@@ -1,0 +1,4 @@
+interface:
+  display_name: "ChrisAI Knowledge"
+  short_description: "Maintain .agents rules and optional MCP publishing"
+  default_prompt: "Use $chrisai-knowledge to install, repair, or update the project-local .agents workspace, including MCP publishing when requested."

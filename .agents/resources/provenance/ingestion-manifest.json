@@ -1,0 +1,2712 @@
+{
+  "captured_at": "2026-10-23 Asia/Manila",
+  "skill_revision": "c3be0b52e797f48ba8400893bb4aae693eaeb221",
+  "source_code_archived": false,
+  "documents": [
+    {
+      "original_path": "/Users/cblanquera/server/projects/stackpress/rust-notes/stackpress-rust-feasibility/2026-10-23-stackpress-rust-working-summary.md",
+      "raw_path": ".agents/resources/conversation/2026-10-23-stackpress-rust/2026-10-23-stackpress-rust-working-summary.md",
+      "reference_path": ".agents/references/00004-discussion-working-summary.md",
+      "kind": "discussion",
+      "sha256": "3bd0d0560371660deb000089dd9114c893552642a969d88414a7ab7fc4a5e8d9",
+      "rendered_body_sha256": "6bdd62d260ddce5237402be879761020643dfd34cd15de67b8b209620c15510e",
+      "source_headings": [
+        "# Working Summary",
+        "## Summary",
+        "## Scope Boundary",
+        "## Current State",
+        "## Key Decisions And Confirmed Requirements",
+        "### Preserve these capabilities",
+        "### Plugin selection is a build-time concern",
+        "### Readability matters more than JavaScript syntax",
+        "### Selected UI direction and shared code",
+        "### Idiomatic Rust and plugin flexibility",
+        "### Event diagnostics",
+        "### Cargo and public namespace",
+        "## Assistant Proposals And Assumptions",
+        "## Conflicts Or Changes",
+        "## Open Questions",
+        "## Blockers Or Risks",
+        "## Next Actions",
+        "## References"
+      ],
+      "rendered_headings": [
+        "# Working Summary",
+        "## Summary",
+        "## Scope Boundary",
+        "## Current State",
+        "## Key Decisions And Confirmed Requirements",
+        "### Preserve these capabilities",
+        "### Plugin selection is a build-time concern",
+        "### Readability matters more than JavaScript syntax",
+        "### Selected UI direction and shared code",
+        "### Idiomatic Rust and plugin flexibility",
+        "### Event diagnostics",
+        "### Cargo and public namespace",
+        "## Assistant Proposals And Assumptions",
+        "## Conflicts Or Changes",
+        "## Open Questions",
+        "## Blockers Or Risks",
+        "## Next Actions",
+        "## References"
+      ]
+    },
+    {
+      "original_path": "/Users/cblanquera/server/projects/stackpress/rust-notes/stackpress-rust-feasibility/feature-inventory-and-feasibility.md",
+      "raw_path": ".agents/resources/conversation/2026-10-23-stackpress-rust/feature-inventory-and-feasibility.md",
+      "reference_path": ".agents/references/00005-discussion-feature-feasibility.md",
+      "kind": "discussion",
+      "sha256": "bd4f10728ae86d410f6c17d9addda754e0868c753b73e86a970b1b849c7db863",
+      "rendered_body_sha256": "f7276a1f9e893665dbf5f43abf983446413e089767a493532b4d03cf5b783ed5",
+      "source_headings": [
+        "# Feature inventory and Rust feasibility",
+        "## Required behavior",
+        "## 1. lib",
+        "## 2. idea",
+        "## 3. ingest",
+        "## 4. inquire",
+        "## 5. reactus",
+        "## 6. stackpress",
+        "## Dependency candidates and exact-fit limits",
+        "## Primary external references"
+      ],
+      "rendered_headings": [
+        "# Feature inventory and Rust feasibility",
+        "## Required behavior",
+        "## 1. lib",
+        "## 2. idea",
+        "## 3. ingest",
+        "## 4. inquire",
+        "## 5. reactus",
+        "## 6. stackpress",
+        "## Dependency candidates and exact-fit limits",
+        "## Primary external references"
+      ]
+    },
+    {
+      "original_path": "/Users/cblanquera/server/projects/stackpress/rust-notes/stackpress-rust-feasibility/crate-and-plugin-architecture.md",
+      "raw_path": ".agents/resources/conversation/2026-10-23-stackpress-rust/crate-and-plugin-architecture.md",
+      "reference_path": ".agents/references/00006-discussion-crate-plugin-proposals.md",
+      "kind": "discussion",
+      "sha256": "daabcbff8b1cfb62e06ca08779e180339331a5ce83312683eaef6055be7e9d0b",
+      "rendered_body_sha256": "b98a0cd988c687ab9fed36ab752a4db88f6413b54af1fb95a1b12ef8454d7535",
+      "source_headings": [
+        "# Proposed crate and plugin architecture",
+        "## Organizing principle",
+        "## Eventual layout",
+        "## Responsibilities",
+        "## Public namespace and Cargo names",
+        "## Dependency rules",
+        "## Compile-time plugin selection",
+        "## Plugin use cases and extension policy",
+        "## Plugin source organization",
+        "## General lifecycle extension events",
+        "## Generation and lifecycle",
+        "## UI and capability invocation",
+        "## Readability contract",
+        "## Proposed first proof",
+        "## References"
+      ],
+      "rendered_headings": [
+        "# Proposed crate and plugin architecture",
+        "## Organizing principle",
+        "## Eventual layout",
+        "## Responsibilities",
+        "## Public namespace and Cargo names",
+        "## Dependency rules",
+        "## Compile-time plugin selection",
+        "## Plugin use cases and extension policy",
+        "## Plugin source organization",
+        "## General lifecycle extension events",
+        "## Generation and lifecycle",
+        "## UI and capability invocation",
+        "## Readability contract",
+        "## Proposed first proof",
+        "## References"
+      ]
+    },
+    {
+      "original_path": "/Users/cblanquera/server/projects/stackpress/rust-notes/stackpress-rust-feasibility/frontend-options.md",
+      "raw_path": ".agents/resources/conversation/2026-10-23-stackpress-rust/frontend-options.md",
+      "reference_path": ".agents/references/00007-discussion-frontend-decision-history.md",
+      "kind": "discussion",
+      "sha256": "5b36b252d4637d1e08c1ad77e01e5a5c106f3742f7ace164b5c8c537b5ca3773",
+      "rendered_body_sha256": "5b36b252d4637d1e08c1ad77e01e5a5c106f3742f7ace164b5c8c537b5ca3773",
+      "source_headings": [
+        "# Frontend options: Leptos, Tauri, and Vite",
+        "## Author's latest position",
+        "## Compare the layers correctly",
+        "## Reasons to favor Leptos for this project",
+        "## Reasons Tauri + Vite + a JS UI framework may be preferable",
+        "## Website and installed applications use different hosts",
+        "### Website",
+        "### Installed application",
+        "## Comparison table",
+        "## Selected direction",
+        "## Focused integration proof",
+        "## Sources and evidence limits"
+      ],
+      "rendered_headings": [
+        "# Frontend options: Leptos, Tauri, and Vite",
+        "## Author's latest position",
+        "## Compare the layers correctly",
+        "## Reasons to favor Leptos for this project",
+        "## Reasons Tauri + Vite + a JS UI framework may be preferable",
+        "## Website and installed applications use different hosts",
+        "### Website",
+        "### Installed application",
+        "## Comparison table",
+        "## Selected direction",
+        "## Focused integration proof",
+        "## Sources and evidence limits"
+      ]
+    },
+    {
+      "original_path": "/Users/cblanquera/server/projects/stackpress/rust-notes/stackpress-rust-feasibility/diagnostics-and-existing-parser.md",
+      "raw_path": ".agents/resources/conversation/2026-10-23-stackpress-rust/diagnostics-and-existing-parser.md",
+      "reference_path": ".agents/references/00008-discussion-diagnostics-existing-parser.md",
+      "kind": "discussion",
+      "sha256": "b89e1469814b4db69dbbd91cc394b0865b8dae98d1de1488e5a36ff152c92be8",
+      "rendered_body_sha256": "d068ce57fc166e34bf5c31b38a796f063482615e34560cf773748115b5057618",
+      "source_headings": [
+        "# Diagnostics and existing Rust parser",
+        "## Confirmed updates from the author",
+        "## What the current Exception provides",
+        "## Four complementary diagnostic layers",
+        "## Anonymous handlers can remain allowed",
+        "## Lifecycle handling and error reporting",
+        "## Existing Idea Rust parser branch",
+        "## Distribution consequence",
+        "## Next proof additions",
+        "## Primary references"
+      ],
+      "rendered_headings": [
+        "# Diagnostics and existing Rust parser",
+        "## Confirmed updates from the author",
+        "## What the current Exception provides",
+        "## Four complementary diagnostic layers",
+        "## Anonymous handlers can remain allowed",
+        "## Lifecycle handling and error reporting",
+        "## Existing Idea Rust parser branch",
+        "## Distribution consequence",
+        "## Next proof additions",
+        "## Primary references"
+      ]
+    },
+    {
+      "original_path": "/Users/cblanquera/server/projects/stackpress/rust-notes/stackpress-rust-feasibility/cargo-naming-and-namespace.md",
+      "raw_path": ".agents/resources/conversation/2026-10-23-stackpress-rust/cargo-naming-and-namespace.md",
+      "reference_path": ".agents/references/00009-discussion-cargo-namespace.md",
+      "kind": "discussion",
+      "sha256": "b92593c10045561f5d71028eee80675a3c4482382cc40f8a52de61572cf2f803",
+      "rendered_body_sha256": "b92593c10045561f5d71028eee80675a3c4482382cc40f8a52de61572cf2f803",
+      "source_headings": [
+        "# Cargo naming and the Stackpress namespace",
+        "## Author request",
+        "## Distinguish the names",
+        "## Proposed facade implementation",
+        "## Dependency and feature consequences",
+        "## Decisions versus open details",
+        "## Primary references checked"
+      ],
+      "rendered_headings": [
+        "# Cargo naming and the Stackpress namespace",
+        "## Author request",
+        "## Distinguish the names",
+        "## Proposed facade implementation",
+        "## Dependency and feature consequences",
+        "## Decisions versus open details",
+        "## Primary references checked"
+      ]
+    },
+    {
+      "original_path": "/Users/cblanquera/server/projects/stackpress/rust-notes/stackpress-rust-feasibility/README.md",
+      "raw_path": ".agents/resources/conversation/2026-10-23-stackpress-rust/README.md",
+      "reference_path": ".agents/references/00010-discussion-source-index.md",
+      "kind": "discussion",
+      "sha256": "62d14124c3c2fc0ddb76514ff9c0045a78387af1fc302a0584a584a8fb5fa5b2",
+      "rendered_body_sha256": "10a8e87b1520215d4809629ed4ea30aaa4039df1b404b702d4cd64d22488db60",
+      "source_headings": [
+        "# Stackpress Rust feasibility notes",
+        "## Read first",
+        "## Latest direction",
+        "## Maintenance"
+      ],
+      "rendered_headings": [
+        "# Stackpress Rust feasibility notes",
+        "## Read first",
+        "## Latest direction",
+        "## Maintenance"
+      ]
+    },
+    {
+      "original_path": "/Users/cblanquera/server/projects/stackpress/stackpress/.agents/context/identity-and-principles.md",
+      "raw_path": ".agents/resources/upstream-stackpress-kb/context/identity-and-principles.md",
+      "reference_path": ".agents/references/00011-upstream-identity-and-principles.md",
+      "kind": "upstream",
+      "sha256": "789361b78581f1c8c137cf5f083fb9ed864b43b94aed0ef90822677523598b52",
+      "rendered_body_sha256": "789361b78581f1c8c137cf5f083fb9ed864b43b94aed0ef90822677523598b52",
+      "source_headings": [
+        "# Stackpress Identity And Principles",
+        "## Technical Identity",
+        "## Server-Side First",
+        "## What Forms An Application",
+        "## Ecosystem Principles",
+        "### Keep Cores Narrow",
+        "### Preserve Inspectable Intent",
+        "### Adapt At Boundaries",
+        "### Let Ownership Follow Responsibility",
+        "### Reuse Capabilities Across Controlled Surfaces",
+        "## Technical Vocabulary",
+        "## Important Non-Claims"
+      ],
+      "rendered_headings": [
+        "# Stackpress Identity And Principles",
+        "## Technical Identity",
+        "## Server-Side First",
+        "## What Forms An Application",
+        "## Ecosystem Principles",
+        "### Keep Cores Narrow",
+        "### Preserve Inspectable Intent",
+        "### Adapt At Boundaries",
+        "### Let Ownership Follow Responsibility",
+        "### Reuse Capabilities Across Controlled Surfaces",
+        "## Technical Vocabulary",
+        "## Important Non-Claims"
+      ]
+    },
+    {
+      "original_path": "/Users/cblanquera/server/projects/stackpress/stackpress/.agents/context/architecture-and-composition.md",
+      "raw_path": ".agents/resources/upstream-stackpress-kb/context/architecture-and-composition.md",
+      "reference_path": ".agents/references/00012-upstream-architecture-and-composition.md",
+      "kind": "upstream",
+      "sha256": "2aed92a7ee9278114dfef53322baa30233a7ad60f55634725748f64e69021466",
+      "rendered_body_sha256": "898ff164144c391040d691ae0a0d3544cfe9e0a307efec2fed56bf83c146e711",
+      "source_headings": [
+        "# Stackpress Architecture And Composition",
+        "## Core Flow",
+        "## Foundation Ownership",
+        "## Lifecycle Ownership",
+        "## Package Composition",
+        "## Event Capability Bus",
+        "## Architectural Invariants",
+        "## Classification Language",
+        "## Detailed Reference"
+      ],
+      "rendered_headings": [
+        "# Stackpress Architecture And Composition",
+        "## Core Flow",
+        "## Foundation Ownership",
+        "## Lifecycle Ownership",
+        "## Package Composition",
+        "## Event Capability Bus",
+        "## Architectural Invariants",
+        "## Classification Language",
+        "## Detailed Reference"
+      ]
+    },
+    {
+      "original_path": "/Users/cblanquera/server/projects/stackpress/stackpress/.agents/context/modeling-and-generation.md",
+      "raw_path": ".agents/resources/upstream-stackpress-kb/context/modeling-and-generation.md",
+      "reference_path": ".agents/references/00013-upstream-modeling-and-generation.md",
+      "kind": "upstream",
+      "sha256": "11ffc3a0707e07704c28f20a48a72f1d615a9934e10728a44e1660e820b6789d",
+      "rendered_body_sha256": "4d4aa931b1982e5fb277c2a676f11a801de1fc17f449f8eef47832ab31dac078",
+      "source_headings": [
+        "# Stackpress Modeling And Generation",
+        "## Idea's Role",
+        "## Semantic Ownership",
+        "## Generation Lifecycle",
+        "## Transform Ownership",
+        "## Generated UI Metadata",
+        "## Frui And r22n Contracts",
+        "## Verification",
+        "## Detailed Reference"
+      ],
+      "rendered_headings": [
+        "# Stackpress Modeling And Generation",
+        "## Idea's Role",
+        "## Semantic Ownership",
+        "## Generation Lifecycle",
+        "## Transform Ownership",
+        "## Generated UI Metadata",
+        "## Frui And r22n Contracts",
+        "## Verification",
+        "## Detailed Reference"
+      ]
+    },
+    {
+      "original_path": "/Users/cblanquera/server/projects/stackpress/stackpress/.agents/context/runtime-and-operations.md",
+      "raw_path": ".agents/resources/upstream-stackpress-kb/context/runtime-and-operations.md",
+      "reference_path": ".agents/references/00014-upstream-runtime-and-operations.md",
+      "kind": "upstream",
+      "sha256": "72ebeda36157933605e4d5602d22701a3378164af5490a0c7c6ebc639198dac5",
+      "rendered_body_sha256": "9c3250719339433044efa219ad3bab47c3624b066e56abf280e34fad9ad0383d",
+      "source_headings": [
+        "# Stackpress Runtime And Operations",
+        "## Bootstrap",
+        "## Configuration As Operational Policy",
+        "## Event Classes",
+        "## Data States",
+        "## Command Semantics",
+        "## Rename Safety",
+        "## Transaction Boundaries",
+        "## Operational Rules",
+        "## Detailed References"
+      ],
+      "rendered_headings": [
+        "# Stackpress Runtime And Operations",
+        "## Bootstrap",
+        "## Configuration As Operational Policy",
+        "## Event Classes",
+        "## Data States",
+        "## Command Semantics",
+        "## Rename Safety",
+        "## Transaction Boundaries",
+        "## Operational Rules",
+        "## Detailed References"
+      ]
+    },
+    {
+      "original_path": "/Users/cblanquera/server/projects/stackpress/stackpress/.agents/context/interfaces-and-experience.md",
+      "raw_path": ".agents/resources/upstream-stackpress-kb/context/interfaces-and-experience.md",
+      "reference_path": ".agents/references/00015-upstream-interfaces-and-experience.md",
+      "kind": "upstream",
+      "sha256": "f0fbe7c2888615218ca8af0d0308c04b40acc74f6db811ab0764d06060beb803",
+      "rendered_body_sha256": "a29e385219adf73ec00addfd3bcfb686dc658ef5853009f629b4411fe7873863",
+      "source_headings": [
+        "# Stackpress Interfaces And Experience",
+        "## Access Surfaces",
+        "## Exposure Models",
+        "## Surface Adapter Flow",
+        "## Host-Routed React",
+        "## Browser Snapshot Boundary",
+        "## UI And Localization Ownership",
+        "## Cross-Surface Risks",
+        "## Detailed Reference"
+      ],
+      "rendered_headings": [
+        "# Stackpress Interfaces And Experience",
+        "## Access Surfaces",
+        "## Exposure Models",
+        "## Surface Adapter Flow",
+        "## Host-Routed React",
+        "## Browser Snapshot Boundary",
+        "## UI And Localization Ownership",
+        "## Cross-Surface Risks",
+        "## Detailed Reference"
+      ]
+    },
+    {
+      "original_path": "/Users/cblanquera/server/projects/stackpress/stackpress/.agents/context/ecosystem-and-portability.md",
+      "raw_path": ".agents/resources/upstream-stackpress-kb/context/ecosystem-and-portability.md",
+      "reference_path": ".agents/references/00016-upstream-ecosystem-and-portability.md",
+      "kind": "upstream",
+      "sha256": "2eacda652d5bdad1bc94734af6788e2c844a82f0717ea358dae75e4a20f46513",
+      "rendered_body_sha256": "7eae6d2a612742de1789c79ba6d7120f3f67834fd8f7cd939b4c7a3033e2647d",
+      "source_headings": [
+        "# Stackpress Ecosystem And Portability",
+        "## Ecosystem Roles",
+        "### `@stackpress/lib`",
+        "### Idea",
+        "### Ingest",
+        "### Inquire",
+        "### Reactus",
+        "### Frui",
+        "### r22n",
+        "## Explicit Adapter Portability",
+        "## Evidence-Level Vocabulary",
+        "## Current Constraints",
+        "## Package-Style Distribution",
+        "## Distribution Rules",
+        "## Detailed Reference"
+      ],
+      "rendered_headings": [
+        "# Stackpress Ecosystem And Portability",
+        "## Ecosystem Roles",
+        "### `@stackpress/lib`",
+        "### Idea",
+        "### Ingest",
+        "### Inquire",
+        "### Reactus",
+        "### Frui",
+        "### r22n",
+        "## Explicit Adapter Portability",
+        "## Evidence-Level Vocabulary",
+        "## Current Constraints",
+        "## Package-Style Distribution",
+        "## Distribution Rules",
+        "## Detailed Reference"
+      ]
+    },
+    {
+      "original_path": "/Users/cblanquera/server/projects/stackpress/stackpress/.agents/context/extension-and-contribution.md",
+      "raw_path": ".agents/resources/upstream-stackpress-kb/context/extension-and-contribution.md",
+      "reference_path": ".agents/references/00017-upstream-extension-and-contribution.md",
+      "kind": "upstream",
+      "sha256": "efdc13cc8d528fdffbe09821b4a121a52d705cf59459ac7f562dd1eb0002c6fe",
+      "rendered_body_sha256": "c4e1ee4d3505f7b3a017d1e8fcb239e4f068c1455627a86b66a80058739004ba",
+      "source_headings": [
+        "# Stackpress Extension And Contribution",
+        "## Guidance Authority",
+        "## Ownership-First Routing",
+        "## Lane Rules",
+        "### Idea/Schema",
+        "### Generation",
+        "### Configuration",
+        "### Runtime Plugin/Event",
+        "### Page/View",
+        "### Adapter/Foundation",
+        "## Lifecycle Placement",
+        "## Change Procedure",
+        "## Verification Matrix",
+        "## Contributor Boundaries",
+        "## Detailed Reference"
+      ],
+      "rendered_headings": [
+        "# Stackpress Extension And Contribution",
+        "## Guidance Authority",
+        "## Ownership-First Routing",
+        "## Lane Rules",
+        "### Idea/Schema",
+        "### Generation",
+        "### Configuration",
+        "### Runtime Plugin/Event",
+        "### Page/View",
+        "### Adapter/Foundation",
+        "## Lifecycle Placement",
+        "## Change Procedure",
+        "## Verification Matrix",
+        "## Contributor Boundaries",
+        "## Detailed Reference"
+      ]
+    },
+    {
+      "original_path": "/Users/cblanquera/server/projects/stackpress/stackpress/.agents/context/compatibility-and-maintenance.md",
+      "raw_path": ".agents/resources/upstream-stackpress-kb/context/compatibility-and-maintenance.md",
+      "reference_path": ".agents/references/00018-upstream-compatibility-and-maintenance.md",
+      "kind": "upstream",
+      "sha256": "3a2c2abae28100b18bdb0f15f0d867babbdfb5e5b0187cdf6f372399f88251d8",
+      "rendered_body_sha256": "3e77046ae1b49cfbb689f351788cd53eec804b6dcab530c051257b9c55980169",
+      "source_headings": [
+        "# Stackpress Compatibility And Maintenance",
+        "## Contract-Chain Compatibility",
+        "## Authority Hierarchy",
+        "## Coordinated Release Set",
+        "## Drift Surfaces",
+        "## Current Safety Signals",
+        "## Current Exceptions And Enforcement Gaps",
+        "## Missing Current Guarantees",
+        "## Diagnostic Order",
+        "## Release And Change Verification",
+        "## KB Maintenance Rule"
+      ],
+      "rendered_headings": [
+        "# Stackpress Compatibility And Maintenance",
+        "## Contract-Chain Compatibility",
+        "## Authority Hierarchy",
+        "## Coordinated Release Set",
+        "## Drift Surfaces",
+        "## Current Safety Signals",
+        "## Current Exceptions And Enforcement Gaps",
+        "## Missing Current Guarantees",
+        "## Diagnostic Order",
+        "## Release And Change Verification",
+        "## KB Maintenance Rule"
+      ]
+    },
+    {
+      "original_path": "/Users/cblanquera/server/projects/stackpress/stackpress/.agents/references/00004-runtime-api-contracts.md",
+      "raw_path": ".agents/resources/upstream-stackpress-kb/references/00004-runtime-api-contracts.md",
+      "reference_path": ".agents/references/00019-upstream-runtime-api-contracts.md",
+      "kind": "upstream",
+      "sha256": "379b61bbcb8b47ba5320547af8bf8e2ce3bbc7360f262ddfff9675a0d7dac69a",
+      "rendered_body_sha256": "379b61bbcb8b47ba5320547af8bf8e2ce3bbc7360f262ddfff9675a0d7dac69a",
+      "source_headings": [
+        "# Runtime API Contracts",
+        "## Request",
+        "## Response",
+        "## Router",
+        "## Server",
+        "## Source Anchors"
+      ],
+      "rendered_headings": [
+        "# Runtime API Contracts",
+        "## Request",
+        "## Response",
+        "## Router",
+        "## Server",
+        "## Source Anchors"
+      ]
+    },
+    {
+      "original_path": "/Users/cblanquera/server/projects/stackpress/stackpress/.agents/references/00005-server-and-transport-contracts.md",
+      "raw_path": ".agents/resources/upstream-stackpress-kb/references/00005-server-and-transport-contracts.md",
+      "reference_path": ".agents/references/00020-upstream-server-and-transport-contracts.md",
+      "kind": "upstream",
+      "sha256": "3381ca0930dd12d555e1e22673b2d05a4df104c6736f81bceb021c9f9338ce73",
+      "rendered_body_sha256": "f712f753838a384fd78d68cbaf80b7e50b1395e1d61d81abaa3a4b0b2b945832",
+      "source_headings": [
+        "# Server And Transport Contracts",
+        "## Design Intent",
+        "## Public Entrypoints",
+        "## Stackpress Terminal",
+        "## Configuration And Plugin Loading",
+        "## Shared Factory Shape",
+        "## Node HTTP Adapter",
+        "## WHATWG Adapter",
+        "## Integration Examples",
+        "## Boundaries And Known Risks",
+        "## Source Anchors And Authority"
+      ],
+      "rendered_headings": [
+        "# Server And Transport Contracts",
+        "## Design Intent",
+        "## Public Entrypoints",
+        "## Stackpress Terminal",
+        "## Configuration And Plugin Loading",
+        "## Shared Factory Shape",
+        "## Node HTTP Adapter",
+        "## WHATWG Adapter",
+        "## Integration Examples",
+        "## Boundaries And Known Risks",
+        "## Source Anchors And Authority"
+      ]
+    },
+    {
+      "original_path": "/Users/cblanquera/server/projects/stackpress/stackpress/.agents/references/00006-schema-api-contracts.md",
+      "raw_path": ".agents/resources/upstream-stackpress-kb/references/00006-schema-api-contracts.md",
+      "reference_path": ".agents/references/00021-upstream-schema-api-contracts.md",
+      "kind": "upstream",
+      "sha256": "87b6fd9a8e43ebd54c9375d4d6e1fb7d867955411e38cb68ab09a3b1a60064ea",
+      "rendered_body_sha256": "87b6fd9a8e43ebd54c9375d4d6e1fb7d867955411e38cb68ab09a3b1a60064ea",
+      "source_headings": [
+        "# Schema API Contracts",
+        "## Purpose And Pattern",
+        "## Public Surface",
+        "## Schema",
+        "## Fieldset And Model",
+        "## Column",
+        "## Attribute And Collections",
+        "## Semantic Lens Catalog",
+        "## Dictionaries And Extensibility",
+        "## Generated Runtime Interfaces",
+        "## Revision History",
+        "## Example",
+        "## Source Anchors And Authority"
+      ],
+      "rendered_headings": [
+        "# Schema API Contracts",
+        "## Purpose And Pattern",
+        "## Public Surface",
+        "## Schema",
+        "## Fieldset And Model",
+        "## Column",
+        "## Attribute And Collections",
+        "## Semantic Lens Catalog",
+        "## Dictionaries And Extensibility",
+        "## Generated Runtime Interfaces",
+        "## Revision History",
+        "## Example",
+        "## Source Anchors And Authority"
+      ]
+    },
+    {
+      "original_path": "/Users/cblanquera/server/projects/stackpress/stackpress/.agents/references/00007-idea-language-catalog.md",
+      "raw_path": ".agents/resources/upstream-stackpress-kb/references/00007-idea-language-catalog.md",
+      "reference_path": ".agents/references/00022-upstream-idea-language-catalog.md",
+      "kind": "upstream",
+      "sha256": "0fc7cd1b1dbdd1fff1c14dcd480b7de5ded413c1c179aa58a59821b151cb9f6d",
+      "rendered_body_sha256": "75ba08cfb1ab18889693e57131a45e3708a2dfb9662f68e774dcffc7a716f132",
+      "source_headings": [
+        "# Idea Language Catalog",
+        "## Intent And Ownership",
+        "## Complete Declaration Shape",
+        "## Types And Modifiers",
+        "## Attributes",
+        "### Schema Attributes",
+        "### Column Attributes",
+        "## Assertions",
+        "## `use` Composition",
+        "## Plugin Transformation",
+        "## Compiler Output And Boundaries",
+        "## Source Anchors And Authority"
+      ],
+      "rendered_headings": [
+        "# Idea Language Catalog",
+        "## Intent And Ownership",
+        "## Complete Declaration Shape",
+        "## Types And Modifiers",
+        "## Attributes",
+        "### Schema Attributes",
+        "### Column Attributes",
+        "## Assertions",
+        "## `use` Composition",
+        "## Plugin Transformation",
+        "## Compiler Output And Boundaries",
+        "## Source Anchors And Authority"
+      ]
+    },
+    {
+      "original_path": "/Users/cblanquera/server/projects/stackpress/stackpress/.agents/references/00008-configuration-catalog.md",
+      "raw_path": ".agents/resources/upstream-stackpress-kb/references/00008-configuration-catalog.md",
+      "reference_path": ".agents/references/00023-upstream-configuration-catalog.md",
+      "kind": "upstream",
+      "sha256": "1981de44bf8e2a3938e04e501c3fbd23a54b75e256b4c8f625dc99bb0166f82c",
+      "rendered_body_sha256": "1981de44bf8e2a3938e04e501c3fbd23a54b75e256b4c8f625dc99bb0166f82c",
+      "source_headings": [
+        "# Stackpress Configuration Catalog",
+        "## Configuration Model",
+        "## `server` And `terminal`",
+        "## `client`",
+        "## `database`",
+        "## `view` And `brand`",
+        "## `language`",
+        "## `session` And `auth`",
+        "## `api`",
+        "## `admin`, `email`, `cookie`, And `csrf`",
+        "## Optional `mcp`",
+        "## Optional `desktop`",
+        "## Environment Composition",
+        "## Source Anchors And Authority"
+      ],
+      "rendered_headings": [
+        "# Stackpress Configuration Catalog",
+        "## Configuration Model",
+        "## `server` And `terminal`",
+        "## `client`",
+        "## `database`",
+        "## `view` And `brand`",
+        "## `language`",
+        "## `session` And `auth`",
+        "## `api`",
+        "## `admin`, `email`, `cookie`, And `csrf`",
+        "## Optional `mcp`",
+        "## Optional `desktop`",
+        "## Environment Composition",
+        "## Source Anchors And Authority"
+      ]
+    },
+    {
+      "original_path": "/Users/cblanquera/server/projects/stackpress/stackpress/.agents/references/00009-cli-and-plugin-contracts.md",
+      "raw_path": ".agents/resources/upstream-stackpress-kb/references/00009-cli-and-plugin-contracts.md",
+      "reference_path": ".agents/references/00024-upstream-cli-and-plugin-contracts.md",
+      "kind": "upstream",
+      "sha256": "86e2d156d4ceb0c367c5b4875f881b6a12d6d3af0c4b37439d4a52b4890b1ada",
+      "rendered_body_sha256": "5dd0a3d4f637a7a86ad69f37dc274d4af8170aa135fde7acf8a03d97bcedc1c2",
+      "source_headings": [
+        "# CLI And Plugin Contracts",
+        "## Two CLI Layers",
+        "## Runtime Command Model",
+        "## Runtime Command Catalog",
+        "## Idea Input Resolution",
+        "## Aggregate Plugin Order",
+        "## Package Plugin Pattern",
+        "## Status And Error Behavior",
+        "## Verification Recipes",
+        "## Source Anchors And Authority"
+      ],
+      "rendered_headings": [
+        "# CLI And Plugin Contracts",
+        "## Two CLI Layers",
+        "## Runtime Command Model",
+        "## Runtime Command Catalog",
+        "## Idea Input Resolution",
+        "## Aggregate Plugin Order",
+        "## Package Plugin Pattern",
+        "## Status And Error Behavior",
+        "## Verification Recipes",
+        "## Source Anchors And Authority"
+      ]
+    },
+    {
+      "original_path": "/Users/cblanquera/server/projects/stackpress/stackpress/.agents/references/00010-sql-api-contracts.md",
+      "raw_path": ".agents/resources/upstream-stackpress-kb/references/00010-sql-api-contracts.md",
+      "reference_path": ".agents/references/00025-upstream-sql-api-contracts.md",
+      "kind": "upstream",
+      "sha256": "cd24ca54863b3e714590c0554e67196e1d13eee119f3fc2516c8dff505210331",
+      "rendered_body_sha256": "cd24ca54863b3e714590c0554e67196e1d13eee119f3fc2516c8dff505210331",
+      "source_headings": [
+        "# SQL API Contracts",
+        "## Ownership And Intent",
+        "## Exports",
+        "## Engine",
+        "## Builder Contract",
+        "## Field And Relationship Shape",
+        "## Dialects",
+        "## Generated Store Interface",
+        "## Generated Actions Interface",
+        "## Stackpress SQL Helpers",
+        "## Operational Boundaries",
+        "## Source Anchors And Authority"
+      ],
+      "rendered_headings": [
+        "# SQL API Contracts",
+        "## Ownership And Intent",
+        "## Exports",
+        "## Engine",
+        "## Builder Contract",
+        "## Field And Relationship Shape",
+        "## Dialects",
+        "## Generated Store Interface",
+        "## Generated Actions Interface",
+        "## Stackpress SQL Helpers",
+        "## Operational Boundaries",
+        "## Source Anchors And Authority"
+      ]
+    },
+    {
+      "original_path": "/Users/cblanquera/server/projects/stackpress/stackpress/.agents/references/00011-database-adapter-contracts.md",
+      "raw_path": ".agents/resources/upstream-stackpress-kb/references/00011-database-adapter-contracts.md",
+      "reference_path": ".agents/references/00026-upstream-database-adapter-contracts.md",
+      "kind": "upstream",
+      "sha256": "1c395e2213fa63ebca388e8edb5a5a79d114898705e8ecb131a8c39d92daa06f",
+      "rendered_body_sha256": "1c395e2213fa63ebca388e8edb5a5a79d114898705e8ecb131a8c39d92daa06f",
+      "source_headings": [
+        "# Database Adapter Contracts",
+        "## Shared Contract",
+        "## MySQL / mysql2",
+        "## PostgreSQL / pg",
+        "## PGlite",
+        "## SQLite / better-sqlite3",
+        "## Connection Interface",
+        "## Choosing An Adapter",
+        "## Safety And Portability Boundaries",
+        "## Source Anchors And Authority"
+      ],
+      "rendered_headings": [
+        "# Database Adapter Contracts",
+        "## Shared Contract",
+        "## MySQL / mysql2",
+        "## PostgreSQL / pg",
+        "## PGlite",
+        "## SQLite / better-sqlite3",
+        "## Connection Interface",
+        "## Choosing An Adapter",
+        "## Safety And Portability Boundaries",
+        "## Source Anchors And Authority"
+      ]
+    },
+    {
+      "original_path": "/Users/cblanquera/server/projects/stackpress/stackpress/.agents/references/00012-view-api-contracts.md",
+      "raw_path": ".agents/resources/upstream-stackpress-kb/references/00012-view-api-contracts.md",
+      "reference_path": ".agents/references/00027-upstream-view-api-contracts.md",
+      "kind": "upstream",
+      "sha256": "648a237a6c7f697cb4d68c1bdd933522bc4a78c07f371674f34f4f1fb02c475d",
+      "rendered_body_sha256": "648a237a6c7f697cb4d68c1bdd933522bc4a78c07f371674f34f4f1fb02c475d",
+      "source_headings": [
+        "# View API Contracts",
+        "## Ownership And Entrypoints",
+        "## Reactus Templates And Helpers",
+        "## Reactus Runtime Classes",
+        "## Stackpress Plugin Lifecycle",
+        "## Server Rendering Flow",
+        "## `setViewProps`",
+        "## Browser Snapshot Classes And Hooks",
+        "## Providers And Layouts",
+        "## Notifications And Admin URL Helpers",
+        "## Source Anchors And Authority"
+      ],
+      "rendered_headings": [
+        "# View API Contracts",
+        "## Ownership And Entrypoints",
+        "## Reactus Templates And Helpers",
+        "## Reactus Runtime Classes",
+        "## Stackpress Plugin Lifecycle",
+        "## Server Rendering Flow",
+        "## `setViewProps`",
+        "## Browser Snapshot Classes And Hooks",
+        "## Providers And Layouts",
+        "## Notifications And Admin URL Helpers",
+        "## Source Anchors And Authority"
+      ]
+    },
+    {
+      "original_path": "/Users/cblanquera/server/projects/stackpress/stackpress/.agents/references/00013-session-language-contracts.md",
+      "raw_path": ".agents/resources/upstream-stackpress-kb/references/00013-session-language-contracts.md",
+      "reference_path": ".agents/references/00028-upstream-session-language-contracts.md",
+      "kind": "upstream",
+      "sha256": "eb40b98b29282ecb1f9bf11c4556f3871557adc9ad2be2099376c0235edb770d",
+      "rendered_body_sha256": "eb40b98b29282ecb1f9bf11c4556f3871557adc9ad2be2099376c0235edb770d",
+      "source_headings": [
+        "# Session And Language Contracts",
+        "## Entrypoints And Ownership",
+        "## Server `Session`",
+        "## Permission Semantics",
+        "## Session Plugin Lifecycle",
+        "## `actions` Auth Namespace",
+        "## Server `Language`",
+        "## Language Plugin Request Flow",
+        "## Browser r22n Contract",
+        "## Security Boundaries",
+        "## Source Anchors And Authority"
+      ],
+      "rendered_headings": [
+        "# Session And Language Contracts",
+        "## Entrypoints And Ownership",
+        "## Server `Session`",
+        "## Permission Semantics",
+        "## Session Plugin Lifecycle",
+        "## `actions` Auth Namespace",
+        "## Server `Language`",
+        "## Language Plugin Request Flow",
+        "## Browser r22n Contract",
+        "## Security Boundaries",
+        "## Source Anchors And Authority"
+      ]
+    },
+    {
+      "original_path": "/Users/cblanquera/server/projects/stackpress/stackpress/.agents/references/00014-exports-types-generated-contracts.md",
+      "raw_path": ".agents/resources/upstream-stackpress-kb/references/00014-exports-types-generated-contracts.md",
+      "reference_path": ".agents/references/00029-upstream-exports-types-generated-contracts.md",
+      "kind": "upstream",
+      "sha256": "f293d7046332e60f1509d4c2f00b2c044996f3c5cf1fee71f9608f6ca6d8bad6",
+      "rendered_body_sha256": "f293d7046332e60f1509d4c2f00b2c044996f3c5cf1fee71f9608f6ca6d8bad6",
+      "source_headings": [
+        "# Exports, Types, And Generated Contracts",
+        "## Aggregate Role",
+        "## Published Subpaths And Assets",
+        "## Root Value Export Families",
+        "## Type Families",
+        "## Generated Client Package",
+        "## Generated Export Map",
+        "## Generated Client Loader",
+        "## UnoCSS Preset",
+        "## Version And Compatibility Boundaries",
+        "## Source Anchors And Authority"
+      ],
+      "rendered_headings": [
+        "# Exports, Types, And Generated Contracts",
+        "## Aggregate Role",
+        "## Published Subpaths And Assets",
+        "## Root Value Export Families",
+        "## Type Families",
+        "## Generated Client Package",
+        "## Generated Export Map",
+        "## Generated Client Loader",
+        "## UnoCSS Preset",
+        "## Version And Compatibility Boundaries",
+        "## Source Anchors And Authority"
+      ]
+    },
+    {
+      "original_path": "/Users/cblanquera/server/projects/stackpress/stackpress/.agents/references/00015-operational-examples.md",
+      "raw_path": ".agents/resources/upstream-stackpress-kb/references/00015-operational-examples.md",
+      "reference_path": ".agents/references/00030-upstream-operational-examples.md",
+      "kind": "upstream",
+      "sha256": "8e115a20caa64718697b488f9fe76d28dec36138accd12e870c3e5f43bf01b9e",
+      "rendered_body_sha256": "c3d4f060b85a840d984b6dbe60463fe1bddc97f2420714d811114ab0ce4b1a3d",
+      "source_headings": [
+        "# Operational Examples",
+        "## Baseline Application Shape",
+        "## Configure And Bootstrap",
+        "## Generate And Start",
+        "## Register A Database",
+        "## Declare A Model And Use Generated Events",
+        "## Expose Capabilities Through Interfaces",
+        "## Build And Preview",
+        "## Schema Change Workflow",
+        "## Source Anchors And Authority"
+      ],
+      "rendered_headings": [
+        "# Operational Examples",
+        "## Baseline Application Shape",
+        "## Configure And Bootstrap",
+        "## Generate And Start",
+        "## Register A Database",
+        "## Declare A Model And Use Generated Events",
+        "## Expose Capabilities Through Interfaces",
+        "## Build And Preview",
+        "## Schema Change Workflow",
+        "## Source Anchors And Authority"
+      ]
+    },
+    {
+      "original_path": "/Users/cblanquera/server/projects/stackpress/stackpress/.agents/references/00016-idea-component-catalog.md",
+      "raw_path": ".agents/resources/upstream-stackpress-kb/references/00016-idea-component-catalog.md",
+      "reference_path": ".agents/references/00031-upstream-idea-component-catalog.md",
+      "kind": "upstream",
+      "sha256": "690869e011c0a237ab1055bec28e258e5a38197bf97fd0e4c9a82bc84ee98ae5",
+      "rendered_body_sha256": "1a954021393388854b48fc1b5a88b287fa0d679b8a9c516d6d643d7e9ebe0aca",
+      "source_headings": [
+        "# Idea Component Catalog",
+        "## Component Contract",
+        "## Field Components",
+        "## View Components",
+        "## Derived Families",
+        "## Selection Semantics",
+        "## Source Anchors And Authority"
+      ],
+      "rendered_headings": [
+        "# Idea Component Catalog",
+        "## Component Contract",
+        "## Field Components",
+        "## View Components",
+        "## Derived Families",
+        "## Selection Semantics",
+        "## Source Anchors And Authority"
+      ]
+    },
+    {
+      "original_path": "/Users/cblanquera/server/projects/stackpress/stackpress/.agents/references/00017-interface-exposure-examples.md",
+      "raw_path": ".agents/resources/upstream-stackpress-kb/references/00017-interface-exposure-examples.md",
+      "reference_path": ".agents/references/00032-upstream-interface-exposure-examples.md",
+      "kind": "upstream",
+      "sha256": "98ecad045838761abccde37458b32e3cf51f0ef20595b17dc2fe11279d7a4fe4",
+      "rendered_body_sha256": "98ecad045838761abccde37458b32e3cf51f0ef20595b17dc2fe11279d7a4fe4",
+      "source_headings": [
+        "# Interface Exposure Examples",
+        "## Handwritten Page And View",
+        "## API Endpoint Over An Event",
+        "## MCP Tool Over The Same Event",
+        "## Cross-Surface Consistency",
+        "## Source Anchors And Authority"
+      ],
+      "rendered_headings": [
+        "# Interface Exposure Examples",
+        "## Handwritten Page And View",
+        "## API Endpoint Over An Event",
+        "## MCP Tool Over The Same Event",
+        "## Cross-Surface Consistency",
+        "## Source Anchors And Authority"
+      ]
+    },
+    {
+      "original_path": "/Users/cblanquera/server/projects/stackpress/stackpress/.agents/references/00018-contributor-source-patterns.md",
+      "raw_path": ".agents/resources/upstream-stackpress-kb/references/00018-contributor-source-patterns.md",
+      "reference_path": ".agents/references/00033-upstream-contributor-source-patterns.md",
+      "kind": "upstream",
+      "sha256": "ceca478556dbb5162daa9df5a19a811f2961f6795952f15f3db1638396863c8d",
+      "rendered_body_sha256": "770f37e93cb956c462f0d5e867051dadac83eaf14073cde08dfc4ccdbe351aab",
+      "source_headings": [
+        "# Contributor Source Patterns",
+        "## Authority Labels",
+        "## Package Anatomy Classes",
+        "## Seven Execution Phases",
+        "## Exact Placement Matrix",
+        "## Event And Script Pair",
+        "## Page And View Pair",
+        "## Generator Recipe",
+        "## Aggregate Decision",
+        "## Public Surface Checklist",
+        "## Cross-Repository Change Checklist",
+        "## Verification Target",
+        "## Known Exceptions And Defects",
+        "## Current Source Anchors"
+      ],
+      "rendered_headings": [
+        "# Contributor Source Patterns",
+        "## Authority Labels",
+        "## Package Anatomy Classes",
+        "## Seven Execution Phases",
+        "## Exact Placement Matrix",
+        "## Event And Script Pair",
+        "## Page And View Pair",
+        "## Generator Recipe",
+        "## Aggregate Decision",
+        "## Public Surface Checklist",
+        "## Cross-Repository Change Checklist",
+        "## Verification Target",
+        "## Known Exceptions And Defects",
+        "## Current Source Anchors"
+      ]
+    }
+  ],
+  "repositories": [
+    {
+      "name": "lib",
+      "root": "/Users/cblanquera/server/projects/stackpress/lib",
+      "head": "e2cc6b8cad77b5ad18be8a94e0d40e72e2f6183a",
+      "dirty_paths": []
+    },
+    {
+      "name": "idea",
+      "root": "/Users/cblanquera/server/projects/stackpress/idea",
+      "head": "cf8e922ba6e57746e15a05c26df0546dda2cc5c9",
+      "dirty_paths": []
+    },
+    {
+      "name": "ingest",
+      "root": "/Users/cblanquera/server/projects/stackpress/ingest",
+      "head": "477ec47f8b5dafa5713b13f9c964d06c61c22938",
+      "dirty_paths": []
+    },
+    {
+      "name": "inquire",
+      "root": "/Users/cblanquera/server/projects/stackpress/inquire",
+      "head": "039a1b5f41500aa63286a9f9b34f4c7f71b990a0",
+      "dirty_paths": []
+    },
+    {
+      "name": "reactus",
+      "root": "/Users/cblanquera/server/projects/stackpress/reactus",
+      "head": "357569a4923821d9086adf565c5ed22f0e082631",
+      "dirty_paths": []
+    },
+    {
+      "name": "stackpress",
+      "root": "/Users/cblanquera/server/projects/stackpress/stackpress",
+      "head": "a71d683051ba8350fdd12d6b5a33f268fdcc285f",
+      "dirty_paths": [
+        " M skills/stackpress-app-scaffold/assets/template/package.json"
+      ]
+    },
+    {
+      "name": "frui",
+      "root": "/Users/cblanquera/server/projects/stackpress/frui",
+      "head": "096fd14580f0f49b6e159fa0aa5ae2a5bce8fb0e",
+      "dirty_paths": []
+    },
+    {
+      "name": "r22n",
+      "root": "/Users/cblanquera/server/projects/stackpress/r22n",
+      "head": "48c50dd1ba57a0555c9afbd4bfa4cb41e702cb68",
+      "dirty_paths": [
+        " M package.json",
+        "?? AGENTS.md",
+        "?? brand/"
+      ]
+    }
+  ],
+  "source_files": [
+    {
+      "repo": "lib",
+      "path": "package.json",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/lib/package.json",
+      "head": "e2cc6b8cad77b5ad18be8a94e0d40e72e2f6183a",
+      "sha256": "c562b850c8cc4238b66d739b348da86c0ad16b3f50c417efbcd0818da594ab6e"
+    },
+    {
+      "repo": "lib",
+      "path": "src/Exception.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/lib/src/Exception.ts",
+      "head": "e2cc6b8cad77b5ad18be8a94e0d40e72e2f6183a",
+      "sha256": "5707a46879891a64ef33dbdac6f9738f3f35e99863dcbca57c64ec477ef645b3"
+    },
+    {
+      "repo": "lib",
+      "path": "src/Reflection.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/lib/src/Reflection.ts",
+      "head": "e2cc6b8cad77b5ad18be8a94e0d40e72e2f6183a",
+      "sha256": "fbf7eed26f13d5e0f0416d33c7d40128dfd69688d8c1f8ac9e05a3cfb667f0c9"
+    },
+    {
+      "repo": "lib",
+      "path": "src/emitter/EventEmitter.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/lib/src/emitter/EventEmitter.ts",
+      "head": "e2cc6b8cad77b5ad18be8a94e0d40e72e2f6183a",
+      "sha256": "4c09a40bfdf2d57144c248630fea222361d05feff8109c3d75b057a26de41cae"
+    },
+    {
+      "repo": "lib",
+      "path": "src/emitter/ExpressEmitter.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/lib/src/emitter/ExpressEmitter.ts",
+      "head": "e2cc6b8cad77b5ad18be8a94e0d40e72e2f6183a",
+      "sha256": "7d7e36c8ff11a86570fc3de6c1ff35d1d53aeed44a9db346fbbbca144df5f015"
+    },
+    {
+      "repo": "lib",
+      "path": "src/emitter/RouteEmitter.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/lib/src/emitter/RouteEmitter.ts",
+      "head": "e2cc6b8cad77b5ad18be8a94e0d40e72e2f6183a",
+      "sha256": "cdd04982316981cd228c2183b8a1b10a8c33fe73e9c0d2c339f42900c67b3fe3"
+    },
+    {
+      "repo": "lib",
+      "path": "src/index.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/lib/src/index.ts",
+      "head": "e2cc6b8cad77b5ad18be8a94e0d40e72e2f6183a",
+      "sha256": "9ea7cc12c26c32b8f022033e71153ec58de9d605cfa38788bee5abca1d5aa9f3"
+    },
+    {
+      "repo": "lib",
+      "path": "src/queue/ItemQueue.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/lib/src/queue/ItemQueue.ts",
+      "head": "e2cc6b8cad77b5ad18be8a94e0d40e72e2f6183a",
+      "sha256": "b48a59725ead45f69128c39d77538a5ad49a0e6f6024afa421eae2a4dafe617e"
+    },
+    {
+      "repo": "lib",
+      "path": "src/queue/TaskQueue.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/lib/src/queue/TaskQueue.ts",
+      "head": "e2cc6b8cad77b5ad18be8a94e0d40e72e2f6183a",
+      "sha256": "305ccd94a05e73b1b08ef12fabf17c86f01db67f7f9c5af232582b1ac0bc5657"
+    },
+    {
+      "repo": "lib",
+      "path": "src/router/Request.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/lib/src/router/Request.ts",
+      "head": "e2cc6b8cad77b5ad18be8a94e0d40e72e2f6183a",
+      "sha256": "fc177823575fdee62db8aff99479fc5f562e2ff1d71e2b4c4ef9bdfa1d3e84e9"
+    },
+    {
+      "repo": "lib",
+      "path": "src/router/Response.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/lib/src/router/Response.ts",
+      "head": "e2cc6b8cad77b5ad18be8a94e0d40e72e2f6183a",
+      "sha256": "003d1cb7fd43aa07eae49c55a4c0e5598158bb0da3b6a9d746598b3cc47ee8a7"
+    },
+    {
+      "repo": "lib",
+      "path": "src/router/Router.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/lib/src/router/Router.ts",
+      "head": "e2cc6b8cad77b5ad18be8a94e0d40e72e2f6183a",
+      "sha256": "4afb9fd6b6b3a8130484362a2a5f98b33b1a4b11b005af0c6b953f92790b2d71"
+    },
+    {
+      "repo": "lib",
+      "path": "src/router/Session.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/lib/src/router/Session.ts",
+      "head": "e2cc6b8cad77b5ad18be8a94e0d40e72e2f6183a",
+      "sha256": "fdfb7b86efd83a34a3171da469c4877d109e166882557963112721c14f54900d"
+    },
+    {
+      "repo": "lib",
+      "path": "src/types.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/lib/src/types.ts",
+      "head": "e2cc6b8cad77b5ad18be8a94e0d40e72e2f6183a",
+      "sha256": "61a81ebe7c56bd962829a759f9bb338207594b3fa3da9845324217ec59234383"
+    },
+    {
+      "repo": "idea",
+      "path": "language/server/src/server.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/idea/language/server/src/server.ts",
+      "head": "cf8e922ba6e57746e15a05c26df0546dda2cc5c9",
+      "sha256": "b813a014100656e734e515507581b637566426b3062afd95c8d7c723bd18692a"
+    },
+    {
+      "repo": "idea",
+      "path": "package.json",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/idea/package.json",
+      "head": "cf8e922ba6e57746e15a05c26df0546dda2cc5c9",
+      "sha256": "62ae8651bad3ffc6783e487cfb726e64ed1c30ec3f7c78d544a5bae7b961b675"
+    },
+    {
+      "repo": "idea",
+      "path": "packages/idea-parser/package.json",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/idea/packages/idea-parser/package.json",
+      "head": "cf8e922ba6e57746e15a05c26df0546dda2cc5c9",
+      "sha256": "3316bd15cf19135dea76308a63b2fc1f85f4a641a20c7c474827eacd9af03e59"
+    },
+    {
+      "repo": "idea",
+      "path": "packages/idea-parser/src/definitions.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/idea/packages/idea-parser/src/definitions.ts",
+      "head": "cf8e922ba6e57746e15a05c26df0546dda2cc5c9",
+      "sha256": "929c10546632f77c795400206dba648cffc74ace20c66cb7a7ed75e7e452e101"
+    },
+    {
+      "repo": "idea",
+      "path": "packages/idea-parser/src/index.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/idea/packages/idea-parser/src/index.ts",
+      "head": "cf8e922ba6e57746e15a05c26df0546dda2cc5c9",
+      "sha256": "40db2e92ae69b9ea8e21ac6468040b68542f3181b8b7a575f4f7b76dae08a50a"
+    },
+    {
+      "repo": "idea",
+      "path": "packages/idea-transformer/package.json",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/idea/packages/idea-transformer/package.json",
+      "head": "cf8e922ba6e57746e15a05c26df0546dda2cc5c9",
+      "sha256": "9a20cb4a2a121319d2a4fdf6273da803cde41f9325311b481fd20ac03709af91"
+    },
+    {
+      "repo": "idea",
+      "path": "packages/idea-transformer/src/Transformer.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/idea/packages/idea-transformer/src/Transformer.ts",
+      "head": "cf8e922ba6e57746e15a05c26df0546dda2cc5c9",
+      "sha256": "630bad166095a7bd642f21e75401c9fccaa36d9f249b18f0daf7686b116947c6"
+    },
+    {
+      "repo": "idea",
+      "path": "packages/idea/package.json",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/idea/packages/idea/package.json",
+      "head": "cf8e922ba6e57746e15a05c26df0546dda2cc5c9",
+      "sha256": "5949af5e81166d3cd08451af3169717a74572b202d4f131588c2907a6d274299"
+    },
+    {
+      "repo": "ingest",
+      "path": "ingest/package.json",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/ingest/ingest/package.json",
+      "head": "477ec47f8b5dafa5713b13f9c964d06c61c22938",
+      "sha256": "d470430e887b056218c35f1930c23fd944c716b4c3170b22021ca7a459c79ed8"
+    },
+    {
+      "repo": "ingest",
+      "path": "ingest/src/Loader.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/ingest/ingest/src/Loader.ts",
+      "head": "477ec47f8b5dafa5713b13f9c964d06c61c22938",
+      "sha256": "e9d6b75972d0ff95b9dc2adc8fdf6174a866c71d39b46bd3ab5b4ea366981af3"
+    },
+    {
+      "repo": "ingest",
+      "path": "ingest/src/Route.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/ingest/ingest/src/Route.ts",
+      "head": "477ec47f8b5dafa5713b13f9c964d06c61c22938",
+      "sha256": "32280c82e703305cbcc6210a0420674911ec620ac83d4b3b339b3921d2d02468"
+    },
+    {
+      "repo": "ingest",
+      "path": "ingest/src/Router.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/ingest/ingest/src/Router.ts",
+      "head": "477ec47f8b5dafa5713b13f9c964d06c61c22938",
+      "sha256": "d285c2ea1d0ba292305bf807696c33683592a097ae2506a20e1045c73b8766e9"
+    },
+    {
+      "repo": "ingest",
+      "path": "ingest/src/Server.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/ingest/ingest/src/Server.ts",
+      "head": "477ec47f8b5dafa5713b13f9c964d06c61c22938",
+      "sha256": "f66c97b2acc15cb3b8fc29efa8f9898674e9769a185d7740bad0b34804b09968"
+    },
+    {
+      "repo": "ingest",
+      "path": "ingest/src/http/Adapter.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/ingest/ingest/src/http/Adapter.ts",
+      "head": "477ec47f8b5dafa5713b13f9c964d06c61c22938",
+      "sha256": "a6d3a087921fbf6ee59a6b9e3a9ddd0d2c04731ee8480ff3e8f621f1f60ee063"
+    },
+    {
+      "repo": "ingest",
+      "path": "ingest/src/plugin/ActionRouter.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/ingest/ingest/src/plugin/ActionRouter.ts",
+      "head": "477ec47f8b5dafa5713b13f9c964d06c61c22938",
+      "sha256": "e25159eba48116ca0b7e158cee084089f715ad4e324e5053a5ff3bd1640ff6ab"
+    },
+    {
+      "repo": "ingest",
+      "path": "ingest/src/whatwg/Adapter.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/ingest/ingest/src/whatwg/Adapter.ts",
+      "head": "477ec47f8b5dafa5713b13f9c964d06c61c22938",
+      "sha256": "dabb0390b12097d6fffb93f4056315c805c54fd63bbdafb0d465abcc13530d44"
+    },
+    {
+      "repo": "ingest",
+      "path": "package.json",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/ingest/package.json",
+      "head": "477ec47f8b5dafa5713b13f9c964d06c61c22938",
+      "sha256": "7b13afe7200a52fb617f30535420872aa4c9be48f3286531859a3b766df3c9d6"
+    },
+    {
+      "repo": "inquire",
+      "path": "package.json",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/inquire/package.json",
+      "head": "039a1b5f41500aa63286a9f9b34f4c7f71b990a0",
+      "sha256": "8adfb4ac9977193393d72fa3778c6e33ed4990f7048d59d7ff833c5afb394725"
+    },
+    {
+      "repo": "inquire",
+      "path": "packages/inquire-mysql2/package.json",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/inquire/packages/inquire-mysql2/package.json",
+      "head": "039a1b5f41500aa63286a9f9b34f4c7f71b990a0",
+      "sha256": "f4b471c0a3fadb8b2cedc01ba8ec0017ee651bbd56b2dbf31467928e832dc2f4"
+    },
+    {
+      "repo": "inquire",
+      "path": "packages/inquire-mysql2/src/Connection.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/inquire/packages/inquire-mysql2/src/Connection.ts",
+      "head": "039a1b5f41500aa63286a9f9b34f4c7f71b990a0",
+      "sha256": "8a790c50cc832d71f5bcda41eaca02461f34a7cf3106dcfe057f997d20a7eb59"
+    },
+    {
+      "repo": "inquire",
+      "path": "packages/inquire-pg/package.json",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/inquire/packages/inquire-pg/package.json",
+      "head": "039a1b5f41500aa63286a9f9b34f4c7f71b990a0",
+      "sha256": "b9043a1c3cde01718c5723c1882473f4d74c5c10d9f1ecd95568a5756ee0ef77"
+    },
+    {
+      "repo": "inquire",
+      "path": "packages/inquire-pg/src/Connection.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/inquire/packages/inquire-pg/src/Connection.ts",
+      "head": "039a1b5f41500aa63286a9f9b34f4c7f71b990a0",
+      "sha256": "f261de0fa4324de9803b078645864c727fb6f96e11d5349db065c71b73fcf3d9"
+    },
+    {
+      "repo": "inquire",
+      "path": "packages/inquire-pglite/package.json",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/inquire/packages/inquire-pglite/package.json",
+      "head": "039a1b5f41500aa63286a9f9b34f4c7f71b990a0",
+      "sha256": "cc6350641b9f9bcce6d4041d72e6bff5de8191bd517a852bc46feaa59ecd01ca"
+    },
+    {
+      "repo": "inquire",
+      "path": "packages/inquire-pglite/src/Connection.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/inquire/packages/inquire-pglite/src/Connection.ts",
+      "head": "039a1b5f41500aa63286a9f9b34f4c7f71b990a0",
+      "sha256": "dbd9ebea24c57d3bf7f3803f02a920867e03575dc640dec9d88496d062814ad9"
+    },
+    {
+      "repo": "inquire",
+      "path": "packages/inquire-sqlite3/package.json",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/inquire/packages/inquire-sqlite3/package.json",
+      "head": "039a1b5f41500aa63286a9f9b34f4c7f71b990a0",
+      "sha256": "a483a91fe91ab920929c12c643fd94624fb4a1039331026cbf761c28bf811f92"
+    },
+    {
+      "repo": "inquire",
+      "path": "packages/inquire-sqlite3/src/Connection.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/inquire/packages/inquire-sqlite3/src/Connection.ts",
+      "head": "039a1b5f41500aa63286a9f9b34f4c7f71b990a0",
+      "sha256": "8695887f212d3dd122de23d1c01bf7d3e19594711845a2dd6354b6aabf8020f0"
+    },
+    {
+      "repo": "inquire",
+      "path": "packages/inquire/package.json",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/inquire/packages/inquire/package.json",
+      "head": "039a1b5f41500aa63286a9f9b34f4c7f71b990a0",
+      "sha256": "538cb621f4ed4db958b04aac60c3a0694948c85d352a2e5d9a3348c65a95039f"
+    },
+    {
+      "repo": "inquire",
+      "path": "packages/inquire/src/Engine.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/inquire/packages/inquire/src/Engine.ts",
+      "head": "039a1b5f41500aa63286a9f9b34f4c7f71b990a0",
+      "sha256": "6840d767b056117bda45eb0d7903e69871afa1e5fccf7416911fbccfdb3555ed"
+    },
+    {
+      "repo": "inquire",
+      "path": "packages/inquire/src/types.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/inquire/packages/inquire/src/types.ts",
+      "head": "039a1b5f41500aa63286a9f9b34f4c7f71b990a0",
+      "sha256": "899f68dae17510f78af4b7d221320cfbb41ee7e791de8dd22cd106f8907be3ce"
+    },
+    {
+      "repo": "reactus",
+      "path": "package.json",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/reactus/package.json",
+      "head": "357569a4923821d9086adf565c5ed22f0e082631",
+      "sha256": "6c52bafce68af0a842c95b65dcc6e62e2315ef9297c8ef27b2fcc701190473b5"
+    },
+    {
+      "repo": "reactus",
+      "path": "reactus/package.json",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/reactus/reactus/package.json",
+      "head": "357569a4923821d9086adf565c5ed22f0e082631",
+      "sha256": "d3577028bb1a697f7a11ff60a4af176233822108b2500a982b74183bc29b58c1"
+    },
+    {
+      "repo": "reactus",
+      "path": "reactus/src/Builder.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/reactus/reactus/src/Builder.ts",
+      "head": "357569a4923821d9086adf565c5ed22f0e082631",
+      "sha256": "e185fc3aa798a9af936cc1642366ed2aae7dc0b75aa7e2bae17995dc330a601d"
+    },
+    {
+      "repo": "reactus",
+      "path": "reactus/src/DocumentBuilder.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/reactus/reactus/src/DocumentBuilder.ts",
+      "head": "357569a4923821d9086adf565c5ed22f0e082631",
+      "sha256": "c3fd18bbaab018ed6ea56d2bafa97508cd833f075da864c2d7715b7d1e620305"
+    },
+    {
+      "repo": "reactus",
+      "path": "reactus/src/DocumentRender.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/reactus/reactus/src/DocumentRender.ts",
+      "head": "357569a4923821d9086adf565c5ed22f0e082631",
+      "sha256": "b048752383f7adced162903471bae024363382e8bbf37c910e808a999c741d96"
+    },
+    {
+      "repo": "reactus",
+      "path": "reactus/src/helpers.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/reactus/reactus/src/helpers.ts",
+      "head": "357569a4923821d9086adf565c5ed22f0e082631",
+      "sha256": "1af40aee56432b1e707ea9cb9e162a84dcf56bb7761eb7e33c5489cbba5d7239"
+    },
+    {
+      "repo": "reactus",
+      "path": "reactus/src/index.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/reactus/reactus/src/index.ts",
+      "head": "357569a4923821d9086adf565c5ed22f0e082631",
+      "sha256": "4e8d03815dcdd8722c0b97639504cd158f9a20ccba5462cdd0ed0dcc1b89c059"
+    },
+    {
+      "repo": "reactus",
+      "path": "reactus/src/plugins.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/reactus/reactus/src/plugins.ts",
+      "head": "357569a4923821d9086adf565c5ed22f0e082631",
+      "sha256": "60de685ebc032cde1fc2fa38dbb754e430d42dca96f6d1d02fc99b07c03420dd"
+    },
+    {
+      "repo": "stackpress",
+      "path": "package.json",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/stackpress/package.json",
+      "head": "a71d683051ba8350fdd12d6b5a33f268fdcc285f",
+      "sha256": "db2f23014def39c59065d25bb1b830b06af9661e35b200fc0a38aec54cd881e7"
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-admin/package.json",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/stackpress/packages/stackpress-admin/package.json",
+      "head": "a71d683051ba8350fdd12d6b5a33f268fdcc285f",
+      "sha256": "8d659d044aa5bf1b3a3c38fad4ef15325fde72178a9164d5746b7900c3650fd5"
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-admin/src/plugin.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/stackpress/packages/stackpress-admin/src/plugin.ts",
+      "head": "a71d683051ba8350fdd12d6b5a33f268fdcc285f",
+      "sha256": "44ae117596e526e9715eb644924bcc34f96460347fe26592f7f311c5bb410fab"
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-ai/package.json",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/stackpress/packages/stackpress-ai/package.json",
+      "head": "a71d683051ba8350fdd12d6b5a33f268fdcc285f",
+      "sha256": "0ec11e5b17ea0d1f582d6dbc328afd5e437e65c1af38b3fd15bf2589058eb173"
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-ai/src/plugin.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/stackpress/packages/stackpress-ai/src/plugin.ts",
+      "head": "a71d683051ba8350fdd12d6b5a33f268fdcc285f",
+      "sha256": "d28d60e06ab289cdc9b6c501c3e9283b9f8b8d5d853ee0b9c3274d4151d2c5f0"
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-api/package.json",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/stackpress/packages/stackpress-api/package.json",
+      "head": "a71d683051ba8350fdd12d6b5a33f268fdcc285f",
+      "sha256": "edfb4dd192d6fc064daf3838443dc34d81783d37cd7a325f0d4e217adc7741d3"
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-api/src/plugin.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/stackpress/packages/stackpress-api/src/plugin.ts",
+      "head": "a71d683051ba8350fdd12d6b5a33f268fdcc285f",
+      "sha256": "a63a25af8cd1288420fc9bb7451230573acaa60b99e9103f6720a3c5d353e600"
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-csrf/package.json",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/stackpress/packages/stackpress-csrf/package.json",
+      "head": "a71d683051ba8350fdd12d6b5a33f268fdcc285f",
+      "sha256": "eb5786bc66b45bdc154cb4f0309c6b70551ffb8d2509980c6d742ee99d9bea2d"
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-csrf/src/plugin.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/stackpress/packages/stackpress-csrf/src/plugin.ts",
+      "head": "a71d683051ba8350fdd12d6b5a33f268fdcc285f",
+      "sha256": "55f589f6d9d9c63d37e751ca1e550b932c4b893de3f65f263a2590286e5792e2"
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-desktop/package.json",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/stackpress/packages/stackpress-desktop/package.json",
+      "head": "a71d683051ba8350fdd12d6b5a33f268fdcc285f",
+      "sha256": "3747dcec14d1adc55789d0533cca26489eb0a243e15244d404fbea8c31d11031"
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-desktop/src/plugin.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/stackpress/packages/stackpress-desktop/src/plugin.ts",
+      "head": "a71d683051ba8350fdd12d6b5a33f268fdcc285f",
+      "sha256": "a5ea3337d0ca40a6611a6f0264ffa2a13eda9ad89e0fa00457efab244474a0d0"
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-email/package.json",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/stackpress/packages/stackpress-email/package.json",
+      "head": "a71d683051ba8350fdd12d6b5a33f268fdcc285f",
+      "sha256": "9188ef014d7b8269e1b2d3da1eb93620f7766c8b5c89d958c1637c46b3dd14a3"
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-email/src/plugin.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/stackpress/packages/stackpress-email/src/plugin.ts",
+      "head": "a71d683051ba8350fdd12d6b5a33f268fdcc285f",
+      "sha256": "4ce2b3cc8a1ad5348309415ab715d278cb1d4882c1b9cf956cb5ace527410759"
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-language/package.json",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/stackpress/packages/stackpress-language/package.json",
+      "head": "a71d683051ba8350fdd12d6b5a33f268fdcc285f",
+      "sha256": "fa785dc0b43b0d1fdb661f0d0fee3a96d3cc708788f00b178138d90c35375382"
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-language/src/plugin.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/stackpress/packages/stackpress-language/src/plugin.ts",
+      "head": "a71d683051ba8350fdd12d6b5a33f268fdcc285f",
+      "sha256": "16566a81683f11b147ca309fe8815b89bbee820b84be0998865651b780e2429c"
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-schema/package.json",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/stackpress/packages/stackpress-schema/package.json",
+      "head": "a71d683051ba8350fdd12d6b5a33f268fdcc285f",
+      "sha256": "6133d0853cef97130d5b7810f35cb55b6c0d7657f262f2bf74028bae909b7101"
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-schema/src/Schema.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/stackpress/packages/stackpress-schema/src/Schema.ts",
+      "head": "a71d683051ba8350fdd12d6b5a33f268fdcc285f",
+      "sha256": "32062e7a2dfdc3af980cbfb74969c63e67a0083083b6848138d88381a4f7e917"
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-schema/src/plugin.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/stackpress/packages/stackpress-schema/src/plugin.ts",
+      "head": "a71d683051ba8350fdd12d6b5a33f268fdcc285f",
+      "sha256": "45cf5d46aacccd5e3ae2bd7511e562237b969b550b4ab9f3ffd35d1c897a9295"
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-server/package.json",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/stackpress/packages/stackpress-server/package.json",
+      "head": "a71d683051ba8350fdd12d6b5a33f268fdcc285f",
+      "sha256": "12a6f84db0ad09141e32be62cc79542eca885339ef92938d01f3e10156cf14ca"
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-server/src/plugin.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/stackpress/packages/stackpress-server/src/plugin.ts",
+      "head": "a71d683051ba8350fdd12d6b5a33f268fdcc285f",
+      "sha256": "3aac2dfccfd09fffa371e116b938b13146c311dccada1703d206a133d22ced09"
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-session/package.json",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/stackpress/packages/stackpress-session/package.json",
+      "head": "a71d683051ba8350fdd12d6b5a33f268fdcc285f",
+      "sha256": "540e86d646a21c67fc745b58cfb468df767d524612053fd890ab3d858b1660b7"
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-session/src/plugin.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/stackpress/packages/stackpress-session/src/plugin.ts",
+      "head": "a71d683051ba8350fdd12d6b5a33f268fdcc285f",
+      "sha256": "aade8d295a5910f7ccc4f9ac56a7c7a6ac7a8da44bd8b544c8259859bbc4a84f"
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-sql/package.json",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/stackpress/packages/stackpress-sql/package.json",
+      "head": "a71d683051ba8350fdd12d6b5a33f268fdcc285f",
+      "sha256": "e07762ef99c9917695cd652aefa0ce3037b760f1cdb6c46e38bda03f5834ab33"
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-sql/src/Migrations.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/stackpress/packages/stackpress-sql/src/Migrations.ts",
+      "head": "a71d683051ba8350fdd12d6b5a33f268fdcc285f",
+      "sha256": "0654c08569095948deb4aa74ce462485c72bd080b9f379ae1da2d13a6adcc10e"
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-sql/src/plugin.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/stackpress/packages/stackpress-sql/src/plugin.ts",
+      "head": "a71d683051ba8350fdd12d6b5a33f268fdcc285f",
+      "sha256": "23f3840d73e011004e53bef77ccc2ab21459db2af1ed3afb3a88fbce5851538d"
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-view/package.json",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/stackpress/packages/stackpress-view/package.json",
+      "head": "a71d683051ba8350fdd12d6b5a33f268fdcc285f",
+      "sha256": "ccfc4fd853d3f58df7560ade2b8a8dc1c3e227185c3ca80ac236ac3ed332295c"
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-view/src/helpers.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/stackpress/packages/stackpress-view/src/helpers.ts",
+      "head": "a71d683051ba8350fdd12d6b5a33f268fdcc285f",
+      "sha256": "f475087062f6ab30627c016699748a275acc401781cbb5e5d0d751aaa2edd317"
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-view/src/plugin.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/stackpress/packages/stackpress-view/src/plugin.ts",
+      "head": "a71d683051ba8350fdd12d6b5a33f268fdcc285f",
+      "sha256": "df8cebe141cfba65efbd98292e77ffb5c09d4d45d8a7bdcca019872450255d70"
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress/package.json",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/stackpress/packages/stackpress/package.json",
+      "head": "a71d683051ba8350fdd12d6b5a33f268fdcc285f",
+      "sha256": "9d30f15005dd2ab22a5f9240b58e394ce07980d8078e0282849365d050cfcb4e"
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress/src/plugin.ts",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/stackpress/packages/stackpress/src/plugin.ts",
+      "head": "a71d683051ba8350fdd12d6b5a33f268fdcc285f",
+      "sha256": "0c3da5b8a8a6ac91c737fb9fad7d81da03d3e2d46ffb9dd57a9ebcc7736d3ee8"
+    },
+    {
+      "repo": "frui",
+      "path": "package.json",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/frui/package.json",
+      "head": "096fd14580f0f49b6e159fa0aa5ae2a5bce8fb0e",
+      "sha256": "59f04597a51a1c1c31258cc4e8b5e8023d67ccbc3f8f73c9e7a335c0a2abe7ca"
+    },
+    {
+      "repo": "r22n",
+      "path": "package.json",
+      "absolute_path": "/Users/cblanquera/server/projects/stackpress/r22n/package.json",
+      "head": "48c50dd1ba57a0555c9afbd4bfa4cb41e702cb68",
+      "sha256": "4aac050d641896c6b78f1f56b3d173d25cf5fa872610694da9d5597a71286264"
+    }
+  ],
+  "skills": [
+    {
+      "name": "chrisai-coding",
+      "revision": "c3be0b52e797f48ba8400893bb4aae693eaeb221",
+      "file_count": 37,
+      "files": [
+        {
+          "path": "SKILL.md",
+          "sha256": "8b5468edfef5e117d09ddc2c9d450ed7f88588b5dc8b7366d63650f3f6c56d6f"
+        },
+        {
+          "path": "agents/openai.yaml",
+          "sha256": "ef073bc8c34b53c2e63f9d2729e2291ebe49b7a712b2e2f774f79253b242bbee"
+        },
+        {
+          "path": "assets/bad-baby-bear-bot-head-icon-small.png",
+          "sha256": "c71808432b708be6689ad46141741af690d9f021cdad19b746c01d34208c0b68"
+        },
+        {
+          "path": "assets/bad-baby-bear-bot-head-icon.png",
+          "sha256": "07652c41ab0c024af7fad3f85885ec88cc08985bfcc86933ed7b3a434bdea1ee"
+        },
+        {
+          "path": "references/html-css-css-style-details.md",
+          "sha256": "01768c19dbe5d59ded7b7267d33fdd2c3cdab96c1a4443c9524b7242ee0fddd0"
+        },
+        {
+          "path": "references/html-css-html-style-details.md",
+          "sha256": "0d921822a8128de9a919ae98304731f53b4c6a80704c1a105e712302040dd7a1"
+        },
+        {
+          "path": "references/javascript-commenting-style.md",
+          "sha256": "ea0a3612ac52760701ad784e8ea8ee540363daaf2dd81567b912ec03498ea8b2"
+        },
+        {
+          "path": "references/javascript-formatting-basics.md",
+          "sha256": "88183c92cdf1806daef2dd2ac038e434451c0090ce39d28ae73b2b78fcb7878a"
+        },
+        {
+          "path": "references/javascript-jsdoc-and-declaration-comments.md",
+          "sha256": "bab19d0a909ebabd534408340e674c3eeaa5698892f168e28f5a2439d5ae0f9c"
+        },
+        {
+          "path": "references/javascript-module-design.md",
+          "sha256": "916b19fd708351455b58bdeecbc1016744c7d5eba754ffed7bf1823b9d8d5323"
+        },
+        {
+          "path": "references/javascript-module-systems.md",
+          "sha256": "f1c32c83c13a848cc15ff9dc8137ce536881a6d0b52c77838da49792b54d04fa"
+        },
+        {
+          "path": "references/logic-review-signals.md",
+          "sha256": "7c5095033766f532cacdb616497bf9d2506e757dc550463d22bdf98f2f32f458"
+        },
+        {
+          "path": "references/maintainability-audit-signals.md",
+          "sha256": "0ba69626c96e24b28aa941599ee40853b59d5cad9e6cfbefcec8f0886b8dc255"
+        },
+        {
+          "path": "references/react-commenting-style.md",
+          "sha256": "e9bd9df2fb614ac89052afded8e43d7ebc74899c777e404c9cb645378fa7af89"
+        },
+        {
+          "path": "references/react-file-outline.md",
+          "sha256": "b7a1822df01301d69a1b6e1936c3e3d812385380cedbc5ad98cb3eb12e952bea"
+        },
+        {
+          "path": "references/react-forms.md",
+          "sha256": "64ebcb380a5f384bae154d03feb2f962946871703c1993ea72f37f908f424dca"
+        },
+        {
+          "path": "references/react-jsdoc-and-declaration-comments.md",
+          "sha256": "9a0e706f9cd42f622b6fbab68e7c9b2ff927a797245f615b3e828bf46cbfd4d9"
+        },
+        {
+          "path": "references/react-modern-react.md",
+          "sha256": "748caf3d53c8c9ffe350dc9da2cc167ec7df86434a5bfcbc6ecef10201e8cd4b"
+        },
+        {
+          "path": "references/react-section-comments.md",
+          "sha256": "12a68fa4c35823e7b5b5759fdabda73b1a3ebf30ed0db3f202985d50bd43911d"
+        },
+        {
+          "path": "references/typescript-commenting-style.md",
+          "sha256": "151c5368409ff09e1946777dcd96572d15b1c7b4ef26814715c09c56b99b7c8d"
+        },
+        {
+          "path": "references/typescript-formatting-basics.md",
+          "sha256": "8cd0437486cbd06d67f57c530b4b64feb37938d0ff0ace8c9d584e0d417d4146"
+        },
+        {
+          "path": "references/typescript-jsdoc-and-declaration-comments.md",
+          "sha256": "ec5d769166e3abf7e8c135191c30112e2b83fdbf8d1706c634f3463ca6941652"
+        },
+        {
+          "path": "references/typescript-module-design.md",
+          "sha256": "0d01d7d70137ae44e42843a69ee89b05b8c72edb727a35030df0677d2017a104"
+        },
+        {
+          "path": "references/typescript-style-details.md",
+          "sha256": "a10596b8980d2cc521bb8836e990716e4cbbd812601cbdc297aa6fe58eb3557b"
+        },
+        {
+          "path": "references/typescript-tests-commenting-style.md",
+          "sha256": "401faf42b33d706e94ebc5bb141df65d5f6c61af4c612e53e6d1930526ccaaf6"
+        },
+        {
+          "path": "references/typescript-tests-jest.md",
+          "sha256": "7e265b8be900c8583734a645eaf03b22694f644bf8140a769a03b9b05eba18fe"
+        },
+        {
+          "path": "references/typescript-tests-jsdoc-and-declaration-comments.md",
+          "sha256": "23a98e371d0d29b446b54abbe3e55c3f8c4df529693f75b26d6b876f026fab2b"
+        },
+        {
+          "path": "references/typescript-tests-mocha-chai.md",
+          "sha256": "d4ab42c96aca3d0446d3d576beef47a0811599e73683fd807ef0755ec9065623"
+        },
+        {
+          "path": "references/typescript-tests-test-selection.md",
+          "sha256": "8b020b52d39a06c086ca91905d4796341142992452c49a8b379c24794700723c"
+        },
+        {
+          "path": "references/typescript-tests-test-style-pass.md",
+          "sha256": "97a03c33f43c64e741276a698c5fe040e9b467c63a64965b08cc6233dd3a520e"
+        },
+        {
+          "path": "workflows/html-css.md",
+          "sha256": "fda8cdb02b38a51f45df55e46172a7e24eb22ec20e69bb7f91a172466bec9bf9"
+        },
+        {
+          "path": "workflows/javascript.md",
+          "sha256": "c64d4479f6ba9a54919f5f848af37407ffc29303ec4cf1c39aeb3c605a4fde72"
+        },
+        {
+          "path": "workflows/logic-review.md",
+          "sha256": "b011b8bba8ac5f5604814a76115f5176da15bcc7ca9646f86101d1e9c3a88bfb"
+        },
+        {
+          "path": "workflows/maintainability-audit.md",
+          "sha256": "dfee2141303fd3af4659ad0b80965ee81bbbb7df7e53b353f2368831e27f6a8a"
+        },
+        {
+          "path": "workflows/react-tsx.md",
+          "sha256": "b90f4b22c688d147e28676bed9d670bc7d29335dfdc247774764c4c18307be9f"
+        },
+        {
+          "path": "workflows/typescript-tests.md",
+          "sha256": "a8d3063b29ae7d9cdcaf6a3889ea35b9d0bd81311fbb5862167dbdefe3ba72b4"
+        },
+        {
+          "path": "workflows/typescript.md",
+          "sha256": "728d5819bd7926e1c63268b722b78edc46fb362ee6859248f2ceba68f44e4346"
+        }
+      ]
+    },
+    {
+      "name": "chrisai-knowledge",
+      "revision": "c3be0b52e797f48ba8400893bb4aae693eaeb221",
+      "file_count": 37,
+      "files": [
+        {
+          "path": "SKILL.md",
+          "sha256": "ab7b92bb9d1309bcfe524e1fd451082474431c0c3b702c0c4c0027f246b83b78"
+        },
+        {
+          "path": "agents/openai.yaml",
+          "sha256": "09095ea5280957126f7e16179d92a105b0af6924c69d55d5a9e458fcaece56ea"
+        },
+        {
+          "path": "assets/dot-agents/AGENTS.md",
+          "sha256": "1f6c02a09000ff6d21ea2f70184e41730316d6575cd14f836d3c16f5ff7119e9"
+        },
+        {
+          "path": "assets/dot-agents/TERMS.md",
+          "sha256": "02fbcc446b6f9466d56e853fe1b529180b82708f9960d0549546271bff490a8d"
+        },
+        {
+          "path": "assets/dot-agents/references/00001-agent-workspace-rules.md",
+          "sha256": "05d7a5314fc7b52fa40a0fc8b1265970f0730c4845e3ff27f9637cf6219d0e96"
+        },
+        {
+          "path": "assets/dot-agents/references/00002-intersection-points.md",
+          "sha256": "c9d82ab2cb29dab6b63d026b5a5681d1e48985634b5c42ec18d67c37ee48d0bd"
+        },
+        {
+          "path": "assets/dot-agents/references/00003-reference-recovery-points.md",
+          "sha256": "ef8a892349ed960f42e314994e19143fc90c48e466d412a07317969017d33ece"
+        },
+        {
+          "path": "assets/dot-agents/scripts/mcp/.npmignore",
+          "sha256": "9016a7b39e27213586b61d033634c2a27a46c9034d49b4b6e3c2523ab074df10"
+        },
+        {
+          "path": "assets/dot-agents/scripts/mcp/cli.mjs",
+          "sha256": "6e5421ec644fe601d02e9dba765e1f7d1dea208c92c11fac154dda183355f4bc"
+        },
+        {
+          "path": "assets/dot-agents/scripts/mcp/config.example.json",
+          "sha256": "ab7709e35ddf2dedc3224e8fba1b74796d74b13d91c6941c5ebcb2a7aaa4f270"
+        },
+        {
+          "path": "assets/dot-agents/scripts/mcp/config.mjs",
+          "sha256": "2dd68831cac178721171b846bd0807fc0f86910c4f24dd5cf536eaaa990b58bb"
+        },
+        {
+          "path": "assets/dot-agents/scripts/mcp/corpus.mjs",
+          "sha256": "443cc5973ace727ebf86ed7b4348c836d6cb0ee181b6f271d0f5dd11f25ed0b3"
+        },
+        {
+          "path": "assets/dot-agents/scripts/mcp/embeddings.mjs",
+          "sha256": "50ad5103b3517c853f944fd3a84c60e7ef034a0f2a73ce2d1893a43c6d5f4d45"
+        },
+        {
+          "path": "assets/dot-agents/scripts/mcp/evaluation.mjs",
+          "sha256": "72d95bc6ec90a06b51141bf27b0c110505b3eb081bb60dde5fe4e0bd4a3bb664"
+        },
+        {
+          "path": "assets/dot-agents/scripts/mcp/gitignore.template",
+          "sha256": "d774b26f393c1c308e1fdb6ab9dd1d8c2eb87cda615881edc4e0688e4be601e0"
+        },
+        {
+          "path": "assets/dot-agents/scripts/mcp/package-lock.json",
+          "sha256": "e22770a7a9e8eb2176b380eb2677d9f04f77923200bbd0333f137bf7ba3b6ce6"
+        },
+        {
+          "path": "assets/dot-agents/scripts/mcp/package.json",
+          "sha256": "dd9b293f767af89ee2614b73ed9052dc600eb7b0dbf84ea77a03240758b7ca7b"
+        },
+        {
+          "path": "assets/dot-agents/scripts/mcp/references.mjs",
+          "sha256": "7fb7cc247e37d4c6b4d6b399b4721c6264054bf29c1023820843ed3d56ffdab3"
+        },
+        {
+          "path": "assets/dot-agents/scripts/mcp/responses.mjs",
+          "sha256": "31e7b46a74df677a1c6fd61d5b146bf633f294d286d5e0a0a708b28c281af76a"
+        },
+        {
+          "path": "assets/dot-agents/scripts/mcp/retrieval.mjs",
+          "sha256": "01d95dedbb1448f285ef79391b0503097771bbf6f2b73071acba7d4d81f6089f"
+        },
+        {
+          "path": "assets/dot-agents/scripts/mcp/server.mjs",
+          "sha256": "1a7333dccdbcf3bf661821d3cd2c58ff9f6c97b2ae89abc3e2ed512c27625f27"
+        },
+        {
+          "path": "assets/dot-agents/scripts/mcp/snapshots.mjs",
+          "sha256": "b7bf68b4252ccdec0497538b1caff31dadcc2587a84a7f0c89c45ee7629ffc1c"
+        },
+        {
+          "path": "assets/dot-agents/scripts/mcp/tokens.mjs",
+          "sha256": "ab2aff89bedd05bdbc0b5119012cc61943833dcf34c5807128379f105ff7f508"
+        },
+        {
+          "path": "assets/dot-agents/workflows/agent-file-creation.md",
+          "sha256": "00113a2226617d6ce8a0a74ac135e23e0e06286734b77098f628eeef5e4049e4"
+        },
+        {
+          "path": "assets/dot-agents/workflows/agent-file-ingestion.md",
+          "sha256": "ae36d309eebd5569f8ae5d084a179f2105bc98362ef04aada81ecf156d85a8f3"
+        },
+        {
+          "path": "assets/dot-agents/workflows/agent-file-update.md",
+          "sha256": "b2c4f26425b4b6f07d26357a9cb1eb8f8d0fda1e7366bb6e8176b61f86c3e5aa"
+        },
+        {
+          "path": "assets/dot-agents/workflows/context-initialization.md",
+          "sha256": "daf31934e264caea1a9c5d857f01d02849478a9467badf5dc46a95f18947e4fd"
+        },
+        {
+          "path": "assets/dot-agents/workflows/repair-zombie-reference-files.md",
+          "sha256": "8d9054cc382ab6b4f8bde6509aefd6898b34dfb15697d9d9e75dfb4c73afa217"
+        },
+        {
+          "path": "assets/dot-agents/workflows/serve-kb.md",
+          "sha256": "acfb2fed4732111ee62c65bbca09acc84f0577512a32e4083ae0fd8b25e964f0"
+        },
+        {
+          "path": "assets/dot-agents/workflows/spec-driven-development.md",
+          "sha256": "1def0be2dd9480b9720ac5cd3c4a527aa29a366c3138f520874671275cf0dd26"
+        },
+        {
+          "path": "assets/dot-agents/workflows/spec-grill-session.md",
+          "sha256": "67d60227f7dffa90dc31c1b4a02f53da7fb160687bc76cc085946d722dce873c"
+        },
+        {
+          "path": "assets/dot-agents/workflows/spec-task-acceptance.md",
+          "sha256": "fad1cde8b27097e03b3ffd18d7558515b37c008ebbb409a5a5e35dff85866bbe"
+        },
+        {
+          "path": "assets/dot-agents/workflows/spec-task-implementation.md",
+          "sha256": "ecae460d66ab67c1d52dfaae268a271f99f59bd4a492b48a9f2492f55f8cfcda"
+        },
+        {
+          "path": "assets/dot-agents/workflows/spec-user-journeys.md",
+          "sha256": "d2e1400a21cd596238d934cf6ab8cb2c579dcd5b26e70b0f3ea8a71bc2e086cd"
+        },
+        {
+          "path": "references/validator-checks.md",
+          "sha256": "d209db53fd5c7e3853d7e8267b079551991602bcdea44a41de1b0ad0afa00404"
+        },
+        {
+          "path": "scripts/install_agent_workspace_rules.py",
+          "sha256": "b43fbe99c4faa30f4cab3904a47a257c122fff8c4bfd8e855fbef6b774bd53a7"
+        },
+        {
+          "path": "scripts/validate_agent_workspace.py",
+          "sha256": "e561a8c0ffb57df08737ab5968e6e6d1f17e223868e148959b84d11aeb81b3cb"
+        }
+      ]
+    }
+  ],
+  "additional_raw_sources": [
+    {
+      "original_path": "/Users/cblanquera/server/projects/stackpress/stackpress/.agents/context/index.md",
+      "raw_path": ".agents/resources/upstream-stackpress-kb/context/index.md",
+      "sha256": "6b2b55bbb3ba93576741739d09e30f3e0fcba2d0d69d9afc419c1b7918616039"
+    },
+    {
+      "original_path": "Current user setup instruction in this conversation",
+      "raw_path": ".agents/resources/conversation/2026-10-23-setup-request.txt",
+      "sha256": "e5acb4181947ac792782b977f913cda28ffb4cb01dbd838eb40fc34d8a66cbeb"
+    }
+  ],
+  "rust_parser_branch": {
+    "repository": "https://github.com/stackpress/idea",
+    "ref": "feature/rust-parser-2",
+    "head": "6c289d1f3fba17c758baafb2d4dcefd87fd448ea",
+    "paths": [
+      "packages/idea-rust/crates/idea_parser_core",
+      "packages/idea-rust/crates/idea_parser_node"
+    ],
+    "verification": "Source inspected; no Rust compilation, tests, merge, or extraction performed."
+  },
+  "packages": [
+    {
+      "repo": "lib",
+      "path": "package.json",
+      "name": "@stackpress/lib",
+      "version": "0.10.8",
+      "workspaces": [],
+      "tests": [
+        "tests"
+      ],
+      "export_keys": [
+        ".",
+        "./types",
+        "./Exception",
+        "./Reflection",
+        "./Status",
+        "./Template",
+        "./cookie",
+        "./Map",
+        "./Set",
+        "./Nest",
+        "./ReadonlyMap",
+        "./ReadonlyNest",
+        "./ReadonlySet",
+        "./EventEmitter",
+        "./ExpressEmitter",
+        "./RouteEmitter",
+        "./ItemQueue",
+        "./TaskQueue",
+        "./Request",
+        "./Response",
+        "./Router",
+        "./Session",
+        "./Terminal",
+        "./terminal/*",
+        "./FileLoader",
+        "./NodeFS",
+        "./tsconfig/cjs",
+        "./tsconfig/esm"
+      ]
+    },
+    {
+      "repo": "idea",
+      "path": "package.json",
+      "name": "(workspace root)",
+      "version": "\u2014",
+      "workspaces": [
+        "packages/*",
+        "example"
+      ],
+      "tests": [],
+      "export_keys": []
+    },
+    {
+      "repo": "idea",
+      "path": "packages/idea/package.json",
+      "name": "@stackpress/idea",
+      "version": "0.10.8",
+      "workspaces": [],
+      "tests": [],
+      "export_keys": [
+        ".",
+        "./bin"
+      ]
+    },
+    {
+      "repo": "idea",
+      "path": "packages/idea-parser/package.json",
+      "name": "@stackpress/idea-parser",
+      "version": "0.10.8",
+      "workspaces": [],
+      "tests": [
+        "packages/idea-parser/tests"
+      ],
+      "export_keys": [
+        ".",
+        "./types",
+        "./definitions",
+        "./Compiler",
+        "./Exception",
+        "./Lexer",
+        "./AbstractTree",
+        "./EnumTree",
+        "./ModelTree",
+        "./PluginTree",
+        "./PropTree",
+        "./SchemaTree",
+        "./TypeTree",
+        "./UseTree"
+      ]
+    },
+    {
+      "repo": "idea",
+      "path": "packages/idea-transformer/package.json",
+      "name": "@stackpress/idea-transformer",
+      "version": "0.10.8",
+      "workspaces": [],
+      "tests": [
+        "packages/idea-transformer/tests"
+      ],
+      "export_keys": [
+        ".",
+        "./types",
+        "./Terminal",
+        "./Transformer"
+      ]
+    },
+    {
+      "repo": "ingest",
+      "path": "ingest/package.json",
+      "name": "@stackpress/ingest",
+      "version": "0.10.8",
+      "workspaces": [],
+      "tests": [
+        "ingest/tests"
+      ],
+      "export_keys": [
+        ".",
+        "./helpers",
+        "./types",
+        "./http",
+        "./http/helpers",
+        "./http/Adapter",
+        "./whatwg",
+        "./whatwg/helpers",
+        "./whatwg/Adapter",
+        "./Exception",
+        "./Loader",
+        "./Request",
+        "./Response",
+        "./Route",
+        "./Router",
+        "./Server",
+        "./EntryRouter",
+        "./ImportRouter",
+        "./ViewRouter"
+      ]
+    },
+    {
+      "repo": "ingest",
+      "path": "package.json",
+      "name": "(workspace root)",
+      "version": "\u2014",
+      "workspaces": [
+        "examples/*",
+        "ingest"
+      ],
+      "tests": [],
+      "export_keys": []
+    },
+    {
+      "repo": "inquire",
+      "path": "package.json",
+      "name": "(workspace root)",
+      "version": "\u2014",
+      "workspaces": [
+        "examples/*",
+        "packages/*"
+      ],
+      "tests": [],
+      "export_keys": []
+    },
+    {
+      "repo": "inquire",
+      "path": "packages/inquire/package.json",
+      "name": "@stackpress/inquire",
+      "version": "0.10.8",
+      "workspaces": [],
+      "tests": [
+        "packages/inquire/tests"
+      ],
+      "export_keys": [
+        ".",
+        "./helpers",
+        "./types",
+        "./Engine",
+        "./Exception",
+        "./Alter",
+        "./Create",
+        "./Delete",
+        "./Insert",
+        "./Select",
+        "./Update",
+        "./Json",
+        "./Mysql",
+        "./Pgsql",
+        "./Sqlite"
+      ]
+    },
+    {
+      "repo": "inquire",
+      "path": "packages/inquire-mysql2/package.json",
+      "name": "@stackpress/inquire-mysql2",
+      "version": "0.10.8",
+      "workspaces": [],
+      "tests": [
+        "packages/inquire-mysql2/tests"
+      ],
+      "export_keys": [
+        ".",
+        "./helpers",
+        "./types",
+        "./Connection"
+      ]
+    },
+    {
+      "repo": "inquire",
+      "path": "packages/inquire-pg/package.json",
+      "name": "@stackpress/inquire-pg",
+      "version": "0.10.8",
+      "workspaces": [],
+      "tests": [
+        "packages/inquire-pg/tests"
+      ],
+      "export_keys": [
+        ".",
+        "./helpers",
+        "./types",
+        "./Connection"
+      ]
+    },
+    {
+      "repo": "inquire",
+      "path": "packages/inquire-pglite/package.json",
+      "name": "@stackpress/inquire-pglite",
+      "version": "0.10.8",
+      "workspaces": [],
+      "tests": [
+        "packages/inquire-pglite/tests"
+      ],
+      "export_keys": [
+        ".",
+        "./helpers",
+        "./types",
+        "./Connection"
+      ]
+    },
+    {
+      "repo": "inquire",
+      "path": "packages/inquire-sqlite3/package.json",
+      "name": "@stackpress/inquire-sqlite3",
+      "version": "0.10.8",
+      "workspaces": [],
+      "tests": [
+        "packages/inquire-sqlite3/tests"
+      ],
+      "export_keys": [
+        ".",
+        "./helpers",
+        "./types",
+        "./Connection"
+      ]
+    },
+    {
+      "repo": "reactus",
+      "path": "package.json",
+      "name": "(workspace root)",
+      "version": "\u2014",
+      "workspaces": [
+        "examples/*",
+        "reactus"
+      ],
+      "tests": [],
+      "export_keys": []
+    },
+    {
+      "repo": "reactus",
+      "path": "reactus/package.json",
+      "name": "reactus",
+      "version": "0.10.8",
+      "workspaces": [],
+      "tests": [
+        "reactus/tests"
+      ],
+      "export_keys": [
+        "./server",
+        "./server/constants",
+        "./server/Document",
+        "./server/helpers",
+        "./server/Server",
+        "./server/types",
+        "./constants",
+        "./helpers",
+        "./types",
+        "./Builder",
+        "./Document",
+        "./DocumentBuilder",
+        "./DocumentLoader",
+        "./DocumentRender",
+        "./Exception",
+        "./Manifest",
+        "./Server",
+        "./ServerLoader",
+        "./ServerManifest",
+        "./ServerResource",
+        "./VirtualServer",
+        ".",
+        "./tsconfig/cjs",
+        "./tsconfig/esm",
+        "./tsconfig/client",
+        "./assets.d.ts",
+        "./fouc.css"
+      ]
+    },
+    {
+      "repo": "stackpress",
+      "path": "package.json",
+      "name": "@stackpress/repository",
+      "version": "0.10.8",
+      "workspaces": [
+        "templates/*",
+        "packages/*"
+      ],
+      "tests": [
+        "tests"
+      ],
+      "export_keys": []
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress/package.json",
+      "name": "stackpress",
+      "version": "0.10.8",
+      "workspaces": [],
+      "tests": [],
+      "export_keys": [
+        "./language/types",
+        "./language",
+        "./lib/types",
+        "./lib",
+        "./schema/types",
+        "./schema",
+        "./http",
+        "./whatwg",
+        "./server/types",
+        "./server",
+        "./session/types",
+        "./session",
+        "./mysql",
+        "./pglite",
+        "./pgsql",
+        "./sqlite",
+        "./sql/types",
+        "./sql",
+        "./view/client",
+        "./view/types",
+        "./view",
+        "./plugin",
+        "./types",
+        "./unocss",
+        ".",
+        "./tsconfig/cjs",
+        "./tsconfig/esm",
+        "./assets.d.ts",
+        "./reset.css",
+        "./stackpress.css"
+      ]
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-admin/package.json",
+      "name": "stackpress-admin",
+      "version": "0.10.8",
+      "workspaces": [],
+      "tests": [],
+      "export_keys": [
+        "./client/*",
+        "./client",
+        "./transform",
+        "./helpers",
+        "./LayoutAdmin",
+        "./plugin",
+        "./types",
+        ".",
+        "./cjs/client/LayoutAdmin",
+        "./esm/client/LayoutAdmin",
+        "./cjs/LayoutAdmin",
+        "./esm/LayoutAdmin",
+        "./styles.css"
+      ]
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-ai/package.json",
+      "name": "stackpress-ai",
+      "version": "0.10.8",
+      "workspaces": [],
+      "tests": [
+        "packages/stackpress-ai/tests"
+      ],
+      "export_keys": [
+        "./events/*",
+        "./events",
+        "./scripts/*",
+        "./scripts",
+        "./helpers",
+        "./plugin",
+        "./transform",
+        "./types",
+        "."
+      ]
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-api/package.json",
+      "name": "stackpress-api",
+      "version": "0.10.8",
+      "workspaces": [],
+      "tests": [],
+      "export_keys": [
+        "./pages/*",
+        "./views/*",
+        "./Exception",
+        "./helpers",
+        "./plugin",
+        "./types",
+        ".",
+        "./esm/views/*",
+        "./cjs/views/*",
+        "./styles.css"
+      ]
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-csrf/package.json",
+      "name": "stackpress-csrf",
+      "version": "0.10.8",
+      "workspaces": [],
+      "tests": [],
+      "export_keys": [
+        "./plugin",
+        "./types",
+        "."
+      ]
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-desktop/package.json",
+      "name": "stackpress-desktop",
+      "version": "0.10.8",
+      "workspaces": [],
+      "tests": [
+        "packages/stackpress-desktop/tests"
+      ],
+      "export_keys": [
+        "./plugin",
+        "./events",
+        "./events/*",
+        "./scripts",
+        "./scripts/*",
+        "./types",
+        "."
+      ]
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-email/package.json",
+      "name": "stackpress-email",
+      "version": "0.10.8",
+      "workspaces": [],
+      "tests": [],
+      "export_keys": [
+        "./events",
+        "./plugin",
+        "./types",
+        "."
+      ]
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-language/package.json",
+      "name": "stackpress-language",
+      "version": "0.10.8",
+      "workspaces": [],
+      "tests": [],
+      "export_keys": [
+        "./Language",
+        "./plugin",
+        "./types",
+        "."
+      ]
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-schema/package.json",
+      "name": "stackpress-schema",
+      "version": "0.10.8",
+      "workspaces": [],
+      "tests": [
+        "packages/stackpress-schema/tests"
+      ],
+      "export_keys": [
+        "./ColumnInterface",
+        "./DefinitionInterface",
+        "./SchemaInterface",
+        "./Attribute",
+        "./AttributeAssertion",
+        "./AttributeComponent",
+        "./AttributeReference",
+        "./Attributes",
+        "./Column",
+        "./ColumnAssertion",
+        "./ColumnComponent",
+        "./ColumnDocument",
+        "./ColumnName",
+        "./ColumnNumber",
+        "./Columns",
+        "./ColumnStore",
+        "./ColumnType",
+        "./ColumnValue",
+        "./Fieldset",
+        "./FieldsetAssertion",
+        "./FieldsetComponent",
+        "./FieldsetDocument",
+        "./FieldsetName",
+        "./FieldsetType",
+        "./FieldsetValue",
+        "./Model",
+        "./ModelStore",
+        "./config/attributes",
+        "./config/definitions",
+        "./transform/helpers",
+        "./transform",
+        "./Exception",
+        "./Revisions",
+        "./Schema",
+        "./events/*",
+        "./events",
+        "./scripts/*",
+        "./scripts",
+        "./dictionary",
+        "./helpers",
+        "./plugin",
+        "./types",
+        "."
+      ]
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-server/package.json",
+      "name": "stackpress-server",
+      "version": "0.10.8",
+      "workspaces": [],
+      "tests": [
+        "packages/stackpress-server/tests"
+      ],
+      "export_keys": [
+        "./Exception",
+        "./http",
+        "./plugin",
+        "./Terminal",
+        "./events/*",
+        "./events",
+        "./scripts/*",
+        "./scripts",
+        "./types",
+        "./whatwg",
+        "."
+      ]
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-session/package.json",
+      "name": "stackpress-session",
+      "version": "0.10.8",
+      "workspaces": [],
+      "tests": [],
+      "export_keys": [
+        "./auth/views/*",
+        "./session/views/*",
+        "./Exception",
+        "./plugin",
+        "./types",
+        ".",
+        "./esm/auth/views/*",
+        "./cjs/auth/views/*",
+        "./esm/session/views/*",
+        "./cjs/session/views/*",
+        "./styles.css"
+      ]
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-sql/package.json",
+      "name": "stackpress-sql",
+      "version": "0.10.8",
+      "workspaces": [],
+      "tests": [
+        "packages/stackpress-sql/tests"
+      ],
+      "export_keys": [
+        "./ActionsInterface",
+        "./StoreInterface",
+        "./Exception",
+        "./helpers",
+        "./mysql",
+        "./pgsql",
+        "./pglite",
+        "./plugin",
+        "./sqlite",
+        "./transform",
+        "./events/*",
+        "./events",
+        "./scripts/*",
+        "./scripts",
+        "./types",
+        "."
+      ]
+    },
+    {
+      "repo": "stackpress",
+      "path": "packages/stackpress-view/package.json",
+      "name": "stackpress-view",
+      "version": "0.10.8",
+      "workspaces": [],
+      "tests": [
+        "packages/stackpress-view/tests"
+      ],
+      "export_keys": [
+        "./client/layout/*",
+        "./client/server/*",
+        "./client/theme/*",
+        "./client/types",
+        "./client",
+        "./config/*",
+        "./events/*",
+        "./events",
+        "./scripts/*",
+        "./scripts",
+        "./layout/*",
+        "./server/*",
+        "./theme/*",
+        "./transform",
+        "./Exception",
+        "./helpers",
+        "./plugin",
+        "./types",
+        ".",
+        "./cjs/client/layout/*",
+        "./esm/client/layout/*",
+        "./cjs/client/server/*",
+        "./esm/client/server/*",
+        "./cjs/client/theme/*",
+        "./esm/client/theme/*",
+        "./cjs/layout/*",
+        "./esm/layout/*",
+        "./cjs/server/*",
+        "./esm/server/*",
+        "./cjs/theme/*",
+        "./esm/theme/*",
+        "./styles.css"
+      ]
+    },
+    {
+      "repo": "frui",
+      "path": "package.json",
+      "name": "frui",
+      "version": "0.2.9",
+      "workspaces": [],
+      "tests": [
+        "tests"
+      ],
+      "export_keys": [
+        ".",
+        "./Accordion",
+        "./Alert",
+        "./Badge",
+        "./Box",
+        "./Bread",
+        "./Button",
+        "./Card",
+        "./Carousel",
+        "./Dialog",
+        "./Dropdown",
+        "./Film",
+        "./Loader",
+        "./Notifier",
+        "./Pager",
+        "./Progress",
+        "./Scope",
+        "./Table",
+        "./Tabs",
+        "./Tooltip",
+        "./When",
+        "./types",
+        "./unocss",
+        "./base",
+        "./base/*",
+        "./data/*",
+        "./component",
+        "./component/*",
+        "./form",
+        "./form/*",
+        "./tool",
+        "./tool/*",
+        "./view",
+        "./view/*",
+        "./frui.css"
+      ]
+    },
+    {
+      "repo": "r22n",
+      "path": "package.json",
+      "name": "r22n",
+      "version": "1.0.10",
+      "workspaces": [],
+      "tests": [],
+      "export_keys": [
+        ".",
+        "./R22nProvider",
+        "./Translate",
+        "./useLanguage",
+        "./context",
+        "./types"
+      ]
+    }
+  ],
+  "note_migration": {
+    "status": "moved",
+    "original_directory": "/Users/cblanquera/server/projects/stackpress/rust-notes/stackpress-rust-feasibility",
+    "raw_directory": ".agents/resources/conversation/2026-10-23-stackpress-rust",
+    "file_count": 7,
+    "preservation": "All seven raw files matched SHA-256 before original note files were removed."
+  }
+}

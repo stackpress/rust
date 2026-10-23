@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "name": "project-knowledge",
+  "project_id": "replace-with-a-stable-project-id",
+  "project_root": "../../..",
+  "exclude": [],
+  "max_file_bytes": 2097152,
+  "max_chunk_chars": 1600,
+  "retrieval": {
+    "expand_references": true,
+    "response_budget_tokens": 6000,
+    "max_reference_depth": 8
+  },
+  "embeddings": {
+    "provider": "local",
+    "model": "Xenova/all-MiniLM-L6-v2",
+    "revision": "751bff37182d3f1213fa05d7196b954e230abad9",
+    "endpoint": "",
+    "api_key_env": "CHRISAI_EMBEDDING_API_KEY",
+    "allow_remote": false,
+    "allow_download": true,
+    "fallback": "keyword",
+    "batch_size": 16,
+    "max_input_tokens": 256,
+    "remote_tokenizer": "utf8_bytes",
+    "timeout_ms": 30000
+  },
+  "http": {
+    "host": "127.0.0.1",
+    "port": 3333,
+    "allowed_hosts": ["127.0.0.1", "localhost", "[::1]"],
+    "allowed_origins": [],
+    "token_env": "CHRISAI_KB_TOKEN"
+  }
+}

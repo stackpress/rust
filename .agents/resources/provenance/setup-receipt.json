@@ -1,0 +1,82 @@
+{
+  "status": "complete",
+  "date": "2026-10-23 Asia/Manila",
+  "project_root": "/Users/cblanquera/server/projects/stackpress/rust",
+  "skill_revision": "c3be0b52e797f48ba8400893bb4aae693eaeb221",
+  "installed_skills": [
+    {
+      "name": "chrisai-coding",
+      "revision": "c3be0b52e797f48ba8400893bb4aae693eaeb221",
+      "file_count": 37
+    },
+    {
+      "name": "chrisai-knowledge",
+      "revision": "c3be0b52e797f48ba8400893bb4aae693eaeb221",
+      "file_count": 37
+    }
+  ],
+  "notes_migrated": {
+    "status": "moved",
+    "original_directory": "/Users/cblanquera/server/projects/stackpress/rust-notes/stackpress-rust-feasibility",
+    "raw_directory": ".agents/resources/conversation/2026-10-23-stackpress-rust",
+    "file_count": 7,
+    "preservation": "All seven raw files matched SHA-256 before original note files were removed."
+  },
+  "complete_document_imports": 30,
+  "upstream_topic_and_domain_documents": 23,
+  "source_anchors": 83,
+  "context_files": 8,
+  "reference_files": 41,
+  "checks": {
+    "workspace_validation": {
+      "command": [
+        "python3",
+        ".agents/scripts/validate-agent-workspace.py"
+      ],
+      "exit_code": 0,
+      "output": "WARN: references/00005-discussion-feature-feasibility.md has 219 lines; preferred target is 200 lines or fewer. Keep a coherent file at 201-500 lines, or split losslessly when that improves routing; do not shorten content merely to clear this warning\nWARN: references/00006-discussion-crate-plugin-proposals.md has 313 lines; preferred target is 200 lines or fewer. Keep a coherent file at 201-500 lines, or split losslessly when that improves routing; do not shorten content merely to clear this warning\nWARN: references/00021-upstream-schema-api-contracts.md has 204 lines; preferred target is 200 lines or fewer. Keep a coherent file at 201-500 lines, or split losslessly when that improves routing; do not shorten content merely to clear this warning\nWARN: references/00023-upstream-configuration-catalog.md has 204 lines; preferred target is 200 lines or fewer. Keep a coherent file at 201-500 lines, or split losslessly when that improves routing; do not shorten content merely to clear this warning\nWARN: references/00025-upstream-sql-api-contracts.md has 213 lines; preferred target is 200 lines or fewer. Keep a coherent file at 201-500 lines, or split losslessly when that improves routing; do not shorten content merely to clear this warning\nWARN: references/00029-upstream-exports-types-generated-contracts.md has 210 lines; preferred target is 200 lines or fewer. Keep a coherent file at 201-500 lines, or split losslessly when that improves routing; do not shorten content merely to clear this warning\nWARN: workflows/spec-user-journeys.md has 228 lines; preferred target is 200 lines or fewer. Keep a coherent file at 201-500 lines, or split losslessly when that improves routing; do not shorten content merely to clear this warning\nWARN: references/00005-discussion-feature-feasibility.md link text for references/00008-discussion-diagnostics-existing-parser.md looks like a path, not a description\nWARN: references/00005-discussion-feature-feasibility.md link text for references/00013-upstream-modeling-and-generation.md looks like a path, not a description\nOK: .agents workspace has warnings only\n"
+    },
+    "provenance_and_source_validation": {
+      "command": [
+        "python3",
+        ".agents/scripts/verify-kb-provenance.py",
+        "--check-sources"
+      ],
+      "exit_code": 0,
+      "output": "PASS: 30 complete document imports, raw preservation, reference heading/body fidelity, 2 skill packages, and migration state.\nPASS: 83 source anchors and upstream KB documents match captured hashes.\n"
+    },
+    "installer_idempotence": {
+      "command": [
+        "python3",
+        ".agents/skills/chrisai-knowledge/scripts/install_agent_workspace_rules.py",
+        "--target",
+        "/Users/cblanquera/server/projects/stackpress/rust"
+      ],
+      "exit_code": 0,
+      "output": "DRY RUN: agent workspace rules install\nok dir /Users/cblanquera/server/projects/stackpress/rust/.agents/references\nok dir /Users/cblanquera/server/projects/stackpress/rust/.agents/scripts\nok dir /Users/cblanquera/server/projects/stackpress/rust/.agents/workflows\nok /Users/cblanquera/server/projects/stackpress/rust/.agents/AGENTS.md\nok /Users/cblanquera/server/projects/stackpress/rust/.agents/TERMS.md\nok /Users/cblanquera/server/projects/stackpress/rust/.agents/references/00001-agent-workspace-rules.md\nok /Users/cblanquera/server/projects/stackpress/rust/.agents/references/00002-intersection-points.md\nok /Users/cblanquera/server/projects/stackpress/rust/.agents/references/00003-reference-recovery-points.md\nok /Users/cblanquera/server/projects/stackpress/rust/.agents/workflows/agent-file-creation.md\nok /Users/cblanquera/server/projects/stackpress/rust/.agents/workflows/agent-file-update.md\nok /Users/cblanquera/server/projects/stackpress/rust/.agents/workflows/agent-file-ingestion.md\nok /Users/cblanquera/server/projects/stackpress/rust/.agents/workflows/context-initialization.md\nok /Users/cblanquera/server/projects/stackpress/rust/.agents/workflows/spec-driven-development.md\nok /Users/cblanquera/server/projects/stackpress/rust/.agents/workflows/spec-task-implementation.md\nok /Users/cblanquera/server/projects/stackpress/rust/.agents/workflows/spec-task-acceptance.md\nok /Users/cblanquera/server/projects/stackpress/rust/.agents/workflows/spec-grill-session.md\nok /Users/cblanquera/server/projects/stackpress/rust/.agents/workflows/spec-user-journeys.md\nok /Users/cblanquera/server/projects/stackpress/rust/.agents/workflows/repair-zombie-reference-files.md\nok /Users/cblanquera/server/projects/stackpress/rust/.agents/scripts/validate-agent-workspace.py\n\nNo changes needed.\n"
+    },
+    "helper_and_manifest_examples": {
+      "result": "PASS",
+      "checks": [
+        "Python helper parses",
+        "Migrated Cargo TOML examples parse"
+      ]
+    },
+    "package_inventory_completeness": {
+      "result": "PASS",
+      "active_framework_package_manifests": 13,
+      "manifest_records": 31
+    }
+  },
+  "warnings_disposition": "Advisory line lengths retained for coherent complete imports/managed workflow; two inherited link-label warnings retained to preserve source text. No hard errors; all Agent Files <=500 lines.",
+  "rust_code_implemented": false,
+  "cargo_manifest_created": false,
+  "rust_tests_or_coverage_run": false,
+  "mcp_installed": false,
+  "commit_or_push": false,
+  "existing_user_changes_preserved": [
+    "untracked LICENSE in Rust repository",
+    "unrelated scaffold package.json modification in TypeScript Stackpress checkout"
+  ],
+  "next_session_entry": "AGENTS.md \u2192 .agents/context/index.md \u2192 relevant owner and .agents/references/00040-session-handoff.md"
+}

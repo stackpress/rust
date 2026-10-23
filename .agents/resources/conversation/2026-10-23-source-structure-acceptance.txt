@@ -1,0 +1,161 @@
+Source: current project conversation, 2026-10-23, Asia/Manila.
+Scope: faithfully extracted user proposal, accepted assistant response, and explicit approval.
+The earlier rust/ tree label represented the current repository root, not an additional directory.
+
+USER PROPOSAL
+
+why does it need to be in the rust folder? can we start from the project root instead?
+
+Are there any issues with this kind of structure?
+
+```
+crates/
+|-  framework/                       # Formerly stackpress
+│   |- framework/
+│   |- framework-admin/
+│   |- framework-api/
+│   |- framework-csrf/
+│   |- framework-email/
+│   |- framework-language/
+│   |- framework-schema/
+│   |- framework-session/
+│   |- framework-sql/
+│   |- framework-ui/                  # Leptos SSR and hydration integration, Reusable Leptos components
+│   |- framework-view/
+|- lib/
+|- idea/
+│   |- idea/                                 # Just a turn-key wrapper in case someone wants to use idea independently
+│   |- idea-parser/
+│   |- idea-transformer/
+|-  server/                                # Formerly ingest
+|-  sql/                                     # Formerly inquire
+│   |- sql/
+│   |- sql-mysql/                      # Do we need this?
+│   |- sql-postgres/                 # Do we need this?
+│   |- sql-sqlite/                      # Do we need this?
+Cargo.toml
+Cargo.lock
+```
+
+then namespaces would be like:
+
+```
+stackpress::framework
+stackpress::framework-admin
+stackpress::framework-api
+stackpress::framework-csrf
+stackpress::framework-email
+stackpress::framework-language
+stackpress::framework-schema
+stackpress::framework-session
+stackpress::framework-sql
+stackpress::framework-ui
+stackpress::framework-view
+stackpress::lib
+stackpress::idea
+stackpress::idea-parser
+stackpress::idea-transformer
+stackpress::server
+stackpress::sql
+stackpress::sql-mysql
+stackpress::sql-postgres
+stackpress::sql-sqlite
+```
+
+ASSISTANT RESPONSE ACCEPTED BY USER
+
+Yes—we can start directly at the project root. In my earlier tree, rust/ represented the current repository root, /Users/cblanquera/server/projects/stackpress/rust. It did not mean adding another rust/ directory inside it.
+
+Your grouping works. I’d keep it, with a small addition for the public stackpress facade:
+
+```
+<project-root>/
+├── Cargo.toml                    # Workspace + package named "stackpress"
+├── Cargo.lock
+├── src/
+│   └── lib.rs                    # Public stackpress:: re-exports
+├── crates/
+│   ├── framework/
+│   │   ├── framework/
+│   │   ├── framework-admin/
+│   │   ├── framework-api/
+│   │   ├── framework-csrf/
+│   │   ├── framework-email/
+│   │   ├── framework-language/
+│   │   ├── framework-schema/
+│   │   ├── framework-session/
+│   │   ├── framework-sql/
+│   │   ├── framework-ui/
+│   │   └── framework-view/
+│   ├── lib/
+│   ├── idea/
+│   │   ├── idea/
+│   │   ├── idea-parser/
+│   │   └── idea-transformer/
+│   ├── server/
+│   └── sql/
+│       ├── sql/
+│       ├── sql-mysql/
+│       ├── sql-postgres/
+│       └── sql-sqlite/
+├── tools/                        # CLI and build orchestration
+├── examples/                     # Applications proving the framework
+└── .agents/
+```
+
+Each actual crate gets its own Cargo.toml and ordinarily src/lib.rs. The grouping directories—crates/framework, crates/idea, and crates/sql—need no manifest. The root manifest lists the nested members. Cargo supports a root package alongside workspace members and shares one root lockfile.
+https://doc.rust-lang.org/cargo/reference/workspaces.html
+
+1. Folder names, package names, and Rust paths are independent.
+
+Retain a stackpress- prefix for Cargo packages while using the shorter directory names:
+crates/lib | stackpress-lib | stackpress::lib
+crates/server | stackpress-server | stackpress::server
+crates/framework/framework-admin | stackpress-framework-admin | stackpress::framework_admin
+crates/sql/sql-mysql | stackpress-sql-mysql | stackpress::sql_mysql
+
+Rust paths require underscores instead of hyphens. The complete normalized namespace catalog is the user's list above with every hyphen replaced by an underscore.
+
+The root facade explicitly provides these exports, for example:
+
+```rust
+// Expose the independently usable foundation through the shared namespace.
+pub use stackpress_lib as lib;
+
+// Expose the MySQL integration only when selected for this build.
+#[cfg(feature = "sql-mysql")]
+pub use stackpress_sql_mysql as sql_mysql;
+```
+
+Directory nesting does not automatically create namespaces; public re-exports establish them.
+https://doc.rust-lang.org/reference/items/use-declarations.html#use-visibility
+
+2. The database adapters are useful, but separate crates are optional.
+
+Backend-specific behavior is needed somewhere: connection handling, parameter binding, SQL differences, schema inspection, and migrations.
+
+You can place that behavior in separate sql-mysql, sql-postgres, and sql-sqlite crates, or in feature-gated modules inside sql. I favor your separate crates because they keep dependencies and backend tests isolated. They can wrap existing database libraries; they need not implement database protocols themselves.
+
+Only create the adapters we actually implement. Keep their facade dependencies optional so an application selects its backends. Cargo features are additive, so another dependency can also enable a backend.
+https://doc.rust-lang.org/cargo/reference/features.html
+
+3. sql and framework-sql need distinct responsibilities.
+
+- sql: independently usable query builders, database contracts, dialects, and execution.
+- framework-sql: connects those facilities to Stackpress schema metadata, generated stores, events, configuration, and lifecycle.
+
+Similarly, server should retain Ingest’s transport-neutral capability host. HTTP, CLI, and permitted Tauri calls can enter that host through adapters.
+
+4. Combining Leptos integration and components in framework-ui is reasonable initially.
+
+Keep components and rendering integration in separate internal modules. Structure dependencies so browser builds can use the shared UI without pulling in database drivers or native host services. Split the crate later if actual dependency or reuse needs justify it.
+
+5. Keep dependency direction acyclic.
+
+The root stackpress facade may depend on all selected libraries. Those libraries should depend directly on their underlying contracts, rather than importing back through stackpress.
+
+Your standalone idea wrapper is also a sensible convenience layer over idea-parser and idea-transformer. Build-time transforms must remain compilable before the application they generate.
+
+USER APPROVAL AND UPDATE REQUEST (EXACT)
+
+okay all accepted. please update KB with this direction
