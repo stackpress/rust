@@ -30,9 +30,11 @@ Acceptance criteria: none for library tasks, because they have no human-reviewab
 | [00001](00001-scaffold-and-send-signature-proof.md) | 0 + 1 (M0) | Workspace scaffold and `Send` handler-signature proof. | verified |
 | [00002](00002-foundation-data-events-and-values.md) | 1 (M1–M3) | Data, queues/events/diagnostics, request/response/session, `resolve`, facade. | verified |
 | [00003](00003-review-rounds-and-closeout.md) | 1 | Refactoring rounds 1–4, follow-up, closeout. | verified |
-| 00004 | 2 | `stackpress-server` capability host (config, plugins, top-level lifecycle) and CLI adapter in `tools/`. | proposed |
-| 00005 | 3 | Idea parser assessment against current fixtures, transformer, and generation of one model. | proposed |
-| 00006 | 4 | `stackpress-sql`, first backend, and `framework-sql` integration. | proposed |
-| 00007 | 5 | `framework-view`/`framework-ui` Leptos SSR with hydration, and a Tauri client. | proposed |
+| [00004](00004-lib-usage-and-api-docs.md) | 1 | `crates/lib/docs`: getting started, concepts, task guides, and API reference, written to the chrisai-docing standard as plain Markdown. | verified |
+| 00004A | 1 | Side quest of 00004: response/envelope API consistency fixes surfaced while documenting. | proposed |
+| 00005 | 2 | `stackpress-server` capability host (config, plugins, top-level lifecycle) and CLI adapter in `tools/`. | proposed |
+| 00006 | 3 | Idea parser assessment against current fixtures, transformer, and generation of one model. | proposed |
+| 00007 | 4 | `stackpress-sql`, first backend, and `framework-sql` integration. | proposed |
+| 00008 | 5 | `framework-view`/`framework-ui` Leptos SSR with hydration, and a Tauri client. | proposed |
 
-Proposed tasks get task files only after the owner accepts them.
+Proposed tasks get task files only after the owner accepts them. Proposed numbers were shifted by one on 2026-10-24 when the owner requested task 00004; none had been accepted, so no stable number changed.

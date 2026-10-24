@@ -25,3 +25,4 @@ The approved Slice 0+1 design, moved losslessly from the former `docs/trial-3/sl
 - [00001 Scaffold and Send signature proof](tasks/00001-scaffold-and-send-signature-proof.md): load for the M0 work and its full receipt.
 - [00002 Foundation data, events, and values](tasks/00002-foundation-data-events-and-values.md): load for the M1–M3 work and its full receipt.
 - [00003 Review rounds and closeout](tasks/00003-review-rounds-and-closeout.md): load for refactoring rounds 1–4, the follow-up, and the Slice 0+1 closeout receipt.
+- [00004 Lib usage and API docs](tasks/00004-lib-usage-and-api-docs.md): load for the `crates/lib/docs` documentation task, its standards, and its review results.

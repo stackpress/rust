@@ -55,6 +55,8 @@ The Rust parser branch is separately pinned at `6c289d1f3fba17c758baafb2d4dcefd8
 
 Installed complete `chrisai-coding` and `chrisai-knowledge` packages from `cblanquera/chrisai` main at `c3be0b52e797f48ba8400893bb4aae693eaeb221` using the official skill installer, at `.agents/skills`. The knowledge installer was dry-run before apply. Package file counts/hashes are in the ingestion manifest.
 
+On 2026-10-24 the owner also requested `chrisai-docing`, installed at `.agents/skills/chrisai-docing` from the same `cblanquera/chrisai` revision `c3be0b52e797f48ba8400893bb4aae693eaeb221` (8 files, byte-identical to the source tree). It supplies the technical-writing standards for crate documentation: API reference, guided learning, formatting, and copy editing. The provenance verifier's integrity check still covers only the original two packages.
+
 The coding skill currently scopes itself to existing JS/TS/React/HTML/CSS. The owner explicitly requests its principles for Rust. The project style/workflow adapts those principles while preserving installed packages. The user-authorized repeated refactor pass supersedes audit-only stops inside the requested coding task; unrelated scope still requires a decision.
 
 No MCP publisher/index/service was requested or installed. This is a Markdown KB; there is no automatic semantic-indexing or external-serving claim.
