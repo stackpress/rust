@@ -1,5 +1,7 @@
 # Slice 3 lane A: M1 parser completeness
 
+Spec file of [00001 Stackpress Rust foundation](index.md), recording Slice 3 lane A (parser, M1) of [task 00006](tasks/00006-slice-3-idea.md). Load for the corrected-grammar parser, fixture parity, JSON import/export, the typed reference API (`compile_ast_with_references`/`finalize_with_references`), and documented limitations. Moved losslessly from `crates/idea/idea-parser/LANE-A-RECEIPT.md` (merged in `b149a0e`); relative links rebased.
+
 Status: implemented and verified locally; **stopped before refactor rounds** for coordinator
 review. No merge, commit, push, publication or KB promotion is claimed.
 
