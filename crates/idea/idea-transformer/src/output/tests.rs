@@ -8,6 +8,23 @@ use stackpress_idea_parser::{CompileInputs, SchemaConfig, parse};
 use super::*;
 use crate::{GeneratedFile, Registry, merge_type};
 
+impl OutputWorkspace {
+    /// Run the M0 interruption seam against the same production transition runner.
+    fn install_with(
+        &self,
+        plan: OutputPlan,
+        after_backup: impl FnOnce() -> Result<()>,
+    ) -> Result<CheckReport> {
+        let mut after_backup = Some(after_backup);
+        self.install_at(plan, |phase| {
+            if phase == Phase::BackupRetained {
+                return after_backup.take().expect("one backup transition")();
+            }
+            Ok(())
+        })
+    }
+}
+
 /// Use a canonical temp parent so macOS's /var and /tmp symlinks are not output ancestors.
 fn temporary() -> tempfile::TempDir {
     tempfile::tempdir_in(std::env::temp_dir().canonicalize().unwrap()).unwrap()
@@ -233,4 +250,596 @@ fn imported_child_replaces_immutable_local_without_mutating_child() {
         assert!(local.attributes.contains_key("child"));
     }
     assert_eq!(before, serde_json::to_value(child).unwrap());
+}
+
+/// Every install transition fails through the real runner, preserving a usable prior/new tree.
+#[test]
+fn complete_install_failure_matrix() {
+    let phases = [
+        Phase::StageWrite,
+        Phase::StagePublish,
+        Phase::IntentWrite,
+        Phase::IntentPublished,
+        Phase::BackupRename,
+        Phase::BackupRetained,
+        Phase::InstallRename,
+        Phase::Installed,
+        Phase::CleanupTree,
+        Phase::ClearIntent,
+    ];
+    for initially_present in [false, true] {
+        for phase in phases {
+            // CleanupTree has no retained predecessor on a first install.
+            if !initially_present && phase == Phase::CleanupTree {
+                continue;
+            }
+            let temp = temporary();
+            let workspace = OutputWorkspace::new(temp.path().join("generated")).unwrap();
+            if initially_present {
+                workspace.install(plan("old")).unwrap();
+            }
+            let error = workspace
+                .install_at(plan("new"), |current| {
+                    if current == phase {
+                        Err(std::io::Error::new(
+                            match phase {
+                                Phase::StageWrite => std::io::ErrorKind::StorageFull,
+                                Phase::IntentWrite => std::io::ErrorKind::WriteZero,
+                                _ => std::io::ErrorKind::PermissionDenied,
+                            },
+                            "injected native operation failure",
+                        )
+                        .into())
+                    } else {
+                        Ok(())
+                    }
+                })
+                .unwrap_err();
+            assert!(error.to_string().contains(&format!("{phase:?}")), "{error}");
+            assert!(std::error::Error::source(&error).is_some());
+            assert!(!workspace.lock.exists());
+            if matches!(phase, Phase::StageWrite | Phase::StagePublish) {
+                assert!(!workspace.stage.exists() && !workspace.journal.exists());
+                assert_eq!(
+                    fs::read_dir(temp.path()).unwrap().count(),
+                    usize::from(initially_present)
+                );
+            } else if phase == Phase::IntentWrite {
+                // Pre-intent stages are retained for explicit inspection, never guessed away.
+                assert!(workspace.stage.exists() && !workspace.journal.exists());
+                assert!(workspace.check(&plan("old")).is_err());
+                assert!(workspace.recover().is_err());
+                inspect_owned(&workspace.stage).unwrap();
+                fs::remove_dir_all(&workspace.stage).unwrap();
+            } else {
+                assert!(workspace.check(&plan("later")).is_err());
+                workspace.recover().unwrap();
+                let installed = fs::read_to_string(workspace.root.join("data/a.txt")).unwrap();
+                let new_wins = !initially_present
+                    || matches!(
+                        phase,
+                        Phase::Installed | Phase::CleanupTree | Phase::ClearIntent
+                    );
+                assert_eq!(installed, if new_wins { "new" } else { "old" });
+                assert!(
+                    !workspace.stage.exists()
+                        && !workspace.backup.exists()
+                        && !workspace.journal.exists()
+                );
+            }
+            workspace.install(plan("final")).unwrap();
+            assert!(workspace.check(&plan("final")).unwrap().is_current());
+        }
+    }
+}
+
+/// Empty selection removes prior partitions; check performs no writes and receipts are portable.
+#[test]
+fn empty_selection_removes_partitions_and_reports_are_deterministic() {
+    let mut receipts = Vec::new();
+    for _ in 0..2 {
+        let temp = temporary();
+        let workspace = OutputWorkspace::new(temp.path().join("generated")).unwrap();
+        let first = workspace.install_report(plan("first")).unwrap();
+        assert_eq!(first.generated, ["data/a.txt", "index.txt"]);
+        assert!(first.removed.is_empty());
+        let before = fs::read(workspace.root.join(MANIFEST)).unwrap();
+        let changed = workspace.check(&plan("second")).unwrap();
+        assert_eq!(changed.differences, ["data/a.txt"]);
+        assert_eq!(before, fs::read(workspace.root.join(MANIFEST)).unwrap());
+        assert!(!workspace.stage.exists() && !workspace.lock.exists());
+        let unchanged = workspace.install_report(plan("first")).unwrap();
+        assert_eq!(unchanged.unchanged, ["data/a.txt", "index.txt"]);
+        let empty = Registry::new()
+            .plan(
+                &SchemaConfig::default(),
+                vec![GeneratedFile::new("index.txt", "owned\n")],
+            )
+            .unwrap();
+        let removed = workspace.install_report(empty).unwrap();
+        assert!(removed.selected.is_empty());
+        assert_eq!(removed.removed, ["data/a.txt"]);
+        assert!(!workspace.root.join("data").exists());
+        let json = serde_json::to_string(&removed).unwrap();
+        assert!(!json.contains(temp.path().to_str().unwrap()));
+        receipts.push(json);
+    }
+    assert_eq!(receipts[0], receipts[1]);
+}
+
+/// Absent and existing-empty roots both gain a real ownership marker for an empty plan.
+#[test]
+fn empty_plans_require_and_install_the_marker() {
+    for existing in [false, true] {
+        let temp = temporary();
+        let root = temp.path().join("generated");
+        if existing {
+            fs::create_dir(&root).unwrap();
+        }
+        let workspace = OutputWorkspace::new(&root).unwrap();
+        let empty = || {
+            Registry::new()
+                .plan(&SchemaConfig::default(), vec![])
+                .unwrap()
+        };
+        assert_eq!(workspace.check(&empty()).unwrap().differences, [MANIFEST]);
+        workspace.install(empty()).unwrap();
+        assert!(root.join(MANIFEST).is_file());
+        assert!(workspace.check(&empty()).unwrap().is_current());
+    }
+}
+
+/// Unknown or edited data in any retained tree blocks recovery before any other tree is purged.
+#[test]
+fn recovery_validates_all_trees_before_mutation() {
+    for retained in ["stage", "backup"] {
+        let temp = temporary();
+        let workspace = OutputWorkspace::new(temp.path().join("generated")).unwrap();
+        workspace.install(plan("old")).unwrap();
+        assert!(
+            workspace
+                .install_at(plan("new"), |phase| {
+                    if phase == Phase::BackupRetained {
+                        Err(TransformError::new("interrupt"))
+                    } else {
+                        Ok(())
+                    }
+                })
+                .is_err()
+        );
+        let tree = if retained == "stage" {
+            &workspace.stage
+        } else {
+            &workspace.backup
+        };
+        fs::write(tree.join("manual.txt"), "manual sentinel").unwrap();
+        assert!(workspace.recover().is_err());
+        assert!(!workspace.root.exists());
+        assert!(workspace.stage.exists() && workspace.backup.exists());
+        assert_eq!(
+            fs::read_to_string(tree.join("manual.txt")).unwrap(),
+            "manual sentinel"
+        );
+        fs::remove_file(tree.join("manual.txt")).unwrap();
+        workspace.recover().unwrap();
+        assert_eq!(
+            fs::read_to_string(workspace.root.join("data/a.txt")).unwrap(),
+            "old"
+        );
+    }
+}
+
+/// Cleanup intent distinguishes partial deletion from a candidate restore tree.
+#[test]
+fn recovery_resumes_partial_cleanup_without_accepting_manual_files() {
+    for emptied in [false, true] {
+        let temp = temporary();
+        let workspace = OutputWorkspace::new(temp.path().join("generated")).unwrap();
+        workspace.install(plan("old")).unwrap();
+        assert!(
+            workspace
+                .install_at(plan("new"), |phase| {
+                    if phase == Phase::CleanupTree {
+                        Err(TransformError::new("delete interrupted"))
+                    } else {
+                        Ok(())
+                    }
+                })
+                .is_err()
+        );
+        fs::remove_file(workspace.backup.join("data/a.txt")).unwrap();
+        if emptied {
+            fs::remove_dir(workspace.backup.join("data")).unwrap();
+            fs::remove_file(workspace.backup.join("index.txt")).unwrap();
+            fs::remove_file(workspace.backup.join(MANIFEST)).unwrap();
+        } else {
+            fs::write(workspace.backup.join("manual.txt"), "preserve").unwrap();
+            assert!(workspace.recover().is_err());
+            assert_eq!(
+                fs::read_to_string(workspace.backup.join("manual.txt")).unwrap(),
+                "preserve"
+            );
+            fs::remove_file(workspace.backup.join("manual.txt")).unwrap();
+        }
+        workspace.recover().unwrap();
+        assert!(!workspace.backup.exists());
+        assert_eq!(
+            fs::read_to_string(workspace.root.join("data/a.txt")).unwrap(),
+            "new"
+        );
+    }
+}
+
+/// Real output replacement and every metadata/sibling surface reject symbolic links.
+#[cfg(unix)]
+#[test]
+fn all_output_symlink_surfaces_are_rejected() {
+    for target in [
+        "file",
+        "directory",
+        "marker",
+        "journal",
+        "stage",
+        "backup",
+        "lock",
+    ] {
+        let temp = temporary();
+        let workspace = OutputWorkspace::new(temp.path().join("generated")).unwrap();
+        workspace.install(plan("old")).unwrap();
+        let outside = temp.path().join("outside");
+        fs::write(&outside, "manual sentinel").unwrap();
+        let link = match target {
+            "file" => {
+                fs::remove_file(workspace.root.join("data/a.txt")).unwrap();
+                workspace.root.join("data/a.txt")
+            }
+            "directory" => {
+                fs::remove_dir_all(workspace.root.join("data")).unwrap();
+                workspace.root.join("data")
+            }
+            "marker" => {
+                fs::remove_file(workspace.root.join(MANIFEST)).unwrap();
+                workspace.root.join(MANIFEST)
+            }
+            "journal" => workspace.journal.clone(),
+            "stage" => workspace.stage.clone(),
+            "backup" => workspace.backup.clone(),
+            _ => workspace.lock.clone(),
+        };
+        std::os::unix::fs::symlink(&outside, &link).unwrap();
+        assert!(workspace.check(&plan("new")).is_err(), "followed {target}");
+        assert!(workspace.install(plan("new")).is_err(), "followed {target}");
+        if target == "journal" {
+            assert!(workspace.recover().is_err());
+        }
+        assert_eq!(fs::read_to_string(outside).unwrap(), "manual sentinel");
+        assert!(fs::symlink_metadata(link).unwrap().file_type().is_symlink());
+    }
+}
+
+/// Corrupt markers, digest/length drift, missing files and unknown versions never grant deletion.
+#[test]
+fn manifest_validation_and_legacy_length_compatibility() {
+    for case in [
+        "bad-json", "version", "length", "sha", "owner", "path", "missing",
+    ] {
+        let temp = temporary();
+        let workspace = OutputWorkspace::new(temp.path().join("generated")).unwrap();
+        workspace.install(plan("old")).unwrap();
+        let marker = workspace.root.join(MANIFEST);
+        let mut value: serde_json::Value =
+            serde_json::from_slice(&fs::read(&marker).unwrap()).unwrap();
+        match case {
+            "bad-json" => {
+                fs::write(&marker, "{").unwrap();
+            }
+            "version" => {
+                value["version"] = 999.into();
+            }
+            "length" => {
+                value["files"]["data/a.txt"]["bytes"] = 999.into();
+            }
+            "sha" => {
+                value["files"]["data/a.txt"]["sha256"] = "0".repeat(64).into();
+            }
+            "owner" => {
+                value["files"]["data/a.txt"]["owner"] = "".into();
+            }
+            "path" => {
+                let entry = value["files"]["data/a.txt"].clone();
+                value["files"]["../escape"] = entry;
+            }
+            _ => {
+                fs::remove_file(workspace.root.join("data/a.txt")).unwrap();
+            }
+        }
+        if case != "bad-json" {
+            fs::write(&marker, serde_json::to_vec(&value).unwrap()).unwrap();
+        }
+        let before = fs::read(&marker).unwrap();
+        assert!(workspace.install(plan("new")).is_err(), "accepted {case}");
+        assert_eq!(before, fs::read(marker).unwrap());
+        assert!(workspace.root.join("index.txt").exists());
+    }
+    let temp = temporary();
+    let workspace = OutputWorkspace::new(temp.path().join("generated")).unwrap();
+    workspace.install(plan("old")).unwrap();
+    let marker = workspace.root.join(MANIFEST);
+    let mut value: serde_json::Value = serde_json::from_slice(&fs::read(&marker).unwrap()).unwrap();
+    for entry in value["files"].as_object_mut().unwrap().values_mut() {
+        entry.as_object_mut().unwrap().remove("bytes");
+    }
+    fs::write(&marker, serde_json::to_vec(&value).unwrap()).unwrap();
+    assert!(workspace.check(&plan("old")).unwrap().is_current());
+}
+
+/// The child holds a real install boundary until the watchdog parent kills and reaps it.
+#[test]
+#[ignore]
+fn interrupted_install_child() {
+    let workspace = OutputWorkspace::new(std::env::var_os("IDEA_KILL_ROOT").unwrap()).unwrap();
+    let phase = std::env::var("IDEA_KILL_PHASE").unwrap();
+    workspace
+        .install_at(plan("new"), |current| {
+            if format!("{current:?}") == phase {
+                fs::write(workspace.root.parent().unwrap().join("ready"), b"ready").unwrap();
+                let deadline = Instant::now() + Duration::from_secs(10);
+                // Explicit ready/go barrier; the parent kills rather than sends go for this proof.
+                while !workspace.root.parent().unwrap().join("go").exists() {
+                    assert!(
+                        Instant::now() < deadline,
+                        "parent did not kill/release child"
+                    );
+                    std::thread::sleep(Duration::from_millis(5));
+                }
+            }
+            Ok(())
+        })
+        .unwrap();
+}
+
+/// Process death retains a stale lock; explicit operator removal permits recognized recovery.
+#[test]
+fn killed_install_barriers_are_recoverable_after_explicit_lock_inspection() {
+    for initially_present in [false, true] {
+        for phase in [
+            Phase::IntentPublished,
+            Phase::BackupRetained,
+            Phase::Installed,
+            Phase::CleanupTree,
+            Phase::ClearIntent,
+        ] {
+            if !initially_present && phase == Phase::CleanupTree {
+                continue;
+            }
+            let temp = temporary();
+            let workspace = OutputWorkspace::new(temp.path().join("generated")).unwrap();
+            if initially_present {
+                workspace.install(plan("old")).unwrap();
+            }
+            let mut child = Command::new(std::env::current_exe().unwrap())
+                .args([
+                    "--ignored",
+                    "--exact",
+                    "output::tests::interrupted_install_child",
+                ])
+                .env("IDEA_KILL_ROOT", &workspace.root)
+                .env("IDEA_KILL_PHASE", format!("{phase:?}"))
+                .stdout(Stdio::null())
+                .stderr(Stdio::inherit())
+                .spawn()
+                .unwrap();
+            let deadline = Instant::now() + Duration::from_secs(5);
+            while !temp.path().join("ready").exists() {
+                if let Some(status) = child.try_wait().unwrap() {
+                    panic!("install child exited before ready: {status}");
+                }
+                if Instant::now() >= deadline {
+                    let _ = child.kill();
+                    let _ = child.wait();
+                    panic!("install child ready watchdog expired");
+                }
+                std::thread::sleep(Duration::from_millis(5));
+            }
+            let blocked = workspace.check(&plan("blocked")).is_err();
+            child.kill().unwrap();
+            assert!(!child.wait().unwrap().success());
+            assert!(blocked);
+            assert!(workspace.lock.exists());
+            assert!(workspace.recover().is_err());
+            // The child is reaped; this simulates the documented explicit operator action.
+            fs::remove_file(&workspace.lock).unwrap();
+            workspace.recover().unwrap();
+            let text = fs::read_to_string(workspace.root.join("data/a.txt")).unwrap();
+            let new_wins = !initially_present
+                || matches!(
+                    phase,
+                    Phase::Installed | Phase::CleanupTree | Phase::ClearIntent
+                );
+            assert_eq!(text, if new_wins { "new" } else { "old" });
+            workspace.install(plan("final")).unwrap();
+        }
+    }
+}
+
+/// Unexpected retained state and broken journals refuse recovery without deleting sentinels.
+#[test]
+fn orphan_and_invalid_recovery_states_require_inspection() {
+    for state in [
+        "stage",
+        "backup",
+        "missing",
+        "partial-journal",
+        "unmarked-stage",
+    ] {
+        let temp = temporary();
+        let workspace = OutputWorkspace::new(temp.path().join("generated")).unwrap();
+        match state {
+            "stage" => fs::create_dir(&workspace.stage).unwrap(),
+            "backup" => fs::create_dir(&workspace.backup).unwrap(),
+            "unmarked-stage" => {
+                fs::create_dir(&workspace.stage).unwrap();
+                fs::write(&workspace.journal, "stackpress-install-v1\n").unwrap();
+            }
+            "partial-journal" => fs::write(&workspace.journal, "stackpress-install-").unwrap(),
+            _ => fs::write(&workspace.journal, "stackpress-install-v1\n").unwrap(),
+        }
+        assert!(workspace.check(&plan("new")).is_err(), "accepted {state}");
+        assert!(workspace.recover().is_err(), "recovered {state}");
+        assert!(!workspace.root.exists());
+        assert!(!workspace.lock.exists());
+    }
+}
+
+/// Ownership manifests reject duplicate JSON keys before maps can hide conflicting claims.
+#[test]
+fn duplicate_manifest_paths_and_unknown_fields_are_rejected() {
+    let temp = temporary();
+    let workspace = OutputWorkspace::new(temp.path().join("generated")).unwrap();
+    workspace.install(plan("old")).unwrap();
+    let marker = workspace.root.join(MANIFEST);
+    let original = fs::read_to_string(&marker).unwrap();
+    let value: serde_json::Value = serde_json::from_str(&original).unwrap();
+    let entry = serde_json::to_string(&value["files"]["data/a.txt"]).unwrap();
+    let duplicate =
+        format!("{{\"version\":1,\"files\":{{\"data/a.txt\":{entry},\"data/a.txt\":{entry}}}}}");
+    fs::write(&marker, &duplicate).unwrap();
+    assert!(workspace.install(plan("new")).is_err());
+    assert_eq!(fs::read_to_string(&marker).unwrap(), duplicate);
+    let mut value = value;
+    value["unexpected"] = true.into();
+    fs::write(&marker, serde_json::to_vec(&value).unwrap()).unwrap();
+    assert!(workspace.check(&plan("old")).is_err());
+    assert_eq!(
+        fs::read_to_string(workspace.root.join("data/a.txt")).unwrap(),
+        "old"
+    );
+}
+
+/// A genuine native delete denial keeps the complete new root and explicit cleanup intent.
+#[cfg(unix)]
+#[test]
+fn native_delete_permission_failure_is_recoverable() {
+    use std::os::unix::fs::PermissionsExt;
+    let temp = temporary();
+    let workspace = OutputWorkspace::new(temp.path().join("generated")).unwrap();
+    workspace.install(plan("old")).unwrap();
+    let result = workspace.install_at(plan("new"), |phase| {
+        if phase == Phase::CleanupTree {
+            fs::set_permissions(
+                workspace.backup.join("data"),
+                fs::Permissions::from_mode(0o500),
+            )?;
+            fs::set_permissions(&workspace.backup, fs::Permissions::from_mode(0o500))?;
+        }
+        Ok(())
+    });
+    // Restore permissions before assertions so disposable roots remain removable on failure.
+    if workspace.backup.exists() {
+        fs::set_permissions(&workspace.backup, fs::Permissions::from_mode(0o700)).unwrap();
+        if workspace.backup.join("data").exists() {
+            fs::set_permissions(
+                workspace.backup.join("data"),
+                fs::Permissions::from_mode(0o700),
+            )
+            .unwrap();
+        }
+    }
+    assert!(
+        result.is_err(),
+        "host privileges bypassed delete denial; no permission proof"
+    );
+    assert!(workspace.journal.exists());
+    assert_eq!(
+        fs::read_to_string(workspace.root.join("data/a.txt")).unwrap(),
+        "new"
+    );
+    workspace.recover().unwrap();
+    assert!(workspace.check(&plan("new")).unwrap().is_current());
+}
+
+/// A failed transform/panic runs before writer ownership or output installation begins.
+#[test]
+#[ignore]
+fn panicking_transform_child() {
+    use crate::{OutputPlan, TransformContext, TransformSpec};
+    /// Panic deliberately to prove the installed root remains outside callback authority.
+    fn panic_transform(_: &TransformContext<'_>, _: &mut OutputPlan) -> Result<()> {
+        panic!("deliberate transform panic");
+    }
+    let mut registry = Registry::new();
+    registry
+        .add(TransformSpec::new("panic"), panic_transform)
+        .unwrap();
+    let plan = registry.plan(&SchemaConfig::default(), vec![]).unwrap();
+    OutputWorkspace::new(std::env::var_os("IDEA_PANIC_ROOT").unwrap())
+        .unwrap()
+        .install(plan)
+        .unwrap();
+}
+
+/// Callback panics are not converted into successful output or hidden by the test harness.
+#[test]
+fn transform_panic_leaves_prior_output_intact_under_watchdog() {
+    let temp = temporary();
+    let workspace = OutputWorkspace::new(temp.path().join("generated")).unwrap();
+    workspace.install(plan("old")).unwrap();
+    let marker = fs::read(workspace.root.join(MANIFEST)).unwrap();
+    let mut child = Command::new(std::env::current_exe().unwrap())
+        .args([
+            "--ignored",
+            "--exact",
+            "output::tests::panicking_transform_child",
+        ])
+        .env("IDEA_PANIC_ROOT", &workspace.root)
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
+        .spawn()
+        .unwrap();
+    let deadline = Instant::now() + Duration::from_secs(5);
+    loop {
+        if let Some(status) = child.try_wait().unwrap() {
+            assert!(!status.success());
+            break;
+        }
+        if Instant::now() >= deadline {
+            let _ = child.kill();
+            let _ = child.wait();
+            panic!("panic child timed out");
+        }
+        std::thread::sleep(Duration::from_millis(5));
+    }
+    assert_eq!(marker, fs::read(workspace.root.join(MANIFEST)).unwrap());
+    assert!(workspace.check(&plan("old")).unwrap().is_current());
+    assert!(!workspace.lock.exists() && !workspace.stage.exists());
+}
+
+/// An adopted empty directory has no owned predecessor and recovers to the complete stage.
+#[test]
+fn initially_empty_root_recovers_across_install_boundaries() {
+    for target in [
+        Phase::IntentPublished,
+        Phase::BackupRetained,
+        Phase::Installed,
+        Phase::ClearIntent,
+    ] {
+        let temp = temporary();
+        let root = temp.path().join("generated");
+        fs::create_dir(&root).unwrap();
+        let workspace = OutputWorkspace::new(&root).unwrap();
+        assert!(
+            workspace
+                .install_at(plan("new"), |phase| {
+                    if phase == target {
+                        Err(TransformError::new("empty-root interruption"))
+                    } else {
+                        Ok(())
+                    }
+                })
+                .is_err()
+        );
+        workspace.recover().unwrap();
+        assert!(workspace.check(&plan("new")).unwrap().is_current());
+        assert!(!workspace.backup.exists() && !workspace.stage.exists());
+    }
 }
