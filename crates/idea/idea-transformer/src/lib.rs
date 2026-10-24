@@ -11,13 +11,11 @@ mod plan;
 mod registry;
 mod source;
 
-pub use compose::{
-    ComposedSchema, Composer, CompositionLimits, ImportEdge, ReferenceKind, ReferencePath,
-    ReferenceSite, ReferenceSpan,
-};
+pub use compose::{ComposedSchema, Composer, CompositionLimits, ImportEdge};
 pub use source::{
     LoadError, LoadedSource, MemoryLoader, ProjectLoader, SourceId, SourceKind, SourceLoader,
 };
+pub use stackpress_idea_parser::Reference;
 
 use std::fmt;
 use std::io::Read;

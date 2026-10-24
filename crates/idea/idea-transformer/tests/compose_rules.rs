@@ -404,8 +404,8 @@ fn explicit_inputs_and_unresolved_imported_props() {
             .compose("root")
             .unwrap();
         assert_eq!(result.config.prop["Config"]["url"], value);
-        // This milestone deliberately does not infer typed references from string placeholders.
-        assert!(result.references.is_empty());
+        // Only actual syntax is a reference; the adjacent placeholder-looking string stays literal.
+        assert_eq!(result.references.len(), 1);
         assert_eq!(
             config(&result)["model"]["User"]["columns"][0]["attributes"]["literal"],
             json!(["${Config}"])
