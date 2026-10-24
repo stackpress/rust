@@ -308,6 +308,16 @@ Trees are retained as `target/slice2-receipts/server-default.tree` and `server-h
 - Committed as `d00114d` and merged as `6f53513`, alongside lane A's in-progress uncommitted rounds. The files don't overlap.
 - Receipt moved losslessly to [slice-2-receipt-lane-d-cli.md](../slice-2-receipt-lane-d-cli.md).
 
+
+**Lane C rounds re-verification and merge (coordinator, 2026-10-24): passed; merged.**
+
+- Checks rerun in the lane worktree: fmt passed; `stackpress-server` 56 tests with `http` and 31 with `--no-default-features`, 0 failed.
+- Clippy warning-free for `-p stackpress-server` alone and for the workspace with `server-http`.
+- Coverage: server+http 93.80% (1,935 lines); `http.rs` 98.31%.
+- Rounds results: `http.rs` comment density is now 92/366 (25 per 100), with 4 `# Examples`. `finish` went from 67 to 39 lines. The public API is unchanged.
+- Committed as `cd5a518` and merged as `94be99b`. The receipt was appended to [slice-2-receipt-lane-c-http.md](../slice-2-receipt-lane-c-http.md).
+- Scope note for closeout: the example enables `stackpress-server/http`, so workspace-wide builds feature-unify HTTP. Default-only server behavior must be verified with `-p stackpress-server` alone, not `--workspace`.
+
 ## Acceptance notes
 
 Library, host, and CLI work has no visual acceptance artifact under the spec workflow; this task finishes at `verified` after coordinator review.
