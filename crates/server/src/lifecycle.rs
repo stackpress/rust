@@ -127,7 +127,7 @@ impl Server {
     }
 
     /// Construct a no-request Input failure for malformed adapter normalization (G17).
-    #[allow(dead_code)] // The buffered adapter consumes this seam in the following milestone.
+    #[cfg(any(feature = "http", test))] // Only the HTTP adapter and seam tests need this entry.
     pub(crate) fn input_failure(&self, event: &str, error: Error) -> Result<HostReply> {
         // A normalized Request does not exist, so no hook receives invented input.
         Ok(no_request_failure(
