@@ -402,3 +402,25 @@ async fn phase_abort_error_and_async_diagnostics() -> Result<()> {
     assert!(Status::find("OK").is_some());
     Ok(())
 }
+
+/// Diagnostic registration metadata rejects terminal controls before publishing a listener.
+#[test]
+fn registration_metadata_rejects_controls_atomically() -> Result<()> {
+    let mut builder = EmitterBuilder::new();
+    // Label and plugin IDs can reach host reports; neither may inject terminal controls.
+    assert!(
+        builder
+            .listen(ListenerSpec::exact("safe").label("bad\nlabel"), labeled)
+            .is_err()
+    );
+    assert!(
+        builder
+            .listen(
+                ListenerSpec::exact("safe").plugin("bad\u{1b}plugin"),
+                labeled
+            )
+            .is_err()
+    );
+    assert_eq!(builder.build().listeners().count(), 0);
+    Ok(())
+}

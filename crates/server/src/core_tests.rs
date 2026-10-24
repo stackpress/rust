@@ -170,6 +170,8 @@ async fn host_scenarios() -> BuildResult<()> {
                 host: Arc::clone(&server.host),
                 correlation: Some(id.into()),
                 stage: LifecycleStage::Operation,
+                failure: None,
+                adapter_context: None,
             };
             server
                 .emitter
@@ -209,7 +211,7 @@ async fn host_scenarios() -> BuildResult<()> {
         .find(|item| item.pattern.contains("profiles"))
         .expect("route descriptor");
     assert_eq!(descriptor.plugin.as_deref(), Some("profiles"));
-    assert!(descriptor.registered.file.ends_with("m0.rs"));
+    assert!(descriptor.registered.file.ends_with("core_tests.rs"));
 
     // Dropping the last host owner releases the service and proves no emitter/context cycle.
     drop(server);
@@ -306,7 +308,7 @@ async fn failed_startup_never_publishes_and_cancel_releases() -> Result<()> {
         };
         assert_eq!(error.stage, StartupStage::Config);
         assert_eq!(error.plugin.as_deref(), Some("failed-plugin"));
-        assert!(error.registered.file.ends_with("m0.rs"));
+        assert!(error.registered.file.ends_with("core_tests.rs"));
         assert_eq!(drops.load(Ordering::SeqCst), 1);
     }
     let drops = Arc::new(AtomicUsize::new(0));
@@ -500,7 +502,12 @@ async fn host_child() {
 #[test]
 fn host_context_and_wrapper_proof_under_watchdog() {
     let mut command = Command::new(std::env::current_exe().expect("test executable"));
-    command.args(["--ignored", "--exact", "m0::host_child", "--nocapture"]);
+    command.args([
+        "--ignored",
+        "--exact",
+        "core_tests::host_child",
+        "--nocapture",
+    ]);
     let result = watchdog::run(&mut command, "host-context", Duration::from_secs(10))
         .expect("launch/reap host child");
     assert!(!result.timed_out, "{}", result.output);

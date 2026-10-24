@@ -1,7 +1,6 @@
 //! Immutable typed host services and the Invocation access/delegation boundary.
 
-use std::any::{Any, TypeId, type_name};
-use std::collections::HashMap;
+use std::any::Any;
 use std::fmt;
 use std::sync::Arc;
 
@@ -9,50 +8,12 @@ use stackpress_lib::{
     DispatchOutcome, Error, HandlerFuture, Invocation, Request, Response, Result,
 };
 
-/// Owned construction-time slots; only immutable borrows escape after host build.
-#[derive(Default)]
-pub(crate) struct Registry {
-    /// Each payload is explicitly shared, never cloned as an ordinary config value.
-    values: HashMap<TypeId, Arc<dyn Any + Send + Sync>>,
-}
-
-impl Registry {
-    /// Insert one typed singleton without replacing an earlier contribution.
-    pub(crate) fn insert<T: Any + Send + Sync>(&mut self, value: Arc<T>) -> Result<()> {
-        // Entry lookup and insertion are synchronous; no lock or callback is involved.
-        if self.values.contains_key(&TypeId::of::<T>()) {
-            return Err(Error::invalid(format!(
-                "duplicate typed value: {}",
-                type_name::<T>()
-            )));
-        }
-        self.values.insert(TypeId::of::<T>(), value);
-        Ok(())
-    }
-
-    /// Read a typed singleton, reporting its missing type instead of panicking.
-    pub(crate) fn get<T: Any + Send + Sync>(&self) -> Result<&T> {
-        // Checked downcasting also protects the registry invariant during future maintenance.
-        self.values
-            .get(&TypeId::of::<T>())
-            .and_then(|value| value.downcast_ref())
-            .ok_or_else(|| Error::new(format!("missing typed value: {}", type_name::<T>())))
-    }
-
-    /// Explicitly retain a service beyond one handler borrow when the caller requests sharing.
-    fn shared<T: Any + Send + Sync>(&self) -> Result<Arc<T>> {
-        // Arc downcast preserves allocation identity; it does not invoke T::clone.
-        self.values
-            .get(&TypeId::of::<T>())
-            .map(Arc::clone)
-            .and_then(|value| value.downcast().ok())
-            .ok_or_else(|| Error::new(format!("missing typed value: {}", type_name::<T>())))
-    }
-}
+use crate::report::{LifecycleStage, StageFailure};
+use crate::services::Registry;
 
 /// Read-only registry view shared by an explicitly retained Arc, without an emitter back-reference.
 pub struct HostContext {
-    /// Decoded typed config sections; M0 tests seed these privately pending M1 decoding.
+    /// Decoded and validated package-owned sections, frozen before Config tasks.
     pub(crate) config: Registry,
     /// Services freeze after Config startup completes.
     pub(crate) services: Registry,
@@ -77,6 +38,23 @@ impl HostContext {
         self.services.get()
     }
 
+    /// Borrow a named service only when its registered concrete type agrees.
+    pub fn service_named<T: Any + Send + Sync>(&self, name: &str) -> Result<&T> {
+        // Named slots are immutable after Config, just like singleton slots.
+        self.services.named(name)
+    }
+
+    /// Inspect original and replacement singleton sites without exposing service contents.
+    pub fn service_sites<T: Any + Send + Sync>(
+        &self,
+    ) -> Result<(
+        &stackpress_lib::SourceLocation,
+        Option<&stackpress_lib::SourceLocation>,
+    )> {
+        // Provenance remains attached to the frozen slot through replacement.
+        self.services.sites::<T>()
+    }
+
     /// Explicitly clone the service's Arc handle, retaining the same allocation.
     ///
     /// # Errors
@@ -87,25 +65,6 @@ impl HostContext {
     }
 }
 
-/// Host stage, independent of the lib's per-listener before/action/after phase.
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub enum LifecycleStage {
-    /// Adapter input construction/loading.
-    Input,
-    /// General request preprocessing.
-    Request,
-    /// Selected capability or method/path event.
-    Operation,
-    /// General response processing.
-    Response,
-    /// An explicit error offer.
-    Error,
-    /// Boundary serialization/delivery.
-    Output,
-    /// Raw dispatch without top-level lifecycle or invented correlation.
-    Dispatch,
-}
-
 /// Explicit per-root metadata borrowed by lib dispatch and inherited by children.
 pub(crate) struct CallContext {
     /// No emitter/callback is stored here, avoiding a framework ownership cycle.
@@ -114,6 +73,10 @@ pub(crate) struct CallContext {
     pub(crate) correlation: Option<String>,
     /// Children inherit the root's active host stage unchanged.
     pub(crate) stage: LifecycleStage,
+    /// Original failing stage/error during an Error offer; inherited by nested dispatch.
+    pub(crate) failure: Option<Arc<StageFailure>>,
+    /// Trusted request-local adapter metadata, never copied from Request.data.
+    pub(crate) adapter_context: Option<Arc<dyn Any + Send + Sync>>,
 }
 
 /// A required delegated capability was absent; the event name remains diagnostic data.
@@ -154,6 +117,12 @@ pub trait ServerInvocationExt {
     fn stage(&self) -> Result<LifecycleStage>;
     /// Inspect a top-level correlation, None for raw host dispatch roots.
     fn correlation_id(&self) -> Result<Option<&str>>;
+    /// Inspect the retained original failure during an Error offer and its nested calls.
+    fn failure(&self) -> Result<Option<&StageFailure>>;
+    /// Borrow typed trusted adapter metadata, absent for ordinary raw roots/lib calls.
+    fn adapter_context<T: Any + Send + Sync>(&self) -> Option<&T>;
+    /// Borrow a deliberately named service from the current host.
+    fn service_named<T: Any + Send + Sync>(&self, name: &str) -> Result<&T>;
     /// Delegate explicitly: child Abort maps to Abort, completion to Continue, missing to error.
     fn delegate<'a>(
         &'a self,
@@ -198,6 +167,28 @@ impl ServerInvocationExt for Invocation<'_> {
     fn correlation_id(&self) -> Result<Option<&str>> {
         // Raw roots intentionally report None rather than allocate an unrelated ID.
         Ok(call_context(self)?.correlation.as_deref())
+    }
+
+    /// Preserve the original failing stage while this invocation itself runs in Error.
+    fn failure(&self) -> Result<Option<&StageFailure>> {
+        // Children inherit the same immutable diagnostic ownership.
+        Ok(call_context(self)?.failure.as_deref())
+    }
+
+    /// Downcast only the trusted adapter slot, never caller-controlled request JSON.
+    fn adapter_context<T: Any + Send + Sync>(&self) -> Option<&T> {
+        // Plain lib calls and raw host roots honestly have no adapter metadata.
+        call_context(self)
+            .ok()?
+            .adapter_context
+            .as_deref()?
+            .downcast_ref()
+    }
+
+    /// Borrow a named slot with the same checked type boundary as HostContext.
+    fn service_named<T: Any + Send + Sync>(&self, name: &str) -> Result<&T> {
+        // The registry does not acquire a lock or infer services from input data.
+        self.host()?.service_named(name)
     }
 
     /// Map the existing raw outcome explicitly, preserving nested errors and ancestry.

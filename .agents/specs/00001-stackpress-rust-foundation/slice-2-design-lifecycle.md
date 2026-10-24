@@ -53,6 +53,8 @@ The latter lifetime sketches abbreviate the shared borrow lifetime used by the e
 
 `Server::emit/resolve/resolve_route` are raw dispatch with host context, without lifecycle, automatic loading, default status or error-event fallback. They return the existing lib results. Their root context has stage Dispatch and no invented top-level correlation; `Invocation::emit/resolve` inherits the caller's actual stage/correlation/failure context. Nested errors annotate the deepest listener path and return to the parent normally. A child Abort only propagates if the parent returns Flow::Abort.
 
+G17 clarifies the pre-normalization boundary: when `call` input conversion or adapter normalization fails before a normalized `Request` exists, allocate the correlation, retain an Input failure, and return a fresh sanitized status-400 response carrying the input error's public view. Run no callbacks and never fabricate a Request. Once a normalized Request exists, load/body-parse failures use the full Input error offer and optional Response table below. The shared crate-private Input runner keeps adapter loading inside this single lifecycle.
+
 ## Top-level state machine
 
 Allocate a correlation before normalization/load and validate event length before handler entry. `handle` finalizes an already buffered Request using its existing load state; HTTP decoding supplies an adapter load operation through the same internal Input stage runner. The public HTTP API must not create a second lifecycle to offer load failures.

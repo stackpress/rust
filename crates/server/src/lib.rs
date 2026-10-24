@@ -1,8 +1,8 @@
 //! Transport-neutral hosting over Stackpress's immutable capability table.
 //!
-//! M0 supplies the proven host/context/startup/wrapper boundary. Top-level
-//! request/operation/response/error handling, config section decoding and full
-//! adapters are later milestones; [`Server::emit`] remains raw dispatch.
+//! Selected compiled plugins configure typed sections/services and startup phases before
+//! immutable publication. [`Server::handle`] runs one top-level lifecycle; nested dispatch
+//! and [`Server::emit`] remain raw. Native output belongs to an explicit adapter.
 //! Nothing in this crate starts a listener, executor or background task.
 //!
 //! ```
@@ -28,15 +28,30 @@
 mod builder;
 mod config;
 mod context;
+mod lifecycle;
 mod output;
+mod plugin;
+mod report;
+mod router;
+mod services;
 
 #[cfg(feature = "http")]
 pub mod http;
 
-pub use builder::{BuildError, BuildResult, Server, ServerBuilder, StartupContext, StartupStage};
+pub use builder::{
+    BuildError, BuildResult, Server, ServerBuilder, StartupContext, StartupSpec, StartupStage,
+};
 pub use config::ConfigLayers;
-pub use context::{DelegationError, HostContext, LifecycleStage, ServerInvocationExt};
+pub use context::{DelegationError, HostContext, ServerInvocationExt};
 pub use output::OutputGuard;
+pub use plugin::{PluginDescriptor, PluginSpec};
+pub use router::{CapturePolicy, RouteSpec};
 
 #[cfg(test)]
-mod m0;
+mod core_tests;
+
+pub use lifecycle::HandleOptions;
+pub use report::{
+    CorrelationId, DeveloperReport, ErrorHandling, ErrorOffer, HandleReport, HostReply,
+    LifecycleOutcome, LifecycleStage, StageFailure, StageOutcome, StageRecord,
+};

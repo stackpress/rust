@@ -607,6 +607,20 @@ impl EmitterBuilder {
         {
             return Err(Error::limit("registration metadata byte limit exceeded"));
         }
+        // Diagnostic identities must not inject control sequences into host reports.
+        if spec
+            .label
+            .as_ref()
+            .is_some_and(|v| v.chars().any(char::is_control))
+            || spec
+                .plugin
+                .as_ref()
+                .is_some_and(|v| v.chars().any(char::is_control))
+        {
+            return Err(Error::invalid(
+                "registration metadata contains control characters",
+            ));
+        }
         // Reserve the next ordinal before any callback is inserted; exhaustion cannot reuse an
         // identity.
         let next = self

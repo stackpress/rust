@@ -136,6 +136,69 @@ Only tests (including the cfg(test)-only server src/m0.rs), dependencies and bui
 
 The coordinated stage gate is intact: no M1–M4 work or formal rounds 1–4 were started. No listener, other-trial access, commit/push, publishing or context promotion occurred. Unrelated pre-existing spec changes were preserved. Next action is coordinator re-verification of M0 and explicit release of the next milestone/lanes.
 
+### Lane A M1/M2 stop receipt (2026-10-24)
+
+M1 host construction and M2 lifecycle are implemented on `trial/3` from approved M0 `996d31f`. This is the required **M2 stop before M3/M4 and formal rounds 1–4**; it is not whole-Slice-2 closeout or publication. Coordinator Verification notes/status are untouched.
+
+#### Behavior and production boundaries
+
+- **M1:** validated `PluginSpec` selection and complete preflight before callbacks (unique/bounded IDs, missing/self/cycle/order errors, optional-present prerequisites, supplied order retained); immutable plugin descriptors; recursively merged typed config defaults → explicit layers, arrays/scalars/null replacement, unknown roots rejected, duplicate key/type rejection and validation before startup; finite raw/aggregate byte, depth, node and layer budgets; owned JSON passes lib iterative checks before host cloning; layer/default/section/type/plugin/site diagnostics without config document dumps.
+- TypeId and named service namespaces retain explicit Arc identity, checked missing/wrong-type errors, Config-only insertion/replacement and original/replacement sites. No registry lock or implicit payload Clone exists. Config → Listen → Route runs through real TaskQueue instances, with stable priorities/ties and mutation gates. Error, Abort, cancellation and panic publish no partial Server; completed external effects are not rolled back.
+- All listener/route/method helpers and `RouteSpec` forward synchronously with actual caller metadata. Host route replacement retains capture policy and IDs; builder composition moves listener IDs, owners/sites and pending startup contributions. Named captures atomically override literal aggregate-data keys in listener order; query/post and positional captures remain separate, and failed capture injection leaves aggregate data unchanged.
+- **M2:** `handle`, `call`, `handle_route`, `handle_with_options` run one finite lifecycle. `emit`, `resolve`, `resolve_route` and nested Invocation calls remain raw. G12 guard skip, operation Abort, fresh error response, optional one Response pass, second Response error offer, nonrecursive error/setup-failure fallback, typed emptiness/status defaults and authoritative delivery-state handling are covered by decision tables.
+- Reports retain original Arc<Error> identity, listener frames, source chains and ordered failures independently of response recovery. A private shared-source wrapper preserves the original allocation in fresh public error responses. Terminal fallback drops partial headers/cookies/body/data/stack and uses generic status 500, falling back to empty output under tiny budgets. Sent/Stopped/Attempted/Failed values never trigger another hook/write; existing private adapter OutputGuard authority survives whole-value Response replacement.
+- Checked per-host AtomicU64 correlation is allocated once before input work; raw roots have none, nested work inherits the exact stage/ID/failure/adapter metadata, and independent hosts intentionally have separate ID scopes. `HandleReport::is_success` inspects final public recovery and delivery/terminal state independently of diagnostic outcome; default Display omits cause/payload details and `developer()` opts into causes.
+- **G17 clarification:** before any normalized Request exists, input conversion/normalization failure returns sanitized status 400 with an Input failure and no callbacks/fabricated Request. Existing normalized-request load/parse failure gets the full G12 error/Response path. `Server::handle_input` is the crate-private shared loader runner; `Server::input_failure` is the no-request adapter seam. Lane C should use these, without adding another lifecycle. Its unused-method allowance is temporary until that adapter is implemented.
+- Production modules are builder/plugin/config/services/context/lifecycle/report/router plus unchanged output/http. M0 proofs are preserved in cfg(test) `core_tests.rs`; no proof-named production module remains. Lib's only production change in this milestone rejects control characters in listener labels/plugin metadata, with an atomic-rejection regression. No lib public signature changed. Root manifests/facade/lock and `tools/cli/**` were not edited; the coordinator's concurrent G17 decision edit was preserved.
+
+#### Verification and exact commands
+
+Fresh effort began with `cargo clean && cargo llvm-cov clean --workspace` (11,175 files / 1.5 GiB removed from this checkout). No dependency, toolchain, listener, commit/push or other trial source was added/read. Compiler is rustc 1.96.0 (ac68faa20, LLVM 22.1.2), native `aarch64-apple-darwin`; cargo-llvm-cov is 0.8.6.
+
+| Command | Result |
+| --- | --- |
+| `cargo test --workspace --all-targets --locked` | **77 passed**, 0 failed; six ignored child entrypoints are explicitly launched/reaped by watchdog/PTY parents. |
+| `cargo test --workspace --doc --locked` | **270 passed**, 0 failed. |
+| `cargo test -p stackpress-server --features http --all-targets --locked` | **31 passed**, 0 failed; two helper entrypoints run by parent watchdogs. HTTP remains the existing value-type seam, not an implemented adapter. |
+| `cargo clippy --workspace --all-targets --features server-http --locked -- -D warnings` | Passed warning-free. |
+| `RUSTDOCFLAGS='-D warnings' cargo doc --workspace --features server-http --no-deps --locked` | Passed warning-free. |
+| `cargo +1.96.0 check --workspace --all-targets --features server-http --locked` | Passed. |
+| `cargo fmt --all -- --check`; `git diff --check` | Passed. Rust source/comment lines in the server are at most 100 columns. |
+| `cargo run --offline --manifest-path /private/tmp/stackpress-slice2-m0.bnnJng/Cargo.toml --target-dir /Users/cblanquera/server/projects/stackpress/rust/target/slice2-m0-consumer --bin stackpress -- -b /private/tmp/stackpress-slice2-m0.bnnJng/config.json emit greet --bootstrap target-data` | Preserved M0 application consumer rebuilt and exited 0, printing the expected code-200 envelope with `bootstrap: target-data`. This remains raw composition evidence, not full CLI lifecycle evidence. |
+
+Runtime evidence uses real lib values: request/operation/response failure crossed with missing/completing/aborting/failing/recovering/cosmetic-only error listeners; repeated Response failure has exactly two bounded offers; each abort and each delivery state at entry and after ordinary/error stages; malformed public-error setup and tiny-budget fallback; no-op/missing/status-only/null/false/zero/empty text/bytes; capture collisions/limits; pre/post-normalization Input behavior. Original source allocation survives the fresh response chain and recovery cannot erase report failures.
+
+The externally watched concurrency child has a two-second async deadline and ten-second parent kill/reap deadline. It proves two concurrent roots with four rendezvousing parent→child→grandchild leaves, 64 additional concurrent unique IDs, bounded same-event recursion, nested work from Error, cancellation in each lifecycle and startup phase, release counters/Weak ownership, and independent success after handler/startup/validator panic. Four new external ten-second rustc rejection fixtures enforce non-Send services/startup futures, escaping host borrows and non-Clone Server/ServerBuilder/OutputGuard; existing lib fixtures and the deliberately blocked-child watchdog self-test remain green.
+
+Full logs and machine-readable coverage reports are retained under ignored `target/slice2-receipts/`.
+
+#### Coverage and dependency evidence
+
+Each final measurement was independently preceded by `cargo llvm-cov clean --workspace`; no ignore/exclusion pattern was added. Exact measurement commands:
+
+```sh
+cargo llvm-cov -p stackpress-lib --all-targets --locked --json --output-path target/slice2-receipts/coverage-lib.json --fail-under-lines 70
+cargo llvm-cov -p stackpress-server --all-targets --locked --json --output-path target/slice2-receipts/coverage-server.json --fail-under-lines 70
+cargo llvm-cov -p stackpress-cli --all-targets --locked --json --output-path target/slice2-receipts/coverage-cli.json --fail-under-lines 70
+```
+
+| Crate / feature scope | Executed / executable lines | Line coverage |
+| --- | --- | --- |
+| stackpress-lib, defaults | 3,154 / 3,393 | **92.96%** |
+| stackpress-server, defaults | 1,509 / 1,639 | **92.07%** |
+| stackpress-cli, default tty baseline, unchanged by lane A | 53 / 55 | **96.36%** |
+
+M1's earlier independently cleaned server measurement was **91.36%** (899/984 lines); its construction tests passed before M2 began. The final per-crate measurements all exceed the 70% development floor. These are the tool's ordinary line metrics, not a branch or publication guarantee. The facade has no executable implementation and is not claimed as 100% covered. Remaining uncovered paths include defensive setter failures impossible under the checked Open/standard-status invariant, arithmetic/formatting failures, some config composition conflicts, and adapter output-report convenience methods pending M3. Critical lifecycle decision combinations are exercised separately from the line percentage.
+
+```sh
+cargo tree -p stackpress-server --no-default-features --edges normal --locked
+cargo tree -p stackpress-server --features http --edges normal --locked
+```
+
+Trees are retained as `target/slice2-receipts/server-default.tree` and `server-http.tree`. Default direct normal edges are stackpress-lib + serde 1.0.229 + serde_json 1.0.154. The http feature adds http 1.5.0 → bytes 1.12.1 + itoa 1.0.18. Neither server normal tree contains Tokio, Hyper, crossterm, mio, parking_lot or signal-hook. No dependency-budget expansion occurred.
+
+**Deviations/limits:** G17 is the coordinator-approved clarification recorded in decisions and the lifecycle design, not an unapproved behavior change. No public signature deviation was needed. No real HTTP adapter/network/streaming/serverless/UI/platform support is claimed; lane C and lane D consume the API after coordinator release. No formal review round was started ahead of its gate. Next action is independent coordinator M2 re-verification and release of the adapter/proof lanes.
+
 ## Verification notes
 
 **Design checkpoint review (coordinator, 2026-10-24): approved with changes.**
@@ -168,6 +231,16 @@ The coordinated stage gate is intact: no M1–M4 work or formal rounds 1–4 wer
 - DX changes present: `ServerInvocationExt::{service, config, shared_service, delegate, host}`. No stock binary exists in `tools/cli`.
 - Carried into M1: `crates/server/src/m0.rs` is an M0 proof module in production source. M1 replaces it with real modules, keeping its proofs as tests.
 - Next: lane A (M1 host construction, then M2 lifecycle) in this checkout, and lane B (`tools/cli` pure parsing/control/prompt/TTY) in an isolated worktree. Lanes C (HTTP) and D (proof app) start after M2.
+
+**M1+M2 re-verification (coordinator, 2026-10-24): passed; M1 and M2 accepted.**
+
+- Checks rerun independently: fmt passed; 77 workspace tests passed, 0 failed; 31 `stackpress-server --features http` tests passed, 0 failed; 270 doctests passed; Clippy (`--features server-http`, `-D warnings`) and Rustdoc warning-free.
+- Dependency trees: `cargo tree -p stackpress-server` normal edges contain no tokio, hyper, crossterm, or mio, for both the default and `--features http` builds. The url/icu crates arrive through lib's existing `url` dependency.
+- Coverage, each measurement preceded by `cargo llvm-cov clean --workspace`: `stackpress-lib` 92.96% (3,393 lines); `stackpress-server` 92.07% (1,639 lines).
+- Lib delta: `event.rs` +14 lines, all additions (control-character rejection in registration metadata per R29). No public signature removed.
+- Layout: the module set matches the design. `m0.rs` was removed, and its proofs now live in `core_tests.rs`. The crate-level hello-world is about 12 lines with a named `async fn`.
+- Carried into lane C: `crates/server/src/lifecycle.rs:130` carries a temporary `#[allow(dead_code)]` on the adapter input seam (`handle_input`/`input_failure`). Lane C must consume it and remove the allowance.
+- Next: commit M1+M2; lane C (HTTP adapter) and lane D (proof application) in isolated worktrees from that commit; lane B finishes its `tools/cli` rounds and is then merged and extended with `run`/`main_with`.
 
 ## Acceptance notes
 
