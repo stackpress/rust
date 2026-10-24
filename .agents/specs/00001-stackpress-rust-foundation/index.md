@@ -8,6 +8,13 @@ Entry point for the Stackpress Rust build program: slices 0–5 coordinated betw
 - [Status](status.md): load to check freeze readiness, implementation status, and the next action.
 - [Decisions and Gap ledger](decisions.md): load before planning or implementing any slice; holds process decisions, Slice 0+1 owner decisions, the applied design decisions (D1–D8, DX), and the carried open design questions with their status.
 - [Proofs](proofs.md): load for proved technical uncertainties, starting with the `Send` handler signature.
+- [Slice 3 parser assessment](slice-3-design-assessment.md): load for the pinned core's exact build/test/fixture evidence, dependencies, code-quality findings and extraction recommendation.
+- [Slice 3 grammar and compatibility findings](slice-3-design-grammar.md): load for the probe corpus, source-versus-catalog discrepancies, diagnostic/env contracts and proposed corrected grammar/composition.
+- [Slice 3 upstream inventory](slice-3-design-inventory.md): load for parser/transformer exports and tests, the language/component/generation catalogs, and the disposition of Slice 1 filesystem/template deferrals.
+- [Slice 3 API sketch](slice-3-design-api.md): load for proposed parser/composer/function-plugin/output/wrapper APIs and the one-command Profile author experience; APIs are not implemented yet.
+- [Slice 3 generation and dependency contract](slice-3-design-generation.md): load for acyclic bootstrap, pre-build CLI selection, output ownership/recovery, generated-code partitions, the first proof and dependency budget.
+- [Slice 3 decisions and recommendations](slice-3-design-decisions.md): load before releasing M0 for pending Q08/Q09 answers, compatibility/scope choices and the checkpoint coverage map.
+- [Slice 3 risks and verification](slice-3-design-verification.md): load for R01–R33, M0 and later milestone stops, lane ownership, fail-fast tests, per-crate coverage and rounds 1–4.
 
 ## Slice 1 design
 

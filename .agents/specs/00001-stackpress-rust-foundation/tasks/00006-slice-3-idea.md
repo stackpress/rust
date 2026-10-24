@@ -37,11 +37,21 @@ Acceptance criteria: none
 
 ## Implementation notes
 
-Pending.
+Design checkpoint prepared on 2026-10-24; start with [Slice 3 decisions and recommendations](../slice-3-design-decisions.md), which routes assessment, inventory, API/generation contracts and risks/milestones. The pinned core was assessed only in `/tmp`; no production code or manifests changed. Unchanged reuse is vetoed on bounded-resource evidence. Q08/Q09 recommendations and disclosed compatibility/template scope choices await coordinator/owner review. Workspace validation passed with existing warnings only; all seven new files are below 250 lines. Verification notes remain coordinator-owned.
 
 ## Verification notes
 
-Pending.
+**Design checkpoint review (coordinator, 2026-10-24): approved; M0 released.**
+
+- **Reviewed:** `slice-3-design-decisions.md`, `slice-3-design-api.md`, and the M0 plan in `slice-3-design-verification.md`.
+- **Parser evidence:** own tests 3/3; all fixtures parse; compiled goldens match; AST parity 4/9 excluding spans. The unchanged-reuse veto stands on the stack-overflow abort, lost plugin order, env-in-enum rejection, and span defects.
+- **DX:**
+  - the parser is usable standalone with no IO;
+  - plugins are function registrations;
+  - output is inspectable;
+  - diagnostics carry file, line, and column;
+  - the separate codegen binary is justified by the bootstrap cycle and reuses the G14 CLI grammar.
+- **Decisions:** owner decisions recorded as G18–G21 and the coordinator dependency approval as G22 in [decisions](../decisions.md). G19 deliberately follows upstream code over the reference 00022 catalog wording.
 
 ## Acceptance notes
 
