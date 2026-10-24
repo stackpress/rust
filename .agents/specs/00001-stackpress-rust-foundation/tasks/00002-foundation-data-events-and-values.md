@@ -1,12 +1,43 @@
-# M1–M3 — foundation implementation checkpoint
+# Task 00002: Foundation data, events, and values (M1–M3)
+
+Task file of [00001 Stackpress Rust foundation](../index.md); status is tracked in [task status](status.md). Slice 1 milestones M1 (data), M2 (queue/events/status/diagnostics), and M3 (request/response/session/cookie/resolve/facade).
+
+## Task summary
+
+Implement the transport-neutral `stackpress-lib` foundation mapped in the [upstream inventory](../design-upstream-inventory.md) according to the [API contract](../design-api-contract.md) and [data/value/error contract](../design-values-and-errors.md), incorporating the owner/coordinator decisions in [decisions](../decisions.md). Replace the M0 signature fixtures with production types and re-prove them. Stop before refactoring rounds with tests and per-crate coverage.
+
+## Implementation steps
+
+1. M1: Value/Nest/paths/ordered collections/parsers/files, Clone and `Shared` semantics, serialization rejection paths.
+2. M2: ItemQueue/TaskQueue, exact/Express/regex/route matching, immutable emitter with hooks, handles, replacement and composition, status catalog, diagnostics; production Send/nested/spawn/compiler/watchdog proofs.
+3. M3: request/response/session/cookie/header/body values, one-attempt load/delivery, envelopes, plain-data `resolve`, facade consumer and bootstrap-mapping example.
+4. Each milestone's tests pass before the next begins; stop after M3 for coordinator review.
+
+## Verification process
+
+The [risk inventory and verification plan](../design-risks-and-verification.md) sections E1–E4: full test suite including watchdog/compiler fixtures, doctests, fmt, Clippy `-D warnings`, Rustdoc `-D warnings`, the 1.96 check, dependency review, and `cargo llvm-cov` with the 70% per-crate development gate.
+
+## Acceptance criteria
+
+Acceptance criteria: none
+
+## Implementation notes
+
+Implemented on 2026-10-24 by the implementer agent. Coordinator M3 review findings (comment density, whole-tree clone per Nest write, inconsistent Nest naming, long functions, route/method/param DX, DataPath display, Response accessor docs) were carried into [task 00003](00003-review-rounds-and-closeout.md). Committed in `e230359`.
+
+## Verification notes
+
+Coordinator re-verification on 2026-10-24: fmt passed; 33 integration tests and 17 doctests passed; Clippy clean; `cargo llvm-cov` reported `stackpress-lib` at 92.33% (2,708/2,933 lines), matching the receipt. The implementer's complete M1–M3 receipt, moved losslessly from `docs/trial-3/m1-m3-receipt.md` (headings demoted three levels, links rebased), follows.
+
+#### M1–M3 — foundation implementation checkpoint
 
 Status: **implemented and tested; stopped for coordinator review before refactoring rounds**. Date: 2026-10-24. Branch: `trial/3`. This is the requested M3 checkpoint, not the final Slice 1 closeout.
 
-Historical checkpoint: the coordinator approved M3 and authorized rounds 1–4. Those rounds are now complete; the [final Slice 1 receipt](slice-1-receipt.md) supersedes the pending-round status below and records the final API/coverage. This file retains the reviewed M3 baseline.
+Historical checkpoint: the coordinator approved M3 and authorized rounds 1–4. Those rounds are now complete; the [final Slice 1 receipt](00003-review-rounds-and-closeout.md) supersedes the pending-round status below and records the final API/coverage. This file retains the reviewed M3 baseline.
 
-## Scope and milestone sequence
+##### Scope and milestone sequence
 
-The coordinator approved the [M0 receipt](m0-receipt.md), independently re-verified its signature proof, and authorized M1 → M2 → M3 without intermediate stops. The [design checkpoint](slice-1-design.md) retains the complete upstream inventory, accepted decisions, deliberate compatibility changes and later-slice deferrals.
+The coordinator approved the [M0 receipt](00001-scaffold-and-send-signature-proof.md), independently re-verified its signature proof, and authorized M1 → M2 → M3 without intermediate stops. The [design checkpoint](../index.md) retains the complete upstream inventory, accepted decisions, deliberate compatibility changes and later-slice deferrals.
 
 Only the root `stackpress` facade and `crates/lib` (`stackpress-lib`) exist as Cargo packages. Both use edition 2024, resolver 3, rust-version 1.96, `publish = false`, `unsafe_code = "forbid"`, and `missing_docs = "deny"`. No placeholder package or server adapter was added.
 
@@ -18,7 +49,7 @@ Only the root `stackpress` facade and `crates/lib` (`stackpress-lib`) exist as C
 
 The final workspace run has 33 passing parent integration tests. Two additional child entrypoints are marked ignored for ordinary harness selection and are explicitly executed by the watchdog parents; they are not omitted behavioral proofs.
 
-## Public API and ownership choices for review
+##### Public API and ownership choices for review
 
 Named async functions register directly through the sealed `Handler` contract. `on_priority(event, priority, function)` and `listen(ListenerSpec::exact(event).priority(...).label(...), function)` are one-expression registration paths. The secondary `handler` helper supplies the boxed borrowing-closure expectation; its Rustdoc explains `Box::pin`, `async move`, and explicit per-call `Arc::clone` of captured configuration. TaskQueue uses the analogous sealed `TaskHandler<C>` bound, with the lifetime-indexed future family hidden inside its module.
 
@@ -35,17 +66,17 @@ Two concrete implementation refinements are reflected in the design document:
 
 The chosen data/path recursion ceiling is 64; callers may lower it. Default payload/node/header budgets remain explicit. Loaded data and outgoing mutable stores are rechecked against the invocation's selected budgets. MIME/disposition parsing preserves quoted spaces/escaped quotes/semicolons instead of trimming a filename's quoted content.
 
-## DX and behavior evidence
+##### DX and behavior evidence
 
-- [Data contracts](../../crates/lib/tests/data_contracts.rs): literal `get`, string `path`, typed `path_as`, string setters, null/missing/scalar distinctions, numeric array normalization, ordered collection behavior, typed dates/bytes/files/native values and explicit JSON errors.
-- [Event contracts](../../crates/lib/tests/event_contracts.rs): exact/Express/regex all-match priority/ties, custom separators, repeatable optional/named regex captures, route method matching, composition and stable replacement/removal, hook stop/error precedence, registration and phase call sites, queue before/action/after error semantics and remaining-task ownership.
-- [Signature/watchdog contracts](../../crates/lib/tests/handler_signature.rs): production named/helper nested calls, multithreaded spawn, Send assertions, concurrent root/sibling isolation, a barrier rendezvous detecting hidden dispatch serialization, recursion limits, panic propagation followed by a usable table, cancellation of emit/queue/load/delivery, non-Send future rejection, stateful Clone rejection, mutable alias rejection and escaping-lifetime rejection.
-- [Request/response contracts](../../crates/lib/tests/request_response_contracts.rs): source precedence, borrowed loaders/writers, atomic failed loading/serialization, typed Serialize structs for results/rows/json, false/zero/null/empty envelope fields, public/private error separation, buffered delivery/finalization guards, header injection, cookie options/codecs/date bounds and scoped deletion revisions, native resolve, plain-data resolve and concurrent nested resolve. Completed/Aborted/NoListener/Err remain distinct from response code.
-- [Facade/bootstrap consumer](../../tests/foundation.rs): named config/listen/route startup tasks mutate a host-owned builder in order, the listen task calls a minimal plugin registration function, then build freezes registrations. The registered route explicitly calls the capability using `inv.resolve(..., json!({...}))`. This is an illustrative startup mapping with no server lifecycle implementation or listener.
+- [Data contracts](../../../../crates/lib/tests/data_contracts.rs): literal `get`, string `path`, typed `path_as`, string setters, null/missing/scalar distinctions, numeric array normalization, ordered collection behavior, typed dates/bytes/files/native values and explicit JSON errors.
+- [Event contracts](../../../../crates/lib/tests/event_contracts.rs): exact/Express/regex all-match priority/ties, custom separators, repeatable optional/named regex captures, route method matching, composition and stable replacement/removal, hook stop/error precedence, registration and phase call sites, queue before/action/after error semantics and remaining-task ownership.
+- [Signature/watchdog contracts](../../../../crates/lib/tests/handler_signature.rs): production named/helper nested calls, multithreaded spawn, Send assertions, concurrent root/sibling isolation, a barrier rendezvous detecting hidden dispatch serialization, recursion limits, panic propagation followed by a usable table, cancellation of emit/queue/load/delivery, non-Send future rejection, stateful Clone rejection, mutable alias rejection and escaping-lifetime rejection.
+- [Request/response contracts](../../../../crates/lib/tests/request_response_contracts.rs): source precedence, borrowed loaders/writers, atomic failed loading/serialization, typed Serialize structs for results/rows/json, false/zero/null/empty envelope fields, public/private error separation, buffered delivery/finalization guards, header injection, cookie options/codecs/date bounds and scoped deletion revisions, native resolve, plain-data resolve and concurrent nested resolve. Completed/Aborted/NoListener/Err remain distinct from response code.
+- [Facade/bootstrap consumer](../../../../tests/foundation.rs): named config/listen/route startup tasks mutate a host-owned builder in order, the listen task calls a minimal plugin registration function, then build freezes registrations. The registered route explicitly calls the capability using `inv.resolve(..., json!({...}))`. This is an illustrative startup mapping with no server lifecycle implementation or listener.
 
-The [signature support file](../../crates/lib/tests/support/signature.rs) now only re-exports production types. No test registry or toy Request/Response remains behind the production claims.
+The [signature support file](../../../../crates/lib/tests/support/signature.rs) now only re-exports production types. No test registry or toy Request/Response remains behind the production claims.
 
-## Verification
+##### Verification
 
 Compiler: `rustc 1.96.0 (ac68faa20 2026-05-25)`; Cargo 1.96; native target `aarch64-apple-darwin`; LLVM 22.1.2; cargo-llvm-cov 0.8.6. No feature flags are defined or selected. The required clean-before-first-build/coverage occurred in M0; no stale pre-trial target output is evidence.
 
@@ -64,7 +95,7 @@ Resolved production dependencies are serde 1.0.229, serde_json 1.0.154, indexmap
 
 Potentially deadlocking scenarios run in a child with a 2-second async deadline and a 10-second external wall-clock deadline. A deliberately blocked child proves kill + wait/reap at 250 ms. Compiler fixtures each have a 10-second external deadline. Pending/cancelled callbacks are dropped before inspecting their exclusively borrowed state; no detached native side effect is started by the foundation. Logs are bounded on read and live in ignored `target/m0/`.
 
-## Current per-crate line coverage
+##### Current per-crate line coverage
 
 ```sh
 mkdir -p target/coverage
@@ -104,7 +135,7 @@ Representative remaining gaps include structured Body type-name presentation arm
 
 The JSON report remains an ignored local artifact at `target/coverage/m1-m3.json`; the numbers above are the durable checkpoint receipt. A root-only `cargo llvm-cov report` selects the facade and reports zero executable lines, so reproductions must use the stated workspace command.
 
-## Pending review rounds and limits
+##### Pending review rounds and limits
 
 **Rounds 1–4 have not started.** Routine implementation fixes and tests above belong to the milestone baseline. The next work requires the coordinator's M3 review reply as explicitly requested:
 
@@ -116,3 +147,6 @@ The JSON report remains an ignored local artifact at `target/coverage/m1-m3.json
 No soundness blocker or unresolved owner decision was encountered in M1–M3. Soundness, API/breadth acceptance and documentation completeness remain subject to those reviews. This checkpoint proves the native macOS target only. Server/CLI/lifecycle/native streaming (Slice 2), Idea/filesystem/generation (Slice 3), SQL (Slice 4), and Leptos/Tauri (Slice 5) remain deferred as inventoried; cross-target compilation and real adapter execution have not been claimed.
 
 No other trial branch was read, diffed, logged or checked out. No commit, push, publication, deployment, listener, or KB publishing occurred. Existing unrelated files were preserved; all requested implementation/doc files remain uncommitted for review.
+## Acceptance notes
+
+No human-reviewable visual output applies, so this task finishes at `verified`. The owner approved committing the Slice 0+1 work on 2026-10-24.

@@ -1,12 +1,44 @@
-# Slice 0 + Slice 1 — implementation closeout
+# Task 00003: Review rounds and Slice 1 closeout
+
+Task file of [00001 Stackpress Rust foundation](../index.md); status is tracked in [task status](status.md). Post-M3 refactoring rounds 1–4, the Round 3 follow-up, and the Slice 0+1 closeout receipt.
+
+## Task summary
+
+Run the [Rust programming workflow](../../../workflows/rust-programming.md) rounds (logic/complexity, responsibility/abstraction, consistency/Rustdoc/comments) plus a dedicated safety/soundness round, addressing the coordinator's M3 findings, then close out with the E5 receipt. A coordinator-requested Round 3 follow-up formatted Rustdoc examples, wrapped over-width lines, and reviewed remaining long functions.
+
+## Implementation steps
+
+1. Round 1: in-place atomic Nest mutation with budget accounting; split long multi-phase functions.
+2. Round 2: responsibility/ownership boundaries, private mutation planner, feature-local named phases.
+3. Round 3: uniform Nest naming, DataPath Display, Method constants and `Invocation::param`, comment density, compiling examples.
+4. Round 4: safety/soundness review of the mutation change, snapshot boundaries, destructor panics, budgets, and path bounds.
+5. Round 3 follow-up: conventional doc-example formatting, 100-column wrapping, long-function justifications.
+
+## Verification process
+
+After every round, rerun affected tests; finally fmt, full tests including watchdog/compiler fixtures, doctests, Clippy, Rustdoc, the 1.96 check, and per-crate coverage, recorded with the [00037 receipt template](../../../references/00037-refactoring-round-checklists.md).
+
+## Acceptance criteria
+
+Acceptance criteria: none
+
+## Implementation notes
+
+Implemented on 2026-10-24 by the implementer agent; coordinator reviewed the final receipt and the follow-up. One residual source line in `crates/lib/src/request.rs:655` measures 101 bytes (likely a multi-byte character); it was judged immaterial. Committed in `e230359`.
+
+## Verification notes
+
+Coordinator re-verification on 2026-10-24 after the follow-up: fmt passed; 37 integration tests and 263 doctests passed; Clippy and Rustdoc warning-free; no doc-example lines with missing comma spacing remain; `cargo llvm-cov` reported `stackpress-lib` at 92.95% (3,320 executable lines, 234 missed) after comment reflow, consistent with the receipt's 92.94% (3,080/3,314) measured before it; facade N/A (re-exports only). The implementer's complete closeout receipt, moved losslessly from `docs/trial-3/slice-1-receipt.md` (headings demoted three levels, links rebased), follows.
+
+#### Slice 0 + Slice 1 — implementation closeout
 
 Date: 2026-10-24. Branch: `trial/3`. Scope: root `stackpress` facade and `crates/lib` (`stackpress-lib`), native `aarch64-apple-darwin`, no selected feature flags. All four requested post-M3 rounds are complete. No owner decision or soundness blocker remains open.
 
 This is code verification for the agreed slices. It does not constitute owner acceptance, publication, deployment, or permission to commit/push.
 
-## Intended behavior and approved decisions
+##### Intended behavior and approved decisions
 
-The [design checkpoint](slice-1-design.md) is the authoritative inventory: all public exports from upstream `../lib/src/index.ts` and behaviors in its 26 test files are mapped to implementation, a named later slice, or an intentional Rust equivalent/omission. The [M0](m0-receipt.md) and [M1–M3](m1-m3-receipt.md) receipts retain their independently reviewed historical baselines.
+The [design checkpoint](../index.md) is the authoritative inventory: all public exports from upstream `../lib/src/index.ts` and behaviors in its 26 test files are mapped to implementation, a named later slice, or an intentional Rust equivalent/omission. The [M0](00001-scaffold-and-send-signature-proof.md) and [M1–M3](00002-foundation-data-events-and-values.md) receipts retain their independently reviewed historical baselines.
 
 The implemented foundation contains:
 
@@ -18,11 +50,11 @@ Accepted differences remain deliberate: deterministic registration-order priorit
 
 Slice 2 retains server/CLI/native adapters and top-level lifecycle; Slice 3 retains Idea assessment/generation/filesystem/templates; Slice 4 retains SQL; Slice 5 retains Leptos/Tauri. Terminal/control/input, FileLoader/NodeFS, Reflection and JS callable syntax retain the exact disposition/reason in the inventory. No placeholder crates or speculative adapter implementations were added.
 
-## Baseline verification
+##### Baseline verification
 
 The coordinator independently approved M0 and then re-ran M3 formatting, 33 integration tests, 17 doctests, Clippy and LLVM line coverage: 2,708 / 2,933, 92.33%. The authorized work after that review was rounds 1–4 incorporating the coordinator's material findings. Required removal of stale target/coverage output occurred before the first M0 build; no old trial output is evidence.
 
-## Round 1 — logic, complexity and budget accounting
+##### Round 1 — logic, complexity and budget accounting
 
 Finding: each Nest write cloned and revalidated the complete tree. This preserved returned-error atomicity but copied unrelated payloads and made repeated construction quadratic.
 
@@ -40,7 +72,7 @@ Tests after the round: 13 data contracts passed, then all 35 workspace integrati
 
 Complexity boundary: edits follow the path plus incoming/replaced subtrees; representation conversion and ordered deletion can still scan/move the affected container. There is no claim that all writes are constant-time or that a benchmark was run. Unrelated payloads are neither cloned nor revalidated per write.
 
-## Round 2 — responsibility, abstraction and ownership
+##### Round 2 — responsibility, abstraction and ownership
 
 Changes:
 
@@ -66,7 +98,7 @@ No-change decisions: item/task scheduling stays in one module because priority s
 
 Tests after the round: all 35 integration tests passed. Later review identified a repeated runtime listener search; the follow-up replaces it with immutable table positions collected during matching. Existing matching/order/handle/nested/watchdog tests passed after that change as part of the final 37-test suite.
 
-## Round 3 — consistency, Rustdoc and comments
+##### Round 3 — consistency, Rustdoc and comments
 
 Changes:
 
@@ -116,7 +148,7 @@ changes physical line counts without adding new explanations. They exclude `///`
 | `src/lib.rs` | 0 |
 | `tests/foundation.rs` | 15 |
 
-## Round 4 — dedicated safety/soundness review
+##### Round 4 — dedicated safety/soundness review
 
 Re-examined the in-place mutation change: the immutable plan is prepared against the same exclusively borrowed tree it later edits; paths are nonempty/bounded; no user callback or payload Clone runs during commit; shape changes account for materialized/removed numeric key bytes; cache publication follows the exact tree change. Object-root and private-value borrowing prevent external cache invalidation.
 
@@ -134,11 +166,11 @@ Compile rejection still uses production types for non-Send returned futures, Req
 
 Tests after fixes: all 37 workspace integration tests passed, including the watchdog and compiler fixtures. No soundness veto or unresolved behavior decision remains.
 
-## Follow-up rounds
+##### Follow-up rounds
 
 Round 2 follow-up removed per-match listener re-search while retaining precomputed all-match order and original stable IDs. Round 3 follow-ups documented the safety findings and added the explicit-budget conversion example. Each was followed by affected/full tests; the final verification below is after the last code edit. No further material in-scope finding emerged from the final review.
 
-## Final verification and coverage
+##### Final verification and coverage
 
 Compiler: `rustc 1.96.0 (ac68faa20 2026-05-25)`, Cargo 1.96.0; host/target `aarch64-apple-darwin`; LLVM 22.1.2; cargo-llvm-cov 0.8.6. No feature flags are defined or selected and no other toolchain was installed.
 
@@ -189,7 +221,7 @@ This uses the reviewed M3 command's workspace/all-targets/filter/gate scope, wit
 
 Per-file figures expose weaker areas; the policy gate is per changed crate. Remaining uncovered areas include structured Body type-name arms, Value accessor/conversion alternatives, some metadata/invalid-input branches, debug views and exhaustion paths that require unattainable normal-workload counters. The final artifact is ignored `target/coverage/slice-1.json`; the table preserves its numerator/denominator independently of build output.
 
-## Remaining limits and unresolved decisions
+##### Remaining limits and unresolved decisions
 
 No unresolved user decision remains. Target support is verified only for native aarch64 Apple Darwin; Linux/Windows/WASM/Tauri/real server adapters are unverified. No fuzz campaign, performance benchmark, branch score or exhaustive proof of arbitrary application callback behavior is claimed. Runtime behavior/concurrency/atomicity tests supplement the line percentage.
 
@@ -198,12 +230,12 @@ The library is async-runtime-agnostic and owns no listeners, filesystems, subpro
 All requested files remain uncommitted for review. No other trial branch was read/diffed/logged/checked out, and no commit, push, publication, deployment, listener or KB publishing occurred. Unrelated files were preserved.
 
 
-## Round 3 follow-up
+##### Round 3 follow-up
 
 The coordinator independently verified the preceding closeout, then requested a focused readability
 pass without behavior changes. This follow-up is complete.
 
-### Examples, prose and source width
+###### Examples, prose and source width
 
 - Formatted all **263 Rustdoc examples** with the installed edition-2024 rustfmt, accounting for the
   enclosing comment prefix so visible source stays within 100 columns. Comma/operator spacing,
@@ -223,7 +255,7 @@ pass without behavior changes. This follow-up is complete.
   generated crate, handler and invocation HTML examples to confirm setup markers stay hidden and
   displayed indentation/comments remain readable.
 
-### Long-function review: retained with justification
+###### Long-function review: retained with justification
 
 | Function | Review result |
 | --- | --- |
@@ -237,7 +269,7 @@ rustfmt-canonicalized source against the local pre-follow-up snapshot produced i
 every production Rust file. This is a documentation/comment pass plus equivalent test formatting;
 there is no new behavior or public API decision.
 
-### Verification after the final edits
+###### Verification after the final edits
 
 | Check | Result |
 | --- | --- |
@@ -257,3 +289,6 @@ relocation and is not presented as a newly generated artifact.
 No soundness blocker or owner decision arose. Native target/feature limitations remain those stated
 above. No commit, push, publication, listener or other-trial access occurred; unrelated files remain
 preserved.
+## Acceptance notes
+
+No human-reviewable visual output applies, so this task finishes at `verified`. The owner approved committing the Slice 0+1 work on 2026-10-24.
