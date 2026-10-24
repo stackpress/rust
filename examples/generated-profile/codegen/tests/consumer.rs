@@ -108,6 +108,7 @@ fn cargo(root: &Path, package: &Path, operation: &str) -> Command {
     // Nested builds are verification consumers, not coverage substitutes for app source.
     command
         .env_remove("RUSTFLAGS")
+        .env_remove("CARGO_ENCODED_RUSTFLAGS")
         .env_remove("LLVM_PROFILE_FILE");
     command.env("CARGO_TARGET_DIR", root.join("target"));
     command

@@ -1,5 +1,7 @@
 # Slice 3 lane D: M4 pre-integration receipt
 
+Final M4 and rounds receipt: [completed integration and verification](slice-3-receipt-lane-d-m4.md).
+
 Spec file of [00001 Stackpress Rust foundation](index.md), recording Slice 3 lane D (integration and example, M4 baseline) of [task 00006](tasks/00006-slice-3-idea.md). Load for the generated-profile example, codegen diagnostics and `-c` alias, the consumer proofs, facade `idea*` features, coverage, and the items pending lane B/C integration. Moved losslessly from `examples/generated-profile/LANE-D-RECEIPT.md`.
 
 Date: 2026-10-25. Checkout: `trial/3`, base/HEAD `54b188e` (accepted M0).

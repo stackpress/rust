@@ -2,10 +2,13 @@
 
 #![cfg(feature = "profiles")]
 
+use std::error::Error as StdError;
 use std::path::Path;
-use std::process::{Command, Stdio};
-use std::time::{Duration, Instant};
 
+#[path = "support/cli.rs"]
+mod cli;
+
+use cli::command;
 use serde_json::{Value, json};
 use stackpress_example_profile_codegen::{build_tool, generate};
 use stackpress_server::ConfigLayers;
@@ -40,6 +43,9 @@ fn generation_is_stable_and_removal_cleans_owned_files() {
     for invalid in [
         "model Customer { id String }",
         "model Profile { id Number name String }",
+        "model Profile { id String }",
+        "model Profile { id String name String extra String }",
+        "model Profile { id String name String } model Other { id String }",
         "model Profile { name String id String }",
         "model Profile { id String? name String }",
         "model Profile { id String[] name String }",
@@ -108,34 +114,13 @@ async fn generation_host_handles_success_check_and_source_failure() {
     let report = server.call("generate", data(false)).await.unwrap();
     assert_eq!(report.response.try_to_json().unwrap()["code"], 400);
     let error = generate(&input, &output, false).unwrap_err();
-    assert!(error.to_string().contains("schema.idea:1:"));
-}
-
-/// Native CLI commands are bounded by a kill-and-reap deadline and preserve OS argument boundaries.
-fn command(input: &Path, output: &Path, arguments: &[&str]) -> std::process::Output {
-    let mut child = Command::new(env!("CARGO_BIN_EXE_profile-codegen"))
-        .args(["emit", "generate", "--input"])
-        .arg(input)
-        .arg("--output")
-        .arg(output)
-        .args(arguments)
-        .stdin(Stdio::null())
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .spawn()
-        .unwrap();
-    let deadline = Instant::now() + Duration::from_secs(10);
-    loop {
-        if child.try_wait().unwrap().is_some() {
-            return child.wait_with_output().unwrap();
-        }
-        if Instant::now() >= deadline {
-            let _ = child.kill();
-            let _ = child.wait();
-            panic!("codegen CLI timed out");
-        }
-        std::thread::sleep(Duration::from_millis(10));
-    }
+    assert!(
+        error
+            .source()
+            .unwrap()
+            .to_string()
+            .contains("schema.idea:1:")
+    );
 }
 
 /// The app-owned binary routes through main_with rather than a private generator command parser.
@@ -169,6 +154,14 @@ fn native_codegen_command_has_one_public_envelope() {
         400
     );
     assert!(output.join("contracts/profile.rs").exists());
+
+    // A present false takes precedence over -c; this request therefore installs model removal.
+    assert!(
+        command(&input, &output, &["--check", "false", "-c"])
+            .status
+            .success()
+    );
+    assert!(!output.join("contracts/profile.rs").exists());
 }
 
 /// Ordinary machine output exposes typed source coordinates but never the bad source body.
@@ -187,7 +180,7 @@ fn malformed_input_has_coordinates_exit_one_and_no_source_excerpt() {
         envelope["error"]
             .as_str()
             .unwrap()
-            .starts_with("broken.idea:2:16:")
+            .contains("broken.idea:2:16:")
     );
     for bytes in [&result.stdout, &result.stderr] {
         assert!(!String::from_utf8_lossy(bytes).contains("private-sentinel"));
@@ -200,4 +193,89 @@ fn malformed_input_has_coordinates_exit_one_and_no_source_excerpt() {
     let envelope: Value = serde_json::from_slice(&missing.stdout).unwrap();
     assert_eq!(envelope["code"], 500);
     assert_eq!(envelope["error"], "Internal Server Error");
+}
+
+/// Read exactly the installed files so a refactor from inline schema to imports proves byte parity.
+fn snapshot(root: &Path) -> std::collections::BTreeMap<std::path::PathBuf, Vec<u8>> {
+    let mut files = std::collections::BTreeMap::new();
+    for entry in std::fs::read_dir(root).unwrap() {
+        let entry = entry.unwrap();
+        if entry.file_type().unwrap().is_dir() {
+            // Retain relative nested names, not host-specific absolute temporary paths.
+            for (path, bytes) in snapshot(&entry.path()) {
+                files.insert(
+                    std::path::PathBuf::from(entry.file_name()).join(path),
+                    bytes,
+                );
+            }
+        } else {
+            files.insert(
+                entry.file_name().into(),
+                std::fs::read(entry.path()).unwrap(),
+            );
+        }
+    }
+    files
+}
+
+/// The actual codegen CLI composes a sibling file and keeps generated Rust/manifest byte-identical.
+#[test]
+fn sibling_schema_import_is_stable_and_reports_child_coordinates() {
+    let temp = temporary();
+    let input = temp.path().join("schema.idea");
+    let child = temp.path().join("types.idea");
+    let output = temp.path().join("generated");
+    std::fs::write(&input, source()).unwrap();
+    assert!(command(&input, &output, &[]).status.success());
+    let original = snapshot(&output);
+
+    // Keep the checked-in first example small; this disposable fixture proves the import path.
+    std::fs::write(&input, "plugin \"profile-demo\" { } use \"./types.idea\"").unwrap();
+    std::fs::write(&child, "model Profile { id String name String }").unwrap();
+    assert!(command(&input, &output, &[]).status.success());
+    assert_eq!(original, snapshot(&output));
+    assert!(command(&input, &output, &["-c"]).status.success());
+
+    // A child error keeps the child's coordinates, never a fabricated root-file location.
+    std::fs::write(&child, "// child-private-sentinel 😀\nmodel Profile {").unwrap();
+    let result = command(&input, &output, &[]);
+    assert_eq!(result.status.code(), Some(1));
+    let envelope: Value = serde_json::from_slice(&result.stdout).unwrap();
+    assert_eq!(envelope["code"], 400);
+    assert!(
+        envelope["error"]
+            .as_str()
+            .unwrap()
+            .contains("types.idea:2:16:")
+    );
+    assert!(!String::from_utf8_lossy(&result.stdout).contains("child-private-sentinel"));
+    assert_eq!(original, snapshot(&output));
+}
+
+/// A malformed leaf at the default import-depth boundary must retain public coordinates.
+#[test]
+fn deepest_default_import_reports_the_leaf_diagnostic() {
+    let temp = temporary();
+    let output = temp.path().join("generated");
+    let depth = stackpress_idea::transformer::CompositionLimits::default().max_depth;
+    for index in 0..depth {
+        let source = if index + 1 == depth {
+            "model Profile {".to_owned()
+        } else {
+            format!("use \"{}.idea\"", index + 1)
+        };
+        std::fs::write(temp.path().join(format!("{index}.idea")), source).unwrap();
+    }
+    // Every import adds cause context; diagnosis must survive the entire allowed native chain.
+    let result = command(&temp.path().join("0.idea"), &output, &[]);
+    let envelope: Value = serde_json::from_slice(&result.stdout).unwrap();
+    assert_eq!(result.status.code(), Some(1));
+    assert_eq!(envelope["code"], 400);
+    assert!(
+        envelope["error"]
+            .as_str()
+            .unwrap()
+            .contains(&format!("{}.idea:1:16:", depth - 1))
+    );
+    assert!(!output.exists());
 }

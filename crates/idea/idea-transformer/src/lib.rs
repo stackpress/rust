@@ -1,9 +1,12 @@
 //! Build-host transforms over Idea config, with exclusive cooperative output ownership.
 //!
-//! Nothing here starts an async runtime or listener. M0 proves sequential function transforms,
-//! explicit output partitions, drift checking and recoverable staging. File composition,
-//! dependency-rich plugin preflight and general auxiliary-input tracking remain later milestones.
-//! Trusted plugin code is ordinary Rust, not a filesystem sandbox.
+//! Native and in-memory loaders compose bounded importer-relative Idea/JSON sources, retaining
+//! typed reference sites and declaration provenance for explicit parser finalization. Selected
+//! function transforms run sequentially after dependency/contract preflight, with declared input
+//! snapshots and disjoint output partitions. The native writer checks drift and stages owned
+//! output with cooperative locking and explicit recovery; it promises no crash atomicity.
+//! Nothing here starts an async runtime or listener. Trusted Rust plugins and source resolution
+//! roots are not filesystem sandboxes. General template rendering remains a separate task.
 
 mod compose;
 mod output;

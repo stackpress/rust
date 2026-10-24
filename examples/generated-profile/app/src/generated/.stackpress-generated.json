@@ -3,15 +3,18 @@
   "files": {
     "contracts/profile.rs": {
       "owner": "profile-demo",
-      "sha256": "db7ce1728b050d537a801d89cc3dcd8afd27963866f24703e7f4592db4b46907"
+      "sha256": "db7ce1728b050d537a801d89cc3dcd8afd27963866f24703e7f4592db4b46907",
+      "bytes": 285
     },
     "mod.rs": {
       "owner": "aggregate",
-      "sha256": "25e9f91a0d3628213e9c42a7ffc58d55908b72de99ace0c334b57d3bfdeda0a2"
+      "sha256": "25e9f91a0d3628213e9c42a7ffc58d55908b72de99ace0c334b57d3bfdeda0a2",
+      "bytes": 669
     },
     "server/profile.rs": {
       "owner": "profile-demo",
-      "sha256": "1c52534059e38baf9119bd118eefe6e2e237257fc908dab6fb8301a190fc44aa"
+      "sha256": "1c52534059e38baf9119bd118eefe6e2e237257fc908dab6fb8301a190fc44aa",
+      "bytes": 6137
     }
   }
 }

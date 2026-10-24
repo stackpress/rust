@@ -44,9 +44,28 @@ the fixed demo rows, case-sensitive ID-prefix search, validated configuration an
 model/column metadata or plugin settings. General field mapping belongs to a later schema layer.
 
 The app's aggregate function emits the root registry; the transformer owns its manifest.
-The application calls
-`generated::register`; it never imports `Profile` by hand. Removing the model therefore removes
+The application calls `generated::register`; it never imports `Profile` by hand. Removing the model removes
 its files, exports and registration while leaving a compiling application that returns 404.
+
+The codegen tool composes sources through a `ProjectLoader` rooted at the app, then the
+`stackpress_idea::generate` wrapper resolves typed references and plans the selected transforms.
+[codegen/src/profile.rs](codegen/src/profile.rs) owns the Profile mapping and its declared
+runtime-template snapshot. The CLI host owns path options, diagnostics and the awaited worker.
+
+## Split a schema into files
+
+Move the displayed Profile model into a sibling `types.idea`, then keep the root input small:
+
+```idea
+plugin "profile-demo" { }
+use "./types.idea"
+```
+
+Run the same generation command. Imports resolve relative to the importing file; `@/` resolves
+from the app's project root. The output is byte-identical to the inline model. The native
+[generation tests](codegen/tests/generation.rs) exercise this change in a disposable directory,
+including child-file diagnostics and unchanged output after a malformed import. Keeping the
+checked-in model inline makes the first author example easier to read.
 
 ## Check freshness before building
 
