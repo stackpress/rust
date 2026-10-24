@@ -5,8 +5,18 @@
 //! dependency-rich plugin preflight and general auxiliary-input tracking remain later milestones.
 //! Trusted plugin code is ordinary Rust, not a filesystem sandbox.
 
+mod compose;
 mod output;
 mod registry;
+mod source;
+
+pub use compose::{
+    ComposedSchema, Composer, CompositionLimits, ImportEdge, ReferenceKind, ReferencePath,
+    ReferenceSite, ReferenceSpan,
+};
+pub use source::{
+    LoadError, LoadedSource, MemoryLoader, ProjectLoader, SourceId, SourceKind, SourceLoader,
+};
 
 use std::fmt;
 use std::io::Read;
