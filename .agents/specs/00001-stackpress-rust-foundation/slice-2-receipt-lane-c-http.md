@@ -1,5 +1,7 @@
 # Lane C: buffered HTTP implementation stop
 
+Spec file of [00001 Stackpress Rust foundation](index.md), recording lane C of [task 00005](tasks/00005-slice-2-server-and-cli.md). Load for the buffered `http` adapter (event selection, normalization, limits, body parsing, response conversion, output authority), its known limitations, and its verification. Moved losslessly from `crates/server/LANE-C-RECEIPT.md` (lane branch commit `96dd37c`, merged in `9d96fd7`).
+
 Date: 2026-10-24. Branch: `trial/3-lane-c-http`, based on
 `f19f37d2260150536e9c8c5448bee56726bf4c56` (accepted M1/M2).
 This is the HTTP milestone stop for coordinator review, before formal refactoring rounds.

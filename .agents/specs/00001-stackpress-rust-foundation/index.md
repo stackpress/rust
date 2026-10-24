@@ -42,3 +42,4 @@ Approved with G12–G16 and coordinator DX changes; only M0 is released. Load th
 - [00005 Slice 2 server and CLI](tasks/00005-slice-2-server-and-cli.md): load for the `stackpress-server` capability host and CLI adapter task, its Gaps, and its receipts.
 - [Slice 2 lane B CLI receipt](slice-2-receipt-lane-b-cli.md): load for the `stackpress-cli` parsing/control/prompt/TTY implementation, its upstream inventory disposition, rounds 1–4, and verification.
 - [Slice 2 lane D proof-app receipt](slice-2-receipt-lane-d-app.md): load for the `examples/capability-host` profiles proof application, its example-coverage measurement method, and which proof items are demonstrated.
+- [Slice 2 lane C HTTP receipt](slice-2-receipt-lane-c-http.md): load for the buffered HTTP adapter's contract, limitations (e.g. list-valued session cookies need an explicit codec), tests, and coverage.

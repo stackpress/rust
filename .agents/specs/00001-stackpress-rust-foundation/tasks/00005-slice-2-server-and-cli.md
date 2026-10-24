@@ -264,6 +264,18 @@ Trees are retained as `target/slice2-receipts/server-default.tree` and `server-h
 - The receipt moved losslessly to [slice-2-receipt-lane-d-app.md](../slice-2-receipt-lane-d-app.md).
 - Remaining for lane D after lanes B and C merge: the application `stackpress` binary via `stackpress_cli::main_with`, and the HTTP-path parity proof.
 
+
+**Lane C re-verification and merge (coordinator, 2026-10-24): passed; merged.**
+
+- Checks rerun in the lane worktree: fmt passed; 53 `stackpress-server --features http` tests and 77 default workspace tests passed, 0 failed; Clippy warning-free with default features and with `server-http`; Rustdoc warning-free; zero lines over 100 columns.
+- Coverage after `cargo llvm-cov clean --workspace`: `stackpress-server --features http` 93.72% (1,911 lines); `http.rs` 98.16%.
+- Shared edit: the only change outside lane C's files is the coordinator-authorized replacement of the `input_failure` dead-code allowance with `#[cfg(any(feature = "http", test))]` plus a comment.
+- Coordinator decisions during the lane: list-valued session cookies keep the explicit-codec requirement, with a named diagnostic in the report and a sanitized 500 on the wire; a future `HttpOptions` codec is noted, not built. The fixed empty-500 fallback starts from a fresh `Response`.
+- Committed as `96dd37c` on `trial/3-lane-c-http` and merged into `trial/3` as `9d96fd7`; the lockfile is consistent.
+- Merged workspace with `server-http`: 123 tests passed, 0 failed; 322 doctests; Clippy clean in both feature sets.
+- Receipt moved losslessly to [slice-2-receipt-lane-c-http.md](../slice-2-receipt-lane-c-http.md).
+- Round finding to carry: `http.rs` inline-comment density is about 9 per 100 code lines, below the 13–23 reached elsewhere.
+
 ## Acceptance notes
 
 Library, host, and CLI work has no visual acceptance artifact under the spec workflow; this task finishes at `verified` after coordinator review.
