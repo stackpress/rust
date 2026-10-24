@@ -127,7 +127,7 @@ python3 examples/generated-profile/verify-m0.py
 
 Results: inspectable source; unchanged output passes check; native search returns Ada Lovelace,
 id abc123, total 1; repeat output is byte-identical. The
-[disposable verification script](../../../../examples/generated-profile/verify-m0.py) contains
+disposable verification script `examples/generated-profile/verify-m0.py` (removed by lane D in `20bb649` and replaced by Rust consumer tests; recoverable at `54b188e`) contains
 the exact Cargo commands for independent consumers and compile-fail cases, enforces per-process
 180-second deadlines and only mutates copies under `/private/tmp/stackpress-slice3-m0-*`.
 The last proof output and its temporary path are retained in `target/slice-3-m0-proof.log`.

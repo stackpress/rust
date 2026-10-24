@@ -23,13 +23,13 @@ than working around M0's rejection.
 - Added explicit rejection of ignored plugin settings and expanded unsupported-shape tests
   for field order, optional/list types and model/column metadata. The generator still owns
   exactly the advertised Profile shape and demo operation.
-- Added [README.md](README.md) using the installed chrisai-docing guided-learning guidance:
+- Added [README.md](../../../examples/generated-profile/README.md) using the installed chrisai-docing guided-learning guidance:
   first generation/search, generated layout, freshness, explicit paths, matching disabled
   builds and conservative output recovery. The disabled instructions await lane C integration.
 - App parity now compares complete generated envelopes against the **actual** Slice 2 host,
   including missing/empty/typed input failures, as well as CLI/direct/buffered HTTP success.
   The prior example source remains unchanged. Its new dependency is dev-only.
-- Replaced `verify-m0.py` with [Rust consumer tests](codegen/tests/consumer.rs): independently
+- Replaced `verify-m0.py` with [Rust consumer tests](../../../examples/generated-profile/codegen/tests/consumer.rs): independently
   copied tool/app sources, no initial generated tree, real Cargo builds, repeated generation,
   freshness, selection/revision compile failures, a Serde-only contracts consumer, model
   removal, and selected-to-disabled cleanup. Disposable app tests check removed registration
