@@ -23,9 +23,9 @@ Spec file of [00001 Stackpress Rust foundation](index.md). Load to see freeze re
 | --- | --- | --- |
 | 0 + 1 | Verified; committed on `trial/3` as `e230359` | Tasks 00001–00003; `stackpress-lib` line coverage 92.95%; 37 integration tests and 263 doctests passing. |
 | 2 | Verified; committed on `trial/3` | Task 00005; 143 workspace tests, 394 doctests; coverage lib 92.96%, server 92.62%/94.23% (http), CLI 96.32%, example 100%; CLI = HTTP = direct-call proof. |
-| 3 | Started (task 00006): design checkpoint | Owner accepted 2026-10-24, in parallel with docs task 00005A. |
+| 3 | Verified; committed on `trial/3` | Task 00006; 262 workspace tests, 430 doctests; coverage parser 94.44%, transformer 96.38%, wrapper 100%, codegen 95.27%, generated app 81.31%; imports compose end to end; generated app has no generator dependency. |
 | 4–5 | Proposed | Awaiting owner approval. |
 
 ## Next action
 
-Coordinator reviews the Slice 3 design checkpoint (task 00006) and the server/CLI docs (task 00005A), which are running in parallel.
+Owner chooses what follows Slice 3: an Idea usage/API docs task, Slice 4 (SQL) or Slice 5 (UI). Both slices are still proposed. The optional polish items from task 00005A remain unscheduled.

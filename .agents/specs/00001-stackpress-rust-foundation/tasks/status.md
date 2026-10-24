@@ -13,6 +13,6 @@ Status values follow the spec task implementation workflow: `proposed`, `open`, 
 | [00004A Envelope JSON conversion respects custom limits](00004A-envelope-json-limits.md) | verified | Side quest of 00004, approved by the owner 2026-10-24 and scoped to the envelope-limits defect only; the other DX observations remain documented behavior. Acceptance criteria: none. Coordinator-verified 2026-10-24. |
 | [00005 Slice 2 server and CLI](00005-slice-2-server-and-cli.md) | verified | Owner accepted 2026-10-24; four parallel lanes merged; coordinator closeout verified 2026-10-24. Acceptance criteria: none. |
 | [00005A Server and CLI docs](00005A-server-and-cli-docs.md) | verified | Owner accepted 2026-10-24; coordinator-reviewed 2026-10-24. Acceptance criteria: none. |
-| [00006 Slice 3 Idea](00006-slice-3-idea.md) | started | Owner accepted 2026-10-24. Design checkpoint, including parser-branch assessment, in progress. Acceptance criteria: none. |
+| [00006 Slice 3 Idea](00006-slice-3-idea.md) | verified | Owner accepted 2026-10-24; four parallel lanes merged; coordinator closeout verified 2026-10-25. Acceptance criteria: none. |
 | 00007 Slice 4 SQL | proposed | Task file created on owner acceptance. |
 | 00008 Slice 5 UI | proposed | Task file created on owner acceptance. |

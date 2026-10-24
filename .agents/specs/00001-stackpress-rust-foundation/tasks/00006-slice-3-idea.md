@@ -230,6 +230,52 @@ engine, database, UI or new toolchain dependency was introduced.
   - The demo generator deliberately accepts only `Profile { id String name String }` and emits a fixed server module (`profile.rs.txt`) that uses the generated contract type, consistent with G20. General type mapping belongs to the later schema layer.
   - `--check true` follows the G14/Slice 1 argv grammar. Upstream `ArgString` likewise has no bare boolean long flag (it drops a dangling `--key`), so no grammar change is made. A short `-c` alias in the codegen tool remains an option.
 
+**Slice 3 closeout (coordinator, 2026-10-25): verified.**
+
+- **Integration:** all four lanes merged on `trial/3`.
+  - Lane A rounds: `c90ef7e` ([receipt](../slice-3-receipt-lane-a-rounds.md)). Parser public declarations are unchanged against `8bdca2c`.
+  - Lane B real-reference composition: `a5c9a13` ([receipt](../slice-3-receipt-lane-b-integration.md)). The `ReferenceSite*` placeholders are removed, and `stackpress_idea_transformer::Reference` re-exports the parser type.
+  - Lane C writer rounds plus three ownership fixes: `90b9dc4` ([receipt](../slice-3-receipt-lane-c-rounds.md)).
+  - Lane D wrapper composition and M4: `b4f3750` ([receipt](../slice-3-receipt-lane-d-m4.md)).
+- **Behavior changes, all defect fixes approved by the coordinator:**
+  - Plans reject ancestor directories that differ only by case.
+  - Special files such as FIFOs are rejected before opening, so a read can't block.
+  - Cleanup keeps the ownership marker until the retained tree is otherwise empty.
+  - An import-depth-32 parser diagnostic now returns the accepted 400 instead of 500.
+- **Wrapper API (planned reshape):** `generate(GenerateRequest, impl SourceLoader, &Registry, &OutputWorkspace) -> Result<CheckReport>` with `GenerationMode::{Check, Install}`. The function composes, runs `finalize_with_references`, then `plan_with`, all before any workspace IO.
+- **Coordinator caught a native-only failure:** lane C's non-UTF-8 filename test failed outside the sandbox, because APFS returns EILSEQ while the sandbox returns EPERM. The fix was test-only.
+- **Checks rerun by the coordinator on the integrated tree:**
+  - fmt passed;
+  - 262 workspace tests passed, 0 failed, and 430 doctests passed;
+  - Clippy `-D warnings` and Rustdoc `-D warnings` are clean;
+  - `cargo +1.96.0 check --workspace --all-targets` passed;
+  - codegen `--no-default-features` 2/2 and `stackpress-server --no-default-features` 32/32.
+- **End to end:**
+  - `cargo run -p stackpress-example-profile-codegen -- emit generate -c` printed `differences: []`, exit 0. The committed manifest only gained the writer's existing optional `bytes` field; generated Rust SHA-256 values are unchanged.
+  - A malformed `--input` returned public 400 `broken.idea:3:15: …`, exit 1.
+- **Generator isolation:** `cargo tree --edges normal` for `stackpress-example-generated-profile` and the default `stackpress` facade shows no `stackpress-idea*`, `tempfile` or `sha2`.
+- **Coverage**, each measurement after `cargo llvm-cov clean --workspace`:
+
+  | Crate | Line coverage |
+  | --- | ---: |
+  | `stackpress-lib` | 92.96% |
+  | `stackpress-server` | 92.62% |
+  | `stackpress-cli` | 96.32% |
+  | `stackpress-idea-parser` | 94.44% |
+  | `stackpress-idea-transformer` | 96.38% |
+  | `stackpress-idea` | 100% |
+  | `stackpress-example-profile-codegen` | 95.27% |
+  | `stackpress-example-generated-profile` | 81.31% |
+  | `stackpress-example-capability-host` | 100% |
+
+  The generated-app figure counts its generated module under the coordinator's example regex. The app's Rust is byte-unchanged since the implementer's 94.44%.
+- **Limits carried forward:**
+  - cooperative single-writer ownership, with no crash-atomic or power-loss claim;
+  - non-UTF-8 native filenames are unprovable on this APFS host;
+  - Linux, Windows and WASM are unverified;
+  - the Profile-only demo generator is not a generic schema mapper;
+  - template engine deferred (G21).
+
 ## Acceptance notes
 
 Library and generator work has no visual acceptance artifact under the spec workflow; this task finishes at `verified` after coordinator review.
