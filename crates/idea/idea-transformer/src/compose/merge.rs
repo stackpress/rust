@@ -1,5 +1,7 @@
 //! Accepted upstream merge table, with the same subtree operations for origins and references.
 
+use stackpress_idea_parser::{DeclarationKind, Reference, TypeConfig};
+
 use crate::SourceId;
 
 use super::Snapshot;
@@ -90,36 +92,12 @@ pub(super) fn merge(local: &mut Snapshot, child: &Snapshot) {
             let prefix = vec![kind.into(), name.clone()];
             match accumulated {
                 // G19: an immutable accumulated local is replaced, not protected from imports.
-                None | Some(stackpress_idea_parser::TypeConfig { mutable: false, .. }) => {
+                None | Some(TypeConfig { mutable: false, .. }) => {
                     replace_metadata(local, child, &prefix);
                 }
                 Some(accumulated) => {
                     // Only absent attributes/columns adopt child origins and reference sites.
-                    let mut adopted = Vec::new();
-                    for attribute in imported.attributes.keys() {
-                        if !accumulated.attributes.contains_key(attribute) {
-                            adopted.push(vec![
-                                kind.into(),
-                                name.clone(),
-                                "attributes".into(),
-                                attribute.clone(),
-                            ]);
-                        }
-                    }
-                    for column in &imported.columns {
-                        if !accumulated
-                            .columns
-                            .iter()
-                            .any(|own| own.name == column.name)
-                        {
-                            adopted.push(vec![
-                                kind.into(),
-                                name.clone(),
-                                "columns".into(),
-                                column.name.clone(),
-                            ]);
-                        }
-                    }
+                    let adopted = adopted_members(kind, name, accumulated, imported);
                     for prefix in adopted {
                         replace_metadata(local, child, &prefix);
                     }
@@ -141,11 +119,75 @@ pub(super) fn merge(local: &mut Snapshot, child: &Snapshot) {
     }
 }
 
+/// Identify absent child members without mixing precedence decisions with metadata mutation.
+fn adopted_members(
+    kind: &str,
+    name: &str,
+    accumulated: &TypeConfig,
+    imported: &TypeConfig,
+) -> Vec<Vec<String>> {
+    let mut adopted = Vec::new();
+    // An absent declaration attribute adopts the child's complete argument list and its sites.
+    for attribute in imported.attributes.keys() {
+        if !accumulated.attributes.contains_key(attribute) {
+            adopted.push(vec![
+                kind.into(),
+                name.into(),
+                "attributes".into(),
+                attribute.clone(),
+            ]);
+        }
+    }
+    // A column collision retains every local field and site; only wholly absent columns move.
+    for column in &imported.columns {
+        if !accumulated
+            .columns
+            .iter()
+            .any(|own| own.name == column.name)
+        {
+            adopted.push(vec![
+                kind.into(),
+                name.into(),
+                "columns".into(),
+                column.name.clone(),
+            ]);
+        }
+    }
+    adopted
+}
+
+/// Match a real parser reference to its surviving declaration, attribute or whole column.
+fn reference_is_within(reference: &Reference, prefix: &[String]) -> bool {
+    let kind = match reference.kind {
+        DeclarationKind::Type => "type",
+        DeclarationKind::Model => "model",
+    };
+    // Structural names are stable when child-only columns prepend; numeric offsets are not.
+    if prefix.first().map(String::as_str) != Some(kind)
+        || prefix.get(1) != Some(&reference.declaration)
+    {
+        return false;
+    }
+    match prefix.get(2).map(String::as_str) {
+        // Declaration adoption/G19 replacement selects all descendant reference sites.
+        None => true,
+        // Declaration attributes must not select a same-named attribute owned by a column.
+        Some("attributes") => {
+            reference.column.is_none() && prefix.get(3) == Some(&reference.attribute)
+        }
+        // Whole-column adoption retains nested value paths without remapping numeric positions.
+        Some("columns") => reference.column.as_ref() == prefix.get(3),
+        _ => false,
+    }
+}
+
 /// Move a winning declaration/member's origins and typed sites as one inseparable subtree.
 fn replace_metadata(local: &mut Snapshot, child: &Snapshot, prefix: &[String]) {
     // Remove every losing descendant, including typed sites when G19 replaces a declaration.
     local.provenance.retain(|path, _| !path.starts_with(prefix));
-    local.references.retain(|site| !site.is_within(prefix));
+    local
+        .references
+        .retain(|site| !reference_is_within(site, prefix));
     local.provenance.extend(
         child
             .provenance
@@ -157,7 +199,8 @@ fn replace_metadata(local: &mut Snapshot, child: &Snapshot, prefix: &[String]) {
         child
             .references
             .iter()
-            .filter(|site| site.is_within(prefix))
+            .filter(|site| reference_is_within(site, prefix))
+            // Copies retain target, path, original coordinates and source-local forward policy.
             .cloned(),
     );
 }

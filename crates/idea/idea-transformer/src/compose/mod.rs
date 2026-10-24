@@ -1,20 +1,21 @@
 //! Finite per-run import composition with immutable child snapshots and effective provenance.
 //!
-//! This layer returns non-final config. M0's parser exposes placeholder strings only; the
-//! reference seam deliberately stays empty until integration with lane A's typed compiler.
-//! It never guesses references from literal text that happens to look like `${Name}`.
+//! This layer returns non-final config and actual typed reference sites. Call the parser's
+//! `finalize_with_references` on the completed result to resolve only those sites. Literal
+//! strings such as `${Name}` remain ordinary data throughout import composition.
 
+mod compile;
 mod json;
 mod merge;
 
 use std::collections::{BTreeMap, HashMap};
 use std::io::{self, Write};
 
-use serde::Serialize;
+use stackpress_idea_parser::{CompileInputs, Reference, SchemaConfig};
 
-use stackpress_idea_parser::{CompileInputs, SchemaConfig};
+use compile::compile_source;
 
-use crate::{LoadedSource, Result, SourceId, SourceKind, SourceLoader, TransformError};
+use crate::{LoadedSource, Result, SourceId, SourceLoader, TransformError};
 
 /// Lowerable composition budgets; all counters reset for every [`Composer::compose`] call.
 #[derive(Debug, Clone, Copy)]
@@ -29,7 +30,7 @@ pub struct CompositionLimits {
     pub max_depth: usize,
     /// Maximum import edges visited, including repeated edges in distinct parents.
     pub max_imports: usize,
-    /// Cumulative serialized config bytes charged before publishing or copying snapshots.
+    /// Cumulative config/reference bytes charged before publishing or copying snapshots.
     /// This bounds diamond expansion work as well as retained config; collisions still charge.
     pub max_expanded_bytes: usize,
     /// Maximum JSON value nodes per normalized input, counted before deserializing each node.
@@ -67,91 +68,30 @@ pub struct ImportEdge {
     pub imported: SourceId,
 }
 
-/// Temporary typed-reference integration seam, carried with each surviving declaration part.
-///
-/// Its fields mirror lane A's additive `Reference` contract. Actual parser references will
-/// replace this shim after integration. The frozen M0 adapter supplies none; no string
-/// placeholders are inferred. Column identities are names, never unstable vector indexes.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
-pub struct ReferenceSite {
-    /// Declaring type/model namespace.
-    pub kind: ReferenceKind,
-    /// Name of the owning declaration.
-    pub declaration: String,
-    /// Whole-column owner, when the attribute belongs to a column.
-    pub column: Option<String>,
-    /// Open attribute name containing the reference.
-    pub attribute: String,
-    /// Argument/nested-value path, independent of declaration and column array positions.
-    pub path: Vec<ReferencePath>,
-    /// Referenced declaration name, distinct from a literal value.
-    pub target: String,
-    /// Source identity and coordinates of the actual reference syntax.
-    pub span: ReferenceSpan,
-    /// Whether the target was declared at or after its owner in the same source.
-    pub forward: bool,
-}
-
-/// Temporary declaration-kind shim, replaced with the parser enum during integration.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
-pub enum ReferenceKind {
-    /// A reusable fieldset declaration.
-    Type,
-    /// A model declaration.
-    Model,
-}
-
-/// Temporary nested-value path shim, replaced with the parser enum during integration.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
-pub enum ReferencePath {
-    /// One argument/array entry.
-    Index(usize),
-    /// One object property.
-    Key(String),
-}
-
-/// Temporary source-span shim with the same fields as lane A's additive parser contract.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
-pub struct ReferenceSpan {
-    /// Logical source identity, retained with the winning declaration.
-    pub file: String,
-    /// Inclusive UTF-8 byte offset.
-    pub start: usize,
-    /// Exclusive UTF-8 byte offset.
-    pub end: usize,
-    /// One-based source line.
-    pub line: usize,
-    /// One-based Unicode-scalar column.
-    pub column: usize,
-}
-
-impl ReferenceSite {
-    /// Match a declaration, declaration attribute or whole-column provenance subtree.
-    fn is_within(&self, prefix: &[String]) -> bool {
-        let kind = match self.kind {
-            ReferenceKind::Type => "type",
-            ReferenceKind::Model => "model",
-        };
-        // Metadata prefixes are structural declaration names; argument paths never relocate.
-        if prefix.first().map(String::as_str) != Some(kind)
-            || prefix.get(1) != Some(&self.declaration)
-        {
-            return false;
-        }
-        match prefix.get(2).map(String::as_str) {
-            None => true,
-            Some("attributes") => self.column.is_none() && prefix.get(3) == Some(&self.attribute),
-            Some("columns") => self.column.as_ref() == prefix.get(3),
-            _ => false,
-        }
-    }
-}
-
 /// Owned composition result, including source snapshots and the origin of every surviving part.
 ///
 /// Config imports are consumed; props and unresolved references remain non-final. Child plugin
 /// declarations are inert and never enter the root plugin selection. Cloning copies ordinary
 /// data deeply. Source snapshots may contain secrets and are for deliberate developer access.
+/// Finalization is explicit and uses the parser's checked reference-aware boundary; it does not
+/// load files or reinterpret placeholder-looking literal strings.
+///
+/// # Examples
+/// ```
+/// use stackpress_idea_parser::{CompileInputs, finalize_with_references};
+/// use stackpress_idea_transformer::{Composer, CompositionLimits, MemoryLoader};
+/// let mut loader = MemoryLoader::new("/project")?;
+/// loader.insert("root.idea", "use \"child\"");
+/// loader.insert("child.idea", "prop Name { label \"resolved\" } \
+///     model Read @value(Name \"${Name}\") { id String }");
+/// let composed = Composer::new(loader, CompositionLimits::default()).compose("root")?;
+/// let schema = finalize_with_references(&composed.config, &composed.references,
+///     &CompileInputs::default())?;
+/// let json = serde_json::to_value(schema)?;
+/// assert_eq!(json["model"]["Read"]["attributes"]["value"],
+///     serde_json::json!([{"label":"resolved"}, "${Name}"]));
+/// # Ok::<(), Box<dyn std::error::Error>>(())
+/// ```
 #[derive(Debug, Clone)]
 pub struct ComposedSchema {
     /// Effective ordered non-final configuration.
@@ -163,8 +103,10 @@ pub struct ComposedSchema {
     /// Origins keyed by structural paths; declaration roots, attributes and whole columns
     /// receive separate entries so a mutable merge retains precise winning provenance.
     pub provenance: BTreeMap<Vec<String>, SourceId>,
-    /// Effective typed-reference sites; empty until the additive parser adapter is integrated.
-    pub references: Vec<ReferenceSite>,
+    /// Actual parser references with their original source spans and source-local forward flags.
+    /// A typed JSON envelope can retain an original Idea filename; `provenance` and `imports`
+    /// separately identify the JSON artifact through which that declaration was acquired.
+    pub references: Vec<Reference>,
 }
 
 /// Immutable configuration and source adapter for independent synchronous composition runs.
@@ -239,7 +181,7 @@ struct Snapshot {
     /// Origins travel with declaration roots/attributes/whole columns.
     provenance: BTreeMap<Vec<String>, SourceId>,
     /// Typed-reference payload travels through exactly the same subtree operations.
-    references: Vec<ReferenceSite>,
+    references: Vec<Reference>,
 }
 
 /// Mutable state belongs to one compose call; cached children are borrowed immutably.
@@ -279,6 +221,61 @@ impl<'a, L: SourceLoader> Run<'a, L> {
 
     /// Acquire a bounded snapshot, detect active cycles and compose each canonical file once.
     fn visit(&mut self, importer: Option<&SourceId>, specifier: &str) -> Result<SourceId> {
+        let loaded = self.acquire(importer, specifier)?;
+        let id = loaded.id.clone();
+        // Completed diamond targets share this call's immutable snapshot, never an active frame.
+        if let Some(position) = self.positions.get(&id) {
+            // Detect inconsistent custom/native snapshots rather than silently using stale data.
+            if self.sources[*position] != loaded {
+                return Err(TransformError::new(
+                    "canonical source changed during composition",
+                ));
+            }
+            return Ok(id);
+        }
+        if self.sources.len() >= self.composer.limits.max_files {
+            return Err(TransformError::new("canonical input file budget exceeded"));
+        }
+        let mut snapshot = compile_source(&loaded, &self.composer.inputs, self.composer.limits)?;
+        charge(
+            &snapshot.config,
+            &snapshot.references,
+            &mut self.remaining_expansion,
+        )?;
+        let uses = std::mem::take(&mut snapshot.config.r#use);
+        self.active.push((id.clone(), loaded.name.clone()));
+        self.positions.insert(id.clone(), self.sources.len());
+        self.sources.push(loaded);
+        // Each direct import merges sequentially; child snapshots are never edited by a parent.
+        // A failure discards this private Run, so its partially populated active stack cannot
+        // poison a subsequent compose call. Only the successful path publishes its cache entry.
+        for specifier in uses {
+            let importer_name = self
+                .active
+                .last()
+                .map(|(_, name)| name.clone())
+                .unwrap_or_else(|| "entry".into());
+            let child = self
+                .visit(Some(&id), &specifier)
+                .map_err(|cause| context(format!("import from {importer_name} failed"), cause))?;
+            let child = self
+                .cache
+                .get(&child)
+                .ok_or_else(|| TransformError::new("completed imported snapshot missing"))?;
+            charge(
+                &child.config,
+                &child.references,
+                &mut self.remaining_expansion,
+            )?;
+            merge::merge(&mut snapshot, child);
+        }
+        self.active.pop();
+        self.cache.insert(id.clone(), snapshot);
+        Ok(id)
+    }
+
+    /// Acquire and charge one edge before testing whether its canonical target was completed.
+    fn acquire(&mut self, importer: Option<&SourceId>, specifier: &str) -> Result<LoadedSource> {
         let limits = self.composer.limits;
         // Check depth/edges before loading another potentially large source.
         if self.active.len() >= limits.max_depth.min(CompositionLimits::HARD_DEPTH) {
@@ -317,66 +314,8 @@ impl<'a, L: SourceLoader> Run<'a, L> {
                 .join(" -> ");
             return Err(TransformError::new(format!("import cycle: {chain}")));
         }
-        if let Some(position) = self.positions.get(&id) {
-            // Detect inconsistent custom/native snapshots rather than silently using stale data.
-            if self.sources[*position] != loaded {
-                return Err(TransformError::new(
-                    "canonical source changed during composition",
-                ));
-            }
-            return Ok(id);
-        }
-        if self.sources.len() >= limits.max_files {
-            return Err(TransformError::new("canonical input file budget exceeded"));
-        }
-        let mut snapshot = compile_source(&loaded, &self.composer.inputs, limits)?;
-        charge(&snapshot.config, &mut self.remaining_expansion)?;
-        let uses = std::mem::take(&mut snapshot.config.r#use);
-        self.active.push((id.clone(), loaded.name.clone()));
-        self.positions.insert(id.clone(), self.sources.len());
-        self.sources.push(loaded);
-        // Each direct import merges sequentially; child snapshots are never edited by a parent.
-        for specifier in uses {
-            let importer_name = self
-                .active
-                .last()
-                .map(|(_, name)| name.clone())
-                .unwrap_or_else(|| "entry".into());
-            let child = self
-                .visit(Some(&id), &specifier)
-                .map_err(|cause| context(format!("import from {importer_name} failed"), cause))?;
-            let child = self
-                .cache
-                .get(&child)
-                .ok_or_else(|| TransformError::new("completed imported snapshot missing"))?;
-            charge(&child.config, &mut self.remaining_expansion)?;
-            merge::merge(&mut snapshot, child);
-        }
-        self.active.pop();
-        self.cache.insert(id.clone(), snapshot);
-        Ok(id)
+        Ok(loaded)
     }
-}
-
-/// Compile the frozen M0 config and initialize metadata at the additive reference seam.
-fn compile_source(
-    source: &LoadedSource,
-    inputs: &CompileInputs,
-    limits: CompositionLimits,
-) -> Result<Snapshot> {
-    // Both grammars share caller-lowered byte/depth policy; JSON also has a node counter.
-    let config = match source.kind {
-        SourceKind::Idea => stackpress_idea_parser::parse(&source.name, &source.text, inputs)
-            .map_err(|cause| context(format!("Idea source {} failed", source.name), cause))?,
-        SourceKind::Json => json::parse(source, inputs.limits, limits.max_json_nodes)?,
-    };
-    let mut snapshot = Snapshot {
-        config,
-        ..Snapshot::default()
-    };
-    merge::record_origins(&mut snapshot, &source.id);
-    // Integration replaces this empty reference vector with lane A's owned typed sites.
-    Ok(snapshot)
 }
 
 /// Preserve typed causes while public Display supplies only the current safe phase context.
@@ -390,14 +329,19 @@ fn context(
     }
 }
 
-/// Charge serialized size without allocating a serialized copy of the untrusted schema.
-fn charge(config: &SchemaConfig, remaining: &mut usize) -> Result<()> {
+/// Charge config and actual reference metadata before a snapshot is retained or copied.
+fn charge(config: &SchemaConfig, references: &[Reference], remaining: &mut usize) -> Result<()> {
     // The writer refuses excess bytes as serialization proceeds, before cloning a child.
     let mut counter = Counter {
         remaining: *remaining,
     };
     serde_json::to_writer(&mut counter, config)
         .map_err(|cause| context("composed config expansion budget exceeded", cause))?;
+    // Real reference payloads are copied with their owner; charge them before the merge too.
+    if !references.is_empty() {
+        serde_json::to_writer(&mut counter, references)
+            .map_err(|cause| context("composed reference expansion budget exceeded", cause))?;
+    }
     *remaining = counter.remaining;
     Ok(())
 }
