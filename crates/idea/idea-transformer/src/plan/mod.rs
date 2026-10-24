@@ -2,8 +2,9 @@
 
 use std::collections::BTreeMap;
 
-use crate::registry::valid_path;
+mod path;
 use crate::{GeneratedFile, Result, TransformError};
+pub(crate) use path::{paths_collide, valid_path};
 
 /// One plugin's declaration for a public module in its exclusive partition.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -73,6 +74,7 @@ impl OutputPlan {
     /// ```
     pub fn write(&mut self, path: impl Into<String>, contents: impl Into<String>) -> Result<()> {
         let path = path.into();
+        // Copy only the owner ID so insertion can borrow the plan mutably after authorization.
         let owner = self.authorize(&path)?.to_owned();
         self.insert(&owner, GeneratedFile::new(path, contents))
     }
@@ -153,6 +155,7 @@ impl OutputPlan {
                 "duplicate generated output ownership or path collision",
             ));
         }
+        // Failed claims leave both ownership and aggregate byte accounting unchanged.
         self.bytes = bytes.unwrap_or_default();
         self.files.insert(file.path, (owner.into(), file.contents));
         Ok(())
@@ -184,6 +187,7 @@ impl OutputPlan {
                 .1
                 .push_str(&format!("pub mod {};\n", item.module));
         }
+        // Empty selections leave app-supplied aggregates intact instead of inventing a module.
         if !partitions.is_empty() {
             let mut root = String::new();
             for (partition, contents) in partitions {
@@ -197,15 +201,6 @@ impl OutputPlan {
         }
         Ok(())
     }
-}
-
-/// Reject file and ancestor collisions using portable ASCII case folding.
-pub(crate) fn paths_collide(left: &str, right: &str) -> bool {
-    let left = left.to_ascii_lowercase();
-    let right = right.to_ascii_lowercase();
-    left == right
-        || left.starts_with(&format!("{right}/"))
-        || right.starts_with(&format!("{left}/"))
 }
 
 /// Accept conservative Rust module identifiers without injecting reserved keywords.

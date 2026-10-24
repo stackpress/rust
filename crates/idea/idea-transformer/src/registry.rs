@@ -5,6 +5,7 @@ use std::collections::BTreeSet;
 
 use stackpress_idea_parser::SchemaConfig;
 
+pub(crate) use crate::plan::valid_path;
 use crate::{Result, TransformError};
 
 mod context;
@@ -86,6 +87,31 @@ impl TransformSpec {
         self.contracts.push((id.into(), revision.into()));
         self
     }
+
+    /// Bound prerequisite/contract metadata before the registry records any registration.
+    fn validate_requirements(&self) -> Result<()> {
+        // Required and optional lists share syntax/duplicate checks, but not presence policy.
+        for requirements in [&self.requires, &self.optional] {
+            if requirements.len() > 1024 {
+                return Err(TransformError::new("prerequisite budget"));
+            }
+            for (index, id) in requirements.iter().enumerate() {
+                if id.is_empty() || id.len() > 128 || requirements[..index].contains(id) {
+                    return Err(TransformError::new("invalid or duplicate prerequisite"));
+                }
+            }
+        }
+        if self.contracts.len() > 1024 || self.partitions.len() > 1024 {
+            return Err(TransformError::new("transform metadata budget"));
+        }
+        for (index, (id, revision)) in self.contracts.iter().enumerate() {
+            context::valid_contract(id, revision)?;
+            if self.contracts[..index].iter().any(|(prior, _)| prior == id) {
+                return Err(TransformError::new("duplicate required runtime contract"));
+            }
+        }
+        Ok(())
+    }
 }
 
 /// Either frozen M0 callbacks or the additive contextual function API.
@@ -123,7 +149,10 @@ impl Registry {
         Self::default()
     }
 
-    /// Add an M0 function with disjoint, nonempty, single-component partitions.
+    /// Add an M0 function with exclusive, single-component partitions.
+    ///
+    /// Each declared partition must be nonempty. An empty list is valid for functions that
+    /// emit no files; legacy functions still run in the same listed order as contextual ones.
     ///
     /// # Errors
     /// Rejects duplicate IDs, overlapping/invalid partitions and an empty ID without mutation.
@@ -173,6 +202,15 @@ impl Registry {
                 "empty, reserved or duplicate generator ID or budget",
             ));
         }
+        // Preserve validation precedence while keeping ownership and metadata checks separate.
+        self.validate_partitions(&spec)?;
+        spec.validate_requirements()?;
+        self.registrations.push(Registration { spec, callback });
+        Ok(())
+    }
+
+    /// Reject partition aliases before a failed registration can reserve any ownership.
+    fn validate_partitions(&self, spec: &TransformSpec) -> Result<()> {
         // Partition case aliases are conflicts even when this machine is case-sensitive.
         for (index, part) in spec.partitions.iter().enumerate() {
             valid_path(part)?;
@@ -190,27 +228,6 @@ impl Registry {
                 return Err(TransformError::new("generator partition conflict"));
             }
         }
-        // Metadata is bounded independently of callback count or output size.
-        for requirements in [&spec.requires, &spec.optional] {
-            if requirements.len() > 1024 {
-                return Err(TransformError::new("prerequisite budget"));
-            }
-            for (index, id) in requirements.iter().enumerate() {
-                if id.is_empty() || id.len() > 128 || requirements[..index].contains(id) {
-                    return Err(TransformError::new("invalid or duplicate prerequisite"));
-                }
-            }
-        }
-        if spec.contracts.len() > 1024 || spec.partitions.len() > 1024 {
-            return Err(TransformError::new("transform metadata budget"));
-        }
-        for (index, (id, revision)) in spec.contracts.iter().enumerate() {
-            context::valid_contract(id, revision)?;
-            if spec.contracts[..index].iter().any(|(prior, _)| prior == id) {
-                return Err(TransformError::new("duplicate required runtime contract"));
-            }
-        }
-        self.registrations.push(Registration { spec, callback });
         Ok(())
     }
 
@@ -244,6 +261,24 @@ impl Registry {
     ///
     /// # Errors
     /// Returns preflight or callback failures, preserving contextual callback errors as causes.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_idea_transformer::{OutputPlan, Registry, Result, TransformContext};
+    /// use stackpress_idea_transformer::{TransformInputs, TransformSelection, TransformSpec};
+    /// fn emit(context: &TransformContext<'_>, plan: &mut OutputPlan) -> Result<()> {
+    ///     plan.write("data/model.txt", context.input("templates/model.txt")?)
+    /// }
+    /// let mut inputs = TransformInputs::new();
+    /// inputs.insert("templates/model.txt", "model body")?;
+    /// let selection = TransformSelection::new().with_inputs(inputs);
+    /// let mut registry = Registry::new();
+    /// registry.add(TransformSpec::new("model").owns(&["data"]), emit)?;
+    /// let plan = registry.plan_with(&Default::default(), &selection, vec![])?;
+    /// assert_eq!(plan.inputs(), &["templates/model.txt"]);
+    /// # Ok::<(), stackpress_idea_transformer::TransformError>(())
+    /// ```
     pub fn plan_with(
         &self,
         schema: &SchemaConfig,
@@ -268,6 +303,7 @@ impl Registry {
             }
             plan.insert("aggregate", file)?;
         }
+        // The access log is run-local; context accessors release every borrow before returning.
         let used = RefCell::new(BTreeSet::new());
         for item in &self.registrations {
             let spec = &item.spec;
@@ -292,9 +328,11 @@ impl Registry {
                     })?;
                 }
             }
+            // Close authority before recording completion or invoking the next plugin.
             plan.end();
             plan.executed.push(spec.id.clone());
         }
+        // BTreeSet order exposes consumed names deterministically without retaining their bytes.
         plan.inputs = used.into_inner().into_iter().collect();
         plan.finish_modules()?;
         Ok(plan)
@@ -338,30 +376,4 @@ impl Registry {
         }
         Ok(())
     }
-}
-
-/// Validate a portable output path before any filesystem operation.
-pub(crate) fn valid_path(path: &str) -> Result<()> {
-    if path.is_empty()
-        || path.len() > 240
-        || !path
-            .bytes()
-            .all(|byte| byte.is_ascii_alphanumeric() || b"_-./".contains(&byte))
-        || path.starts_with('.')
-        || path.split('/').count() > 16
-        || path.split('/').any(|part| {
-            let stem = part.split('.').next().unwrap_or("").to_ascii_uppercase();
-            part.is_empty()
-                || part == "."
-                || part == ".."
-                || part.ends_with('.')
-                || matches!(stem.as_str(), "CON" | "PRN" | "AUX" | "NUL")
-                || (stem.len() == 4
-                    && (stem.starts_with("COM") || stem.starts_with("LPT"))
-                    && stem.as_bytes()[3].is_ascii_digit())
-        })
-    {
-        return Err(TransformError::new("invalid relative generated path"));
-    }
-    Ok(())
 }
