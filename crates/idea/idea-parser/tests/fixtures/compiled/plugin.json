@@ -1,0 +1,24 @@
+{
+  "compiled": {
+    "plugin": {
+      "./custom-plugin": {
+        "provider": "custom-client-js",
+        "previewFeatures": [
+          "fullTextSearch"
+        ]
+      }
+    }
+  },
+  "resolved": {
+    "ok": {
+      "plugin": {
+        "./custom-plugin": {
+          "provider": "custom-client-js",
+          "previewFeatures": [
+            "fullTextSearch"
+          ]
+        }
+      }
+    }
+  }
+}

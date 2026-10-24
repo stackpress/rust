@@ -1,0 +1,10 @@
+{
+  "compiled": {
+    "use": [
+      "./some/other.idea"
+    ]
+  },
+  "resolved": {
+    "ok": {}
+  }
+}

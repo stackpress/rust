@@ -159,6 +159,11 @@ fn compile_data(token: &DataToken, references: Option<&References>) -> Result<Va
             Ok(Value::Array(compiled))
         }
         DataToken::Literal(value) => Ok(value.value.clone()),
+        DataToken::Environment(value) => Err(IdeaError::new(
+            ErrorCode::ValidationError,
+            "Environment node was not compiled",
+        )
+        .with_span(value.start, value.end)),
         DataToken::Identifier(value) => compile_identifier(value, references),
     }
 }

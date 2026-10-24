@@ -1,0 +1,241 @@
+{
+  "compiled": {
+    "model": {
+      "User": {
+        "name": "User",
+        "mutable": false,
+        "attributes": {
+          "label": [
+            "User",
+            "Users"
+          ]
+        },
+        "columns": [
+          {
+            "type": "String",
+            "name": "id",
+            "required": true,
+            "multiple": false,
+            "attributes": {
+              "label": [
+                "ID"
+              ],
+              "id": true,
+              "default": [
+                "nanoid(20)"
+              ]
+            }
+          },
+          {
+            "type": "String",
+            "name": "username",
+            "required": true,
+            "multiple": false,
+            "attributes": {
+              "label": [
+                "Username"
+              ],
+              "searchable": true,
+              "field.input": [
+                "${Text}"
+              ],
+              "is.required": true
+            }
+          },
+          {
+            "type": "String",
+            "name": "password",
+            "required": true,
+            "multiple": false,
+            "attributes": {
+              "label": [
+                "Password"
+              ],
+              "field.password": true,
+              "is.clt": [
+                80
+              ],
+              "is.cgt": [
+                8
+              ],
+              "is.required": true,
+              "list.hide": true,
+              "view.hide": true
+            }
+          },
+          {
+            "type": "Roles",
+            "name": "role",
+            "required": true,
+            "multiple": false,
+            "attributes": {
+              "label": [
+                "Role"
+              ],
+              "filterable": true,
+              "field.select": true,
+              "list.text": [
+                "${Uppercase}"
+              ],
+              "view.text": [
+                "${Uppercase}"
+              ]
+            }
+          },
+          {
+            "type": "Address",
+            "name": "address",
+            "required": false,
+            "multiple": false,
+            "attributes": {
+              "label": [
+                "Address"
+              ],
+              "list.hide": true
+            }
+          },
+          {
+            "type": "Number",
+            "name": "age",
+            "required": true,
+            "multiple": false,
+            "attributes": {
+              "label": [
+                "Age"
+              ],
+              "unsigned": true,
+              "filterable": true,
+              "sortable": true,
+              "field.number": [
+                "${Age}"
+              ],
+              "is.gt": [
+                0
+              ],
+              "is.lt": [
+                150
+              ]
+            }
+          },
+          {
+            "type": "Number",
+            "name": "salary",
+            "required": true,
+            "multiple": false,
+            "attributes": {
+              "label": [
+                "Salary"
+              ],
+              "insigned": true,
+              "filterable": true,
+              "sortable": true,
+              "field.number": [
+                "${Price}"
+              ],
+              "list.number": true,
+              "view.number": true
+            }
+          },
+          {
+            "type": "Number",
+            "name": "balance",
+            "required": true,
+            "multiple": true,
+            "attributes": {
+              "label": [
+                "Balance"
+              ],
+              "filterable": true,
+              "sortable": true,
+              "field.number": true,
+              "list.number": true,
+              "view.number": true
+            }
+          },
+          {
+            "type": "Text",
+            "name": "bio",
+            "required": true,
+            "multiple": false,
+            "attributes": {
+              "label": [
+                "Bio"
+              ],
+              "field.markdown": true
+            }
+          },
+          {
+            "type": "Boolean",
+            "name": "active",
+            "required": true,
+            "multiple": false,
+            "attributes": {
+              "label": [
+                "Active"
+              ],
+              "default": [
+                true
+              ],
+              "filterable": true,
+              "field.switch": true,
+              "list.yesno": true,
+              "view.yesno": true
+            }
+          },
+          {
+            "type": "Date",
+            "name": "created",
+            "required": true,
+            "multiple": false,
+            "attributes": {
+              "label": [
+                "Created"
+              ],
+              "default": [
+                "now()"
+              ],
+              "filterable": true,
+              "sortable": true,
+              "list.date": [
+                "${Pretty}"
+              ]
+            }
+          },
+          {
+            "type": "Date",
+            "name": "updated",
+            "required": true,
+            "multiple": false,
+            "attributes": {
+              "label": [
+                "Updated"
+              ],
+              "default": [
+                "updated()"
+              ],
+              "filterable": true,
+              "sortable": true,
+              "list.date": [
+                "${Pretty}"
+              ]
+            }
+          },
+          {
+            "type": "Company",
+            "name": "company",
+            "required": false,
+            "multiple": false,
+            "attributes": {
+              "label": [
+                "My Company"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  },
+  "resolved": {
+    "error": "UnknownReference"
+  }
+}
