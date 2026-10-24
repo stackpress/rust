@@ -1,0 +1,23 @@
+[package]
+name = "stackpress-example-capability-host"
+description = "In-memory profiles application proving compiled Stackpress plugin composition"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish = false
+
+[features]
+default = []
+experimental = []
+
+[dependencies]
+stackpress-lib = { path = "../../crates/lib" }
+stackpress-server = { path = "../../crates/server", default-features = false }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+
+[lints]
+workspace = true
