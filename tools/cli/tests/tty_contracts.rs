@@ -29,6 +29,7 @@ struct Worker {
 impl Worker {
     /// Spawn a reader that only polls under the acquired real terminal lease.
     fn start(session: TtySession) -> Self {
+        // The original M0 worker fixture owns the guard, matching the production lease boundary.
         let stop = Arc::new(AtomicBool::new(false));
         let worker_stop = Arc::clone(&stop);
         let join = thread::spawn(move || {
@@ -52,6 +53,8 @@ impl Worker {
 
     /// Await a real Ctrl-C event without creating a second reader competing with the worker.
     fn wait_for_key(&mut self) {
+        // This unchanged M0 probe observes worker completion; production tests use explicit
+        // handshakes.
         let started = Instant::now();
         while !self.join.as_ref().unwrap().is_finished() {
             assert!(
@@ -66,6 +69,7 @@ impl Worker {
 impl Drop for Worker {
     /// Stop/join the controlled worker; the parent process watchdog catches any violated bound.
     fn drop(&mut self) {
+        // Always stop and reap the fixture thread before its enclosing test can release ownership.
         self.stop.store(true, Ordering::Release);
         if let Some(join) = self.join.take() {
             join.join()
@@ -79,6 +83,7 @@ impl Drop for Worker {
 #[tokio::test(flavor = "current_thread")]
 #[ignore = "run only by the PTY watchdog parent"]
 async fn tty_native_child() -> io::Result<()> {
+    // Begin from a non-raw PTY, then independently prove each guard cleanup path below.
     assert!(io::stdin().is_terminal());
     assert!(!terminal::is_raw_mode_enabled()?);
     {
@@ -156,6 +161,7 @@ async fn tty_native_child() -> io::Result<()> {
 /// A non-TTY stdin never starts a hidden blocking read or changes raw mode.
 #[test]
 fn non_tty_input_is_rejected_without_reading() {
+    // The host test process uses a pipe; acquisition must reject it before any blocking read.
     if !io::stdin().is_terminal() {
         assert_eq!(
             TtySession::acquire().err().unwrap().kind(),
@@ -167,6 +173,7 @@ fn non_tty_input_is_rejected_without_reading() {
 /// Python owns/reaps the PTY child; the outer watchdog also kills/reaps a stalled harness.
 #[test]
 fn native_guard_poll_cancel_and_drop_are_bounded() {
+    // Retain the accepted M0 PTY proof as an independent guard regression beside production tests.
     let mut command = Command::new("python3");
     command
         .arg(concat!(
