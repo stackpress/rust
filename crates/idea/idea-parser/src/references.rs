@@ -1,5 +1,8 @@
 //! Structural reference validation and bounded dependency resolution after composition.
 
+mod collect;
+pub(crate) use collect::collect;
+
 use serde_json::Value;
 use std::collections::{HashMap, HashSet};
 

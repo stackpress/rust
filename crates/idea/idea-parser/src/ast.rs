@@ -1,4 +1,7 @@
-//! Extracted private syntax representation with bounded parser ownership.
+//! Inspectable extracted syntax with bounded parser-owned compilation.
+//!
+//! Public node fields support inspection and serialization. Only a checked Ast can enter
+//! compilation, so constructing or mutating a detached node cannot bypass parser limits.
 
 use serde::Serialize;
 

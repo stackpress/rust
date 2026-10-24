@@ -21,6 +21,7 @@ mod references;
 mod stages;
 mod token;
 mod types;
+
 use indexmap::IndexMap;
 
 pub use ast::{
@@ -118,8 +119,8 @@ pub fn parse(file: &str, source: &str, inputs: &CompileInputs) -> Result<SchemaC
 /// Resolve prior-declaration references and remove prop/use from a single source.
 ///
 /// This compatibility entry mirrors the pinned final compiler: it discards use directives
-/// without loading them. Use composition is a later milestone; callers needing imports must
-/// not treat this single-source result as a composed schema. The typed
+/// without loading them. The transformer owns source composition; callers needing imports
+/// must not treat this single-source result as a composed schema. The typed
 /// [`finalize_with_references`] entry is the correct path for composed schemas.
 ///
 /// # Errors

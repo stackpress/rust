@@ -58,12 +58,15 @@ pub(crate) fn parse(source: &str, inputs: &CompileInputs) -> Result<SchemaToken,
     })
 }
 
+/// Per-invocation syntax cursor; no state survives a returned result or failed parse.
 pub(crate) struct Parser<'a> {
+    /// Original UTF-8 text, borrowed and never normalized or modified.
     source: &'a str,
+    /// Next unread byte, always at a UTF-8 boundary.
     index: usize,
     /// Active recursive data depth, checked before descent.
     depth: usize,
-    /// Explicit environment snapshot and caller-lowered limits.
+    /// Caller limits; syntax retains env names and never reads the supplied environment map.
     inputs: &'a CompileInputs,
     /// Whether nested data is currently inside an attribute argument list.
     attribute_data: bool,
@@ -94,6 +97,7 @@ impl<'a> Parser<'a> {
         if self.nodes >= self.inputs.limits.max_nodes() {
             return Err(self.limit("Syntax node budget exceeded"));
         }
+        // Spend the slot before the caller constructs the next semantic syntax node.
         self.nodes += 1;
         Ok(())
     }
@@ -403,6 +407,7 @@ impl<'a> Parser<'a> {
         // Parentheses choose method arguments; no parentheses means a true flag.
         let value = if self.consume_char('(') {
             self.skip_noncode()?;
+            // Only argument data permits bare references, including nested arrays/objects.
             self.attribute_data = true;
             let mut elements = Vec::new();
             // Whitespace/comments separate complete arguments without comma syntax.
@@ -412,6 +417,7 @@ impl<'a> Parser<'a> {
                 self.separate_or_close(')')?;
             }
             self.expect_char(')')?;
+            // After the closing parenthesis, ordinary object data becomes literal-only again.
             self.attribute_data = false;
             DataToken::Array(ArrayToken::new(start, self.index, elements))
         } else {
@@ -470,7 +476,7 @@ impl<'a> Parser<'a> {
         if self.current() == Some('[') {
             return Ok(DataToken::Array(self.parse_array_literal()?));
         }
-        // Environment syntax uses only this invocation's explicit map.
+        // Syntax retains only the environment name; compile stages receive explicit values.
         if self.starts_with("env(\"") {
             return Ok(DataToken::Environment(self.parse_env_literal()?));
         }
@@ -525,6 +531,7 @@ impl<'a> Parser<'a> {
             self.separate_or_close('}')?;
         }
         self.expect_char('}')?;
+        // Successful closure releases depth; an error discards the entire parser instead.
         self.depth -= 1;
         unique_properties(&properties)?;
         Ok(ObjectToken::new(start, self.index, properties))
@@ -661,8 +668,8 @@ impl<'a> Parser<'a> {
 
     /// Read literal scalar data, including explicit environment values.
     fn parse_scalar_literal(&mut self) -> Result<LiteralToken, IdeaError> {
-        // Enums use the same explicit environment grammar as other scalar positions.
-        // Environment syntax uses only this invocation's explicit map.
+        // Enums use the same environment-name grammar as every other scalar position.
+        // Syntax retains only the environment name; compile stages receive explicit values.
         if self.starts_with("env(\"") {
             return self.parse_env_literal();
         }
@@ -744,37 +751,30 @@ impl<'a> Parser<'a> {
 
     /// Read an object key with ordinary ASCII identifier syntax.
     fn parse_any_identifier(&mut self) -> Result<IdentifierToken, IdeaError> {
-        let start = self.index;
-        let word = self.parse_word()?;
-        if !is_any_identifier(&word) {
-            return Err(IdeaError::new(
-                ErrorCode::UnexpectedToken,
-                format!("Invalid identifier {}", word),
-            )
-            .with_span(start, self.index));
-        }
-        Ok(IdentifierToken::new(start, self.index, word))
+        self.parse_identifier(is_any_identifier)
     }
 
     /// Require the capital declaration-name convention.
     fn parse_capital_identifier(&mut self) -> Result<IdentifierToken, IdeaError> {
-        let start = self.index;
-        let word = self.parse_word()?;
-        if !is_capital_identifier(&word) {
-            return Err(IdeaError::new(
-                ErrorCode::UnexpectedToken,
-                format!("Invalid identifier {}", word),
-            )
-            .with_span(start, self.index));
-        }
-        Ok(IdentifierToken::new(start, self.index, word))
+        self.parse_identifier(is_capital_identifier)
     }
 
     /// Require uppercase enum option keys.
     fn parse_upper_identifier(&mut self) -> Result<IdentifierToken, IdeaError> {
+        self.parse_identifier(is_upper_identifier)
+    }
+
+    /// Require the lowercase field-name convention.
+    fn parse_camel_identifier(&mut self) -> Result<IdentifierToken, IdeaError> {
+        self.parse_identifier(is_camel_identifier)
+    }
+
+    /// Validate one consumed word while keeping every identifier diagnostic identical.
+    fn parse_identifier(&mut self, valid: fn(&str) -> bool) -> Result<IdentifierToken, IdeaError> {
         let start = self.index;
         let word = self.parse_word()?;
-        if !is_upper_identifier(&word) {
+        // Consume the entire word before rejecting its casing, preserving the error range.
+        if !valid(&word) {
             return Err(IdeaError::new(
                 ErrorCode::UnexpectedToken,
                 format!("Invalid identifier {}", word),
@@ -784,32 +784,32 @@ impl<'a> Parser<'a> {
         Ok(IdentifierToken::new(start, self.index, word))
     }
 
-    /// Require the lowercase field-name convention.
-    fn parse_camel_identifier(&mut self) -> Result<IdentifierToken, IdeaError> {
-        let start = self.index;
-        let word = self.parse_word()?;
-        if !is_camel_identifier(&word) {
-            return Err(IdeaError::new(
-                ErrorCode::UnexpectedToken,
-                format!("Invalid identifier {}", word),
-            )
-            .with_span(start, self.index));
+    /// Find the next word endpoint without mutating the shared UTF-8 cursor.
+    fn word_end(&self) -> usize {
+        let mut index = self.index;
+        while index < self.source.len() {
+            // Adjacent comments end a word even when no whitespace precedes the slash.
+            let suffix = &self.source[index..];
+            if suffix.starts_with("//") || suffix.starts_with("/*") {
+                break;
+            }
+            let Some(ch) = suffix.chars().next() else {
+                break;
+            };
+            if !(ch.is_ascii_alphanumeric() || matches!(ch, '_' | '.' | '?' | '/' | '-')) {
+                break;
+            }
+            index += ch.len_utf8();
         }
-        Ok(IdentifierToken::new(start, self.index, word))
+        index
     }
 
     /// Consume the lexical word characters while preserving UTF-8 cursor validity.
     fn parse_word(&mut self) -> Result<String, IdeaError> {
         let start = self.index;
-        let mut word = String::new();
-        while !self.starts_with("//")
-            && !self.starts_with("/*")
-            && matches!(self.current(), Some(ch)
-            if ch.is_ascii_alphanumeric() || matches!(ch, '_' | '.' | '?' | '/' | '-'))
-        {
-            word.push(self.advance_char().unwrap_or_default());
-        }
-        if word.is_empty() {
+        self.index = self.word_end();
+        // Lookahead and consumption use one endpoint rule; only consumption reports an error.
+        if self.index == start {
             return Err(IdeaError::new(
                 if self.is_eof() {
                     ErrorCode::UnexpectedEof
@@ -820,25 +820,13 @@ impl<'a> Parser<'a> {
             )
             .with_span(start, start + 1));
         }
-        Ok(word)
+        Ok(self.source[start..self.index].into())
     }
 
     /// Inspect the next lexical word without committing cursor advancement.
     fn peek_word(&self) -> Option<String> {
-        let mut index = self.index;
-        let mut word = String::new();
-        while index < self.source.len() {
-            if self.source[index..].starts_with("//") || self.source[index..].starts_with("/*") {
-                break;
-            }
-            let ch = self.source[index..].chars().next()?;
-            if !(ch.is_ascii_alphanumeric() || matches!(ch, '_' | '.' | '?' | '/' | '-')) {
-                break;
-            }
-            word.push(ch);
-            index += ch.len_utf8();
-        }
-        if word.is_empty() { None } else { Some(word) }
+        let end = self.word_end();
+        (end != self.index).then(|| self.source[self.index..end].into())
     }
 
     /// Consume one required declaration keyword.

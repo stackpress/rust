@@ -15,11 +15,11 @@ pub enum AttributeValue {
     Array(Vec<Value>),
 }
 
-/// Extracted EnumConfig syntax/config representation.
+/// Ordered enum choices; checked syntax and JSON imports require scalar values.
 pub type EnumConfig = IndexMap<String, Value>;
-/// Extracted PluginConfig syntax/config representation.
+/// Ordered plugin configuration data; parsing does not activate executable code.
 pub type PluginConfig = IndexMap<String, Value>;
-/// Extracted PropConfig syntax/config representation.
+/// Ordered reusable property data, available to later declaration references.
 pub type PropConfig = IndexMap<String, Value>;
 
 #[derive(Debug, Clone, PartialEq, Serialize)]
@@ -32,9 +32,9 @@ pub struct ColumnConfig {
     pub column_type: String,
     /// Open metadata retained without framework interpretation.
     pub attributes: IndexMap<String, AttributeValue>,
-    /// Whether null/absence is disallowed by the type modifier.
+    /// Whether the type spelling omitted the optional `?` marker; no value validation runs.
     pub required: bool,
-    /// Whether this is a single list of the base type.
+    /// Whether the type spelling included one `[]` suffix for a list of the base type.
     pub multiple: bool,
 }
 
@@ -51,5 +51,5 @@ pub struct TypeConfig {
     pub columns: Vec<ColumnConfig>,
 }
 
-/// Extracted ModelConfig syntax/config representation.
+/// A model uses the same normalized fieldset shape as a reusable type.
 pub type ModelConfig = TypeConfig;
