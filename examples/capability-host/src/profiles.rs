@@ -119,7 +119,7 @@ async fn configure(start: &mut StartupContext) -> Result<Flow> {
 
 /// Register the named capability after the service registry has frozen.
 async fn listen_profiles(start: &mut StartupContext) -> Result<Flow> {
-    // This operation is independent of HTTP route selection and future CLI parsing.
+    // This operation is independent of HTTP route selection and CLI argument parsing.
     start.on("profile-search", profile_search)?;
     Ok(Flow::Continue)
 }

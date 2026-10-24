@@ -6,18 +6,26 @@ edition.workspace = true
 rust-version.workspace = true
 publish = false
 
+[[bin]]
+name = "stackpress"
+path = "src/main.rs"
+# The executable has no library API; avoid overwriting the facade's stackpress Rustdoc output.
+doc = false
+
 [features]
 default = []
 experimental = []
 
 [dependencies]
+stackpress-cli = { path = "../../tools/cli" }
 stackpress-lib = { path = "../../crates/lib" }
 stackpress-server = { path = "../../crates/server", default-features = false, features = ["http"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+tokio = { version = "1", features = ["macros", "rt"] }
 
 [dev-dependencies]
-tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+tokio = { version = "1", features = ["rt-multi-thread"] }
 
 [lints]
 workspace = true

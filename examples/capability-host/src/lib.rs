@@ -3,8 +3,8 @@
 //! [`build_application`] owns plugin selection and accepts explicit configuration layers.
 //! The optional [`customization`] plugin can be selected by another application without
 //! changing [`profiles`]. The `experimental` feature compiles and selects an additional
-//! plugin; its entire module is absent from default builds. In-process HTTP tests use this
-//! builder; the application CLI can share it once its adapter is integrated.
+//! plugin; its entire module is absent from default builds. The app-owned `stackpress` binary
+//! and in-process HTTP adapter invoke the same compiled profiles operation.
 //!
 //! ```
 //! use stackpress_example_capability_host::build_application;
