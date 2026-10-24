@@ -14,6 +14,8 @@ Read [.agents/context/index.md](.agents/context/index.md) first, then the smalle
 
 Use [.agents/workflows/rust-programming.md](.agents/workflows/rust-programming.md) for programming tasks. Implement naturally, prove behavior with meaningful tests, then perform at least three distinct test-verified refactoring rounds covering complexity, responsibility/abstraction, and consistency/Rustdoc/comments. Repeat targeted rounds while material findings remain; avoid ceremonial edits when a round finds nothing.
 
+For most crates the owner prefers [.agents/workflows/coordinated-crate-development.md](.agents/workflows/coordinated-crate-development.md). A coordinator agent directs and reviews, an implementer agent writes the code through Paseo, and the owner decides product questions. Work moves through gated stages (design checkpoint, proof, milestones, rounds, docs, scoped fixes) tracked in `.agents/specs/`.
+
 The user's standing instruction authorizes those routine behavior-preserving rounds inside the requested task. Do not stop between rounds for the coding skill's default audit-only approval question. Request a decision only for genuinely new scope, changed public behavior, or an unresolved product choice.
 
 Follow [.agents/context/rust-code-style.md](.agents/context/rust-code-style.md): conventional Rust formatting/names, Rustdoc, explanatory comments for every logical block, and line-level explanation for branching/stateful/non-obvious work. Use the installed chrisai-coding principles with the explicit Rust adaptation; do not apply JS-specific syntax rules to Rust.
