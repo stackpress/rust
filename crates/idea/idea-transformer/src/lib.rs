@@ -6,14 +6,19 @@
 //! Trusted plugin code is ordinary Rust, not a filesystem sandbox.
 
 mod output;
+mod plan;
 mod registry;
 
 use std::fmt;
 use std::io::Read;
 use std::path::Path;
 
+pub use output::GenerationReport;
 pub use output::{CheckReport, OutputWorkspace};
+pub use plan::ModuleContribution;
+pub use registry::{ContextTransform, TransformContext, TransformRegistry, TransformSelection};
 pub use registry::{GeneratedFile, OutputPlan, Registry, Transform};
+pub use registry::{TransformInputs, TransformSpec};
 
 /// A build-tool failure retaining IO causes without automatically dumping source contents.
 #[derive(Debug)]
