@@ -1,4 +1,4 @@
-//! M0 proofs against real host/lib values; policy breadth remains in later milestones.
+//! Preserved M0 ownership/context proofs against the integrated production host and lib.
 
 use std::future::Future;
 use std::process::Command;
@@ -64,7 +64,9 @@ async fn leaf(_: &mut Request, res: &mut Response, inv: Invocation<'_>) -> Resul
     let service = inv.service::<Profiles>()?;
     let config = inv.config::<Config>()?;
     let label = service.label.as_str();
+    // Both children must reach the real rendezvous; a serialized callback lock would deadlock.
     service.barrier.wait().await;
+    // Observe the same borrowed service/config values after suspension without payload cloning.
     assert_eq!(label, config.label);
     res.results(&serde_json::json!({
         "correlation": inv.correlation_id()?, "stage": format!("{:?}", inv.stage()?),
@@ -85,10 +87,12 @@ async fn echo(req: &mut Request, res: &mut Response, inv: Invocation<'_>) -> Res
 
 /// Concurrent child resolves preserve both parent context identity and diagnostic ancestry.
 async fn parent(req: &mut Request, res: &mut Response, inv: Invocation<'_>) -> Result<Flow> {
+    // Retain the original host borrow and root identity before either child suspends.
     let host = inv.host()?;
     let id = inv.correlation_id()?.expect("explicit proof root");
     let shared = inv.shared_service::<Profiles>()?;
     assert!(std::ptr::eq(shared.as_ref(), host.service::<Profiles>()?));
+    // Poll distinct owned request/response pairs concurrently through the same parent context.
     let (left, right) = tokio::try_join!(
         inv.resolve("leaf", Nest::new()),
         inv.resolve("leaf", Nest::new()),
@@ -100,6 +104,7 @@ async fn parent(req: &mut Request, res: &mut Response, inv: Invocation<'_>) -> R
         assert_eq!(value["stage"], "Operation");
         assert_eq!(value["path"], serde_json::json!(["parent", "leaf"]));
     }
+    // Children must not replace the parent's host pointer, event or ancestry when they return.
     assert!(std::ptr::eq(host, inv.host()?));
     assert_eq!(inv.event(), "parent");
     assert_eq!(inv.path().len(), 1);
@@ -120,6 +125,7 @@ async fn profile_route(req: &mut Request, res: &mut Response, inv: Invocation<'_
 
 /// Install operation listeners after Config has constructed the service.
 async fn listen(start: &mut StartupContext) -> Result<Flow> {
+    // Verify phase advancement before installing reusable operation handlers.
     assert_eq!(start.stage(), StartupStage::Listen);
     start.on("parent", parent)?;
     start.on("leaf", leaf)?;
@@ -130,6 +136,7 @@ async fn listen(start: &mut StartupContext) -> Result<Flow> {
 
 /// Register the route through the same real host wrapper used by later HTTP work.
 async fn routes(start: &mut StartupContext) -> Result<Flow> {
+    // HTTP exposure belongs to Route, after the operation/service phases completed.
     assert_eq!(start.stage(), StartupStage::Route);
     start.get("/profiles/:id", profile_route)?;
     Ok(Flow::Continue)
@@ -137,6 +144,7 @@ async fn routes(start: &mut StartupContext) -> Result<Flow> {
 
 /// Select a function plugin without a macro or trait implementation.
 fn plugin(app: &mut ServerBuilder) -> Result<()> {
+    // Selection schedules named phases; no service or operation runs during this function.
     app.on_config(configure)?;
     app.on_listen(listen)?;
     app.on_route(routes)?;
@@ -145,8 +153,10 @@ fn plugin(app: &mut ServerBuilder) -> Result<()> {
 
 /// Seed only typed input data privately; all task/wrapper/runtime work is production code.
 fn builder(drops: &Arc<AtomicUsize>) -> Result<ServerBuilder> {
+    // Keep non-serializable drop counters as private test inputs; normal config uses typed
+    // sections.
     let mut builder = ServerBuilder::new();
-    // This fixture is not a claimed implementation of the future config-section policy.
+    // These private typed counters isolate ownership proof from serialized config layering.
     builder.state.config.insert(Arc::new(Config {
         label: "configured".into(),
         drops: Arc::clone(drops),
@@ -156,16 +166,19 @@ fn builder(drops: &Arc<AtomicUsize>) -> Result<ServerBuilder> {
 
 /// Exercise two concurrently spawned roots against one immutable real host.
 async fn host_scenarios() -> BuildResult<()> {
+    // Prepare independently observed resource ownership before compiling the real plugin.
     let drops = Arc::new(AtomicUsize::new(0));
     let mut app = builder(&drops)?;
     app.plugin("profiles", plugin)?;
+    // Only explicit Arc sharing makes this non-Clone host available to spawned roots.
     let server = Arc::new(app.build().await?);
     let weak = Arc::downgrade(&server.host);
     let mut tasks = Vec::new();
+    // Give each concurrent root its own immutable context rather than a global current-ID slot.
     for id in ["root-one", "root-two"] {
         let server = Arc::clone(&server);
         tasks.push(tokio::spawn(async move {
-            // M0 carries explicit fixture correlations; top-level allocation is an M2 concern.
+            // Explicit IDs isolate context inheritance from separately tested top-level allocation.
             let context = CallContext {
                 host: Arc::clone(&server.host),
                 correlation: Some(id.into()),
@@ -179,6 +192,7 @@ async fn host_scenarios() -> BuildResult<()> {
                 .await
         }));
     }
+    // Join every owned root so no framework test task escapes the watchdog child.
     for task in tasks {
         assert_eq!(
             task.await.expect("owned root task")?.outcome,
@@ -194,6 +208,7 @@ async fn host_scenarios() -> BuildResult<()> {
     server
         .emit("GET /profiles/path-id", &mut req, &mut res)
         .await?;
+    // Observe incoming route precedence while the original query store remains independent.
     assert_eq!(req.data.get("id").and_then(|v| v.as_str()), Some("path-id"));
     assert_eq!(
         req.query.get("id").and_then(|v| v.as_str()),
@@ -205,6 +220,8 @@ async fn host_scenarios() -> BuildResult<()> {
         server.resolve("missing", Nest::new()).await?.outcome,
         DispatchOutcome::NoListener
     );
+    // Inspect real registration provenance after dispatch, rather than inferring owner from a
+    // label.
     let descriptor = server
         .emitter
         .listeners()
@@ -223,22 +240,28 @@ async fn host_scenarios() -> BuildResult<()> {
 /// Prove helper semantics separately from host startup breadth.
 #[tokio::test]
 async fn delegation_and_missing_host_are_explicit() -> Result<()> {
+    /// Delegate a raw child Abort through the public extension helper.
     async fn delegate_abort(
         req: &mut Request,
         res: &mut Response,
         inv: Invocation<'_>,
     ) -> Result<Flow> {
+        // A raw child Abort must propagate only through this explicit delegation.
         // Delegation remains a raw nested operation even without a server context.
         inv.delegate("abort", req, res).await
     }
+    /// Require a missing capability through the typed delegation error path.
     async fn delegate_missing(
         req: &mut Request,
         res: &mut Response,
         inv: Invocation<'_>,
     ) -> Result<Flow> {
+        // Do not silently treat NoListener as a completed delegated capability.
         inv.delegate("absent", req, res).await
     }
+    /// Check every typed lookup against an honestly context-free lib invocation.
     async fn missing_host(_: &mut Request, _: &mut Response, inv: Invocation<'_>) -> Result<Flow> {
+        // None of the server shortcuts may infer a host from untrusted input.
         assert!(inv.host().is_err());
         assert!(inv.config::<Config>().is_err());
         assert!(inv.service::<Profiles>().is_err());
@@ -247,6 +270,7 @@ async fn delegation_and_missing_host_are_explicit() -> Result<()> {
         assert!(inv.correlation_id().is_err());
         Ok(Flow::Continue)
     }
+    // Use raw lib dispatch to isolate delegation mapping and missing-host errors from lifecycle.
     let mut builder = EmitterBuilder::new();
     builder.on("abort", abort)?;
     builder.on("delegated", delegate_abort)?;
@@ -257,6 +281,7 @@ async fn delegation_and_missing_host_are_explicit() -> Result<()> {
         emitter.resolve("delegated", Nest::new()).await?.outcome,
         DispatchOutcome::Aborted
     );
+    // Missing delegation is a typed 404 source, not an apparently successful no-listener outcome.
     let error = emitter
         .resolve("missing", Nest::new())
         .await
@@ -267,6 +292,7 @@ async fn delegation_and_missing_host_are_explicit() -> Result<()> {
             .is::<DelegationError>()
     );
     assert_eq!(error.code(), 404);
+    // Plain lib roots remain valid but provide no trusted server registry/context.
     emitter.resolve("raw", Nest::new()).await?;
     Ok(())
 }
@@ -276,7 +302,9 @@ struct AbortStartup(bool);
 
 /// A configuration task may fail/abort after allocating a real service.
 async fn fail_or_stop(start: &mut StartupContext) -> Result<Flow> {
+    // Allocate the real service first so both Abort and error must release attempted construction.
     configure(start).await?;
+    // Select the intended failure path from a typed fixture without hiding construction effects.
     if start.config::<AbortStartup>()?.0 {
         Ok(Flow::Abort)
     } else {
@@ -286,11 +314,13 @@ async fn fail_or_stop(start: &mut StartupContext) -> Result<Flow> {
 
 /// Real selection supplies the error's plugin metadata before asynchronous startup.
 fn failed_plugin(app: &mut ServerBuilder) -> Result<()> {
+    // The selected plugin owns the failing task's metadata even before asynchronous entry.
     app.on_config(fail_or_stop)
 }
 
 /// A suspended task owns its partial state until the build future is dropped.
 async fn suspend(start: &mut StartupContext) -> Result<Flow> {
+    // Construct a real resource before the pending await exposes build cancellation ownership.
     configure(start).await?;
     std::future::pending().await
 }
@@ -298,19 +328,23 @@ async fn suspend(start: &mut StartupContext) -> Result<Flow> {
 /// Fail/Abort/cancel paths destroy accumulated services without pretending to roll back effects.
 #[tokio::test]
 async fn failed_startup_never_publishes_and_cancel_releases() -> Result<()> {
+    // Exercise both ordinary failure and cooperative startup Abort against fresh resource owners.
     for abort in [false, true] {
         let drops = Arc::new(AtomicUsize::new(0));
         let mut builder = builder(&drops)?;
         builder.state.config.insert(Arc::new(AbortStartup(abort)))?;
         builder.plugin("failed-plugin", failed_plugin)?;
+        // Neither path may return a partially usable runtime or a resumable builder.
         let Err(error) = builder.build().await else {
             panic!("partial host escaped")
         };
+        // Retained diagnostics must identify the actual phase, selected plugin and external site.
         assert_eq!(error.stage, StartupStage::Config);
         assert_eq!(error.plugin.as_deref(), Some("failed-plugin"));
         assert!(error.registered.file.ends_with("core_tests.rs"));
         assert_eq!(drops.load(Ordering::SeqCst), 1);
     }
+    // A separate suspended build proves drop cleanup independently from returned errors.
     let drops = Arc::new(AtomicUsize::new(0));
     let mut builder = builder(&drops)?;
     builder.on_config(suspend)?;
@@ -321,6 +355,7 @@ async fn failed_startup_never_publishes_and_cancel_releases() -> Result<()> {
         Poll::Ready(())
     })
     .await;
+    // Cancellation drops the sole attempted construction owner; no background work finishes it.
     drop(future);
     assert_eq!(drops.load(Ordering::SeqCst), 1);
     Ok(())
@@ -329,6 +364,7 @@ async fn failed_startup_never_publishes_and_cancel_releases() -> Result<()> {
 /// Output authority belongs to the adapter, not a replaceable Response instance.
 #[tokio::test]
 async fn response_replacement_cannot_repeat_native_output() -> Result<()> {
+    // Keep the native write counter/guard outside the replaceable handler response.
     let writes = Arc::new(AtomicUsize::new(0));
     let mut guard = OutputGuard::default();
     let mut response = Response::new();
@@ -336,6 +372,7 @@ async fn response_replacement_cannot_repeat_native_output() -> Result<()> {
     // A handler can replace a whole value before any native write; it cannot see guard.
     response = Response::new();
     let count = Arc::clone(&writes);
+    // The first actual writer entry consumes the adapter's independent authority.
     guard
         .dispatch(&mut response, move |_| async move {
             count.fetch_add(1, Ordering::SeqCst);
@@ -349,6 +386,7 @@ async fn response_replacement_cannot_repeat_native_output() -> Result<()> {
             .await
             .is_err()
     );
+    // A fresh Response must not make the second writer closure reachable.
     assert_eq!(writes.load(Ordering::SeqCst), 1);
     assert_eq!(guard.state(), DeliveryState::Sent);
 
@@ -361,6 +399,7 @@ async fn response_replacement_cannot_repeat_native_output() -> Result<()> {
         Poll::Ready(())
     })
     .await;
+    // Dropping the actual pending attempt preserves incomplete delivery in the adapter guard.
     drop(attempt);
     assert_eq!(guard.state(), DeliveryState::Attempted);
     response = Response::new();
@@ -376,6 +415,7 @@ async fn response_replacement_cannot_repeat_native_output() -> Result<()> {
 /// Partial writer errors and suppression/finalized states consume independent native authority.
 #[tokio::test]
 async fn output_failure_and_suppression_do_not_retry() -> Result<()> {
+    // Prepare separate value and native-attempt state before simulating a partial write.
     let mut guard = OutputGuard::default();
     let mut response = Response::new();
     let bytes = Arc::new(AtomicUsize::new(0));
@@ -389,6 +429,7 @@ async fn output_failure_and_suppression_do_not_retry() -> Result<()> {
             .await
             .is_err()
     );
+    // Replacing buffered state after partial output must not grant another native write.
     response = Response::new();
     assert!(
         guard
@@ -396,10 +437,12 @@ async fn output_failure_and_suppression_do_not_retry() -> Result<()> {
             .await
             .is_err()
     );
+    // Observe both the retained terminal state and the exact accepted prefix length.
     assert_eq!(guard.state(), DeliveryState::Failed);
     assert_eq!(bytes.load(Ordering::SeqCst), 3);
 
     let mut guard = OutputGuard::default();
+    // Explicit suppression consumes a new adapter opportunity without ever calling the writer.
     response.stop()?;
     guard
         .dispatch(&mut response, |_| async { panic!("suppressed writer") })
@@ -411,6 +454,7 @@ async fn output_failure_and_suppression_do_not_retry() -> Result<()> {
             .await
             .is_err()
     );
+    // Whole-value replacement cannot erase this adapter's suppression history.
     assert_eq!(guard.state(), DeliveryState::Stopped);
 
     // A finalized no-op lib dispatch did not produce a native adapter result.
@@ -436,29 +480,39 @@ async fn output_failure_and_suppression_do_not_retry() -> Result<()> {
 /// Singleton service state and failed registration never become silent replacement.
 #[tokio::test]
 async fn startup_and_registry_missing_values_are_explicit() -> Result<()> {
+    /// Attempt duplicate insertion without replacing the earlier singleton.
     async fn duplicate(start: &mut StartupContext) -> Result<Flow> {
+        // The first value must survive a duplicate-type failure.
         start.register(Arc::new(7_u64))?;
         assert!(start.register(Arc::new(9_u64)).is_err());
         assert_eq!(*start.service::<u64>()?, 7);
         Ok(Flow::Continue)
     }
+    /// Attempt a service mutation after Config has already frozen the registry.
     async fn wrong_phase(start: &mut StartupContext) -> Result<Flow> {
+        // A later phase must fail before inserting or replacing any service.
         start.register(Arc::new(8_u64))?;
         Ok(Flow::Continue)
     }
+    /// Provide a compiled no-op registration function for selection validation.
     fn empty(_: &mut ServerBuilder) -> Result<()> {
+        // Selection validation is isolated from any callback side effect.
         Ok(())
     }
+    // Invalid/duplicate selection must fail before any compiled callback runs.
     let mut app = ServerBuilder::new();
     assert!(app.plugin("bad\nname", empty).is_err());
     app.plugin("single", empty)?;
     assert!(app.plugin("single", empty).is_err());
     app.on_config(duplicate)?;
     app.on_listen(wrong_phase)?;
+    // Config succeeds, then Listen's service write must prevent runtime publication.
     let Err(error) = app.build().await else {
         panic!("late service registration escaped")
     };
     assert_eq!(error.stage, StartupStage::Listen);
+    // An independently built empty host reports missing values instead of panicking or inferring
+    // them.
     let server = ServerBuilder::new()
         .build()
         .await
@@ -472,6 +526,7 @@ async fn startup_and_registry_missing_values_are_explicit() -> Result<()> {
 /// Test the bounded data-input seam without claiming M1 merge/section policy coverage.
 #[test]
 fn explicit_config_layers_validate_before_append() -> Result<()> {
+    // Start from a real accepted layer, then attempt each malformed append against the same owner.
     let mut layers = ConfigLayers::new();
     layers.json("explicit file", r#"{"profiles":{"limit":3}}"#)?;
     assert!(layers.json("invalid", "[]").is_err());
@@ -482,6 +537,7 @@ fn explicit_config_layers_validate_before_append() -> Result<()> {
     let mut bounded = ConfigLayers::new();
     bounded.value("first", payload.clone())?;
     assert!(bounded.value("second", payload).is_err());
+    // Rejected aggregate input preserves the earlier accepted sequence and its original value.
     assert_eq!(bounded.entries().count(), 1);
     assert_eq!(layers.entries().count(), 1);
     assert_eq!(layers.entries().next().unwrap().1["profiles"]["limit"], 3);
@@ -492,6 +548,7 @@ fn explicit_config_layers_validate_before_append() -> Result<()> {
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 #[ignore = "run by the M0 host watchdog parent"]
 async fn host_child() {
+    // Bound cooperative async progress inside the child as well as its external process lifetime.
     tokio::time::timeout(Duration::from_secs(2), host_scenarios())
         .await
         .expect("host async deadline")
@@ -501,6 +558,7 @@ async fn host_child() {
 /// A parent outside the executor can kill and reap even a synchronously blocked child.
 #[test]
 fn host_context_and_wrapper_proof_under_watchdog() {
+    // Launch only the ignored child marker, avoiding recursively launching this parent test.
     let mut command = Command::new(std::env::current_exe().expect("test executable"));
     command.args([
         "--ignored",
@@ -508,8 +566,10 @@ fn host_context_and_wrapper_proof_under_watchdog() {
         "core_tests::host_child",
         "--nocapture",
     ]);
+    // The parent can kill and reap this exact child even if its executor is synchronously blocked.
     let result = watchdog::run(&mut command, "host-context", Duration::from_secs(10))
         .expect("launch/reap host child");
+    // A successful proof requires normal child completion, not merely successful watchdog cleanup.
     assert!(!result.timed_out, "{}", result.output);
     assert!(result.status.success(), "{}", result.output);
 }

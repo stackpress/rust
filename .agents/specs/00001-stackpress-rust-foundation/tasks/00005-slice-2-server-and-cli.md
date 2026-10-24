@@ -199,6 +199,10 @@ Trees are retained as `target/slice2-receipts/server-default.tree` and `server-h
 
 **Deviations/limits:** G17 is the coordinator-approved clarification recorded in decisions and the lifecycle design, not an unapproved behavior change. No public signature deviation was needed. No real HTTP adapter/network/streaming/serverless/UI/platform support is claimed; lane C and lane D consume the API after coordinator release. No formal review round was started ahead of its gate. Next action is independent coordinator M2 re-verification and release of the adapter/proof lanes.
 
+### Lane A server core rounds 1–4 receipt (2026-10-24)
+
+Released rounds 1–4 are complete for coordinator re-verification. Read the [lane A rounds receipt](../slice-2-receipt-lane-a-rounds.md) for per-round findings, API preservation, per-file comment/example counts, safety/cancellation evidence, exact final commands and independently cleaned server coverage with/without HTTP. No commit, listener or acceptance is implied; Verification notes remain coordinator-owned.
+
 ## Verification notes
 
 **Design checkpoint review (coordinator, 2026-10-24): approved with changes.**
@@ -317,6 +321,53 @@ Trees are retained as `target/slice2-receipts/server-default.tree` and `server-h
 - Rounds results: `http.rs` comment density is now 92/366 (25 per 100), with 4 `# Examples`. `finish` went from 67 to 39 lines. The public API is unchanged.
 - Committed as `cd5a518` and merged as `94be99b`. The receipt was appended to [slice-2-receipt-lane-c-http.md](../slice-2-receipt-lane-c-http.md).
 - Scope note for closeout: the example enables `stackpress-server/http`, so workspace-wide builds feature-unify HTTP. Default-only server behavior must be verified with `-p stackpress-server` alone, not `--workspace`.
+
+
+**Lane A rounds and Slice 2 closeout (coordinator, 2026-10-24): verified.**
+
+- **Lane A rounds 1–4:** reviewed against the [lane A rounds receipt](../slice-2-receipt-lane-a-rounds.md).
+  - `builder.rs` went from 629 to 149 code lines, split into private `startup.rs`, `registration.rs`, and `server.rs`.
+  - `run_stages` went from 70 to 35 lines.
+  - 65 new compiling examples; `lifecycle.rs` inline comments rose from 22 to 116.
+- **API freeze verified independently.** The set of public declarations in `crates/server/src` is identical before and after. The crate root only gained private `mod` lines, and `builder.rs` re-exports the moved `Server`/`BuildError`/`BuildResult`/`StartupContext`/`StartupSpec`/`StartupStage` at their unchanged paths.
+- **Closeout matrix**, run by the coordinator on the integrated `trial/3` working tree:
+
+  | Check | Result |
+  | --- | --- |
+  | fmt | Passed. |
+  | `cargo test --workspace --all-targets --locked` | 143 passed, 0 failed. |
+  | Same with `--features server-http` | 143 passed, 0 failed. |
+  | `-p stackpress-server --no-default-features` (true default build; the example unifies HTTP workspace-wide) | 32 passed. |
+  | `-p stackpress-server --features http` | 57 passed. |
+  | `-p stackpress-cli --no-default-features` | 14 passed. |
+  | `-p stackpress-example-capability-host --features experimental` | 25 passed. |
+  | Doctests: workspace `server-http` / server default-only | 394 / 66 passed. |
+  | Clippy `-D warnings`: server default-only, workspace, workspace `server-http` | Clean. |
+  | Rustdoc `-D warnings` (`server-http`) | 0 warnings. |
+  | `cargo +1.96.0 check --workspace --all-targets --features server-http` | Passed. |
+  | Server normal dependency trees, default and `http` | 0 tokio/hyper/crossterm/mio. |
+  | Width | Only `crates/lib/src/request.rs:655`, which is 99 characters (101 bytes with a multi-byte character), so within the limit. |
+
+- **Per-crate line coverage**, each measurement after `cargo llvm-cov clean --workspace`, all above the 70% floor:
+
+  | Crate | Coverage | Executable lines |
+  | --- | --- | --- |
+  | `stackpress-lib` | 92.96% | 3,393 |
+  | `stackpress-server`, default build | 92.62% | 1,680 |
+  | `stackpress-server` with `http` | 94.23% | 1,976 |
+  | `stackpress-cli` | 96.32% | 1,278 |
+  | `stackpress-example-capability-host` (receipt's corrected command) | 100% | 120 |
+
+  `output.rs` individually is 69.70%; its authority and cancellation behavior is proven by the watchdog scenarios.
+- **Proof items** from `00006` demonstrated in-process and through the real binary:
+  - item 5: CLI, HTTP, and direct call return the same `profile-search` envelope;
+  - item 6: manually constructed requests/responses mutated before output;
+  - item 7: errors reach the error event, with handled/unhandled outcomes explicit;
+  - item 8: the disabled experimental plugin is excluded from the compiled build;
+  - item 9: a customization plugin changes behavior without editing the original;
+  - item 14: lifecycle order and abort behavior are explicit and not repeated for nested calls.
+- **Limits:** native `aarch64-apple-darwin` only; no real listener, streaming, serverless, or Tauri proof; distributed tracing remains deferred (G15). Server and CLI docs follow as a separate task.
+- **Status: verified.** `Acceptance criteria: none`.
 
 ## Acceptance notes
 

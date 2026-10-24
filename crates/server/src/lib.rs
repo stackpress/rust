@@ -31,9 +31,12 @@ mod context;
 mod lifecycle;
 mod output;
 mod plugin;
+mod registration;
 mod report;
 mod router;
+mod server;
 mod services;
+mod startup;
 
 #[cfg(feature = "http")]
 pub mod http;

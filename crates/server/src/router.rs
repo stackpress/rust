@@ -14,6 +14,27 @@ pub enum CapturePolicy {
 }
 
 /// Explicit method/path contribution; duplicate matchers remain independent listeners.
+///
+/// The default capture policy atomically overlays named captures onto literal aggregate-data
+/// keys before this route action. Incoming captures win; query/post and positional captures
+/// remain separate. Replacement by listener ID retains this policy and original provenance.
+///
+/// # Examples
+///
+/// ```rust
+/// use stackpress_lib::{Flow, Invocation, Request, Response, Result};
+/// use stackpress_server::ServerBuilder;
+/// async fn greet(_: &mut Request, res: &mut Response, _: Invocation<'_>) -> Result<Flow> {
+///     res.results(&"hello")?;
+///     Ok(Flow::Continue)
+/// }
+/// use stackpress_lib::MethodPattern;
+/// use stackpress_server::RouteSpec;
+/// let mut app = ServerBuilder::new();
+/// let spec = RouteSpec::new(MethodPattern::GET, "/hello").priority(10).label("hello");
+/// app.route_with(spec, greet)?;
+/// # Ok::<(), stackpress_lib::Error>(())
+/// ```
 #[derive(Debug)]
 pub struct RouteSpec {
     /// Checked method matcher, including Any and extension verbs.
@@ -30,6 +51,23 @@ pub struct RouteSpec {
 
 impl RouteSpec {
     /// Describe a route at priority zero with incoming named captures winning.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use stackpress_lib::{Flow, Invocation, Request, Response, Result};
+    /// use stackpress_server::ServerBuilder;
+    /// async fn greet(_: &mut Request, res: &mut Response, _: Invocation<'_>) -> Result<Flow> {
+    ///     res.results(&"hello")?;
+    ///     Ok(Flow::Continue)
+    /// }
+    /// use stackpress_lib::MethodPattern;
+    /// use stackpress_server::RouteSpec;
+    /// let mut app = ServerBuilder::new();
+    /// let spec = RouteSpec::new(MethodPattern::GET, "/hello").priority(10).label("hello");
+    /// app.route_with(spec, greet)?;
+    /// # Ok::<(), stackpress_lib::Error>(())
+    /// ```
     pub fn new(method: MethodPattern, path: &str) -> Self {
         // Defer fallible pattern compilation to the registration boundary.
         Self {
@@ -41,12 +79,46 @@ impl RouteSpec {
         }
     }
     /// Set execution priority without changing specificity or equal-priority order.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use stackpress_lib::{Flow, Invocation, Request, Response, Result};
+    /// use stackpress_server::ServerBuilder;
+    /// async fn greet(_: &mut Request, res: &mut Response, _: Invocation<'_>) -> Result<Flow> {
+    ///     res.results(&"hello")?;
+    ///     Ok(Flow::Continue)
+    /// }
+    /// use stackpress_lib::MethodPattern;
+    /// use stackpress_server::RouteSpec;
+    /// let mut app = ServerBuilder::new();
+    /// let spec = RouteSpec::new(MethodPattern::GET, "/hello").priority(10).label("hello");
+    /// app.route_with(spec, greet)?;
+    /// # Ok::<(), stackpress_lib::Error>(())
+    /// ```
     pub fn priority(mut self, priority: i64) -> Self {
         // Lib remains the sole sorting authority.
         self.priority = priority;
         self
     }
     /// Set a diagnostic label, validated before the listener is installed.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use stackpress_lib::{Flow, Invocation, Request, Response, Result};
+    /// use stackpress_server::ServerBuilder;
+    /// async fn greet(_: &mut Request, res: &mut Response, _: Invocation<'_>) -> Result<Flow> {
+    ///     res.results(&"hello")?;
+    ///     Ok(Flow::Continue)
+    /// }
+    /// use stackpress_lib::MethodPattern;
+    /// use stackpress_server::RouteSpec;
+    /// let mut app = ServerBuilder::new();
+    /// let spec = RouteSpec::new(MethodPattern::GET, "/hello").priority(10).label("hello");
+    /// app.route_with(spec, greet)?;
+    /// # Ok::<(), stackpress_lib::Error>(())
+    /// ```
     pub fn label(mut self, label: impl Into<String>) -> Self {
         // Labels are metadata rather than replacement authority.
         self.label = Some(label.into());
@@ -72,13 +144,16 @@ impl RouteSpec {
 
 /// Wrap only host routes; raw lib captures and nesting semantics remain unchanged.
 pub(crate) fn wrap(policy: CapturePolicy, action: impl Handler + 'static) -> impl Handler {
+    // Share the compiled action explicitly; only this wrapper applies host capture policy.
     let action = Arc::new(action);
     handler(move |req, res, inv| {
         let action = Arc::clone(&action);
         Box::pin(async move {
+            // Only opted-in host routes overlay aggregate data; raw lib captures remain untouched.
             if policy == CapturePolicy::NamedIntoData {
                 // Literal keys prevent punctuation in parameter names becoming a data path.
                 let mut captures = Nest::with_limits(req.data.limits());
+                // Copy named parameters only; positional captures stay private to this Invocation.
                 for (name, value) in &inv.captures().params {
                     captures.set(name, value.clone())?;
                 }

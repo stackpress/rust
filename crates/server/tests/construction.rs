@@ -11,12 +11,14 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 static REGISTRATIONS: AtomicUsize = AtomicUsize::new(0);
 /// Count callback entry without publishing any runtime state.
 fn counted(_: &mut ServerBuilder) -> Result<()> {
+    // An observable counter detects any callback entry before graph preflight completed.
     REGISTRATIONS.fetch_add(1, Ordering::SeqCst);
     Ok(())
 }
 /// Missing/order/cycle failures run no callbacks; valid selection preserves supplied order.
 #[tokio::test]
 async fn dependency_preflight() -> Result<()> {
+    // Every invalid complete graph must fail before this test's callback counter can change.
     let cases = [
         vec![PluginSpec::new("a").requires(&["missing"])],
         vec![PluginSpec::new("a").requires(&["b"]), PluginSpec::new("b")],
@@ -30,6 +32,7 @@ async fn dependency_preflight() -> Result<()> {
         ],
     ];
     for specs in cases {
+        // Build each invalid graph in isolation so selection state cannot leak between cases.
         let mut app = ServerBuilder::new();
         for spec in specs {
             app.plugin_with(spec, counted)?;
@@ -74,6 +77,7 @@ struct Settings {
 }
 /// Semantic validation occurs before startup, after the final typed decoding.
 fn validate(value: &Settings) -> Result<()> {
+    // A decoded but semantically invalid limit must be rejected before service startup.
     if value.limit == 0 {
         return Err(Error::invalid("limit must be positive"));
     }
@@ -81,6 +85,7 @@ fn validate(value: &Settings) -> Result<()> {
 }
 /// Defaults can be registered by a selected plugin after layers were supplied.
 fn settings(app: &mut ServerBuilder) -> Result<()> {
+    // Register defaults through the selected plugin so pre-supplied layers cannot bypass ownership.
     app.config_section(
         "settings",
         Settings {
@@ -95,6 +100,8 @@ fn settings(app: &mut ServerBuilder) -> Result<()> {
 /// Objects merge recursively; null/arrays replace; unknown/invalid sections fail build.
 #[tokio::test]
 async fn typed_configuration() -> Result<()> {
+    // Combine partial file/code layers against typed defaults, preserving null and array
+    // replacement.
     let mut layers = ConfigLayers::new();
     layers.json(
         "file",
@@ -103,12 +110,16 @@ async fn typed_configuration() -> Result<()> {
     layers.value("code", serde_json::json!({"settings":{"limit":7}}))?;
     let mut app = ServerBuilder::new();
     app.config_layers(layers)?.plugin("settings", settings)?;
+    // Observe the final typed values only after registration, merge, decoding and validation all
+    // succeed.
     let server = app.build().await.map_err(|e| e.error)?;
     let value = server.host().config::<Settings>()?;
     assert_eq!(value.nested, serde_json::json!({"a":9,"b":2}));
     assert_eq!(value.list, [3]);
     assert_eq!(value.nullable, None);
     assert_eq!(value.limit, 7);
+    // Unknown roots, unknown typed fields, failed validation and null type mismatch all reject
+    // build.
     for value in [
         serde_json::json!({"unknown":{}}),
         serde_json::json!({"settings":{"extra":1}}),
@@ -132,6 +143,7 @@ async fn typed_configuration() -> Result<()> {
 /// Every invalid/budget-exceeding append retains the previous accepted layer sequence.
 #[test]
 fn bounded_configuration_is_atomic() -> Result<()> {
+    // Accept one baseline layer and use the same owner for every rejected append.
     let mut layers = ConfigLayers::new();
     layers.json("ok", r#"{"s":{"key":1}}"#)?;
     assert!(layers.json("bad", "[]").is_err());
@@ -158,6 +170,7 @@ fn bounded_configuration_is_atomic() -> Result<()> {
 }
 /// Register and replace typed services with explicit sharing and checked names.
 async fn services(start: &mut StartupContext) -> Result<Flow> {
+    // Explicit Arc counts distinguish retained ownership from silent duplicate replacement.
     assert!(start.replace_service(Arc::new(1_u64)).is_err());
     let first = Arc::new(2_u64);
     start.register(Arc::clone(&first))?;
@@ -179,6 +192,7 @@ async fn services(start: &mut StartupContext) -> Result<Flow> {
 }
 /// Services freeze in Listen; routes cannot be added before Route.
 async fn listen(start: &mut StartupContext) -> Result<Flow> {
+    // Config has completed, so service mutation and early route exposure must both be denied.
     assert!(start.register(Arc::new(1_u64)).is_err());
     assert!(start.replace_service(Arc::new(1_u64)).is_err());
     assert!(start.register_named("late", Arc::new(1_u64)).is_err());
@@ -188,6 +202,7 @@ async fn listen(start: &mut StartupContext) -> Result<Flow> {
 }
 /// Route cannot reopen operation or service registration.
 async fn routes(start: &mut StartupContext) -> Result<Flow> {
+    // Route may expose existing capabilities but cannot reopen operation/service registration.
     assert!(start.on("late", echo).is_err());
     assert!(start.register(Arc::new(1_u64)).is_err());
     start.get("/ok/:id", echo)?;
@@ -195,6 +210,7 @@ async fn routes(start: &mut StartupContext) -> Result<Flow> {
 }
 /// Plugins cannot expand their already-preflighted selection list.
 fn phases(app: &mut ServerBuilder) -> Result<()> {
+    // A plugin cannot expand the already-preflighted selected set while scheduling its own tasks.
     assert!(app.plugin("late", counted).is_err());
     app.on_config(services)?;
     app.on_listen(listen)?;
@@ -203,6 +219,7 @@ fn phases(app: &mut ServerBuilder) -> Result<()> {
 /// Phase gates, immutable service access and replacement sites survive build.
 #[tokio::test]
 async fn services_and_phase_gates() -> Result<()> {
+    // Build a real selected plugin through all phases before inspecting the frozen registry.
     let mut app = ServerBuilder::new();
     app.plugin("phases", phases)?;
     assert!(
@@ -216,6 +233,8 @@ async fn services_and_phase_gates() -> Result<()> {
         )
         .is_err()
     );
+    // The immutable registry must retain the chosen type/name values and original/replacement
+    // sites.
     let server = app.build().await.map_err(|e| e.error)?;
     assert_eq!(*server.host().service::<u64>()?, 9);
     assert_eq!(*server.host().service_named::<u64>("other")?, 5);
@@ -235,12 +254,14 @@ async fn services_and_phase_gates() -> Result<()> {
 }
 /// Report aggregate capture data without adding another lifecycle.
 async fn echo(req: &mut Request, res: &mut Response, _: Invocation<'_>) -> Result<Flow> {
+    // Snapshot aggregate data through a public response so capture precedence is observable.
     res.results(&req.data)?;
     Ok(Flow::Continue)
 }
 /// Replacing a host route retains capture policy and the original listener handle/site.
 #[tokio::test]
 async fn route_handles_and_capture_policy() -> Result<()> {
+    // Register a real route handle, then replace/remove contributions through explicit authority.
     let mut app = ServerBuilder::new();
     let id = app.route_with(
         RouteSpec::new(MethodPattern::GET, "/items/:id").label("route"),
@@ -269,6 +290,7 @@ async fn route_handles_and_capture_policy() -> Result<()> {
         )
         .is_err()
     );
+    // Dispatch against the published table to verify provenance and capture-wrapper retention.
     let server = app.build().await.map_err(|e| e.error)?;
     let input = Request::builder()
         .query(serde_json::json!({"id":"query"}))
@@ -286,6 +308,7 @@ async fn route_handles_and_capture_policy() -> Result<()> {
 /// High priority Config tasks run before the equal-priority insertion-order pair.
 #[tokio::test]
 async fn stable_phase_priorities_and_failure_stops() -> Result<()> {
+    // A user-owned trace observes priority order without any production registry lock.
     use stackpress_lib::queue::task;
     let trace = Arc::new(std::sync::Mutex::new(Vec::new()));
     let mut app = ServerBuilder::new();
@@ -305,7 +328,9 @@ async fn stable_phase_priorities_and_failure_stops() -> Result<()> {
         )?;
     }
     app.build().await.map_err(|e| e.error)?;
+    // The observed order must be priority-first with stable insertion ties.
     assert_eq!(*trace.lock().unwrap(), ["high", "first", "last"]);
+    // Error and Abort at every phase must prevent publication with the correct task identity.
     for stage in [
         StartupStage::Config,
         StartupStage::Listen,
@@ -340,6 +365,7 @@ async fn stable_phase_priorities_and_failure_stops() -> Result<()> {
 /// Composition moves handles and wrappers without cloning runtime ownership.
 #[tokio::test]
 async fn composed_builder_preserves_handles() -> Result<()> {
+    // Move the source registrar into a target; its original handle must still replace the wrapper.
     let mut source = ServerBuilder::new();
     let route = source.get("/composed/:id", echo)?;
     let mut target = ServerBuilder::new();
@@ -355,6 +381,7 @@ async fn composed_builder_preserves_handles() -> Result<()> {
 /// Exact raw byte/layer limits accept the boundary and reject the next unit atomically.
 #[test]
 fn configuration_exact_boundaries() -> Result<()> {
+    // Use exact byte/layer limits and reject only the next unit without changing accepted inputs.
     let mut layers = ConfigLayers::new();
     let mut text = "{}".to_owned();
     text.push_str(&" ".repeat(1_048_576 - 2));
@@ -373,6 +400,7 @@ fn configuration_exact_boundaries() -> Result<()> {
 /// Aggregate defaults and many small layers cannot bypass merged node/byte budgets.
 #[tokio::test]
 async fn merged_configuration_budgets_cover_defaults_and_layers() -> Result<()> {
+    // Separate newtypes allow distinct section claims whose combined defaults exceed the budget.
     /// Newtypes permit two deliberately distinct package-owned string sections.
     #[derive(Serialize, Deserialize)]
     struct First(String);
@@ -381,6 +409,8 @@ async fn merged_configuration_budgets_cover_defaults_and_layers() -> Result<()> 
     struct Second(String);
     /// These sections have no semantic constraint beyond their host-enforced budget.
     fn valid<T>(_: &T) -> Result<()> {
+        // These fixtures leave semantic validation unconstrained so only host budgets decide
+        // failure.
         Ok(())
     }
     let mut app = ServerBuilder::new();
@@ -411,5 +441,31 @@ async fn merged_configuration_budgets_cover_defaults_and_layers() -> Result<()> 
             .is_err()
     );
     assert_eq!(layers.entries().count(), 1);
+    Ok(())
+}
+
+/// Failed aggregate append preserves the builder's previously accepted typed configuration.
+#[tokio::test]
+async fn rejected_composed_config_keeps_accepted_layers() -> Result<()> {
+    // Each individual layer fits, but their cumulative encoded input exceeds the host budget.
+    let mut accepted = ConfigLayers::new();
+    accepted.value(
+        "accepted",
+        serde_json::json!({"settings":{"nested":"a".repeat(600_000)}}),
+    )?;
+    let mut excessive = ConfigLayers::new();
+    excessive.value(
+        "excessive",
+        serde_json::json!({"settings":{"nested":"b".repeat(600_000)}}),
+    )?;
+    let mut app = ServerBuilder::new();
+    app.plugin("settings", settings)?;
+    app.config_layers(accepted)?;
+    // Rejection must not replace the first value or spend its accounting a second time.
+    assert!(app.config_layers(excessive).is_err());
+    let host = app.build().await.map_err(|error| error.error)?;
+    let typed = host.host().config::<Settings>()?;
+    assert_eq!(typed.nested.as_str(), Some("a".repeat(600_000).as_str()));
+    assert_eq!(typed.limit, 4);
     Ok(())
 }

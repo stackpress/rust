@@ -108,8 +108,57 @@ pub trait ServerInvocationExt {
     /// Access the complete immutable host context, or error for a non-host lib invocation.
     fn host(&self) -> Result<&HostContext>;
     /// Borrow a typed service directly from the current invocation.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use std::sync::Arc;
+    /// use stackpress_lib::{Flow, Invocation, Request, Response, Result};
+    /// use stackpress_server::{ServerBuilder, ServerInvocationExt, StartupContext};
+    /// async fn greet(_: &mut Request, res: &mut Response, inv: Invocation<'_>) -> Result<Flow> {
+    ///     res.results(inv.service::<String>()?)?;
+    ///     Ok(Flow::Continue)
+    /// }
+    /// async fn configure(start: &mut StartupContext) -> Result<Flow> {
+    ///     start.register(Arc::new("ready".to_owned()))?;
+    ///     Ok(Flow::Continue)
+    /// }
+    /// # #[tokio::main(flavor = "current_thread")]
+    /// # async fn main() -> stackpress_server::BuildResult<()> {
+    /// let mut app = ServerBuilder::new();
+    /// app.on_config(configure)?;
+    /// app.on("greet", greet)?;
+    /// let reply = app.build().await?.call("greet", serde_json::json!({})).await?;
+    /// assert_eq!(reply.response.result().and_then(|v| v.as_str()), Some("ready"));
+    /// # Ok(())
+    /// # }
+    /// ```
     fn service<T: Any + Send + Sync>(&self) -> Result<&T>;
     /// Borrow a typed config section directly from the current invocation.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use stackpress_lib::{Flow, Invocation, Request, Response, Result};
+    /// use stackpress_server::{ServerBuilder, ServerInvocationExt};
+    /// async fn limit(_: &mut Request, res: &mut Response, inv: Invocation<'_>) -> Result<Flow> {
+    ///     res.results(inv.config::<u64>()?)?;
+    ///     Ok(Flow::Continue)
+    /// }
+    /// fn validate(_: &u64) -> Result<()> {
+    ///     Ok(())
+    /// }
+    /// # #[tokio::main(flavor = "current_thread")]
+    /// # async fn main() -> stackpress_server::BuildResult<()> {
+    /// let mut app = ServerBuilder::new();
+    /// app.config_section("limit", 4_u64, validate)?;
+    /// app.on("limit", limit)?;
+    /// let server = app.build().await?;
+    /// let reply = server.call("limit", serde_json::json!({})).await?;
+    /// assert!(reply.response.error().is_none());
+    /// # Ok(())
+    /// # }
+    /// ```
     fn config<T: Any + Send + Sync>(&self) -> Result<&T>;
     /// Explicitly retain a service Arc directly from the current invocation.
     fn shared_service<T: Any + Send + Sync>(&self) -> Result<Arc<T>>;
@@ -124,6 +173,34 @@ pub trait ServerInvocationExt {
     /// Borrow a deliberately named service from the current host.
     fn service_named<T: Any + Send + Sync>(&self, name: &str) -> Result<&T>;
     /// Delegate explicitly: child Abort maps to Abort, completion to Continue, missing to error.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use stackpress_lib::{Flow, Invocation, Request, Response, Result};
+    /// use stackpress_server::ServerBuilder;
+    /// async fn greet(_: &mut Request, res: &mut Response, _: Invocation<'_>) -> Result<Flow> {
+    ///     res.results(&"hello")?;
+    ///     Ok(Flow::Continue)
+    /// }
+    /// use stackpress_server::ServerInvocationExt;
+    /// async fn expose(
+    ///     req: &mut Request,
+    ///     res: &mut Response,
+    ///     inv: Invocation<'_>,
+    /// ) -> Result<Flow> {
+    ///     inv.delegate("greet", req, res).await
+    /// }
+    /// # #[tokio::main(flavor = "current_thread")]
+    /// # async fn main() -> stackpress_server::BuildResult<()> {
+    /// let mut app = ServerBuilder::new();
+    /// app.on("greet", greet)?;
+    /// app.get("/hello", expose)?;
+    /// let reply = app.build().await?.call("GET /hello", serde_json::json!({})).await?;
+    /// assert!(reply.report.is_success(&reply.response));
+    /// # Ok(())
+    /// # }
+    /// ```
     fn delegate<'a>(
         &'a self,
         event: &'a str,

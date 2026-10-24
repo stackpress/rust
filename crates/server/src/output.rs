@@ -47,6 +47,7 @@ impl OutputGuard {
             ));
         }
         match response.delivery_state() {
+            // Only unused value-level delivery may proceed to this adapter's native attempt.
             DeliveryState::Open => {}
             DeliveryState::Stopped => {
                 // Suppression consumes this adapter's output opportunity without entering writer.
@@ -63,7 +64,9 @@ impl OutputGuard {
         }
         // Consume before any await; dropping a pending future cannot reopen authority.
         self.state = DeliveryState::Attempted;
+        // The sole writer owns this await; cancellation preserves Attempted in both owners.
         let result = response.dispatch_with(writer).await;
+        // Record completion without granting a retry after partial failure.
         self.state = if result.is_ok() {
             DeliveryState::Sent
         } else {

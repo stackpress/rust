@@ -35,6 +35,7 @@ impl Registry {
                 type_name::<T>()
             )));
         }
+        // Publish the exact Arc allocation only after duplicate-type rejection.
         self.values.insert(TypeId::of::<T>(), Slot::new(value));
         Ok(())
     }
@@ -48,9 +49,11 @@ impl Registry {
     ) -> Result<()> {
         // Names appear in diagnostics, so reject unbounded/control-bearing input.
         crate::plugin::identity(name)?;
+        // A name is a singleton authority across all concrete types, not a per-type alias.
         if self.named.contains_key(name) {
             return Err(Error::invalid(format!("duplicate service name: {name}")));
         }
+        // Store the checked name/type pair together; wrong-typed reads can never reinterpret it.
         self.named.insert(name.into(), Slot::new(value));
         Ok(())
     }
@@ -63,7 +66,9 @@ impl Registry {
             .values
             .get_mut(&TypeId::of::<T>())
             .ok_or_else(|| missing::<T>(None))?;
+        // Drop the registry's previous Arc handle; any application-retained owner remains explicit.
         slot.value = value;
+        // Keep the original site and record the actual customization caller separately.
         slot.replaced = Some(SourceLocation::caller());
         Ok(())
     }
@@ -71,6 +76,7 @@ impl Registry {
     /// Borrow one singleton without acquiring any lock.
     pub(crate) fn get<T: Any + Send + Sync>(&self) -> Result<&T> {
         // Checked downcasting guards the private insertion invariant as well as missing types.
+        // The TypeId lookup and downcast must both succeed; neither grants mutable service access.
         self.values
             .get(&TypeId::of::<T>())
             .and_then(|s| s.value.downcast_ref())
@@ -80,6 +86,8 @@ impl Registry {
     /// Borrow a named service only if the name's concrete type also agrees.
     pub(crate) fn named<T: Any + Send + Sync>(&self, name: &str) -> Result<&T> {
         // Wrong types are lookup failures rather than casts or alternate named allocations.
+        // Require the requested name and concrete type together; missing/wrong type shares one
+        // error path.
         self.named
             .get(name)
             .and_then(|s| s.value.downcast_ref())
@@ -105,6 +113,8 @@ impl Registry {
             .values
             .get(&TypeId::of::<T>())
             .ok_or_else(|| missing::<T>(None))?;
+        // Return borrowed provenance only; no resource or registration authority leaves the
+        // registry.
         Ok((&slot.registered, slot.replaced.as_ref()))
     }
 }
