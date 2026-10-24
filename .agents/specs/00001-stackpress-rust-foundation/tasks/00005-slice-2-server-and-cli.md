@@ -252,6 +252,18 @@ Trees are retained as `target/slice2-receipts/server-default.tree` and `server-h
 - Committed as `cb09e90` on `trial/3-lane-b-cli` and merged into `trial/3` as `55ca02b` with no conflicts. The receipt moved losslessly to [slice-2-receipt-lane-b-cli.md](../slice-2-receipt-lane-b-cli.md).
 - Remaining for lane B: CLI `run`/`main_with`/exit mapping against `Server::handle`, under an extended brief.
 
+
+**Lane D re-verification and merge (coordinator, 2026-10-24): passed; merged.**
+
+- Checks rerun in the lane worktree: fmt passed; 12 example tests passed in both the default and `--features experimental` modes; Clippy clean.
+- Scope: changes are confined to `examples/capability-host/**`, the root workspace `members` entry, and the lockfile package entry.
+- DX review: `profiles.rs` matches the design's example. It is one plain `register` function with named `async fn` config, listen, and route steps, `inv.service::<Profiles>()`, and a one-line `inv.delegate` route, with no traits or macros.
+- Committed as `340750d` on `trial/3-lane-d-app` and merged into `trial/3` as `253734a`. `Cargo.lock` auto-merged, and `cargo metadata --locked` confirms consistency.
+- Merged workspace: 101 tests passed, 0 failed; 320 doctests; Clippy clean with `server-http`.
+- Coverage, reproduced with the receipt's corrected command (the tool excludes `examples/` by default): 100% (108 lines) by default and 99.22% (129 lines) with `experimental`.
+- The receipt moved losslessly to [slice-2-receipt-lane-d-app.md](../slice-2-receipt-lane-d-app.md).
+- Remaining for lane D after lanes B and C merge: the application `stackpress` binary via `stackpress_cli::main_with`, and the HTTP-path parity proof.
+
 ## Acceptance notes
 
 Library, host, and CLI work has no visual acceptance artifact under the spec workflow; this task finishes at `verified` after coordinator review.

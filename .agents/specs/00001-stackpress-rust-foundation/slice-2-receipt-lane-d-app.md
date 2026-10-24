@@ -1,5 +1,7 @@
 # Lane D: profiles application proof
 
+Spec file of [00001 Stackpress Rust foundation](index.md), recording lane D of [task 00005](tasks/00005-slice-2-server-and-cli.md). Load for the `examples/capability-host` proof application (profiles plugin, customization, compile-time experimental exclusion, lifecycle reporting), its coverage method, and proof-item status. Moved losslessly from `examples/capability-host/LANE-D-RECEIPT.md` (lane branch commit `340750d`, merged in `253734a`).
+
 Implemented on 2026-10-24 in branch `trial/3-lane-d-app`, based on accepted M1/M2
 commit `f19f37d`. This is the initial, in-process application deliverable for coordinator
 review. The app binary and buffered HTTP adapter proof await the coordinator's next brief.
