@@ -24,3 +24,10 @@ All 21 original pinned/current fixture files were compared byte-for-byte and mat
 The three standalone fieldset/model fixtures retain their expected unresolved Text
 reference failure. The TypeScript oracle was run outside the upstream checkout;
 no upstream build, installation or modification was performed.
+
+The Slice 3 refactoring rounds retain the public API and serialized shapes. Word
+lookahead and consumption share one scanner rule; reference discovery has a private
+bounded visitor; JSON codec and normalized-schema validation have separate private
+modules. Legacy reference-copy accounting uses a bounded counting writer instead
+of allocating temporary serialized buffers. These are internal repairs, not a new
+upstream parser or a grammar change.

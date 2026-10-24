@@ -17,11 +17,11 @@ pub enum ErrorCode {
     InvalidLiteral,
     /// A declaration/member name appears twice.
     DuplicateName,
-    /// An attribute refers to a declaration not available yet.
+    /// A target is missing, forward-declared, or part of a cyclic reference dependency.
     UnknownReference,
     /// Required normalized structure is missing.
     MissingProperty,
-    /// Internal normalized input violates its contract.
+    /// Checked syntax, normalized data or a structural reference violates its contract.
     ValidationError,
     /// A source, expansion or recursion budget was exceeded.
     Limit,
@@ -36,9 +36,9 @@ pub struct IdeaError {
     pub code: ErrorCode,
     /// Human-readable explanation without source excerpts.
     pub message: String,
-    /// Inclusive UTF-8 byte offset, present for public diagnostics.
+    /// Inclusive UTF-8 byte offset; source-free validation failures may omit coordinates.
     pub start: Option<usize>,
-    /// Exclusive UTF-8 byte offset, present for public diagnostics.
+    /// Exclusive UTF-8 byte offset; source-free validation failures may omit coordinates.
     pub end: Option<usize>,
     /// Caller-supplied logical file name.
     pub file: String,

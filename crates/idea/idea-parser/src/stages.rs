@@ -1,6 +1,5 @@
 //! Checked syntax stages with owned source identity and typed environment provenance.
 
-use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
@@ -21,7 +20,10 @@ pub struct SourceFile {
 }
 
 impl SourceFile {
-    /// Own a caller-named source; parsing checks budgets before copying syntax.
+    /// Own a caller-named source and build its UTF-8 coordinate indexes.
+    ///
+    /// Construction does not validate resource limits. [`parse_ast`] checks its policy before
+    /// constructing syntax or cloning this source into the immutable Ast owner.
     ///
     /// # Examples
     /// ```
@@ -60,11 +62,23 @@ impl SourceFile {
     }
 
     /// Return the caller's logical identity; callers use distinct names for distinct sources.
+    ///
+    /// # Examples
+    /// ```
+    /// use stackpress_idea_parser::SourceFile;
+    /// assert_eq!(SourceFile::new("named.idea", "").name(), "named.idea");
+    /// ```
     pub fn name(&self) -> &str {
         &self.name
     }
 
     /// Borrow the unchanged UTF-8 source.
+    ///
+    /// # Examples
+    /// ```
+    /// use stackpress_idea_parser::SourceFile;
+    /// assert_eq!(SourceFile::new("named.idea", "// é").text(), "// é");
+    /// ```
     pub fn text(&self) -> &str {
         &self.text
     }
@@ -81,6 +95,14 @@ pub struct Ast {
 
 impl Ast {
     /// Borrow the source used to interpret every byte offset in this syntax.
+    ///
+    /// # Examples
+    /// ```
+    /// use stackpress_idea_parser::{parse_ast, SourceFile, ParseLimits};
+    /// let ast = parse_ast(&SourceFile::new("named.idea", ""), ParseLimits::default())?;
+    /// assert_eq!(ast.source().name(), "named.idea");
+    /// # Ok::<(), stackpress_idea_parser::IdeaError>(())
+    /// ```
     pub fn source(&self) -> &SourceFile {
         &self.source
     }
@@ -88,12 +110,23 @@ impl Ast {
     /// Inspect syntax without obtaining mutable access to the checked owner.
     ///
     /// Environment nodes contain names, never environment values; identifiers remain typed.
+    ///
+    /// # Examples
+    /// ```
+    /// use stackpress_idea_parser::{parse_ast, SourceFile, ParseLimits};
+    /// let ast = parse_ast(&SourceFile::new("empty.idea", ""), ParseLimits::default())?;
+    /// assert!(ast.syntax().body.is_empty());
+    /// # Ok::<(), stackpress_idea_parser::IdeaError>(())
+    /// ```
     pub fn syntax(&self) -> &SchemaToken {
         &self.syntax
     }
 }
 
 /// Source identity and half-open UTF-8 byte coordinates, without a source excerpt.
+///
+/// Parser-generated spans refer to the supplied SourceFile. Deserializing a span alone does
+/// not authenticate its historical text; checked envelope import validates its structure.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct SourceSpan {
@@ -168,6 +201,10 @@ pub enum ValuePath {
 }
 
 /// An actual reference, structurally separate from placeholder-looking literal strings.
+///
+/// Composition must keep records only for surviving declaration/column/attribute sites.
+/// [`finalize_with_references`](crate::finalize_with_references) validates each destination
+/// against its unresolved placeholder before applying any substitutions.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Reference {
@@ -272,152 +309,8 @@ pub fn compile_ast_with_references(
     inputs: &CompileInputs,
 ) -> Result<CompiledSchema, IdeaError> {
     let config = compile_ast(ast, inputs)?;
-    let mut references = Vec::new();
-    let declarations: IndexMap<_, _> = ast
-        .syntax
-        .body
-        .iter()
-        .enumerate()
-        .filter_map(|(index, item)| {
-            // Imports do not establish reference targets; declaration order remains source order.
-            if let Statement::Declaration(declaration) = item {
-                Some((declaration.declarations[0].id.name.as_str(), index))
-            } else {
-                None
-            }
-        })
-        .collect();
-    let mut metadata_remaining = inputs.limits.max_bytes;
-    for (index, item) in ast.syntax.body.iter().enumerate() {
-        let Statement::Declaration(declaration) = item else {
-            continue;
-        };
-        let kind = match declaration.kind {
-            "type" => DeclarationKind::Type,
-            "model" => DeclarationKind::Model,
-            _ => continue,
-        };
-        let value = &declaration.declarations[0];
-        // The parser creates a normalized metadata/columns object for both fieldset kinds.
-        for property in &value.init.properties {
-            let DataToken::Object(object) = &property.value else {
-                continue;
-            };
-            if property.key.name == "attributes" {
-                collect_attributes(
-                    object,
-                    None,
-                    kind,
-                    &value.id.name,
-                    ast,
-                    index,
-                    &declarations,
-                    &mut references,
-                    &mut metadata_remaining,
-                )?;
-            } else if property.key.name == "columns" {
-                for column in &object.properties {
-                    let DataToken::Object(fields) = &column.value else {
-                        continue;
-                    };
-                    for field in &fields.properties {
-                        if field.key.name == "attributes" {
-                            let DataToken::Object(attributes) = &field.value else {
-                                continue;
-                            };
-                            collect_attributes(
-                                attributes,
-                                Some(&column.key.name),
-                                kind,
-                                &value.id.name,
-                                ast,
-                                index,
-                                &declarations,
-                                &mut references,
-                                &mut metadata_remaining,
-                            )?;
-                        }
-                    }
-                }
-            }
-        }
-    }
+    let references = crate::references::collect(ast, inputs.limits)?;
     Ok(CompiledSchema { config, references })
-}
-
-/// Gather references only inside a declaration or column's attribute arguments.
-#[allow(clippy::too_many_arguments)]
-fn collect_attributes(
-    attributes: &crate::ObjectToken,
-    column: Option<&str>,
-    kind: DeclarationKind,
-    declaration: &str,
-    ast: &Ast,
-    index: usize,
-    declarations: &IndexMap<&str, usize>,
-    references: &mut Vec<Reference>,
-    remaining: &mut usize,
-) -> Result<(), IdeaError> {
-    for attribute in &attributes.properties {
-        let mut pending = vec![(&attribute.value, Vec::new())];
-        // Iterative traversal keeps nested paths explicit and avoids another recursive walker.
-        while let Some((data, path)) = pending.pop() {
-            match data {
-                DataToken::Identifier(target) => {
-                    // Charge repeated owner/source/path strings before creating the owned record.
-                    let path_bytes: usize = path
-                        .iter()
-                        .map(|step| match step {
-                            ValuePath::Key(key) => key.len() + 16,
-                            ValuePath::Index(_) => 24,
-                        })
-                        .sum();
-                    let bytes = declaration
-                        .len()
-                        .saturating_add(column.map_or(0, str::len))
-                        .saturating_add(attribute.key.name.len())
-                        .saturating_add(target.name.len())
-                        .saturating_add(ast.source.name.len())
-                        .saturating_add(path_bytes)
-                        .saturating_add(256);
-                    *remaining = remaining.checked_sub(bytes).ok_or_else(|| {
-                        IdeaError::new(ErrorCode::Limit, "Reference metadata budget exceeded")
-                            .with_span(target.start, target.end)
-                            .locate(ast.source.name(), ast.source.text())
-                    })?;
-                    references.push(Reference {
-                        kind,
-                        declaration: declaration.into(),
-                        column: column.map(Into::into),
-                        attribute: attribute.key.name.clone(),
-                        path,
-                        target: target.name.clone(),
-                        span: SourceSpan::new(&ast.source, target.start, target.end),
-                        forward: declarations
-                            .get(target.name.as_str())
-                            .is_some_and(|order| *order >= index),
-                    });
-                }
-                DataToken::Array(array) => {
-                    // Reverse stack insertion restores source order on removal.
-                    for (index, data) in array.elements.iter().enumerate().rev() {
-                        let mut child = path.clone();
-                        child.push(ValuePath::Index(index));
-                        pending.push((data, child));
-                    }
-                }
-                DataToken::Object(object) => {
-                    for property in object.properties.iter().rev() {
-                        let mut child = path.clone();
-                        child.push(ValuePath::Key(property.key.name.clone()));
-                        pending.push((&property.value, child));
-                    }
-                }
-                DataToken::Literal(_) | DataToken::Environment(_) => {}
-            }
-        }
-    }
-    Ok(())
 }
 
 /// Finalize a single checked source, requiring imports to be composed explicitly first.

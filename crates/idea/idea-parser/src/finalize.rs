@@ -176,21 +176,15 @@ fn compile_identifier(
     // Only final compilation resolves references; ordinary compilation preserves placeholders.
     if let Some(references) = references {
         if let Some(value) = references.get(&token.name) {
-            // Charge a bounded value before cloning; repeated props cannot amplify forever.
-            let bytes = serde_json::to_vec(value)
-                .map_err(|_| {
-                    IdeaError::new(ErrorCode::ValidationError, "Reference serialization failed")
-                })?
-                .len();
-            let remaining = references
-                .remaining
-                .get()
-                .checked_sub(bytes)
-                .ok_or_else(|| {
-                    IdeaError::new(ErrorCode::Limit, "Reference expansion budget exceeded")
-                        .with_span(token.start, token.end)
-                })?;
-            references.remaining.set(remaining);
+            // Count escaped JSON bytes without allocating a temporary serialization buffer.
+            // The sink stops at the same available-byte boundary as the former subtraction.
+            let available = references.remaining.get();
+            let bytes = crate::json::measure(value, available).map_err(|_| {
+                IdeaError::new(ErrorCode::Limit, "Reference expansion budget exceeded")
+                    .with_span(token.start, token.end)
+            })?;
+            // Successful measurement proves bytes <= available before this subtraction.
+            references.remaining.set(available - bytes);
             return Ok(value.clone());
         }
 
