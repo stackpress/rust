@@ -294,6 +294,20 @@ Trees are retained as `target/slice2-receipts/server-default.tree` and `server-h
 - Receipt moved losslessly to [slice-2-receipt-lane-b-run.md](../slice-2-receipt-lane-b-run.md).
 - Remaining: lane D adds the application `stackpress` binary for the CLI side of proof item 5.
 
+
+**Lane D CLI binary re-verification and merge (coordinator, 2026-10-24): passed; merged. Proof item 5 complete.**
+
+- Checks rerun in the lane worktree: 25 example tests passed in both the default and `experimental` modes, 0 failed; Clippy clean with `server-http`.
+- The coordinator ran the real compiled binary (`target/debug/stackpress`):
+  - `emit profile-search --id abc123` printed one envelope, `{"code":200,"status":"OK",...,"results":[{"id":"abc123","name":"Ada Lovelace"}],"total":1}`, and exited 0;
+  - an unknown event printed a public 404 envelope and exited 1;
+  - a usage error printed nothing on stdout and exited 2;
+  - `-b x.json` after the event was treated as capability data, with no file read.
+- The tests prove that envelope equals the HTTP (`GET /profiles/abc123`) and `Server::call` envelopes.
+- `main.rs` is a short copyable entry: a named `build_application` plus `stackpress_cli::main_with`.
+- Committed as `d00114d` and merged as `6f53513`, alongside lane A's in-progress uncommitted rounds. The files don't overlap.
+- Receipt moved losslessly to [slice-2-receipt-lane-d-cli.md](../slice-2-receipt-lane-d-cli.md).
+
 ## Acceptance notes
 
 Library, host, and CLI work has no visual acceptance artifact under the spec workflow; this task finishes at `verified` after coordinator review.

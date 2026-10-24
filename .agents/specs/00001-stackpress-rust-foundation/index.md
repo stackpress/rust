@@ -44,3 +44,4 @@ Approved with G12–G16 and coordinator DX changes; only M0 is released. Load th
 - [Slice 2 lane B CLI execution receipt](slice-2-receipt-lane-b-run.md): load for `run`/`main_with`, stdout/stderr and exit-code policy, output authority, and verification.
 - [Slice 2 lane D proof-app receipt](slice-2-receipt-lane-d-app.md): load for the `examples/capability-host` profiles proof application, its example-coverage measurement method, and which proof items are demonstrated.
 - [Slice 2 lane C HTTP receipt](slice-2-receipt-lane-c-http.md): load for the buffered HTTP adapter's contract, limitations (e.g. list-valued session cookies need an explicit codec), tests, and coverage.
+- [Slice 2 lane D CLI binary receipt](slice-2-receipt-lane-d-cli.md): load for the application `stackpress` binary and the end-to-end CLI = HTTP = direct-call proof.

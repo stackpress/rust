@@ -1,5 +1,7 @@
 # Lane D: application executable and cross-surface proof
 
+Spec file of [00001 Stackpress Rust foundation](index.md), recording the lane D application binary for [task 00005](tasks/00005-slice-2-server-and-cli.md). Load for the `examples/capability-host` `stackpress` binary, the end-to-end CLI proof completing proof item 5, its rounds, and verification. Moved losslessly from `examples/capability-host/LANE-D-CLI-RECEIPT.md` (lane branch commit `d00114d`, merged in `6f53513`).
+
 Date: 2026-10-24. Branch: `trial/3-lane-d-app`, based on coordinator fast-forward `3ab0a80`.
 This completes the application CLI brief using the merged `stackpress_cli::main_with` implementation.
 Stopped for coordinator review; no commit, push, listener or socket was performed.
