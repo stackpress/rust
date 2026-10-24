@@ -4,106 +4,26 @@ use std::collections::BTreeMap;
 use std::fs;
 use std::io::Write;
 use std::path::{Path, PathBuf};
-use std::process::{Command, Stdio};
-
-use serde::{Deserialize, Serialize};
-use sha2::{Digest, Sha256};
 
 use crate::registry::valid_path;
-use crate::{OutputPlan, Result, TransformError, read_source};
+use crate::{OutputPlan, Result, TransformError};
 
-/// Reserved marker and ownership manifest; it never claims its own digest.
-const MANIFEST: &str = ".stackpress-generated.json";
+mod format;
+mod ownership;
+mod report;
 
-/// One installed output's cooperative drift-detection data.
-#[derive(Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-struct Entry {
-    /// Plugin or aggregate owner recorded when planning.
-    owner: String,
-    /// SHA-256 of the last installed UTF-8 file bytes.
-    sha256: String,
-    /// Exact installed byte count; older M0 manifests omitted this optional field.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    bytes: Option<u64>,
-}
+use format::formatted;
+use ownership::read_regular;
+use ownership::{
+    MANIFEST, exists, inspect, inspect_owned, inspect_retained, manifest, no_symlinks,
+};
+use report::compare;
+pub use report::{CheckReport, GenerationReport};
 
-/// Versioned owned-root marker; it is not proof of authenticity against malicious editors.
-#[derive(Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-struct Manifest {
-    /// Only this exact version is accepted for managed cleanup.
-    version: u32,
-    /// Every owned relative path and its last installed content digest.
-    #[serde(deserialize_with = "unique_entries")]
-    files: BTreeMap<String, Entry>,
-}
-
-/// Reject duplicate ownership keys during deserialization rather than silently taking the last.
-fn unique_entries<'de, D: serde::Deserializer<'de>>(
-    deserializer: D,
-) -> std::result::Result<BTreeMap<String, Entry>, D::Error> {
-    /// Bounded manifest-map visitor; the outer source reader also bounds total marker bytes.
-    struct Entries;
-    impl<'de> serde::de::Visitor<'de> for Entries {
-        type Value = BTreeMap<String, Entry>;
-
-        /// Describe the expected data without disclosing marker contents.
-        fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            formatter.write_str("a unique bounded ownership map")
-        }
-
-        /// Consume each ownership claim once, rejecting duplicates before replacement.
-        fn visit_map<M: serde::de::MapAccess<'de>>(
-            self,
-            mut map: M,
-        ) -> std::result::Result<Self::Value, M::Error> {
-            let mut entries = BTreeMap::new();
-            while let Some((path, entry)) = map.next_entry::<String, Entry>()? {
-                if entries.len() >= 1024 || entries.insert(path, entry).is_some() {
-                    return Err(serde::de::Error::custom(
-                        "duplicate ownership or entry budget",
-                    ));
-                }
-            }
-            Ok(entries)
-        }
-    }
-    deserializer.deserialize_map(Entries)
-}
-
-/// Result of a no-write output comparison.
-#[derive(Debug, Serialize)]
-pub struct CheckReport {
-    /// Paths added, changed or removed, in deterministic order.
-    pub differences: Vec<String>,
-}
-
-/// Deterministic install receipt containing logical names, relative paths and selected IDs.
-///
-/// No timestamp, native root, environment value or source contents enter this report.
-#[derive(Debug, Serialize, PartialEq, Eq)]
-pub struct GenerationReport {
-    /// Consumed auxiliary input names, sorted and deduplicated.
-    pub inputs: Vec<String>,
-    /// Actual transform execution order.
-    pub selected: Vec<String>,
-    /// Added or changed planned paths, sorted lexically.
-    pub generated: Vec<String>,
-    /// Byte- and owner-identical planned paths, sorted lexically.
-    pub unchanged: Vec<String>,
-    /// Previously owned paths omitted from the new plan, sorted lexically.
-    pub removed: Vec<String>,
-    /// Writer receipt/ownership contract revision, independent of app runtime contracts.
-    pub contract_version: u32,
-}
-
-impl CheckReport {
-    /// Whether every planned file and the exact ownership set match disk.
-    pub fn is_current(&self) -> bool {
-        self.differences.is_empty()
-    }
-}
+/// Recognized pre-cleanup intent; paths are always fixed workspace siblings, never journal data.
+const INSTALL_INTENT: &str = "stackpress-install-v1\n";
+/// Recognized cleanup intent, which permits missing promised files only in retained trees.
+const CLEANUP_INTENT: &str = "stackpress-cleanup-v1\n";
 
 /// Native generated root requiring exclusive/cooperative ownership by all writers.
 ///
@@ -145,6 +65,7 @@ impl OutputWorkspace {
     /// ```
     pub fn new(root: impl AsRef<Path>) -> Result<Self> {
         let root = root.as_ref();
+        // A portable final component keeps every fixed recovery sibling in the chosen parent.
         let name = root
             .file_name()
             .and_then(|part| part.to_str())
@@ -154,6 +75,7 @@ impl OutputWorkspace {
             .parent()
             .filter(|path| !path.as_os_str().is_empty())
             .ok_or_else(|| TransformError::new("generated root needs an explicit parent"))?;
+        // Reject aliases before canonicalizing; later cwd changes cannot redirect this workspace.
         no_symlinks(parent)?;
         let parent = parent.canonicalize()?;
         let sibling = |suffix: &str| parent.join(format!(".{name}.stackpress-{suffix}"));
@@ -170,6 +92,7 @@ impl OutputWorkspace {
 
     /// Acquire a cooperative lock immediately, without waits or automatic stale-PID reclamation.
     fn acquire(&self) -> Result<WriterLock> {
+        // The create-new operation arbitrates ownership without a check-then-create window.
         let mut file = fs::OpenOptions::new()
             .write(true)
             .create_new(true)
@@ -181,6 +104,7 @@ impl OutputWorkspace {
                     error.into()
                 }
             })?;
+        // Establish RAII ownership before writing diagnostics, so a write error releases the lock.
         let guard = WriterLock(self.lock.clone());
         // PID is informational for explicit operator inspection, never automatic reclamation.
         writeln!(file, "writer pid {}", std::process::id())?;
@@ -212,20 +136,20 @@ impl OutputWorkspace {
     /// # Ok::<(), stackpress_idea_transformer::TransformError>(())
     /// ```
     pub fn check(&self, plan: &OutputPlan) -> Result<CheckReport> {
+        // Formatting has no output-root authority and fails before acquiring a managed lock.
         let files = formatted(plan)?;
+        // Keep the guard alive through inspection and reporting; no generated bytes are written.
         let _guard = self.acquire()?;
-        self.ready()?;
-        let previous = inspect(&self.root)?;
-        self.comparison(&previous, &files)
+        self.compare_plan(&files)
     }
 
-    /// Include a missing owned-root marker even for an otherwise empty aggregate-only plan.
-    fn comparison(
-        &self,
-        previous: &BTreeMap<String, (String, String)>,
-        files: &BTreeMap<String, (String, String)>,
-    ) -> Result<CheckReport> {
-        let mut report = compare(previous, files);
+    /// Share readiness, drift inspection and marker-aware differences between check and install.
+    fn compare_plan(&self, files: &BTreeMap<String, (String, String)>) -> Result<CheckReport> {
+        // Both callers already hold the writer lock; checking is never a second lock attempt.
+        self.ready()?;
+        let previous = inspect(&self.root)?;
+        let mut report = compare(&previous, files);
+        // Even an empty plan is stale when its dedicated root lacks an ownership marker.
         if !exists(&self.root.join(MANIFEST))? {
             report.differences.push(MANIFEST.into());
             report.differences.sort();
@@ -297,10 +221,9 @@ impl OutputWorkspace {
     ) -> Result<CheckReport> {
         let files = formatted(&plan)?;
         let _guard = self.acquire()?;
-        self.ready()?;
-        let previous = inspect(&self.root)?;
-        let report = self.comparison(&previous, &files)?;
+        let report = self.compare_plan(&files)?;
         if report.is_current() && exists(&self.root.join(MANIFEST))? {
+            // Repeats preserve exact bytes and avoid a needless visibility gap during renames.
             return Ok(report);
         }
         // Only installation errors get a phase wrapper; preflight/lock errors stay actionable.
@@ -348,7 +271,7 @@ impl OutputWorkspace {
             .write(true)
             .create_new(true)
             .open(&self.journal)?
-            .write_all(b"stackpress-install-v1\n")?;
+            .write_all(INSTALL_INTENT.as_bytes())?;
         fault(Phase::IntentPublished)?;
         fault(Phase::BackupRename)?;
         if exists(&self.root)? {
@@ -392,9 +315,9 @@ impl OutputWorkspace {
                 "no generation install intent to recover",
             ));
         }
-        let intent = read_source(&self.journal, 64)?;
-        let cleaning = intent == "stackpress-cleanup-v1\n";
-        if intent != "stackpress-install-v1\n" && !cleaning {
+        let intent = read_regular(&self.journal, 64)?;
+        let cleaning = intent == CLEANUP_INTENT;
+        if intent != INSTALL_INTENT && !cleaning {
             return Err(TransformError::new("unrecognized generation journal"));
         }
         // Inspect before any rename/removal; ownership drift blocks rather than destroys data.
@@ -408,6 +331,13 @@ impl OutputWorkspace {
                 inspect_retained(path, cleaning)?;
             }
         }
+        // Every candidate has passed validation before the first destination mutation.
+        self.restore_root()?;
+        self.finish_recovery()
+    }
+
+    /// Keep a complete root, or restore the validated predecessor/stage if it is absent.
+    fn restore_root(&self) -> Result<()> {
         if exists(&self.root)? {
             inspect(&self.root)?;
             if !exists(&self.root.join(MANIFEST))? {
@@ -431,7 +361,7 @@ impl OutputWorkspace {
             fs::rename(source, &self.root)?;
         }
         inspect_owned(&self.root)?;
-        self.finish_recovery()
+        Ok(())
     }
 
     /// Remove only validated retained generated trees, leaving the intent marker until last.
@@ -443,22 +373,24 @@ impl OutputWorkspace {
     fn finish_at(&self, fault: &mut impl FnMut(Phase) -> Result<()>) -> Result<()> {
         inspect_owned(&self.root)?;
         no_symlinks(&self.journal)?;
-        let cleaning = read_source(&self.journal, 64)? == "stackpress-cleanup-v1\n";
+        let cleaning = read_regular(&self.journal, 64)? == CLEANUP_INTENT;
+        // Validate every retained tree before purging any, preserving manual data on conflicts.
         for path in [&self.backup, &self.stage] {
             if exists(path)? {
                 inspect_retained(path, cleaning)?;
             }
         }
         // Publish cleanup intent by rename, so interrupted recursive deletion is recognizable.
+        // Construction fixes root to canonical_parent.join(name), so it always has a parent.
         let mut marker = tempfile::NamedTempFile::new_in(self.root.parent().unwrap())?;
-        marker.write_all(b"stackpress-cleanup-v1\n")?;
+        marker.write_all(CLEANUP_INTENT.as_bytes())?;
         marker
             .persist(&self.journal)
             .map_err(|error| TransformError::from(error.error))?;
         for path in [&self.backup, &self.stage] {
             if exists(path)? {
                 fault(Phase::CleanupTree)?;
-                fs::remove_dir_all(path)?;
+                purge_retained(path, fault)?;
             }
         }
         fault(Phase::ClearIntent)?;
@@ -467,154 +399,31 @@ impl OutputWorkspace {
     }
 }
 
-/// Inspect every existing path component without following output symlinks.
-fn no_symlinks(path: &Path) -> Result<()> {
-    let mut prefix = PathBuf::new();
-    for component in path.components() {
-        if matches!(component, std::path::Component::ParentDir) {
-            return Err(TransformError::new(
-                "output path cannot contain parent traversal",
-            ));
-        }
-        prefix.push(component);
-        match fs::symlink_metadata(&prefix) {
-            Ok(metadata) if metadata.file_type().is_symlink() => {
-                return Err(TransformError::new(
-                    "generated output cannot follow symlinks",
-                ));
-            }
-            Err(error) if error.kind() != std::io::ErrorKind::NotFound => return Err(error.into()),
-            _ => {}
-        }
-    }
-    Ok(())
-}
-
-/// Hash bounded UTF-8 bytes for cooperative drift detection, not authentication.
-fn digest(text: &str) -> String {
-    format!("{:x}", Sha256::digest(text.as_bytes()))
-}
-
-/// Describe exactly the newly formatted owned files.
-fn manifest(files: &BTreeMap<String, (String, String)>) -> Manifest {
-    Manifest {
-        version: 1,
-        files: files
-            .iter()
-            .map(|(path, (owner, text))| {
-                (
-                    path.clone(),
-                    Entry {
-                        owner: owner.clone(),
-                        sha256: digest(text),
-                        bytes: Some(text.len() as u64),
-                    },
-                )
-            })
-            .collect(),
-    }
-}
-
-/// Format Rust through stdin/stdout, avoiding formatter writes outside the staged plan.
-fn formatted(plan: &OutputPlan) -> Result<BTreeMap<String, (String, String)>> {
-    let mut files = plan.files.clone();
-    for (path, (_, text)) in &mut files {
-        if path.ends_with(".rs") {
-            let mut child = Command::new("rustfmt")
-                .args([
-                    "--edition",
-                    "2024",
-                    "--config",
-                    "skip_children=true",
-                    "--emit",
-                    "stdout",
-                ])
-                .stdin(Stdio::piped())
-                .stdout(Stdio::piped())
-                .stderr(Stdio::piped())
-                .spawn()?;
-            let written = match child.stdin.take() {
-                Some(mut input) => input.write_all(text.as_bytes()),
-                None => Err(std::io::Error::other("formatter stdin missing")),
-            };
-            // A broken pipe must not leave a live child behind on an early error return.
-            if let Err(error) = written {
-                let _ = child.kill();
-                let _ = child.wait();
-                return Err(error.into());
-            }
-            let output = child.wait_with_output()?;
-            if !output.status.success() {
-                return Err(TransformError::new("Rust formatting failed"));
-            }
-            *text = String::from_utf8(output.stdout)
-                .map_err(|_| TransformError::new("formatter output is not UTF-8"))?;
-        }
-    }
-    if files.values().map(|(_, text)| text.len()).sum::<usize>() > 1024 * 1024 {
-        return Err(TransformError::new("formatted output byte budget exceeded"));
-    }
-    Ok(files)
-}
-
-/// Verify marker, exact file set and every last-installed digest before granting cleanup rights.
-fn inspect(root: &Path) -> Result<BTreeMap<String, (String, String)>> {
-    inspect_mode(root, false)
-}
-
-/// Validate existing bytes; cleanup alone may tolerate already removed promised files.
-fn inspect_mode(root: &Path, allow_missing: bool) -> Result<BTreeMap<String, (String, String)>> {
-    no_symlinks(root)?;
-    if !root.try_exists()? {
-        return Ok(BTreeMap::new());
-    }
-    // An empty dedicated directory contains no manual data and can be adopted on first install.
-    if fs::read_dir(root)?.next().is_none() {
-        return Ok(BTreeMap::new());
-    }
-    let marker = root.join(MANIFEST);
-    no_symlinks(&marker)?;
-    let manifest: Manifest = serde_json::from_str(&read_source(&marker, 1024 * 1024)?)
-        .map_err(|_| TransformError::new("root is not a recognized generated directory"))?;
-    if manifest.version != 1 || manifest.files.len() > 1024 {
-        return Err(TransformError::new("unsupported generated manifest"));
-    }
-    let mut files: BTreeMap<String, (String, String)> = BTreeMap::new();
-    let mut remaining = 1024 * 1024usize;
-    for (path, entry) in manifest.files {
-        valid_path(&path)?;
-        if entry.owner.is_empty()
-            || entry.owner.len() > 128
-            || entry.sha256.len() != 64
-            || !entry.sha256.bytes().all(|byte| byte.is_ascii_hexdigit())
-            || files
-                .keys()
-                .any(|prior| crate::plan::paths_collide(prior, &path))
-        {
-            return Err(TransformError::new("invalid generated manifest ownership"));
-        }
-        let absolute = root.join(&path);
-        no_symlinks(&absolute)?;
-        if allow_missing && !exists(&absolute)? {
-            // Keep the promised path for exact directory/unknown-file validation below.
-            files.insert(path, (entry.owner, String::new()));
+/// Remove a validated retained tree while preserving its ownership marker through partial errors.
+fn purge_retained(root: &Path, fault: &mut impl FnMut(Phase) -> Result<()>) -> Result<()> {
+    for entry in fs::read_dir(root)? {
+        let entry = entry?;
+        // Never delegate the root marker to recursive deletion's unspecified entry order.
+        if entry.file_name() == MANIFEST {
             continue;
         }
-        let text = read_source(&absolute, 1024 * 1024)?;
-        remaining = remaining
-            .checked_sub(text.len())
-            .ok_or_else(|| TransformError::new("installed output byte budget exceeded"))?;
-        if entry.bytes.is_some_and(|bytes| bytes != text.len() as u64)
-            || digest(&text) != entry.sha256
-        {
-            return Err(TransformError::new(
-                "manually edited generated file; restore it explicitly",
-            ));
+        fault(Phase::CleanupEntry)?;
+        if entry.file_type()?.is_dir() {
+            // Nested deletion may be partial, but the root marker still lists every promise.
+            fs::remove_dir_all(entry.path())?;
+        } else {
+            fs::remove_file(entry.path())?;
         }
-        files.insert(path, (entry.owner, text));
     }
-    inspect_paths(root, root, &files, 0)?;
-    Ok(files)
+    let marker = root.join(MANIFEST);
+    if exists(&marker)? {
+        // Only an otherwise empty retained root can lose its marker. Cleanup can resume empty.
+        fault(Phase::CleanupEntry)?;
+        fs::remove_file(marker)?;
+    }
+    fault(Phase::CleanupEntry)?;
+    fs::remove_dir(root)?;
+    Ok(())
 }
 
 /// Testable installation boundaries; faults exercise the production state machine.
@@ -629,107 +438,9 @@ enum Phase {
     InstallRename,
     Installed,
     CleanupTree,
+    CleanupEntry,
     ClearIntent,
-}
-
-/// Inspect existence without hiding dangling symlinks as absent paths.
-fn exists(path: &Path) -> Result<bool> {
-    match fs::symlink_metadata(path) {
-        Ok(_) => Ok(true),
-        Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(false),
-        Err(error) => Err(error.into()),
-    }
-}
-
-/// Require a real ownership marker before removing a retained stage or backup tree.
-fn inspect_owned(root: &Path) -> Result<BTreeMap<String, (String, String)>> {
-    no_symlinks(root)?;
-    no_symlinks(&root.join(MANIFEST))?;
-    if !exists(&root.join(MANIFEST))? {
-        return Err(TransformError::new(
-            "recovery tree lacks generated ownership marker",
-        ));
-    }
-    inspect(root)
-}
-
-/// Cleanup may resume after individual files or the final marker have already been removed.
-fn inspect_retained(root: &Path, cleaning: bool) -> Result<()> {
-    no_symlinks(root)?;
-    if cleaning && fs::read_dir(root)?.next().is_none() {
-        // An empty directory contains no manual bytes and can be removed after cleanup intent.
-        return Ok(());
-    }
-    no_symlinks(&root.join(MANIFEST))?;
-    if !exists(&root.join(MANIFEST))? {
-        return Err(TransformError::new(
-            "recovery tree lacks generated ownership marker",
-        ));
-    }
-    inspect_mode(root, cleaning)?;
-    Ok(())
-}
-
-/// Reject unknown files, special files, symlinks and excessive directory depth before cleanup.
-fn inspect_paths(
-    root: &Path,
-    path: &Path,
-    files: &BTreeMap<String, (String, String)>,
-    depth: usize,
-) -> Result<()> {
-    if depth > 16 {
-        return Err(TransformError::new("generated directory depth exceeded"));
-    }
-    for entry in fs::read_dir(path)? {
-        let entry = entry?;
-        let kind = entry.file_type()?;
-        let path = entry.path();
-        if kind.is_dir() {
-            let relative = path
-                .strip_prefix(root)
-                .ok()
-                .and_then(Path::to_str)
-                .ok_or_else(|| TransformError::new("invalid generated directory"))?;
-            if !files
-                .keys()
-                .any(|file| file.starts_with(&format!("{relative}/")))
-            {
-                return Err(TransformError::new(
-                    "manual directory inside generated root",
-                ));
-            }
-            inspect_paths(root, &path, files, depth + 1)?;
-        } else {
-            let relative = path
-                .strip_prefix(root)
-                .ok()
-                .and_then(Path::to_str)
-                .ok_or_else(|| TransformError::new("invalid generated path"))?;
-            if !kind.is_file() || (relative != MANIFEST && !files.contains_key(relative)) {
-                return Err(TransformError::new(
-                    "manual or special file inside generated root",
-                ));
-            }
-        }
-    }
-    Ok(())
 }
 
 #[cfg(test)]
 mod tests;
-
-/// Compare exact bytes and ownership, retaining removals in the deterministic path set.
-fn compare(
-    previous: &BTreeMap<String, (String, String)>,
-    files: &BTreeMap<String, (String, String)>,
-) -> CheckReport {
-    let mut differences: Vec<_> = previous
-        .keys()
-        .chain(files.keys())
-        .filter(|path| previous.get(*path) != files.get(*path))
-        .cloned()
-        .collect();
-    differences.sort();
-    differences.dedup();
-    CheckReport { differences }
-}

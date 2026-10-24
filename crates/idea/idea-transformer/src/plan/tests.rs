@@ -72,3 +72,26 @@ fn output_budget_boundaries() {
     }
     assert!(plan.write("data/over", "").is_err());
 }
+
+/// Case aliases of a shared directory are conflicts even when their leaf names differ.
+#[test]
+fn ancestor_directory_case_aliases_are_collisions() {
+    for (left, right) in [
+        ("data/Models/a.rs", "data/models/b.rs"),
+        ("Data/a.rs", "data/b.rs"),
+        ("data/models/A.rs", "data/models/a.rs"),
+        ("data/Models", "data/models/b.rs"),
+    ] {
+        assert!(
+            paths_collide(left, right),
+            "accepted alias {left} / {right}"
+        );
+        assert!(paths_collide(right, left));
+    }
+    assert!(!paths_collide("data/Models/a.rs", "data/Models/b.rs"));
+    assert!(!paths_collide("data/a.rs", "other/A.rs"));
+    let mut plan = OutputPlan::default();
+    plan.begin("plugin", &["data".into()]);
+    plan.write("data/Models/a.rs", "pub struct A;\n").unwrap();
+    assert!(plan.write("data/models/b.rs", "pub struct B;\n").is_err());
+}

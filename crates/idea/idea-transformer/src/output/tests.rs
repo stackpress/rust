@@ -607,9 +607,10 @@ fn killed_install_barriers_are_recoverable_after_explicit_lock_inspection() {
             Phase::BackupRetained,
             Phase::Installed,
             Phase::CleanupTree,
+            Phase::CleanupEntry,
             Phase::ClearIntent,
         ] {
-            if !initially_present && phase == Phase::CleanupTree {
+            if !initially_present && matches!(phase, Phase::CleanupTree | Phase::CleanupEntry) {
                 continue;
             }
             let temp = temporary();
@@ -654,7 +655,10 @@ fn killed_install_barriers_are_recoverable_after_explicit_lock_inspection() {
             let new_wins = !initially_present
                 || matches!(
                     phase,
-                    Phase::Installed | Phase::CleanupTree | Phase::ClearIntent
+                    Phase::Installed
+                        | Phase::CleanupTree
+                        | Phase::CleanupEntry
+                        | Phase::ClearIntent
                 );
             assert_eq!(text, if new_wins { "new" } else { "old" });
             workspace.install(plan("final")).unwrap();
@@ -750,6 +754,7 @@ fn native_delete_permission_failure_is_recoverable() {
         "host privileges bypassed delete denial; no permission proof"
     );
     assert!(workspace.journal.exists());
+    assert!(workspace.backup.join(MANIFEST).is_file());
     assert_eq!(
         fs::read_to_string(workspace.root.join("data/a.txt")).unwrap(),
         "new"
@@ -842,4 +847,252 @@ fn initially_empty_root_recovers_across_install_boundaries() {
         assert!(workspace.check(&plan("new")).unwrap().is_current());
         assert!(!workspace.backup.exists() && !workspace.stage.exists());
     }
+}
+
+/// FIFO metadata must be rejected before a bounded text reader can block opening it.
+#[cfg(unix)]
+#[test]
+#[ignore]
+fn special_file_child() {
+    let workspace = OutputWorkspace::new(std::env::var_os("IDEA_SPECIAL_ROOT").unwrap()).unwrap();
+    workspace.install(plan("owned")).unwrap();
+    let case = std::env::var("IDEA_SPECIAL_CASE").unwrap();
+    let path = match case.as_str() {
+        "marker" => workspace.root.join(MANIFEST),
+        "owned-file" => workspace.root.join("data/a.txt"),
+        _ => workspace.journal.clone(),
+    };
+    if path.exists() {
+        fs::remove_file(&path).unwrap();
+    }
+    assert!(
+        Command::new("mkfifo")
+            .arg(&path)
+            .status()
+            .unwrap()
+            .success()
+    );
+    if case == "journal" {
+        assert!(workspace.recover().is_err());
+    } else {
+        assert!(workspace.check(&plan("owned")).is_err());
+        assert!(workspace.install(plan("replacement")).is_err());
+        fs::write(&workspace.journal, INSTALL_INTENT).unwrap();
+        assert!(workspace.recover().is_err());
+    }
+    assert!(!fs::symlink_metadata(path).unwrap().is_file());
+}
+
+/// Every special-file surface fails promptly in its own process under a kill/reap watchdog.
+#[cfg(unix)]
+#[test]
+fn fifo_inspection_is_watchdog_bounded() {
+    let mut failures = Vec::new();
+    for case in ["marker", "owned-file", "journal"] {
+        let temp = temporary();
+        let mut child = Command::new(std::env::current_exe().unwrap())
+            .args(["--ignored", "--exact", "output::tests::special_file_child"])
+            .env("IDEA_SPECIAL_ROOT", temp.path().join("generated"))
+            .env("IDEA_SPECIAL_CASE", case)
+            .stdout(Stdio::null())
+            .stderr(Stdio::inherit())
+            .spawn()
+            .unwrap();
+        let deadline = Instant::now() + Duration::from_secs(5);
+        loop {
+            if let Some(status) = child.try_wait().unwrap() {
+                if !status.success() {
+                    failures.push(format!("{case}: {status}"));
+                }
+                break;
+            }
+            if Instant::now() >= deadline {
+                let _ = child.kill();
+                let _ = child.wait();
+                failures.push(format!("{case}: blocked until watchdog"));
+                break;
+            }
+            std::thread::sleep(Duration::from_millis(5));
+        }
+    }
+    assert!(failures.is_empty(), "{}", failures.join(", "));
+}
+
+/// Every deletion boundary retains the root marker until the remaining owned entries are gone.
+#[test]
+fn cleanup_keeps_marker_until_last_entry_and_recovers_each_failure() {
+    for stop_at in 1..=4 {
+        let temp = temporary();
+        let workspace = OutputWorkspace::new(temp.path().join("generated")).unwrap();
+        workspace.install(plan("old")).unwrap();
+        let mut entries = 0;
+        let result = workspace.install_at(plan("new"), |phase| {
+            if phase == Phase::CleanupEntry {
+                entries += 1;
+                if entries == stop_at {
+                    return Err(TransformError::new("entry deletion failed"));
+                }
+            }
+            Ok(())
+        });
+        assert!(result.is_err(), "no interruption at deletion {stop_at}");
+        assert!(workspace.backup.exists());
+        if !workspace.backup.join(MANIFEST).exists() {
+            assert!(
+                fs::read_dir(&workspace.backup).unwrap().next().is_none(),
+                "ownership marker removed before remaining files"
+            );
+        }
+        assert!(workspace.check(&plan("new")).is_err());
+        workspace.recover().unwrap();
+        assert!(workspace.check(&plan("new")).unwrap().is_current());
+        assert!(!workspace.backup.exists() && !workspace.journal.exists());
+    }
+}
+
+/// Invalid native names and text are rejected losslessly without granting cleanup authority.
+#[cfg(unix)]
+#[test]
+fn non_utf8_names_and_owned_text_preserve_the_tree() {
+    use std::os::unix::ffi::OsStringExt;
+    for case in [
+        "file-name",
+        "directory-name",
+        "owned-text",
+        "marker-text",
+        "root-name",
+    ] {
+        let temp = temporary();
+        let workspace = OutputWorkspace::new(temp.path().join("generated")).unwrap();
+        workspace.install(plan("owned")).unwrap();
+        let invalid = std::ffi::OsString::from_vec(b"manual-\xff".to_vec());
+        let unknown = workspace.root.join(&invalid);
+        let created = match case {
+            "file-name" => fs::write(&unknown, b"sentinel"),
+            "directory-name" => fs::create_dir(&unknown),
+            "owned-text" => fs::write(workspace.root.join("data/a.txt"), b"\xff"),
+            "marker-text" => fs::write(workspace.root.join(MANIFEST), b"\xff"),
+            _ => {
+                assert!(OutputWorkspace::new(temp.path().join(invalid)).is_err());
+                continue;
+            }
+        };
+        if let Err(error) = created {
+            // Some native filesystems/sandboxes cannot represent undecodable names at all.
+            assert!(
+                matches!(case, "file-name" | "directory-name"),
+                "{case}: {error}"
+            );
+            assert!(
+                // APFS can return EILSEQ as Uncategorized; the sandbox can return EPERM.
+                matches!(
+                    error.kind(),
+                    std::io::ErrorKind::PermissionDenied
+                        | std::io::ErrorKind::InvalidInput
+                        | std::io::ErrorKind::InvalidFilename
+                ) || (cfg!(target_os = "macos") && error.raw_os_error() == Some(92)),
+                "{case}: {error}"
+            );
+            eprintln!("host refused non-UTF-8 {case} creation: {error}");
+            assert!(!unknown.exists());
+            continue;
+        }
+        let marker = fs::read(workspace.root.join(MANIFEST)).unwrap();
+        assert!(workspace.check(&plan("owned")).is_err());
+        assert!(workspace.install(plan("replacement")).is_err());
+        assert_eq!(fs::read(workspace.root.join(MANIFEST)).unwrap(), marker);
+        assert_eq!(
+            fs::read_to_string(workspace.root.join("index.txt")).unwrap(),
+            "owned\n"
+        );
+        if case == "file-name" {
+            assert_eq!(fs::read(unknown).unwrap(), b"sentinel");
+        }
+    }
+}
+
+/// A forged ownership path never allows a marker to claim files outside the generated root.
+#[test]
+fn tampered_manifest_cannot_claim_external_paths() {
+    for path in [
+        "../outside.txt",
+        "/outside.txt",
+        "data/../../outside.txt",
+        "data/x\n",
+    ] {
+        let temp = temporary();
+        let outside = temp.path().join("outside.txt");
+        fs::write(&outside, "manual sentinel").unwrap();
+        let workspace = OutputWorkspace::new(temp.path().join("generated")).unwrap();
+        workspace.install(plan("owned")).unwrap();
+        let marker = workspace.root.join(MANIFEST);
+        let mut value: serde_json::Value =
+            serde_json::from_slice(&fs::read(&marker).unwrap()).unwrap();
+        value["files"][path] = value["files"]["data/a.txt"].clone();
+        fs::write(&marker, serde_json::to_vec(&value).unwrap()).unwrap();
+        let before = fs::read(&marker).unwrap();
+        assert!(workspace.check(&plan("owned")).is_err());
+        assert!(workspace.install(plan("replacement")).is_err());
+        fs::write(&workspace.journal, INSTALL_INTENT).unwrap();
+        assert!(workspace.recover().is_err());
+        assert_eq!(fs::read(&marker).unwrap(), before);
+        assert_eq!(fs::read_to_string(&outside).unwrap(), "manual sentinel");
+    }
+}
+
+/// Shared comparison returns identical differences for checking and installing each plan.
+#[test]
+fn check_and_install_share_the_same_differences() {
+    let temp = temporary();
+    let workspace = OutputWorkspace::new(temp.path().join("generated")).unwrap();
+    for text in ["first", "first", "second"] {
+        let checked = workspace.check(&plan(text)).unwrap();
+        let installed = workspace.install(plan(text)).unwrap();
+        assert_eq!(checked.differences, installed.differences);
+    }
+    let empty = || {
+        Registry::new()
+            .plan(&SchemaConfig::default(), vec![])
+            .unwrap()
+    };
+    let checked = workspace.check(&empty()).unwrap();
+    assert_eq!(
+        checked.differences,
+        workspace.install(empty()).unwrap().differences
+    );
+    assert!(workspace.check(&empty()).unwrap().is_current());
+}
+
+/// Stale recognized siblings block work; unrelated temporary files are never guessed away.
+#[cfg(unix)]
+#[test]
+fn dangling_recovery_links_and_unrelated_temps_are_preserved() {
+    for case in ["stage", "backup", "journal", "lock"] {
+        let temp = temporary();
+        let workspace = OutputWorkspace::new(temp.path().join("generated")).unwrap();
+        workspace.install(plan("owned")).unwrap();
+        let link = match case {
+            "stage" => &workspace.stage,
+            "backup" => &workspace.backup,
+            "journal" => &workspace.journal,
+            _ => &workspace.lock,
+        };
+        let absent = temp.path().join("absent");
+        std::os::unix::fs::symlink(&absent, link).unwrap();
+        assert!(workspace.check(&plan("replacement")).is_err());
+        assert!(workspace.install(plan("replacement")).is_err());
+        assert!(workspace.recover().is_err());
+        assert!(fs::symlink_metadata(link).unwrap().file_type().is_symlink());
+        assert!(!absent.exists());
+        assert_eq!(
+            fs::read_to_string(workspace.root.join("data/a.txt")).unwrap(),
+            "owned"
+        );
+    }
+    let temp = temporary();
+    let orphan = temp.path().join(".tmp-unrecognized");
+    fs::write(&orphan, "manual sentinel").unwrap();
+    let workspace = OutputWorkspace::new(temp.path().join("generated")).unwrap();
+    workspace.install(plan("new")).unwrap();
+    assert_eq!(fs::read_to_string(orphan).unwrap(), "manual sentinel");
 }
