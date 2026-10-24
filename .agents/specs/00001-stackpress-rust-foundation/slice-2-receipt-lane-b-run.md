@@ -1,5 +1,7 @@
 # Lane B: CLI execution integration receipt
 
+Spec file of [00001 Stackpress Rust foundation](index.md), recording lane B CLI execution for [task 00005](tasks/00005-slice-2-server-and-cli.md). Load for `stackpress-cli` `run`/`main_with`, stdout/stderr and exit-code policy, output authority, rounds 1–4, and verification. Moved losslessly from `tools/cli/LANE-B-RUN-RECEIPT.md` (lane branch commit `6e820d1`, merged in `fc14274`).
+
 Date: 2026-10-24. Branch: `trial/3-lane-b-cli`. Base: `8309047`.
 Scope: `tools/cli/**` only. No commits, pushes, listeners, dependencies, manifest changes or
 lockfile changes. No missing server API blocked this implementation.

@@ -283,6 +283,17 @@ Trees are retained as `target/slice2-receipts/server-default.tree` and `server-h
 - The four new in-process proofs: `HttpAdapter` and `Server::call` return identical public envelopes for `profile-search`; an unknown route gives a public 404; malformed input gives the G17 400 with no callbacks; the customization plugin is visible through HTTP. Proof item 5 (CLI and HTTP invoke the same capability) is complete on the HTTP side; the CLI side awaits lane B.
 - Committed as `1f1a319` and merged as `93654d7`. The receipt was appended to [slice-2-receipt-lane-d-app.md](../slice-2-receipt-lane-d-app.md).
 
+
+**Lane B CLI execution re-verification and merge (coordinator, 2026-10-24): passed; merged.**
+
+- Checks rerun in the lane worktree: fmt passed; `stackpress-cli` 17 tests with `tty` and 14 without, 0 failed; Clippy and Rustdoc warning-free.
+- Coverage: 96.32% (1,278 lines). Scope: `tools/cli/**` only.
+- `run` enters `Server::handle_with_options` once with `CliContext` as adapter context. The exit codes follow G14: `run` maps success to 0 and failure to 1 through `HandleReport::is_success`, and `main_with` maps usage/config/startup errors to 2 and prompt cancellation to 130. Tests cover executable exits, exit precedence, usage errors, the `-b` layer and its boundary, and cancellation.
+- Committed as `6e820d1` and merged as `fc14274`; the lockfile is consistent.
+- Merged workspace with `server-http`: 130 tests passed, 0 failed; 327 doctests; Clippy clean.
+- Receipt moved losslessly to [slice-2-receipt-lane-b-run.md](../slice-2-receipt-lane-b-run.md).
+- Remaining: lane D adds the application `stackpress` binary for the CLI side of proof item 5.
+
 ## Acceptance notes
 
 Library, host, and CLI work has no visual acceptance artifact under the spec workflow; this task finishes at `verified` after coordinator review.
