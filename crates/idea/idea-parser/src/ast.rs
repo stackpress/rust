@@ -22,7 +22,9 @@ pub struct SchemaToken {
 #[serde(untagged)]
 /// Extracted Statement syntax/config representation.
 pub enum Statement {
+    /// One plugin, prop, enum, type or model declaration.
     Declaration(DeclarationToken),
+    /// One unresolved source import.
     Import(ImportToken),
 }
 
@@ -166,15 +168,21 @@ pub struct LiteralToken {
 #[serde(untagged)]
 /// Extracted DataToken syntax/config representation.
 pub enum DataToken {
+    /// An actual reference, distinct from literal strings.
     Identifier(IdentifierToken),
+    /// An ordinary scalar literal.
     Literal(LiteralToken),
+    /// An unevaluated environment key with its original source range.
+    Environment(LiteralToken),
+    /// Ordered object members.
     Object(ObjectToken),
+    /// Ordered nested values.
     Array(ArrayToken),
 }
 
 impl IdentifierToken {
-    /// Initialize an isolated cursor at the beginning of this source.
-    pub fn new(start: usize, end: usize, name: impl Into<String>) -> Self {
+    /// Construct an internal node; checked compilation accepts only parser-owned Ast.
+    pub(crate) fn new(start: usize, end: usize, name: impl Into<String>) -> Self {
         Self {
             node_type: "Identifier",
             start,
@@ -185,8 +193,13 @@ impl IdentifierToken {
 }
 
 impl LiteralToken {
-    /// Initialize an isolated cursor at the beginning of this source.
-    pub fn new(start: usize, end: usize, value: serde_json::Value, raw: impl Into<String>) -> Self {
+    /// Construct an internal node; checked compilation accepts only parser-owned Ast.
+    pub(crate) fn new(
+        start: usize,
+        end: usize,
+        value: serde_json::Value,
+        raw: impl Into<String>,
+    ) -> Self {
         Self {
             node_type: "Literal",
             start,
@@ -198,8 +211,8 @@ impl LiteralToken {
 }
 
 impl PropertyToken {
-    /// Initialize an isolated cursor at the beginning of this source.
-    pub fn new(start: usize, end: usize, key: IdentifierToken, value: DataToken) -> Self {
+    /// Construct an internal node; checked compilation accepts only parser-owned Ast.
+    pub(crate) fn new(start: usize, end: usize, key: IdentifierToken, value: DataToken) -> Self {
         Self {
             node_type: "Property",
             kind: "init",
@@ -215,8 +228,8 @@ impl PropertyToken {
 }
 
 impl ObjectToken {
-    /// Initialize an isolated cursor at the beginning of this source.
-    pub fn new(start: usize, end: usize, properties: Vec<PropertyToken>) -> Self {
+    /// Construct an internal node; checked compilation accepts only parser-owned Ast.
+    pub(crate) fn new(start: usize, end: usize, properties: Vec<PropertyToken>) -> Self {
         Self {
             node_type: "ObjectExpression",
             start,
@@ -227,8 +240,8 @@ impl ObjectToken {
 }
 
 impl ArrayToken {
-    /// Initialize an isolated cursor at the beginning of this source.
-    pub fn new(start: usize, end: usize, elements: Vec<DataToken>) -> Self {
+    /// Construct an internal node; checked compilation accepts only parser-owned Ast.
+    pub(crate) fn new(start: usize, end: usize, elements: Vec<DataToken>) -> Self {
         Self {
             node_type: "ArrayExpression",
             start,

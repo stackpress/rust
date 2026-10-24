@@ -1,0 +1,22 @@
+{
+  "compiled": {
+    "enum": {
+      "Roles": {
+        "ADMIN": "Admin",
+        "MANAGER": "Manager",
+        "USER": "User"
+      }
+    }
+  },
+  "resolved": {
+    "ok": {
+      "enum": {
+        "Roles": {
+          "ADMIN": "Admin",
+          "MANAGER": "Manager",
+          "USER": "User"
+        }
+      }
+    }
+  }
+}

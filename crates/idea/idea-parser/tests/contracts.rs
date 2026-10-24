@@ -169,6 +169,7 @@ fn source_coordinates_are_valid_and_actionable() {
 
 /// Lowerable depth/byte limits hold at the exact accepted boundary and at one beyond.
 #[test]
+#[ignore]
 fn finite_limits_and_reference_amplification() {
     let mut inputs = inputs();
     inputs.limits = ParseLimits {
@@ -226,8 +227,15 @@ fn deep_child() {
 /// The formerly aborting input must return normally, without hanging or overflowing a test thread.
 #[test]
 fn deep_input_returns_a_diagnostic_under_process_watchdog() {
+    for name in ["deep_child", "finite_limits_and_reference_amplification"] {
+        run_child(name);
+    }
+}
+
+/// Apply the same finite deadline to all depth and amplification contract children.
+fn run_child(name: &str) {
     let mut child = Command::new(std::env::current_exe().unwrap())
-        .args(["--ignored", "--exact", "deep_child"])
+        .args(["--ignored", "--exact", name])
         .stdout(Stdio::null())
         .stderr(Stdio::inherit())
         .spawn()

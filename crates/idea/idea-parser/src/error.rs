@@ -46,6 +46,8 @@ pub struct IdeaError {
     pub line: usize,
     /// One-based Unicode-scalar column, with tabs counted as one scalar.
     pub column: usize,
+    /// Earlier declaration locations associated with a duplicate or related failure.
+    pub related: Box<[crate::SourceSpan]>,
 }
 
 impl IdeaError {
@@ -60,6 +62,7 @@ impl IdeaError {
             file: String::new(),
             line: 1,
             column: 1,
+            related: Box::new([]),
         }
     }
 
@@ -67,6 +70,20 @@ impl IdeaError {
     pub(crate) fn with_span(mut self, start: usize, end: usize) -> Self {
         self.start = Some(start);
         self.end = Some(end);
+        self
+    }
+
+    /// Retain an earlier duplicate's byte range for normalization at the source boundary.
+    pub(crate) fn with_related(mut self, start: usize, end: usize) -> Self {
+        let mut related = self.related.into_vec();
+        related.push(crate::SourceSpan {
+            file: String::new(),
+            start,
+            end,
+            line: 1,
+            column: 1,
+        });
+        self.related = related.into_boxed_slice();
         self
     }
 
@@ -89,6 +106,14 @@ impl IdeaError {
         self.start = Some(start);
         self.end = Some(end);
         self.file = file.into();
+        for related in self.related.iter_mut() {
+            // Related locations originate in the same parse; normalize without source excerpts.
+            *related = crate::SourceSpan::new(
+                &crate::SourceFile::new(file, source),
+                related.start,
+                related.end,
+            );
+        }
         self
     }
 }

@@ -1,0 +1,78 @@
+{
+  "compiled": {
+    "type": {
+      "Address": {
+        "name": "Address",
+        "mutable": true,
+        "attributes": {
+          "label": [
+            "Address",
+            "Addresses"
+          ]
+        },
+        "columns": [
+          {
+            "type": "String",
+            "name": "street",
+            "required": true,
+            "multiple": false,
+            "attributes": {
+              "field.input": [
+                "${Text}"
+              ],
+              "is.required": true,
+              "list.hide": true
+            }
+          },
+          {
+            "type": "String",
+            "name": "city",
+            "required": false,
+            "multiple": false,
+            "attributes": {
+              "field.input": [
+                "${Text}"
+              ],
+              "is.required": true
+            }
+          },
+          {
+            "type": "String",
+            "name": "country",
+            "required": true,
+            "multiple": false,
+            "attributes": {
+              "field.select": [
+                "${Countries}"
+              ],
+              "is.option": [
+                "${Countries}"
+              ],
+              "list.text": [
+                "${Uppercase}"
+              ],
+              "view.text": [
+                "${Uppercase}"
+              ]
+            }
+          },
+          {
+            "type": "String",
+            "name": "postal",
+            "required": true,
+            "multiple": false,
+            "attributes": {
+              "field.input": [
+                "${Text}"
+              ],
+              "is.required": true
+            }
+          }
+        ]
+      }
+    }
+  },
+  "resolved": {
+    "error": "UnknownReference"
+  }
+}

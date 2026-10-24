@@ -1,0 +1,578 @@
+{
+  "compiled": {
+    "model": {
+      "Address": {
+        "name": "Address",
+        "mutable": true,
+        "attributes": {
+          "label": [
+            "Address",
+            "Addresses"
+          ],
+          "template": [
+            "{{label}}"
+          ],
+          "icon": [
+            "map-marker"
+          ]
+        },
+        "columns": [
+          {
+            "type": "String",
+            "name": "id",
+            "required": true,
+            "multiple": false,
+            "attributes": {
+              "label": [
+                "Places ID"
+              ],
+              "id": true,
+              "list.overflow": [
+                {
+                  "length": 10,
+                  "hellip": true
+                }
+              ]
+            }
+          },
+          {
+            "type": "String",
+            "name": "formatted",
+            "required": true,
+            "multiple": false,
+            "attributes": {
+              "label": [
+                "Formatted Address"
+              ],
+              "field.text": true,
+              "is.required": true,
+              "list.text": true,
+              "view.text": true
+            }
+          },
+          {
+            "type": "String",
+            "name": "street",
+            "required": true,
+            "multiple": false,
+            "attributes": {
+              "label": [
+                "Street Address"
+              ],
+              "field.text": true,
+              "is.required": true,
+              "list.text": true,
+              "view.text": true
+            }
+          },
+          {
+            "type": "String",
+            "name": "neighborhood",
+            "required": false,
+            "multiple": false,
+            "attributes": {
+              "label": [
+                "Neighborhood"
+              ],
+              "field.text": true,
+              "list.text": true,
+              "view.text": true
+            }
+          },
+          {
+            "type": "String",
+            "name": "city",
+            "required": true,
+            "multiple": false,
+            "attributes": {
+              "label": [
+                "City"
+              ],
+              "field.text": true,
+              "is.required": true,
+              "list.text": true,
+              "view.text": true
+            }
+          },
+          {
+            "type": "String",
+            "name": "state",
+            "required": false,
+            "multiple": false,
+            "attributes": {
+              "label": [
+                "State"
+              ],
+              "field.text": true,
+              "list.text": true,
+              "view.text": true
+            }
+          },
+          {
+            "type": "String",
+            "name": "region",
+            "required": false,
+            "multiple": false,
+            "attributes": {
+              "label": [
+                "Region"
+              ],
+              "field.text": true,
+              "list.text": true,
+              "view.text": true
+            }
+          },
+          {
+            "type": "String",
+            "name": "country",
+            "required": true,
+            "multiple": false,
+            "attributes": {
+              "label": [
+                "Country"
+              ],
+              "field.text": true,
+              "is.required": true,
+              "list.text": true,
+              "view.text": true
+            }
+          },
+          {
+            "type": "String",
+            "name": "postal",
+            "required": true,
+            "multiple": false,
+            "attributes": {
+              "label": [
+                "Postal Code"
+              ],
+              "field.text": true,
+              "is.required": true,
+              "list.text": true,
+              "view.text": true
+            }
+          },
+          {
+            "type": "Float",
+            "name": "latitude",
+            "required": false,
+            "multiple": false,
+            "attributes": {
+              "label": [
+                "Latitude"
+              ],
+              "min": [
+                -90
+              ],
+              "max": [
+                90
+              ],
+              "step": [
+                1e-08
+              ],
+              "field.number": [
+                {
+                  "min": -90,
+                  "max": 90,
+                  "step": 1e-08
+                }
+              ],
+              "is.gte": [
+                -90
+              ],
+              "is.lte": [
+                90
+              ],
+              "list.hide": true,
+              "view.number": true
+            }
+          },
+          {
+            "type": "Float",
+            "name": "longitude",
+            "required": false,
+            "multiple": false,
+            "attributes": {
+              "label": [
+                "Longitude"
+              ],
+              "min": [
+                -180
+              ],
+              "max": [
+                180
+              ],
+              "step": [
+                1e-08
+              ],
+              "field.number": [
+                {
+                  "min": -180,
+                  "max": 180,
+                  "step": 1e-08
+                }
+              ],
+              "is.gte": [
+                -180
+              ],
+              "is.lte": [
+                180
+              ],
+              "list.hide": true,
+              "view.number": true
+            }
+          },
+          {
+            "type": "Boolean",
+            "name": "active",
+            "required": true,
+            "multiple": false,
+            "attributes": {
+              "label": [
+                "Active"
+              ],
+              "default": [
+                true
+              ],
+              "filter.switch": true,
+              "list.hide": true,
+              "view.yesno": true
+            }
+          },
+          {
+            "type": "Datetime",
+            "name": "created",
+            "required": true,
+            "multiple": false,
+            "attributes": {
+              "label": [
+                "Created"
+              ],
+              "default": [
+                "now()"
+              ],
+              "sortable": true,
+              "list.date": [
+                "m d, Y h:iA"
+              ],
+              "view.date": [
+                "m d, Y h:iA"
+              ]
+            }
+          },
+          {
+            "type": "Datetime",
+            "name": "updated",
+            "required": true,
+            "multiple": false,
+            "attributes": {
+              "label": [
+                "Updated"
+              ],
+              "default": [
+                "now()"
+              ],
+              "timestamp": true,
+              "sortable": true,
+              "list.date": [
+                "m d, Y h:iA"
+              ],
+              "view.date": [
+                "m d, Y h:iA"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  },
+  "resolved": {
+    "ok": {
+      "model": {
+        "Address": {
+          "name": "Address",
+          "mutable": true,
+          "attributes": {
+            "label": [
+              "Address",
+              "Addresses"
+            ],
+            "template": [
+              "{{label}}"
+            ],
+            "icon": [
+              "map-marker"
+            ]
+          },
+          "columns": [
+            {
+              "type": "String",
+              "name": "id",
+              "required": true,
+              "multiple": false,
+              "attributes": {
+                "label": [
+                  "Places ID"
+                ],
+                "id": true,
+                "list.overflow": [
+                  {
+                    "length": 10,
+                    "hellip": true
+                  }
+                ]
+              }
+            },
+            {
+              "type": "String",
+              "name": "formatted",
+              "required": true,
+              "multiple": false,
+              "attributes": {
+                "label": [
+                  "Formatted Address"
+                ],
+                "field.text": true,
+                "is.required": true,
+                "list.text": true,
+                "view.text": true
+              }
+            },
+            {
+              "type": "String",
+              "name": "street",
+              "required": true,
+              "multiple": false,
+              "attributes": {
+                "label": [
+                  "Street Address"
+                ],
+                "field.text": true,
+                "is.required": true,
+                "list.text": true,
+                "view.text": true
+              }
+            },
+            {
+              "type": "String",
+              "name": "neighborhood",
+              "required": false,
+              "multiple": false,
+              "attributes": {
+                "label": [
+                  "Neighborhood"
+                ],
+                "field.text": true,
+                "list.text": true,
+                "view.text": true
+              }
+            },
+            {
+              "type": "String",
+              "name": "city",
+              "required": true,
+              "multiple": false,
+              "attributes": {
+                "label": [
+                  "City"
+                ],
+                "field.text": true,
+                "is.required": true,
+                "list.text": true,
+                "view.text": true
+              }
+            },
+            {
+              "type": "String",
+              "name": "state",
+              "required": false,
+              "multiple": false,
+              "attributes": {
+                "label": [
+                  "State"
+                ],
+                "field.text": true,
+                "list.text": true,
+                "view.text": true
+              }
+            },
+            {
+              "type": "String",
+              "name": "region",
+              "required": false,
+              "multiple": false,
+              "attributes": {
+                "label": [
+                  "Region"
+                ],
+                "field.text": true,
+                "list.text": true,
+                "view.text": true
+              }
+            },
+            {
+              "type": "String",
+              "name": "country",
+              "required": true,
+              "multiple": false,
+              "attributes": {
+                "label": [
+                  "Country"
+                ],
+                "field.text": true,
+                "is.required": true,
+                "list.text": true,
+                "view.text": true
+              }
+            },
+            {
+              "type": "String",
+              "name": "postal",
+              "required": true,
+              "multiple": false,
+              "attributes": {
+                "label": [
+                  "Postal Code"
+                ],
+                "field.text": true,
+                "is.required": true,
+                "list.text": true,
+                "view.text": true
+              }
+            },
+            {
+              "type": "Float",
+              "name": "latitude",
+              "required": false,
+              "multiple": false,
+              "attributes": {
+                "label": [
+                  "Latitude"
+                ],
+                "min": [
+                  -90
+                ],
+                "max": [
+                  90
+                ],
+                "step": [
+                  1e-08
+                ],
+                "field.number": [
+                  {
+                    "min": -90,
+                    "max": 90,
+                    "step": 1e-08
+                  }
+                ],
+                "is.gte": [
+                  -90
+                ],
+                "is.lte": [
+                  90
+                ],
+                "list.hide": true,
+                "view.number": true
+              }
+            },
+            {
+              "type": "Float",
+              "name": "longitude",
+              "required": false,
+              "multiple": false,
+              "attributes": {
+                "label": [
+                  "Longitude"
+                ],
+                "min": [
+                  -180
+                ],
+                "max": [
+                  180
+                ],
+                "step": [
+                  1e-08
+                ],
+                "field.number": [
+                  {
+                    "min": -180,
+                    "max": 180,
+                    "step": 1e-08
+                  }
+                ],
+                "is.gte": [
+                  -180
+                ],
+                "is.lte": [
+                  180
+                ],
+                "list.hide": true,
+                "view.number": true
+              }
+            },
+            {
+              "type": "Boolean",
+              "name": "active",
+              "required": true,
+              "multiple": false,
+              "attributes": {
+                "label": [
+                  "Active"
+                ],
+                "default": [
+                  true
+                ],
+                "filter.switch": true,
+                "list.hide": true,
+                "view.yesno": true
+              }
+            },
+            {
+              "type": "Datetime",
+              "name": "created",
+              "required": true,
+              "multiple": false,
+              "attributes": {
+                "label": [
+                  "Created"
+                ],
+                "default": [
+                  "now()"
+                ],
+                "sortable": true,
+                "list.date": [
+                  "m d, Y h:iA"
+                ],
+                "view.date": [
+                  "m d, Y h:iA"
+                ]
+              }
+            },
+            {
+              "type": "Datetime",
+              "name": "updated",
+              "required": true,
+              "multiple": false,
+              "attributes": {
+                "label": [
+                  "Updated"
+                ],
+                "default": [
+                  "now()"
+                ],
+                "timestamp": true,
+                "sortable": true,
+                "list.date": [
+                  "m d, Y h:iA"
+                ],
+                "view.date": [
+                  "m d, Y h:iA"
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

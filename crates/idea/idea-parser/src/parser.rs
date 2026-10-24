@@ -18,11 +18,37 @@ pub(crate) fn parse(source: &str, inputs: &CompileInputs) -> Result<SchemaToken,
     // Skip leading trivia once; each statement then owns its complete grammar extent.
     parser.skip_noncode()?;
     while !parser.is_eof() {
+        parser.charge_node()?;
+        if body.len() >= inputs.limits.max_collection() {
+            return Err(parser.limit("Declaration collection limit exceeded"));
+        }
         body.push(parser.parse_statement()?);
-        // Skip leading trivia once; each statement then owns its complete grammar extent.
+        // Top-level statements need trivia between them, but never after the final statement.
+        let end = parser.index;
         parser.skip_noncode()?;
+        if !parser.is_eof() && parser.index == end {
+            return Err(IdeaError::new(
+                ErrorCode::UnexpectedToken,
+                "Expected declaration separator",
+            )
+            .with_span(end, end + 1));
+        }
     }
 
+    // Cross-kind uniqueness is a syntax invariant as well as a compilation invariant.
+    let mut names = std::collections::HashMap::new();
+    for item in &body {
+        if let Statement::Declaration(declaration) = item {
+            let name = &declaration.declarations[0].id;
+            if let Some((start, end)) = names.insert(&name.name, (name.start, name.end)) {
+                return Err(
+                    IdeaError::new(ErrorCode::DuplicateName, "Duplicate declaration")
+                        .with_span(name.start, name.end)
+                        .with_related(start, end),
+                );
+            }
+        }
+    }
     Ok(SchemaToken {
         node_type: "Program",
         kind: "schema",
@@ -32,15 +58,17 @@ pub(crate) fn parse(source: &str, inputs: &CompileInputs) -> Result<SchemaToken,
     })
 }
 
-struct Parser<'a> {
+pub(crate) struct Parser<'a> {
     source: &'a str,
     index: usize,
     /// Active recursive data depth, checked before descent.
     depth: usize,
     /// Explicit environment snapshot and caller-lowered limits.
     inputs: &'a CompileInputs,
-    /// Remaining bytes allowed for repeated environment literal copies.
-    env_remaining: usize,
+    /// Whether nested data is currently inside an attribute argument list.
+    attribute_data: bool,
+    /// Aggregate syntax-node count, charged before growing a collection.
+    nodes: usize,
 }
 
 impl<'a> Parser<'a> {
@@ -51,8 +79,39 @@ impl<'a> Parser<'a> {
             index: 0,
             depth: 0,
             inputs,
-            env_remaining: inputs.limits.max_bytes,
+            attribute_data: false,
+            nodes: 0,
         }
+    }
+
+    /// Produce a positioned limit error at the cursor before allocating another node.
+    fn limit(&self, message: &str) -> IdeaError {
+        IdeaError::new(ErrorCode::Limit, message).with_span(self.index, self.index)
+    }
+
+    /// Charge one syntax node before allocating it.
+    fn charge_node(&mut self) -> Result<(), IdeaError> {
+        if self.nodes >= self.inputs.limits.max_nodes() {
+            return Err(self.limit("Syntax node budget exceeded"));
+        }
+        self.nodes += 1;
+        Ok(())
+    }
+
+    /// Guard a collection before parsing and allocating its next member.
+    fn check_collection(&mut self, length: usize) -> Result<(), IdeaError> {
+        if length >= self.inputs.limits.max_collection() {
+            return Err(self.limit("Syntax collection budget exceeded"));
+        }
+        self.charge_node()
+    }
+
+    /// Require trivia between values while allowing an adjacent closing delimiter.
+    fn separate_or_close(&mut self, closer: char) -> Result<(), IdeaError> {
+        if self.check_char(closer) {
+            return Ok(());
+        }
+        self.expect_whitespace()
     }
 
     /// Reject recursive data before constructing another stack frame's children.
@@ -116,7 +175,7 @@ impl<'a> Parser<'a> {
                         ErrorCode::UnexpectedEof,
                         "Unterminated block comment",
                     )
-                    .with_span(start, self.source.len()));
+                    .with_span(self.source.len(), self.source.len()));
                 }
                 self.index += 2;
             }
@@ -209,18 +268,17 @@ impl<'a> Parser<'a> {
         let mut properties = Vec::new();
         // Each successful member parser advances; EOF and invalid members return an error.
         while !self.check_char('}') {
+            self.check_collection(properties.len())?;
             let key = self.parse_upper_identifier()?;
             self.expect_whitespace()?;
-            let value = self.parse_scalar_literal()?;
-            let end = value.end;
-            properties.push(PropertyToken::new(
-                key.start,
-                end,
-                key,
-                DataToken::Literal(value),
-            ));
-            self.expect_whitespace()?;
-            self.skip_noncode()?;
+            let value = if self.starts_with("env(\"") {
+                DataToken::Environment(self.parse_env_literal()?)
+            } else {
+                DataToken::Literal(self.parse_scalar_literal()?)
+            };
+            let end = value_end(&value);
+            properties.push(PropertyToken::new(key.start, end, key, value));
+            self.separate_or_close('}')?;
         }
         self.expect_char('}')?;
         unique_properties(&properties)?;
@@ -254,6 +312,7 @@ impl<'a> Parser<'a> {
         let mut columns = Vec::new();
         // Each successful member parser advances; EOF and invalid members return an error.
         while !self.check_char('}') {
+            self.check_collection(columns.len())?;
             columns.push(self.parse_column_property()?);
         }
         self.expect_char('}')?;
@@ -266,13 +325,13 @@ impl<'a> Parser<'a> {
                 PropertyToken::new(
                     start,
                     self.index,
-                    IdentifierToken::new(start, start + 10, "attributes"),
+                    IdentifierToken::new(start, start, "attributes"),
                     DataToken::Object(ObjectToken::new(start, self.index, attributes)),
                 ),
                 PropertyToken::new(
                     start,
                     self.index,
-                    IdentifierToken::new(start, start + 7, "columns"),
+                    IdentifierToken::new(start, start, "columns"),
                     DataToken::Object(ObjectToken::new(start, self.index, columns)),
                 ),
             ],
@@ -286,7 +345,7 @@ impl<'a> Parser<'a> {
         let key = self.parse_camel_identifier()?;
         self.expect_whitespace()?;
         let value = self.parse_type_literal()?;
-        self.expect_whitespace()?;
+        self.separate_or_close('}')?;
         // Attributes stay uninterpreted so framework metadata does not leak into grammar.
         let attributes = self.parse_attribute_properties()?;
         self.skip_noncode()?;
@@ -322,8 +381,10 @@ impl<'a> Parser<'a> {
     fn parse_attribute_properties(&mut self) -> Result<Vec<PropertyToken>, IdeaError> {
         let mut properties = Vec::new();
         while self.check_char('@') {
+            self.check_collection(properties.len())?;
             properties.push(self.parse_attribute_property()?);
-            self.skip_noncode()?;
+            // Metadata methods/flags cannot run directly into another attribute or field.
+            self.separate_or_close('}')?;
         }
         unique_properties(&properties)?;
         Ok(properties)
@@ -342,13 +403,16 @@ impl<'a> Parser<'a> {
         // Parentheses choose method arguments; no parentheses means a true flag.
         let value = if self.consume_char('(') {
             self.skip_noncode()?;
+            self.attribute_data = true;
             let mut elements = Vec::new();
             // Whitespace/comments separate complete arguments without comma syntax.
             while !self.check_char(')') {
+                self.check_collection(elements.len())?;
                 elements.push(self.parse_attribute_data()?);
-                self.skip_noncode()?;
+                self.separate_or_close(')')?;
             }
             self.expect_char(')')?;
+            self.attribute_data = false;
             DataToken::Array(ArrayToken::new(start, self.index, elements))
         } else {
             DataToken::Literal(LiteralToken::new(
@@ -398,6 +462,7 @@ impl<'a> Parser<'a> {
 
     /// Read literal scalar, object or array data without executing expressions.
     fn parse_data(&mut self) -> Result<DataToken, IdeaError> {
+        self.charge_node()?;
         // Composite delimiters take precedence over scalar and identifier interpretation.
         if self.current() == Some('{') {
             return Ok(DataToken::Object(self.parse_object_literal()?));
@@ -407,7 +472,7 @@ impl<'a> Parser<'a> {
         }
         // Environment syntax uses only this invocation's explicit map.
         if self.starts_with("env(\"") {
-            return Ok(DataToken::Literal(self.parse_env_literal()?));
+            return Ok(DataToken::Environment(self.parse_env_literal()?));
         }
         if self.current() == Some('"') {
             return Ok(DataToken::Literal(self.parse_string_literal()?));
@@ -417,16 +482,28 @@ impl<'a> Parser<'a> {
         }
 
         let word = self.peek_word().ok_or_else(|| {
-            IdeaError::new(ErrorCode::UnexpectedToken, "Expected data")
-                .with_span(self.index, self.index + 1)
+            IdeaError::new(
+                if self.is_eof() {
+                    ErrorCode::UnexpectedEof
+                } else {
+                    ErrorCode::UnexpectedToken
+                },
+                "Expected data",
+            )
+            .with_span(self.index, self.index + 1)
         })?;
         if matches!(word.as_str(), "true" | "false" | "null") {
             return Ok(DataToken::Literal(self.parse_scalar_literal()?));
         }
 
+        // Attribute argument composites retain typed references just like direct arguments.
+        if self.attribute_data && is_capital_identifier(&word) {
+            return Ok(DataToken::Identifier(self.parse_capital_identifier()?));
+        }
+
         Err(
             IdeaError::new(ErrorCode::UnexpectedToken, "Expected literal data")
-                .with_span(self.index, self.index),
+                .with_span(self.index, self.index + word.len()),
         )
     }
 
@@ -439,12 +516,13 @@ impl<'a> Parser<'a> {
         let mut properties = Vec::new();
         // Each successful member parser advances; EOF and invalid members return an error.
         while !self.check_char('}') {
+            self.check_collection(properties.len())?;
             let key = self.parse_any_identifier()?;
             self.expect_whitespace()?;
             let value = self.parse_data()?;
             let end = value_end(&value);
             properties.push(PropertyToken::new(key.start, end, key, value));
-            self.skip_noncode()?;
+            self.separate_or_close('}')?;
         }
         self.expect_char('}')?;
         self.depth -= 1;
@@ -461,44 +539,31 @@ impl<'a> Parser<'a> {
         let mut elements = Vec::new();
         // Nested elements spend depth before descending and release it only on success.
         while !self.check_char(']') {
+            self.check_collection(elements.len())?;
             elements.push(self.parse_data()?);
-            self.skip_noncode()?;
+            self.separate_or_close(']')?;
         }
         self.expect_char(']')?;
         self.depth -= 1;
         Ok(ArrayToken::new(start, self.index, elements))
     }
 
-    /// Resolve one explicitly supplied environment input without process-global reads.
+    /// Retain one environment name without reading or copying any environment value.
     fn parse_env_literal(&mut self) -> Result<LiteralToken, IdeaError> {
         let start = self.index;
         self.expect_keyword("env")?;
         self.expect_char('(')?;
         let key = self.parse_string_literal()?;
         self.expect_char(')')?;
-        let env_key = key.value.as_str().unwrap_or_default();
-        let value = match self.inputs.environment.get(env_key) {
-            Some(value) => value.clone(),
-            None if self.inputs.missing_env_is_empty => String::new(),
-            None => {
-                return Err(IdeaError::new(
-                    ErrorCode::MissingEnvironment,
-                    format!("Missing environment input {env_key}"),
-                )
-                .with_span(start, self.index));
-            }
-        };
-        // Repeated env references consume an aggregate budget before entering the AST.
-        self.env_remaining = self.env_remaining.checked_sub(value.len()).ok_or_else(|| {
-            IdeaError::new(ErrorCode::Limit, "Environment expansion budget exceeded")
-                .with_span(start, self.index)
-        })?;
-        Ok(LiteralToken::new(
+        // Retain the name and exact syntax; compilation alone receives environment values.
+        let mut node = LiteralToken::new(
             start,
             self.index,
-            Value::String(value.clone()),
-            format!("'{}'", value),
-        ))
+            key.value,
+            &self.source[start..self.index],
+        );
+        node.node_type = "Environment";
+        Ok(node)
     }
 
     /// Read the existing raw double-quoted grammar without inventing escapes.
@@ -521,7 +586,7 @@ impl<'a> Parser<'a> {
         }
         Err(
             IdeaError::new(ErrorCode::UnexpectedEof, "Unterminated string literal")
-                .with_span(start, self.source.len()),
+                .with_span(self.source.len(), self.source.len()),
         )
     }
 
@@ -531,16 +596,31 @@ impl<'a> Parser<'a> {
         if self.current() == Some('-') {
             self.advance_char();
         }
+        let digits = self.index;
         while matches!(self.current(), Some(ch) if ch.is_ascii_digit()) {
             self.advance_char();
+        }
+        if digits == self.index {
+            return Err(
+                IdeaError::new(ErrorCode::InvalidLiteral, "Expected numeric digits")
+                    .with_span(start, self.index),
+            );
         }
         // A decimal point selects finite-float parsing; integer precision is never coerced.
         let mut is_float = false;
         if self.current() == Some('.') {
             is_float = true;
             self.advance_char();
+            let fractional_start = self.index;
             while matches!(self.current(), Some(ch) if ch.is_ascii_digit()) {
                 self.advance_char();
+            }
+            if fractional_start == self.index {
+                return Err(IdeaError::new(
+                    ErrorCode::InvalidLiteral,
+                    "Expected fractional digits",
+                )
+                .with_span(start, self.index));
             }
         }
         let raw = &self.source[start..self.index];
@@ -562,17 +642,14 @@ impl<'a> Parser<'a> {
                 raw,
             ))
         } else {
-            let value = raw.parse::<serde_json::Number>().map_err(|_| {
-                IdeaError::new(ErrorCode::InvalidLiteral, "Invalid integer literal")
-                    .with_span(start, self.index)
-            })?;
-            if !value.is_i64() && !value.is_u64() {
-                return Err(IdeaError::new(
-                    ErrorCode::InvalidLiteral,
-                    "Integer outside 64-bit range",
-                )
-                .with_span(start, self.index));
-            }
+            let value = raw
+                .parse::<i64>()
+                .map(serde_json::Number::from)
+                .or_else(|_| raw.parse::<u64>().map(serde_json::Number::from))
+                .map_err(|_| {
+                    IdeaError::new(ErrorCode::InvalidLiteral, "Integer outside 64-bit range")
+                        .with_span(start, self.index)
+                })?;
             Ok(LiteralToken::new(
                 start,
                 self.index,
@@ -624,7 +701,11 @@ impl<'a> Parser<'a> {
     /// Validate exactly the approved scalar/list optionality modifiers.
     fn parse_type_literal(&mut self) -> Result<LiteralToken, IdeaError> {
         let start = self.index;
-        let word = self.parse_word()?;
+        let mut word = self.parse_word()?;
+        // Brackets belong to type modifiers only here, never to a reference identifier.
+        while matches!(self.current(), Some('[' | ']' | '?')) {
+            word.push(self.advance_char().unwrap_or_default());
+        }
         if !is_type_identifier(&word) {
             return Err(IdeaError::new(
                 ErrorCode::InvalidLiteral,
@@ -721,14 +802,23 @@ impl<'a> Parser<'a> {
     fn parse_word(&mut self) -> Result<String, IdeaError> {
         let start = self.index;
         let mut word = String::new();
-        while matches!(self.current(), Some(ch)
-            if ch.is_ascii_alphanumeric() || matches!(ch, '_' | '.' | '?' | '[' | ']' | '/' | '-'))
+        while !self.starts_with("//")
+            && !self.starts_with("/*")
+            && matches!(self.current(), Some(ch)
+            if ch.is_ascii_alphanumeric() || matches!(ch, '_' | '.' | '?' | '/' | '-'))
         {
             word.push(self.advance_char().unwrap_or_default());
         }
         if word.is_empty() {
-            return Err(IdeaError::new(ErrorCode::UnexpectedToken, "Expected word")
-                .with_span(start, start + 1));
+            return Err(IdeaError::new(
+                if self.is_eof() {
+                    ErrorCode::UnexpectedEof
+                } else {
+                    ErrorCode::UnexpectedToken
+                },
+                "Expected word",
+            )
+            .with_span(start, start + 1));
         }
         Ok(word)
     }
@@ -738,10 +828,11 @@ impl<'a> Parser<'a> {
         let mut index = self.index;
         let mut word = String::new();
         while index < self.source.len() {
+            if self.source[index..].starts_with("//") || self.source[index..].starts_with("/*") {
+                break;
+            }
             let ch = self.source[index..].chars().next()?;
-            if !(ch.is_ascii_alphanumeric()
-                || matches!(ch, '_' | '.' | '?' | '[' | ']' | '/' | '-'))
-            {
+            if !(ch.is_ascii_alphanumeric() || matches!(ch, '_' | '.' | '?' | '/' | '-')) {
                 break;
             }
             word.push(ch);
@@ -765,14 +856,18 @@ impl<'a> Parser<'a> {
 
     /// Require a separator so adjacent values cannot merge ambiguously.
     fn expect_whitespace(&mut self) -> Result<(), IdeaError> {
-        if !matches!(self.current(), Some(ch) if ch.is_whitespace()) {
-            return Err(
-                IdeaError::new(ErrorCode::UnexpectedToken, "Expected whitespace")
-                    .with_span(self.index, self.index + 1),
-            );
-        }
-        while matches!(self.current(), Some(ch) if ch.is_whitespace()) {
-            self.advance_char();
+        let start = self.index;
+        self.skip_noncode()?;
+        if self.index == start {
+            return Err(IdeaError::new(
+                if self.is_eof() {
+                    ErrorCode::UnexpectedEof
+                } else {
+                    ErrorCode::UnexpectedToken
+                },
+                "Expected whitespace or comment",
+            )
+            .with_span(start, start + usize::from(!self.is_eof())));
         }
         Ok(())
     }
@@ -784,10 +879,15 @@ impl<'a> Parser<'a> {
                 self.advance_char();
                 Ok(())
             }
-            _ => Err(
-                IdeaError::new(ErrorCode::UnexpectedToken, format!("Expected {}", expected))
-                    .with_span(self.index, self.index + 1),
-            ),
+            _ => Err(IdeaError::new(
+                if self.is_eof() {
+                    ErrorCode::UnexpectedEof
+                } else {
+                    ErrorCode::UnexpectedToken
+                },
+                format!("Expected {}", expected),
+            )
+            .with_span(self.index, self.index + 1)),
         }
     }
 
@@ -837,42 +937,42 @@ impl<'a> Parser<'a> {
 fn value_end(value: &DataToken) -> usize {
     match value {
         DataToken::Identifier(value) => value.end,
-        DataToken::Literal(value) => value.end,
+        DataToken::Literal(value) | DataToken::Environment(value) => value.end,
         DataToken::Object(value) => value.end,
         DataToken::Array(value) => value.end,
     }
 }
 
 /// Validate ordinary ASCII identifier characters.
-fn is_any_identifier(value: &str) -> bool {
+pub(crate) fn is_any_identifier(value: &str) -> bool {
     let mut chars = value.chars();
     matches!(chars.next(), Some(ch) if ch.is_ascii_alphabetic() || ch == '_')
         && chars.all(|ch| ch.is_ascii_alphanumeric() || ch == '_')
 }
 
 /// Validate a capitalized declaration/type name.
-fn is_capital_identifier(value: &str) -> bool {
+pub(crate) fn is_capital_identifier(value: &str) -> bool {
     let mut chars = value.chars();
     matches!(chars.next(), Some(ch) if ch.is_ascii_uppercase() || ch == '_')
         && chars.all(|ch| ch.is_ascii_alphanumeric() || ch == '_')
 }
 
 /// Validate an uppercase enum member name.
-fn is_upper_identifier(value: &str) -> bool {
+pub(crate) fn is_upper_identifier(value: &str) -> bool {
     let mut chars = value.chars();
     matches!(chars.next(), Some(ch) if ch.is_ascii_uppercase() || ch == '_')
         && chars.all(|ch| ch.is_ascii_uppercase() || ch.is_ascii_digit() || ch == '_')
 }
 
 /// Validate a lowercase field name.
-fn is_camel_identifier(value: &str) -> bool {
+pub(crate) fn is_camel_identifier(value: &str) -> bool {
     let mut chars = value.chars();
     matches!(chars.next(), Some(ch) if ch.is_ascii_lowercase() || ch == '_')
         && chars.all(|ch| ch.is_ascii_alphanumeric() || ch == '_')
 }
 
 /// Accept exactly required/optional scalar and required/optional single list.
-fn is_type_identifier(value: &str) -> bool {
+pub(crate) fn is_type_identifier(value: &str) -> bool {
     // Removing at most one suffix keeps repeated modifiers invalid.
     let base = value.strip_suffix('?').unwrap_or(value);
     let base = base.strip_suffix("[]").unwrap_or(base);
@@ -880,7 +980,7 @@ fn is_type_identifier(value: &str) -> bool {
 }
 
 /// Require lowercase namespace segments rather than accepting arbitrary dots/digits.
-fn valid_attribute(value: &str) -> bool {
+pub(crate) fn valid_attribute(value: &str) -> bool {
     value.split('.').all(|part| {
         let mut chars = part.chars();
         matches!(chars.next(), Some(ch) if ch.is_ascii_lowercase())
@@ -893,7 +993,9 @@ fn unique_properties(properties: &[PropertyToken]) -> Result<(), IdeaError> {
     let mut names = std::collections::HashMap::new();
     // Inspect source order so the later member is the primary diagnostic.
     for property in properties {
-        if let Some(first) = names.insert(&property.key.name, property.key.start) {
+        if let Some((first, first_end)) =
+            names.insert(&property.key.name, (property.key.start, property.key.end))
+        {
             return Err(IdeaError::new(
                 ErrorCode::DuplicateName,
                 format!(
@@ -901,8 +1003,122 @@ fn unique_properties(properties: &[PropertyToken]) -> Result<(), IdeaError> {
                     property.key.name
                 ),
             )
-            .with_span(property.key.start, property.key.end));
+            .with_span(property.key.start, property.key.end)
+            .with_related(first, first_end));
         }
     }
     Ok(())
+}
+
+/// Tokenize with the same literal, identifier, attribute and trivia scanner as the parser.
+pub(crate) fn tokenize_source(
+    source: &crate::SourceFile,
+    limits: ParseLimits,
+) -> Result<Vec<crate::Token>, IdeaError> {
+    let inputs = CompileInputs {
+        limits,
+        ..Default::default()
+    };
+    crate::check_inputs(source.name(), source.text(), &inputs)?;
+    let mut scanner = Parser::new(source.text(), &inputs);
+    let mut tokens = Vec::new();
+    let mut delimiter_depth = 0usize;
+    let result = (|| {
+        scanner.skip_noncode()?;
+        while !scanner.is_eof() {
+            scanner.charge_node()?;
+            let start = scanner.index;
+            // Composite punctuation stays lexical; parsing alone checks balanced grammar.
+            let (kind, value) = match scanner.current() {
+                Some('@') => {
+                    scanner.advance_char();
+                    let identifier = scanner.parse_attribute_identifier(start)?;
+                    (
+                        crate::TokenKind::Attribute,
+                        crate::TokenValue::Text(identifier.name),
+                    )
+                }
+                Some('"') => {
+                    let literal = scanner.parse_string_literal()?;
+                    (
+                        crate::TokenKind::Literal,
+                        crate::TokenValue::Literal(literal.value),
+                    )
+                }
+                Some(ch) if matches!(ch, '{' | '}' | '[' | ']' | '(' | ')' | '!') => {
+                    if matches!(ch, '{' | '[' | '(') {
+                        if delimiter_depth >= limits.max_depth.min(ParseLimits::HARD_DEPTH) {
+                            return Err(scanner.limit("Token nesting limit exceeded"));
+                        }
+                        delimiter_depth += 1;
+                    } else if matches!(ch, '}' | ']' | ')') {
+                        delimiter_depth = delimiter_depth.saturating_sub(1);
+                    }
+                    scanner.advance_char();
+                    (crate::TokenKind::Delimiter, crate::TokenValue::Symbol(ch))
+                }
+                Some(ch) if ch.is_ascii_digit() || ch == '-' => {
+                    let literal = scanner.parse_number_literal()?;
+                    (
+                        crate::TokenKind::Literal,
+                        crate::TokenValue::Literal(literal.value),
+                    )
+                }
+                _ if scanner.starts_with("env(\"") => {
+                    let environment = scanner.parse_env_literal()?;
+                    (
+                        crate::TokenKind::Environment,
+                        crate::TokenValue::Literal(environment.value),
+                    )
+                }
+                _ => {
+                    let mut word = scanner.parse_word()?;
+                    if is_capital_identifier(word.trim_end_matches('?')) {
+                        while scanner.starts_with("[]") || scanner.current() == Some('?') {
+                            if scanner.starts_with("[]") {
+                                word.push('[');
+                                word.push(']');
+                                scanner.index += 2;
+                            } else {
+                                word.push(scanner.advance_char().unwrap_or_default());
+                            }
+                        }
+                    }
+                    match word.as_str() {
+                        "true" => (
+                            crate::TokenKind::Literal,
+                            crate::TokenValue::Literal(true.into()),
+                        ),
+                        "false" => (
+                            crate::TokenKind::Literal,
+                            crate::TokenValue::Literal(false.into()),
+                        ),
+                        "null" => (
+                            crate::TokenKind::Literal,
+                            crate::TokenValue::Literal(Value::Null),
+                        ),
+                        _ if is_any_identifier(&word) || is_type_identifier(&word) => {
+                            (crate::TokenKind::Word, crate::TokenValue::Text(word))
+                        }
+                        _ => {
+                            return Err(IdeaError::new(
+                                ErrorCode::UnexpectedToken,
+                                "Invalid lexical word",
+                            )
+                            .with_span(start, scanner.index));
+                        }
+                    }
+                }
+            };
+            tokens.push(crate::Token {
+                kind,
+                value,
+                span: crate::SourceSpan::new(source, start, scanner.index),
+                raw: source.text()[start..scanner.index].into(),
+            });
+            scanner.skip_noncode()?;
+        }
+        Ok(tokens)
+    })();
+    result.map_err(|error| error.locate(source.name(), source.text()))
 }
