@@ -276,6 +276,13 @@ Trees are retained as `target/slice2-receipts/server-default.tree` and `server-h
 - Receipt moved losslessly to [slice-2-receipt-lane-c-http.md](../slice-2-receipt-lane-c-http.md).
 - Round finding to carry: `http.rs` inline-comment density is about 9 per 100 code lines, below the 13–23 reached elsewhere.
 
+
+**Lane D HTTP proof re-verification and merge (coordinator, 2026-10-24): passed; merged.**
+
+- Checks: 16 example tests passed in both the default and `experimental` modes, 0 failed; Clippy clean with `server-http`.
+- The four new in-process proofs: `HttpAdapter` and `Server::call` return identical public envelopes for `profile-search`; an unknown route gives a public 404; malformed input gives the G17 400 with no callbacks; the customization plugin is visible through HTTP. Proof item 5 (CLI and HTTP invoke the same capability) is complete on the HTTP side; the CLI side awaits lane B.
+- Committed as `1f1a319` and merged as `93654d7`. The receipt was appended to [slice-2-receipt-lane-d-app.md](../slice-2-receipt-lane-d-app.md).
+
 ## Acceptance notes
 
 Library, host, and CLI work has no visual acceptance artifact under the spec workflow; this task finishes at `verified` after coordinator review.
