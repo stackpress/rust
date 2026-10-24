@@ -6,6 +6,7 @@
 #[path = "../../selection.rs"]
 pub mod selection;
 
+use std::error::Error as StdError;
 use std::path::Path;
 
 use stackpress_idea::parser::{CompileInputs, SchemaConfig};
@@ -21,12 +22,24 @@ use stackpress_server::{BuildResult, ConfigLayers, Server, ServerBuilder};
 /// # Errors
 /// Returns registry ID/partition conflicts before any callbacks execute.
 pub fn register(registry: &mut Registry) -> GenerateResult<()> {
-    registry.register("profile-demo", &["contracts", "server"], emit_profile)
+    // Disabled builds contain no generator callback; schema blocks cannot activate it.
+    #[cfg(feature = "profiles")]
+    registry.register("profile-demo", &["contracts", "server"], emit_profile)?;
+    let _ = registry;
+    Ok(())
 }
 
 /// Emit real typed public fields and the existing proved search implementation.
+#[cfg(feature = "profiles")]
 fn emit_profile(schema: &SchemaConfig) -> GenerateResult<Vec<GeneratedFile>> {
-    if !selection::ENABLED || schema.model.is_empty() {
+    // This generator has no configuration knobs; accepting them would imply false semantics.
+    if schema.plugin.values().any(|config| !config.is_empty()) {
+        return Err(TransformError::new(
+            "profile-demo accepts no plugin configuration",
+        ));
+    }
+    // Removing the model deliberately contributes no contracts or runtime implementation.
+    if schema.model.is_empty() {
         return Ok(Vec::new());
     }
     let model = schema
@@ -112,7 +125,10 @@ pub fn generate(input: &Path, output: &Path, check: bool) -> GenerateResult<Chec
     register(&mut registry)?;
     let workspace = OutputWorkspace::new(output)?;
     stackpress_idea::generate(
-        "schema.idea",
+        input
+            .file_name()
+            .and_then(|name| name.to_str())
+            .unwrap_or("schema.idea"),
         &source,
         &inputs,
         &registry,
@@ -120,6 +136,21 @@ pub fn generate(input: &Path, output: &Path, check: bool) -> GenerateResult<Chec
         &workspace,
         check,
     )
+}
+
+/// Disclose parser-owned safe coordinates while retaining internal/IO causes privately.
+fn generation_error(error: TransformError) -> Error {
+    // A typed cause check prevents an arbitrary plugin/OS message becoming public diagnostics.
+    let mut cause: Option<&(dyn StdError + 'static)> = Some(&error);
+    for _ in 0..32 {
+        let Some(current) = cause else { break };
+        if let Some(diagnostic) = current.downcast_ref::<stackpress_idea::parser::IdeaError>() {
+            return Error::invalid(diagnostic.to_string()).with_cause(error);
+        }
+        // A finite walk also protects the adapter from a malformed cyclic plugin error chain.
+        cause = current.source();
+    }
+    Error::from_source(error)
 }
 
 /// Read capability data once, then await the owned blocking worker on the tool runtime.
@@ -138,13 +169,17 @@ async fn generate_event(req: &mut Request, res: &mut Response, _: Invocation<'_>
         .path_as::<String>("output")?
         .map(Into::into)
         .unwrap_or_else(|| root.join("src/generated"));
-    let check = req.data.path_as::<bool>("check")?.unwrap_or(false);
+    // Presence wins over aliases, including an explicit false in the long form.
+    let check = match req.data.path_as::<bool>("check")? {
+        Some(check) => check,
+        None => req.data.path_as::<bool>("c")?.unwrap_or(false),
+    };
     // The worker owns its paths and writer lock. Runtime shutdown waits for blocking work;
     // cancelling this future does not release a lock while the worker can still write.
     let report = tokio::task::spawn_blocking(move || generate(&input, &output, check))
         .await
         .map_err(Error::from_source)?
-        .map_err(Error::from_source)?;
+        .map_err(generation_error)?;
     if check && !report.is_current() {
         return Err(Error::invalid(
             "generated output is stale; run emit generate",

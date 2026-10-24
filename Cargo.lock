@@ -638,6 +638,7 @@ dependencies = [
  "serde",
  "serde_json",
  "stackpress-cli",
+ "stackpress-example-capability-host",
  "stackpress-lib",
  "stackpress-server",
  "tokio",

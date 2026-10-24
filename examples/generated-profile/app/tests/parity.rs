@@ -10,10 +10,19 @@ use stackpress_server::http::{BufferedRequest, HttpAdapter, HttpOptions, HttpOut
 /// All adapters return the complete same public envelope from the generated operation.
 #[tokio::test]
 async fn generated_cli_http_and_direct_match_slice_two() {
+    // Compare the actual Slice 2 application instead of a handwritten expected surrogate.
+    let reference = stackpress_example_capability_host::build_application(ConfigLayers::new())
+        .await
+        .unwrap();
     let app = build_application(ConfigLayers::new()).await.unwrap();
     for id in ["abc123", "abc", "unknown"] {
         let direct = app.call("profile-search", json!({"id":id})).await.unwrap();
         let expected = direct.response.try_to_json().unwrap();
+        let original = reference
+            .call("profile-search", json!({"id":id}))
+            .await
+            .unwrap();
+        assert_eq!(original.response.try_to_json().unwrap(), expected);
         let args = ["emit", "profile-search", "--id", id].map(String::from);
         let terminal = Terminal::parse(&args, ParseLimits::default()).unwrap();
         let (mut stdout, mut stderr) = (Vec::new(), Vec::new());
@@ -42,6 +51,16 @@ async fn generated_cli_http_and_direct_match_slice_two() {
                 json!([{"id":"abc123","name":"Ada Lovelace"}])
             );
         }
+    }
+
+    // Typed/guard failures must agree with the original operation as well as successful rows.
+    for data in [json!({}), json!({"id":""}), json!({"id":3})] {
+        let generated = app.call("profile-search", data.clone()).await.unwrap();
+        let original = reference.call("profile-search", data).await.unwrap();
+        assert_eq!(
+            generated.response.try_to_json().unwrap(),
+            original.response.try_to_json().unwrap()
+        );
     }
 }
 

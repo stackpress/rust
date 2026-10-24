@@ -4,6 +4,11 @@
 //! Native hosts/UI/database libraries are introduced only as implemented.
 //! Re-exporting a library does not register a plugin or start an executor.
 //!
+//! Idea build-host tools are opt-in: `idea-parser` exposes `idea_parser` for pure parsing,
+//! `idea-transformer` exposes the native transformer, and `idea` exposes their convenience
+//! wrapper. None is selected by default. The wrapper also re-exports both component crates.
+//! The transformer and wrapper are native build tools; browser targets are not verified.
+//!
 //! # Examples
 //!
 //! ```
