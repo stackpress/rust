@@ -26,6 +26,7 @@ use crate::{
     DispatchOutcome, Error, ErrorKind, EventPattern, Flow, HandlerFuture, InvocationFrame,
     MatchData, MethodPattern, Nest, Request, Response, ResponseEnvelope, Result, SourceLocation,
 };
+use std::any::Any;
 use std::fmt;
 use std::sync::{
     Arc,
@@ -954,6 +955,15 @@ impl SharedAncestry {
     }
 }
 
+/// Inherited immutable ancestry and an optional caller-owned context borrow.
+#[derive(Default)]
+struct DispatchContext<'a> {
+    /// Diagnostic ancestry remains independent for each root and sibling.
+    ancestry: SharedAncestry,
+    /// The caller retains ownership; dispatch cannot extend this borrow's lifetime.
+    state: Option<&'a (dyn Any + Send + Sync)>,
+}
+
 /// Immutable all-matching dispatch; share the table by reference or explicit Arc.
 pub struct EventEmitter {
     listeners: Vec<Listener>,
@@ -992,14 +1002,52 @@ impl EventEmitter {
         input: I,
     ) -> HandlerFuture<'a, Result<Resolution>> {
         // A root capability call starts fresh ancestry without entering host lifecycle events.
-        self.resolve_nested(event, input, SharedAncestry::default())
+        self.resolve_nested(event, input, DispatchContext::default())
+    }
+    /// Resolve with explicitly borrowed immutable host state, inherited by nested calls.
+    ///
+    /// # Errors
+    /// Returns the same input/dispatch failures as [`Self::resolve`]. Context is
+    /// never inserted into request data, serialized, or interpreted by the foundation.
+    ///
+    /// ```
+    /// use stackpress_lib::{EmitterBuilder, Flow, Invocation, Nest, Request, Response, Result};
+    /// async fn read(_: &mut Request, res: &mut Response, inv: Invocation<'_>) -> Result<Flow> {
+    ///     res.results(inv.context::<String>().expect("explicit context"))?;
+    ///     Ok(Flow::Continue)
+    /// }
+    /// # async fn example() -> Result<()> {
+    /// let mut builder = EmitterBuilder::new();
+    /// builder.on("read", read)?;
+    /// let emitter = builder.build();
+    /// let context = String::from("caller owned");
+    /// let reply = emitter.resolve_with_context("read", Nest::new(), &context).await?;
+    /// assert_eq!(reply.response.results.unwrap().as_str(), Some("caller owned"));
+    /// # Ok(())
+    /// # }
+    /// ```
+    pub fn resolve_with_context<'a, T: Any + Send + Sync, I: IntoRequest + 'a>(
+        &'a self,
+        event: &'a str,
+        input: I,
+        context: &'a T,
+    ) -> HandlerFuture<'a, Result<Resolution>> {
+        // A fresh root has no ancestry; only the explicit state borrow is inherited.
+        self.resolve_nested(
+            event,
+            input,
+            DispatchContext {
+                ancestry: SharedAncestry::default(),
+                state: Some(context),
+            },
+        )
     }
     /// Construct isolated child values while sharing only immutable diagnostic ancestry.
     fn resolve_nested<'a, I: IntoRequest + 'a>(
         &'a self,
         event: &'a str,
         input: I,
-        parent: SharedAncestry,
+        parent: DispatchContext<'a>,
     ) -> HandlerFuture<'a, Result<Resolution>> {
         // The owned input lives inside this Send future and is converted only when polled.
         Box::pin(async move {
@@ -1125,7 +1173,46 @@ impl EventEmitter {
         res: &'a mut Response,
     ) -> HandlerFuture<'a, Result<DispatchOutcome>> {
         // A root emit mutates the caller's exact pair and carries no ambient invocation state.
-        self.emit_nested(event, req, res, SharedAncestry::default())
+        self.emit_nested(event, req, res, DispatchContext::default())
+    }
+    /// Dispatch with explicit caller-owned immutable state, without a host lifecycle.
+    ///
+    /// # Errors
+    /// Returns ordinary matching/depth/callback failures. The returned Send future
+    /// borrows context alongside the table and request/response; it is not `'static`.
+    ///
+    /// ```
+    /// use stackpress_lib::{EmitterBuilder, Flow, Invocation, Request, Response, Result};
+    /// async fn read(_: &mut Request, res: &mut Response, inv: Invocation<'_>) -> Result<Flow> {
+    ///     res.results(&inv.context::<u64>().copied())?;
+    ///     Ok(Flow::Continue)
+    /// }
+    /// # async fn example() -> Result<()> {
+    /// let mut builder = EmitterBuilder::new();
+    /// builder.on("read", read)?;
+    /// builder.build().emit_with_context(
+    ///     "read", &mut Request::new(), &mut Response::new(), &7_u64,
+    /// ).await?;
+    /// # Ok(())
+    /// # }
+    /// ```
+    pub fn emit_with_context<'a, T: Any + Send + Sync>(
+        &'a self,
+        event: &'a str,
+        req: &'a mut Request,
+        res: &'a mut Response,
+        context: &'a T,
+    ) -> HandlerFuture<'a, Result<DispatchOutcome>> {
+        // The foundation treats state as an opaque borrow, with no service/global policy.
+        self.emit_nested(
+            event,
+            req,
+            res,
+            DispatchContext {
+                ancestry: SharedAncestry::default(),
+                state: Some(context),
+            },
+        )
     }
     /// Execute a phase with invocation-local captures and immutable ancestry.
     async fn phase(
@@ -1133,7 +1220,7 @@ impl EventEmitter {
         listener: &Listener,
         matched: &EventMatch,
         phase: ListenerPhase,
-        parent: &SharedAncestry,
+        parent: &DispatchContext<'_>,
         req: &mut Request,
         res: &mut Response,
     ) -> Result<Flow> {
@@ -1155,7 +1242,7 @@ impl EventEmitter {
         };
         let description = &listener.description;
         // Each phase adds owned current metadata while retaining immutable parent nodes.
-        let ancestry = parent.push(InvocationFrame {
+        let ancestry = parent.ancestry.push(InvocationFrame {
             event: matched.event.clone(),
             pattern: description.pattern.clone(),
             listener: description.id.to_string(),
@@ -1172,6 +1259,7 @@ impl EventEmitter {
             emitter: self,
             ancestry: ancestry.clone(),
             captures: &matched.data,
+            context: parent.state,
         };
         // Await under exclusive req/res borrows, then annotate only failures; no callback lock
         // crosses the await.
@@ -1186,16 +1274,16 @@ impl EventEmitter {
         event: &'a str,
         req: &'a mut Request,
         res: &'a mut Response,
-        parent: SharedAncestry,
+        parent: DispatchContext<'a>,
     ) -> HandlerFuture<'a, Result<DispatchOutcome>> {
         // Box only the recursive boundary; all callbacks still borrow caller-owned state
         // sequentially.
         Box::pin(async move {
             // Stop a recursive cycle before allocating its next frame/future chain.
-            if parent.depth() >= self.depth_limit {
+            if parent.ancestry.depth() >= self.depth_limit {
                 return Err(Error::limit("dispatch depth limit exceeded")
                     .at_path(event)
-                    .with_frames(parent.snapshot()));
+                    .with_frames(parent.ancestry.snapshot()));
             }
             let matches = self.collect_matches(event)?;
             // No listener is an execution outcome; leave response status untouched.
@@ -1240,8 +1328,28 @@ pub struct Invocation<'a> {
     ancestry: SharedAncestry,
     /// Borrowed captures for this listener only; raw dispatch never injects them into request data.
     captures: &'a MatchData,
+    /// Optional explicit host borrow; child dispatch never replaces it with request data.
+    context: Option<&'a (dyn Any + Send + Sync)>,
 }
 impl Invocation<'_> {
+    /// Borrow explicitly supplied typed context, or None for raw/context-type mismatch.
+    ///
+    /// The returned reference cannot escape this invocation borrow. Nested emit and
+    /// resolve preserve the exact context pointer without cloning its payload.
+    ///
+    /// ```
+    /// use stackpress_lib::{Flow, Invocation, Request, Response, Result};
+    /// async fn inspect(_: &mut Request, _: &mut Response, inv: Invocation<'_>) -> Result<Flow> {
+    ///     if let Some(host) = inv.context::<String>() {
+    ///         assert!(!host.is_empty());
+    ///     }
+    ///     Ok(Flow::Continue)
+    /// }
+    /// ```
+    pub fn context<T: Any + Send + Sync>(&self) -> Option<&T> {
+        // Checked downcasting exposes only immutable access to the caller's chosen type.
+        self.context.and_then(|state| state.downcast_ref())
+    }
     /// Borrow a named capture for this listener without allocating a String.
     ///
     /// # Examples
@@ -1301,8 +1409,14 @@ impl Invocation<'_> {
     ) -> HandlerFuture<'a, Result<Resolution>> {
         // Nested capability calls retain the parent path but create isolated request/response
         // values.
-        self.emitter
-            .resolve_nested(event, input, self.ancestry.clone())
+        self.emitter.resolve_nested(
+            event,
+            input,
+            DispatchContext {
+                ancestry: self.ancestry.clone(),
+                state: self.context,
+            },
+        )
     }
     /// Inspect the current immutable frame.
     ///
@@ -1442,7 +1556,14 @@ impl Invocation<'_> {
         res: &'a mut Response,
     ) -> HandlerFuture<'a, Result<DispatchOutcome>> {
         // Nested emit reborrows the caller pair and shares only immutable parent ancestry.
-        self.emitter
-            .emit_nested(event, req, res, self.ancestry.clone())
+        self.emitter.emit_nested(
+            event,
+            req,
+            res,
+            DispatchContext {
+                ancestry: self.ancestry.clone(),
+                state: self.context,
+            },
+        )
     }
 }

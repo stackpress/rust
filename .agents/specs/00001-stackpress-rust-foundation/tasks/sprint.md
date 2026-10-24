@@ -32,7 +32,7 @@ Acceptance criteria: none for library tasks, because they have no human-reviewab
 | [00003](00003-review-rounds-and-closeout.md) | 1 | Refactoring rounds 1–4, follow-up, closeout. | verified |
 | [00004](00004-lib-usage-and-api-docs.md) | 1 | `crates/lib/docs`: getting started, concepts, task guides, and API reference, written to the chrisai-docing standard as plain Markdown. | verified |
 | [00004A](00004A-envelope-json-limits.md) | 1 | Side quest of 00004: envelope JSON conversion respects custom limits. | verified |
-| 00005 | 2 | `stackpress-server` capability host (config, plugins, top-level lifecycle) and CLI adapter in `tools/`. | proposed |
+| [00005](00005-slice-2-server-and-cli.md) | 2 | `stackpress-server` capability host (config, plugins, top-level lifecycle) and CLI adapter in `tools/`. | started |
 | 00006 | 3 | Idea parser assessment against current fixtures, transformer, and generation of one model. | proposed |
 | 00007 | 4 | `stackpress-sql`, first backend, and `framework-sql` integration. | proposed |
 | 00008 | 5 | `framework-view`/`framework-ui` Leptos SSR with hydration, and a Tauri client. | proposed |

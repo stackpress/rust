@@ -18,6 +18,18 @@ The approved Slice 0+1 design, moved losslessly from the former `docs/trial-3/sl
 - [Data, request/response, and error contract](design-values-and-errors.md): load for Value/Nest and parser rules, request/response/session values, and the error/diagnostic model.
 - [Risk inventory and verification plan](design-risks-and-verification.md): load for the risk table with required proofs, milestone order, watchdog rules, review rounds, coverage, and the receipt template.
 
+## Slice 2 design checkpoint
+
+Approved with G12–G16 and coordinator DX changes; only M0 is released. Load the decision checkpoint and task receipt before advancing:
+
+- [Upstream host inventory](slice-2-design-upstream-host.md): load for Ingest exports/types/tests, plugin/loading facets, and precise source lifecycle discrepancies.
+- [Upstream adapter and terminal inventory](slice-2-design-upstream-adapters.md): load for HTTP/WHATWG, Stackpress commands, lib Terminal/control/input, tested behavior and every Slice 1 deferral.
+- [Host API and ownership](slice-2-design-api.md): load for crate/module layout, function plugins, startup, typed config/services, examples and additive lib context changes.
+- [Lifecycle, failures and diagnostics](slice-2-design-lifecycle.md): load for top-level versus raw dispatch, stage/abort/error tables, finalization, terminal fallback and correlation.
+- [CLI, HTTP and dependencies](slice-2-design-adapters.md): load for native envelopes, capture precedence, operator syntax/output/exit, compile-time app composition, prompts and feature/dependency boundaries.
+- [Risks, milestones and verification](slice-2-design-verification.md): load for R01–R33, M0 and later stops, per-crate coverage, watchdogs, rounds 1–4 and possible four-lane file ownership.
+- [Open decisions and recommendations](slice-2-design-decisions.md): load for proposed Q04/Q05/Q10/Q14 answers, partial Q01 scope, pending owner choices and checkpoint coverage.
+
 ## Tasks
 
 - [Sprint plan](tasks/sprint.md): load for task order, rationale, the planning rubric mapping, and proposed later slices.
@@ -27,3 +39,4 @@ The approved Slice 0+1 design, moved losslessly from the former `docs/trial-3/sl
 - [00003 Review rounds and closeout](tasks/00003-review-rounds-and-closeout.md): load for refactoring rounds 1–4, the follow-up, and the Slice 0+1 closeout receipt.
 - [00004 Lib usage and API docs](tasks/00004-lib-usage-and-api-docs.md): load for the `crates/lib/docs` documentation task, its standards, and its review results.
 - [00004A Envelope JSON limits](tasks/00004A-envelope-json-limits.md): load for the side quest that makes envelope JSON conversion honor custom limits.
+- [00005 Slice 2 server and CLI](tasks/00005-slice-2-server-and-cli.md): load for the `stackpress-server` capability host and CLI adapter task, its Gaps, and its receipts.

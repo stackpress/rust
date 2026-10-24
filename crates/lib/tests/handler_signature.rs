@@ -645,6 +645,16 @@ fn stateful_clone_and_concurrent_mutable_aliases_are_rejected() {
             "escaping-invocation",
             vec!["lifetime may not live long enough", "'static"],
         ),
+        (
+            "escaping_context.rs",
+            "escaping-context",
+            vec!["cannot return value referencing function parameter", "inv"],
+        ),
+        (
+            "non_sync_context.rs",
+            "non-sync-context",
+            vec!["cannot be shared between threads safely", "Rc<()>"],
+        ),
     ] {
         let completion = watchdog::run(
             &mut compiler_command(fixture),

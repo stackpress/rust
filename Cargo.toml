@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/lib"]
+members = ["crates/lib", "crates/server", "tools/cli"]
 resolver = "3"
 
 [workspace.package]
@@ -22,6 +22,12 @@ publish.workspace = true
 
 [dependencies]
 stackpress-lib = { path = "crates/lib" }
+stackpress-server = { path = "crates/server", optional = true, default-features = false }
+
+[features]
+default = []
+server = ["dep:stackpress-server"]
+server-http = ["server", "stackpress-server/http"]
 
 [dev-dependencies]
 serde = { version = "1", features = ["derive"] }

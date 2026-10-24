@@ -23,26 +23,38 @@ Spec file of [00001 Stackpress Rust foundation](index.md). Load before planning 
 | G10 | Which coordinator DX changes apply? | Accepted (coordinator review) | Dot-path and typed getters; `Serialize` results/rows/json; one-line priority/label registration; bootstrap-mapping example; uniform Nest naming; infallible `Method` constants; `Invocation::param`; readable `DataPath` display; Response accessor-guard docs; in-place Nest mutation; conventional doc-example formatting and 100-column wrapping. |
 | G11 | What is the slice plan? | Accepted (owner/coordinator) | Slice 0 workspace; Slice 1 `stackpress-lib`; Slice 2 `stackpress-server` + CLI adapter in `tools/`; Slice 3 Idea (parser assessment, transformer, generation, filesystem, templates); Slice 4 SQL; Slice 5 Leptos/Tauri UI. See the [sprint plan](tasks/sprint.md). |
 
+## Slice 2 owner decisions
+
+Decided by the owner on 2026-10-24 after coordinator review of the [Slice 2 design decisions](slice-2-design-decisions.md). Details live in the linked Slice 2 design files.
+
+| ID | Gap | Status | Decision / evidence |
+| --- | --- | --- | --- |
+| G12 (Q05) | Top-level lifecycle rules? | Accepted (owner): all four as proposed | A failed `request` stage skips the operation. An operation Abort stops the lifecycle, including the `response` stage; this deliberately fixes upstream discarding operation aborts. Any error replaces the response with a fresh public error response, discarding partial body, headers, and cookies. An `error`-listener failure keeps both failures, never recurses, and falls back to a sanitized generic 500. Full table in [lifecycle](slice-2-design-lifecycle.md). |
+| G13 (S2-D01, D04, D05) | What does Slice 2 include? | Accepted (owner): HTTP + prompts now | The buffered, feature-gated, in-process HTTP adapter (no listener) and full terminal prompt/control support with an optional crossterm TTY driver are in scope, implemented as parallel lanes after M0. A real network gateway, streaming, and serverless are deferred to a separate later task. |
+| G14 (S2-D02, D03) | CLI packaging and syntax? | Accepted (owner): app binary only; operator flags before `emit` | Ship the reusable `stackpress-cli` library and have each application compile its own `stackpress` binary (the proof app in `examples/capability-host`). No empty stock binary. Operator flags (`-v`, `-f`, `-b`) come before `emit`; every token after the event is capability data. Exit code policy as in [adapters](slice-2-design-adapters.md). |
+| G15 (Q10, Q04, S2-D07, Q14, Q01) | Host policies? | Accepted (owner): all as proposed | **Config:** typed JSON sections layered defaults → files → code, with unknown top-level sections rejected. **Plugins:** run in the listed order, and a wrong dependency order is an error, not an automatic reorder. **Routes:** captures override same-named request data keys. **Correlation:** per-host IDs only, with no distributed tracing yet. **First end-to-end proof:** an in-memory `profile-search` via CLI and HTTP. |
+| G16 (S2-D06, S2-D08) | Lib changes and dependency budget? | Accepted (coordinator, within authority) | Additive borrowed host context on `Invocation` (`emit_with_context`/`resolve_with_context`/`Invocation::context`), plus `Handler`/`TaskHandler` forwarding only if M0 compiler evidence requires it. Dependencies as budgeted in [adapters](slice-2-design-adapters.md); additions return for review. |
+
 ## Carried design questions for later slices
 
 These come from [open design questions](../../references/00039-open-design-questions.md). Numbers match that reference.
 
 | ID | Gap | Status | Owner / current position |
 | --- | --- | --- | --- |
-| Q01 | Which first vertical capability/model and which first native target? | Unresolved | Owner. Assumption to verify: the profile-search-like capability proposed in 00039. |
+| Q01 | Which first vertical capability/model and which first native target? | Partly answered (G15) | First capability: in-memory `profile-search` via CLI and HTTP. Generated model (Slice 3) and the first Tauri target (Slice 5) remain open. |
 | Q02 | Which operations run remotely, locally, or both; is offline required? | Unresolved | Owner, before Slice 5. |
 | Q03 | Precise async handler signature and context access? | Answered for Slice 1 | G06 and the [API contract](design-api-contract.md); host context enrichment remains Slice 2. |
-| Q04 | Tie order, matching precedence, handles, plugin dependencies, registration conflicts? | Partly answered | Ties run in registration order; handles, replacement, and removal implemented. Plugin dependencies and registration conflicts unresolved (Slice 2). |
-| Q05 | Top-level CLI/HTTP/Tauri lifecycle versus nested emit; abort, finalization, sent state, error-handler failure? | Unresolved | Slice 2 design checkpoint. Slice 1 dispatch runs no lifecycle hooks. |
+| Q04 | Tie order, matching precedence, handles, plugin dependencies, registration conflicts? | Answered (G15) | Ties run in registration order; handles implemented in Slice 1. Plugins have unique IDs, run in the listed order, and wrong order or missing dependencies are startup errors; singleton config/service conflicts error; duplicate listeners stay all-matching. |
+| Q05 | Top-level CLI/HTTP/Tauri lifecycle versus nested emit; abort, finalization, sent state, error-handler failure? | Answered for CLI/HTTP (G12) | See [lifecycle](slice-2-design-lifecycle.md). Tauri entry is defined in Slice 5. |
 | Q06 | First database/backend, first serverless adapter, PGlite? | Unresolved | Owner, before Slice 4. Assumption to verify: SQLite first for test simplicity. |
 | Q07 | ECMAScript regex compatibility versus a Rust path-pattern contract? | Answered | Rust `regex` syntax with explicit options; no ECMAScript lookaround/backreference parity (D3, [API contract](design-api-contract.md) B4). |
 | Q08 | Rust parser grammar/schema parity and extraction strategy? | Unresolved | Slice 3: assess the pinned `feature/rust-parser-2` core against current fixtures first. |
 | Q09 | Generator packaging/order, output cleanup, partitions, build/runtime consistency? | Unresolved | Slice 3. |
-| Q10 | Configuration authoring/loading/merging and runtime validation? | Unresolved | Slice 2. |
+| Q10 | Configuration authoring/loading/merging and runtime validation? | Answered (G15) | Typed package-owned JSON sections, layered and validated at startup; unknown sections rejected. |
 | Q11 | Leptos routing, metadata/Head, server props/hydration, Tauri operation adapter? | Unresolved | Slice 5. |
 | Q12 | Which React/Frui/r22n behavior to reimplement? | Unresolved | Owner, before Slice 5. |
 | Q13 | Feature catalog/defaults, item-level APIs, dependency wiring, MSRV/edition, versions, publication? | Partly answered | Edition 2024 and MSRV 1.96 (G09); no feature flags yet; the rest unresolved. |
-| Q14 | Error/report type, tracing, caller metadata, backtraces, disclosure, correlation? | Partly answered | Slice 1 `Error` with cause chain, registration sites, invocation frames, public/private separation; no tracing dependency. Tracing and cross-process correlation unresolved (Slice 2). |
+| Q14 | Error/report type, tracing, caller metadata, backtraces, disclosure, correlation? | Partly answered (G15) | Slice 1 `Error` plus per-host correlation IDs and lifecycle stage in reports. Tracing and cross-process correlation remain unresolved. |
 | Q15 | Target/build/test matrix and platform exclusions? | Partly answered | Only native `aarch64-apple-darwin` verified; matrix unresolved. |
 
 ## Slice 1 design decisions applied

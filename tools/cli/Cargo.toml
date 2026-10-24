@@ -1,0 +1,27 @@
+[package]
+name = "stackpress-cli"
+description = "Application-owned Stackpress CLI adapter primitives"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+autobins = false
+
+[features]
+default = ["tty"]
+tty = ["dep:crossterm"]
+
+[dependencies]
+stackpress-server = { path = "../../crates/server", default-features = false }
+stackpress-lib = { path = "../../crates/lib" }
+serde = "1"
+serde_json = "1"
+regex = "1"
+tokio = { version = "1", features = ["rt", "macros", "sync", "time"] }
+crossterm = { version = "0.29", default-features = false, features = ["events"], optional = true }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["rt-multi-thread"] }
+
+[lints]
+workspace = true

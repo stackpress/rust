@@ -37,3 +37,5 @@ pub use stackpress_lib::{
     Route, SameSite, Session, SessionRevision, SessionValue, SharedNative, SourceLocation,
     SourceSpan, Status, Timestamp, Value, handler, with_unknown_host,
 };
+#[cfg(feature = "server")]
+pub use stackpress_server as server;

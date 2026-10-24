@@ -1,0 +1,23 @@
+[package]
+name = "stackpress-server"
+description = "Transport-neutral Stackpress capability host"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[features]
+default = []
+http = ["dep:http"]
+
+[dependencies]
+stackpress-lib = { path = "../lib" }
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+http = { version = "1", optional = true }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "sync", "time"] }
+
+[lints]
+workspace = true
