@@ -9,6 +9,8 @@ Use for implementing or fixing Rust code in this monorepo. This is the project-o
 3. Installed [coding skill](../skills/chrisai-coding/SKILL.md), [logic signals](../skills/chrisai-coding/references/logic-review-signals.md), [maintainability signals](../skills/chrisai-coding/references/maintainability-audit-signals.md), [commenting principles](../skills/chrisai-coding/references/typescript-commenting-style.md), and [declaration documentation](../skills/chrisai-coding/references/typescript-jsdoc-and-declaration-comments.md) as needed for the owned round.
 4. [Detailed round checklists](../references/00037-refactoring-round-checklists.md) when making a refactoring pass.
 
+When a crate or slice is built by a coordinator and an implementer agent, also follow [coordinated crate development](coordinated-crate-development.md). It assigns these steps to roles and adds stage gates, review, crate documentation, and scoped fixes.
+
 ## Scope and authorization
 
 The distributed coding skill targets existing JS/TS/React/HTML/CSS. This user explicitly requests its complexity, responsibility, abstraction, consistency, and high-comment-density principles for Rust. Apply those principles through this Rust adaptation; retain the installed skill package unchanged.

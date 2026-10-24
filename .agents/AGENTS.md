@@ -86,6 +86,7 @@ When several next steps are realistic, include up to two useful alternatives. Us
 
 - Read [the Rust context index](context/index.md) before project work.
 - Use [the Rust programming workflow](workflows/rust-programming.md) for implementation, testing, and repeated behavior-preserving refactoring.
+- Use [the coordinated crate development workflow](workflows/coordinated-crate-development.md) when building a crate or slice with the owner, a coordinator agent, and an implementer agent run through Paseo: roles, stage gates, review, crate docs, and discovered fixes.
 - Follow [Rust style](context/rust-code-style.md) and [quality/coverage](context/testing-and-quality.md), including Rustdoc and detailed block/line commentary.
 - Imported TypeScript contracts and discussion proposals retain their scoped authority; use [source catalog](context/source-catalog.md) before promoting a historical claim.
 - Root [AGENTS.md](../AGENTS.md) provides the contributor contract discovered by a new session.

@@ -65,7 +65,7 @@ Coordinator review on 2026-10-24. Result: **verified**.
   - Captures are not injected into `req.data` during raw dispatch.
   - `inv.resolve` uses a fresh request/response pair.
 - Example compilation: per the owner's decision, examples are not doctests. The implementer's disposable out-of-repo consumer compiled 263 API blocks and ran all seven guide walkthroughs plus the quick start. That is implementer evidence; the coordinator did not re-run the disposable crate.
-- Confirmed defect from the DX observations: `ResponseEnvelope::try_to_json` converts `errors`/`results` with `Value::to_json()`, which applies `ParseLimits::default()`. A response built with larger custom limits can therefore accept values that its own envelope later rejects. This is the same class of issue Round 4 fixed for Nest and Response JSON text, and that fix missed the envelope path. The docs describe current behavior accurately; the code fix and the other DX observations are proposed as [side quest 00004A](status.md) for owner decision.
+- Confirmed defect from the DX observations: `ResponseEnvelope::try_to_json` converts `errors`/`results` with `Value::to_json()`, which applies `ParseLimits::default()`. A response built with larger custom limits can therefore accept values that its own envelope later rejects. This is the same class of issue Round 4 fixed for Nest and Response JSON text, and that fix missed the envelope path. The docs describe current behavior accurately; the code fix and the other DX observations are proposed as side quest 00004A. The owner approved only the envelope-limits defect as [task 00004A](00004A-envelope-json-limits.md); the other observations remain documented behavior.
 
 ## Acceptance notes
 

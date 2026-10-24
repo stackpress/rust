@@ -26,4 +26,4 @@ Spec file of [00001 Stackpress Rust foundation](index.md). Load to see freeze re
 
 ## Next action
 
-Decide side quest 00004A (response/envelope API consistency), then start Slice 2 (`stackpress-server` + CLI adapter) with a design checkpoint in a fresh implementer session that receives a handoff brief referencing this spec.
+Finish side quest 00004A (envelope JSON limits), then start Slice 2 (`stackpress-server` + CLI adapter) with a design checkpoint in a fresh implementer session that receives a handoff brief referencing this spec.
