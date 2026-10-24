@@ -1,5 +1,7 @@
 # Slice 3 lane B: M2 composition implementation gate
 
+Spec file of [00001 Stackpress Rust foundation](index.md), recording Slice 3 lane B (composition, M2) of [task 00006](tasks/00006-slice-3-idea.md). Load for source loaders, `use` composition, the merge-table matrix including G19, reference-site movement, and the pending typed-reference switch. Moved losslessly from `crates/idea/idea-transformer/LANE-B-RECEIPT.md` (merged in `17dbcac`); relative links rebased.
+
 Date: 2026-10-25. Branch: `trial/3-s3-lane-b-compose`.
 Base and unchanged HEAD: `54b188e3a5811f8d05ec6017fcb7382466660135`.
 

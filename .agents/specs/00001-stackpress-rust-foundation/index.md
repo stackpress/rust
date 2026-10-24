@@ -48,6 +48,7 @@ Approved with G12–G16 and coordinator DX changes; only M0 is released. Load th
 - [00004A Envelope JSON limits](tasks/00004A-envelope-json-limits.md): load for the side quest that makes envelope JSON conversion honor custom limits.
 - [00005 Slice 2 server and CLI](tasks/00005-slice-2-server-and-cli.md): load for the `stackpress-server` capability host and CLI adapter task, its Gaps, and its receipts.
 - [Slice 3 lane A parser receipt](slice-3-receipt-lane-a-parser.md): load for the corrected-grammar parser, fixture parity, JSON import/export, and the typed reference API.
+- [Slice 3 lane B composition receipt](slice-3-receipt-lane-b-compose.md): load for source loaders, `use` composition, the merge-table matrix (including G19), and the pending typed-reference switch.
 - [Slice 3 lane C writer receipt](slice-3-receipt-lane-c-writer.md): load for the transform registry, output plan, writer recovery matrix, and limitations.
 - [Slice 3 lane D integration receipt](slice-3-receipt-lane-d-integration.md): load for the generated-profile example, codegen DX, consumer proofs, and facade features at the M4 baseline.
 - [00005A Server and CLI docs](tasks/00005A-server-and-cli-docs.md): load for the `crates/server/docs` and `tools/cli/docs` documentation task.
