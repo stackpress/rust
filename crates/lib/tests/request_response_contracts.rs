@@ -3,8 +3,8 @@
 use serde::{Serialize, Serializer};
 use stackpress_lib::session::cookie;
 use stackpress_lib::{
-    Body, CookieOptions, DeliveryState, DispatchOutcome, EmitterBuilder, Error, Flow, Headers,
-    Invocation, LoadResult, LoadState, Nest, ParseLimits, Priority, PublicError, Request,
+    Body, CookieOptions, DeliveryState, DispatchOutcome, EmitterBuilder, Error, ErrorKind, Flow,
+    Headers, Invocation, LoadResult, LoadState, Nest, ParseLimits, Priority, PublicError, Request,
     RequestView, Response, ResponseEnvelope, ResponseView, Result, SameSite, Session,
     SessionRevision, SessionValue, SharedNative, SourceLocation, Status, Value,
 };
@@ -371,6 +371,265 @@ fn typed_response_helpers_and_serialization_are_atomic() -> Result<()> {
     response.set("application/octet-stream", Body::Bytes(vec![0, 255]))?;
     assert_eq!(response.body().type_name(), "bytes");
     assert!(response.to_envelope().try_to_json().is_err());
+    Ok(())
+}
+
+/// Response-selected limits must remain usable when exporting its public envelope as JSON.
+#[test]
+fn response_envelope_json_respects_selected_limits() -> Result<()> {
+    // Put a nested text value just above the default budget under a deliberately larger policy.
+    let defaults = ParseLimits::default();
+    let limits = ParseLimits {
+        max_bytes: defaults.max_bytes + 256,
+        ..defaults
+    };
+    let text = "x".repeat(defaults.max_bytes + 1);
+    let mut results = Nest::with_limits(limits);
+    results.set_path("profile.bio", text.clone())?;
+    let value = results.into_value();
+
+    // The default response must still reject this value rather than silently relaxing its policy.
+    assert!(Response::new().results_value(value.clone()).is_err());
+    let mut response = Response::with_limits(limits);
+    response.results_value(value.clone())?;
+    response
+        .errors_mut()?
+        .set_path("profile.bio", text.clone())?;
+
+    // Standalone envelopes retain a defined default wire budget when no policy is supplied.
+    let standalone = ResponseEnvelope {
+        results: Some(value),
+        ..Default::default()
+    };
+    assert!(standalone.try_to_json().is_err());
+
+    // Direct response conversion retains its own policy rather than applying unrelated defaults.
+    let json = response.try_to_json()?;
+    assert_eq!(
+        json["results"]["profile"]["bio"].as_str(),
+        Some(text.as_str())
+    );
+
+    assert_eq!(
+        json["errors"]["profile"]["bio"].as_str(),
+        Some(text.as_str())
+    );
+    assert_eq!(response.delivery_state(), DeliveryState::Open);
+
+    // Cloned and moved data-only envelopes can use an explicit copy of their originating budget.
+    let selected = response.limits();
+    assert_eq!(selected, limits);
+    assert_eq!(response.to_envelope().try_to_json_with(&selected)?, json);
+    assert_eq!(response.into_envelope().try_to_json_with(&selected)?, json);
+    Ok(())
+}
+
+/// A replaced field-error store cannot replace the owning response's tighter conversion policy.
+#[test]
+fn response_json_retains_limits_after_public_store_replacement() -> Result<()> {
+    // Mutable store access can replace a Nest with one retaining a larger independent policy.
+    let limits = ParseLimits {
+        max_bytes: 64,
+        ..Default::default()
+    };
+    let mut response = Response::with_limits(limits);
+    *response.errors_mut()? = Nest::from_object(serde_json::json!({"detail": "x".repeat(65)}))?;
+    let failure = response.try_to_json().expect_err("owning response policy");
+    assert_eq!(failure.kind(), ErrorKind::Limit);
+    assert_eq!(failure.path(), Some("errors.detail"));
+
+    // A copied policy can select a different wire boundary without changing the response itself.
+    let mut wire_limits = response.limits();
+    wire_limits.max_bytes = 128;
+    assert!(
+        response
+            .to_envelope()
+            .try_to_json_with(&wire_limits)
+            .is_ok()
+    );
+    assert_eq!(response.limits(), limits);
+    assert!(response.try_to_json().is_err());
+    assert_eq!(response.delivery_state(), DeliveryState::Open);
+    Ok(())
+}
+
+/// A resolver caller can retain an explicit wire policy without adding state to public envelopes.
+#[tokio::test]
+async fn resolved_envelope_json_accepts_an_explicit_large_budget() -> Result<()> {
+    /// This operation deliberately selects a response policy matching its prepared input data.
+    async fn echo(req: &mut Request, res: &mut Response, _: Invocation<'_>) -> Result<Flow> {
+        // Replacing output is an explicit operation choice; the resulting envelope remains data.
+        *res = Response::with_limits(req.data.limits());
+        res.results_value(req.data.value().clone())?;
+        Ok(Flow::Continue)
+    }
+
+    // Prepare owned input under the same explicit policy that will be used at the wire boundary.
+    let defaults = ParseLimits::default();
+    let limits = ParseLimits {
+        max_bytes: defaults.max_bytes + 256,
+        ..defaults
+    };
+    let text = "x".repeat(defaults.max_bytes + 1);
+    let mut input = Nest::with_limits(limits);
+    input.set_path("profile.bio", text.clone())?;
+    let request = Request::builder().limits(limits).data(input).build()?;
+    let mut builder = EmitterBuilder::new();
+    builder.on("echo", echo)?;
+    let call = builder.build().resolve("echo", request).await?;
+
+    // Resolution still separates execution outcome from the public response data; the caller
+    // explicitly chooses a large wire policy rather than relying on hidden origin tracking.
+    assert_eq!(call.outcome, DispatchOutcome::Completed);
+    assert!(call.response.try_to_json().is_err());
+    let json = call.response.try_to_json_with(&limits)?;
+    assert_eq!(
+        json["results"]["profile"]["bio"].as_str(),
+        Some(text.as_str())
+    );
+    Ok(())
+}
+
+/// Hand-built envelopes use defaults unless an explicit policy is supplied for both value fields.
+#[test]
+fn standalone_envelope_json_uses_explicit_limits_for_each_value() -> Result<()> {
+    // Exercise errors/results separately so a missed policy forwarding call cannot hide behind
+    // the other field's earlier failure.
+    let defaults = ParseLimits::default();
+    let limits = ParseLimits {
+        max_bytes: defaults.max_bytes + 256,
+        ..defaults
+    };
+    for field in ["errors", "results"] {
+        let text = "x".repeat(defaults.max_bytes + 1);
+        let mut data = Nest::with_limits(limits);
+        data.set_path("profile.bio", text.clone())?;
+        let value = data.into_value();
+        let mut envelope = ResponseEnvelope {
+            code: Some(0),
+            status: Some(String::new()),
+            error: Some(String::new()),
+            total: Some(0),
+            stack: Some(vec![]),
+            ..Default::default()
+        };
+        if field == "errors" {
+            // A public field assignment remains available without new required/private fields.
+            envelope.errors = Some(value);
+        } else {
+            envelope.results = Some(value);
+        }
+
+        // Legacy/default conversion still rejects the same value with full envelope context.
+        let failure = envelope
+            .try_to_json()
+            .expect_err("default budget must reject");
+        assert_eq!(failure.kind(), ErrorKind::Limit);
+        assert_eq!(
+            failure.path(),
+            Some(format!("{field}.profile.bio").as_str())
+        );
+        let json = envelope.try_to_json_with(&limits)?;
+        assert_eq!(json[field]["profile"]["bio"].as_str(), Some(text.as_str()));
+        assert_eq!(json["code"], 0);
+        assert_eq!(json["status"], "");
+        assert_eq!(json["error"], "");
+        assert_eq!(json["total"], 0);
+        assert_eq!(json["stack"], serde_json::json!([]));
+        // The absent sibling field stays absent; successful explicit conversion does not change
+        // the policy subsequently used by the no-argument operation.
+        let absent = if field == "errors" {
+            "results"
+        } else {
+            "errors"
+        };
+        assert!(json.get(absent).is_none());
+        assert!(envelope.try_to_json().is_err());
+    }
+    Ok(())
+}
+
+/// Explicit policies can be stricter too, without losing native paths or changing field presence.
+#[test]
+fn envelope_json_limits_preserve_paths_presence_and_tighter_budgets() -> Result<()> {
+    // A three-node tree succeeds exactly at its depth/entry/byte boundaries.
+    let value = Value::try_from(serde_json::json!({"profile": {"active": false}}))?;
+    let envelope = ResponseEnvelope {
+        results: Some(value),
+        errors: Some(Value::Null),
+        total: Some(0),
+        ..Default::default()
+    };
+    let exact = ParseLimits {
+        max_bytes: "profileactive".len(),
+        max_depth: 2,
+        max_entries: 3,
+        ..Default::default()
+    };
+    let before = envelope.try_to_json()?;
+    assert_eq!(envelope.try_to_json_with(&exact)?, before);
+    assert!(before["errors"].is_null());
+    assert_eq!(before["results"]["profile"]["active"], false);
+    assert!(before.get("code").is_none());
+    for tighter in [
+        ParseLimits {
+            max_bytes: exact.max_bytes - 1,
+            ..exact
+        },
+        ParseLimits {
+            max_depth: exact.max_depth - 1,
+            ..exact
+        },
+        ParseLimits {
+            max_entries: exact.max_entries - 1,
+            ..exact
+        },
+    ] {
+        // Each independent budget failure is qualified by the envelope field and leaves input
+        // data intact for another conversion under an adequate policy.
+        let failure = envelope
+            .try_to_json_with(&tighter)
+            .expect_err("tighter budget");
+        assert_eq!(failure.kind(), ErrorKind::Limit);
+        assert!(
+            failure
+                .path()
+                .is_some_and(|path| path.starts_with("results"))
+        );
+        assert_eq!(envelope.try_to_json()?, before);
+    }
+
+    // Non-JSON native values are rejected under every adequate budget; keep the exact child
+    // suffix for both result and field-error paths rather than collapsing it to the envelope root.
+    let mut data = Nest::new();
+    data.set_path("profile.native", SharedNative::new(7u32))?;
+    for field in ["errors", "results"] {
+        let mut envelope = ResponseEnvelope::default();
+        let mut response = Response::new();
+        if field == "errors" {
+            // Field errors remain object-root data even when a nested native child is present.
+            envelope.errors = Some(data.value().clone());
+            *response.errors_mut()? = data.clone();
+        } else {
+            // Structured results retain the same native child without choosing a wire encoding.
+            envelope.results = Some(data.value().clone());
+            response.results_value(data.value().clone())?;
+        }
+        let failure = envelope
+            .try_to_json_with(&ParseLimits::default())
+            .expect_err("native");
+        assert_eq!(
+            failure.path(),
+            Some(format!("{field}.profile.native").as_str())
+        );
+        // Response-owned export preserves the same failure path and does not attempt delivery.
+        let failure = response.try_to_json().expect_err("native response value");
+        assert_eq!(
+            failure.path(),
+            Some(format!("{field}.profile.native").as_str())
+        );
+        assert_eq!(response.delivery_state(), DeliveryState::Open);
+    }
     Ok(())
 }
 

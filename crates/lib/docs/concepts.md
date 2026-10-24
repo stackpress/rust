@@ -110,8 +110,11 @@ data-only views are clonable snapshots, so adapters can inspect values without d
 ownership.
 
 A `ResponseEnvelope` carries public status/results/error fields. It omits headers, session, MIME,
-metadata, private causes, and delivery state. JSON conversion is explicit and may reject richer
-values. Learn the state transitions in [Requests and responses](guides/requests-and-responses.md).
+metadata, private causes, delivery state, and retained limits. `Response::try_to_json` uses the
+owning response's limits automatically. After extracting an envelope, use `try_to_json_with` to
+select a wire policy; its plain `try_to_json` uses defaults. JSON conversion remains explicit and
+rejects unsupported rich values. Learn the conversion choices and state transitions in
+[Requests and responses](guides/requests-and-responses.md).
 
 ## Nest, Value, and explicit sharing
 

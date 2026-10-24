@@ -48,7 +48,10 @@ or stack; set/html/xml/json also retain an existing total.
 ResponseEnvelope is Clone/Debug/Default; Default leaves every field None. Envelopes made from
 Response always include errors (even `{}` ) and total (even 0). Empty body becomes absent results;
 Text becomes String, Bytes remains Bytes, and Body::Value retains its Value. Envelopes omit headers,
-MIME, session, metadata, native resources, private error causes, and delivery state.
+MIME, session, metadata, native resources, private error causes, delivery state, and the originating
+response's limits. Use `Response::try_to_json` to retain those limits automatically, or
+`ResponseEnvelope::try_to_json_with` to choose an explicit wire policy after extracting an envelope.
+Plain envelope `try_to_json` retains the default wire policy.
 
 `ResponseView` is Clone with public `status: Option<Status>`, `body: Body`, `headers: Headers`,
 `session: Session`, `data: Nest`, `envelope: ResponseEnvelope`, and `mimetype: Option<String>`.
@@ -281,6 +284,22 @@ assert!(res.errors().is_empty());
 ```
 
 **Returns** Immutable object-root field errors.
+
+### 2.18. Response::limits
+
+`limits(&self) -> ParseLimits`
+
+Copy the retained response policy before cloning or consuming an envelope for later conversion.
+This policy is independent of the limits retained by an editable store that a caller replaces.
+
+```rust
+let limits = res.limits();
+assert_eq!(limits, ParseLimits::default());
+```
+
+**Returns** A copy of the selected limits. Changing the copy does not change the response, and
+reading it neither validates nor delivers output. Pass it to `try_to_json_with` after envelope
+extraction, or call `Response::try_to_json` directly.
 
 ## 3. Guarded mutable access
 
@@ -630,7 +649,9 @@ assert_eq!(envelope.total, Some(1));
 
 **Returns** An infallible cloned envelope. Ordinary values are independent; explicit SharedNative
 remains shared. Errors and total are always present. Headers/session/MIME/data/private
-cause/delivery state are omitted.
+cause/delivery state and retained limits are omitted. Use `Response::try_to_json` to convert under
+the originating policy automatically, or pass a copy from `res.limits()` to the envelope's
+`try_to_json_with` method.
 
 ### 5.3. Response::into_envelope
 
@@ -640,12 +661,14 @@ Consume the output owner and move public values without cloning result data.
 
 ```rust
 res.results(&false)?;
+let limits = res.limits();
 let envelope = res.into_envelope();
-assert_eq!(envelope.results.unwrap().as_bool(), Some(false));
+assert_eq!(envelope.try_to_json_with(&limits)?["results"], false);
 ```
 
 **Returns** A moved public envelope, infallibly. Private cause and all non-envelope state are
-discarded; no delivery occurs.
+discarded; no delivery occurs. Copy `res.limits()` before the move when a later JSON conversion
+must use the originating policy; envelopes carry no hidden limits.
 
 ### 5.4. Response::into_error
 
@@ -683,7 +706,9 @@ cause or attempt state; SharedNative sharing remains explicit.
 
 `try_to_json(&self) -> Result<serde_json::Value>`
 
-Convert present envelope fields to JSON explicitly.
+Convert present envelope fields with the default wire policy. This applies to hand-built envelopes
+and to data-only envelopes extracted from a response or returned inside a Resolution. Use the
+explicit-budget method below when a different wire policy is required.
 
 ```rust
 let envelope = ResponseEnvelope {
@@ -696,11 +721,68 @@ assert!(json["results"].is_null());
 assert_eq!(json["total"], 0);
 ```
 
-**Returns** An object omitting None fields and retaining present values. Errors/results use Value's
-default conversion policy, independently of a response's retained limits; unsupported values/limits
-return a path prefixed with `errors` or `results`. Stack is serialized only when explicitly
-supplied. This method does not apply Response's metadata-length/count validation to a manually
-constructed envelope.
+**Returns** An object omitting None fields and retaining present values. Each errors/results value
+uses default `ParseLimits`; budget failures or unsupported rich values return a path prefixed with
+`errors` or `results`. Stack is serialized only when explicitly supplied. This method does not
+apply Response's metadata-length/count validation to a manually constructed envelope.
+
+### 5.7. ResponseEnvelope::try_to_json_with
+
+`try_to_json_with(&self, limits: &ParseLimits) -> Result<serde_json::Value>`
+
+Choose an explicit wire budget for a standalone, cloned, moved, or resolved envelope. Both
+errors/results use the same selected policy, checked independently per value; the hard value-depth
+ceiling remains 64. The multipart header budget has no role here. No origin state is inferred or
+stored in the public envelope.
+
+```rust
+let limits = ParseLimits {
+    max_bytes: ParseLimits::default().max_bytes + 128,
+    ..Default::default()
+};
+let envelope = ResponseEnvelope {
+    results: Some(Value::String("x".repeat(ParseLimits::default().max_bytes + 1))),
+    total: Some(0),
+    ..Default::default()
+};
+assert!(envelope.try_to_json().is_err());
+assert!(envelope.try_to_json_with(&limits)?["results"].is_string());
+```
+
+| Parameter | Type | Meaning |
+| --- | --- | --- |
+| `limits` | `&ParseLimits` | Wire policy for each present errors/results value; may be larger or stricter than defaults. Metadata conversion is unchanged. |
+
+**Returns** An owned JSON object, or a selected-budget/non-JSON failure with its complete path,
+such as `results.profile.native`. Absent fields stay absent; present null, false, zero, empty
+objects/arrays, and empty strings remain present. Conversion neither mutates the envelope nor
+changes its future default policy. Metadata-length/count validation is not added by this method.
+
+### 5.8. Response::try_to_json
+
+`try_to_json(&self) -> Result<serde_json::Value>`
+
+Convert the public envelope while retaining the owning response's selected limits automatically.
+This is the direct JSON export path for `Response::with_limits`; it uses the same public fields
+and clone semantics as `to_envelope` followed by the explicit-budget converter.
+
+```rust
+let limits = ParseLimits {
+    max_bytes: ParseLimits::default().max_bytes + 128,
+    ..Default::default()
+};
+let text = "x".repeat(ParseLimits::default().max_bytes + 1);
+let mut res = Response::with_limits(limits);
+res.results(&text)?;
+assert_eq!(res.try_to_json()?["results"].as_str(), Some(text.as_str()));
+assert_eq!(res.delivery_state(), DeliveryState::Open);
+```
+
+**Returns** The owned public JSON envelope, or selected-budget/non-JSON errors qualified by
+errors/results and the failing child path. It does not deliver output, mutate the response, or
+add metadata validation. It remains a read operation after finalization. A larger policy admits
+larger JSON-compatible values; dates, bytes, files, and SharedNative still require deliberate wire
+representations. Generic Value serialization's own default policy is unchanged.
 
 ## 6. Delivery and suppression
 

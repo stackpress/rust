@@ -55,7 +55,7 @@ assert_eq!(
     emitter.emit("GET /profiles/42", &mut req, &mut res).await?,
     DispatchOutcome::Completed,
 );
-assert_eq!(res.to_envelope().try_to_json()?["results"]["id"], "42");
+assert_eq!(res.try_to_json()?["results"]["id"], "42");
 assert!(!req.data.has("id"));
 ```
 

@@ -79,10 +79,15 @@ impl ResponseEnvelope {
         }
         Ok(())
     }
-    /// Select JSON fields explicitly, rejecting rich values at their qualified path.
+    /// Convert the public envelope with default wire limits, preserving presence/null/zero.
+    ///
+    /// An envelope contains data only, not the originating response's limits. Use
+    /// [`Self::try_to_json_with`] to select a wire budget, or [`Response::try_to_json`]
+    /// to convert while the response still owns its selected policy.
     ///
     /// # Errors
-    /// Returns unsupported non-JSON result/field data, never stringifying it.
+    /// Returns default-budget failures or unsupported non-JSON result/field data,
+    /// retaining the envelope field and child path rather than stringifying it.
     ///
     /// # Examples
     ///
@@ -97,6 +102,40 @@ impl ResponseEnvelope {
     /// # Ok::<(), stackpress_lib::Error>(())
     /// ```
     pub fn try_to_json(&self) -> Result<serde_json::Value> {
+        // Standalone envelopes have no hidden origin policy; keep their existing default contract.
+        self.try_to_json_with(&ParseLimits::default())
+    }
+
+    /// Convert public results and field errors under an explicit wire policy.
+    ///
+    /// Each present errors/results value is checked independently using `limits`;
+    /// metadata fields keep the same conversion behavior as [`Self::try_to_json`].
+    /// Only value byte/node/depth budgets apply; multipart header limits are unused.
+    /// The hard value-depth ceiling remains 64. This read does not mutate the
+    /// envelope or restore response/delivery ownership.
+    ///
+    /// # Errors
+    /// Returns selected-budget failures or unsupported non-JSON values with an
+    /// envelope-qualified path such as `results.profile.native`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_lib::{ParseLimits, ResponseEnvelope, Value};
+    /// let limits = ParseLimits {
+    ///     max_bytes: ParseLimits::default().max_bytes + 128,
+    ///     ..Default::default()
+    /// };
+    /// let envelope = ResponseEnvelope {
+    ///     results: Some(Value::String("x".repeat(ParseLimits::default().max_bytes + 1))),
+    ///     ..Default::default()
+    /// };
+    /// // An explicit budget can admit a value that the default wire policy rejects.
+    /// assert!(envelope.try_to_json().is_err());
+    /// assert!(envelope.try_to_json_with(&limits)?["results"].is_string());
+    /// # Ok::<(), stackpress_lib::Error>(())
+    /// ```
+    pub fn try_to_json_with(&self, limits: &ParseLimits) -> Result<serde_json::Value> {
         // Select presence explicitly so false, zero, empty objects and null are retained while
         // absent fields are omitted.
         let mut object = serde_json::Map::new();
@@ -116,7 +155,8 @@ impl ResponseEnvelope {
             ("results", self.results.as_ref()),
         ] {
             if let Some(value) = value {
-                let json = value.to_json().map_err(|error| {
+                // Carry the selected wire budget into each value instead of reapplying defaults.
+                let json = value.to_json_with(limits).map_err(|error| {
                     // Retain the unsupported child suffix so diagnostics identify
                     // results.profile.native rather than only results.
                     let path = match error.path().filter(|v| !v.is_empty()) {
@@ -263,6 +303,26 @@ impl Response {
             limits,
         }
     }
+    /// Copy the response's retained workload policy for a later envelope conversion.
+    ///
+    /// Envelopes omit this policy to preserve their public data-only structure.
+    /// Keep this copy before [`Self::into_envelope`] and pass it to
+    /// [`ResponseEnvelope::try_to_json_with`], or use [`Self::try_to_json`] directly.
+    /// Changing the returned value does not alter this response's policy.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_lib::{ParseLimits, Response};
+    /// let limits = ParseLimits { max_bytes: 4096, ..Default::default() };
+    /// let response = Response::with_limits(limits);
+    /// assert_eq!(response.limits(), limits);
+    /// ```
+    pub fn limits(&self) -> ParseLimits {
+        // Copy policy independently of editable stores so their replacement cannot relax it.
+        self.limits
+    }
+
     /// Borrow actual buffered output.
     ///
     /// # Examples
@@ -1099,7 +1159,42 @@ impl Response {
         }
         Ok(self)
     }
+    /// Convert the public envelope using this response's retained limits.
+    ///
+    /// This is the response-originated JSON path: unlike converting a detached
+    /// envelope with defaults, it retains the policy selected by [`Self::with_limits`].
+    /// It uses the same public fields as [`Self::to_envelope`], without delivering
+    /// output or changing delivery state. Non-JSON values still need an explicit
+    /// caller-selected wire representation.
+    ///
+    /// # Errors
+    /// Returns selected-budget or non-JSON errors with envelope-qualified data
+    /// paths. JSON conversion does not impose new validation on metadata fields.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_lib::{ParseLimits, Response};
+    /// let limits = ParseLimits {
+    ///     max_bytes: ParseLimits::default().max_bytes + 128,
+    ///     ..Default::default()
+    /// };
+    /// let text = "x".repeat(ParseLimits::default().max_bytes + 1);
+    /// let mut response = Response::with_limits(limits);
+    /// response.results(&text)?;
+    /// // The response's own conversion retains its selected budget automatically.
+    /// assert_eq!(response.try_to_json()?["results"].as_str(), Some(text.as_str()));
+    /// # Ok::<(), stackpress_lib::Error>(())
+    /// ```
+    pub fn try_to_json(&self) -> Result<serde_json::Value> {
+        // Reuse the envelope encoder with the owning response's policy, never unrelated defaults.
+        self.to_envelope().try_to_json_with(&self.limits)
+    }
+
     /// Clone a result/status view; only explicitly Shared native values share.
+    ///
+    /// The data-only envelope omits limits. Use [`Self::try_to_json`] to retain
+    /// them automatically, or pass [`Self::limits`] to its explicit converter.
     ///
     /// # Examples
     ///
@@ -1128,6 +1223,9 @@ impl Response {
     }
     /// Move result/status values without duplicating delivery state or owned causes.
     ///
+    /// The data-only envelope omits limits; copy [`Self::limits`] first when its
+    /// later JSON conversion must retain the originating response's policy.
+    ///
     /// # Examples
     ///
     /// ```
@@ -1137,7 +1235,10 @@ impl Response {
     /// # };
     /// let mut response = Response::new();
     /// response.results(&serde_json::json!({"id": 7}))?;
-    /// assert_eq!(response.into_envelope().code, Some(200));
+    /// let limits = response.limits();
+    /// let envelope = response.into_envelope();
+    /// assert_eq!(envelope.code, Some(200));
+    /// assert_eq!(envelope.try_to_json_with(&limits)?["results"]["id"], 7);
     /// # Ok::<(), stackpress_lib::Error>(())
     /// ```
     pub fn into_envelope(self) -> ResponseEnvelope {

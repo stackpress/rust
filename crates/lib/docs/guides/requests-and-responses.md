@@ -63,7 +63,7 @@ Choose structured results for capability output and JSON text when you need a te
 let mut res = Response::new();
 res.rows(&[serde_json::json!({"id": 42})], 1)?;
 res.status_code(200, None)?;
-assert_eq!(res.to_envelope().try_to_json()?["total"], 1);
+assert_eq!(res.try_to_json()?["total"], 1);
 ```
 
 `rows` requires an array serialization and preserves a supplied total, including zero. `results`
@@ -74,6 +74,42 @@ For native delivery, supply a named callback with
 `async fn write(view: ResponseView) -> Result<()>`, then await `res.dispatch_with(write)`. It
 receives a data-only snapshot. `dispatch().await` finalizes without output; `stop()` records
 explicit suppression without a writer.
+
+## Keep the intended envelope wire budget
+
+When a response accepts larger data under a custom policy, export JSON through the response to
+retain that policy automatically. This converts public envelope fields without delivering output:
+
+```rust
+use stackpress_lib::ParseLimits;
+
+let limits = ParseLimits {
+    max_bytes: ParseLimits::default().max_bytes + 128,
+    ..Default::default()
+};
+let text = "x".repeat(ParseLimits::default().max_bytes + 1);
+let mut res = Response::with_limits(limits);
+res.results(&text)?;
+assert_eq!(res.try_to_json()?["results"].as_str(), Some(text.as_str()));
+```
+
+The result exceeds the default byte budget but fits the response's selected policy. The same
+explicit policy applies independently to each present errors/results value; dates, bytes, files,
+and shared natives still need an intentional wire representation.
+
+If you need to move the envelope out first, keep a copy of the policy:
+
+```rust
+let limits = res.limits();
+let envelope = res.into_envelope();
+let json = envelope.try_to_json_with(&limits)?;
+assert_eq!(json["results"].as_str(), Some(text.as_str()));
+```
+
+Envelopes remain plain public data and do not retain hidden origin state. Their plain
+`try_to_json` uses default limits, including hand-built envelopes and `Resolution.response`.
+Choose `try_to_json_with(&limits)` at the caller's wire boundary when a resolved envelope needs
+another policy. The same operation can impose a stricter policy before external output.
 
 ## Read attempt state accurately
 

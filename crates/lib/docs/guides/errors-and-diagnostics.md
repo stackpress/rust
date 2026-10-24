@@ -21,7 +21,7 @@ let error = Error::from_source(cause)
 let mut res = Response::new();
 res.apply_error(error)?;
 assert_eq!(
-    res.to_envelope().try_to_json()?["error"],
+    res.try_to_json()?["error"],
     "Count must be an integer"
 );
 assert!(res.diagnostic().is_some());
