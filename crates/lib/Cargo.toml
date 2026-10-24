@@ -1,0 +1,21 @@
+[package]
+name = "stackpress-lib"
+description = "Transport-neutral Stackpress values and ordered capability dispatch"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+indexmap = { version = "2", features = ["serde"] }
+regex = "1"
+url = "2"
+httpdate = "1"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "sync", "time"] }
+
+[lints]
+workspace = true
