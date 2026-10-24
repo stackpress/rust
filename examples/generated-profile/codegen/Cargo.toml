@@ -1,0 +1,30 @@
+[package]
+name = "stackpress-example-profile-codegen"
+description = "Independent pre-build codegen host for the generated Profile example"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish = false
+
+[features]
+default = ["profiles"]
+profiles = []
+
+[[bin]]
+name = "profile-codegen"
+path = "src/main.rs"
+doc = false
+
+[dependencies]
+stackpress-idea = { path = "../../../crates/idea/idea" }
+stackpress-lib = { path = "../../../crates/lib" }
+stackpress-server = { path = "../../../crates/server", default-features = false }
+stackpress-cli = { path = "../../../tools/cli", default-features = false }
+serde_json = "1"
+tokio = { version = "1", features = ["macros", "rt"] }
+
+[dev-dependencies]
+tempfile = "3"
+
+[lints]
+workspace = true

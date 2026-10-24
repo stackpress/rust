@@ -1,0 +1,6 @@
+plugin "profile-demo" { }
+
+model Profile {
+  id String
+  name String
+}

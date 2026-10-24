@@ -1,0 +1,17 @@
+[package]
+name = "stackpress-idea"
+description = "Independent Idea generation orchestration"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[dependencies]
+stackpress-idea-parser = { path = "../idea-parser" }
+stackpress-idea-transformer = { path = "../idea-transformer" }
+
+[dev-dependencies]
+tempfile = "3"
+
+[lints]
+workspace = true

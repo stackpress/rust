@@ -1,5 +1,9 @@
 [workspace]
-members = ["crates/lib", "crates/server", "tools/cli", "examples/capability-host"]
+members = [
+    "crates/lib", "crates/server", "tools/cli", "examples/capability-host",
+    "crates/idea/idea-parser", "crates/idea/idea-transformer", "crates/idea/idea",
+    "examples/generated-profile/codegen", "examples/generated-profile/app",
+]
 resolver = "3"
 
 [workspace.package]
@@ -23,11 +27,17 @@ publish.workspace = true
 [dependencies]
 stackpress-lib = { path = "crates/lib" }
 stackpress-server = { path = "crates/server", optional = true, default-features = false }
+stackpress-idea-parser = { path = "crates/idea/idea-parser", optional = true }
+stackpress-idea-transformer = { path = "crates/idea/idea-transformer", optional = true }
+stackpress-idea = { path = "crates/idea/idea", optional = true }
 
 [features]
 default = []
 server = ["dep:stackpress-server"]
 server-http = ["server", "stackpress-server/http"]
+idea-parser = ["dep:stackpress-idea-parser"]
+idea-transformer = ["dep:stackpress-idea-transformer"]
+idea = ["dep:stackpress-idea"]
 
 [dev-dependencies]
 serde = { version = "1", features = ["derive"] }

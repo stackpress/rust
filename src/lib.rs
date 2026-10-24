@@ -26,6 +26,12 @@
 //! # }
 //! ```
 
+#[cfg(feature = "idea")]
+pub use stackpress_idea as idea;
+#[cfg(feature = "idea-parser")]
+pub use stackpress_idea_parser as idea_parser;
+#[cfg(feature = "idea-transformer")]
+pub use stackpress_idea_transformer as idea_transformer;
 pub use stackpress_lib as lib;
 pub use stackpress_lib::{
     Body, CookieOptions, DataMap, DataPath, DataSet, DeliveryState, DispatchOutcome,

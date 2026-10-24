@@ -1,0 +1,27 @@
+[package]
+name = "stackpress-example-generated-profile"
+description = "Generated public Profile contracts and one capability implementation"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish = false
+
+[features]
+default = ["profiles"]
+profiles = []
+
+[[bin]]
+name = "profile-app"
+path = "src/main.rs"
+doc = false
+
+[dependencies]
+stackpress-lib = { path = "../../../crates/lib" }
+stackpress-server = { path = "../../../crates/server", default-features = false, features = ["http"] }
+stackpress-cli = { path = "../../../tools/cli", default-features = false }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1", features = ["macros", "rt"] }
+
+[lints]
+workspace = true
