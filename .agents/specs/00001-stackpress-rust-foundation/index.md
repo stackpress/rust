@@ -40,6 +40,8 @@ Approved with G12–G16 and coordinator DX changes; only M0 is released. Load th
 - [00004 Lib usage and API docs](tasks/00004-lib-usage-and-api-docs.md): load for the `crates/lib/docs` documentation task, its standards, and its review results.
 - [00004A Envelope JSON limits](tasks/00004A-envelope-json-limits.md): load for the side quest that makes envelope JSON conversion honor custom limits.
 - [00005 Slice 2 server and CLI](tasks/00005-slice-2-server-and-cli.md): load for the `stackpress-server` capability host and CLI adapter task, its Gaps, and its receipts.
+- [00005A Server and CLI docs](tasks/00005A-server-and-cli-docs.md): load for the `crates/server/docs` and `tools/cli/docs` documentation task.
+- [00006 Slice 3 Idea](tasks/00006-slice-3-idea.md): load for the Idea parser assessment, transformer, and generation task, its Gaps, and its receipts.
 - [Slice 2 lane A rounds receipt](slice-2-receipt-lane-a-rounds.md): load for the server-core refactor rounds 1–4 (module split, lifecycle readability, examples, safety evidence) and final server coverage.
 - [Slice 2 lane B CLI receipt](slice-2-receipt-lane-b-cli.md): load for the `stackpress-cli` parsing/control/prompt/TTY implementation, its upstream inventory disposition, rounds 1–4, and verification.
 - [Slice 2 lane B CLI execution receipt](slice-2-receipt-lane-b-run.md): load for `run`/`main_with`, stdout/stderr and exit-code policy, output authority, and verification.
