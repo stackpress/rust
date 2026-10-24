@@ -1,5 +1,7 @@
 # Lane B: CLI and prompt receipt
 
+Spec file of [00001 Stackpress Rust foundation](index.md), recording lane B of [task 00005](tasks/00005-slice-2-server-and-cli.md). Load for the `stackpress-cli` parsing, control, prompt and native TTY baseline, its upstream Terminal/control/input disposition, rounds 1–4 and verification. Moved losslessly from `tools/cli/LANE-B-RECEIPT.md` (lane branch commit `cb09e90`, merged in `55ca02b`).
+
 **Current status: rounds 1–4 complete; ready for coordinator re-verification.**
 The final round receipt at the end of this file supersedes the baseline limitations
 and pending-round statements below. Run/main_with integration remains gated on M2.

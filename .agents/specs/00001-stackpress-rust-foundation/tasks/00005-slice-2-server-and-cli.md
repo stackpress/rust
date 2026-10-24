@@ -242,6 +242,16 @@ Trees are retained as `target/slice2-receipts/server-default.tree` and `server-h
 - Carried into lane C: `crates/server/src/lifecycle.rs:130` carries a temporary `#[allow(dead_code)]` on the adapter input seam (`handle_input`/`input_failure`). Lane C must consume it and remove the allowance.
 - Next: commit M1+M2; lane C (HTTP adapter) and lane D (proof application) in isolated worktrees from that commit; lane B finishes its `tools/cli` rounds and is then merged and extended with `run`/`main_with`.
 
+
+**Lane B re-verification and merge (coordinator, 2026-10-24): passed; merged.**
+
+- Checks rerun in the lane worktree after rounds 1–4: fmt passed; `stackpress-cli` tests 14 passed with default `tty` and 11 with `--no-default-features`, 0 failures; 48 doctests; Clippy and Rustdoc warning-free; zero lines over 100 columns.
+- Coverage after `cargo llvm-cov clean --workspace`: 96.02% (1,054 executable lines).
+- Inline-comment density rose from about 3 per 100 code lines to 13–23 across production files.
+- Scope: changes are confined to `tools/cli/**` plus the coordinator-approved `unicode-width` lockfile entry.
+- Committed as `cb09e90` on `trial/3-lane-b-cli` and merged into `trial/3` as `55ca02b` with no conflicts. The receipt moved losslessly to [slice-2-receipt-lane-b-cli.md](../slice-2-receipt-lane-b-cli.md).
+- Remaining for lane B: CLI `run`/`main_with`/exit mapping against `Server::handle`, under an extended brief.
+
 ## Acceptance notes
 
 Library, host, and CLI work has no visual acceptance artifact under the spec workflow; this task finishes at `verified` after coordinator review.
