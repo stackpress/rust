@@ -54,7 +54,7 @@ impl From<Error> for ArgumentError {
 /// Application presentation defaults and request-local operator settings.
 #[derive(Debug, Default)]
 pub struct TerminalOptions {
-    /// Request developer diagnostics from the later execution adapter.
+    /// Request developer diagnostics from the execution adapter.
     pub verbose: bool,
     /// Metadata only: this never grants a capability permission to destroy data.
     pub force: bool,
@@ -80,6 +80,12 @@ pub struct Terminal {
 }
 
 impl Terminal {
+    /// Move checked command/data/settings into the execution adapter without cloning target input.
+    pub(crate) fn into_parts(self) -> (String, Nest, TerminalOptions) {
+        // Original argv has served its parsing purpose; no later event reparses process arguments.
+        (self.command, self.data, self.options)
+    }
+
     /// Parse argv **without the executable name**, requiring `emit <event>`.
     ///
     /// # Errors

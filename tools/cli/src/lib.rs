@@ -2,8 +2,9 @@
 //!
 //! This package intentionally has no stock/empty binary. M0 proves native terminal
 //! input ownership. Parsing, formatting and prompts are usable independently of a
-//! server. Prompts never run implicitly during capability dispatch. Application
-//! execution and exit-code mapping are a later integration milestone.
+//! server. Prompts never run implicitly during capability dispatch. [`run`] enters
+//! the server lifecycle once; [`main_with`] supplies process argv/config/sinks for
+//! an application-owned executable with its selected compiled plugins.
 //!
 //! ```
 //! use stackpress_cli::Terminal;
@@ -18,6 +19,13 @@
 pub mod args;
 pub mod control;
 pub mod prompt;
+
+mod diagnostics;
+mod entry;
+mod execution;
+
+pub use entry::{main_with, main_with_args};
+pub use execution::{CliContext, CliRun, CliSinks, run};
 
 pub use args::{ArgumentError, Terminal, TerminalOptions};
 pub use control::{ColorMode, Control, Level, OutputEnvironment};
