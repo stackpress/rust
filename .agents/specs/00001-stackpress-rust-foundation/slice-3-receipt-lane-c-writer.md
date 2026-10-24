@@ -1,5 +1,7 @@
 # Slice 3 lane C: M3 transforms and output writer
 
+Spec file of [00001 Stackpress Rust foundation](index.md), recording Slice 3 lane C (transforms and writer, M3) of [task 00006](tasks/00006-slice-3-idea.md). Load for the transform registry selection table, output plan ownership, the check/install/lock/recovery matrix, and documented limitations. Moved losslessly from `crates/idea/idea-transformer/LANE-C-RECEIPT.md` (merged in `646db65`); relative links rebased.
+
 Implementation stop before refactor rounds. Coordinator re-verification and integration are
 pending. No refactor round, commit, push, listener, dependency change or KB edit was performed.
 
