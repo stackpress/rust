@@ -70,7 +70,6 @@ Implemented on 2026-10-25 by two implementers working in parallel in disjoint di
 - Automatic module contributions and an app-owned root `mod.rs` are mutually exclusive.
 - The `TransformSpec::owns` Rustdoc calls an empty owner list "contribution-only", but a module contribution requires an owned partition. This is a Rustdoc inaccuracy, kept as a candidate side quest.
 
-
 ## Verification notes
 
 Coordinator review on 2026-10-25. Result: **verified**.
@@ -87,7 +86,6 @@ Coordinator review on 2026-10-25. Result: **verified**.
     - the writer limits and recovery order match the lane C receipt.
 - **Guided learning:** the parser quick start prints `Profile: id String` with no IO. The wrapper quick start composes an import through `ProjectLoader`, installs, then checks current in a temp directory.
 - **Example evidence** comes from the implementers and was not rerun by the coordinator: 101 Rust blocks were compile-checked in disposable consumers outside the repo.
-
 
 ## Acceptance notes
 
