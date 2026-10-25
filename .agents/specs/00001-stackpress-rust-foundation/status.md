@@ -28,4 +28,4 @@ Spec file of [00001 Stackpress Rust foundation](index.md). Load to see freeze re
 
 ## Next action
 
-Owner chooses what follows Slice 3: an Idea usage/API docs task, Slice 4 (SQL) or Slice 5 (UI). Both slices are still proposed. The optional polish items from task 00005A remain unscheduled.
+Task 00006A (Idea usage and API docs) is in progress. The coordinator will then review it. After that, the owner chooses between Slice 4 (SQL) and Slice 5 (UI), which remain proposed.

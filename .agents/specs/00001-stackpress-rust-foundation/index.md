@@ -53,6 +53,7 @@ Approved with G12–G16 and coordinator DX changes; only M0 is released. Load th
 - [Slice 3 lane D integration receipt](slice-3-receipt-lane-d-integration.md): load for the generated-profile example, codegen DX, consumer proofs, and facade features at the M4 baseline.
 - [00005A Server and CLI docs](tasks/00005A-server-and-cli-docs.md): load for the `crates/server/docs` and `tools/cli/docs` documentation task.
 - [00006 Slice 3 Idea](tasks/00006-slice-3-idea.md): load for the Idea parser assessment, transformer, and generation task, its Gaps, and its receipts.
+- [00006A Idea usage and API docs](tasks/00006A-idea-docs.md): load for the parser, transformer, and wrapper documentation task.
 - [Slice 2 lane A rounds receipt](slice-2-receipt-lane-a-rounds.md): load for the server-core refactor rounds 1–4 (module split, lifecycle readability, examples, safety evidence) and final server coverage.
 - [Slice 2 lane B CLI receipt](slice-2-receipt-lane-b-cli.md): load for the `stackpress-cli` parsing/control/prompt/TTY implementation, its upstream inventory disposition, rounds 1–4, and verification.
 - [Slice 2 lane B CLI execution receipt](slice-2-receipt-lane-b-run.md): load for `run`/`main_with`, stdout/stderr and exit-code policy, output authority, and verification.

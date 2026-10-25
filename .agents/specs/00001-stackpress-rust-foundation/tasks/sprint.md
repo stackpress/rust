@@ -34,7 +34,8 @@ Acceptance criteria: none for library tasks, because they have no human-reviewab
 | [00004A](00004A-envelope-json-limits.md) | 1 | Side quest of 00004: envelope JSON conversion respects custom limits. | verified |
 | [00005](00005-slice-2-server-and-cli.md) | 2 | `stackpress-server` capability host (config, plugins, top-level lifecycle), buffered HTTP adapter, CLI adapter in `tools/`, and the `examples/capability-host` proof app. | verified |
 | [00005A](00005A-server-and-cli-docs.md) | 2 | Follow-up: server and CLI usage/API docs (chrisai-docing). | verified |
-| [00006](00006-slice-3-idea.md) | 3 | Idea parser assessment against current fixtures, transformer, and generation of one model. | started |
+| [00006](00006-slice-3-idea.md) | 3 | Idea parser assessment against current fixtures, transformer, and generation of one model. | verified |
+| [00006A](00006A-idea-docs.md) | 3 | Follow-up: Idea parser, transformer and wrapper usage/API docs (chrisai-docing). | started |
 | 00007 | 4 | `stackpress-sql`, first backend, and `framework-sql` integration. | proposed |
 | 00008 | 5 | `framework-view`/`framework-ui` Leptos SSR with hydration, and a Tauri client. | proposed |
 
