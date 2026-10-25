@@ -54,11 +54,40 @@ Acceptance criteria: none
 
 ## Implementation notes
 
-Pending.
+Implemented on 2026-10-25 by two implementers working in parallel in disjoint directories. Their full receipts:
+
+- [parser receipt](00006A-receipt-parser.md): `crates/idea/idea-parser/docs`, 18 pages, 1,767 lines. All 33 Rust and 3 Idea examples were checked in a disposable consumer; the audit covers 34 exported types, 21 functions and methods, 98 fields, 31 variants, and `HARD_DEPTH`.
+- [transformer and wrapper receipt](00006A-receipt-transformer.md): `crates/idea/idea-transformer/docs` (21 pages) and `crates/idea/idea/docs` (4 pages). 68 Rust blocks compile and six walkthroughs pass; the audit covers 49 transformer functions and methods, 31 fields, and the wrapper's surface.
+
+**DX observations, no code changes:**
+
+- `finalize` discards `use` directives for compatibility, while `finalize_ast` and typed finalization reject them.
+- Plain `SchemaConfig` JSON loses reference intent; `CompiledSchema` has no named-import counterpart.
+- `FinalSchema` has no checked JSON method family.
+- `install` and `generate(.., Install)` return the pre-install differences, so a first install reports `is_current() == false`.
+- `LoadError` has no `From` conversion into `TransformError`.
+- The wrapper's aggregate renderer runs before registry preflight.
+- Automatic module contributions and an app-owned root `mod.rs` are mutually exclusive.
+- The `TransformSpec::owns` Rustdoc calls an empty owner list "contribution-only", but a module contribution requires an owned partition. This is a Rustdoc inaccuracy, kept as a candidate side quest.
+
 
 ## Verification notes
 
-Pending.
+Coordinator review on 2026-10-25. Result: **verified**.
+
+- **Scope:** 43 pages across the three `docs/` directories, plus the two receipts. `git status` shows no tracked changes, so no source, tests, manifests or lockfile changed.
+- **Mechanical scan** of all 43 pages and 275 relative links/anchors: one H1 per page, tagged fences, no heading directly above a lower heading, no double blank lines, and every target and anchor resolves. 0 issues. The coordinator's scanner was itself re-validated against the verified lib and server docs.
+- **Accuracy spot checks against source:**
+  - **Parser:** default limits (1 MiB, depth 64, `HARD_DEPTH`, 100,000 nodes, 10,000 entries); the export list, with no public `compile`; `finalize` dropping `use`.
+  - **Reference versus literal:** the coordinator ran the concepts example in a probe. Plain config holds `["${Labels}","${Labels}"]`, typed compilation finds 1 reference, and finalization gives `[{"title":"Profiles"},"${Labels}"]`.
+  - **Transformer:**
+    - the G19 table matches `compose/merge.rs` (whole-local props/enums; immutable accumulated types and models replaced);
+    - the G20 table matches decision G20;
+    - the path, plan and contribution limits match `plan/path.rs`, `plan/mod.rs` and `registry.rs`: 240 bytes, 16 components, 1,024 files, 1 MiB, 1,024 entries;
+    - the writer limits and recovery order match the lane C receipt.
+- **Guided learning:** the parser quick start prints `Profile: id String` with no IO. The wrapper quick start composes an import through `ProjectLoader`, installs, then checks current in a temp directory.
+- **Example evidence** comes from the implementers and was not rerun by the coordinator: 101 Rust blocks were compile-checked in disposable consumers outside the repo.
+
 
 ## Acceptance notes
 

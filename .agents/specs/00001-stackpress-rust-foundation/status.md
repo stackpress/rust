@@ -29,9 +29,8 @@ Spec file of [00001 Stackpress Rust foundation](index.md). Load to see freeze re
 
 ## Next action
 
-Three pieces of work are running in parallel:
+Two design checkpoints are running in parallel (task 00006A, the Idea docs, is verified):
 
-- task 00006A, the Idea docs;
 - the Slice 4 design checkpoint (task 00007);
 - the Slice 5 design checkpoint (task 00008).
 
