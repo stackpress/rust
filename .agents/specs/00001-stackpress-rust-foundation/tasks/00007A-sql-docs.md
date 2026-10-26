@@ -56,11 +56,33 @@ Acceptance criteria: none
 
 ## Implementation notes
 
-Pending.
+Implemented on 2026-10-26 by two implementers working in parallel in disjoint directories. Their full receipts:
+
+- [core receipt](00007A-receipt-core.md): `crates/sql/sql/docs`, 32 pages.
+- [SQLite receipt](00007A-receipt-sqlite.md): `crates/sql/sql-sqlite/docs`, 8 pages, with 13 Rust examples and quick-start/CLI walkthroughs compile-checked and run in disposable consumers.
+
+**DX observations, no code changes:**
+
+1. **Candidate fix:** `Select::where_eq` *replaces* its equality slot, while `Update` and `Delete` *append*. A second `where_eq` on a Select silently drops the first filter.
+2. **Candidate fix:** the `QueryResult::insert_id` Rustdoc is stale. It says the adapter exposes no IDs, but SQLite returns `Some(id)` for observed rowid transitions (still `None` for some inserts).
+3. QueryPlan has no public arbitrary-batch constructor; app statements compose through a Transaction.
+4. Engine has no limits getter, and Transaction has no dialect getter.
+5. Every transaction connection is retired, and statements refresh schema metadata. These are correctness-first costs that haven't been benchmarked.
+6. Awaited shutdown is application-owned; there is no host async-finalization hook.
+7. SqliteOptions uses public fields, so invalid settings persist until `validate`/`open`.
 
 ## Verification notes
 
-Pending.
+Coordinator review on 2026-10-26. Result: **verified**.
+
+- **Scope:** 40 pages (32 core, 8 SQLite) plus two receipts. `git status` shows no source, test, manifest or lockfile change.
+- **Mechanical scan** of all 40 pages and 342 relative links/anchors: 0 real issues. The single flag is a scanner false positive on an anchor in `examples/sql-profile/README.md`, outside the scanned set; the heading exists. The four cross-crate anchors into core concepts resolve.
+- **Accuracy against source:**
+  - **Capability table:** every row matches `DialectCapabilities` in `dialect.rs` (RETURNING, transactional DDL, alteration, cascade, JSON number kinds, text NUL).
+  - **Strict value rules:** checked against the value module.
+  - **TrustedSql:** stated as an authorship assertion, not sanitization.
+  - **SQLite pages:** transaction retirement, rollback-only after native failure, unknown cancelled-commit outcome, path validation (no `:memory:`/`file:`), and eager-open behavior all match the code and the Slice 4 receipts.
+- **Example evidence** comes from the implementers and was not rerun by the coordinator.
 
 ## Acceptance notes
 
