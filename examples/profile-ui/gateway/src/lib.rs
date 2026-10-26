@@ -1,6 +1,6 @@
 //! Example-only buffered HTTP/1 boundary; no socket is opened by this library.
 //!
-//! Immutable checked assets and generated operations pass through the existing
+//! Immutable checked assets and selected operations pass through the existing
 //! HttpAdapter. Dropping a connection drops its current read/handler future;
 //! cancellation never promises rollback or retries completed work.
 
@@ -18,7 +18,7 @@ use hyper::{
 use hyper_util::rt::{TokioIo, TokioTimer};
 use stackpress_framework_view::BasePath;
 use stackpress_server::{
-    Server, ServerBuilder,
+    ConfigLayers, Server, ServerBuilder,
     http::{HttpAdapter, HttpOptions, HttpOutput},
 };
 use std::{
@@ -40,7 +40,7 @@ pub type WireResponse = Response<Full<Bytes>>;
 
 /// One immutable preview host; each connection owns and cancels its own work.
 pub struct Gateway {
-    /// Built immutable generated capability/page/asset host.
+    /// Built immutable selected capability/page/asset host.
     app: Server,
     /// Existing conversion/lifecycle/output authority with trusted finite policy.
     adapter: HttpAdapter,
@@ -60,9 +60,26 @@ impl Gateway {
         assets: assets::AssetBundle,
         limits: GatewayLimits,
     ) -> Result<Self, Box<dyn std::error::Error + Send + Sync>> {
+        Self::with_config(base, assets, limits, ConfigLayers::new()).await
+    }
+
+    /// Build the selected backend from explicit layers before any listener binds.
+    ///
+    /// SQLite uses sql-profile's `sqlite.path` and `profiles.limit` sections and
+    /// requires an already installed file. Missing files/schema fail startup.
+    ///
+    /// # Errors
+    /// Returns finite-policy, configuration, read-only database or page/asset errors.
+    pub async fn with_config(
+        base: BasePath,
+        assets: assets::AssetBundle,
+        limits: GatewayLimits,
+        layers: ConfigLayers,
+    ) -> Result<Self, Box<dyn std::error::Error + Send + Sync>> {
         limits.validate()?;
         stackpress_example_profile_ui_web::initialize_renderer()?;
         let mut app = ServerBuilder::new();
+        app.config_layers(layers)?;
         stackpress_example_profile_ui_web::configure_application_with_module(
             &mut app,
             base.clone(),
@@ -78,7 +95,10 @@ impl Gateway {
         // its two-MiB HTML ceiling; only the adapter's static buffer budget expands.
         options.response_limits.max_bytes = assets::MAX_ASSET_BYTES;
         Ok(Self {
-            app: app.build().await.map_err(|error| error.error)?,
+            app: app
+                .build()
+                .await
+                .map_err(stackpress_example_profile_ui_web::backend::startup_error)?,
             adapter: HttpAdapter::new(options)?,
             limits,
             active: AtomicUsize::new(0),

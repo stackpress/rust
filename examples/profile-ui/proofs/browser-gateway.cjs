@@ -3,7 +3,7 @@ const cp = require('node:child_process');
 const assert = require('node:assert/strict');
 const { chromium } = require(process.env.PROFILE_UI_PLAYWRIGHT || 'playwright');
 const probe = process.env.PROFILE_UI_GATEWAY_PROBE;
-const base = process.env.PROFILE_UI_BASE || '/demo';
+const base = process.env.PROFILE_UI_BASE ?? '/demo';
 if (!probe) throw Error('set PROFILE_UI_GATEWAY_PROBE to the built finite probe');
 function request(method, uri, body = '') {
   const bytes = cp.execFileSync(probe, [method, uri, body], {

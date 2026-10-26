@@ -1,4 +1,6 @@
 //! Real buffered HTTP input, typed projection, mounted routes and sanitized errors.
+
+mod support;
 use stackpress_example_profile_ui_contracts::{BUILD, REVISION, SearchPage, SearchReply};
 use stackpress_framework_view::{BasePath, PageSnapshot};
 use stackpress_server::{
@@ -40,7 +42,7 @@ async fn call(
 /// Body fields are exact, input paths are allowlisted and the operation is fixed.
 #[tokio::test]
 async fn strict_fixed_codec() {
-    let app = stackpress_example_profile_ui_web::application()
+    let (_directory, app) = support::application(stackpress_framework_view::BasePath::default())
         .await
         .unwrap();
     for (body, mime, ok) in [
@@ -126,11 +128,9 @@ async fn strict_fixed_codec() {
 /// SSR forms, canonical URLs, detail status and asset URLs share one trusted mount.
 #[tokio::test]
 async fn mounted_route_head_and_seed_agreement() {
-    let app = stackpress_example_profile_ui_web::application_with_base(
-        BasePath::new("/demo/v1").unwrap(),
-    )
-    .await
-    .unwrap();
+    let (_directory, app) = support::application(BasePath::new("/demo/v1").unwrap())
+        .await
+        .unwrap();
     let (status, html, report) = call(
         &app,
         "GET",
@@ -284,9 +284,7 @@ async fn encoded_route_contract() {
     for bad in ["%", "%0X", "%FF", "..", "%2e", ""] {
         assert!(routes::decode_parameter(bad).is_err());
     }
-    let app = stackpress_example_profile_ui_web::application_with_base(base.clone())
-        .await
-        .unwrap();
+    let (_directory, app) = support::application(base.clone()).await.unwrap();
     let request = base.join(path.as_str()).unwrap();
     let (status, html, _) = call(&app, "GET", request.as_str(), "text/plain", vec![]).await;
     assert_eq!(status, 404, "{html}");
@@ -319,7 +317,7 @@ async fn encoded_route_contract() {
 /// Exact non-2xx host error contract, kept separate from successful SearchReply.
 #[tokio::test]
 async fn public_error_envelope_contract() {
-    let app = stackpress_example_profile_ui_web::application()
+    let (_directory, app) = support::application(stackpress_framework_view::BasePath::default())
         .await
         .unwrap();
     let (code, body, _) = call(
@@ -342,7 +340,7 @@ async fn public_error_envelope_contract() {
 /// The same native page root consumes explicit French/dark settings and real detail seeds.
 #[tokio::test]
 async fn initial_settings_and_detail_projection() {
-    let app = stackpress_example_profile_ui_web::application()
+    let (_directory, app) = support::application(stackpress_framework_view::BasePath::default())
         .await
         .unwrap();
     for (id, code, heading) in [

@@ -4308,6 +4308,7 @@ dependencies = [
  "sha2 0.10.9",
  "stackpress-example-profile-ui-contracts",
  "stackpress-example-profile-ui-web",
+ "stackpress-example-sql-profile",
  "stackpress-framework-view",
  "stackpress-lib",
  "stackpress-server",
@@ -4349,10 +4350,12 @@ dependencies = [
  "stackpress-example-generated-profile",
  "stackpress-example-profile-ui-contracts",
  "stackpress-example-profile-ui-shared",
+ "stackpress-example-sql-profile",
  "stackpress-framework-ui",
  "stackpress-framework-view",
  "stackpress-lib",
  "stackpress-server",
+ "tempfile",
  "tokio",
 ]
 

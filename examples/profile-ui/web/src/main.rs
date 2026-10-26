@@ -9,7 +9,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let base = stackpress_framework_view::BasePath::new(
         std::env::var("PROFILE_UI_BASE").unwrap_or_default(),
     )?;
-    let app = stackpress_example_profile_ui_web::application_with_base(base.clone()).await?;
+    // Only this executable reads the operator's environment; libraries take layers.
+    let config = std::env::var_os("PROFILE_UI_CONFIG").map(std::path::PathBuf::from);
+    let layers = stackpress_example_profile_ui_web::backend::configuration(config.as_deref())?;
+    let app =
+        stackpress_example_profile_ui_web::application_with_config(base.clone(), layers).await?;
     if arguments.first().map(String::as_str) == Some("hostile") {
         use stackpress_example_profile_ui_contracts::{
             Profile, REVISION, SearchInput, SearchPage, SearchReply, snapshot,

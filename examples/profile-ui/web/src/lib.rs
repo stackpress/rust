@@ -1,4 +1,8 @@
 //! Buffered typed pages and a fixed HTTP operation over the existing lifecycle.
+//!
+//! The generated in-memory capability is the default. The native-only `sqlite`
+//! feature selects sql-profile's existing read-only plugins before compilation;
+//! explicit configuration names an already installed file. Presentation is shared.
 
 use stackpress_example_profile_ui_contracts::{
     BUILD, DetailContext, MAX_REQUEST_BYTES, REVISION, SearchInput, SearchPage, SearchReply,
@@ -10,7 +14,9 @@ use stackpress_framework_view::{
     PublicLocation, ServerBuilderViewExt, ViewError,
 };
 use stackpress_lib::{Body, Error, Flow, Invocation, Request, Response, Result};
-use stackpress_server::{BuildResult, Server, ServerBuilder, ServerInvocationExt};
+use stackpress_server::{BuildResult, ConfigLayers, Server, ServerBuilder, ServerInvocationExt};
+
+pub mod backend;
 
 #[path = "../../route-contract.rs"]
 pub mod routes;
@@ -27,7 +33,7 @@ pub fn initialize_renderer() -> Result<()> {
     stackpress_framework_ui::render::initialize_ssr().map_err(Error::from_source)
 }
 
-/// Build the public read-only example at the root mount.
+/// Build the compiled read-only backend at the root mount with registered defaults.
 ///
 /// # Errors
 /// Preserves checked plugin/startup/page-registration failures.
@@ -35,18 +41,30 @@ pub async fn application() -> BuildResult<Server> {
     application_with_base(BasePath::default()).await
 }
 
-/// Build one explicit mount; caller headers never select the route/asset base.
+/// Build one explicit mount with registered defaults; caller headers never select the base.
 ///
 /// # Errors
 /// Returns checked startup, route, asset or generated plugin failures.
 pub async fn application_with_base(base: BasePath) -> BuildResult<Server> {
-    initialize_renderer()?;
-    let mut app = ServerBuilder::new();
-    configure_application(&mut app, base.clone())?;
-    app.build().await
+    application_with_config(base, ConfigLayers::new()).await
 }
 
-/// Register the unchanged generated domain, optional compiled plugin and page/API routes.
+/// Build the compiled backend with explicit application-owned configuration layers.
+///
+/// With `sqlite`, startup opens an installed file read-only and verifies its schema.
+/// Use sql-profile's separate setup command first; no startup path installs or seeds.
+///
+/// # Errors
+/// Returns configuration, database-open/schema, plugin and page registration failures.
+pub async fn application_with_config(base: BasePath, layers: ConfigLayers) -> BuildResult<Server> {
+    initialize_renderer()?;
+    let mut app = ServerBuilder::new();
+    app.config_layers(layers)?;
+    configure_application(&mut app, base.clone())?;
+    app.build().await.map_err(backend::startup_error)
+}
+
+/// Register the selected domain, optional compiled plugin and shared page/API routes.
 ///
 /// # Errors
 /// Returns ordinary plugin, route and renderer registration errors.
@@ -63,7 +81,7 @@ pub fn configure_application_with_module(
     base: BasePath,
     module: &str,
 ) -> Result<()> {
-    stackpress_example_generated_profile::generated::register(app)?;
+    backend::register(app)?;
     #[cfg(feature = "demo-customization")]
     app.plugin("profile-ui-labels", customization::register)?;
     register_pages_with_module(app, base.clone(), module)?;
@@ -192,7 +210,7 @@ pub async fn load_profiles(
     }))
 }
 
-/// Project an exact detail from the unchanged generated prefix-search capability.
+/// Project an exact detail from the selected prefix-search capability.
 ///
 /// # Errors
 /// Preserves domain errors and checked response-status changes.
@@ -218,7 +236,7 @@ pub async fn load_detail(
         PageLoad::Abort => return Ok(PageLoad::Abort),
         PageLoad::Ready(page) => page,
     };
-    // The read capability remains generated; only page-specific presentation is narrowed.
+    // The selected read capability stays unchanged; only the page projection is narrowed.
     page.reply.rows.retain(|row| row.id == page.input.id);
     page.reply.total = page.reply.rows.len() as u64;
     page.detail = Some(DetailContext {

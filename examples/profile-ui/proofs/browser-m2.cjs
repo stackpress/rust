@@ -6,6 +6,7 @@ const assert = require('node:assert/strict');
 const { chromium } = require(process.env.PROFILE_UI_PLAYWRIGHT || 'playwright');
 const root = path.resolve(__dirname, '../../..');
 const host = process.env.PROFILE_UI_HOST;
+const base = process.env.PROFILE_UI_BASE || '';
 if (!host) throw Error('set PROFILE_UI_HOST to the finite web fixture executable');
 const assets = path.join(root, 'examples/profile-ui/dist/hydrate');
 const render = () => cp.execFileSync(host, [], { encoding: 'utf8', timeout: 10000 });
@@ -25,7 +26,7 @@ const render = () => cp.execFileSync(host, [], { encoding: 'utf8', timeout: 1000
   await page.route('**/*', async route => {
     const url = new URL(route.request().url());
     if (url.origin !== 'https://profiles.invalid') return route.abort();
-    if (url.pathname === '/ui-api/v1/profile-search') {
+    if (url.pathname === `${base}/ui-api/v1/profile-search`) {
       const json = route.request().postData();
       const id = JSON.parse(json).id;
       calls.push(id);
@@ -42,8 +43,8 @@ const render = () => cp.execFileSync(host, [], { encoding: 'utf8', timeout: 1000
       catch (error) { if (!/already handled|closed|cancel|abort/i.test(String(error))) throw error; }
       return;
     }
-    if (url.pathname.startsWith('/assets/')) {
-      const file = path.join(assets, url.pathname.slice('/assets/'.length));
+    if (url.pathname.startsWith(`${base}/assets/`)) {
+      const file = path.join(assets, url.pathname.slice(`${base}/assets/`.length));
       return route.fulfill({ path: file, contentType: file.endsWith('.wasm') ? 'application/wasm' : 'text/javascript' });
     }
     const html = render().replace('<script type="module"', '<script>window.before=document.querySelector("#app").innerHTML;window.inputBefore=document.querySelector("input");window.inputBefore.focus();</script><script type="module"');
@@ -54,7 +55,7 @@ const render = () => cp.execFileSync(host, [], { encoding: 'utf8', timeout: 1000
   const rows = () => page.locator('.sp-list li');
   const release = id => { const resolve = held.get(id); assert.ok(resolve, `missing barrier ${id}`); held.delete(id); resolve(); };
   try {
-    await page.goto('https://profiles.invalid/ui/profiles?id=abc');
+    await page.goto(`https://profiles.invalid${base}/ui/profiles?id=abc`);
     await page.waitForFunction(() => window.profileUiReady === true, { timeout: 10000 });
     assert.equal(calls.length, 0);
     assert.equal(await page.evaluate(() => window.before === document.querySelector('#app').innerHTML), true);
@@ -71,6 +72,13 @@ const render = () => cp.execFileSync(host, [], { encoding: 'utf8', timeout: 1000
     assert.equal(await input.getAttribute('aria-invalid'), 'true');
     assert.match(await page.locator('#profile-id-error').textContent(), /Enter a profile ID prefix/);
     assert.equal(await rows().count(), 3);
+    // Literal hostile prefixes must settle through the typed host without broadening search.
+    for (const prefix of ['%', '_', "'", '"', '\\', '雪']) {
+      await submit(prefix);
+      await page.waitForFunction(prefix => new URL(location.href).searchParams.get('id') === prefix && document.querySelector('.sp-results').getAttribute('aria-busy') === 'false', prefix);
+      assert.equal(await rows().count(), 0, prefix);
+      assert.equal(await page.locator('.sp-empty').isVisible(), true);
+    }
     await submit('zzz');
     await page.waitForFunction(() => document.querySelectorAll('.sp-list li').length === 0);
     assert.equal(await page.locator('.sp-empty').isVisible(), true);
