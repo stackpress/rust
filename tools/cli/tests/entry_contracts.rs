@@ -284,6 +284,47 @@ async fn diagnostic_error() {
     assert!(stdout.is_empty());
 }
 
+/// A sibling future must advance before bootstrap parsing can consume the builder.
+async fn executor_progress() {
+    let fixture = Fixture::new();
+    let path = fixture.file("progress", b"{}");
+    let progressed = std::sync::atomic::AtomicBool::new(false);
+    let (mut stdout, mut stderr) = (Vec::new(), Vec::new());
+    let args = with_file(&path);
+    let mut sinks = CliSinks::new(&mut stdout, &mut stderr);
+    let entry = main_with_args(&args, &mut sinks, |layers| {
+        assert!(
+            progressed.load(Ordering::SeqCst),
+            "bootstrap blocked executor progress"
+        );
+        configured(layers)
+    });
+    let (exit, ()) = tokio::join!(biased; entry, async {
+        progressed.store(true, Ordering::SeqCst);
+    });
+    assert_eq!(exit, ExitCode::SUCCESS);
+}
+
+/// Unsupported acquisition never waits for a FIFO writer or invokes the builder.
+#[cfg(unix)]
+async fn special_bootstrap() {
+    let fixture = Fixture::new();
+    let fifo = fixture.0.join("fifo");
+    assert!(
+        Command::new("mkfifo")
+            .arg(&fifo)
+            .status()
+            .unwrap()
+            .success()
+    );
+    for path in [&fifo, Path::new("/dev/null")] {
+        let (exit, stdout, _, calls) = invoke(&with_file(path)).await;
+        assert_eq!(exit, ExitCode::from(2));
+        assert!(stdout.is_empty());
+        assert_eq!(calls, 0);
+    }
+}
+
 /// All data-file tests have an inner async deadline and the independent external watchdog.
 #[tokio::test(flavor = "current_thread")]
 #[ignore = "run by entry watchdog parent"]
@@ -294,6 +335,9 @@ async fn entry_child() {
         file_limits_and_errors().await;
         usage_errors().await;
         diagnostic_error().await;
+        executor_progress().await;
+        #[cfg(unix)]
+        special_bootstrap().await;
     })
     .await
     .expect("entry scenario deadline");

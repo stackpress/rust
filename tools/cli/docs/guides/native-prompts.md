@@ -71,7 +71,9 @@ bounded.
 
 Only one framework native reader may own stdin. TtyInput uses a joined polling worker, finite queue,
 and raw-mode guard. Explicit close exposes cleanup errors; Drop makes a best-effort restoration and
-joins on cancellation/unwind. OS failures and competing direct crossterm readers can violate timing
+signals stop on cancellation/unwind; a prestarted cleanup owner retains and joins the reader.
+The lease remains held until restoration completes, so immediate reacquisition can fail while
+cleanup is pending. Explicit async close waits for restoration. OS failures and competing direct crossterm readers can violate timing
 assumptions; no arbitrary input-worker or callback cancellation guarantee is made.
 
 Terminal rendering captures width/height. It can reject a frame too tall or a character too wide;

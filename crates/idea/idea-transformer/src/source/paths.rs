@@ -34,7 +34,10 @@ pub(super) fn kind(path: &Path) -> Result<SourceKind, LoadError> {
     match path.extension().and_then(|extension| extension.to_str()) {
         None | Some("idea") => Ok(SourceKind::Idea),
         Some("json") => Ok(SourceKind::Json),
-        _ => Err(LoadError::new("unsupported schema source extension")),
+        _ => Err(LoadError::classified(
+            crate::TransformErrorKind::Parse,
+            "unsupported schema source extension",
+        )),
     }
 }
 

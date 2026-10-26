@@ -5,6 +5,7 @@
 
 mod memory;
 mod native;
+pub(crate) use native::open_regular;
 mod paths;
 
 use std::fmt;
@@ -56,6 +57,8 @@ pub struct LoadedSource {
 /// Actionable source failure that retains the original IO/UTF-8 cause separately.
 #[derive(Debug)]
 pub struct LoadError {
+    /// Internal category carried into composition without parsing message text.
+    pub(crate) kind: crate::TransformErrorKind,
     /// Safe adapter explanation without source contents.
     message: String,
     /// Underlying native error, inspectable through `Error::source`.
@@ -66,6 +69,16 @@ impl LoadError {
     /// Describe a resolution, format, or byte-budget failure.
     pub fn new(message: impl Into<String>) -> Self {
         Self {
+            kind: crate::TransformErrorKind::Other,
+            message: message.into(),
+            cause: None,
+        }
+    }
+
+    /// Carry a known loader policy into the transformer's composition boundary.
+    pub(crate) fn classified(kind: crate::TransformErrorKind, message: impl Into<String>) -> Self {
+        Self {
+            kind,
             message: message.into(),
             cause: None,
         }
@@ -77,6 +90,7 @@ impl LoadError {
         cause: impl std::error::Error + Send + Sync + 'static,
     ) -> Self {
         Self {
+            kind: crate::TransformErrorKind::Io,
             message: message.into(),
             cause: Some(Box::new(cause)),
         }

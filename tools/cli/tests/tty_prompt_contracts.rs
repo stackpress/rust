@@ -116,7 +116,7 @@ async fn pending_driver_drop() {
     let started = Instant::now();
     drop(future);
     assert!(started.elapsed() < Duration::from_millis(250));
-    assert!(!terminal::is_raw_mode_enabled().unwrap());
+    wait_for_cleanup().await;
 }
 
 /// Production success, cancellation during validation, output failure, drop and panic cleanup.
@@ -198,7 +198,7 @@ async fn tty_prompt_child() -> io::Result<()> {
     .await
     .expect("native queue saturation deadline");
     drop(input);
-    assert!(!terminal::is_raw_mode_enabled()?);
+    wait_for_cleanup().await;
     // Parent writes exactly 33 keys: the 33rd may be held by the sender or remain in the OS.
     // Drain only with a ready poll under a new lease, never an unbounded read.
     let mut drain = TtySession::acquire()?;
@@ -249,7 +249,7 @@ async fn tty_prompt_child() -> io::Result<()> {
     .await
     .unwrap_err();
     assert!(panicked.is_panic());
-    assert!(!terminal::is_raw_mode_enabled()?);
+    wait_for_cleanup().await;
 
     // The production wrapper must preserve a pre-existing enclosing raw-mode owner too.
     terminal::enable_raw_mode()?;
@@ -269,6 +269,34 @@ async fn pending_driver_drop_raw() {
     // An enclosing raw-mode owner must survive a nested production worker being dropped.
     let input = TtyInput::acquire(PromptCancellation::new()).unwrap();
     drop(input);
+    // Raw mode belongs to the enclosing owner; reacquisition proves the nested lease was released.
+    wait_for_lease().await;
+}
+
+/// Wait for lease release rather than assuming asynchronous Drop has already restored native mode.
+async fn wait_for_lease() {
+    tokio::time::timeout(Duration::from_secs(2), async {
+        loop {
+            match TtySession::acquire() {
+                Ok(mut session) => {
+                    session.close().unwrap();
+                    break;
+                }
+                Err(error) if error.kind() == io::ErrorKind::AlreadyExists => {
+                    tokio::task::yield_now().await
+                }
+                Err(error) => panic!("terminal reacquisition: {error}"),
+            }
+        }
+    })
+    .await
+    .expect("terminal cleanup deadline");
+}
+
+/// The worker keeps the lease until restoration, so reacquisition is the cleanup handshake.
+async fn wait_for_cleanup() {
+    wait_for_lease().await;
+    assert!(!terminal::is_raw_mode_enabled().unwrap());
 }
 
 /// Ten-second watchdog owns Python; Python kills/reaps the exact PTY child on every failure.

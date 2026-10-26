@@ -75,14 +75,16 @@ pub(super) fn no_symlinks(path: &Path) -> Result<()> {
     let mut prefix = PathBuf::new();
     for component in path.components() {
         if matches!(component, std::path::Component::ParentDir) {
-            return Err(TransformError::new(
+            return Err(TransformError::classified(
+                crate::TransformErrorKind::Ownership,
                 "output path cannot contain parent traversal",
             ));
         }
         prefix.push(component);
         match fs::symlink_metadata(&prefix) {
             Ok(metadata) if metadata.file_type().is_symlink() => {
-                return Err(TransformError::new(
+                return Err(TransformError::classified(
+                    crate::TransformErrorKind::Ownership,
                     "generated output cannot follow symlinks",
                 ));
             }
@@ -135,10 +137,38 @@ fn inspect_mode(root: &Path, allow_missing: bool) -> Result<BTreeMap<String, (St
     }
     let marker = root.join(MANIFEST);
     no_symlinks(&marker)?;
-    let manifest: Manifest = serde_json::from_str(&read_regular(&marker, 1024 * 1024)?)
-        .map_err(|_| TransformError::new("root is not a recognized generated directory"))?;
+    let manifest: Manifest =
+        serde_json::from_str(&read_regular(&marker, 1024 * 1024).map_err(|error| {
+            // Retain native NotFound while identifying a missing ownership marker semantically.
+            let missing = std::error::Error::source(&error)
+                .and_then(|cause| cause.downcast_ref::<std::io::Error>())
+                .is_some_and(|cause| cause.kind() == std::io::ErrorKind::NotFound);
+            if missing {
+                TransformError::caused(
+                    crate::TransformErrorKind::Ownership,
+                    "generated manifest is missing",
+                    error,
+                )
+            } else {
+                error
+            }
+        })?)
+        .map_err(|cause| {
+            TransformError::caused(
+                crate::TransformErrorKind::Ownership,
+                "root is not a recognized generated directory",
+                cause,
+            )
+        })?;
     if manifest.version != 1 || manifest.files.len() > 1024 {
-        return Err(TransformError::new("unsupported generated manifest"));
+        return Err(TransformError::classified(
+            if manifest.version != 1 {
+                crate::TransformErrorKind::Ownership
+            } else {
+                crate::TransformErrorKind::Limit
+            },
+            "unsupported generated manifest",
+        ));
     }
     let mut files: BTreeMap<String, (String, String)> = BTreeMap::new();
     let mut remaining = 1024 * 1024usize;
@@ -153,7 +183,10 @@ fn inspect_mode(root: &Path, allow_missing: bool) -> Result<BTreeMap<String, (St
                 .keys()
                 .any(|prior| crate::plan::paths_collide(prior, &path))
         {
-            return Err(TransformError::new("invalid generated manifest ownership"));
+            return Err(TransformError::classified(
+                crate::TransformErrorKind::Ownership,
+                "invalid generated manifest ownership",
+            ));
         }
         let absolute = root.join(&path);
         no_symlinks(&absolute)?;
@@ -164,14 +197,18 @@ fn inspect_mode(root: &Path, allow_missing: bool) -> Result<BTreeMap<String, (St
         }
         let text = read_regular(&absolute, 1024 * 1024)?;
         // Bound the entire installed tree, rather than allowing 1024 individually large files.
-        remaining = remaining
-            .checked_sub(text.len())
-            .ok_or_else(|| TransformError::new("installed output byte budget exceeded"))?;
+        remaining = remaining.checked_sub(text.len()).ok_or_else(|| {
+            TransformError::classified(
+                crate::TransformErrorKind::Limit,
+                "installed output byte budget exceeded",
+            )
+        })?;
         // Legacy lengths may be absent, but the installed bytes must always match SHA-256.
         if entry.bytes.is_some_and(|bytes| bytes != text.len() as u64)
             || digest(&text) != entry.sha256
         {
-            return Err(TransformError::new(
+            return Err(TransformError::classified(
+                crate::TransformErrorKind::Ownership,
                 "manually edited generated file; restore it explicitly",
             ));
         }
@@ -186,7 +223,8 @@ pub(super) fn read_regular(path: &Path, max_bytes: usize) -> Result<String> {
     no_symlinks(path)?;
     // Byte limits do not bound open/read latency for FIFOs, devices or sockets.
     if !fs::symlink_metadata(path)?.file_type().is_file() {
-        return Err(TransformError::new(
+        return Err(TransformError::classified(
+            crate::TransformErrorKind::Ownership,
             "generated input must be a regular file",
         ));
     }
@@ -207,7 +245,8 @@ pub(super) fn inspect_owned(root: &Path) -> Result<BTreeMap<String, (String, Str
     no_symlinks(root)?;
     no_symlinks(&root.join(MANIFEST))?;
     if !exists(&root.join(MANIFEST))? {
-        return Err(TransformError::new(
+        return Err(TransformError::classified(
+            crate::TransformErrorKind::Ownership,
             "recovery tree lacks generated ownership marker",
         ));
     }
@@ -223,7 +262,8 @@ pub(super) fn inspect_retained(root: &Path, cleaning: bool) -> Result<()> {
     }
     no_symlinks(&root.join(MANIFEST))?;
     if !exists(&root.join(MANIFEST))? {
-        return Err(TransformError::new(
+        return Err(TransformError::classified(
+            crate::TransformErrorKind::Ownership,
             "recovery tree lacks generated ownership marker",
         ));
     }
@@ -239,7 +279,10 @@ fn inspect_paths(
     depth: usize,
 ) -> Result<()> {
     if depth > 16 {
-        return Err(TransformError::new("generated directory depth exceeded"));
+        return Err(TransformError::classified(
+            crate::TransformErrorKind::Limit,
+            "generated directory depth exceeded",
+        ));
     }
     for entry in fs::read_dir(path)? {
         let entry = entry?;
@@ -251,12 +294,18 @@ fn inspect_paths(
                 .strip_prefix(root)
                 .ok()
                 .and_then(Path::to_str)
-                .ok_or_else(|| TransformError::new("invalid generated directory"))?;
+                .ok_or_else(|| {
+                    TransformError::classified(
+                        crate::TransformErrorKind::Ownership,
+                        "invalid generated directory",
+                    )
+                })?;
             if !files
                 .keys()
                 .any(|file| file.starts_with(&format!("{relative}/")))
             {
-                return Err(TransformError::new(
+                return Err(TransformError::classified(
+                    crate::TransformErrorKind::Ownership,
                     "manual directory inside generated root",
                 ));
             }
@@ -266,9 +315,15 @@ fn inspect_paths(
                 .strip_prefix(root)
                 .ok()
                 .and_then(Path::to_str)
-                .ok_or_else(|| TransformError::new("invalid generated path"))?;
+                .ok_or_else(|| {
+                    TransformError::classified(
+                        crate::TransformErrorKind::Ownership,
+                        "invalid generated path",
+                    )
+                })?;
             if !kind.is_file() || (relative != MANIFEST && !files.contains_key(relative)) {
-                return Err(TransformError::new(
+                return Err(TransformError::classified(
+                    crate::TransformErrorKind::Ownership,
                     "manual or special file inside generated root",
                 ));
             }

@@ -49,8 +49,9 @@ async fn entry() -> std::process::ExitCode {
 | `build` | `F` | Async application composition with selected compiled plugins. |
 
 **Returns** ExitCode from the policy below. No prompt or plugin discovery runs implicitly.
-Synchronous file/sink I/O and application callbacks may block; cancellation drops the owned
-build/run future rather than spawning completion work.
+Bootstrap acquisition runs on the Tokio blocking pool; synchronous sink IO and application
+callbacks may still block. Cancelling the async entry drops build/run work, but cannot abort
+an in-flight native file operation or let invalid data invoke the builder.
 
 ### 1.2. main_with_args
 
@@ -79,7 +80,10 @@ assert_eq!(exit, std::process::ExitCode::SUCCESS);
 **Returns** ExitCode using the same policy as main_with. The explicit bootstrap path is opened
 exactly as supplied, read up to default max_bytes plus one detection byte, checked as UTF-8 and JSON
 object under label cli-bootstrap. No path means no external layers. File contents are data, never
-Rust/plugin imports.
+Rust/plugin imports. Only regular files are accepted, following input symlinks, with metadata
+checks before open and on the acquired handle. Unsupported devices/FIFOs reject before waiting
+for a writer. The cooperative-path policy is not race-free against a concurrent replacement;
+a byte bound and blocking worker do not make stalled OS reads cancellable.
 
 ## 2. Exit and disclosure policy
 

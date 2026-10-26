@@ -89,7 +89,10 @@ impl OutputPlan {
     pub fn contribute_module(&mut self, partition: &str, module: &str) -> Result<()> {
         // Validate identifiers before using them as Rust source, not merely as file paths.
         if !rust_identifier(partition) || !rust_identifier(module) || module == "mod" {
-            return Err(TransformError::new("invalid generated module identifier"));
+            return Err(TransformError::classified(
+                crate::TransformErrorKind::Ownership,
+                "invalid generated module identifier",
+            ));
         }
         let path = format!("{partition}/{module}.rs");
         let owner = self.authorize(&path)?.to_owned();
@@ -99,7 +102,12 @@ impl OutputPlan {
                     && item.module.eq_ignore_ascii_case(module)
             })
         {
-            return Err(TransformError::new(
+            return Err(TransformError::classified(
+                if self.contributions.len() >= 1024 {
+                    crate::TransformErrorKind::Limit
+                } else {
+                    crate::TransformErrorKind::Ownership
+                },
                 "duplicate module contribution or contribution budget",
             ));
         }
@@ -125,15 +133,22 @@ impl OutputPlan {
     fn authorize(&self, path: &str) -> Result<&str> {
         valid_path(path)?;
         let Some((owner, partitions)) = &self.active else {
-            return Err(TransformError::new(
+            return Err(TransformError::classified(
+                crate::TransformErrorKind::Ownership,
                 "output write requires an active transform",
             ));
         };
         let Some((partition, _)) = path.split_once('/') else {
-            return Err(TransformError::new("transform wrote outside its partition"));
+            return Err(TransformError::classified(
+                crate::TransformErrorKind::Ownership,
+                "transform wrote outside its partition",
+            ));
         };
         if !partitions.iter().any(|item| item == partition) {
-            return Err(TransformError::new("transform wrote outside its partition"));
+            return Err(TransformError::classified(
+                crate::TransformErrorKind::Ownership,
+                "transform wrote outside its partition",
+            ));
         }
         Ok(owner)
     }
@@ -143,7 +158,10 @@ impl OutputPlan {
         valid_path(&file.path)?;
         let bytes = self.bytes.checked_add(file.contents.len());
         if self.files.len() >= 1024 || bytes.is_none_or(|total| total > 1024 * 1024) {
-            return Err(TransformError::new("generated output budget exceeded"));
+            return Err(TransformError::classified(
+                crate::TransformErrorKind::Limit,
+                "generated output budget exceeded",
+            ));
         }
         // Prefix collisions matter on case-insensitive hosts and for file/directory conflicts.
         if self
@@ -151,7 +169,8 @@ impl OutputPlan {
             .keys()
             .any(|path| paths_collide(path, &file.path))
         {
-            return Err(TransformError::new(
+            return Err(TransformError::classified(
+                crate::TransformErrorKind::Ownership,
                 "duplicate generated output ownership or path collision",
             ));
         }
@@ -172,7 +191,8 @@ impl OutputPlan {
                 .get(&path)
                 .is_none_or(|(owner, _)| owner != &item.owner)
             {
-                return Err(TransformError::new(
+                return Err(TransformError::classified(
+                    crate::TransformErrorKind::Ownership,
                     "module contribution has no owned generated file",
                 ));
             }

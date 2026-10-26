@@ -19,7 +19,14 @@ use std::collections::{HashMap, HashSet};
 ///     .after_if_present(&["metrics"]);
 /// # let _ = spec;
 /// ```
+/// Discarded specification chains are diagnosed; use an explicit binding for intentional discard.
+/// ```compile_fail
+/// #![deny(unused_must_use)]
+/// use stackpress_server::PluginSpec;
+/// PluginSpec::new("profiles").requires(&["storage"]);
+/// ```
 #[derive(Clone, Debug)]
+#[must_use = "the configured value must be used"]
 pub struct PluginSpec {
     /// Stable bounded application-selected identity.
     pub(crate) id: String,

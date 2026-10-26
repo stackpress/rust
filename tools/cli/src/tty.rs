@@ -7,7 +7,7 @@
 use std::io::{self, IsTerminal};
 use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
-use std::thread::{self, JoinHandle};
+use std::thread::{self, JoinHandle, Thread};
 use std::time::Duration;
 
 use crossterm::{event, terminal};
@@ -128,13 +128,18 @@ impl TtySession {
     /// # Ok::<(), std::io::Error>(())
     /// ```
     pub fn close(&mut self) -> io::Result<()> {
+        self.close_with(terminal::disable_raw_mode)
+    }
+
+    /// Restore through the native boundary, retaining lease/flags for retry on failure.
+    fn close_with(&mut self, restore: impl FnOnce() -> io::Result<()>) -> io::Result<()> {
         // A successful repeated close has no additional terminal side effects.
         if !self.active {
             return Ok(());
         }
         if self.restore_raw_mode {
             // Keep active/restore flags set if the OS fails, allowing Drop's final retry.
-            terminal::disable_raw_mode()?;
+            restore()?;
             self.restore_raw_mode = false;
         }
         // Release authority only after successful restoration, so a new owner cannot race cleanup.
@@ -158,16 +163,17 @@ impl Drop for TtySession {
 /// One native input worker and bounded event queue; non-Clone and exclusively leased.
 ///
 /// Only crossterm polling/event mapping runs in the worker, never callbacks or writers.
-/// Drop stops/joins it synchronously with a 20-ms polling/backpressure interval under
-/// the exclusive-reader contract. Arbitrary competing crossterm callers and OS stalls
-/// are outside this bound. Explicit [`Self::close`] awaits worker exit before joining.
+/// A prestarted cleanup owner joins the reader after cancellation/Drop; Drop only signals stop.
+/// The worker retains its terminal lease until restoration completes. A new reader is rejected
+/// while cleanup is pending. The 20-ms polling/backpressure interval does not bound arbitrary
+/// OS stalls or competing Crossterm calls. Explicit [`Self::close`] awaits the join result.
 pub struct TtyInput {
     /// Shared only with this worker, never with application callbacks.
     stop: Arc<AtomicBool>,
-    /// The single exact worker to reap on all paths.
-    worker: Option<JoinHandle<io::Result<()>>>,
-    /// Worker completion notification is sent/dropped before joining, including unwind.
-    done: Option<oneshot::Receiver<()>>,
+    /// Unpark capability only; the prestarted cleanup owner holds the exact worker's join handle.
+    worker: Thread,
+    /// Completion follows worker join/restoration, including worker failure or unwind.
+    done: Option<oneshot::Receiver<io::Result<()>>>,
     /// Backpressure is bounded to 32 small native key events.
     events: mpsc::Receiver<io::Result<PromptEvent>>,
 }
@@ -207,19 +213,13 @@ impl TtyInput {
         let stop = Arc::new(AtomicBool::new(false));
         let worker_stop = Arc::clone(&stop);
         let (sender, events) = mpsc::channel(32);
-        let (completed, done) = oneshot::channel();
-        let worker = thread::Builder::new()
-            .name("stackpress-prompt".into())
-            .spawn(move || {
-                // Move the guard into the worker so every unwind/error path retains its destructor.
-                let result = read_events(session, &worker_stop, &sender, &cancellation);
-                // read_events drops/restores its session before normal completion is advertised.
-                let _ = completed.send(());
-                result
-            })?;
+        let (worker, done) = start_worker(&stop, move || {
+            // Move the guard into the worker so every unwind/error path retains its destructor.
+            read_events(session, &worker_stop, &sender, &cancellation)
+        })?;
         Ok(Self {
             stop,
-            worker: Some(worker),
+            worker,
             done: Some(done),
             events,
         })
@@ -228,8 +228,10 @@ impl TtyInput {
     /// Stop without waiting for more input, await completion, then reap this exact worker.
     ///
     /// # Errors
-    /// Reports worker panic, native input or raw-mode restoration failure.
-    /// Cancellation of close is safe: Drop still stops/joins the owned worker.
+    /// Reports worker panic or raw-mode restoration failure. Native input errors arrive
+    /// through PromptInput::next; no error text is guessed from a terminal event.
+    /// Cancellation retains the completion receiver; retrying close still awaits cleanup.
+    /// Drop signals stop and the prestarted owner joins without blocking this executor.
     ///
     /// # Examples
     /// ```no_run
@@ -245,35 +247,23 @@ impl TtyInput {
     pub async fn close(&mut self) -> io::Result<()> {
         // Close backpressure and interrupt idle retry waits before awaiting terminal restoration.
         self.signal_stop();
-        if let Some(done) = self.done.take() {
-            // Channel closure also wakes this await if the worker unwinds.
-            let _ = done.await;
-        }
-        // Completion precedes join, keeping normal cleanup from blocking on a live OS poll.
-        self.join()
+        let result = if let Some(done) = self.done.as_mut() {
+            // Borrow the receiver across await so cancellation cannot consume the cleanup result.
+            done.await
+                .unwrap_or_else(|_| Err(io::Error::other("terminal cleanup owner stopped")))
+        } else {
+            return Ok(());
+        };
+        // Completed cleanup is consumed once; repeated close has no further side effects.
+        self.done = None;
+        result
     }
 
-    /// Release queue backpressure and wake an idle send-retry wait before joining.
+    /// Release backpressure and wake the worker; its cleanup owner retains join authority.
     fn signal_stop(&mut self) {
-        // Set stop before queue closure; both polling and a full send then have an exit path.
         self.stop.store(true, Ordering::Release);
         self.events.close();
-        if let Some(worker) = &self.worker {
-            // Wake a parked send retry immediately; an in-flight native poll has its finite
-            // timeout.
-            worker.thread().unpark();
-        }
-    }
-
-    /// Reap once; all normal callers have observed the worker's completion first.
-    fn join(&mut self) -> io::Result<()> {
-        // Take the handle before joining, making repeated close/Drop cleanup idempotent.
-        match self.worker.take() {
-            Some(worker) => worker
-                .join()
-                .map_err(|_| io::Error::other("terminal input worker panicked"))?,
-            None => Ok(()),
-        }
+        self.worker.unpark();
     }
 }
 
@@ -287,13 +277,49 @@ impl PromptInput for TtyInput {
 }
 
 impl Drop for TtyInput {
-    /// Exceptional synchronous cleanup never detaches a blocked stdin reader.
+    /// Signal cancellation without joining native work on the dropping executor thread.
     fn drop(&mut self) {
-        // Exceptional cancellation/unwind cannot leave ownership behind in a detached reader.
+        // The reaper already owns the live reader; its terminal guard retains the lease.
         self.signal_stop();
-        // Drop cannot return failures; TtySession retains the lease if raw restoration fails.
-        let _ = self.join();
     }
+}
+
+/// Start the cleanup owner before creating a reader, then transfer exact join authority.
+///
+/// Reaper startup failure creates no reader. Worker startup failure closes the transfer channel.
+/// A failed transfer retains the handle locally and synchronously joins as an exceptional
+/// fallback; arbitrary OS stalls cannot be bounded in that broken-cleanup-owner path.
+fn start_worker(
+    stop: &AtomicBool,
+    work: impl FnOnce() -> io::Result<()> + Send + 'static,
+) -> io::Result<(Thread, oneshot::Receiver<io::Result<()>>)> {
+    let (transfer, retired) = std::sync::mpsc::channel::<JoinHandle<io::Result<()>>>();
+    let (completed, done) = oneshot::channel();
+    // This detached cleanup owner never reads stdin itself. It owns and joins every transferred
+    // reader, even after the async owner/runtime is dropped; the reader owns raw-mode restoration.
+    thread::Builder::new()
+        .name("stackpress-prompt-cleanup".into())
+        .spawn(move || {
+            if let Ok(worker) = retired.recv() {
+                // Panic payloads may contain arbitrary private data; report a fixed safe explanation.
+                let result = worker
+                    .join()
+                    .unwrap_or_else(|_| Err(io::Error::other("terminal input worker panicked")));
+                let _ = completed.send(result);
+            }
+        })?;
+    let worker = thread::Builder::new()
+        .name("stackpress-prompt".into())
+        .spawn(work)?;
+    let thread = worker.thread().clone();
+    if let Err(failed) = transfer.send(worker) {
+        // Never lose a competing reader if the prestarted cleanup owner unexpectedly stopped.
+        stop.store(true, Ordering::Release);
+        failed.0.thread().unpark();
+        let _ = failed.0.join();
+        return Err(io::Error::other("terminal cleanup transfer failed"));
+    }
+    Ok((thread, done))
 }
 
 /// Poll only under the exclusive guard, with finite input and send-retry intervals.
@@ -385,3 +411,6 @@ fn key_event(event: event::Event) -> Option<PromptEvent> {
         _ => None,
     }
 }
+
+#[cfg(test)]
+mod tests;

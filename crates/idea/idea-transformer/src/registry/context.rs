@@ -44,7 +44,12 @@ impl TransformInputs {
             || self.values.len() >= 1024
             || bytes.is_none_or(|total| total > 1024 * 1024)
         {
-            return Err(TransformError::new(
+            return Err(TransformError::classified(
+                if self.values.contains_key(name) {
+                    crate::TransformErrorKind::Selection
+                } else {
+                    crate::TransformErrorKind::Limit
+                },
                 "auxiliary input duplicate or budget exceeded",
             ));
         }
@@ -56,6 +61,7 @@ impl TransformInputs {
 
 /// App-supplied selection contracts and immutable auxiliary input snapshots for one run.
 #[derive(Debug, Default)]
+#[must_use = "the configured value must be used"]
 pub struct TransformSelection {
     /// Required contract IDs/revisions are checked before any callback.
     pub(crate) contracts: BTreeMap<String, String>,
@@ -76,7 +82,14 @@ impl TransformSelection {
     pub fn contract(&mut self, id: &str, revision: &str) -> Result<()> {
         valid_contract(id, revision)?;
         if self.contracts.len() >= 1024 || self.contracts.contains_key(id) {
-            return Err(TransformError::new("invalid or duplicate runtime contract"));
+            return Err(TransformError::classified(
+                if self.contracts.len() >= 1024 {
+                    crate::TransformErrorKind::Limit
+                } else {
+                    crate::TransformErrorKind::Selection
+                },
+                "invalid or duplicate runtime contract",
+            ));
         }
         self.contracts.insert(id.into(), revision.into());
         Ok(())
@@ -91,14 +104,21 @@ impl TransformSelection {
 
 /// Use the same bounded contract vocabulary for required and supplied revisions.
 pub(super) fn valid_contract(id: &str, revision: &str) -> Result<()> {
-    valid_path(id)?;
+    valid_path(id).map_err(|mut error| {
+        // Contract IDs use portable path syntax but fail at the selection boundary.
+        error.kind = crate::TransformErrorKind::Selection;
+        error
+    })?;
     if revision.is_empty()
         || revision.len() > 128
         || !revision
             .bytes()
             .all(|byte| byte.is_ascii_alphanumeric() || b"._-".contains(&byte))
     {
-        return Err(TransformError::new("invalid runtime contract revision"));
+        return Err(TransformError::classified(
+            crate::TransformErrorKind::Selection,
+            "invalid runtime contract revision",
+        ));
     }
     Ok(())
 }
@@ -144,10 +164,12 @@ impl<'a> TransformContext<'a> {
     /// # Errors
     /// Rejects undeclared inputs without reading the filesystem or exposing input values.
     pub fn input(&self, name: &str) -> Result<&'a str> {
-        let value =
-            self.selection.inputs.values.get(name).ok_or_else(|| {
-                TransformError::new("transform requested undeclared auxiliary input")
-            })?;
+        let value = self.selection.inputs.values.get(name).ok_or_else(|| {
+            TransformError::classified(
+                crate::TransformErrorKind::Selection,
+                "transform requested undeclared auxiliary input",
+            )
+        })?;
         self.used.borrow_mut().insert(name.into());
         Ok(value)
     }

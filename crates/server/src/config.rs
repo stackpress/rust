@@ -76,6 +76,11 @@ impl ConfigLayers {
     /// assert_eq!(layers.entries().count(), 2);
     /// # Ok::<(), stackpress_lib::Error>(())
     /// ```
+    ///
+    /// # Errors
+    /// Rejects an invalid layer label, excessive raw bytes, malformed JSON, or any
+    /// validation/merge limit from [`Self::value`]. Earlier accepted layers stay unchanged.
+    /// The original parser diagnostic is retained privately through Error::source.
     #[track_caller]
     pub fn json(&mut self, label: &str, text: &str) -> Result<&mut Self> {
         // Bound the layer's diagnostic identity before parsing or retaining caller input.
@@ -85,8 +90,11 @@ impl ConfigLayers {
             return Err(Error::limit("configuration input exceeds byte limit").at_path(label));
         }
         // The parser is bounded by raw bytes; parse diagnostics never include the whole document.
-        let value = serde_json::from_str(text)
-            .map_err(|_| Error::invalid("invalid configuration JSON").at_path(label))?;
+        let value = serde_json::from_str(text).map_err(|cause| {
+            Error::invalid("invalid configuration JSON")
+                .at_path(label)
+                .with_cause(cause)
+        })?;
         self.value(label, value)
     }
     /// Validate and atomically append a data-only object layer in supplied order.
@@ -101,6 +109,11 @@ impl ConfigLayers {
     /// assert_eq!(layers.entries().count(), 2);
     /// # Ok::<(), stackpress_lib::Error>(())
     /// ```
+    ///
+    /// # Errors
+    /// Rejects invalid labels, non-object roots, depth/node/byte limits, or excessive
+    /// aggregate input/layer counts. Validation and candidate merging finish before
+    /// publication; earlier layers and accounting remain unchanged on rejection.
     #[track_caller]
     pub fn value(&mut self, label: &str, value: Value) -> Result<&mut Self> {
         crate::plugin::identity(label)?;
@@ -231,8 +244,10 @@ impl Sections {
             )));
         }
         // Validate serialized defaults as a section object wrapper before retaining them.
-        let value = serde_json::to_value(defaults).map_err(|_| {
-            Error::invalid("configuration defaults serialization failed").at_path(key)
+        let value = serde_json::to_value(defaults).map_err(|cause| {
+            Error::invalid("configuration defaults serialization failed")
+                .at_path(key)
+                .with_cause(cause)
         })?;
         // Wrap arbitrary section values in the required object root before applying lib budgets.
         let mut wrapper = Map::new();

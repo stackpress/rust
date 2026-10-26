@@ -23,7 +23,10 @@ pub(crate) fn valid_path(path: &str) -> Result<()> {
                     && stem.as_bytes()[3].is_ascii_digit())
         })
     {
-        return Err(TransformError::new("invalid relative generated path"));
+        return Err(TransformError::classified(
+            crate::TransformErrorKind::Ownership,
+            "invalid relative generated path",
+        ));
     }
     Ok(())
 }

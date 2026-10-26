@@ -19,19 +19,32 @@ pub(super) fn parse(
     max_nodes: usize,
 ) -> Result<CompiledSchema> {
     if source.text.len() > limits.max_bytes {
-        return Err(TransformError::new("JSON source byte budget exceeded"));
+        return Err(TransformError::classified(
+            crate::TransformErrorKind::Limit,
+            "JSON source byte budget exceeded",
+        ));
     }
     check_integer_range(&source.text)
         .map_err(|cause| super::context(format!("JSON source {} failed", source.name), cause))?;
     let mut remaining = max_nodes;
+    let mut exhausted = false;
     let mut deserializer = serde_json::Deserializer::from_str(&source.text);
     let value = Seed {
         depth: 0,
         max_depth: limits.max_depth.min(ParseLimits::HARD_DEPTH),
         remaining: &mut remaining,
+        exhausted: &mut exhausted,
     }
     .deserialize(&mut deserializer)
-    .map_err(|cause| super::context(format!("JSON source {} failed", source.name), cause))?;
+    .map_err(|cause| {
+        // The traversal records budget exhaustion directly; never classify serde message text.
+        let kind = if exhausted {
+            crate::TransformErrorKind::Limit
+        } else {
+            crate::TransformErrorKind::Parse
+        };
+        TransformError::caused(kind, format!("JSON source {} failed", source.name), cause)
+    })?;
     deserializer
         .end()
         .map_err(|cause| super::context(format!("JSON source {} failed", source.name), cause))?;
@@ -59,6 +72,8 @@ struct Seed<'a> {
     max_depth: usize,
     /// Remaining nodes, charged before allocation of each corresponding Value.
     remaining: &'a mut usize,
+    /// Records a policy rejection independently of serde's erased custom error text.
+    exhausted: &'a mut bool,
 }
 
 impl<'de> DeserializeSeed<'de> for Seed<'_> {
@@ -70,6 +85,7 @@ impl<'de> DeserializeSeed<'de> for Seed<'_> {
         deserializer: D,
     ) -> std::result::Result<Value, D::Error> {
         if self.depth > self.max_depth || *self.remaining == 0 {
+            *self.exhausted = true;
             return Err(de::Error::custom("JSON depth/node budget exceeded"));
         }
         *self.remaining -= 1;
@@ -125,6 +141,7 @@ impl<'de> Visitor<'de> for Seed<'_> {
             depth: self.depth + 1,
             max_depth: self.max_depth,
             remaining: self.remaining,
+            exhausted: self.exhausted,
         })? {
             values.push(value);
         }
@@ -142,6 +159,7 @@ impl<'de> Visitor<'de> for Seed<'_> {
                 depth: self.depth + 1,
                 max_depth: self.max_depth,
                 remaining: self.remaining,
+                exhausted: self.exhausted,
             })?;
             values.insert(key, value);
         }
@@ -183,7 +201,10 @@ fn check_integer_range(text: &str) -> Result<()> {
                     number.parse::<u64>().is_ok()
                 };
                 if !valid {
-                    return Err(TransformError::new("JSON integer range exceeded"));
+                    return Err(TransformError::classified(
+                        crate::TransformErrorKind::Parse,
+                        "JSON integer range exceeded",
+                    ));
                 }
             }
             continue;

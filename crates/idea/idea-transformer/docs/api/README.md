@@ -22,7 +22,7 @@ traits. They omit private registries and copy no dependency method catalog.
 | [Output plan](output-plan.md) | OutputPlan, GeneratedFile, ModuleContribution |
 | [Output workspace](output-workspace.md) | OutputWorkspace |
 | [Reports](reports.md) | CheckReport, GenerationReport |
-| [Errors and bounded reading](errors.md) | TransformError, Result, LoadError, read_source |
+| [Errors and bounded reading](errors.md) | TransformError, TransformErrorKind, Result, LoadError, read_source |
 
 ## Example conventions
 

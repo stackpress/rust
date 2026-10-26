@@ -95,6 +95,10 @@ impl PromptCancellation {
 /// This trait is the actual substitution boundary for buffers, channels and native TTY input.
 pub trait PromptInput: Send {
     /// Return one event or EOF; cancellation may drop this future at any await.
+    ///
+    /// # Errors
+    /// Returns the input adapter's native IO/acquisition failure. EOF is Ok(None),
+    /// and dropping a pending read must preserve any event already consumed by the adapter.
     fn next(&mut self) -> impl Future<Output = io::Result<Option<PromptEvent>>> + Send;
 }
 

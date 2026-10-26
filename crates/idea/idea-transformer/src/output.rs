@@ -69,12 +69,22 @@ impl OutputWorkspace {
         let name = root
             .file_name()
             .and_then(|part| part.to_str())
-            .ok_or_else(|| TransformError::new("generated root needs a named directory"))?;
+            .ok_or_else(|| {
+                TransformError::classified(
+                    crate::TransformErrorKind::Ownership,
+                    "generated root needs a named directory",
+                )
+            })?;
         valid_path(name)?;
         let parent = root
             .parent()
             .filter(|path| !path.as_os_str().is_empty())
-            .ok_or_else(|| TransformError::new("generated root needs an explicit parent"))?;
+            .ok_or_else(|| {
+                TransformError::classified(
+                    crate::TransformErrorKind::Ownership,
+                    "generated root needs an explicit parent",
+                )
+            })?;
         // Reject aliases before canonicalizing; later cwd changes cannot redirect this workspace.
         no_symlinks(parent)?;
         let parent = parent.canonicalize()?;
@@ -99,7 +109,11 @@ impl OutputWorkspace {
             .open(&self.lock)
             .map_err(|error| {
                 if error.kind() == std::io::ErrorKind::AlreadyExists {
-                    TransformError::new("generation writer lock exists; inspect its owner")
+                    TransformError::caused(
+                        crate::TransformErrorKind::LockExists,
+                        "generation writer lock exists; inspect its owner",
+                        error,
+                    )
                 } else {
                     error.into()
                 }
@@ -115,7 +129,8 @@ impl OutputWorkspace {
     fn ready(&self) -> Result<()> {
         for path in [&self.journal, &self.stage, &self.backup] {
             if exists(path)? {
-                return Err(TransformError::new(
+                return Err(TransformError::classified(
+                    crate::TransformErrorKind::RecoveryRequired,
                     "generation recovery required before another run",
                 ));
             }
@@ -171,8 +186,12 @@ impl OutputWorkspace {
     /// OutputWorkspace::new("./generated")?.install(plan)?;
     /// # Ok::<(), stackpress_idea_transformer::TransformError>(())
     /// ```
+    #[expect(
+        clippy::needless_pass_by_value,
+        reason = "the compatible installation API intentionally consumes completed plans"
+    )]
     pub fn install(&self, plan: OutputPlan) -> Result<CheckReport> {
-        self.install_at(plan, |_| Ok(()))
+        self.install_at(&plan, |_| Ok(()))
     }
 
     /// Install and return a deterministic summary while retaining the M0 `install` return type.
@@ -216,10 +235,10 @@ impl OutputWorkspace {
     /// Run real native operations with a test seam at every installation boundary.
     fn install_at(
         &self,
-        plan: OutputPlan,
+        plan: &OutputPlan,
         mut fault: impl FnMut(Phase) -> Result<()>,
     ) -> Result<CheckReport> {
-        let files = formatted(&plan)?;
+        let files = formatted(plan)?;
         let _guard = self.acquire()?;
         let report = self.compare_plan(&files)?;
         if report.is_current() && exists(&self.root.join(MANIFEST))? {
@@ -233,6 +252,7 @@ impl OutputWorkspace {
             fault(next)
         })
         .map_err(|error| TransformError {
+            kind: error.kind(),
             message: format!("generation install failed during {phase:?}; inspect recovery state"),
             cause: Some(Box::new(error)),
         })?;
@@ -246,11 +266,12 @@ impl OutputWorkspace {
         mut fault: impl FnMut(Phase) -> Result<()>,
     ) -> Result<()> {
         // TempDir cleans staging-write failures. Moving it to stage retains recovery data.
-        let temporary = tempfile::tempdir_in(
-            self.root
-                .parent()
-                .ok_or_else(|| TransformError::new("generated root lost its parent"))?,
-        )?;
+        let temporary = tempfile::tempdir_in(self.root.parent().ok_or_else(|| {
+            TransformError::classified(
+                crate::TransformErrorKind::Ownership,
+                "generated root lost its parent",
+            )
+        })?)?;
         let manifest = manifest(files);
         fault(Phase::StageWrite)?;
         for (path, (_, contents)) in files {
@@ -260,8 +281,13 @@ impl OutputWorkspace {
             }
             fs::write(destination, contents)?;
         }
-        let marker = serde_json::to_vec_pretty(&manifest)
-            .map_err(|_| TransformError::new("manifest serialization failed"))?;
+        let marker = serde_json::to_vec_pretty(&manifest).map_err(|cause| {
+            TransformError::caused(
+                crate::TransformErrorKind::Parse,
+                "manifest serialization failed",
+                cause,
+            )
+        })?;
         fs::write(temporary.path().join(MANIFEST), marker)?;
         fault(Phase::StagePublish)?;
         fs::rename(temporary.path(), &self.stage)?;
@@ -311,14 +337,18 @@ impl OutputWorkspace {
         let _guard = self.acquire()?;
         no_symlinks(&self.journal)?;
         if !exists(&self.journal)? {
-            return Err(TransformError::new(
+            return Err(TransformError::classified(
+                crate::TransformErrorKind::Ownership,
                 "no generation install intent to recover",
             ));
         }
         let intent = read_regular(&self.journal, 64)?;
         let cleaning = intent == CLEANUP_INTENT;
         if intent != INSTALL_INTENT && !cleaning {
-            return Err(TransformError::new("unrecognized generation journal"));
+            return Err(TransformError::classified(
+                crate::TransformErrorKind::Ownership,
+                "unrecognized generation journal",
+            ));
         }
         // Inspect before any rename/removal; ownership drift blocks rather than destroys data.
         // Validate every retained tree before moving or deleting any of them.
@@ -343,7 +373,10 @@ impl OutputWorkspace {
             if !exists(&self.root.join(MANIFEST))? {
                 // Only the documented initial empty directory can be adopted here.
                 if !exists(&self.stage)? || exists(&self.backup)? {
-                    return Err(TransformError::new("unmarked recovery root"));
+                    return Err(TransformError::classified(
+                        crate::TransformErrorKind::Ownership,
+                        "unmarked recovery root",
+                    ));
                 }
                 fs::remove_dir(&self.root)?;
             }
@@ -355,7 +388,10 @@ impl OutputWorkspace {
                 &self.stage
             };
             if !exists(source)? {
-                return Err(TransformError::new("recovery tree is missing"));
+                return Err(TransformError::classified(
+                    crate::TransformErrorKind::Ownership,
+                    "recovery tree is missing",
+                ));
             }
             inspect_owned(source)?;
             fs::rename(source, &self.root)?;
