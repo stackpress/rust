@@ -4,6 +4,7 @@ import hashlib
 import json
 from pathlib import Path
 import re
+import stat
 import sys
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -17,6 +18,38 @@ CONTRACT_FILES = (
     "crates/framework/framework-view/src/policy.rs",
     "crates/framework/framework-view/src/routes.rs",
 )
+MAX_ASSET_BYTES = 64 * 1024 * 1024
+MAX_TOTAL_BYTES = 128 * 1024 * 1024
+MAX_FILES = 128
+MAX_MANIFEST_BYTES = 64 * 1024
+
+
+def asset_folder(mode):
+    """Admit only an existing regular output directory, matching native startup."""
+    if mode not in ("hydrate", "csr"):
+        raise ValueError("choose hydrate or csr")
+    folder = PROFILE / "dist" / mode
+    if folder.is_symlink():
+        raise ValueError(f"asset root symlink refused: {folder}")
+    if not folder.is_dir():
+        raise ValueError(f"asset output missing: {folder}; build {mode} first")
+    return folder
+
+
+def read_bounded(file, limit, excess):
+    """Reject special/oversized files before opening, and bound a growing file's read."""
+    metadata = file.lstat()
+    if stat.S_ISLNK(metadata.st_mode):
+        raise ValueError(f"asset symlink refused: {file}")
+    if not stat.S_ISREG(metadata.st_mode):
+        raise ValueError(f"asset is not a regular file: {file}")
+    if metadata.st_size > limit:
+        raise ValueError(f"{excess}: {file}")
+    with file.open("rb") as source:
+        data = source.read(limit + 1)
+    if len(data) > limit:
+        raise ValueError(f"{excess}: {file}")
+    return data
 
 
 def contract():
@@ -44,14 +77,14 @@ def identity(manifest):
 
 def inventory(mode):
     """Hash every actual output, rejecting ambiguous names and unsupported assets."""
-    if mode not in ("hydrate", "csr"):
-        raise ValueError("choose hydrate or csr")
-    folder = PROFILE / "dist" / mode
+    folder = asset_folder(mode)
     files = {}
-    for file in sorted(folder.rglob("*")):
+    total = 0
+    # Admission is streaming; only the bounded accepted inventory is sorted for hashing.
+    for file in folder.rglob("*"):
         if file.is_symlink():
             raise ValueError(f"asset symlink refused: {file}")
-        if not file.is_file() or file.name == "manifest.json":
+        if file.is_dir() or file == folder / "manifest.json":
             continue
         name = file.relative_to(folder).as_posix()
         if any(part in ("", ".", "..") or not re.fullmatch(r"[A-Za-z0-9_.-]+", part)
@@ -61,15 +94,17 @@ def inventory(mode):
                 ".html": "text/html; charset=utf-8"}.get(file.suffix)
         if mime is None:
             raise ValueError(f"unsupported asset: {file}")
-        data = file.read_bytes()
-        if len(data) > 64 * 1024 * 1024:
-            raise ValueError(f"asset exceeds 64 MiB: {file}")
+        # Count and remaining total are admission policy, not after-the-read checks.
+        if len(files) >= MAX_FILES:
+            raise ValueError("asset inventory exceeds count limit")
+        limit = min(MAX_ASSET_BYTES, MAX_TOTAL_BYTES - total)
+        excess = "asset exceeds 64 MiB" if limit == MAX_ASSET_BYTES else "asset inventory exceeds total byte limit"
+        data = read_bounded(file, limit, excess)
+        total += len(data)
         files[name] = {"sha256": hashlib.sha256(data).hexdigest(), "bytes": len(data), "mime": mime}
     for required in ("start.js", "profile_ui.js", "profile_ui_bg.wasm"):
         if required not in files:
             raise ValueError(f"asset missing: {folder / required}; build {mode} first")
-    if len(files) > 128 or sum(entry["bytes"] for entry in files.values()) > 128 * 1024 * 1024:
-        raise ValueError("asset inventory exceeds count/total byte limit")
     revision, build, fingerprint = contract()
     manifest = {"format": 1, "revision": revision, "build": build, "mode": mode,
                 "wasm_bindgen": "0.2.129", "contract_sha256": fingerprint, "files": files}
@@ -80,14 +115,21 @@ def inventory(mode):
 def write(mode):
     """Publish one inventory only after all assets and the seed contract have been checked."""
     manifest = inventory(mode)
-    (PROFILE / "dist" / mode / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
+    path = asset_folder(mode) / "manifest.json"
+    text = json.dumps(manifest, indent=2, sort_keys=True) + "\n"
+    if len(text.encode("utf-8")) > MAX_MANIFEST_BYTES:
+        raise ValueError(f"manifest exceeds 64 KiB: {path}")
+    # Refuse an existing redirect/special file before replacing owned build metadata.
+    if path.exists() or path.is_symlink():
+        read_bounded(path, MAX_MANIFEST_BYTES, "manifest exceeds 64 KiB")
+    path.write_text(text)
     return manifest
 
 
 def check(mode):
     """Reject stale source, missing/modified assets, extra files and metadata drift."""
-    path = PROFILE / "dist" / mode / "manifest.json"
-    actual = json.loads(path.read_text())
+    path = asset_folder(mode) / "manifest.json"
+    actual = json.loads(read_bounded(path, MAX_MANIFEST_BYTES, "manifest exceeds 64 KiB").decode("utf-8"))
     expected = inventory(mode)
     if actual != expected:
         raise ValueError(f"asset/seed contract mismatch: {path}; rebuild {mode}")

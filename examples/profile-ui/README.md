@@ -79,4 +79,6 @@ Static assets are buffered, capped at 64 MiB per file and 128 MiB total; concurr
 
 Native render startup calls the idempotent `initialize_ssr()` inside Tokio. Missing startup/runtime returns a typed error before dependency executor code can panic. Reactive Owners are local to synchronous component evaluation; only owned Head/HTML buffers cross the final await. SSR, hydrate and CSR are separate valid builds; never combine them with `--all-features`.
 
+During SSR, Head values and formatters must use eager owned data: use `<Title text=title.get()/>`, resolving the signal while its Owner is active. A deferred getter such as `<Title text=move || title.get()/>` can read disposed state; the render boundary converts a Head evaluation panic into a safe typed render error. Reactive SSR Head remains deferred with **S5-F6**. Browser Head reactivity is separate from this native SSR restriction.
+
 For native executable-line coverage, use a clean one-native/one-WASM target pair and cargo-llvm-cov; `proofs/coverage.py` includes real example source that cargo-llvm-cov's default example filter omits. Browser-only adapters use real Chromium/WKWebView proofs under the accepted numeric-coverage disposition. Packaged app/permission/cancellation evidence belongs to native M3 and is separate from the web gateway checks.

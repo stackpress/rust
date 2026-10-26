@@ -40,7 +40,7 @@ pub async fn application() -> BuildResult<Server> {
 /// # Errors
 /// Returns checked startup, route, asset or generated plugin failures.
 pub async fn application_with_base(base: BasePath) -> BuildResult<Server> {
-    stackpress_framework_ui::render::initialize_ssr().map_err(Error::from_source)?;
+    initialize_renderer()?;
     let mut app = ServerBuilder::new();
     configure_application(&mut app, base.clone())?;
     app.build().await

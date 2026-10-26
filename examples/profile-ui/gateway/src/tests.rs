@@ -399,9 +399,16 @@ async fn already_stopped_connection() {
     drop(stop);
 }
 
-/// Disconnect after operation entry drops the actual borrowed handler future and its state.
+/// Disconnect and expired graceful draining release an already-entered handler's state.
 #[tokio::test]
 async fn disconnect_cancels_entered_handler() {
+    for graceful in [false, true] {
+        cancel_entered_handler(graceful).await;
+    }
+}
+
+/// Keep a real operation pending until the selected connection exit path cancels it.
+async fn cancel_entered_handler(graceful: bool) {
     use stackpress_lib::{Error, Flow, handler};
     struct Ticket(Arc<AtomicUsize>);
     impl Drop for Ticket {
@@ -431,7 +438,10 @@ async fn disconnect_cancels_entered_handler() {
     let host = Arc::new(Gateway {
         app: app.build().await.unwrap(),
         adapter: HttpAdapter::new(Default::default()).unwrap(),
-        limits: GatewayLimits::default(),
+        limits: GatewayLimits {
+            drain_timeout: Duration::from_millis(30),
+            ..GatewayLimits::default()
+        },
         active: AtomicUsize::new(0),
     });
     let (mut client, server) = tokio::io::duplex(4096);
@@ -445,7 +455,11 @@ async fn disconnect_cancels_entered_handler() {
         .await
         .unwrap();
     assert_eq!(live.load(Ordering::SeqCst), 1);
-    drop(client);
+    if graceful {
+        stop.send(true).unwrap();
+    } else {
+        drop(client);
+    }
     let _ = timeout(Duration::from_secs(2), task)
         .await
         .unwrap()

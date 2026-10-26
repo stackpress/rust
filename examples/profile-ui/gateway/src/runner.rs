@@ -31,17 +31,25 @@ impl Gateway {
         tokio::pin!(stop);
         let result = loop {
             tokio::select! {
-                result=&mut stop=>break result,
-                Some(_)=tasks.join_next(),if !tasks.is_empty()=>{},
-                accepted=accept()=>match accepted {
-                    Ok(Some(io))=>{
+                result = &mut stop => break result,
+                // Reap completed work while still admitting new connections.
+                Some(_) = tasks.join_next(), if !tasks.is_empty() => {},
+                accepted = accept() => match accepted {
+                    Ok(Some(io)) => {
                         // Keep the permit in the owned task; excess IO is dropped immediately.
-                        let Ok(slot)=Arc::clone(&slots).try_acquire_owned() else {drop(io);continue;};
-                        let host=Arc::clone(&self);let signal=signal.clone();
-                        tasks.spawn(async move {let _slot=slot;host.serve(io,signal).await});
+                        let Ok(slot) = Arc::clone(&slots).try_acquire_owned() else {
+                            drop(io);
+                            continue;
+                        };
+                        let host = Arc::clone(&self);
+                        let signal = signal.clone();
+                        tasks.spawn(async move {
+                            let _slot = slot;
+                            host.serve(io, signal).await
+                        });
                     }
-                    Ok(None)=>break Ok(()),
-                    Err(error)=>break Err(error),
+                    Ok(None) => break Ok(()),
+                    Err(error) => break Err(error),
                 }
             }
         };

@@ -61,7 +61,7 @@ impl Gateway {
         limits: GatewayLimits,
     ) -> Result<Self, Box<dyn std::error::Error + Send + Sync>> {
         limits.validate()?;
-        stackpress_framework_ui_startup()?;
+        stackpress_example_profile_ui_web::initialize_renderer()?;
         let mut app = ServerBuilder::new();
         stackpress_example_profile_ui_web::configure_application_with_module(
             &mut app,
@@ -192,14 +192,16 @@ impl Gateway {
         let connection = builder.serve_connection(TokioIo::new(io), service);
         tokio::pin!(connection);
         tokio::select! {
-            result=&mut connection=>return result.map_err(io::Error::other),
-            _=async {
+            result = &mut connection => return result.map_err(io::Error::other),
+            _ = async {
                 // Release watch's read guard before waiting; an already-stopped
                 // receiver must never wait for a second shutdown notification.
-                let stopped=*shutdown.borrow();
-                if !stopped {let _=shutdown.changed().await;}
-            }=>{},
-            _=tokio::time::sleep(self.limits.connection_timeout)=>{},
+                let stopped = *shutdown.borrow();
+                if !stopped {
+                    let _ = shutdown.changed().await;
+                }
+            } => {},
+            _ = tokio::time::sleep(self.limits.connection_timeout) => {},
         }
         connection.as_mut().graceful_shutdown();
         timeout(self.limits.drain_timeout, &mut connection)
@@ -214,12 +216,6 @@ impl Gateway {
     }
 }
 
-/// SSR initialization stays owned by the web host API, never inferred from a backtrace.
-fn stackpress_framework_ui_startup() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-    stackpress_example_profile_ui_web::initialize_renderer()?;
-    Ok(())
-}
-
 /// RAII makes cancellation of a pending connection release its admission count.
 struct ConnectionTicket<'a>(&'a AtomicUsize);
 impl Drop for ConnectionTicket<'_> {
@@ -231,7 +227,13 @@ impl Drop for ConnectionTicket<'_> {
 
 /// Emit only fixed public admission errors; never format body/parser/native causes.
 fn failure(code: u16, message: &str) -> WireResponse {
-    let json = serde_json::json!({"code":code,"status":hyper::StatusCode::from_u16(code).ok().and_then(|s|s.canonical_reason()).unwrap_or("Error"),"error":message,"errors":{},"total":0});
+    let reason = hyper::StatusCode::from_u16(code)
+        .ok()
+        .and_then(|status| status.canonical_reason())
+        .unwrap_or("Error");
+    let json = serde_json::json!({
+        "code": code, "status": reason, "error": message, "errors": {}, "total": 0
+    });
     let mut response = Response::new(Full::new(Bytes::from(json.to_string())));
     *response.status_mut() =
         hyper::StatusCode::from_u16(code).unwrap_or(hyper::StatusCode::INTERNAL_SERVER_ERROR);
