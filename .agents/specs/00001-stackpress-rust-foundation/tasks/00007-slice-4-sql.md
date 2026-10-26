@@ -58,6 +58,28 @@ Design checkpoint prepared on 2026-10-25. Start with [Slice 4 decisions and reco
 - **Owner decisions:** recorded as [G24](../decisions.md). Every recommendation S4-D01 to D07 was accepted, and the D08 dependency budget is approved by the coordinator.
 - **Amendment [G26](../decisions.md), 2026-10-26:** from M1, opt-in tests run the rendered PostgreSQL and MySQL SQL against the owner's local development servers. Each run uses a throwaway database of its own; network drivers are dev-only; production adapters stay S4-N.
 
+**M0 re-verification (coordinator, 2026-10-26): passed; merged as `70af7a6`; M1 released.** Details are in the [M0 receipt](../slice-4-receipt-m0.md).
+
+- **Checks rerun by the coordinator in the M0 worktree:**
+  - fmt passed;
+  - Clippy `-D warnings` clean;
+  - `cargo +1.96.0 check --workspace --all-targets` passed;
+  - 272 workspace tests passed, 0 failed (the implementer counted 275, including ignored child entries), and 432 doctests passed;
+  - the `m0-host` proof app prints `profile-name: Ada`.
+- **Isolation:** the core `stackpress-sql` has **no** normal dependencies. `cargo tree` for the default `stackpress` facade, `stackpress-lib` and `stackpress-server` shows no `sqlx`, `libsqlite3` or `stackpress-sql`. No shared-crate edits.
+- **Coverage:**
+  - the coordinator measured each crate alone after a clean: `stackpress-sql` **81.19%**, `stackpress-sql-sqlite` **95.45%**;
+  - the receipt's 99.23% for core comes from a combined run that counts lines exercised by the adapter's tests, so the per-crate 81.19% is the figure of record;
+  - both pass the 70% floor.
+- **Soundness highlights:**
+  - prepared-parameter arity is validated on the same lease;
+  - an admission permit is coupled to native completion, after a defect where cancellation released it early was found and fixed;
+  - transactions are non-Clone and exclusive, with rollback on drop, abort and unwind;
+  - a cancelled commit has an unknown outcome and is never replayed;
+  - SQLite's sticky `changes()` counts are corrected;
+  - seven trybuild compile-fail proofs;
+  - every concurrency test runs under a process watchdog, with a negative control.
+
 ## Acceptance notes
 
 Library work has no visual acceptance artifact under the spec workflow; this task finishes at `verified` after coordinator review.
