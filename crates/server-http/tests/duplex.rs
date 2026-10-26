@@ -174,7 +174,10 @@ async fn ordinary(path: &str) -> Result<(Vec<u8>, ConnectionReport, Arc<Probe>)>
             .await
     });
     client
-        .write_all(format!("GET {path} HTTP/1.1\r\nHost: localhost\r\n\r\n").as_bytes())
+        .write_all(
+            format!("GET {path} HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n")
+                .as_bytes(),
+        )
         .await
         .unwrap();
     let mut wire = Vec::new();
@@ -292,7 +295,7 @@ async fn shutdown(drain: bool) -> Result<()> {
         .await
     });
     client
-        .write_all(b"GET /pending HTTP/1.1\r\nHost: localhost\r\n\r\n")
+        .write_all(b"GET /pending HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n")
         .await
         .unwrap();
     let reading = tokio::spawn(async move {
@@ -347,7 +350,7 @@ async fn disconnect() -> Result<()> {
             .await
     });
     client
-        .write_all(b"GET /pending HTTP/1.1\r\nHost: localhost\r\n\r\n")
+        .write_all(b"GET /pending HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n")
         .await
         .unwrap();
     probe.polled.notified().await;
@@ -382,7 +385,7 @@ async fn handler_cancel(abort: bool) -> Result<()> {
         .await
     });
     client
-        .write_all(b"GET /handler-pending HTTP/1.1\r\nHost: localhost\r\n\r\n")
+        .write_all(b"GET /handler-pending HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n")
         .await
         .unwrap();
     probe.entered.notified().await;
@@ -413,7 +416,7 @@ async fn input_boundaries() -> Result<()> {
     for (raw, host_expected) in [
         (b"INVALID\r\n\r\n".as_slice(), false),
         (
-            b"GET /a/../buffered HTTP/1.1\r\nHost: localhost\r\n\r\n",
+            b"GET /a/../buffered HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n",
             true,
         ),
     ] {
@@ -507,7 +510,7 @@ async fn tls_handshakes() -> Result<()> {
                 Some(b"http/1.1".as_slice())
             );
             client
-                .write_all(b"GET /normal HTTP/1.1\r\nHost: localhost\r\n\r\n")
+                .write_all(b"GET /normal HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n")
                 .await
                 .unwrap();
             let mut wire = Vec::new();

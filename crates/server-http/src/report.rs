@@ -15,9 +15,9 @@ pub enum HttpDelivery {
     RejectedBeforeHost,
     /// Framework explicitly suppressed output.
     Suppressed,
-    /// Adapter published output but transport has not observed EOF.
+    /// Adapter published output; producer handoff or native flush remains pending.
     Published,
-    /// EOF was handed to Hyper; this is not a remote acknowledgement.
+    /// Producer handoff and native flush completed; this is not a remote acknowledgement.
     Completed,
     /// Producer, adapter or native connection failed; no retry is permitted.
     Failed,
@@ -38,6 +38,8 @@ pub struct HttpExchangeReport {
     pub elapsed: Duration,
     /// First original typed transport/producer failure, retained once.
     pub failure: Option<Arc<Error>>,
+    /// Chosen HTTP status, including boundary rejections that only close excess IO.
+    pub status: Option<u16>,
 }
 /// Final result of driving one supplied IO; returned only after its connection is dropped.
 pub struct ConnectionReport {
@@ -58,6 +60,8 @@ pub(crate) struct Exchange {
     pub(crate) started: Instant,
     /// Shared read-only signal outlives the active work when a handler retains its context.
     pub(crate) cancellation: Cancellation,
+    /// A later exchange cannot retroactively fail a previously completed native flush.
+    pub(crate) settled: bool,
 }
 /// Shared only with the one active body; all mutation is short synchronous work.
 pub(crate) type ExchangeSlot = Arc<Mutex<Exchange>>;
@@ -78,9 +82,11 @@ impl Exchange {
                 bytes: 0,
                 elapsed: Duration::ZERO,
                 failure: None,
+                status: None,
             },
             started: Instant::now(),
             cancellation: Cancellation::default(),
+            settled: false,
         }
     }
     /// First failure wins and cannot be overwritten by subsequent Body Drop or IO errors.
@@ -103,10 +109,14 @@ pub(crate) fn finish(
     // Drain after Hyper Drop: no body or service future can still mutate these reports.
     let mut exchanges = std::mem::take(&mut *lock(&slots));
     let failure = result.err().map(Arc::new);
-    if exchanges.is_empty() && failure.is_some() {
-        let mut rejected = Exchange::new(1);
+    if failure.is_some() && exchanges.iter().all(|slot| lock(slot).settled) {
+        let mut rejected = Exchange::new(exchanges.len() as u64 + 1);
         rejected.report.delivery = HttpDelivery::RejectedBeforeHost;
         rejected.report.failure = failure.clone();
+        rejected.report.status = failure
+            .as_ref()
+            .map(|error| error.code())
+            .filter(|code| matches!(code, 400 | 408 | 431));
         exchanges.push(Arc::new(Mutex::new(rejected)));
     }
     let reports = exchanges
@@ -115,6 +125,8 @@ pub(crate) fn finish(
             let mut state = lock(&slot);
             // Native errors can invalidate a completed handoff; preserve original producer errors.
             if let Some(error) = &failure
+                && !state.settled
+                && state.report.failure.is_none()
                 && !matches!(
                     state.report.delivery,
                     HttpDelivery::Suppressed | HttpDelivery::RejectedBeforeHost
@@ -124,7 +136,13 @@ pub(crate) fn finish(
                 // Forced drain preserves Cancelled; an ordinary IO failure records Failed.
                 state.fail(Arc::clone(error));
             }
-            state.report.elapsed = state.started.elapsed();
+            // An ended producer can still have native bytes pending when graceful drain is forced.
+            if !state.settled && state.report.delivery == HttpDelivery::Published {
+                state.report.delivery = HttpDelivery::Cancelled;
+            }
+            if !state.settled {
+                state.report.elapsed = state.started.elapsed();
+            }
             // Moving the report after dropping Hyper avoids clones or completion channels.
             std::mem::replace(&mut state.report, Exchange::new(0).report)
         })
@@ -148,6 +166,7 @@ impl std::fmt::Debug for HttpExchangeReport {
             .field("delivery", &self.delivery)
             .field("bytes", &self.bytes)
             .field("elapsed", &self.elapsed)
+            .field("status", &self.status)
             .field(
                 "failure_kind",
                 &self.failure.as_ref().map(|error| error.kind()),
@@ -169,5 +188,20 @@ impl std::fmt::Debug for ConnectionReport {
             .field("shutdown", &self.shutdown)
             .field("forced", &self.forced)
             .finish()
+    }
+}
+
+/// A transport rejection owns no fabricated framework request or lifecycle report.
+pub(crate) fn rejected(error: Error, status: u16) -> ConnectionReport {
+    let mut exchange = Exchange::new(1);
+    exchange.report.delivery = HttpDelivery::RejectedBeforeHost;
+    exchange.report.status = Some(status);
+    let error = Arc::new(error);
+    exchange.report.failure = Some(Arc::clone(&error));
+    ConnectionReport {
+        exchanges: vec![exchange.report],
+        failure: Some(error),
+        shutdown: false,
+        forced: false,
     }
 }

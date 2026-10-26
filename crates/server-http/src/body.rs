@@ -1,5 +1,6 @@
 //! Hyper body ownership and terminal observation; never spawns a producer or completion task.
 
+use crate::monitor::Monitor;
 use crate::report::{ExchangeSlot, HttpDelivery, lock};
 use bytes::Bytes;
 use futures_core::Stream;
@@ -18,18 +19,33 @@ pub(crate) struct TrackedBody {
     source: Option<HttpBody>,
     /// State owned also by the connection so a body drop cannot lose its report.
     exchange: ExchangeSlot,
+    /// Shared only with this connection; EOF is followed by a separate native flush boundary.
+    monitor: Arc<Monitor>,
 }
 impl TrackedBody {
     /// Wrap the already published producer without polling it.
-    pub(crate) fn new(source: HttpBody, exchange: ExchangeSlot) -> Self {
+    pub(crate) fn new(source: HttpBody, exchange: ExchangeSlot, monitor: Arc<Monitor>) -> Self {
         // Hyper need not poll body-forbidden/empty responses; local absence is already known.
         let source = if source.is_finished() {
-            lock(&exchange).report.delivery = HttpDelivery::Completed;
+            monitor.body_done();
             None
         } else {
             Some(source)
         };
-        Self { source, exchange }
+        Self {
+            source,
+            exchange,
+            monitor,
+        }
+    }
+    /// An empty boundary rejection still has a native flush, without fabricating a host report.
+    pub(crate) fn empty(exchange: ExchangeSlot, monitor: Arc<Monitor>) -> Self {
+        monitor.body_done();
+        Self {
+            source: None,
+            exchange,
+            monitor,
+        }
     }
 }
 impl Body for TrackedBody {
@@ -58,8 +74,9 @@ impl Body for TrackedBody {
                 }
                 let mut state = lock(&self.exchange);
                 state.report.bytes = state.report.bytes.saturating_add(length);
+                drop(state);
                 if finished {
-                    state.report.delivery = HttpDelivery::Completed;
+                    self.monitor.body_done();
                 }
                 Poll::Ready(Some(Ok(Frame::data(Bytes::from(bytes)))))
             }
@@ -72,7 +89,7 @@ impl Body for TrackedBody {
             }
             None => {
                 self.source = None;
-                lock(&self.exchange).report.delivery = HttpDelivery::Completed;
+                self.monitor.body_done();
                 Poll::Ready(None)
             }
         }
