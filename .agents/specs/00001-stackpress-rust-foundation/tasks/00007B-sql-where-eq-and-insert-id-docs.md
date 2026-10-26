@@ -125,7 +125,15 @@ was set for the SQL documentation command.
 
 ## Verification notes
 
-Pending.
+Coordinator review on 2026-10-26. Result: **verified**; merged as `4faf7ae`.
+
+- **Scope:** only `crates/sql/**` and this task file changed. No stale "replaces"/"does not expose IDs" wording remains in either SQL doc set.
+- **Regression-first evidence:** recorded by the implementer. Before the fix the two core regressions failed (0 passed / 2 failed), rendering only `WHERE "active" = ?`.
+- **Checks rerun by the coordinator:**
+  - fmt passed; Clippy and Rustdoc `-D warnings` clean; `cargo +1.96.0 check` passed;
+  - 436 workspace tests and 855 doctests passed;
+  - sql-profile against capability-host parity: 12/12 byte-identical.
+- **Coverage:** core-only 95.41% (implementer figure).
 
 ## Acceptance notes
 
