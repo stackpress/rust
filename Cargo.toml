@@ -4,6 +4,7 @@ members = [
     "crates/idea/idea-parser", "crates/idea/idea-transformer", "crates/idea/idea",
     "examples/generated-profile/codegen", "examples/generated-profile/app",
     "crates/sql/sql", "crates/sql/sql-sqlite", "examples/sql-profile",
+    "crates/sql/sql-postgres", "crates/sql/sql-mysql",
     "crates/framework/framework-view", "crates/framework/framework-ui",
     "examples/profile-ui/contracts", "examples/profile-ui/shared",
     "examples/profile-ui/web", "examples/profile-ui/client", "examples/profile-ui/native",
@@ -37,6 +38,8 @@ stackpress-idea-transformer = { path = "crates/idea/idea-transformer", optional 
 stackpress-idea = { path = "crates/idea/idea", optional = true }
 stackpress-sql = { path = "crates/sql/sql", optional = true }
 stackpress-sql-sqlite = { path = "crates/sql/sql-sqlite", optional = true }
+stackpress-sql-postgres = { path = "crates/sql/sql-postgres", optional = true }
+stackpress-sql-mysql = { path = "crates/sql/sql-mysql", optional = true }
 stackpress-framework-view = { path = "crates/framework/framework-view", optional = true }
 stackpress-framework-ui = { path = "crates/framework/framework-ui", optional = true }
 
@@ -49,6 +52,8 @@ idea-transformer = ["dep:stackpress-idea-transformer"]
 idea = ["dep:stackpress-idea"]
 sql = ["dep:stackpress-sql"]
 sql-sqlite = ["sql", "dep:stackpress-sql-sqlite"]
+sql-postgres = ["sql", "dep:stackpress-sql-postgres"]
+sql-mysql = ["sql", "dep:stackpress-sql-mysql"]
 framework-view = ["dep:stackpress-framework-view"]
 framework-view-server = ["framework-view", "stackpress-framework-view/server"]
 framework-ui = ["framework-view", "dep:stackpress-framework-ui"]
