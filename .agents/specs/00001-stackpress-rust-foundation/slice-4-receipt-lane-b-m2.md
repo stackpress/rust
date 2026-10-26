@@ -132,3 +132,26 @@ Ignored local evidence in `target/s4-lane-b-m2-evidence/`: baseline and three re
 - KB baseline before receipt: **146 existing errors and 20 warnings**. No existing KB was repaired. Post-write comparison is reported in the handoff; passing code checks does not make that validator green.
 
 Stop here without commit or further-stage implementation. Acceptance criteria: none; coordinator re-verification remains outstanding.
+
+## Public execute_plan integration follow-up at 90aa05e
+
+This coordinator-released follow-up starts from clean HEAD `90aa05e531c1ead9b73f44b288b338ee73c2744d` and **resolves the public execute_plan pending-on-merge item above**. Earlier evidence remains historical; the other scope/platform limits remain. Only adapter test files and this appended section change; production/core/shared code, manifests and dependencies are untouched. No commit or agent messages.
+
+Removed the temporary `m2::plan` executor. All existing native DDL success/failure/cache tests and the commit-cancellation proof now call `Engine::execute_plan` directly. Three new watchdog scenarios exercise validation, active native cancellation and caller-owned transaction composition:
+
+| Requested proof | Passing real-file evidence |
+| --- | --- |
+| Successful multi-statement plan | `m2::ddl::supported`: public three-statement Create/table/index plan, replay, constraints/defaults and subsequent CRUD. |
+| Statement N failure / original error | `m2::ddl::atomic`: public failing CREATE/ALTER batches restore schema/data on rollback and reopen; downcast source retains native SQLx Database error code `1` and exact `index occupied already exists`, with no cleanup-error replacement. |
+| Another dialect before effects | `m2::plans::validation`: real PostgreSQL and MySQL plans return Unsupported from both public methods while the sole SQLite lease is held. The caller guard remains usable; schema/data stay identical. |
+| Unsupported SQLite DDL | Existing `m2::ddl::unsupported` still rejects the whole builder at rendering, including a valid earlier ADD; no executable plan escapes and schema/data stay identical. |
+| Mid-plan cancellation | `m2::plans::cancellation`: public Engine batch pauses in a safe native text-collation comparison during statement two's index creation, after statement one's ADD. Aborting restores identical schema/data, including after reopen. The one-shot test-only mutex is released before callback signaling/waiting; the native wait has a three-second deadline. |
+| Caller-owned transaction | `m2::plans::caller_transaction`: public Transaction batch preserves the caller's prior writes, permits later inserts/queries, hides uncommitted schema/data from outside reads, and leaves rollback/commit explicit. Both completion paths and persisted commit are checked. |
+
+All scenarios retain the independent 10-second process / 8-second cooperative watchdog. M2 now has **18 native scenarios**. Scoped reviews covered (1) exact statement/error/cancellation boundaries, (2) removing the temporary executor and keeping only test-local synchronization, and (3) Rustdoc/comments/ownership safety. Each review was test-verified; no production refactor or further scope was warranted.
+
+Final fmt, adapter all-target tests, two doctests, Clippy `-D warnings`, Rustdoc `-D warnings` and `cargo +1.96.0 check -p stackpress-sql-sqlite --all-targets --locked --offline` all passed. Test result: **10 passed parent/unit entries, six deliberately ignored child entrypoints launched by their parents**. Commands for tests/docs/Clippy/fmt match the earlier final-check block; no new workspace-wide or network execution claim is made.
+
+Fresh adapter-only coverage reran the earlier clean/test/report commands with output under `target/s4-lane-b-m2-public-plans-evidence/`: **369/387 production lines, 95.35%**, package alone, no core/dependency/example execution credited. Only test-only source is excluded; all five production files and their per-file counts remain identical to the table above. The unchanged example was compile-checked by all-targets; its prior separately executed coverage is historical. Reused the existing targets, then removed completed instrumentation artifacts; retained check/review/coverage logs and JSON. `git diff --check` and the forbidden-path audit passed. KB baseline remains 146 existing errors / 20 warnings; post-write comparison is reported in the handoff.
+
+Stop for coordinator re-verification; the public-plan integration follow-up has no remaining implementation item.

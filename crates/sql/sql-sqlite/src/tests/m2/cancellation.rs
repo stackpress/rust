@@ -193,7 +193,7 @@ pub(super) async fn ddl() {
     let (entered, release) = gate(&db, Hook::Commit).await;
     let engine = Arc::new(Engine::new(db));
     let shared = Arc::clone(&engine);
-    let task = tokio::spawn(async move { super::plan(&shared, &plan).await });
+    let task = tokio::spawn(async move { shared.execute_plan(&plan).await });
     entered.await.unwrap();
     task.abort();
     assert!(task.await.unwrap_err().is_cancelled());

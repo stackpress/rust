@@ -7,7 +7,7 @@ use stackpress_sql::{
     ReferentialAction, Select, SqlType, SqlValue, TableCommand,
 };
 
-use super::{SqliteDatabase, TempDir, options, plan, schema, sql};
+use super::{SqliteDatabase, TempDir, options, schema, sql};
 
 /// All native ADD/DROP/RENAME/index commands preserve rows and explicit defaults.
 pub(super) async fn supported() {
@@ -26,9 +26,9 @@ pub(super) async fn supported() {
         .add_index(Index::new("profile_score", ["score"]))
         .if_not_exists();
     let rendered = create.render(DialectId::Sqlite).unwrap();
-    assert_eq!(plan(&engine, &rendered).await.unwrap().len(), 3);
+    assert_eq!(engine.execute_plan(&rendered).await.unwrap().len(), 3);
     let installed = schema(&engine).await;
-    plan(&engine, &rendered).await.unwrap();
+    engine.execute_plan(&rendered).await.unwrap();
     assert_eq!(schema(&engine).await, installed);
     let inserted = engine
         .execute(
@@ -61,7 +61,8 @@ pub(super) async fn supported() {
         .remove_field("optional")
         .remove_index("profile_score")
         .add_index(Index::new("display_index", ["display.name"]));
-    plan(&engine, &alter.render(DialectId::Sqlite).unwrap())
+    engine
+        .execute_plan(&alter.render(DialectId::Sqlite).unwrap())
         .await
         .unwrap();
     let rows = engine
@@ -112,7 +113,8 @@ async fn foreign_keys(engine: &Engine) {
         .add_field(Field::new("y", SqlType::Integer))
         .add_foreign_key(foreign);
     for create in [parent, child] {
-        plan(engine, &create.render(DialectId::Sqlite).unwrap())
+        engine
+            .execute_plan(&create.render(DialectId::Sqlite).unwrap())
             .await
             .unwrap();
     }
@@ -158,10 +160,20 @@ pub(super) async fn atomic() {
     let create = Create::new("never_installed")
         .add_field(Field::new("value", SqlType::Text))
         .add_index(Index::new("occupied", ["value"]));
-    let error = plan(&engine, &create.render(DialectId::Sqlite).unwrap())
+    let error = engine
+        .execute_plan(&create.render(DialectId::Sqlite).unwrap())
         .await
         .unwrap_err();
-    assert!(error.source().is_some());
+    // The public batch method must return statement N's native error, not a cleanup wrapper.
+    assert_eq!(error.kind(), ErrorKind::Driver);
+    let source = error
+        .source()
+        .unwrap()
+        .downcast_ref::<sqlx::Error>()
+        .unwrap();
+    let native = source.as_database_error().unwrap();
+    assert_eq!(native.code().as_deref(), Some("1"));
+    assert_eq!(native.message(), "index occupied already exists");
     assert!(error.cleanup_error().is_none());
     assert_eq!(schema(&engine).await, before);
     engine
@@ -180,7 +192,8 @@ pub(super) async fn atomic() {
     let alter = Alter::new("existing")
         .add_field(Field::new("partial", SqlType::Text))
         .add_index(Index::new("duplicates_forbidden", ["value"]).unique());
-    let error = plan(&engine, &alter.render(DialectId::Sqlite).unwrap())
+    let error = engine
+        .execute_plan(&alter.render(DialectId::Sqlite).unwrap())
         .await
         .unwrap_err();
     assert!(error.source().is_some());
@@ -199,7 +212,8 @@ pub(super) async fn atomic() {
         .rename_field("value", "renamed")
         .remove_index("absent");
     assert!(
-        plan(&engine, &alter.render(DialectId::Sqlite).unwrap())
+        engine
+            .execute_plan(&alter.render(DialectId::Sqlite).unwrap())
             .await
             .is_err()
     );
@@ -339,7 +353,8 @@ pub(super) async fn cached_schema() {
         .source_field(Field::new("value", SqlType::Text))
         .rename_field("value", "display.name")
         .add_field(Field::new("added", SqlType::Integer).default(0_i64));
-    plan(&engine, &alter.render(DialectId::Sqlite).unwrap())
+    engine
+        .execute_plan(&alter.render(DialectId::Sqlite).unwrap())
         .await
         .unwrap();
     let after = crate::execute::run(&mut old, star, limits).await.unwrap();
