@@ -1,58 +1,326 @@
 //! Typed field, index and foreign-key metadata for detached DDL builders.
 //!
 //! These are explicit builder inputs, not schema introspection or migration history.
-//! TableDefinition and structural diff belong to the following milestone.
+//! [`crate::TableDefinition`] and [`crate::SchemaDiff`] compare these owned definitions.
 
 use crate::identifier::{invalid, quote, unsupported};
 use crate::{DialectId, Result, SqlValue, TrustedSql};
 
 /// Known storage types; arbitrary SQL strings require an explicit trusted type.
+///
+/// Types describe native storage, not an application codec. DateTime uses text
+/// (SQLite/PostgreSQL TEXT, MySQL VARCHAR(30)); call [`crate::SqlValue::utc_text`] to
+/// validate canonical UTC input explicitly. JSON uses SQLite text, PostgreSQL JSONB
+/// and MySQL JSON. Use [`crate::WriteValue::Json`] for native JSON writes. Decimal is
+/// unsupported in SQLite; PostgreSQL/MySQL require valid precision/scale metadata.
+///
+/// # Examples
+///
+/// ```
+/// use stackpress_sql::{DefaultValue, Field, Length, SqlType};
+/// let field = Field::new("name", SqlType::Varchar)
+///     .not_null()
+///     .length(Length::Size(80))
+///     .default("");
+/// assert_eq!(field.name, "name");
+/// assert_eq!(field.data_type, SqlType::Varchar);
+/// assert!(!field.nullable);
+/// assert_eq!(field.length, Some(Length::Size(80)));
+/// assert_eq!(field.default, Some(DefaultValue::Value("".into())));
+/// assert!(!field.auto_increment);
+/// assert!(!field.unsigned);
+/// assert!(field.comment.is_none());
+/// # Ok::<(), stackpress_sql::SqlError>(())
+/// ```
 #[derive(Clone, Debug, PartialEq)]
 pub enum SqlType {
     /// Exact signed integer storage; SQLite primary auto-increment requires this type.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Create, DialectId, Field, Render, SqlType};
+    /// let field = Field::new("value", SqlType::Integer);
+    /// Create::new("example")
+    ///     .add_field(field)
+    ///     .render(DialectId::Postgres)?;
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Integer,
     /// Finite real storage.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Create, DialectId, Field, Render, SqlType};
+    /// let field = Field::new("value", SqlType::Real);
+    /// Create::new("example")
+    ///     .add_field(field)
+    ///     .render(DialectId::Postgres)?;
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Real,
     /// Boolean affinity; native decoding is still strict 0/1.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Create, DialectId, Field, Render, SqlType};
+    /// let field = Field::new("value", SqlType::Boolean);
+    /// Create::new("example")
+    ///     .add_field(field)
+    ///     .render(DialectId::Postgres)?;
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Boolean,
     /// Unbounded UTF-8 text.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Create, DialectId, Field, Render, SqlType};
+    /// let field = Field::new("value", SqlType::Text);
+    /// Create::new("example")
+    ///     .add_field(field)
+    ///     .render(DialectId::Postgres)?;
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Text,
     /// Text affinity with optional declared length; SQLite does not enforce that length.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Create, DialectId, Field, Length, Render, SqlType};
+    /// let field = Field::new("value", SqlType::Varchar).length(Length::Size(80));
+    /// Create::new("example")
+    ///     .add_field(field)
+    ///     .render(DialectId::Postgres)?;
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Varchar,
     /// Owned bytes.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Create, DialectId, Field, Render, SqlType};
+    /// let field = Field::new("value", SqlType::Blob);
+    /// Create::new("example")
+    ///     .add_field(field)
+    ///     .render(DialectId::Postgres)?;
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Blob,
     /// Explicit JSON stored as text in SQLite; document validity is checked by callers.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Create, DialectId, Field, Render, SqlType};
+    /// let field = Field::new("value", SqlType::Json);
+    /// Create::new("example")
+    ///     .add_field(field)
+    ///     .render(DialectId::Postgres)?;
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Json,
     /// Explicit canonical UTC date text in SQLite.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Create, DialectId, Field, Render, SqlType};
+    /// let field = Field::new("value", SqlType::DateTime);
+    /// Create::new("example")
+    ///     .add_field(field)
+    ///     .render(DialectId::Postgres)?;
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     DateTime,
     /// Exact decimal metadata; SQLite exact-decimal storage is unsupported.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Create, DialectId, Field, Length, Render, SqlType};
+    /// let field = Field::new("value", SqlType::Decimal).length(Length::Precision {
+    ///     precision: 10,
+    ///     scale: 2,
+    /// });
+    /// Create::new("example")
+    ///     .add_field(field)
+    ///     .render(DialectId::Postgres)?;
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Decimal,
     /// Audited backend-specific type syntax; never inferred from ordinary text.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Create, DialectId, Field, Render, SqlType, TrustedSql};
+    /// let field = Field::new(
+    ///     "value",
+    ///     SqlType::Trusted(DialectId::Sqlite, TrustedSql::audited("CUSTOM_TEXT")),
+    /// );
+    /// Create::new("example")
+    ///     .add_field(field)
+    ///     .render(DialectId::Sqlite)?;
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Trusted(DialectId, TrustedSql),
 }
 
 /// Explicit type-length metadata. Invalid nonpositive lengths are rejected.
+///
+/// # Examples
+///
+/// ```
+/// use stackpress_sql::{DefaultValue, Field, Length, SqlType};
+/// let field = Field::new("name", SqlType::Varchar)
+///     .not_null()
+///     .length(Length::Size(80))
+///     .default("");
+/// assert_eq!(field.name, "name");
+/// assert_eq!(field.data_type, SqlType::Varchar);
+/// assert!(!field.nullable);
+/// assert_eq!(field.length, Some(Length::Size(80)));
+/// assert_eq!(field.default, Some(DefaultValue::Value("".into())));
+/// assert!(!field.auto_increment);
+/// assert!(!field.unsigned);
+/// assert!(field.comment.is_none());
+/// # Ok::<(), stackpress_sql::SqlError>(())
+/// ```
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum Length {
     /// A positive character/storage declaration length.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Create, DialectId, Field, Length, Render, SqlType};
+    /// let field = Field::new("value", SqlType::Varchar).length(Length::Size(80));
+    /// Create::new("example")
+    ///     .add_field(field)
+    ///     .render(DialectId::Postgres)?;
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Size(i32),
     /// Decimal precision and scale, with 0 <= scale <= precision.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Create, DialectId, Field, Length, Render, SqlType};
+    /// let field = Field::new("value", SqlType::Decimal).length(Length::Precision {
+    ///     precision: 10,
+    ///     scale: 2,
+    /// });
+    /// Create::new("example")
+    ///     .add_field(field)
+    ///     .render(DialectId::Postgres)?;
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Precision {
         /// Positive total number of decimal digits.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use stackpress_sql::{Create, DialectId, Field, Length, Render, SqlType};
+        /// let field = Field::new("value", SqlType::Decimal).length(Length::Precision {
+        ///     precision: 10,
+        ///     scale: 2,
+        /// });
+        /// Create::new("example")
+        ///     .add_field(field)
+        ///     .render(DialectId::Postgres)?;
+        /// # Ok::<(), stackpress_sql::SqlError>(())
+        /// ```
         precision: i32,
         /// Nonnegative fractional digit count.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use stackpress_sql::{Create, DialectId, Field, Length, Render, SqlType};
+        /// let field = Field::new("value", SqlType::Decimal).length(Length::Precision {
+        ///     precision: 10,
+        ///     scale: 2,
+        /// });
+        /// Create::new("example")
+        ///     .add_field(field)
+        ///     .render(DialectId::Postgres)?;
+        /// # Ok::<(), stackpress_sql::SqlError>(())
+        /// ```
         scale: i32,
     },
 }
 
 /// Absence of this enum means no explicit default; NULL/false/zero/empty remain values.
+///
+/// # Examples
+///
+/// ```
+/// use stackpress_sql::{DefaultValue, Field, Length, SqlType};
+/// let field = Field::new("name", SqlType::Varchar)
+///     .not_null()
+///     .length(Length::Size(80))
+///     .default("");
+/// assert_eq!(field.name, "name");
+/// assert_eq!(field.data_type, SqlType::Varchar);
+/// assert!(!field.nullable);
+/// assert_eq!(field.length, Some(Length::Size(80)));
+/// assert_eq!(field.default, Some(DefaultValue::Value("".into())));
+/// assert!(!field.auto_increment);
+/// assert!(!field.unsigned);
+/// assert!(field.comment.is_none());
+/// # Ok::<(), stackpress_sql::SqlError>(())
+/// ```
 #[derive(Clone, Debug, PartialEq)]
 pub enum DefaultValue {
     /// A validated scalar literal; DDL cannot use bind parameters for defaults.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Create, DefaultValue, DialectId, Field, Render, SqlType};
+    /// let field = Field::new("value", SqlType::Boolean).default(DefaultValue::Value(false.into()));
+    /// Create::new("example")
+    ///     .add_field(field)
+    ///     .render(DialectId::Sqlite)?;
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Value(SqlValue),
     /// The explicit native current timestamp expression.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Create, DefaultValue, DialectId, Field, Render, SqlType};
+    /// let field = Field::new("value", SqlType::Text).default(DefaultValue::CurrentTimestamp);
+    /// Create::new("example")
+    ///     .add_field(field)
+    ///     .render(DialectId::Sqlite)?;
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     CurrentTimestamp,
     /// Audited native expression, carrying its dialect identity.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Create, DefaultValue, DialectId, Field, Render, SqlType, TrustedSql};
+    /// let field = Field::new("value", SqlType::Text).default(DefaultValue::Trusted(
+    ///     DialectId::Sqlite,
+    ///     TrustedSql::audited("CURRENT_DATE"),
+    /// ));
+    /// Create::new("example")
+    ///     .add_field(field)
+    ///     .render(DialectId::Sqlite)?;
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Trusted(DialectId, TrustedSql),
 }
 
@@ -64,28 +332,138 @@ impl<T: Into<SqlValue>> From<T> for DefaultValue {
 }
 
 /// One explicit field definition, compared structurally rather than by identity.
+///
+/// # Examples
+///
+/// ```
+/// use stackpress_sql::{DefaultValue, Field, Length, SqlType};
+/// let field = Field::new("name", SqlType::Varchar)
+///     .not_null()
+///     .length(Length::Size(80))
+///     .default("");
+/// assert_eq!(field.name, "name");
+/// assert_eq!(field.data_type, SqlType::Varchar);
+/// assert!(!field.nullable);
+/// assert_eq!(field.length, Some(Length::Size(80)));
+/// assert_eq!(field.default, Some(DefaultValue::Value("".into())));
+/// assert!(!field.auto_increment);
+/// assert!(!field.unsigned);
+/// assert!(field.comment.is_none());
+/// # Ok::<(), stackpress_sql::SqlError>(())
+/// ```
 #[derive(Clone, Debug, PartialEq)]
 pub struct Field {
     /// One literal column name.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Field, SqlType};
+    /// let value = Field::new("id", SqlType::Integer).not_null();
+    /// assert_eq!(value.name, "id");
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub name: String,
     /// Known or explicitly audited native type.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Field, SqlType};
+    /// let value = Field::new("id", SqlType::Integer).not_null();
+    /// assert_eq!(value.data_type, SqlType::Integer);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub data_type: SqlType,
     /// Whether SQL NULL is allowed.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Field, SqlType};
+    /// let value = Field::new("id", SqlType::Integer).not_null();
+    /// assert_eq!(value.nullable, false);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub nullable: bool,
     /// Optional declared size/precision, validated by type.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Field, SqlType};
+    /// let value = Field::new("id", SqlType::Integer).not_null();
+    /// assert_eq!(value.length, None);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub length: Option<Length>,
     /// No explicit default differs from an explicit NULL default.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Field, SqlType};
+    /// let value = Field::new("id", SqlType::Integer).not_null();
+    /// assert_eq!(value.default, None);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub default: Option<DefaultValue>,
     /// Requires the sole integer primary key in SQLite.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Field, SqlType};
+    /// let value = Field::new("id", SqlType::Integer).not_null();
+    /// assert_eq!(value.auto_increment, false);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub auto_increment: bool,
     /// Unsigned enforcement is unsupported by SQLite and never silently ignored.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Field, SqlType};
+    /// let value = Field::new("id", SqlType::Integer).not_null();
+    /// assert_eq!(value.unsigned, false);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub unsigned: bool,
     /// Native comment metadata; unsupported by SQLite rather than silently dropped.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Field, SqlType};
+    /// let value = Field::new("id", SqlType::Integer).not_null();
+    /// assert_eq!(value.comment, None);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub comment: Option<String>,
 }
 
 impl Field {
     /// Define a nullable field with no default or backend-specific annotations.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{DefaultValue, Field, Length, SqlType};
+    /// let field = Field::new("name", SqlType::Varchar)
+    ///     .not_null()
+    ///     .length(Length::Size(80))
+    ///     .default("");
+    /// assert_eq!(field.name, "name");
+    /// assert_eq!(field.data_type, SqlType::Varchar);
+    /// assert!(!field.nullable);
+    /// assert_eq!(field.length, Some(Length::Size(80)));
+    /// assert_eq!(field.default, Some(DefaultValue::Value("".into())));
+    /// assert!(!field.auto_increment);
+    /// assert!(!field.unsigned);
+    /// assert!(field.comment.is_none());
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn new(name: impl Into<String>, data_type: SqlType) -> Self {
         Self {
             name: name.into(),
@@ -100,24 +478,96 @@ impl Field {
     }
 
     /// Disallow SQL NULL; this does not invent a default value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{DefaultValue, Field, Length, SqlType};
+    /// let field = Field::new("name", SqlType::Varchar)
+    ///     .not_null()
+    ///     .length(Length::Size(80))
+    ///     .default("");
+    /// assert_eq!(field.name, "name");
+    /// assert_eq!(field.data_type, SqlType::Varchar);
+    /// assert!(!field.nullable);
+    /// assert_eq!(field.length, Some(Length::Size(80)));
+    /// assert_eq!(field.default, Some(DefaultValue::Value("".into())));
+    /// assert!(!field.auto_increment);
+    /// assert!(!field.unsigned);
+    /// assert!(field.comment.is_none());
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn not_null(mut self) -> Self {
         self.nullable = false;
         self
     }
 
     /// Preserve an explicit default, including false/zero/empty/NULL.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{DefaultValue, Field, Length, SqlType};
+    /// let field = Field::new("name", SqlType::Varchar)
+    ///     .not_null()
+    ///     .length(Length::Size(80))
+    ///     .default("");
+    /// assert_eq!(field.name, "name");
+    /// assert_eq!(field.data_type, SqlType::Varchar);
+    /// assert!(!field.nullable);
+    /// assert_eq!(field.length, Some(Length::Size(80)));
+    /// assert_eq!(field.default, Some(DefaultValue::Value("".into())));
+    /// assert!(!field.auto_increment);
+    /// assert!(!field.unsigned);
+    /// assert!(field.comment.is_none());
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn default(mut self, value: impl Into<DefaultValue>) -> Self {
         self.default = Some(value.into());
         self
     }
 
     /// Request auto-increment on the sole integer primary key.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Create, DialectId, Field, Render, SqlType};
+    /// let field = Field::new("id", SqlType::Integer)
+    ///     .not_null()
+    ///     .auto_increment();
+    /// assert!(field.auto_increment);
+    /// Create::new("profile")
+    ///     .add_field(field)
+    ///     .primary_key(["id"])
+    ///     .render(DialectId::Sqlite)?;
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn auto_increment(mut self) -> Self {
         self.auto_increment = true;
         self
     }
 
     /// Declare a checked length/precision. SQLite Varchar length is affinity metadata only.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{DefaultValue, Field, Length, SqlType};
+    /// let field = Field::new("name", SqlType::Varchar)
+    ///     .not_null()
+    ///     .length(Length::Size(80))
+    ///     .default("");
+    /// assert_eq!(field.name, "name");
+    /// assert_eq!(field.data_type, SqlType::Varchar);
+    /// assert!(!field.nullable);
+    /// assert_eq!(field.length, Some(Length::Size(80)));
+    /// assert_eq!(field.default, Some(DefaultValue::Value("".into())));
+    /// assert!(!field.auto_increment);
+    /// assert!(!field.unsigned);
+    /// assert!(field.comment.is_none());
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn length(mut self, length: Length) -> Self {
         self.length = Some(length);
         self
@@ -227,18 +677,71 @@ impl Field {
 }
 
 /// One named ordered index; a unique definition wins only over identical fields.
+///
+/// Names/columns are checked when building/rendering. Duplicate names with identical
+/// columns normalize to the unique form regardless of insertion order; conflicting
+/// column lists error. Compound-column order is significant in schema differences.
+///
+/// # Examples
+///
+/// ```
+/// use stackpress_sql::Index;
+/// let index = Index::new("profile_name", ["name", "id"]).unique();
+/// assert_eq!(index.name, "profile_name");
+/// assert_eq!(index.columns, ["name", "id"]);
+/// assert!(index.unique);
+/// # Ok::<(), stackpress_sql::SqlError>(())
+/// ```
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Index {
     /// Literal index name.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Index;
+    /// let value = Index::new("profile_id", ["id"]).unique();
+    /// assert_eq!(value.name, "profile_id");
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub name: String,
     /// Ordered literal local columns.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Index;
+    /// let value = Index::new("profile_id", ["id"]).unique();
+    /// assert_eq!(value.columns, ["id"]);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub columns: Vec<String>,
     /// Whether duplicate key tuples are forbidden.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Index;
+    /// let value = Index::new("profile_id", ["id"]).unique();
+    /// assert_eq!(value.unique, true);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub unique: bool,
 }
 
 impl Index {
     /// Define a regular index; validation runs at build/render time.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Index;
+    /// let index = Index::new("profile_name", ["name", "id"]).unique();
+    /// assert_eq!(index.name, "profile_name");
+    /// assert_eq!(index.columns, ["name", "id"]);
+    /// assert!(index.unique);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn new(
         name: impl Into<String>,
         columns: impl IntoIterator<Item = impl Into<String>>,
@@ -251,6 +754,17 @@ impl Index {
     }
 
     /// Require uniqueness while preserving name and compound-column order.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Index;
+    /// let index = Index::new("profile_name", ["name", "id"]).unique();
+    /// assert_eq!(index.name, "profile_name");
+    /// assert_eq!(index.columns, ["name", "id"]);
+    /// assert!(index.unique);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn unique(mut self) -> Self {
         self.unique = true;
         self
@@ -270,18 +784,113 @@ impl Index {
 }
 
 /// Typed foreign-key update/delete policy.
+///
+/// # Examples
+///
+/// ```
+/// use stackpress_sql::{
+///     Create, DialectId, Field, ForeignKey, ReferentialAction, Render, SqlType,
+/// };
+/// let mut key = ForeignKey::new("profile_parent", ["parent_id"], "parent", ["id"]);
+/// key.on_delete = ReferentialAction::SetNull;
+/// key.on_update = ReferentialAction::Cascade;
+/// assert_eq!(key.name, "profile_parent");
+/// assert_eq!(key.columns, ["parent_id"]);
+/// assert_eq!(key.table, "parent");
+/// assert_eq!(key.foreign_columns, ["id"]);
+/// Create::new("profile")
+///     .add_field(Field::new("parent_id", SqlType::Integer))
+///     .add_foreign_key(key)
+///     .render(DialectId::Sqlite)?;
+/// # Ok::<(), stackpress_sql::SqlError>(())
+/// ```
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub enum ReferentialAction {
     /// No automatic action; the native constraint policy decides failure timing.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{
+    ///     Create, DialectId, Field, ForeignKey, ReferentialAction, Render, SqlType,
+    /// };
+    /// let mut key = ForeignKey::new("parent_fk", ["parent"], "parent", ["id"]);
+    /// key.on_delete = ReferentialAction::NoAction;
+    /// Create::new("example")
+    ///     .add_field(Field::new("parent", SqlType::Integer).default(0))
+    ///     .add_foreign_key(key)
+    ///     .render(DialectId::Sqlite)?;
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     #[default]
     NoAction,
     /// Reject conflicting parent changes.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{
+    ///     Create, DialectId, Field, ForeignKey, ReferentialAction, Render, SqlType,
+    /// };
+    /// let mut key = ForeignKey::new("parent_fk", ["parent"], "parent", ["id"]);
+    /// key.on_delete = ReferentialAction::Restrict;
+    /// Create::new("example")
+    ///     .add_field(Field::new("parent", SqlType::Integer).default(0))
+    ///     .add_foreign_key(key)
+    ///     .render(DialectId::Sqlite)?;
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Restrict,
     /// Apply the parent change to children.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{
+    ///     Create, DialectId, Field, ForeignKey, ReferentialAction, Render, SqlType,
+    /// };
+    /// let mut key = ForeignKey::new("parent_fk", ["parent"], "parent", ["id"]);
+    /// key.on_delete = ReferentialAction::Cascade;
+    /// Create::new("example")
+    ///     .add_field(Field::new("parent", SqlType::Integer).default(0))
+    ///     .add_foreign_key(key)
+    ///     .render(DialectId::Sqlite)?;
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Cascade,
     /// Set local columns to SQL NULL (all must be nullable).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{
+    ///     Create, DialectId, Field, ForeignKey, ReferentialAction, Render, SqlType,
+    /// };
+    /// let mut key = ForeignKey::new("parent_fk", ["parent"], "parent", ["id"]);
+    /// key.on_delete = ReferentialAction::SetNull;
+    /// Create::new("example")
+    ///     .add_field(Field::new("parent", SqlType::Integer).default(0))
+    ///     .add_foreign_key(key)
+    ///     .render(DialectId::Sqlite)?;
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     SetNull,
     /// Set local columns to their declared defaults.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{
+    ///     Create, DialectId, Field, ForeignKey, ReferentialAction, Render, SqlType,
+    /// };
+    /// let mut key = ForeignKey::new("parent_fk", ["parent"], "parent", ["id"]);
+    /// key.on_delete = ReferentialAction::SetDefault;
+    /// Create::new("example")
+    ///     .add_field(Field::new("parent", SqlType::Integer).default(0))
+    ///     .add_foreign_key(key)
+    ///     .render(DialectId::Sqlite)?;
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     SetDefault,
 }
 
@@ -299,24 +908,122 @@ impl ReferentialAction {
 }
 
 /// An explicitly named compound foreign key with ordered local/remote columns.
+///
+/// Local/remote arity must match. SET NULL requires nullable non-primary local
+/// fields; SET DEFAULT requires explicit defaults. MySQL rejects SET DEFAULT.
+/// Referenced-table existence and matching native keys are checked by the database.
+///
+/// # Examples
+///
+/// ```
+/// use stackpress_sql::{
+///     Create, DialectId, Field, ForeignKey, ReferentialAction, Render, SqlType,
+/// };
+/// let mut key = ForeignKey::new("profile_parent", ["parent_id"], "parent", ["id"]);
+/// key.on_delete = ReferentialAction::SetNull;
+/// key.on_update = ReferentialAction::Cascade;
+/// assert_eq!(key.name, "profile_parent");
+/// assert_eq!(key.columns, ["parent_id"]);
+/// assert_eq!(key.table, "parent");
+/// assert_eq!(key.foreign_columns, ["id"]);
+/// Create::new("profile")
+///     .add_field(Field::new("parent_id", SqlType::Integer))
+///     .add_foreign_key(key)
+///     .render(DialectId::Sqlite)?;
+/// # Ok::<(), stackpress_sql::SqlError>(())
+/// ```
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ForeignKey {
     /// Literal constraint name.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::ForeignKey;
+    /// let value = ForeignKey::new("parent_fk", ["parent_id"], "parent", ["id"]);
+    /// assert_eq!(value.name, "parent_fk");
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub name: String,
     /// Ordered local columns.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::ForeignKey;
+    /// let value = ForeignKey::new("parent_fk", ["parent_id"], "parent", ["id"]);
+    /// assert_eq!(value.columns, ["parent_id"]);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub columns: Vec<String>,
     /// Literal target table (never a SQL fragment).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::ForeignKey;
+    /// let value = ForeignKey::new("parent_fk", ["parent_id"], "parent", ["id"]);
+    /// assert_eq!(value.table, "parent");
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub table: String,
     /// Ordered target columns, with equal arity.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::ForeignKey;
+    /// let value = ForeignKey::new("parent_fk", ["parent_id"], "parent", ["id"]);
+    /// assert_eq!(value.foreign_columns, ["id"]);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub foreign_columns: Vec<String>,
     /// Parent delete policy.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{ForeignKey, ReferentialAction};
+    /// let value = ForeignKey::new("parent_fk", ["parent_id"], "parent", ["id"]);
+    /// assert_eq!(value.on_delete, ReferentialAction::NoAction);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub on_delete: ReferentialAction,
     /// Parent update policy.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{ForeignKey, ReferentialAction};
+    /// let value = ForeignKey::new("parent_fk", ["parent_id"], "parent", ["id"]);
+    /// assert_eq!(value.on_update, ReferentialAction::NoAction);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub on_update: ReferentialAction,
 }
 
 impl ForeignKey {
     /// Construct a compound relationship with no automatic parent-change action.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{
+    ///     Create, DialectId, Field, ForeignKey, ReferentialAction, Render, SqlType,
+    /// };
+    /// let mut key = ForeignKey::new("profile_parent", ["parent_id"], "parent", ["id"]);
+    /// key.on_delete = ReferentialAction::SetNull;
+    /// key.on_update = ReferentialAction::Cascade;
+    /// assert_eq!(key.name, "profile_parent");
+    /// assert_eq!(key.columns, ["parent_id"]);
+    /// assert_eq!(key.table, "parent");
+    /// assert_eq!(key.foreign_columns, ["id"]);
+    /// Create::new("profile")
+    ///     .add_field(Field::new("parent_id", SqlType::Integer))
+    ///     .add_foreign_key(key)
+    ///     .render(DialectId::Sqlite)?;
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn new(
         name: impl Into<String>,
         columns: impl IntoIterator<Item = impl Into<String>>,

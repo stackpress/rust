@@ -11,72 +11,547 @@ use crate::{
 };
 
 /// Explicit ordering direction, ascending by default.
+///
+/// # Examples
+///
+/// ```
+/// use stackpress_sql::{DialectId, Expr, Join, JoinKind, Order, Render, Select, Sort, TableRef};
+/// let query = Select::new(["id"])
+///     .select("name")
+///     .from(TableRef::new("profile").alias("p"))
+///     .join(Join {
+///         kind: JoinKind::Cross,
+///         table: "category".into(),
+///         on: None,
+///     })
+///     .sort(Sort {
+///         expression: Expr::column("id"),
+///         order: Order::Desc,
+///     })
+///     .limit(10)
+///     .offset(2)
+///     .distinct();
+/// let data = query.build();
+/// assert_eq!(data.selectors.len(), 2);
+/// assert_eq!(data.table.as_ref().unwrap().alias.as_deref(), Some("p"));
+/// assert_eq!(data.joins.len(), 1);
+/// assert!(data.filters.is_empty());
+/// assert_eq!(data.sort[0].order, Order::Desc);
+/// assert_eq!(
+///     (data.limit, data.offset, data.distinct),
+///     (Some(10), Some(2), true)
+/// );
+/// assert!(
+///     query
+///         .render(DialectId::Sqlite)?
+///         .sql()
+///         .contains("CROSS JOIN")
+/// );
+/// # Ok::<(), stackpress_sql::SqlError>(())
+/// ```
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub enum Order {
     /// Ascending order.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Order, Select};
+    /// let query = Select::default().order_by("id", Order::Asc);
+    /// assert_eq!(query.build().sort.len(), 1);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     #[default]
     Asc,
     /// Descending order.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Order, Select};
+    /// let query = Select::default().order_by("id", Order::Desc);
+    /// assert_eq!(query.build().sort.len(), 1);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Desc,
 }
 
 /// A checked join family; CROSS never carries an ON clause.
+///
+/// # Examples
+///
+/// ```
+/// use stackpress_sql::{DialectId, Expr, Join, JoinKind, Order, Render, Select, Sort, TableRef};
+/// let query = Select::new(["id"])
+///     .select("name")
+///     .from(TableRef::new("profile").alias("p"))
+///     .join(Join {
+///         kind: JoinKind::Cross,
+///         table: "category".into(),
+///         on: None,
+///     })
+///     .sort(Sort {
+///         expression: Expr::column("id"),
+///         order: Order::Desc,
+///     })
+///     .limit(10)
+///     .offset(2)
+///     .distinct();
+/// let data = query.build();
+/// assert_eq!(data.selectors.len(), 2);
+/// assert_eq!(data.table.as_ref().unwrap().alias.as_deref(), Some("p"));
+/// assert_eq!(data.joins.len(), 1);
+/// assert!(data.filters.is_empty());
+/// assert_eq!(data.sort[0].order, Order::Desc);
+/// assert_eq!(
+///     (data.limit, data.offset, data.distinct),
+///     (Some(10), Some(2), true)
+/// );
+/// assert!(
+///     query
+///         .render(DialectId::Sqlite)?
+///         .sql()
+///         .contains("CROSS JOIN")
+/// );
+/// # Ok::<(), stackpress_sql::SqlError>(())
+/// ```
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum JoinKind {
     /// Matching rows only.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{DialectId, Expr, Join, JoinKind, Render, Select};
+    /// let join = Join {
+    ///     kind: JoinKind::Inner,
+    ///     table: "parent".into(),
+    ///     on: Some(Expr::eq("id", 7)),
+    /// };
+    /// Select::default()
+    ///     .from("profile")
+    ///     .join(join)
+    ///     .render(DialectId::Postgres)?;
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Inner,
     /// All rows from the left input.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{DialectId, Expr, Join, JoinKind, Render, Select};
+    /// let join = Join {
+    ///     kind: JoinKind::Left,
+    ///     table: "parent".into(),
+    ///     on: Some(Expr::eq("id", 7)),
+    /// };
+    /// Select::default()
+    ///     .from("profile")
+    ///     .join(join)
+    ///     .render(DialectId::Postgres)?;
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Left,
     /// All rows from the right input (SQLite 3.39+).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{DialectId, Expr, Join, JoinKind, Render, Select};
+    /// let join = Join {
+    ///     kind: JoinKind::Right,
+    ///     table: "parent".into(),
+    ///     on: Some(Expr::eq("id", 7)),
+    /// };
+    /// Select::default()
+    ///     .from("profile")
+    ///     .join(join)
+    ///     .render(DialectId::Postgres)?;
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Right,
     /// All rows from both inputs (SQLite 3.39+).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{DialectId, Expr, Join, JoinKind, Render, Select};
+    /// let join = Join {
+    ///     kind: JoinKind::Full,
+    ///     table: "parent".into(),
+    ///     on: Some(Expr::eq("id", 7)),
+    /// };
+    /// Select::default()
+    ///     .from("profile")
+    ///     .join(join)
+    ///     .render(DialectId::Postgres)?;
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Full,
     /// Cartesian product, without an ON predicate.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{DialectId, Join, JoinKind, Render, Select};
+    /// let join = Join {
+    ///     kind: JoinKind::Cross,
+    ///     table: "parent".into(),
+    ///     on: None,
+    /// };
+    /// Select::default()
+    ///     .from("profile")
+    ///     .join(join)
+    ///     .render(DialectId::Postgres)?;
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Cross,
 }
 
 /// An ordered relation join with an explicit typed condition.
+///
+/// # Examples
+///
+/// ```
+/// use stackpress_sql::{DialectId, Expr, Join, JoinKind, Order, Render, Select, Sort, TableRef};
+/// let query = Select::new(["id"])
+///     .select("name")
+///     .from(TableRef::new("profile").alias("p"))
+///     .join(Join {
+///         kind: JoinKind::Cross,
+///         table: "category".into(),
+///         on: None,
+///     })
+///     .sort(Sort {
+///         expression: Expr::column("id"),
+///         order: Order::Desc,
+///     })
+///     .limit(10)
+///     .offset(2)
+///     .distinct();
+/// let data = query.build();
+/// assert_eq!(data.selectors.len(), 2);
+/// assert_eq!(data.table.as_ref().unwrap().alias.as_deref(), Some("p"));
+/// assert_eq!(data.joins.len(), 1);
+/// assert!(data.filters.is_empty());
+/// assert_eq!(data.sort[0].order, Order::Desc);
+/// assert_eq!(
+///     (data.limit, data.offset, data.distinct),
+///     (Some(10), Some(2), true)
+/// );
+/// assert!(
+///     query
+///         .render(DialectId::Sqlite)?
+///         .sql()
+///         .contains("CROSS JOIN")
+/// );
+/// # Ok::<(), stackpress_sql::SqlError>(())
+/// ```
 #[derive(Clone, Debug, PartialEq)]
 pub struct Join {
     /// The join's finite syntax choice.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Expr, Join, JoinKind};
+    /// let value = Join {
+    ///     kind: JoinKind::Inner,
+    ///     table: "parent".into(),
+    ///     on: Some(Expr::eq("id", 7)),
+    /// };
+    /// assert_eq!(value.kind, JoinKind::Inner);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub kind: JoinKind,
     /// The joined table and optional alias.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Expr, Join, JoinKind};
+    /// let value = Join {
+    ///     kind: JoinKind::Inner,
+    ///     table: "parent".into(),
+    ///     on: Some(Expr::eq("id", 7)),
+    /// };
+    /// assert_eq!(value.table.name.segments(), ["parent"]);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub table: TableRef,
     /// Required for ordinary joins and forbidden for CROSS.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Expr, Join, JoinKind};
+    /// let value = Join {
+    ///     kind: JoinKind::Inner,
+    ///     table: "parent".into(),
+    ///     on: Some(Expr::eq("id", 7)),
+    /// };
+    /// assert!(value.on.is_some());
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub on: Option<Expr>,
 }
 
 /// One ordered sort expression.
+///
+/// # Examples
+///
+/// ```
+/// use stackpress_sql::{DialectId, Expr, Join, JoinKind, Order, Render, Select, Sort, TableRef};
+/// let query = Select::new(["id"])
+///     .select("name")
+///     .from(TableRef::new("profile").alias("p"))
+///     .join(Join {
+///         kind: JoinKind::Cross,
+///         table: "category".into(),
+///         on: None,
+///     })
+///     .sort(Sort {
+///         expression: Expr::column("id"),
+///         order: Order::Desc,
+///     })
+///     .limit(10)
+///     .offset(2)
+///     .distinct();
+/// let data = query.build();
+/// assert_eq!(data.selectors.len(), 2);
+/// assert_eq!(data.table.as_ref().unwrap().alias.as_deref(), Some("p"));
+/// assert_eq!(data.joins.len(), 1);
+/// assert!(data.filters.is_empty());
+/// assert_eq!(data.sort[0].order, Order::Desc);
+/// assert_eq!(
+///     (data.limit, data.offset, data.distinct),
+///     (Some(10), Some(2), true)
+/// );
+/// assert!(
+///     query
+///         .render(DialectId::Sqlite)?
+///         .sql()
+///         .contains("CROSS JOIN")
+/// );
+/// # Ok::<(), stackpress_sql::SqlError>(())
+/// ```
 #[derive(Clone, Debug, PartialEq)]
 pub struct Sort {
     /// A typed column or expression, with bound data if needed.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Expr, Order, Sort};
+    /// let value = Sort {
+    ///     expression: Expr::column("id"),
+    ///     order: Order::Asc,
+    /// };
+    /// assert!(matches!(value.expression, Expr::Column(_)));
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub expression: Expr,
     /// Explicit direction.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Expr, Order, Sort};
+    /// let value = Sort {
+    ///     expression: Expr::column("id"),
+    ///     order: Order::Asc,
+    /// };
+    /// assert_eq!(value.order, Order::Asc);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub order: Order,
 }
 
-/// Immutable inspection snapshot borrowed from a [`Select`].
+/// Immutable inspection snapshot borrowed from a [`crate::Select`].
+///
+/// # Examples
+///
+/// ```
+/// use stackpress_sql::{DialectId, Expr, Join, JoinKind, Order, Render, Select, Sort, TableRef};
+/// let query = Select::new(["id"])
+///     .select("name")
+///     .from(TableRef::new("profile").alias("p"))
+///     .join(Join {
+///         kind: JoinKind::Cross,
+///         table: "category".into(),
+///         on: None,
+///     })
+///     .sort(Sort {
+///         expression: Expr::column("id"),
+///         order: Order::Desc,
+///     })
+///     .limit(10)
+///     .offset(2)
+///     .distinct();
+/// let data = query.build();
+/// assert_eq!(data.selectors.len(), 2);
+/// assert_eq!(data.table.as_ref().unwrap().alias.as_deref(), Some("p"));
+/// assert_eq!(data.joins.len(), 1);
+/// assert!(data.filters.is_empty());
+/// assert_eq!(data.sort[0].order, Order::Desc);
+/// assert_eq!(
+///     (data.limit, data.offset, data.distinct),
+///     (Some(10), Some(2), true)
+/// );
+/// assert!(
+///     query
+///         .render(DialectId::Sqlite)?
+///         .sql()
+///         .contains("CROSS JOIN")
+/// );
+/// # Ok::<(), stackpress_sql::SqlError>(())
+/// ```
 #[derive(Clone, Debug, PartialEq)]
 pub struct SelectData {
     /// Ordered projections; default construction selects `*`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Select;
+    /// let query = Select::default().from("profile").order("id").limit(10);
+    /// let value = query.build();
+    /// assert_eq!(value.selectors.len(), 1);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub selectors: Vec<Selector>,
     /// Required source relation.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Select;
+    /// let query = Select::default().from("profile").order("id").limit(10);
+    /// let value = query.build();
+    /// assert!(value.table.is_some());
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub table: Option<TableRef>,
     /// Ordered joins.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Select;
+    /// let query = Select::default().from("profile").order("id").limit(10);
+    /// let value = query.build();
+    /// assert!(value.joins.is_empty());
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub joins: Vec<Join>,
     /// Ordered predicates combined by AND.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Select;
+    /// let query = Select::default().from("profile").order("id").limit(10);
+    /// let value = query.build();
+    /// assert!(value.filters.is_empty());
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub filters: Vec<Expr>,
     /// Ordered sorting.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Select;
+    /// let query = Select::default().from("profile").order("id").limit(10);
+    /// let value = query.build();
+    /// assert_eq!(value.sort.len(), 1);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub sort: Vec<Sort>,
     /// None leaves SQL unbounded; Some(0) means zero rows.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Select;
+    /// let query = Select::default().from("profile").order("id").limit(10);
+    /// let value = query.build();
+    /// assert_eq!(value.limit, Some(10));
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub limit: Option<u64>,
     /// Optional row offset; offset alone uses SQLite LIMIT -1.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Select;
+    /// let query = Select::default().from("profile").order("id").limit(10);
+    /// let value = query.build();
+    /// assert_eq!(value.offset, None);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub offset: Option<u64>,
     /// Whether duplicate projected rows are removed.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Select;
+    /// let query = Select::default().from("profile").order("id").limit(10);
+    /// let value = query.build();
+    /// assert_eq!(value.distinct, false);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub distinct: bool,
 }
 
 /// Owned reusable SELECT, independent from a database or transaction.
+///
+/// Builders retain owned data and defer validation to [`crate::Render::render`].
+/// [`Self::build`] borrows an inspection snapshot and performs no validation.
+/// [`Self::where_eq`] replaces the previous equality set by that method; use
+/// [`Self::and_where`] to append equalities. No filter is allowed for SELECT.
+/// `limit(0)` requests zero rows; absent limit leaves the adapter output budget in force.
+///
+/// # Examples
+///
+/// ```
+/// use stackpress_sql::{DialectId, Expr, Join, JoinKind, Order, Render, Select, Sort, TableRef};
+/// let query = Select::new(["id"])
+///     .select("name")
+///     .from(TableRef::new("profile").alias("p"))
+///     .join(Join {
+///         kind: JoinKind::Cross,
+///         table: "category".into(),
+///         on: None,
+///     })
+///     .sort(Sort {
+///         expression: Expr::column("id"),
+///         order: Order::Desc,
+///     })
+///     .limit(10)
+///     .offset(2)
+///     .distinct();
+/// let data = query.build();
+/// assert_eq!(data.selectors.len(), 2);
+/// assert_eq!(data.table.as_ref().unwrap().alias.as_deref(), Some("p"));
+/// assert_eq!(data.joins.len(), 1);
+/// assert!(data.filters.is_empty());
+/// assert_eq!(data.sort[0].order, Order::Desc);
+/// assert_eq!(
+///     (data.limit, data.offset, data.distinct),
+///     (Some(10), Some(2), true)
+/// );
+/// assert!(
+///     query
+///         .render(DialectId::Sqlite)?
+///         .sql()
+///         .contains("CROSS JOIN")
+/// );
+/// # Ok::<(), stackpress_sql::SqlError>(())
+/// ```
 #[derive(Clone, Debug, PartialEq)]
 pub struct Select {
     /// All mutable builder state; only consumed fluent calls can change it.
@@ -94,6 +569,15 @@ impl Default for Select {
 
 impl Select {
     /// Select an explicit list. Only the exact string `*` is special syntax.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Select;
+    /// let query = Select::new(["id", "name"]);
+    /// assert_eq!(query.build().selectors.len(), 2);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn new(columns: impl IntoIterator<Item = impl Into<Selector>>) -> Self {
         Self {
             data: SelectData {
@@ -111,36 +595,124 @@ impl Select {
     }
 
     /// Inspect immutable data; cloning the builder produces independent state.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Select;
+    /// let query = Select::default().from("profile").limit(0);
+    /// assert_eq!(query.build().limit, Some(0));
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn build(&self) -> &SelectData {
         &self.data
     }
 
     /// Add another typed projection in SQL/bind order.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Select;
+    /// let query = Select::new(["id"]).select("name");
+    /// assert_eq!(query.build().selectors.len(), 2);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn select(mut self, selector: impl Into<Selector>) -> Self {
         self.data.selectors.push(selector.into());
         self
     }
 
     /// Set a literal or explicitly qualified/aliased source relation.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Select;
+    /// let query = Select::default().from("profile");
+    /// assert!(query.build().table.is_some());
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn from(mut self, table: impl Into<TableRef>) -> Self {
         self.data.table = Some(table.into());
         self
     }
 
     /// Request duplicate-row elimination.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Select;
+    /// assert!(Select::default().distinct().build().distinct);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn distinct(mut self) -> Self {
         self.data.distinct = true;
         self
     }
 
     /// Append a typed join, validated as a whole before rendering returns.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{DialectId, Expr, Join, JoinKind, Order, Render, Select, Sort, TableRef};
+    /// let query = Select::new(["id"])
+    ///     .select("name")
+    ///     .from(TableRef::new("profile").alias("p"))
+    ///     .join(Join {
+    ///         kind: JoinKind::Cross,
+    ///         table: "category".into(),
+    ///         on: None,
+    ///     })
+    ///     .sort(Sort {
+    ///         expression: Expr::column("id"),
+    ///         order: Order::Desc,
+    ///     })
+    ///     .limit(10)
+    ///     .offset(2)
+    ///     .distinct();
+    /// let data = query.build();
+    /// assert_eq!(data.selectors.len(), 2);
+    /// assert_eq!(data.table.as_ref().unwrap().alias.as_deref(), Some("p"));
+    /// assert_eq!(data.joins.len(), 1);
+    /// assert!(data.filters.is_empty());
+    /// assert_eq!(data.sort[0].order, Order::Desc);
+    /// assert_eq!(
+    ///     (data.limit, data.offset, data.distinct),
+    ///     (Some(10), Some(2), true)
+    /// );
+    /// assert!(
+    ///     query
+    ///         .render(DialectId::Sqlite)?
+    ///         .sql()
+    ///         .contains("CROSS JOIN")
+    /// );
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn join(mut self, join: Join) -> Self {
         self.data.joins.push(join);
         self
     }
 
     /// Set the M0 equality condition, replacing its previous value if present.
-    /// Use [`Self::and_where`] with [`Expr::eq`] to append multiple equalities.
+    /// Use [`Self::and_where`] with [`crate::Expr::eq`] to append multiple equalities.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{DialectId, Render, Select, SqlValue};
+    /// let query = Select::default()
+    ///     .from("profile")
+    ///     .where_eq("id", 1)
+    ///     .where_eq("id", 2);
+    /// assert_eq!(
+    ///     query.render(DialectId::Sqlite)?.binds(),
+    ///     &[SqlValue::Integer(2)]
+    /// );
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn where_eq(mut self, column: impl Into<Identifier>, value: impl Into<SqlValue>) -> Self {
         let expression = Expr::eq(column, value);
         if let Some(index) = self.equality_index {
@@ -154,12 +726,38 @@ impl Select {
     }
 
     /// Append a typed condition while preserving group parentheses.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Expr, Select};
+    /// let query = Select::default()
+    ///     .from("profile")
+    ///     .and_where(Expr::eq("id", 7));
+    /// assert_eq!(query.build().filters.len(), 1);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn and_where(mut self, expression: Expr) -> Self {
         self.data.filters.push(expression);
         self
     }
 
     /// Append exact typed JSON scalar equality at a checked path.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{DialectId, JsonPath, JsonPathOptions, JsonScalar, Render, Select};
+    /// let path = JsonPath::parse("tags", JsonPathOptions::default())?;
+    /// let query = Select::default().from("profile").where_json(
+    ///     "data",
+    ///     path,
+    ///     JsonScalar::String("admin".into()),
+    /// );
+    /// assert_eq!(query.build().filters.len(), 1);
+    /// assert!(!query.render(DialectId::Sqlite)?.binds().is_empty());
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn where_json(
         self,
         column: impl Into<Identifier>,
@@ -170,6 +768,21 @@ impl Select {
     }
 
     /// Append direct scalar membership in a JSON array.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{DialectId, JsonPath, JsonPathOptions, JsonScalar, Render, Select};
+    /// let path = JsonPath::parse("tags", JsonPathOptions::default())?;
+    /// let query = Select::default().from("profile").where_json_contains(
+    ///     "data",
+    ///     path,
+    ///     JsonScalar::String("admin".into()),
+    /// );
+    /// assert_eq!(query.build().filters.len(), 1);
+    /// assert!(!query.render(DialectId::Sqlite)?.binds().is_empty());
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn where_json_contains(
         self,
         column: impl Into<Identifier>,
@@ -180,6 +793,15 @@ impl Select {
     }
 
     /// Append a column sort with an explicit direction.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Order, Select};
+    /// let query = Select::default().order_by("id", Order::Desc);
+    /// assert_eq!(query.build().sort[0].order, Order::Desc);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn order_by(mut self, column: impl Into<Identifier>, order: Order) -> Self {
         self.data.sort.push(Sort {
             expression: Expr::column(column),
@@ -189,23 +811,88 @@ impl Select {
     }
 
     /// Append the default ascending column sort.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Order, Select};
+    /// assert_eq!(
+    ///     Select::default().order("id").build().sort[0].order,
+    ///     Order::Asc
+    /// );
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn order(self, column: impl Into<Identifier>) -> Self {
         self.order_by(column, Order::Asc)
     }
 
     /// Append an explicit expression sort.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{DialectId, Expr, Join, JoinKind, Order, Render, Select, Sort, TableRef};
+    /// let query = Select::new(["id"])
+    ///     .select("name")
+    ///     .from(TableRef::new("profile").alias("p"))
+    ///     .join(Join {
+    ///         kind: JoinKind::Cross,
+    ///         table: "category".into(),
+    ///         on: None,
+    ///     })
+    ///     .sort(Sort {
+    ///         expression: Expr::column("id"),
+    ///         order: Order::Desc,
+    ///     })
+    ///     .limit(10)
+    ///     .offset(2)
+    ///     .distinct();
+    /// let data = query.build();
+    /// assert_eq!(data.selectors.len(), 2);
+    /// assert_eq!(data.table.as_ref().unwrap().alias.as_deref(), Some("p"));
+    /// assert_eq!(data.joins.len(), 1);
+    /// assert!(data.filters.is_empty());
+    /// assert_eq!(data.sort[0].order, Order::Desc);
+    /// assert_eq!(
+    ///     (data.limit, data.offset, data.distinct),
+    ///     (Some(10), Some(2), true)
+    /// );
+    /// assert!(
+    ///     query
+    ///         .render(DialectId::Sqlite)?
+    ///         .sql()
+    ///         .contains("CROSS JOIN")
+    /// );
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn sort(mut self, sort: Sort) -> Self {
         self.data.sort.push(sort);
         self
     }
 
     /// Set a row limit; zero is retained rather than treated as absent.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Select;
+    /// assert_eq!(Select::default().limit(0).build().limit, Some(0));
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn limit(mut self, limit: u64) -> Self {
         self.data.limit = Some(limit);
         self
     }
 
     /// Set a row offset, checked against SQLite's signed integer range.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Select;
+    /// assert_eq!(Select::default().offset(0).build().offset, Some(0));
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn offset(mut self, offset: u64) -> Self {
         self.data.offset = Some(offset);
         self
@@ -288,15 +975,78 @@ impl Render for Select {
 }
 
 /// Explicit write-cell state: a bound NULL differs from a requested database default.
+///
+/// # Examples
+///
+/// ```
+/// use stackpress_sql::{DialectId, Insert, Render, WriteValue};
+/// let insert = Insert::new("profile")
+///     .columns(["name"])
+///     .values([WriteValue::from("Ada")])
+///     .values([WriteValue::from("Grace")])
+///     .returning(["id"]);
+/// let data = insert.build();
+/// assert_eq!(data.table.segments(), ["profile"]);
+/// assert_eq!(data.columns, ["name"]);
+/// assert_eq!(data.rows.len(), 2);
+/// assert_eq!(data.returning.len(), 1);
+/// assert!(!data.default_values);
+/// assert_eq!(insert.render(DialectId::Sqlite)?.binds().len(), 2);
+/// # Ok::<(), stackpress_sql::SqlError>(())
+/// ```
 #[derive(Clone, Debug, PartialEq)]
 pub enum WriteValue {
     /// Explicit structured JSON: bound text is cast to the dialect's native JSON storage.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{DialectId, Insert, JsonScalar, JsonValue, Render, WriteValue};
+    /// let insert = Insert::new("profile")
+    ///     .columns(["value"])
+    ///     .values([WriteValue::Json(JsonValue::Scalar(JsonScalar::Null))]);
+    /// insert.render(DialectId::Sqlite)?;
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Json(crate::JsonValue),
     /// Owned native bind, including SQL NULL.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{DialectId, Insert, Render, WriteValue};
+    /// let insert = Insert::new("profile")
+    ///     .columns(["value"])
+    ///     .values([WriteValue::Value("Ada".into())]);
+    /// insert.render(DialectId::Sqlite)?;
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Value(SqlValue),
     /// Omit/use the column's default; SQLite allows this only for a whole omitted column.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{DialectId, Insert, Render, WriteValue};
+    /// let insert = Insert::new("profile")
+    ///     .columns(["value"])
+    ///     .values([WriteValue::Default]);
+    /// insert.render(DialectId::Postgres)?;
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Default,
     /// A typed expression, useful for updates such as `count = count + ...` via trusted SQL.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{DialectId, Expr, Insert, Render, WriteValue};
+    /// let insert = Insert::new("profile")
+    ///     .columns(["value"])
+    ///     .values([WriteValue::Expression(Expr::value(7))]);
+    /// insert.render(DialectId::Sqlite)?;
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Expression(Expr),
 }
 
@@ -308,21 +1058,115 @@ impl<T: Into<SqlValue>> From<T> for WriteValue {
 }
 
 /// Immutable inspection data for one or many explicit-column insert rows.
+///
+/// # Examples
+///
+/// ```
+/// use stackpress_sql::{DialectId, Insert, Render, WriteValue};
+/// let insert = Insert::new("profile")
+///     .columns(["name"])
+///     .values([WriteValue::from("Ada")])
+///     .values([WriteValue::from("Grace")])
+///     .returning(["id"]);
+/// let data = insert.build();
+/// assert_eq!(data.table.segments(), ["profile"]);
+/// assert_eq!(data.columns, ["name"]);
+/// assert_eq!(data.rows.len(), 2);
+/// assert_eq!(data.returning.len(), 1);
+/// assert!(!data.default_values);
+/// assert_eq!(insert.render(DialectId::Sqlite)?.binds().len(), 2);
+/// # Ok::<(), stackpress_sql::SqlError>(())
+/// ```
 #[derive(Clone, Debug, PartialEq)]
 pub struct InsertData {
     /// Literal destination table.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Insert;
+    /// let query = Insert::new("profile").columns(["name"]).values(["Ada"]);
+    /// let value = query.build();
+    /// assert_eq!(value.table.segments(), ["profile"]);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub table: Identifier,
     /// Stable column order shared by every row.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Insert;
+    /// let query = Insert::new("profile").columns(["name"]).values(["Ada"]);
+    /// let value = query.build();
+    /// assert_eq!(value.columns, ["name"]);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub columns: Vec<String>,
     /// Each row must have exactly the column count.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Insert;
+    /// let query = Insert::new("profile").columns(["name"]).values(["Ada"]);
+    /// let value = query.build();
+    /// assert_eq!(value.rows.len(), 1);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub rows: Vec<Vec<WriteValue>>,
     /// Explicit RETURNING list, empty when not requested.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Insert;
+    /// let query = Insert::new("profile").columns(["name"]).values(["Ada"]);
+    /// let value = query.build();
+    /// assert!(value.returning.is_empty());
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub returning: Vec<Selector>,
     /// Explicit `DEFAULT VALUES`, mutually exclusive with columns/rows.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Insert;
+    /// let query = Insert::new("profile").columns(["name"]).values(["Ada"]);
+    /// let value = query.build();
+    /// assert_eq!(value.default_values, false);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub default_values: bool,
 }
 
 /// Owned INSERT builder with stable bulk column and bind order.
+///
+/// Call [`Self::columns`] once to set stable column order, then [`Self::values`]
+/// for each row. Every row must have that arity. Use [`Self::default_values`] for
+/// a single all-default row. SQLite rejects per-cell DEFAULT; JSON writes can
+/// use [`crate::WriteValue::Json`] to request the native JSON cast. RETURNING is unsupported
+/// on MySQL. Construction/build are inspection only; rendering validates the shape.
+///
+/// # Examples
+///
+/// ```
+/// use stackpress_sql::{DialectId, Insert, Render, WriteValue};
+/// let insert = Insert::new("profile")
+///     .columns(["name"])
+///     .values([WriteValue::from("Ada")])
+///     .values([WriteValue::from("Grace")])
+///     .returning(["id"]);
+/// let data = insert.build();
+/// assert_eq!(data.table.segments(), ["profile"]);
+/// assert_eq!(data.columns, ["name"]);
+/// assert_eq!(data.rows.len(), 2);
+/// assert_eq!(data.returning.len(), 1);
+/// assert!(!data.default_values);
+/// assert_eq!(insert.render(DialectId::Sqlite)?.binds().len(), 2);
+/// # Ok::<(), stackpress_sql::SqlError>(())
+/// ```
 #[derive(Clone, Debug, PartialEq)]
 pub struct Insert {
     data: InsertData,
@@ -330,6 +1174,15 @@ pub struct Insert {
 
 impl Insert {
     /// Name a destination; columns/values must be supplied or default_values requested.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Insert;
+    /// let insert = Insert::new("profile");
+    /// assert_eq!(insert.build().table.segments(), ["profile"]);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn new(table: impl Into<Identifier>) -> Self {
         Self {
             data: InsertData {
@@ -343,17 +1196,64 @@ impl Insert {
     }
 
     /// Inspect the detached insert state.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{DialectId, Insert, Render, WriteValue};
+    /// let insert = Insert::new("profile")
+    ///     .columns(["name"])
+    ///     .values([WriteValue::from("Ada")])
+    ///     .values([WriteValue::from("Grace")])
+    ///     .returning(["id"]);
+    /// let data = insert.build();
+    /// assert_eq!(data.table.segments(), ["profile"]);
+    /// assert_eq!(data.columns, ["name"]);
+    /// assert_eq!(data.rows.len(), 2);
+    /// assert_eq!(data.returning.len(), 1);
+    /// assert!(!data.default_values);
+    /// assert_eq!(insert.render(DialectId::Sqlite)?.binds().len(), 2);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn build(&self) -> &InsertData {
         &self.data
     }
 
     /// Set explicit stable columns; duplicate/empty names are render errors.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Insert;
+    /// let insert = Insert::new("profile").columns(["name", "id"]);
+    /// assert_eq!(insert.build().columns, ["name", "id"]);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn columns(mut self, columns: impl IntoIterator<Item = impl Into<String>>) -> Self {
         self.data.columns = columns.into_iter().map(Into::into).collect();
         self
     }
 
     /// Append one row in column order; bulk inserts call this repeatedly.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{DialectId, Insert, Render, WriteValue};
+    /// let insert = Insert::new("profile")
+    ///     .columns(["name"])
+    ///     .values([WriteValue::from("Ada")])
+    ///     .values([WriteValue::from("Grace")])
+    ///     .returning(["id"]);
+    /// let data = insert.build();
+    /// assert_eq!(data.table.segments(), ["profile"]);
+    /// assert_eq!(data.columns, ["name"]);
+    /// assert_eq!(data.rows.len(), 2);
+    /// assert_eq!(data.returning.len(), 1);
+    /// assert!(!data.default_values);
+    /// assert_eq!(insert.render(DialectId::Sqlite)?.binds().len(), 2);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn values(mut self, values: impl IntoIterator<Item = impl Into<WriteValue>>) -> Self {
         self.data
             .rows
@@ -362,18 +1262,69 @@ impl Insert {
     }
 
     /// Explicitly insert a row using database defaults for every column.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{DialectId, Insert, Render};
+    /// let insert = Insert::new("profile").default_values();
+    /// assert!(insert.build().default_values);
+    /// assert!(
+    ///     insert
+    ///         .render(DialectId::Sqlite)?
+    ///         .sql()
+    ///         .contains("DEFAULT VALUES")
+    /// );
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn default_values(mut self) -> Self {
         self.data.default_values = true;
         self
     }
 
     /// Replace RETURNING projections with an explicit ordered list.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{DialectId, Insert, Render, WriteValue};
+    /// let insert = Insert::new("profile")
+    ///     .columns(["name"])
+    ///     .values([WriteValue::from("Ada")])
+    ///     .values([WriteValue::from("Grace")])
+    ///     .returning(["id"]);
+    /// let data = insert.build();
+    /// assert_eq!(data.table.segments(), ["profile"]);
+    /// assert_eq!(data.columns, ["name"]);
+    /// assert_eq!(data.rows.len(), 2);
+    /// assert_eq!(data.returning.len(), 1);
+    /// assert!(!data.default_values);
+    /// assert_eq!(insert.render(DialectId::Sqlite)?.binds().len(), 2);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn returning(mut self, selectors: impl IntoIterator<Item = impl Into<Selector>>) -> Self {
         self.data.returning = selectors.into_iter().map(Into::into).collect();
         self
     }
 
     /// Request every returned column.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{DialectId, Insert, Render};
+    /// let insert = Insert::new("profile")
+    ///     .columns(["name"])
+    ///     .values(["Ada"])
+    ///     .returning_all();
+    /// assert!(
+    ///     insert
+    ///         .render(DialectId::Postgres)?
+    ///         .sql()
+    ///         .ends_with("RETURNING *")
+    /// );
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn returning_all(self) -> Self {
         self.returning(["*"])
     }
@@ -447,15 +1398,67 @@ impl Render for Insert {
 }
 
 /// Shared inspectable mutation scope, including the explicit all-rows authorization.
+///
+/// # Examples
+///
+/// ```
+/// use stackpress_sql::{Delete, DialectId, Render};
+/// let query = Delete::new("profile").where_eq("id", 7).returning(["id"]);
+/// assert_eq!(query.build().filters.len(), 1);
+/// assert!(!query.build().all_rows);
+/// assert_eq!(query.build().returning.len(), 1);
+/// assert!(query.render(DialectId::Sqlite)?.sql().contains("RETURNING"));
+/// # Ok::<(), stackpress_sql::SqlError>(())
+/// ```
 #[derive(Clone, Debug, PartialEq)]
 pub struct MutationData {
     /// Literal or explicitly qualified target.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Delete;
+    /// let query = Delete::new("profile").where_eq("id", 7);
+    /// let value = query.build();
+    /// assert_eq!(value.table.segments(), ["profile"]);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub table: Identifier,
     /// Bound predicates in insertion order.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Delete;
+    /// let query = Delete::new("profile").where_eq("id", 7);
+    /// let value = query.build();
+    /// assert_eq!(value.filters.len(), 1);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub filters: Vec<Expr>,
     /// Explicit permission for a mutation without predicates.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Delete;
+    /// let query = Delete::new("profile").where_eq("id", 7);
+    /// let value = query.build();
+    /// assert_eq!(value.all_rows, false);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub all_rows: bool,
     /// Explicit RETURNING projections.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Delete;
+    /// let query = Delete::new("profile").where_eq("id", 7);
+    /// let value = query.build();
+    /// assert!(value.returning.is_empty());
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub returning: Vec<Selector>,
 }
 
@@ -480,6 +1483,26 @@ impl MutationData {
 }
 
 /// Owned UPDATE; empty assignments and implicit whole-table mutation are errors.
+///
+/// Rendering requires a nonempty filter or an explicit [`Self::all_rows`] choice.
+/// An empty/invalid filter still errors after all_rows; it never widens the mutation.
+/// RETURNING is unsupported on MySQL. Builder methods retain owned input;
+/// [`Self::build`] borrows data without validation or execution.
+///
+/// # Examples
+///
+/// ```
+/// use stackpress_sql::{DialectId, Render, Update};
+/// let query = Update::new("profile")
+///     .set("name", "Ada")
+///     .where_eq("id", 7)
+///     .returning(["id"]);
+/// assert_eq!(query.build().filters.len(), 1);
+/// assert!(!query.build().all_rows);
+/// assert_eq!(query.build().returning.len(), 1);
+/// assert!(query.render(DialectId::Sqlite)?.sql().contains("RETURNING"));
+/// # Ok::<(), stackpress_sql::SqlError>(())
+/// ```
 #[derive(Clone, Debug, PartialEq)]
 pub struct Update {
     /// Shared target, predicates and returned projections.
@@ -490,6 +1513,15 @@ pub struct Update {
 
 impl Update {
     /// Name the target without granting permission to update all rows.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Update;
+    /// let query = Update::new("profile");
+    /// assert_eq!(query.build().table.segments(), ["profile"]);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn new(table: impl Into<Identifier>) -> Self {
         Self {
             scope: MutationData::new(table),
@@ -498,33 +1530,110 @@ impl Update {
     }
 
     /// Inspect target/filter/returning state.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{DialectId, Render, Update};
+    /// let query = Update::new("profile")
+    ///     .set("name", "Ada")
+    ///     .where_eq("id", 7)
+    ///     .returning(["id"]);
+    /// assert_eq!(query.build().filters.len(), 1);
+    /// assert!(!query.build().all_rows);
+    /// assert_eq!(query.build().returning.len(), 1);
+    /// assert!(query.render(DialectId::Sqlite)?.sql().contains("RETURNING"));
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn build(&self) -> &MutationData {
         &self.scope
     }
 
     /// Inspect ordered assignments without exposing mutable builder state.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Update, WriteValue};
+    /// let query = Update::new("profile").set("name", "Ada");
+    /// assert_eq!(
+    ///     query.assignments(),
+    ///     &[("name".into(), WriteValue::Value("Ada".into()))]
+    /// );
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn assignments(&self) -> &[(String, WriteValue)] {
         &self.assignments
     }
 
     /// Append an assignment; repeated names are rejected at render time.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Update, WriteValue};
+    /// let query = Update::new("profile").set("name", "Ada");
+    /// assert_eq!(
+    ///     query.assignments(),
+    ///     &[("name".into(), WriteValue::Value("Ada".into()))]
+    /// );
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn set(mut self, column: impl Into<String>, value: impl Into<WriteValue>) -> Self {
         self.assignments.push((column.into(), value.into()));
         self
     }
 
     /// Append a bound equality predicate.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Update;
+    /// let query = Update::new("profile")
+    ///     .set("name", "Ada")
+    ///     .where_eq("id", 7)
+    ///     .where_eq("active", true);
+    /// assert_eq!(query.build().filters.len(), 2);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn where_eq(self, column: impl Into<Identifier>, value: impl Into<SqlValue>) -> Self {
         self.and_where(Expr::eq(column, value))
     }
 
     /// Append a typed predicate.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Expr, Update};
+    /// let query = Update::new("profile")
+    ///     .set("name", "Ada")
+    ///     .and_where(Expr::eq("id", 7));
+    /// assert_eq!(query.build().filters.len(), 1);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn and_where(mut self, expression: Expr) -> Self {
         self.scope.filters.push(expression);
         self
     }
 
     /// Match an exact JSON scalar at a checked path.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{DialectId, JsonPath, JsonPathOptions, JsonScalar, Render, Update};
+    /// let path = JsonPath::parse("tags", JsonPathOptions::default())?;
+    /// let query = Update::new("profile").set("name", "Ada").where_json(
+    ///     "data",
+    ///     path,
+    ///     JsonScalar::String("admin".into()),
+    /// );
+    /// assert_eq!(query.build().filters.len(), 1);
+    /// assert!(!query.render(DialectId::Sqlite)?.binds().is_empty());
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn where_json(
         self,
         column: impl Into<Identifier>,
@@ -535,6 +1644,19 @@ impl Update {
     }
 
     /// Match direct JSON array membership.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{DialectId, JsonPath, JsonPathOptions, JsonScalar, Render, Update};
+    /// let path = JsonPath::parse("tags", JsonPathOptions::default())?;
+    /// let query = Update::new("profile")
+    ///     .set("name", "Ada")
+    ///     .where_json_contains("data", path, JsonScalar::String("admin".into()));
+    /// assert_eq!(query.build().filters.len(), 1);
+    /// assert!(!query.render(DialectId::Sqlite)?.binds().is_empty());
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn where_json_contains(
         self,
         column: impl Into<Identifier>,
@@ -545,18 +1667,60 @@ impl Update {
     }
 
     /// Explicitly authorize an update without predicates.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{DialectId, Render, Update};
+    /// let query = Update::new("profile").set("name", "Ada").all_rows();
+    /// assert!(query.build().all_rows);
+    /// query.render(DialectId::Sqlite)?;
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn all_rows(mut self) -> Self {
         self.scope.all_rows = true;
         self
     }
 
     /// Replace the ordered RETURNING list.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{DialectId, Render, Update};
+    /// let query = Update::new("profile")
+    ///     .set("name", "Ada")
+    ///     .where_eq("id", 7)
+    ///     .returning(["id"]);
+    /// assert_eq!(query.build().filters.len(), 1);
+    /// assert!(!query.build().all_rows);
+    /// assert_eq!(query.build().returning.len(), 1);
+    /// assert!(query.render(DialectId::Sqlite)?.sql().contains("RETURNING"));
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn returning(mut self, selectors: impl IntoIterator<Item = impl Into<Selector>>) -> Self {
         self.scope.returning = selectors.into_iter().map(Into::into).collect();
         self
     }
 
     /// Return every updated column.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{DialectId, Render, Update};
+    /// let query = Update::new("profile")
+    ///     .set("name", "Ada")
+    ///     .where_eq("id", 7)
+    ///     .returning_all();
+    /// assert!(
+    ///     query
+    ///         .render(DialectId::Postgres)?
+    ///         .sql()
+    ///         .ends_with("RETURNING *")
+    /// );
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn returning_all(self) -> Self {
         self.returning(["*"])
     }
@@ -596,6 +1760,23 @@ impl Render for Update {
 }
 
 /// Owned DELETE; an absent/invalid predicate never silently widens mutation scope.
+///
+/// Rendering requires a nonempty filter or an explicit [`Self::all_rows`] choice.
+/// An empty/invalid filter still errors after all_rows; it never widens the mutation.
+/// RETURNING is unsupported on MySQL. Builder methods retain owned input;
+/// [`Self::build`] borrows data without validation or execution.
+///
+/// # Examples
+///
+/// ```
+/// use stackpress_sql::{Delete, DialectId, Render};
+/// let query = Delete::new("profile").where_eq("id", 7).returning(["id"]);
+/// assert_eq!(query.build().filters.len(), 1);
+/// assert!(!query.build().all_rows);
+/// assert_eq!(query.build().returning.len(), 1);
+/// assert!(query.render(DialectId::Sqlite)?.sql().contains("RETURNING"));
+/// # Ok::<(), stackpress_sql::SqlError>(())
+/// ```
 #[derive(Clone, Debug, PartialEq)]
 pub struct Delete {
     scope: MutationData,
@@ -603,6 +1784,15 @@ pub struct Delete {
 
 impl Delete {
     /// Name a target, initially requiring a predicate.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Delete;
+    /// let query = Delete::new("profile");
+    /// assert_eq!(query.build().table.segments(), ["profile"]);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn new(table: impl Into<Identifier>) -> Self {
         Self {
             scope: MutationData::new(table),
@@ -610,22 +1800,65 @@ impl Delete {
     }
 
     /// Inspect all detached mutation state.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Delete, DialectId, Render};
+    /// let query = Delete::new("profile").where_eq("id", 7).returning(["id"]);
+    /// assert_eq!(query.build().filters.len(), 1);
+    /// assert!(!query.build().all_rows);
+    /// assert_eq!(query.build().returning.len(), 1);
+    /// assert!(query.render(DialectId::Sqlite)?.sql().contains("RETURNING"));
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn build(&self) -> &MutationData {
         &self.scope
     }
 
     /// Append a bound equality predicate.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Delete;
+    /// let query = Delete::new("profile")
+    ///     .where_eq("id", 7)
+    ///     .where_eq("active", true);
+    /// assert_eq!(query.build().filters.len(), 2);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn where_eq(self, column: impl Into<Identifier>, value: impl Into<SqlValue>) -> Self {
         self.and_where(Expr::eq(column, value))
     }
 
     /// Append a typed predicate, preserving its group semantics.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Delete, Expr};
+    /// let query = Delete::new("profile").and_where(Expr::eq("id", 7));
+    /// assert_eq!(query.build().filters.len(), 1);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn and_where(mut self, expression: Expr) -> Self {
         self.scope.filters.push(expression);
         self
     }
 
     /// Match an exact JSON scalar at a checked path.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Delete, DialectId, JsonPath, JsonPathOptions, JsonScalar, Render};
+    /// let path = JsonPath::parse("tags", JsonPathOptions::default())?;
+    /// let query = Delete::new("profile").where_json("data", path, JsonScalar::String("admin".into()));
+    /// assert_eq!(query.build().filters.len(), 1);
+    /// assert!(!query.render(DialectId::Sqlite)?.binds().is_empty());
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn where_json(
         self,
         column: impl Into<Identifier>,
@@ -636,6 +1869,21 @@ impl Delete {
     }
 
     /// Match direct scalar membership in a JSON array.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Delete, DialectId, JsonPath, JsonPathOptions, JsonScalar, Render};
+    /// let path = JsonPath::parse("tags", JsonPathOptions::default())?;
+    /// let query = Delete::new("profile").where_json_contains(
+    ///     "data",
+    ///     path,
+    ///     JsonScalar::String("admin".into()),
+    /// );
+    /// assert_eq!(query.build().filters.len(), 1);
+    /// assert!(!query.render(DialectId::Sqlite)?.binds().is_empty());
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn where_json_contains(
         self,
         column: impl Into<Identifier>,
@@ -646,18 +1894,54 @@ impl Delete {
     }
 
     /// Explicitly authorize deleting every row.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Delete, DialectId, Render};
+    /// let query = Delete::new("profile").all_rows();
+    /// assert!(query.build().all_rows);
+    /// query.render(DialectId::Sqlite)?;
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn all_rows(mut self) -> Self {
         self.scope.all_rows = true;
         self
     }
 
     /// Replace the ordered RETURNING list.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Delete, DialectId, Render};
+    /// let query = Delete::new("profile").where_eq("id", 7).returning(["id"]);
+    /// assert_eq!(query.build().filters.len(), 1);
+    /// assert!(!query.build().all_rows);
+    /// assert_eq!(query.build().returning.len(), 1);
+    /// assert!(query.render(DialectId::Sqlite)?.sql().contains("RETURNING"));
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn returning(mut self, selectors: impl IntoIterator<Item = impl Into<Selector>>) -> Self {
         self.scope.returning = selectors.into_iter().map(Into::into).collect();
         self
     }
 
     /// Return every deleted column.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Delete, DialectId, Render};
+    /// let query = Delete::new("profile").where_eq("id", 7).returning_all();
+    /// assert!(
+    ///     query
+    ///         .render(DialectId::Postgres)?
+    ///         .sql()
+    ///         .ends_with("RETURNING *")
+    /// );
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn returning_all(self) -> Self {
         self.returning(["*"])
     }
