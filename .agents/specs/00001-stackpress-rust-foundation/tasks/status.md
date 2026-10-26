@@ -18,7 +18,7 @@ Status values follow the spec task implementation workflow: `proposed`, `open`, 
 | [00007 Slice 4 SQL](00007-slice-4-sql.md) | verified | Owner accepted 2026-10-25 (G24/G26); M0–M3 and rounds 1–4 merged; coordinator closeout verified 2026-10-26. Acceptance criteria: none. |
 | [00007A SQL usage and API docs](00007A-sql-docs.md) | verified | Owner requested 2026-10-26; 40 pages across core and SQLite; coordinator-reviewed 2026-10-26. Acceptance criteria: none. |
 | [00007B Consistent where_eq and insert_id Rustdoc](00007B-sql-where-eq-and-insert-id-docs.md) | verified | Side quest of 00007A, owner-approved and coordinator-verified 2026-10-26. Acceptance criteria: none. |
-| [00008 Slice 5 UI](00008-slice-5-ui.md) | started | Owner accepted 2026-10-25, in parallel with 00007 (G23). Design approved 2026-10-26 (G25); M0 released. Visual acceptance 00008-001 to 008 accepted. |
-| [00008A UI usage and API docs](00008A-ui-docs.md) | started | Owner requested 2026-10-26 (option A). Acceptance criteria: none. |
+| [00008 Slice 5 UI](00008-slice-5-ui.md) | accepted | Owner accepted 2026-10-25 (G25); M0–M4 and rounds 1–4 merged; coordinator closeout verified and owner visual acceptance 2026-10-26. |
+| [00008A UI usage and API docs](00008A-ui-docs.md) | verified | Owner requested 2026-10-26; 52 pages across framework-view and framework-ui; coordinator-reviewed 2026-10-26. Acceptance criteria: none. |
 | [00009 Profile UI backed by SQLite](00009-profile-ui-on-sqlite.md) | started | Owner requested 2026-10-26 (option B). Acceptance criteria: none; output parity with the accepted UI. |
 | [00010 Owner review issues #1–#13](00010-owner-review-issues.md) | started | Owner filed 2026-10-26 and allowed early start; two crate-disjoint lanes. Acceptance criteria: none. |

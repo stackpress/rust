@@ -142,6 +142,24 @@ Design checkpoint prepared on 2026-10-25. Start with [Slice 5 decisions and reco
   - the packaged `.app` passed the full control list (bootstrap, invalid, empty, search, native host error and retry, denied transport, detail, history, return, missing, locale, theme, disposal), with `in_flight: 0` and no process left behind.
 - **Acceptance progress:** 00008-002 and 003 have implementer and coordinator evidence. 004 and 005 are covered for native geometry, locale and Head. 006 to 008 remain for M3 and M4. Owner visual sign-off is still pending.
 
+**Rounds 1–4 and slice closeout (coordinator, 2026-10-26): verified.** Details are in the rounds receipts for [lane A](../slice-5-receipt-lane-a-rounds.md) and [lane B](../slice-5-receipt-lane-b-rounds.md).
+
+- **Lane A rounds (merged as `a4e99fa`):** defect fixes with regressions.
+  - The caller's reactive Owner is restored when a render unwinds; Leptos `Owner::with` doesn't restore it on panic.
+  - Reactive SSR Head evaluation is contained as a typed render error instead of a crashed request. Owned Head values are documented, and reactive SSR Head is deferred to S5-F6.
+  - Generated asset manifests are bounded by the gateway limit.
+  - A failed recheck no longer leaves a stale passed summary.
+- **Lane B rounds (merged as `fc91959`):** defect fixes with regressions.
+  - Row identities are unambiguous.
+  - The native host selects the shared customization as the named `profile-ui-labels` plugin after `profiles`, matching web. The coordinator's earlier output-only parity check had missed this.
+  - The single-owner signal-root boundary is documented: concurrent writers to one root are unsupported.
+- **Coordinator closeout on the integrated `trial/3`:**
+  - `check.py` passed;
+  - 442 workspace tests and 855 doctests passed; Rustdoc `-D warnings` clean; `cargo +1.96.0 check` passed;
+  - coverage: `stackpress-framework-view` **94.52%** and `stackpress-framework-ui` (SSR mode) **98.12%**. The example crates are covered by the implementers' lane receipts under the accepted WASM disposition.
+  - A packaged `.app` freshly built with `demo-customization` passed the navigation proof with `customization: true`, and no process was left behind.
+  - Per-lane reruns: all browser proofs at the root and `/demo/v1`, the gateway proof, and all three packaged launch modes.
+
 ## Acceptance notes
 
 **Owner visual acceptance, 2026-10-26: accepted ("looks good").**

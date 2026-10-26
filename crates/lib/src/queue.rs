@@ -12,6 +12,26 @@
 //! ```
 
 use crate::{Error, Flow, HandlerFuture, Result};
+use std::collections::VecDeque;
+
+#[cfg(test)]
+mod tests {
+    use super::ItemQueue;
+
+    /// Exhaustion cannot advance order, alter watermarks, or insert a partial item.
+    #[test]
+    fn sequence_exhaustion_preserves_pending_entries_and_watermarks() {
+        let mut queue = ItemQueue::new();
+        queue.add("retained", 7).unwrap();
+        queue.sequence = u64::MAX;
+        assert!(queue.add("rejected", -9).is_err());
+        assert_eq!((queue.sequence, queue.lower, queue.upper), (u64::MAX, 0, 7));
+        assert_eq!(queue.entries().len(), 1);
+        assert_eq!(queue.pop(), Some("retained"));
+        assert!(queue.push_front("rejected").is_err());
+        assert!(queue.is_empty());
+    }
+}
 
 /// A queued value with explicit signed priority and deterministic insertion order.
 pub struct Item<T> {
@@ -24,9 +44,11 @@ pub struct Item<T> {
 }
 
 /// An owned stable priority queue; draining retains priority high/low watermarks.
+/// Insertion takes O(n) movement with O(log n) priority comparisons; pop is O(1),
+/// so draining n pending entries is O(n). Entries stay contiguous for slice inspection.
 pub struct ItemQueue<T> {
-    /// Pending items sorted in execution order; pop consumes the first entry.
-    entries: Vec<Item<T>>,
+    /// Execution-ordered entries, made contiguous after insertion; pop preserves that invariant.
+    entries: VecDeque<Item<T>>,
     /// Next checked insertion order, never reused after draining.
     sequence: u64,
     /// Retained minimum priority, including already consumed items.
@@ -57,13 +79,13 @@ impl<T> ItemQueue<T> {
         // Priority watermarks start at zero and survive draining so front/back retain their
         // meaning.
         Self {
-            entries: Vec::new(),
+            entries: VecDeque::new(),
             sequence: 0,
             lower: 0,
             upper: 0,
         }
     }
-    /// Insert a value, sorting descending priority then ascending insertion order.
+    /// Insert a value in descending priority and ascending insertion order.
     ///
     /// # Errors
     /// Rejects exhausted sequence arithmetic before modifying the queue.
@@ -84,22 +106,25 @@ impl<T> ItemQueue<T> {
             .sequence
             .checked_add(1)
             .ok_or_else(|| Error::limit("queue sequence exhausted"))?;
-        self.entries.push(Item {
-            item,
-            priority,
-            sequence: self.sequence,
-        });
+        // The upper bound places this item after every existing equal-priority item (FIFO).
+        let position = self
+            .entries
+            .partition_point(|entry| entry.priority >= priority);
+        self.entries.insert(
+            position,
+            Item {
+                item,
+                priority,
+                sequence: self.sequence,
+            },
+        );
         // Advance monotonic order only after the corresponding item is stored.
         self.sequence = next;
         // Retain extremes so front/back remain deterministic after older items are popped.
         self.lower = self.lower.min(priority);
         self.upper = self.upper.max(priority);
-        // Higher priorities win; explicit sequence order resolves equal-priority ties consistently.
-        self.entries.sort_by(|a, b| {
-            b.priority
-                .cmp(&a.priority)
-                .then(a.sequence.cmp(&b.sequence))
-        });
+        // Restore the slice-view invariant here; later pops only advance the contiguous head.
+        self.entries.make_contiguous();
         Ok(self)
     }
     /// Insert below the retained low watermark.
@@ -161,12 +186,8 @@ impl<T> ItemQueue<T> {
     /// # Ok::<(), stackpress_lib::Error>(())
     /// ```
     pub fn pop(&mut self) -> Option<T> {
-        // Empty queues return None; consuming the selected item leaves all unstarted work in order.
-        if self.entries.is_empty() {
-            None
-        } else {
-            Some(self.entries.remove(0).item)
-        }
+        // Advancing the head moves no remaining items and preserves their execution-order slice.
+        self.entries.pop_front().map(|entry| entry.item)
     }
     /// Inspect remaining length.
     ///
@@ -213,7 +234,9 @@ impl<T> ItemQueue<T> {
     /// ```
     pub fn entries(&self) -> &[Item<T>] {
         // Borrow execution order without allowing priority/sequence invariants to be edited.
-        &self.entries
+        let (entries, wrapped) = self.entries.as_slices();
+        debug_assert!(wrapped.is_empty(), "insertion keeps the queue contiguous");
+        entries
     }
 }
 

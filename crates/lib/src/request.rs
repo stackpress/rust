@@ -249,7 +249,9 @@ impl Request {
     /// Finalize without invoking a reader; successful repeated loads are no-ops.
     ///
     /// # Errors
-    /// Rejects an already failed/interrupted attempt.
+    /// Rejects an already failed/interrupted attempt or current post/aggregate data
+    /// exceeding this request's selected budgets. See [`Self::load_with`] for the
+    /// retained-data and one-attempt state contracts, including cancellation.
     ///
     /// # Examples
     ///
@@ -275,6 +277,10 @@ impl Request {
     /// # Errors
     /// Returns the reader's original error, staged validation error or invalid state.
     /// Cancellation leaves Attempted; no automatic reader retry is permitted.
+    /// Reader or validation failure records Failed, retaining the previous body,
+    /// post and aggregate data. State rejection happens before invoking the loader;
+    /// successful repeated loads are no-ops. External loader side effects are not
+    /// rolled back when its staged result is rejected.
     ///
     /// # Panics
     /// A loader panic propagates and leaves the request Attempted; no automatic retry occurs.
@@ -375,7 +381,16 @@ impl fmt::Debug for Request {
 type DataInput = Box<dyn FnOnce(ParseLimits) -> Result<Nest> + Send>;
 
 /// Checked construction; setters stage owned inputs, build validates atomically.
+///
+/// Accidentally discarding a consuming chain is diagnosed; intentional discard uses `let _ =`.
+///
+/// ```compile_fail
+/// #![deny(unused_must_use)]
+/// use stackpress_lib::Request;
+/// Request::builder().method("POST");
+/// ```
 #[derive(Default)]
+#[must_use = "the staged request builder must be built or explicitly discarded"]
 pub struct RequestBuilder {
     url: Option<String>,
     method: Option<String>,
@@ -612,7 +627,11 @@ impl RequestBuilder {
     /// Validate all sources and commit one independently owned request.
     ///
     /// # Errors
-    /// Returns URL/method/header/MIME/data/parser failures, without partial output.
+    /// Returns URL, header/body-budget, MIME, query/post/data, cookie/session or
+    /// method validation failures, in that order. Deferred serialization errors
+    /// from [`Self::data_serialized`] surface when the data stage is reached.
+    /// No partial request is returned; this consumes the builder and its staged
+    /// inputs on failure, so retry requires constructing a new builder.
     ///
     /// # Examples
     ///
@@ -689,11 +708,19 @@ fn request_url(url: &str, limits: &ParseLimits) -> Result<url::Url> {
         // Only a real relative path is prefixed; malformed absolute URLs keep their original parse
         // failure.
         Err(url::ParseError::RelativeUrlWithoutBase) => {
-            url::Url::parse(&with_unknown_host(url)).map_err(Error::from_source)?
+            url::Url::parse(&with_unknown_host(url)).map_err(url_error)?
         }
-        Err(error) => return Err(Error::from_source(error)),
+        Err(error) => return Err(url_error(error)),
     };
     Ok(url)
+}
+
+/// Retain the URL parser cause while adding only request-boundary context.
+fn url_error(cause: url::ParseError) -> Error {
+    // Parser details remain private and independently downcastable in the source chain.
+    Error::new("request URL could not be parsed")
+        .with_kind(crate::ErrorKind::External)
+        .with_cause(cause)
 }
 
 /// Prefer explicit initial session values; otherwise combine all cookie header lines.

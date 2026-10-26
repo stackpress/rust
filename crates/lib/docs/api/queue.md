@@ -41,6 +41,9 @@ zero and retain all prior extrema even after draining. Neither queue implements 
 
 An item queue owns `T` without requiring it to be a handler. All arithmetic exhaustion errors occur
 before insertion.
+Storage keeps a contiguous execution-order slice. Insertion uses O(log n) comparisons and O(n)
+movement; pop is O(1), so draining n pending items is O(n). This suits registration/startup queues
+that favor ordered inspection and consuming execution over heap-only unordered inspection.
 
 ### 2.1. ItemQueue::new
 

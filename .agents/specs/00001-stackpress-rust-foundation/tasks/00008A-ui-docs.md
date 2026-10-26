@@ -52,11 +52,28 @@ Acceptance criteria: none
 
 ## Implementation notes
 
-Pending.
+Implemented on 2026-10-26; the full receipt is in [00008A receipt](00008A-receipt.md). It covers 52 pages across `crates/framework/framework-view/docs` and `crates/framework/framework-ui/docs`. Examples were compile-checked in native and wasm32 disposable consumers.
+
+**DX observations, no code changes:**
+
+1. **Candidate fix:** the generic `List` component emits `data-profile-id`. Profile-specific naming has leaked into a framework component. Renaming it changes visible markup, so it goes through the coordinator.
+2. Leptos macro consumers need a direct pinned `leptos` dependency in addition to framework re-exports.
+3. Owned SSR Head values and single-owner signal roots are behavioral contracts that the handle types don't fully enforce. Both are documented.
+4. `PageSnapshot.location` is a `String`; apps must validate their own canonical location against the catalog.
+5. The Language locale syntax is broader than the page-contract locale syntax; page users must satisfy both.
 
 ## Verification notes
 
-Pending.
+Coordinator review on 2026-10-26. Result: **verified**.
+
+- **Scope:** 52 pages plus the receipt; no source, test, manifest or lockfile change.
+- **Mechanical scan** of all 52 pages and 245 relative links/anchors: 0 real issues. The two flags are scanner false positives on `examples/profile-ui/README.md#asset-and-version-agreement`, outside the scanned set; that heading exists.
+- **Accuracy:** framework-ui concepts match the Slice 5 rounds receipts and source:
+  - owned SSR Head, with reactive Head deferred to S5-F6;
+  - a Head-assembly panic becomes `ViewError::Failure`, while component panics propagate after cleanup;
+  - Owner disposal and restoration on every supported exit;
+  - one signal root per owner, with no concurrent cross-thread queue.
+- **Example evidence** comes from the implementer and was not rerun by the coordinator.
 
 ## Acceptance notes
 

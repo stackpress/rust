@@ -1344,6 +1344,11 @@ impl Response {
     ///
     /// # Errors
     /// Returns original writer/state failures. Failure/cancellation does not retry.
+    /// Validation of buffered values/headers happens before consuming the attempt;
+    /// rejection there leaves output Open for correction. Entering the writer marks
+    /// Attempted, writer error records Failed, and cancellation while awaiting keeps
+    /// Attempted. Either can follow partial native output and cannot be retried.
+    /// Already Sent or Stopped output returns success without invoking another writer.
     ///
     /// # Panics
     /// A writer panic propagates and leaves output Attempted; bytes may already have been written.
