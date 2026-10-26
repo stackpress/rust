@@ -80,6 +80,13 @@ Design checkpoint prepared on 2026-10-25. Start with [Slice 4 decisions and reco
   - seven trybuild compile-fail proofs;
   - every concurrency test runs under a process watchdog, with a negative control.
 
+**M1 re-verification (coordinator, 2026-10-26): passed; merged as `bb078d5` (core) and `5a265a8` (SQLite); M2 released.** Details are in the receipts for the [core lane](../slice-4-receipt-lane-a-m1.md) and the [SQLite lane](../slice-4-receipt-lane-b-m1.md).
+
+- **Core lane (each lane checked in its own worktree):** the scope stays within `crates/sql/sql/**`. fmt, Clippy and the 1.96 check passed; 312 workspace tests and 437 doctests passed. Coverage measured alone is **98.30%**, and the core still has zero normal dependencies.
+- **SQLite lane:** the scope stays within `crates/sql/sql-sqlite/**`. fmt, Clippy and the 1.96 check passed; 276 workspace tests and 433 doctests passed. Coverage measured alone is **95.15%**.
+- **Integrated on `trial/3` after both merges:** fmt passed and Clippy is clean; 328 tests and 438 doctests passed, 0 failed.
+- **Operational note:** the disk reached 0 bytes free during verification. The coordinator deleted only finished-work build output, keeping logs and evidence, and lanes now reuse at most two target dirs each.
+
 ## Acceptance notes
 
 Library work has no visual acceptance artifact under the spec workflow; this task finishes at `verified` after coordinator review.
