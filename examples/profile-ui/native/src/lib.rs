@@ -3,7 +3,9 @@
 //! The registry owns only cancellation senders. No detached task owns a request,
 //! response or server, and cancel means losing a result rather than rollback.
 
-use stackpress_example_profile_ui_contracts::{MAX_REQUEST_BYTES, SearchInput, SearchReply};
+use stackpress_example_profile_ui_contracts::{
+    HostError, MAX_REQUEST_BYTES, SearchInput, SearchReply,
+};
 use stackpress_lib::{Request, Response};
 use stackpress_server::{HandleOptions, Server};
 use std::{
@@ -130,7 +132,13 @@ impl NativeHost {
             .await
             .map_err(|_| NativeError::Unavailable)?;
         if !report.is_success(&response) {
-            return Err(NativeError::Unavailable);
+            // A completed lifecycle rejection is public response data, not bridge failure.
+            let envelope = response
+                .try_to_json()
+                .map_err(|_| NativeError::Unavailable)?;
+            let error =
+                HostError::from_envelope(&envelope).map_err(|_| NativeError::Unavailable)?;
+            return serde_json::to_string(&error).map_err(|_| NativeError::Unavailable);
         }
         let reply = SearchReply::from_envelope(
             &response

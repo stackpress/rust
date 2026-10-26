@@ -14,15 +14,24 @@ use tokio::sync::oneshot;
 use super::{SqliteDatabase, TempDir, count, options, sql};
 
 /// Native phase at which the SQLite worker pauses behind a ready/go handshake.
-enum Hook {
+pub(super) enum Hook {
+    /// First native VM progress, including BEGIN before acknowledgement.
     Progress,
+    /// A nontrivial VM, beyond the short metadata and control statements.
     Costly,
+    /// A native row mutation before its statement acknowledgement.
     Update,
+    /// Native commit before its acknowledgement.
     Commit,
+    /// Explicit native rollback before its acknowledgement.
+    Rollback,
 }
 
 /// Install a one-shot safe SQLx hook on the size-one pool's only connection.
-async fn gate(db: &SqliteDatabase, hook: Hook) -> (oneshot::Receiver<()>, mpsc::Sender<()>) {
+pub(super) async fn gate(
+    db: &SqliteDatabase,
+    hook: Hook,
+) -> (oneshot::Receiver<()>, mpsc::Sender<()>) {
     let (ready, entered) = oneshot::channel();
     let (release, go) = mpsc::channel();
     let mut ready = Some(ready);
@@ -51,6 +60,7 @@ async fn gate(db: &SqliteDatabase, hook: Hook) -> (oneshot::Receiver<()>, mpsc::
             pause();
             true
         }),
+        Hook::Rollback => handle.set_rollback_hook(pause),
     }
     drop(handle);
     drop(connection);

@@ -3,6 +3,33 @@
 use stackpress_example_profile_ui_native::NativeHost;
 use tauri::{Manager, WebviewUrl, WebviewWindow, WebviewWindowBuilder};
 
+/// Proof-only listener, selected before building the host; ordinary app startup omits it.
+async fn proof_rejection(
+    request: &mut stackpress_lib::Request,
+    _: &mut stackpress_lib::Response,
+    _: stackpress_lib::Invocation<'_>,
+) -> stackpress_lib::Result<stackpress_lib::Flow> {
+    // Only the finite proof's explicit prefix selects this controlled public rejection.
+    if request.data.path_as::<String>("id")?.as_deref() == Some("host-error") {
+        return Err(stackpress_lib::Error::new("PRIVATE_PROOF_CAUSE")
+            .with_code(422)
+            .with_public_message("Choose another prefix."));
+    }
+    Ok(stackpress_lib::Flow::Continue)
+}
+
+/// Build the unchanged generated operation, optionally adding one explicit proof listener.
+async fn application(proof: bool) -> stackpress_server::BuildResult<NativeHost> {
+    if !proof {
+        return NativeHost::new().await;
+    }
+    let mut builder = stackpress_server::ServerBuilder::new();
+    stackpress_example_generated_profile::generated::register(&mut builder)?;
+    // Registration is proof-only; no command, privilege or domain implementation is added.
+    builder.on("profile-search", proof_rejection)?;
+    Ok(NativeHost::from_server(builder.build().await?))
+}
+
 /// Bind admission to the authoritative calling WebView and packaged origin.
 fn trusted(window: &WebviewWindow) -> Result<(), String> {
     let url = window.url().map_err(|_| "Search denied")?;
@@ -40,9 +67,9 @@ fn cancel_profile_search(
 
 /// Build real packaged windows and reject navigation away from bundled assets.
 fn main() {
-    let host =
-        tauri::async_runtime::block_on(NativeHost::new()).expect("valid generated Profile host");
     let proof = std::env::var_os("PROFILE_UI_PROOF").map(std::path::PathBuf::from);
+    let host = tauri::async_runtime::block_on(application(proof.is_some()))
+        .expect("valid generated Profile host");
     tauri::Builder::default()
         .manage(host)
         .invoke_handler(tauri::generate_handler![profile_search, cancel_profile_search])

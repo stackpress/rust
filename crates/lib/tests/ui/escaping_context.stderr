@@ -1,0 +1,17 @@
+error: lifetime may not live long enough
+ --> tests/ui/escaping_context.rs:7:5
+  |
+5 | fn escape(inv: Invocation<'_>) -> &'static String {
+  |           --- has type `Invocation<'1>`
+6 |     // Any requires a static payload type, not a static reference to that payload.
+7 |     inv.context::<String>().expect("context")
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ returning this value requires that `'1` must outlive `'static`
+
+error[E0515]: cannot return value referencing function parameter `inv`
+ --> tests/ui/escaping_context.rs:7:5
+  |
+7 |     inv.context::<String>().expect("context")
+  |     ---^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |     |
+  |     returns a value referencing data owned by the current function
+  |     `inv` is borrowed here

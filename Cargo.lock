@@ -4135,6 +4135,9 @@ version = "0.1.0"
 dependencies = [
  "serde",
  "serde_json",
+ "stackpress-lib",
+ "stackpress-server",
+ "tokio",
 ]
 
 [[package]]
@@ -4176,6 +4179,7 @@ dependencies = [
  "serde",
  "serde_json",
  "tokio",
+ "trybuild",
  "url",
 ]
 
@@ -4188,6 +4192,7 @@ dependencies = [
  "serde_json",
  "stackpress-lib",
  "tokio",
+ "trybuild",
 ]
 
 [[package]]

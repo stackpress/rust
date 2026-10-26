@@ -556,125 +556,32 @@ fn send_and_nested_handlers_finish_under_watchdog() {
     assert!(completion.status.success(), "{}", completion.output);
 }
 
-/// Link a UI fixture to this test build's production library, not a toy registry.
-fn compiler_command(fixture: &str) -> Command {
-    // Link the fixture against this test build's production rlib rather than recompiling a toy
-    // adapter.
-
-    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
-    let output = root.join("../../target/m0");
-    std::fs::create_dir_all(&output).expect("create ignored compiler-output directory");
-    let deps = std::env::current_exe()
-        .expect("test executable")
-        .parent()
-        .expect("deps directory")
-        .to_owned();
-    let rlib = std::fs::read_dir(&deps)
-        .expect("built libraries")
-        .filter_map(|entry| entry.ok())
-        .map(|entry| entry.path())
-        .filter(|path| {
-            path.file_name().is_some_and(|name| {
-                name.to_string_lossy().starts_with("libstackpress_lib-")
-                    && name.to_string_lossy().ends_with(".rlib")
-            })
-        })
-        .max_by_key(|path| path.metadata().and_then(|meta| meta.modified()).ok())
-        .expect("production rlib");
-    let mut command = Command::new("rustc");
-    command
-        .arg("--extern")
-        .arg(format!("stackpress_lib={}", rlib.display()))
-        .arg("-L")
-        .arg(format!("dependency={}", deps.display()));
-    command
-        .args(["--edition=2024", "--crate-type=bin"])
-        .arg(root.join("tests/ui").join(fixture))
-        .arg("--out-dir")
-        .arg(output);
-    command
+/// Check every rejection against Cargo-resolved production dependencies and exact diagnostics.
+#[test]
+#[ignore = "invoked by the compiler watchdog test"]
+fn compiler_rejections_child() {
+    // Cargo selects a consistent dependency graph for the fixtures; unrelated artifacts in the
+    // target directory cannot substitute a different library. Snapshots preserve each intended
+    // Send, Sync, Clone, exclusive-borrow, or lifetime error and reject incidental failures.
+    trybuild::TestCases::new().compile_fail("tests/ui/*.rs");
 }
 
-/// Compile the same adapter with a non-Send future and require a relevant error.
+/// Bound the complete compiler proof, including a cold Cargo build, by an external deadline.
 #[test]
-fn registration_rejects_a_non_send_returned_future() {
-    // Reject the named function because its returned future retains Rc across await, not because
-    // the function item is non-Send.
-
-    let mut command = compiler_command("non_send_handler.rs");
-    let completion = watchdog::run(&mut command, "non-send", Duration::from_secs(10))
+fn handler_ownership_and_send_contracts_are_compiler_enforced() {
+    // Run trybuild in this crate's own directory even when this executable is launched directly.
+    // A blocked Cargo/rustc cannot stop the parent from reporting a bounded failure.
+    let mut command = Command::new(std::env::current_exe().expect("integration-test executable"));
+    command.current_dir(env!("CARGO_MANIFEST_DIR")).args([
+        "--ignored",
+        "--exact",
+        "compiler_rejections_child",
+        "--nocapture",
+    ]);
+    let completion = watchdog::run(&mut command, "handler-compile", Duration::from_secs(180))
         .expect("launch/reap compiler rejection proof");
     assert!(!completion.timed_out, "{}", completion.output);
-    assert!(
-        !completion.status.success(),
-        "a non-Send future was accepted"
-    );
-    assert!(
-        completion
-            .output
-            .contains("cannot be sent between threads safely")
-            && completion.output.contains("Rc<()>")
-            && completion.output.contains("EmitterBuilder::on"),
-        "rejection must concern the returned future's Send bound: {}",
-        completion.output
-    );
-}
-
-/// Prove ownership restrictions with compiler errors against production types.
-#[test]
-fn stateful_clone_and_concurrent_mutable_aliases_are_rejected() {
-    // Require relevant compiler diagnostics so an unrelated syntax failure cannot satisfy an
-    // ownership proof.
-
-    for (fixture, scenario, diagnostics) in [
-        (
-            "stateful_clone.rs",
-            "stateful-clone",
-            vec!["no method named `clone`", "Request", "Response"],
-        ),
-        (
-            "concurrent_mutable_inputs.rs",
-            "mutable-alias",
-            vec![
-                "cannot borrow `*req` as mutable more than once",
-                "cannot borrow `*res` as mutable more than once",
-            ],
-        ),
-        (
-            "escaping_invocation.rs",
-            "escaping-invocation",
-            vec!["lifetime may not live long enough", "'static"],
-        ),
-        (
-            "escaping_context.rs",
-            "escaping-context",
-            vec!["cannot return value referencing function parameter", "inv"],
-        ),
-        (
-            "non_sync_context.rs",
-            "non-sync-context",
-            vec!["cannot be shared between threads safely", "Rc<()>"],
-        ),
-    ] {
-        let completion = watchdog::run(
-            &mut compiler_command(fixture),
-            scenario,
-            Duration::from_secs(10),
-        )
-        .expect("launch/reap ownership compiler proof");
-        assert!(!completion.timed_out, "{}", completion.output);
-        assert!(
-            !completion.status.success(),
-            "invalid ownership fixture was accepted"
-        );
-        for diagnostic in diagnostics {
-            assert!(
-                completion.output.contains(diagnostic),
-                "missing {diagnostic}: {}",
-                completion.output
-            );
-        }
-    }
+    assert!(completion.status.success(), "{}", completion.output);
 }
 
 /// Simulate a synchronously blocked executor only when a watchdog owns this child.

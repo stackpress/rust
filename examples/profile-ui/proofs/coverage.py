@@ -8,7 +8,7 @@ import subprocess
 import sys
 
 root = Path(__file__).resolve().parents[3]
-base = Path(os.environ.get("PROFILE_UI_COVERAGE_TARGET", "/private/tmp/stackpress-s5-m0-cov/llvm-cov-target"))
+base = Path(os.environ.get("PROFILE_UI_COVERAGE_TARGET", str(root / "target" / "profile-ui-native")))
 if len(sys.argv) > 1 and sys.argv[1] == "build-native":
     import shlex
     env = dict(os.environ, CARGO_TARGET_DIR=str(base))
@@ -25,7 +25,7 @@ if not profiles:
     raise SystemExit("no profiles; run the scoped cargo llvm-cov command after cleaning first")
 merged = base / "profile-ui-complete.profdata"
 subprocess.run([str(llvm / "llvm-profdata"), "merge", "-sparse", *map(str, profiles), "-o", str(merged)], check=True)
-prefixes = ("stackpress_example_profile_ui_", "stackpress_framework_", "pages-", "contracts-", "executor-", "cleanup-", "wire-")
+prefixes = ("stackpress_example_profile_ui_", "stackpress_framework_", "pages-", "contracts-", "executor-", "cleanup-", "wire-", "lifecycle-", "policies-", "routing-", "codec-", "reply-")
 objects = [p for p in (base / "debug/deps").iterdir() if p.is_file() and p.suffix == "" and p.name.startswith(prefixes) and os.access(p, os.X_OK)]
 for binary in ("profile-ui", "stackpress-example-profile-ui-web"):
     p = base / "debug" / binary
@@ -33,7 +33,7 @@ for binary in ("profile-ui", "stackpress-example-profile-ui-web"):
 command = [str(llvm / "llvm-cov"), "export", "-format=text", f"-instr-profile={merged}"]
 for obj in objects: command.extend(["-object", str(obj)])
 raw = subprocess.check_output(command, text=True)
-output = Path(os.environ.get("PROFILE_UI_COVERAGE_REPORT", "/private/tmp/stackpress-s5-m0-complete-coverage.json"))
+output = Path(os.environ.get("PROFILE_UI_COVERAGE_REPORT", "/private/tmp/profile-ui-complete-coverage.json"))
 output.write_text(raw)
 totals = defaultdict(lambda: [0, 0])
 for file in json.loads(raw)["data"][0]["files"]:
@@ -41,8 +41,9 @@ for file in json.loads(raw)["data"][0]["files"]:
     if not name.startswith(str(root) + "/"): continue
     relative = Path(name).relative_to(root)
     # Only production src files count; dedicated test source is evidence, not production.
-    if "src" not in relative.parts or relative.name == "tests.rs": continue
-    if str(relative).startswith("examples/profile-ui/"): group = relative.parts[2]
+    if str(relative) == "examples/profile-ui/route-contract.rs": group = "web"
+    elif "src" not in relative.parts or relative.name == "tests.rs": continue
+    elif str(relative).startswith("examples/profile-ui/"): group = relative.parts[2]
     elif str(relative).startswith("crates/framework/"): group = relative.parts[2]
     else: continue
     lines = file["summary"]["lines"]

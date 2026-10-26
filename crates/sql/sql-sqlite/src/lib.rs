@@ -1,6 +1,6 @@
 //! Native Tokio/SQLx SQLite execution, with finite pool and query budgets.
 //!
-//! Open is eager and file-backed. Transactions own a lease across awaits; M0 retires
+//! Open is eager and file-backed. Transactions own a lease across awaits; the adapter retires
 //! every transaction connection on completion/drop, conservatively covering uncertain
 //! native state. Ordinary statement leases are reused. No database is opened by import,
 //! no listeners are started, and no SQL operation is automatically retried.
@@ -8,7 +8,14 @@
 //! Cancelling a future loses observation: a write/commit may already have happened.
 //! Drop initiates worker close and native rollback; it does not synchronously acknowledge it.
 //! Result limits bound retained first-party values, not SQLite VM memory/time or a
-//! native cell's allocation before decoding. Only native aarch64 macOS is proved at M0.
+//! native cell's allocation before decoding. Verification covers native aarch64 macOS only.
+//! Statements refresh the native schema and discard cached statement metadata before prepare,
+//! favoring correct results after explicit DDL over reuse of prepared statement caches.
+//!
+//! Native insert IDs are reported only when this statement changes data and changes
+//! the connection's last-rowid observation. Reused explicit rowids and WITHOUT ROWID
+//! tables can yield `None`; use `INSERT ... RETURNING` for an authoritative generated
+//! key on every insert. UPDATE/DELETE/SELECT do not inherit a previous statement's ID.
 //!
 //! ```no_run
 //! use stackpress_sql::{DialectId, Engine, Sql};
@@ -25,6 +32,7 @@
 //! # }
 //! ```
 
+mod collect;
 mod execute;
 mod lease;
 mod options;
@@ -52,15 +60,23 @@ pub struct SqliteDatabase {
 }
 
 impl SqliteDatabase {
-    /// Validate options and eagerly open a real file using WAL/FULL and foreign keys.
+    /// Validate options and eagerly open a real file with FULL synchronous and foreign keys.
+    /// Writable connections request WAL; read-only connections preserve the file's mode.
     ///
     /// # Errors
     /// Invalid options, unavailable files, permissions and native/open timeouts fail;
     /// there is no fallback to a different file or an in-memory database.
     pub async fn open(options: SqliteOptions) -> Result<Self> {
+        Self::open_pool(options, SqlitePoolOptions::new()).await
+    }
+
+    /// Apply the adapter's finite policy before eagerly opening the native pool.
+    /// Keeping pool construction here also permits safe, private transition hooks in tests;
+    /// callers of the public API cannot install callbacks or change connection policy.
+    async fn open_pool(options: SqliteOptions, pool: SqlitePoolOptions) -> Result<Self> {
         options.validate()?;
         let connect = options.connect_options();
-        let pool = SqlitePoolOptions::new()
+        let pool = pool
             .max_connections(options.max_connections)
             .min_connections(0)
             .acquire_timeout(options.acquire_timeout())

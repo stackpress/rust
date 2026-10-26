@@ -1,0 +1,19 @@
+error[E0499]: cannot borrow `*req` as mutable more than once at a time
+  --> tests/ui/concurrent_mutable_inputs.rs:10:41
+   |
+ 9 |     let first = emitter.emit("first", req, res);
+   |                                       --- first mutable borrow occurs here
+10 |     let second = emitter.emit("second", req, res);
+   |                                         ^^^ second mutable borrow occurs here
+11 |     let _ = first.await;
+   |             ----- first borrow later used here
+
+error[E0499]: cannot borrow `*res` as mutable more than once at a time
+  --> tests/ui/concurrent_mutable_inputs.rs:10:46
+   |
+ 9 |     let first = emitter.emit("first", req, res);
+   |                                            --- first mutable borrow occurs here
+10 |     let second = emitter.emit("second", req, res);
+   |                                              ^^^ second mutable borrow occurs here
+11 |     let _ = first.await;
+   |             ----- first borrow later used here

@@ -12,7 +12,7 @@ if mode not in ("hydrate", "csr"):
 version = subprocess.check_output(["wasm-bindgen", "--version"], text=True).strip()
 if version != "wasm-bindgen 0.2.129":
     raise SystemExit("requires wasm-bindgen 0.2.129; no implicit install")
-target = Path(os.environ.get("PROFILE_UI_TARGET", root / "target" / f"profile-ui-{mode}"))
+target = Path(os.environ.get("PROFILE_UI_TARGET", root / "target" / "profile-ui-wasm"))
 environment = dict(os.environ, CARGO_TARGET_DIR=str(target))
 subprocess.run(["cargo", "build", "--locked", "-p", "stackpress-example-profile-ui-client", "--target", "wasm32-unknown-unknown", "--features", mode], cwd=root, env=environment, check=True)
 output = root / "examples" / "profile-ui" / "dist" / mode

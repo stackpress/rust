@@ -1,0 +1,8 @@
+error: lifetime may not live long enough
+ --> tests/ui/escaping_invocation.rs:9:5
+  |
+5 | fn escape(invocation: Invocation<'_>) -> Invocation<'static> {
+  |           ---------- has type `Invocation<'1>`
+...
+9 |     invocation
+  |     ^^^^^^^^^^ returning this value requires that `'1` must outlive `'static`

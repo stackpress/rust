@@ -4,11 +4,12 @@
 use stackpress_example_profile_ui_contracts::SearchInput;
 #[cfg(any(feature = "hydrate", test))]
 use stackpress_example_profile_ui_contracts::{BUILD, REVISION};
-use stackpress_example_profile_ui_contracts::{SearchPage, SearchReply};
-use stackpress_example_profile_ui_shared::m1_compat::BasePath;
+use stackpress_example_profile_ui_contracts::{
+    SearchFailure, SearchOutcome, SearchPage, SearchReply, decode_search_reply,
+};
 use stackpress_example_profile_ui_shared::profile_language;
+use stackpress_framework_ui::routing::BasePath;
 use stackpress_framework_ui::{language::Language, state::Theme};
-use stackpress_framework_view::MAX_SNAPSHOT_BYTES;
 #[cfg(any(feature = "hydrate", test))]
 use stackpress_framework_view::PageSnapshot;
 
@@ -27,7 +28,7 @@ pub(crate) struct ClientSeed {
 /// Decode a bounded revision/build-checked public seed before trusting server markup.
 #[cfg(any(feature = "hydrate", test))]
 pub(crate) fn decode(text: &str, assets: &str) -> Result<ClientSeed, String> {
-    let assets = crate::assets_compat::PageAssets::decode(assets, BUILD)
+    let assets = stackpress_framework_view::PageAssets::decode(assets, BUILD)
         .map_err(|error| error.to_string())?;
     let snapshot = PageSnapshot::<SearchPage>::decode(text, REVISION, BUILD)
         .map_err(|error| error.to_string())?;
@@ -69,14 +70,12 @@ pub(crate) fn packaged() -> Result<ClientSeed, String> {
 }
 
 /// Decode and validate a complete public reply before invoking the shared controller.
-pub(crate) fn reply(text: &str) -> Result<SearchReply, String> {
-    // The adapter acquires text; this testable boundary controls its accepted size/shape.
-    if text.len() > MAX_SNAPSHOT_BYTES {
-        return Err("Search reply is too large".into());
+pub(crate) fn reply(text: &str, status: Option<u16>) -> Result<SearchReply, SearchFailure> {
+    // Both HTTP and IPC use the same decoder; a valid host rejection is never discarded.
+    match decode_search_reply(text, status).map_err(SearchFailure::Protocol)? {
+        SearchOutcome::Success(reply) => Ok(reply),
+        SearchOutcome::Rejected(error) => Err(SearchFailure::Host(error)),
     }
-    let reply: SearchReply = serde_json::from_str(text).map_err(|_| "Invalid search response")?;
-    reply.validate().map_err(str::to_owned)?;
-    Ok(reply)
 }
 
 #[cfg(test)]

@@ -7,16 +7,10 @@ const assert = require('node:assert/strict');
 const { chromium } = require(process.env.PROFILE_UI_PLAYWRIGHT || 'playwright');
 const root = path.resolve(__dirname, '../../..');
 const host = process.env.PROFILE_UI_HOST;
+const base = process.env.PROFILE_UI_BASE || '';
 if (!host) throw Error('set PROFILE_UI_HOST to the built finite web fixture binary');
 const assets = path.join(root, 'examples/profile-ui/dist/hydrate');
-const render = (hostile) => withM1Assets(cp.execFileSync(host, hostile ? ["hostile"] : [], { encoding: 'utf8', timeout: 10000 }));
-/** Temporary M1 bootstrap fixture; remove when the merged host emits its own assets. */
-function withM1Assets(html) {
-  if (html.includes('id="stackpress-assets"')) return html;
-  const data = JSON.parse(html.match(/id="stackpress-page">(.*?)<\/script>/s)[1]);
-  const assets = JSON.stringify({ build: data.build, base: "", module: "/assets/start.js", stylesheet: null });
-  return html.replace('</head>', '<script type="application/json" id="stackpress-assets">' + assets + '</script></head>');
-}
+const render = (hostile) => cp.execFileSync(host, hostile ? ["hostile"] : [], { encoding: 'utf8', timeout: 10000 });
 
 (async () => {
   const browser = await chromium.launch({ headless: true });
@@ -33,15 +27,15 @@ function withM1Assets(html) {
   await page.route('**/*', async route => {
     const url = new URL(route.request().url());
     if (url.origin !== 'https://profiles.invalid') return route.abort();
-    if (url.pathname === '/ui-api/v1/profile-search') {
+    if (url.pathname === `${base}/ui-api/v1/profile-search`) {
       calls++;
       requested?.();
       if (hold) await new Promise(resolve => { release = resolve; });
       const body = cp.execFileSync(host, ['search', route.request().postData()], { encoding: 'utf8', timeout: 10000 });
       return route.fulfill({ contentType: 'application/json', body });
     }
-    if (url.pathname.startsWith('/assets/')) {
-      const file = path.join(assets, url.pathname.slice('/assets/'.length));
+    if (url.pathname.startsWith(`${base}/assets/`)) {
+      const file = path.join(assets, url.pathname.slice(`${base}/assets/`.length));
       return route.fulfill({ path: file, contentType: file.endsWith('.wasm') ? 'application/wasm' : 'text/javascript' });
     }
     let html = render(hostile);
@@ -51,7 +45,7 @@ function withM1Assets(html) {
     return route.fulfill({ contentType: 'text/html', body: html });
   });
   try {
-    await page.goto('https://profiles.invalid/ui/profiles?id=abc');
+    await page.goto(`https://profiles.invalid${base}/ui/profiles?id=abc`);
     await page.waitForFunction(() => window.profileUiReady === true, { timeout: 10000 });
     assert.equal(calls, 0, 'hydration must consume seed without duplicate initial search');
     assert.equal(await page.evaluate(() => window.before === document.querySelector('#app').innerHTML), true, 'unchanged SSR markup');
@@ -77,13 +71,13 @@ function withM1Assets(html) {
     assert.equal(calls, 2);
     // The mismatch is intentionally returned to the entrypoint as a rejected start.
     mismatch = false;
-    hostile = true;
+    hostile = !base;
     await page.reload();
     await page.waitForFunction(() => window.profileUiReady === true);
-    assert.equal(await page.locator('li').textContent(), '</script><script>globalThis.pwned=1</script>&\"\u2028\u2029');
+    if (!base) assert.equal(await page.locator('li').textContent(), '</script><script>globalThis.pwned=1</script>&\"\u2028\u2029');
     assert.equal(await page.evaluate(() => globalThis.pwned), undefined);
     const unexpected = errors.filter(message => !message.includes('Page version changed. Refresh to continue.'));
     assert.deepEqual(unexpected, []);
-    console.log(JSON.stringify({ hydration: 'unchanged DOM and focus', initialCalls: 0, secondTypedQuery: 'Grace Hopper', disposed: true, hostileSeed: 'inert exact roundtrip', mismatch: 'visible refresh required', errors: unexpected }));
+    console.log(JSON.stringify({ base, hydration: 'unchanged DOM and focus', initialCalls: 0, secondTypedQuery: 'Grace Hopper', disposed: true, hostileSeed: base ? 'covered by root proof' : 'inert exact roundtrip', mismatch: 'visible refresh required', errors: unexpected }));
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });

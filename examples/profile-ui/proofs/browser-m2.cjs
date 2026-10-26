@@ -1,6 +1,5 @@
 // Finite real-Chromium interaction proof using intercepted requests over pipes.
 // No listener, dependency install, test framework or external service is used.
-const fs = require('node:fs');
 const path = require('node:path');
 const cp = require('node:child_process');
 const assert = require('node:assert/strict');
@@ -9,15 +8,8 @@ const root = path.resolve(__dirname, '../../..');
 const host = process.env.PROFILE_UI_HOST;
 if (!host) throw Error('set PROFILE_UI_HOST to the finite web fixture executable');
 const assets = path.join(root, 'examples/profile-ui/dist/hydrate');
-const render = () => withM1Assets(cp.execFileSync(host, [], { encoding: 'utf8', timeout: 10000 }));
+const render = () => cp.execFileSync(host, [], { encoding: 'utf8', timeout: 10000 });
 
-/** Temporary M1 bootstrap fixture; remove when the merged host emits its own assets. */
-function withM1Assets(html) {
-  if (html.includes('id="stackpress-assets"')) return html;
-  const data = JSON.parse(html.match(/id="stackpress-page">(.*?)<\/script>/s)[1]);
-  const assets = JSON.stringify({ build: data.build, base: "", module: "/assets/start.js", stylesheet: null });
-  return html.replace('</head>', '<script type="application/json" id="stackpress-assets">' + assets + '</script></head>');
-}
 
 (async () => {
   const browser = await chromium.launch({ headless: true });
@@ -37,11 +29,16 @@ function withM1Assets(html) {
       const json = route.request().postData();
       const id = JSON.parse(json).id;
       calls.push(id);
-      if (mode === 'error') return route.fulfill({ status: 503, body: 'private diagnostics must never be shown' });
+      if (mode === 'transport') return route.abort('failed');
+      if (mode === 'host-error') {
+        const invalid = JSON.stringify({ revision: 999, id });
+        const body = cp.execFileSync(host, ['search', invalid], { encoding: 'utf8', timeout: 10000 });
+        return route.fulfill({ status: 400, contentType: 'application/json', body });
+      }
       if (mode === 'hold') await new Promise(resolve => held.set(id, resolve));
       const body = cp.execFileSync(host, ['search', json], { encoding: 'utf8', timeout: 10000 });
       // An aborted fetch can already be detached when its held response is released.
-      try { await route.fulfill({ contentType: 'application/json', body }); }
+      try { await route.fulfill({ contentType: 'application/json', headers: { 'x-proof-request': id }, body }); }
       catch (error) { if (!/already handled|closed|cancel|abort/i.test(String(error))) throw error; }
       return;
     }
@@ -79,13 +76,18 @@ function withM1Assets(html) {
     assert.equal(await page.locator('.sp-empty').isVisible(), true);
     assert.equal(await input.getAttribute('aria-invalid'), 'false');
 
-    mode = 'error';
+    mode = 'transport';
     await submit('abc123');
     await page.getByRole('button', { name: 'Retry search', exact: true }).waitFor();
     assert.match(await page.locator('.sp-alert').textContent(), /Search unavailable/);
+    assert.equal(await page.locator('[data-search-failure]').getAttribute('data-search-failure'), 'transport');
     assert.doesNotMatch(await page.locator('#app').textContent(), /private diagnostics/);
     await page.getByRole('button', { name: 'Dismiss notification' }).click();
     assert.equal(await page.locator('.sp-notice').count(), 0);
+    mode = 'host-error';
+    await page.getByRole('button', { name: 'Retry search', exact: true }).click();
+    await page.waitForFunction(() => document.querySelector('[data-search-failure]')?.dataset.searchFailure === 'host');
+    assert.match(await page.locator('.sp-alert').textContent(), /Search rejected: Page version changed. Refresh to continue./);
     mode = 'normal';
     await page.getByRole('button', { name: 'Retry search', exact: true }).click();
     await page.waitForFunction(() => document.querySelector('.sp-list li')?.textContent === 'Ada Lovelace');
@@ -100,6 +102,21 @@ function withM1Assets(html) {
     release('abc456');
     assert.equal(await page.locator('.sp-results').getAttribute('aria-busy'), 'false');
 
+    // Suppress best-effort abort only for this race, forcing a real late successful A.
+    await page.evaluate(() => {
+      window.raceReads = [];
+      window.originalAbort = AbortController.prototype.abort;
+      window.originalResponseText = Response.prototype.text;
+      AbortController.prototype.abort = function () {};
+      Response.prototype.text = function () {
+        const id = this.headers.get('x-proof-request');
+        return window.originalResponseText.call(this).then(text => {
+          // A timer turn observes completion after the consumer's Promise/microtask chain.
+          setTimeout(() => window.raceReads.push(id), 0);
+          return text;
+        });
+      };
+    });
     await submit('abc123');
     await page.getByRole('button', { name: 'Cancel search', exact: true }).waitFor();
     await submit('abc456');
@@ -107,7 +124,13 @@ function withM1Assets(html) {
     release('abc456');
     await page.waitForFunction(() => document.querySelector('.sp-list li')?.textContent === 'Grace Hopper');
     release('abc123');
+    await page.waitForFunction(() => window.raceReads.includes('abc123'));
+    assert.deepEqual(await page.evaluate(() => window.raceReads), ['abc456', 'abc123']);
     assert.equal(await rows().textContent(), 'Grace Hopper');
+    await page.evaluate(() => {
+      AbortController.prototype.abort = window.originalAbort;
+      Response.prototype.text = window.originalResponseText;
+    });
 
     await page.getByRole('button', { name: 'Français', exact: true }).click();
     await page.waitForFunction(() => document.documentElement.lang === 'fr' && document.title === 'Profils');
@@ -138,7 +161,7 @@ function withM1Assets(html) {
     release('abc789');
     assert.equal(await page.locator('#app').innerHTML(), '');
     assert.deepEqual(errors, []);
-    console.log(JSON.stringify({ initialCalls: 0, hydration: 'same DOM and focus', keyboard: true, invalid: true, empty: true, safeErrorAndRetry: true, loadingRetainsRows: true, cancellation: true, newestWins: true, localeAndHead: true, theme: true, geometry, disposed: true, errors }));
+    console.log(JSON.stringify({ initialCalls: 0, hydration: 'same DOM and focus', keyboard: true, invalid: true, empty: true, transportFailure: true, hostErrorAndRetry: true, loadingRetainsRows: true, cancellation: true, newestWinsWithLateSuccess: true, localeAndHead: true, theme: true, geometry, disposed: true, errors }));
   } finally {
     for (const resolve of held.values()) resolve();
     await browser.close();

@@ -2,7 +2,10 @@
 
 use super::{SearchCancellation, SearchCompletion, SearchTransport};
 use leptos::prelude::*;
-use stackpress_example_profile_ui_contracts::{SearchInput, SearchPage, SearchReply};
+use stackpress_example_profile_ui_contracts::{
+    REVISION, ReplyDecodeError, SearchFailure, SearchFailureKind, SearchInput, SearchPage,
+    SearchReply,
+};
 use stackpress_framework_ui::state::{NoticeKind, Notifications};
 
 /// Signal handles for one component; cleanup remains with the owning Leptos root.
@@ -16,6 +19,8 @@ pub(super) struct SearchController {
     pub(super) total: RwSignal<u64>,
     /// Safe transport/host failure, separate from associated field validation.
     pub(super) error: RwSignal<String>,
+    /// Host rejections, transport failures and invalid wire output stay distinct.
+    pub(super) failure_kind: RwSignal<Option<SearchFailureKind>>,
     /// Validation failure associated with the prefix input.
     pub(super) field_error: RwSignal<String>,
     /// Whether the newest admitted submission is in flight.
@@ -40,6 +45,7 @@ impl SearchController {
             ),
             total: RwSignal::new(seed.reply.total),
             error: RwSignal::new(String::new()),
+            failure_kind: RwSignal::new(None),
             field_error: RwSignal::new(String::new()),
             pending: RwSignal::new(false),
             generation: RwSignal::new(Some(0)),
@@ -65,6 +71,7 @@ impl SearchController {
         // Invalid submission must also revoke the previous request's publication rights.
         self.invalidate(cancel);
         self.error.set(String::new());
+        self.failure_kind.set(None);
         self.field_error.set(String::new());
         self.notices.clear();
         let input = match SearchInput::new(self.id.get_untracked()) {
@@ -81,7 +88,7 @@ impl SearchController {
         };
         self.pending.set(true);
         let done: SearchCompletion =
-            std::sync::Arc::new(move |reply: Result<SearchReply, String>| {
+            std::sync::Arc::new(move |reply: Result<SearchReply, SearchFailure>| {
                 // Cleanup removes the generation signal; supersession changes its value.
                 if self.generation.try_get_untracked() != Some(Some(current))
                     || self.pending.try_get_untracked() != Some(true)
@@ -89,9 +96,16 @@ impl SearchController {
                     return;
                 }
                 self.pending.set(false);
-                match reply
-                    .and_then(|reply| reply.validate().map(|()| reply).map_err(str::to_owned))
-                {
+                match reply.and_then(|reply| {
+                    reply.validate().map_err(|_| {
+                        SearchFailure::Protocol(if reply.revision != REVISION {
+                            ReplyDecodeError::ContractMismatch
+                        } else {
+                            ReplyDecodeError::Invalid
+                        })
+                    })?;
+                    Ok(reply)
+                }) {
                     Ok(reply) => {
                         // Replace rows/count together in one reactive batch after wire validation.
                         batch(|| {
@@ -105,7 +119,9 @@ impl SearchController {
                             );
                         });
                     }
-                    Err(message) => {
+                    Err(failure) => {
+                        let message = failure.to_string();
+                        self.failure_kind.set(Some(failure.kind()));
                         self.error.set(message.clone());
                         // The bounded notification duplicates no active identical notice.
                         let _ = self.notices.notify(NoticeKind::Error, message);
@@ -118,6 +134,7 @@ impl SearchController {
     /// Cancel explicitly, preserve useful results and present a safe retryable state.
     pub(super) fn cancel(self, cancel: Option<SearchCancellation>) {
         self.invalidate(cancel);
+        self.failure_kind.set(Some(SearchFailureKind::Transport));
         self.error
             .set("Search cancelled. You can search again.".into());
     }

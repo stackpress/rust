@@ -1,6 +1,8 @@
 //! Real controller state transitions independent of browser event plumbing.
 use super::*;
-use stackpress_example_profile_ui_contracts::{Profile, REVISION};
+use stackpress_example_profile_ui_contracts::{
+    Profile, REVISION, SearchFailure, SearchFailureKind, TransportFailure,
+};
 use std::{cell::RefCell, rc::Rc};
 
 /// Seed one meaningful public result without duplicating domain search logic.
@@ -59,8 +61,17 @@ fn controller_preserves_newest_result_and_disposal() {
     assert_eq!(controller.total.get_untracked(), 0);
     assert!(controller.rows.get_untracked().is_empty());
     controller.submit(transport, None);
-    completions.borrow()[3](Err("Safe failure".into()));
-    assert_eq!(controller.error.get_untracked(), "Safe failure");
+    completions.borrow()[3](Err(SearchFailure::Transport(TransportFailure::Unavailable)));
+    assert!(
+        controller
+            .error
+            .get_untracked()
+            .contains("Search unavailable")
+    );
+    assert_eq!(
+        controller.failure_kind.get_untracked(),
+        Some(SearchFailureKind::Transport)
+    );
     controller.submit(transport, None);
     let late = std::sync::Arc::clone(&completions.borrow()[4]);
     owner.cleanup();
@@ -97,7 +108,7 @@ fn invalidation_cancellation_and_retry_preserve_useful_rows() {
         assert!(controller.error.get_untracked().contains("cancelled"));
         assert_eq!(controller.rows.get_untracked()[0].1, "Ada Lovelace");
         controller.submit(transport, Some(cancel));
-        completions.borrow()[2](Err("Search unavailable".into()));
+        completions.borrow()[2](Err(SearchFailure::Transport(TransportFailure::Unavailable)));
         assert_eq!(controller.notices.entries().len(), 1);
         controller.submit(transport, Some(cancel));
         assert!(controller.notices.entries().is_empty());
@@ -228,9 +239,43 @@ fn mounted_form_action() {
     let owner = Owner::new();
     owner.with(|| {
         stackpress_framework_ui::leptos_meta::provide_meta_context();
-        m1_compat::provide_route_context(m1_compat::BasePath::new("/office").unwrap());
+        stackpress_framework_ui::routing::provide_route_context(
+            stackpress_framework_ui::routing::BasePath::new("/office").unwrap(),
+        );
         let html = view! { <ProfileSearch seed=seed()/> }.to_html();
         assert!(html.contains("action=\"/office/ui/profiles\""));
+    });
+    owner.cleanup();
+}
+
+/// Completed host rejections retain their safe message and a category distinct from transport.
+#[test]
+fn controller_retains_host_rejection_identity() {
+    let owner = Owner::new();
+    owner.with(|| {
+        let controller = SearchController::new(seed());
+        let transport = UnsyncCallback::new(move |(_, done): (SearchInput, SearchCompletion)| {
+            done(Err(SearchFailure::Host(
+                stackpress_example_profile_ui_contracts::HostError {
+                    code: 422,
+                    status: "Unprocessable Entity".into(),
+                    error: "Choose another prefix.".into(),
+                    errors: Default::default(),
+                    total: 0,
+                },
+            )));
+        });
+        controller.submit(transport, None);
+        assert_eq!(
+            controller.failure_kind.get_untracked(),
+            Some(SearchFailureKind::Host)
+        );
+        assert_eq!(
+            controller.error.get_untracked(),
+            "Search rejected: Choose another prefix."
+        );
+        assert_eq!(controller.rows.get_untracked()[0].1, "Ada Lovelace");
+        assert!(!controller.pending.get_untracked());
     });
     owner.cleanup();
 }

@@ -2,7 +2,9 @@
 
 use crate::seed::ClientSeed;
 use leptos::prelude::*;
-use stackpress_example_profile_ui_contracts::{SearchInput, SearchReply};
+use stackpress_example_profile_ui_contracts::{
+    ReplyDecodeError, SearchFailure, SearchInput, SearchReply, TransportFailure,
+};
 use stackpress_example_profile_ui_shared::{
     ProfileSearch, SearchCancellation, SearchCompletion, SearchTransport,
 };
@@ -54,7 +56,7 @@ fn transport(endpoint: String) -> (SearchTransport, SearchCancellation) {
         let controller = match web_sys::AbortController::new() {
             Ok(controller) => controller,
             Err(_) => {
-                done(Err("Search could not start".into()));
+                done(Err(SearchFailure::Transport(TransportFailure::Start)));
                 return;
             }
         };
@@ -79,10 +81,11 @@ async fn search(
     id: &str,
     signal: web_sys::AbortSignal,
     endpoint: &str,
-) -> Result<SearchReply, String> {
-    let json = serde_json::to_string(&input).map_err(|_| "Invalid search input")?;
+) -> Result<SearchReply, SearchFailure> {
+    let json = serde_json::to_string(&input)
+        .map_err(|_| SearchFailure::Protocol(ReplyDecodeError::Invalid))?;
     #[cfg(feature = "hydrate")]
-    let text = {
+    let (text, status) = {
         let _ = id;
         let options = web_sys::RequestInit::new();
         options.set_method("POST");
@@ -90,36 +93,41 @@ async fn search(
         options.set_signal(Some(&signal));
         options.set_mode(web_sys::RequestMode::SameOrigin);
         let request = web_sys::Request::new_with_str_and_init(endpoint, &options)
-            .map_err(|_| "Search could not start")?;
+            .map_err(|_| SearchFailure::Transport(TransportFailure::Start))?;
         request
             .headers()
             .set("content-type", "application/json")
-            .map_err(|_| "Search could not start")?;
-        let window = web_sys::window().ok_or("Window unavailable")?;
+            .map_err(|_| SearchFailure::Transport(TransportFailure::Start))?;
+        let window =
+            web_sys::window().ok_or(SearchFailure::Transport(TransportFailure::Unavailable))?;
         let response: web_sys::Response = JsFuture::from(window.fetch_with_request(&request))
             .await
-            .map_err(|_| "Search cancelled or unavailable")?
+            .map_err(|_| SearchFailure::Transport(TransportFailure::Unavailable))?
             .dyn_into()
-            .map_err(|_| "Invalid search response")?;
-        if !response.ok() {
-            return Err("Search unavailable".into());
-        }
-        JsFuture::from(response.text().map_err(|_| "Invalid search response")?)
-            .await
-            .map_err(|_| "Invalid search response")?
-            .as_string()
-            .ok_or("Invalid search response")?
+            .map_err(|_| SearchFailure::Protocol(ReplyDecodeError::Invalid))?;
+        let status = response.status();
+        let text = JsFuture::from(
+            response
+                .text()
+                .map_err(|_| SearchFailure::Protocol(ReplyDecodeError::Invalid))?,
+        )
+        .await
+        .map_err(|_| SearchFailure::Protocol(ReplyDecodeError::Invalid))?
+        .as_string()
+        .ok_or(SearchFailure::Protocol(ReplyDecodeError::Invalid))?;
+        (text, Some(status))
     };
     #[cfg(feature = "csr")]
-    let text = {
+    let (text, status) = {
         let _ = (signal, endpoint);
-        profile_search(id, &json)
+        let text = profile_search(id, &json)
             .await
-            .map_err(|_| "Search cancelled or denied")?
+            .map_err(|_| SearchFailure::Transport(TransportFailure::CancelledOrDenied))?
             .as_string()
-            .ok_or("Invalid search response")?
+            .ok_or(SearchFailure::Protocol(ReplyDecodeError::Invalid))?;
+        (text, None)
     };
-    crate::seed::reply(&text)
+    crate::seed::reply(&text, status)
 }
 
 /// Acquire DOM text only; all wire/settings decisions are tested in the seed module.
@@ -168,9 +176,7 @@ pub fn start() -> Result<js_sys::Function, JsValue> {
         .to_owned();
     let root = move || {
         stackpress_framework_ui::leptos_meta::provide_meta_context();
-        stackpress_example_profile_ui_shared::m1_compat::provide_route_context(
-            initial.base.clone(),
-        );
+        stackpress_framework_ui::routing::provide_route_context(initial.base.clone());
         let (transport, cancel) = transport(endpoint);
         view! { <ProfileSearch seed=initial.page transport cancel
         initial_language=initial.language initial_theme=initial.theme

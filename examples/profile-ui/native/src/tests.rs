@@ -186,6 +186,29 @@ async fn cancellation_and_disposal() {
     );
 }
 
+/// The actual lifecycle's safe host error is encoded as response data, not an IPC failure.
+async fn public_host_rejection() {
+    async fn reject(_: &mut Request, _: &mut Response, _: Invocation<'_>) -> Result<Flow> {
+        Err(stackpress_lib::Error::new("PRIVATE_NATIVE_CAUSE")
+            .with_code(422)
+            .with_public_message("Choose another prefix."))
+    }
+    let mut builder = ServerBuilder::new();
+    builder.on("profile-search", reject).unwrap();
+    let host = NativeHost::from_server(builder.build().await.unwrap());
+    let text = host
+        .search("main", "rejected", r#"{"revision":1,"id":"abc"}"#)
+        .await
+        .unwrap();
+    assert!(!text.contains("PRIVATE_NATIVE_CAUSE"));
+    let outcome =
+        stackpress_example_profile_ui_contracts::decode_search_reply(&text, None).unwrap();
+    assert!(
+        matches!(outcome, stackpress_example_profile_ui_contracts::SearchOutcome::Rejected(error) if error.code == 422 && error.error == "Choose another prefix." && error.total == 0)
+    );
+    assert_eq!(host.in_flight().unwrap(), 0);
+}
+
 /// Native cancellation/poison cases cannot silently hang the test process.
 #[test]
 fn native_cases() {
@@ -194,6 +217,7 @@ fn native_cases() {
         runtime.block_on(async {
             lifecycle_and_denial().await;
             cancellation_and_disposal().await;
+            public_host_rejection().await;
         });
         return;
     }

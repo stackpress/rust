@@ -1,0 +1,17 @@
+error[E0599]: no method named `clone` found for struct `Server` in the current scope
+ --> tests/ui/stateful_clone.rs:4:20
+  |
+4 |     let _ = server.clone();
+  |                    ^^^^^ method not found in `Server`
+
+error[E0599]: no method named `clone` found for struct `ServerBuilder` in the current scope
+ --> tests/ui/stateful_clone.rs:5:34
+  |
+5 |     let _ = ServerBuilder::new().clone();
+  |                                  ^^^^^ method not found in `ServerBuilder`
+
+error[E0599]: no method named `clone` found for struct `OutputGuard` in the current scope
+ --> tests/ui/stateful_clone.rs:6:36
+  |
+6 |     let _ = OutputGuard::default().clone();
+  |                                    ^^^^^ method not found in `OutputGuard`

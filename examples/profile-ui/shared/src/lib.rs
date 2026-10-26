@@ -5,13 +5,13 @@
 
 mod controller;
 mod locale;
-// TEMPORARY: coordinator swaps this module for lane A's real routing API at merge.
-pub mod m1_compat;
 
 use controller::SearchController;
 use leptos::prelude::*;
 pub use locale::profile_language;
-use stackpress_example_profile_ui_contracts::{SearchInput, SearchPage, SearchReply};
+use stackpress_example_profile_ui_contracts::{
+    SearchFailure, SearchInput, SearchPage, SearchReply,
+};
 use stackpress_framework_ui::{
     components::{
         Alert, Button, ButtonType, FieldControl, Input, LayoutBlank, LayoutHead, LayoutLeft,
@@ -20,11 +20,13 @@ use stackpress_framework_ui::{
     },
     language::{Language, LanguageContext, LanguageProvider, Translate},
     leptos_meta::{Html, Meta, Title},
+    routing::use_route_context,
     state::{Theme, ThemeState},
 };
 
 /// A local transport completes with a validated public reply or safe error.
-pub type SearchCompletion = std::sync::Arc<dyn Fn(Result<SearchReply, String>) + Send + Sync>;
+pub type SearchCompletion =
+    std::sync::Arc<dyn Fn(Result<SearchReply, SearchFailure>) + Send + Sync>;
 /// WASM-local adapter; it need not be Send and is never stored by a native host.
 pub type SearchTransport = UnsyncCallback<(SearchInput, SearchCompletion)>;
 /// Explicit root-local cancellation; no implicit retry or rollback is promised.
@@ -63,7 +65,7 @@ pub fn ProfileSearch(
         Err(message) => return view! { <p role="alert">{message}</p> }.into_any(),
     };
     let theme = ThemeState::new(initial_theme);
-    let base = m1_compat::use_route_context().base;
+    let base = use_route_context().base;
     let form_action = match base.join("/ui/profiles") {
         Ok(location) => location.as_str().to_owned(),
         Err(_) => {
@@ -77,6 +79,7 @@ pub fn ProfileSearch(
         rows,
         total,
         error,
+        failure_kind,
         field_error,
         pending,
         notices,
@@ -148,7 +151,9 @@ pub fn ProfileSearch(
                     </form>
                     <Loader busy=pending label=Signal::derive(move || language.text("Searching…", &[]))/>
                     <p role="status" aria-live="polite">{move || language.text("%s profiles", &[total.get().to_string()])}</p>
-                    <Alert message=error/>
+                    <div data-search-failure=move || failure_kind.get().map(|kind| kind.as_str())>
+                        <Alert message=error/>
+                    </div>
                     <div class="sp-menu">
                         <Show when=move || !error.get().is_empty()>
                             <Button on:click=move |_| { if let Some(transport) = transport { controller.submit(transport, cancel); } }>{move || language.text("Retry search", &[])}</Button>
