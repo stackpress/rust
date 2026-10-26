@@ -1,4 +1,4 @@
-//! Detached query data, minimal SELECT rendering, and the single-statement lexical gate.
+//! Detached query data, statement validation, and the single-statement lexical gate.
 
 use crate::{ErrorKind, Result, SqlError, SqlValue};
 
@@ -47,6 +47,17 @@ pub struct Query {
 }
 
 impl Query {
+    /// Freeze AST-generated SQL and parameters under the default finite budgets.
+    pub(crate) fn bound(dialect: DialectId, sql: String, binds: Vec<SqlValue>) -> Result<Self> {
+        let query = Self {
+            dialect,
+            sql,
+            binds,
+        };
+        query.validate(QueryLimits::default())?;
+        Ok(query)
+    }
+
     /// Inspect statement text independently of IO.
     pub fn sql(&self) -> &str {
         &self.sql
@@ -109,10 +120,15 @@ impl Render for Query {
 /// Explicit assertion that dynamic SQL was authored/audited as trusted code.
 ///
 /// This is not sanitization. Never pass request text to this constructor.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct TrustedSql(String);
 
 impl TrustedSql {
+    /// Borrow audited text inside the rendering boundary.
+    pub(crate) fn text(&self) -> &str {
+        &self.0
+    }
+
     /// Mark trusted, manually audited SQL; values still belong in binds.
     pub fn audited(sql: impl Into<String>) -> Self {
         Self(sql.into())
@@ -159,87 +175,10 @@ impl Render for Sql {
                 "renderer not implemented at M0",
             ));
         }
+        query.validate(QueryLimits::default())?;
         validate_statement(&query.sql)?;
-        query.validate(QueryLimits::default())?;
         Ok(query)
     }
-}
-
-/// Small owned SELECT builder used by the ownership/host proof.
-#[derive(Clone, Debug)]
-pub struct Select {
-    columns: Vec<String>,
-    table: String,
-    equality: Option<(String, SqlValue)>,
-}
-
-impl Select {
-    /// Select explicit identifier segments; `*`/expressions require trusted raw SQL at M0.
-    pub fn new(columns: impl IntoIterator<Item = impl Into<String>>) -> Self {
-        Self {
-            columns: columns.into_iter().map(Into::into).collect(),
-            table: String::new(),
-            equality: None,
-        }
-    }
-
-    /// Set one literal table-name segment; dots do not imply qualification.
-    pub fn from(mut self, table: impl Into<String>) -> Self {
-        self.table = table.into();
-        self
-    }
-
-    /// Add one bound equality predicate, replacing a previous predicate.
-    pub fn where_eq(mut self, column: impl Into<String>, value: impl Into<SqlValue>) -> Self {
-        self.equality = Some((column.into(), value.into()));
-        self
-    }
-}
-
-impl Render for Select {
-    /// Quote identifiers and bind data, without interpreting either as SQL syntax.
-    fn render(&self, dialect: DialectId) -> Result<Query> {
-        if dialect != DialectId::Sqlite {
-            return Err(SqlError::new(
-                ErrorKind::Unsupported,
-                "renderer not implemented at M0",
-            ));
-        }
-        if self.columns.is_empty() {
-            return Err(invalid_sql());
-        }
-        let columns = self
-            .columns
-            .iter()
-            .map(|column| identifier(column))
-            .collect::<Result<Vec<_>>>()?;
-        let mut sql = format!(
-            "SELECT {} FROM {}",
-            columns.join(", "),
-            identifier(&self.table)?
-        );
-        let mut binds = Vec::new();
-        if let Some((column, value)) = &self.equality {
-            // Identifier syntax and the value take distinct construction paths.
-            sql.push_str(&format!(" WHERE {} = ?", identifier(column)?));
-            binds.push(value.clone());
-        }
-        let query = Query {
-            dialect,
-            sql,
-            binds,
-        };
-        query.validate(QueryLimits::default())?;
-        Ok(query)
-    }
-}
-
-/// Quote one identifier segment, rejecting empty/control-containing input.
-fn identifier(name: &str) -> Result<String> {
-    if name.is_empty() || name.chars().any(char::is_control) {
-        return Err(invalid_sql());
-    }
-    Ok(format!("\"{}\"", name.replace('"', "\"\"")))
 }
 
 /// Construct a safe lexical/identifier failure without echoing caller input.
@@ -253,6 +192,9 @@ fn invalid_sql() -> SqlError {
 /// Admit one SQLite statement while respecting comments and every SQLite quote form.
 fn validate_statement(sql: &str) -> Result<()> {
     let bytes = sql.as_bytes();
+    if bytes.contains(&0) {
+        return Err(invalid_sql());
+    }
     let mut index = 0;
     let mut ended = false;
     let mut first_word = None;

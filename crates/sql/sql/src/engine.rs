@@ -46,6 +46,63 @@ pub struct Engine {
 }
 
 impl Engine {
+    /// Inspect the adapter's dialect without acquiring a native connection.
+    pub fn dialect(&self) -> DialectId {
+        self.database.dialect()
+    }
+
+    /// Construct a detached select; no executor is captured by the returned value.
+    pub fn select(
+        &self,
+        columns: impl IntoIterator<Item = impl Into<crate::Selector>>,
+    ) -> crate::Select {
+        crate::Select::new(columns)
+    }
+
+    /// Construct a detached insert that may also be executed on an explicit transaction.
+    pub fn insert(&self, table: impl Into<crate::Identifier>) -> crate::Insert {
+        crate::Insert::new(table)
+    }
+
+    /// Construct a detached update requiring an explicit filter/all-rows choice.
+    pub fn update(&self, table: impl Into<crate::Identifier>) -> crate::Update {
+        crate::Update::new(table)
+    }
+
+    /// Construct a detached delete requiring an explicit filter/all-rows choice.
+    pub fn delete(&self, table: impl Into<crate::Identifier>) -> crate::Delete {
+        crate::Delete::new(table)
+    }
+
+    /// Describe table creation without installation or schema introspection.
+    pub fn create(&self, table: impl Into<String>) -> crate::Create {
+        crate::Create::new(table)
+    }
+
+    /// Describe explicit table alterations without migration history or effects.
+    pub fn alter(&self, table: impl Into<String>) -> crate::Alter {
+        crate::Alter::new(table)
+    }
+
+    /// Describe a checked table drop; execution remains explicit.
+    pub fn drop_table(&self, table: impl Into<String>) -> crate::TableCommand {
+        crate::TableCommand::drop_table(table)
+    }
+
+    /// Describe a checked rename; no SQL is executed by this convenience method.
+    pub fn rename_table(
+        &self,
+        from: impl Into<String>,
+        to: impl Into<String>,
+    ) -> crate::TableCommand {
+        crate::TableCommand::rename(from, to)
+    }
+
+    /// Describe SQLite DELETE-style truncate; its sequence is not reset.
+    pub fn truncate(&self, table: impl Into<String>) -> crate::TableCommand {
+        crate::TableCommand::truncate(table)
+    }
+
     /// Own a native adapter with the default finite query budgets.
     pub fn new(database: impl Database) -> Self {
         Self {
