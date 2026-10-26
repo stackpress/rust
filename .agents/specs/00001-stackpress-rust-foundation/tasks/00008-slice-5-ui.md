@@ -114,6 +114,16 @@ Design checkpoint prepared on 2026-10-25. Start with [Slice 5 decisions and reco
 - **Pinned host error envelope:** `code`, `status`, safe `error`, `errors`, `total: 0`. The shared decoder is assigned to lane B as an M2 integration item.
 - **Lane B (2026-10-26):** independent M2 work committed on its branch as `5e51ac3`. Lane B now merges trial/3, replaces its shims with lane A's real route, asset and snapshot APIs, finishes detail and back/forward navigation, and adds the shared error decoder.
 
+**Lane B M2 integration (coordinator, 2026-10-26): merged as `70627b5`; M2 not yet complete.** Details are in the [lane B M2 receipt](../slice-5-receipt-lane-b-m2.md).
+
+- **Delivered:**
+  - lane A's real route, asset and snapshot APIs replace every shim;
+  - the shared HTTP/IPC host-error envelope decoder (host rejection versus transport or protocol failure, safe message, retry);
+  - newest-search-wins even after a late successful older one.
+- **Checks rerun by the coordinator:** fmt and Clippy clean; 367 tests and 442 doctests passed. The hydrate build passed; browser.cjs at the root and `/demo/v1` and browser-m2.cjs passed (keyboard, invalid, empty, transport failure, host error and retry, loading retains rows, cancellation, newest wins, locale, Head, theme, and 375/1280 px at 100% and 200% zoom).
+- **Gap found:** lane A's M1 lacked the return-query codec and detail seed, and the renderer always selected search presentation. The coordinator's M1 verification missed this, because those proofs exercised only search.
+- **Correction assigned to lane B as a single owner,** with a scoped exception to edit lane A's route, web and render files: a shared detail-location codec, a `{ id, search_prefix }` detail seed, a canonical return query, a page root selected from the snapshot, navigation, and an initial French/dark SSR-to-hydration proof.
+
 ## Acceptance notes
 
 Pending.

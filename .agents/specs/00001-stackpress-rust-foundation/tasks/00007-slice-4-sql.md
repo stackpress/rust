@@ -87,6 +87,15 @@ Design checkpoint prepared on 2026-10-25. Start with [Slice 4 decisions and reco
 - **Integrated on `trial/3` after both merges:** fmt passed and Clippy is clean; 328 tests and 438 doctests passed, 0 failed.
 - **Operational note:** the disk reached 0 bytes free during verification. The coordinator deleted only finished-work build output, keeping logs and evidence, and lanes now reuse at most two target dirs each.
 
+**M2 re-verification (coordinator, 2026-10-26).** Details are in the receipts for the [core lane](../slice-4-receipt-lane-a-m2.md) and the [SQLite lane](../slice-4-receipt-lane-b-m2.md).
+
+- **SQLite lane:** merged as `3ec57a9`. The scope stays within the adapter. fmt, Clippy and the 1.96 check passed; 329 workspace tests and 438 doctests passed. Adapter-only coverage is **95.35%**. The implementer fixed stale pooled column metadata after ALTER. The public `execute_plan` integration test is assigned post-merge.
+- **Core lane:** merged as `90aa05e`. fmt, Clippy and the 1.96 check passed; 352 workspace tests and 440 doctests passed. Core-only coverage is 95.49% (implementer figure), and the core keeps zero normal dependencies. The lockfile adds 23 dev-only packages and changes no existing version. The work adds `Engine::execute_plan`/`Transaction::execute_plan` on the existing traits and fixes a primary-key `SET NULL` validation gap.
+- **G26 live renderer validation, rerun by the coordinator:** **16/16 passed** on PostgreSQL 12.2 and MySQL 8.0.27, and both owned throwaway databases were dropped.
+  - No `stackpress_test_` database remains on MySQL.
+  - A first-run PostgreSQL 12 cleanup-syntax failure (`WITH (FORCE)` needs PG13+) left one owned database. It was dropped by an audited, prefix- and nonce-bounded recovery, and cleanup is now plain `DROP DATABASE IF EXISTS`.
+- **Integrated `trial/3`:** Clippy clean; 365 tests and 441 doctests passed.
+
 ## Acceptance notes
 
 Library work has no visual acceptance artifact under the spec workflow; this task finishes at `verified` after coordinator review.
