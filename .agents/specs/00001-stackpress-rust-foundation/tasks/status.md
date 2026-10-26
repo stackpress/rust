@@ -21,3 +21,4 @@ Status values follow the spec task implementation workflow: `proposed`, `open`, 
 | [00008 Slice 5 UI](00008-slice-5-ui.md) | started | Owner accepted 2026-10-25, in parallel with 00007 (G23). Design approved 2026-10-26 (G25); M0 released. Visual acceptance 00008-001 to 008 accepted. |
 | [00008A UI usage and API docs](00008A-ui-docs.md) | started | Owner requested 2026-10-26 (option A). Acceptance criteria: none. |
 | [00009 Profile UI backed by SQLite](00009-profile-ui-on-sqlite.md) | started | Owner requested 2026-10-26 (option B). Acceptance criteria: none; output parity with the accepted UI. |
+| [00010 Owner review issues #1–#13](00010-owner-review-issues.md) | started | Owner filed 2026-10-26 and allowed early start; two crate-disjoint lanes. Acceptance criteria: none. |

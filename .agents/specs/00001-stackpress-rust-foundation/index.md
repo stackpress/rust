@@ -72,6 +72,7 @@ Approved with G12–G16 and coordinator DX changes; only M0 is released. Load th
 - [00008 Slice 5 UI](tasks/00008-slice-5-ui.md): load for the Leptos view/UI and Tauri hosting task.
 - [00008A UI usage and API docs](tasks/00008A-ui-docs.md): load for the framework-view/framework-ui documentation task.
 - [00009 Profile UI backed by SQLite](tasks/00009-profile-ui-on-sqlite.md): load for wiring the UI example to the SQLite-backed search.
+- [00010 Owner review issues #1–#13](tasks/00010-owner-review-issues.md): load for the GitHub review-issue batch across lib, server, CLI and transformer.
 - [Slice 2 lane A rounds receipt](slice-2-receipt-lane-a-rounds.md): load for the server-core refactor rounds 1–4 (module split, lifecycle readability, examples, safety evidence) and final server coverage.
 - [Slice 2 lane B CLI receipt](slice-2-receipt-lane-b-cli.md): load for the `stackpress-cli` parsing/control/prompt/TTY implementation, its upstream inventory disposition, rounds 1–4, and verification.
 - [Slice 2 lane B CLI execution receipt](slice-2-receipt-lane-b-run.md): load for `run`/`main_with`, stdout/stderr and exit-code policy, output authority, and verification.
