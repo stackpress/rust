@@ -1,6 +1,7 @@
 //! Offline configuration, strict budgets, and diagnostic ownership checks.
 
 use super::*;
+use stackpress_sql::{DialectId, ErrorKind, QueryLimits, Result, SqlError};
 
 #[test]
 /// Invalid options fail before IO and Debug never reveals connection fields.
@@ -120,4 +121,104 @@ fn transaction_gate_respects_lexical_boundaries() {
             .unwrap();
         execute::validate_transaction(&query).unwrap();
     }
+}
+
+#[test]
+/// JSON decoding preserves SQL/JSON null separation, deterministic objects and numeric digits.
+fn json_is_bounded_and_lossless() {
+    use serde_json::value::RawValue;
+    let raw = RawValue::from_string("{\"z\": 123456789012345678901234567890, \"a\":null}".into())
+        .unwrap();
+    assert_eq!(
+        crate::json::canonical(&raw, 1000).unwrap(),
+        "{\"a\":null,\"z\":123456789012345678901234567890}"
+    );
+    assert_eq!(
+        crate::json::canonical(&raw, 1).unwrap_err().kind(),
+        ErrorKind::Limit
+    );
+    let null = RawValue::from_string("null".into()).unwrap();
+    assert_eq!(crate::json::canonical(&null, 4).unwrap(), "null");
+    assert!(RawValue::from_string("invalid".into()).is_err());
+}
+
+#[test]
+/// Reuse candidates exclude stateful/ambiguous syntax while ordinary DML remains reusable.
+fn mysql_reuse_policy_is_conservative() {
+    for sql in [
+        "SELECT ? AS value",
+        "/* lead */ SELECT COUNT(*) FROM items",
+        "INSERT INTO items(id) VALUES (?)",
+        "INSERT INTO `schema`.`items` (`id`) VALUES (?)",
+        "UPDATE items SET id = ? WHERE id = ?",
+        "DELETE FROM items WHERE id = ?",
+        "SELECT 'GET_LOCK(@x)'",
+        "SELECT 1; /* tail */",
+    ] {
+        assert!(crate::reuse::allowed_sql(sql), "must reuse: {sql}");
+    }
+    for sql in [
+        "SET @x=1",
+        "SELECT @x",
+        "CREATE TEMPORARY TABLE t(id INT)",
+        "WITH t AS (SELECT 1) SELECT * FROM t",
+        "EXPLAIN SELECT 1",
+        "SELECT GET_LOCK('x',0)",
+        "SELECT GET_LOCK -- comment\n ('x',0)",
+        "SELECT RELEASE_LOCK/* comment */('x')",
+        "SELECT schema. /* comment */ ABS(1)",
+        "SELECT `ABS`(1)",
+        "SELECT unknown_function()",
+        "LOCK TABLES t WRITE",
+        "HANDLER t OPEN",
+        "PREPARE s FROM 'SELECT 1'",
+        "SELECT 1 INTO OUTFILE 'x'",
+        "SELECT SQL_CALC_FOUND_ROWS * FROM t",
+        "SELECT 1; SELECT 2",
+        "SELECT 'unclosed",
+        "SELECT /* unclosed",
+        "SELECT /*! native */ 1",
+    ] {
+        assert!(!crate::reuse::allowed_sql(sql), "must retire: {sql}");
+    }
+}
+
+#[test]
+/// Duplicate keys cannot disappear during canonicalization, including nested objects.
+fn duplicate_json_keys_are_rejected() {
+    for source in [r#"{"a":1,"a":2}"#, r#"{"nested":{"a":1,"a":2}}"#] {
+        let raw = serde_json::value::RawValue::from_string(source.into()).unwrap();
+        assert_eq!(
+            crate::json::canonical(&raw, 1000).unwrap_err().kind(),
+            ErrorKind::Decode
+        );
+    }
+}
+
+#[test]
+/// Raw traversal preserves huge/exponent tokens and JSON strings without global number features.
+fn json_raw_token_and_depth_boundaries() {
+    use serde_json::value::RawValue;
+    let raw = RawValue::from_string(
+        r#"{"z":[1e999,123456789012345678901234567890],"a":"\u0061"}"#.into(),
+    )
+    .unwrap();
+    assert_eq!(
+        crate::json::canonical(&raw, 1000).unwrap(),
+        r#"{"a":"a","z":[1e999,123456789012345678901234567890]}"#
+    );
+    let duplicate = RawValue::from_string(r#"[{"a":1,"\u0061":2}]"#.into()).unwrap();
+    assert_eq!(
+        crate::json::canonical(&duplicate, 1000).unwrap_err().kind(),
+        ErrorKind::Decode
+    );
+    let nested = format!("{}0{}", "[".repeat(128), "]".repeat(128));
+    let raw = RawValue::from_string(nested).unwrap();
+    assert_eq!(
+        crate::json::canonical(&raw, 1000).unwrap_err().kind(),
+        ErrorKind::Decode
+    );
+    let allowed = format!("{}0{}", "[".repeat(127), "]".repeat(127));
+    let raw = RawValue::from_string(allowed.clone()).unwrap();
+    assert_eq!(crate::json::canonical(&raw, 1000).unwrap(), allowed);
 }

@@ -58,17 +58,32 @@ pub(crate) async fn control(
     command: &'static str,
     timeout: Duration,
 ) -> Result<()> {
-    tokio::time::timeout(timeout, connection.execute(command))
-        .await
-        .map_err(|cause| {
-            SqlError::with_source(
-                ErrorKind::Driver,
-                "MySQL transaction deadline exceeded; outcome uncertain",
-                cause,
-            )
-        })?
-        .map(|_| ())
-        .map_err(driver_error)
+    tokio::time::timeout(timeout, async {
+        #[cfg(test)]
+        crate::probe::at(match command {
+            "BEGIN" => crate::probe::Phase::BeforeBegin,
+            "COMMIT" => crate::probe::Phase::BeforeCommit,
+            _ => crate::probe::Phase::BeforeRollback,
+        })
+        .await?;
+        connection.execute(command).await.map_err(driver_error)?;
+        #[cfg(test)]
+        crate::probe::at(match command {
+            "BEGIN" => crate::probe::Phase::AfterBegin,
+            "COMMIT" => crate::probe::Phase::AfterCommit,
+            _ => crate::probe::Phase::AfterRollback,
+        })
+        .await?;
+        Ok(())
+    })
+    .await
+    .map_err(|cause| {
+        SqlError::with_source(
+            ErrorKind::Driver,
+            "Mysql transaction deadline exceeded; outcome uncertain",
+            cause,
+        )
+    })?
 }
 /// Prepare metadata and execute the same SQL on the exclusively borrowed socket.
 async fn run(
@@ -78,10 +93,14 @@ async fn run(
 ) -> Result<QueryResult> {
     // This is the only dynamic SQL audit marker. Query has separate, owned binds;
     // the core renderer already validated its single trusted ordinary statement.
+    #[cfg(test)]
+    crate::probe::at(crate::probe::Phase::BeforePrepare).await?;
     let statement = connection
         .prepare(sqlx::AssertSqlSafe(query.sql()).into_sql_str())
         .await
         .map_err(driver_error)?;
+    #[cfg(test)]
+    crate::probe::at(crate::probe::Phase::AfterPrepare).await?;
     let expected = match statement.parameters() {
         Some(Either::Right(count)) => count,
         Some(Either::Left(types)) => types.len(),
@@ -106,6 +125,8 @@ async fn run(
         };
     }
     // Poll rows incrementally; never allocate an unbounded fetch_all collection.
+    #[cfg(test)]
+    crate::probe::at(crate::probe::Phase::BeforeExecute).await?;
     let mut stream = connection.fetch_many(bound);
     let mut result = QueryResult::default();
     let mut budget = OutputBudget::new(limits);
@@ -127,9 +148,15 @@ async fn run(
                     })?)
                 };
             }
-            Either::Right(native) => result.rows.push(budget.decode(&native)?),
+            Either::Right(native) => {
+                #[cfg(test)]
+                crate::probe::at(crate::probe::Phase::AfterRow).await?;
+                result.rows.push(budget.decode(&native)?);
+            }
         }
     }
+    #[cfg(test)]
+    crate::probe::at(crate::probe::Phase::AfterExecute).await?;
     Ok(result)
 }
 /// Report a native parameter count mismatch before executing any bound statement.

@@ -58,7 +58,7 @@ pub struct MysqlOptions {
     /// Whole prepare/bind/execute/decode/control budget, 1..=300000 milliseconds.
     #[serde(default = "default_statement")]
     pub statement_timeout_ms: u64,
-    /// Retirement budget before forced transport disposal, 1..=300000 milliseconds.
+    /// Per-reset and per-retirement budget, 1..=300000 milliseconds each.
     #[serde(default = "default_cleanup")]
     pub cleanup_timeout_ms: u64,
 }
@@ -173,7 +173,7 @@ impl MysqlOptions {
     pub(crate) fn statement_timeout(&self) -> Duration {
         Duration::from_millis(self.statement_timeout_ms)
     }
-    /// Bound graceful transport disposal while retaining both permits.
+    /// Bound each reset/disposal phase while retaining both permits.
     pub(crate) fn cleanup_timeout(&self) -> Duration {
         Duration::from_millis(self.cleanup_timeout_ms)
     }
@@ -212,7 +212,7 @@ fn default_statement() -> u64 {
     30000
 }
 
-/// Bound graceful retirement before forced disposal by default.
+/// Bound each reset/retirement phase before forced disposal by default.
 fn default_cleanup() -> u64 {
     5000
 }
