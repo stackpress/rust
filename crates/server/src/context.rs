@@ -5,7 +5,7 @@ use std::fmt;
 use std::sync::Arc;
 
 use stackpress_lib::{
-    DispatchOutcome, Error, HandlerFuture, Invocation, Request, Response, Result,
+    DispatchOutcome, Error, ErrorKind, HandlerFuture, Invocation, Request, Response, Result,
 };
 
 use crate::report::{LifecycleStage, StageFailure};
@@ -319,11 +319,13 @@ impl ServerInvocationExt for Invocation<'_> {
                 DispatchOutcome::Completed => Ok(stackpress_lib::Flow::Continue),
                 DispatchOutcome::Aborted => Ok(stackpress_lib::Flow::Abort),
                 DispatchOutcome::NoListener => {
-                    Err(Error::from_source(DelegationError::NoListener {
-                        event: event.to_owned(),
-                    })
-                    .with_code(404)
-                    .with_public_message("Not Found"))
+                    Err(Error::new("required capability delegation failed")
+                        .with_kind(ErrorKind::External)
+                        .with_cause(DelegationError::NoListener {
+                            event: event.to_owned(),
+                        })
+                        .with_code(404)
+                        .with_public_message("Not Found"))
                 }
             }
         })

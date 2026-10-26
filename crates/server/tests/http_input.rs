@@ -372,8 +372,19 @@ async fn invalid_headers_and_method_are_no_request_failures() -> Result<()> {
         .method("X".repeat(129).as_str())
         .body(Vec::new())
         .unwrap();
-    for input in [binary, repeated, long_method] {
+    for (index, input) in [binary, repeated, long_method].into_iter().enumerate() {
         let reply = adapter.handle(&app, input).await?;
+        if index == 0 {
+            let error = reply.report.failures[0].error.as_ref();
+            assert_eq!(error.message(), "HTTP request header decoding failed");
+            assert!(
+                std::error::Error::source(error)
+                    .unwrap()
+                    .is::<http::header::ToStrError>()
+            );
+            assert_eq!(error.kind(), stackpress_lib::ErrorKind::External);
+            assert_eq!(error.public_view().error, "Internal Server Error");
+        }
         // G17 returns a fixed public 400 and offers no callback an invented normalized request.
         assert!(reply.report.error_offers.is_empty());
         assert_eq!(native(reply).status(), 400);

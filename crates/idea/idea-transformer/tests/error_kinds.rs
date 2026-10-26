@@ -132,3 +132,22 @@ fn parser_and_json_visitor_budgets_are_machine_readable() {
         Kind::Limit
     );
 }
+
+/// Direct parser conversion adds phase context without copying the concrete diagnostic Display.
+#[test]
+fn direct_parser_conversion_retains_one_concrete_cause() {
+    let original =
+        stackpress_idea_parser::parse("review.idea", "model {", &Default::default()).unwrap_err();
+    let explanation = original.to_string();
+    let converted = TransformError::from(original.clone());
+    assert_eq!(converted.to_string(), "Idea parsing failed");
+    assert_eq!(converted.kind(), Kind::Parse);
+    assert_eq!(
+        converted
+            .source()
+            .unwrap()
+            .downcast_ref::<stackpress_idea_parser::IdeaError>(),
+        Some(&original)
+    );
+    assert_ne!(converted.to_string(), explanation);
+}

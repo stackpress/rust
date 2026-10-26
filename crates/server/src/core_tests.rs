@@ -291,6 +291,8 @@ async fn delegation_and_missing_host_are_explicit() -> Result<()> {
             .unwrap()
             .is::<DelegationError>()
     );
+    assert_eq!(error.message(), "required capability delegation failed");
+    assert_eq!(error.public_view().error, "Not Found");
     assert_eq!(error.code(), 404);
     // Plain lib roots remain valid but provide no trusted server registry/context.
     emitter.resolve("raw", Nest::new()).await?;

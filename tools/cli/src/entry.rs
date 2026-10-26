@@ -7,7 +7,7 @@ use std::io::{self, Read};
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-use stackpress_lib::{Error, ParseLimits, Result};
+use stackpress_lib::{Error, ErrorKind, ParseLimits, Result};
 use stackpress_server::{BuildResult, ConfigLayers, LifecycleStage, Server};
 
 use crate::control::{Control, Level};
@@ -173,7 +173,13 @@ async fn configuration_async(path: Option<PathBuf>) -> Result<ConfigLayers> {
     // Await the blocking pool before consuming the builder; preserve both join and file failures.
     tokio::task::spawn_blocking(move || configuration(path.as_deref()))
         .await
-        .map_err(Error::from_source)?
+        .map_err(|cause| {
+            Error::new("bootstrap acquisition worker failed")
+                .with_kind(ErrorKind::External)
+                .with_code(500)
+                .with_public_message("Internal Server Error")
+                .with_cause(cause)
+        })?
 }
 
 /// Load at most one explicitly selected JSON object, retaining normal I/O/UTF-8/parser causes.
@@ -187,26 +193,60 @@ fn configuration(path: Option<&Path>) -> Result<ConfigLayers> {
         // Follow input symlinks, but reject devices/FIFOs before open can wait for a writer.
         // Pre/post checks assume cooperative paths; concurrent replacement is not race-free.
         if !std::fs::metadata(path)
-            .map_err(Error::from_source)?
+            .map_err(|cause| {
+                Error::new("bootstrap source metadata failed")
+                    .with_kind(ErrorKind::External)
+                    .with_code(500)
+                    .with_public_message("Internal Server Error")
+                    .with_cause(cause)
+            })?
             .is_file()
         {
             return Err(Error::invalid("bootstrap source is not a regular file"));
         }
-        let file = File::open(path).map_err(Error::from_source)?;
-        if !file.metadata().map_err(Error::from_source)?.is_file() {
+        let file = File::open(path).map_err(|cause| {
+            Error::new("bootstrap source open failed")
+                .with_kind(ErrorKind::External)
+                .with_code(500)
+                .with_public_message("Internal Server Error")
+                .with_cause(cause)
+        })?;
+        if !file
+            .metadata()
+            .map_err(|cause| {
+                Error::new("bootstrap file metadata failed")
+                    .with_kind(ErrorKind::External)
+                    .with_code(500)
+                    .with_public_message("Internal Server Error")
+                    .with_cause(cause)
+            })?
+            .is_file()
+        {
             return Err(Error::invalid(
                 "opened bootstrap source is not a regular file",
             ));
         }
         file.take(limit as u64 + 1)
             .read_to_end(&mut bytes)
-            .map_err(Error::from_source)?;
+            .map_err(|cause| {
+                Error::new("bootstrap source read failed")
+                    .with_kind(ErrorKind::External)
+                    .with_code(500)
+                    .with_public_message("Internal Server Error")
+                    .with_cause(cause)
+            })?;
         if bytes.len() > limit {
             // The extra detection byte rejects excess before UTF-8/JSON allocation or build entry.
             return Err(Error::limit("bootstrap configuration exceeds byte limit"));
         }
         // Invalid encodings are never replaced with another configuration document.
-        let text = std::str::from_utf8(&bytes).map_err(Error::from_source)?;
+        let text = std::str::from_utf8(&bytes).map_err(|cause| {
+            Error::new("bootstrap source UTF-8 decoding failed")
+                .with_kind(ErrorKind::External)
+                .with_code(500)
+                .with_public_message("Internal Server Error")
+                .with_cause(cause)
+        })?;
         // A constant printable source label never exposes the path or file contents in diagnostics.
         layers.json("cli-bootstrap", text)?;
     }

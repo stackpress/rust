@@ -568,6 +568,14 @@ async fn delivery_results() {
         assert_eq!(stdout.calls, expected_calls);
         let cause = result.report.failures.last().unwrap().error.as_ref();
         assert_eq!(
+            cause.message(),
+            if flush {
+                "CLI response flush failed"
+            } else {
+                "CLI response write failed"
+            }
+        );
+        assert_eq!(
             std::error::Error::source(cause)
                 .unwrap()
                 .downcast_ref::<io::Error>()

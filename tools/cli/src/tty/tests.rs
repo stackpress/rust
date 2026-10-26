@@ -1,8 +1,7 @@
 //! Controlled workers exercise cancellation independently of native OS scheduling.
 use super::*;
 
-#[path = "../../../../crates/lib/tests/support/watchdog.rs"]
-mod watchdog;
+use crate::watchdog;
 
 /// Build the real input owner around a controlled stalled native-work substitute.
 fn controlled(work: impl FnOnce() -> io::Result<()> + Send + 'static) -> TtyInput {

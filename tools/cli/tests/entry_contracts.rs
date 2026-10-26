@@ -219,7 +219,12 @@ async fn file_limits_and_errors() {
     assert_eq!(exit, ExitCode::from(2));
     assert!(stdout.is_empty());
     assert_eq!(calls, 0);
-    assert!(String::from_utf8(stderr).unwrap().contains("caused by:"));
+    let detail = String::from_utf8(stderr).unwrap();
+    assert!(detail.contains("caused by:"));
+    assert_eq!(
+        detail.matches("bootstrap source metadata failed").count(),
+        1
+    );
 }
 
 /// Invalid argv never calls the application builder and never writes machine output.

@@ -12,8 +12,8 @@ use http::header::{CONTENT_LENGTH, CONTENT_TYPE, SET_COOKIE, TRANSFER_ENCODING};
 use http::{HeaderMap, HeaderName, HeaderValue, Uri};
 use stackpress_lib::data::parse_body;
 use stackpress_lib::{
-    Body, DeliveryState, Error, Headers, LoadResult, ParseLimits, Request, Response, Result,
-    Session, SessionRevision, SessionValue,
+    Body, DeliveryState, Error, ErrorKind, Headers, LoadResult, ParseLimits, Request, Response,
+    Result, Session, SessionRevision, SessionValue,
 };
 
 use crate::{HandleOptions, HandleReport, HostReply, OutputGuard, Server};
@@ -98,7 +98,11 @@ impl Default for HttpOptions {
 /// let adapter = HttpAdapter::new(HttpOptions::default())?;
 /// for path in ["/missing", "/suppressed", "/elsewhere"] {
 ///     let input = http::Request::builder().uri(path).body(Vec::new())
-///         .map_err(stackpress_lib::Error::from_source)?;
+///         .map_err(|cause| stackpress_lib::Error::new("buffered HTTP request construction failed")
+///             .with_kind(stackpress_lib::ErrorKind::External)
+///             .with_code(500)
+///             .with_public_message("Internal Server Error")
+///             .with_cause(cause))?;
 ///     let reply = adapter.handle(&app, input).await?;
 ///     match reply.output {
 ///         HttpOutput::Response(native) => assert_eq!(native.status(), 404),
@@ -200,7 +204,11 @@ impl HttpAdapter {
     /// # async fn example() -> stackpress_lib::Result<()> {
     /// let app = ServerBuilder::new().build().await.map_err(|error| error.error)?;
     /// let input = http::Request::builder().uri("/missing").body(Vec::new())
-    ///     .map_err(stackpress_lib::Error::from_source)?;
+    ///     .map_err(|cause| stackpress_lib::Error::new("buffered HTTP request construction failed")
+    ///         .with_kind(stackpress_lib::ErrorKind::External)
+    ///         .with_code(500)
+    ///         .with_public_message("Internal Server Error")
+    ///         .with_cause(cause))?;
     /// let reply = HttpAdapter::new(HttpOptions::default())?.handle(&app, input).await?;
     /// assert!(matches!(reply.output, HttpOutput::Response(response) if response.status() == 404));
     /// # Ok(())
@@ -255,7 +263,13 @@ impl HttpAdapter {
         let mut headers = Headers::new();
         for (name, value) in input.headers() {
             // Reject opaque binary header values instead of guessing a text codec.
-            let value = value.to_str().map_err(Error::from_source)?;
+            let value = value.to_str().map_err(|cause| {
+                Error::new("HTTP request header decoding failed")
+                    .with_kind(ErrorKind::External)
+                    .with_code(500)
+                    .with_public_message("Internal Server Error")
+                    .with_cause(cause)
+            })?;
             headers.append(name.as_str(), value)?;
         }
         // An absent type uses the foundation default; multiple types cannot select one parser.
@@ -519,13 +533,25 @@ fn frame_response(
     // 204/304 omit length; 205 receives zero because prepare already discarded its body.
     if !matches!(code, 204 | 304) {
         // Count bytes before HEAD suppression, retaining the selected representation's length.
-        let length = HeaderValue::from_str(&body.len().to_string()).map_err(Error::from_source)?;
+        let length = HeaderValue::from_str(&body.len().to_string()).map_err(|cause| {
+            Error::new("HTTP response content length encoding failed")
+                .with_kind(ErrorKind::External)
+                .with_code(500)
+                .with_public_message("Internal Server Error")
+                .with_cause(cause)
+        })?;
         headers.insert(CONTENT_LENGTH, length);
     }
     // HEAD never exposes its computed representation bytes or silently chooses a GET handler.
     let mut native = BufferedResponse::new(if head { Vec::new() } else { body });
     // Install checked status and completed headers before returning the preflight candidate.
-    *native.status_mut() = http::StatusCode::from_u16(code).map_err(Error::from_source)?;
+    *native.status_mut() = http::StatusCode::from_u16(code).map_err(|cause| {
+        Error::new("HTTP response status conversion failed")
+            .with_kind(ErrorKind::External)
+            .with_code(500)
+            .with_public_message("Internal Server Error")
+            .with_cause(cause)
+    })?;
     *native.headers_mut() = headers;
     Ok(native)
 }
@@ -544,7 +570,13 @@ fn response_headers(response: &Response, limits: &ParseLimits) -> Result<HeaderM
             bytes = bytes.saturating_add(value.len());
             count = count.saturating_add(1);
             // Convert names with the native HTTP validator before applying transport policy.
-            let name = HeaderName::from_bytes(name.as_bytes()).map_err(Error::from_source)?;
+            let name = HeaderName::from_bytes(name.as_bytes()).map_err(|cause| {
+                Error::new("HTTP response header name conversion failed")
+                    .with_kind(ErrorKind::External)
+                    .with_code(500)
+                    .with_public_message("Internal Server Error")
+                    .with_cause(cause)
+            })?;
             if name == TRANSFER_ENCODING {
                 // Transfer coding requires real transport ownership beyond this buffer.
                 return Err(Error::invalid(
@@ -552,7 +584,13 @@ fn response_headers(response: &Response, limits: &ParseLimits) -> Result<HeaderM
                 ));
             }
             // Reject invalid native field values while every candidate is still unpublished.
-            let value = HeaderValue::from_str(value).map_err(Error::from_source)?;
+            let value = HeaderValue::from_str(value).map_err(|cause| {
+                Error::new("HTTP response header value conversion failed")
+                    .with_kind(ErrorKind::External)
+                    .with_code(500)
+                    .with_public_message("Internal Server Error")
+                    .with_cause(cause)
+            })?;
             headers.append(name, value);
         }
     }
@@ -585,7 +623,13 @@ fn append_cookie_headers(session: &Session, headers: &mut HeaderMap) -> Result<(
     // Foundation serialization validates attributes and forces scoped removal expiry/max-age.
     for cookie in session.cookie_headers()? {
         // Checked scalar serialization retains deletion scope and separate revisions.
-        let value = HeaderValue::from_str(&cookie).map_err(Error::from_source)?;
+        let value = HeaderValue::from_str(&cookie).map_err(|cause| {
+            Error::new("HTTP response cookie header conversion failed")
+                .with_kind(ErrorKind::External)
+                .with_code(500)
+                .with_public_message("Internal Server Error")
+                .with_cause(cause)
+        })?;
         headers.append(SET_COOKIE, value);
     }
     Ok(())
@@ -600,7 +644,16 @@ fn representation(response: &Response, headers: &mut HeaderMap) -> Result<Vec<u8
         Body::Empty | Body::Value(_) => {
             // Keep the owning Response limits and presence of null/false/zero/total=0.
             let json = response.try_to_json()?;
-            (serde_json::to_vec(&json)?, Some("application/json"))
+            (
+                serde_json::to_vec(&json).map_err(|cause| {
+                    Error::new("HTTP response JSON serialization failed")
+                        .with_kind(ErrorKind::External)
+                        .with_code(500)
+                        .with_public_message("Internal Server Error")
+                        .with_cause(cause)
+                })?,
+                Some("application/json"),
+            )
         }
     };
     // An absent MIME keeps an explicit header; structured envelopes always supply JSON MIME.
@@ -608,7 +661,13 @@ fn representation(response: &Response, headers: &mut HeaderMap) -> Result<Vec<u8
         // Explicit MIME wins over stale user headers; an envelope always declares JSON.
         headers.insert(
             CONTENT_TYPE,
-            HeaderValue::from_str(mime).map_err(Error::from_source)?,
+            HeaderValue::from_str(mime).map_err(|cause| {
+                Error::new("HTTP response content type conversion failed")
+                    .with_kind(ErrorKind::External)
+                    .with_code(500)
+                    .with_public_message("Internal Server Error")
+                    .with_cause(cause)
+            })?,
         );
     }
     Ok(body)
