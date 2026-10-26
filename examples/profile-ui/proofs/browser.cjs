@@ -11,6 +11,7 @@ const base = process.env.PROFILE_UI_BASE || '';
 if (!host) throw Error('set PROFILE_UI_HOST to the built finite web fixture binary');
 const assets = path.join(root, 'examples/profile-ui/dist/hydrate');
 const render = (hostile) => cp.execFileSync(host, hostile ? ["hostile"] : [], { encoding: 'utf8', timeout: 10000 });
+
 (async () => {
   const browser = await chromium.launch({ headless: true });
   const errors = [];
@@ -51,14 +52,14 @@ const render = (hostile) => cp.execFileSync(host, hostile ? ["hostile"] : [], { 
     assert.equal(await page.evaluate(() => window.inputBefore === document.querySelector('input') && document.activeElement === window.inputBefore), true, 'preserved DOM/focus');
     assert.equal(await page.locator('li').count(), 3);
     await page.locator('input').fill('abc456');
-    await page.locator('button').click();
+    await page.locator('form button[type=submit]').click();
     await page.waitForFunction(() => document.querySelectorAll('li').length === 1 && document.querySelector('li').textContent === 'Grace Hopper');
     assert.equal(calls, 1);
     // Owner disposal aborts the active transport and cannot publish its late completion.
     hold = true;
     const barrier = new Promise(resolve => { requested = resolve; });
     await page.locator('input').fill('abc123');
-    await page.locator('button').click();
+    await page.locator('form button[type=submit]').click();
     await barrier;
     await page.evaluate(() => window.disposeProfileUi());
     release();

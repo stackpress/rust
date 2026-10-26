@@ -3,6 +3,12 @@
 //! This example-only path reuse deliberately fails if generation removes Profile.
 //! It does not import the generated application's native dependencies.
 
+mod reply;
+pub use reply::{
+    HostError, ReplyDecodeError, SearchFailure, SearchFailureKind, SearchOutcome, TransportFailure,
+    decode_search_reply,
+};
+
 #[path = "../../../generated-profile/app/src/generated/contracts/profile.rs"]
 mod generated_profile;
 pub use generated_profile::Profile;
