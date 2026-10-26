@@ -1,7 +1,7 @@
 //! Leptos integration with explicit SSR, hydrate and CSR compilation modes.
 //!
-//! M0 supplies the render/ownership boundary. Broader components and routing are
-//! later milestones. Native hosts never store an Owner or live reactive state.
+//! Native buffered rendering and compiled route descriptors share checked public
+//! contracts. Native hosts never store an Owner or live reactive state.
 
 #[cfg(any(
     all(feature = "ssr", feature = "hydrate"),
@@ -22,3 +22,6 @@ compile_error!("ssr is a native mode; use hydrate or csr for wasm32");
 
 #[cfg(all(feature = "ssr", not(target_arch = "wasm32")))]
 pub mod render;
+
+/// Checked route context and Leptos path matching over a compiled route catalog.
+pub mod routing;

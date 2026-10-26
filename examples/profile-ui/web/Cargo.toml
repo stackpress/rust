@@ -10,7 +10,7 @@ publish.workspace = true
 leptos = { version = "=0.8.22", default-features = false }
 stackpress-lib = { path = "../../../crates/lib" }
 stackpress-server = { path = "../../../crates/server", features = ["http"] }
-stackpress-framework-view = { path = "../../../crates/framework/framework-view" }
+stackpress-framework-view = { path = "../../../crates/framework/framework-view", features = ["server"] }
 stackpress-framework-ui = { path = "../../../crates/framework/framework-ui", features = ["ssr"] }
 stackpress-example-generated-profile = { path = "../../generated-profile/app" }
 stackpress-example-profile-ui-contracts = { path = "../contracts" }

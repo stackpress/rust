@@ -7,12 +7,12 @@
 mod generated_profile;
 pub use generated_profile::Profile;
 use serde::{Deserialize, Serialize};
-use stackpress_framework_view::{PageId, PageSnapshot};
+use stackpress_framework_view::{PageId, PageSnapshot, PublicStatus};
 
 /// Current public search/page wire revision.
 pub const REVISION: u32 = 1;
 /// Build ID shared by the locked hydration and CSR assets.
-pub const BUILD: &str = "profile-ui-m0-1";
+pub const BUILD: &str = "profile-ui-m1-1";
 /// Maximum encoded search DTO size.
 pub const MAX_REQUEST_BYTES: usize = 64 * 1024;
 
@@ -144,6 +144,7 @@ pub fn snapshot(
         location: format!("/ui/profiles?id={query}"),
         locale: "en".into(),
         theme: "light".into(),
+        status: PublicStatus::ok(),
         data,
     })
 }
