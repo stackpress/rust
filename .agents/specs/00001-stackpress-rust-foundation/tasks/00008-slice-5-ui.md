@@ -144,4 +144,19 @@ Design checkpoint prepared on 2026-10-25. Start with [Slice 5 decisions and reco
 
 ## Acceptance notes
 
-Pending.
+**Owner visual acceptance, 2026-10-26: accepted ("looks good").**
+
+- **Preview:** the coordinator started the example gateway through devmetrics (`http://localhost:3000/demo/...`, assets verified before bind). The owner reviewed it against a 5-minute checklist:
+  - search, including the singular "1 profile", empty and no-match states;
+  - detail, return-to-search and back/forward;
+  - refresh on a detail page;
+  - narrow width;
+  - French and the dark theme.
+
+  The preview was stopped afterwards.
+- **Context given to the owner:**
+  - the vertical deliberately uses the in-memory `profile-search`, not SQL (G25 kept Slice 5 independent of Slice 4);
+  - styling is the agreed neutral grayscale;
+  - wiring the UI to the SQL-backed example is a natural follow-up, not part of this task.
+- **Automated and coordinator evidence for controls 00008-001 to 008** is recorded in the verification notes above. That covers browser proofs at the root and `/demo/v1`, packaged-app proofs including networking-free operation, recovery screens, and `Demo:` customization parity across direct, CLI, HTTP, SSR and Tauri.
+- **Remaining before the task closes:** refactor rounds 1–4 and the slice closeout re-verification. These are behavior-preserving; closeout reruns the proofs.
