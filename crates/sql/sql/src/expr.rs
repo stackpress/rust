@@ -1,6 +1,6 @@
 //! Bounded expression trees and selectors shared by every DML builder.
 
-use crate::identifier::{invalid, quote, unsupported};
+use crate::identifier::{invalid, unsupported};
 use crate::{
     DialectId, Identifier, JsonPath, JsonScalar, Query, QueryLimits, Render, Result, Sql, SqlValue,
     TrustedSql,
@@ -158,14 +158,14 @@ impl Selector {
     pub(crate) fn render(&self, context: &mut RenderContext) -> Result<String> {
         let mut sql = match (&self.expression, &self.wildcard) {
             (Some(expression), _) => context.expression(expression, 0)?,
-            (None, Some(table)) => format!("{}.*", table.quoted()?),
+            (None, Some(table)) => format!("{}.*", table.quoted(context.dialect)?),
             (None, None) => "*".into(),
         };
         if let Some(alias) = &self.alias {
             if self.expression.is_none() {
                 return Err(invalid("wildcards cannot have aliases"));
             }
-            sql.push_str(&format!(" AS {}", quote(alias)?));
+            sql.push_str(&format!(" AS {}", context.dialect.quote(alias)?));
         }
         Ok(sql)
     }
@@ -200,6 +200,8 @@ impl From<Identifier> for Selector {
 pub(crate) struct RenderContext {
     /// Bind order follows the final SQL traversal exactly.
     binds: Vec<SqlValue>,
+    /// Renderer identity for quoting and bind numbering.
+    pub(crate) dialect: DialectId,
     /// Total expression nodes visited across every clause.
     nodes: usize,
     /// Cumulative retained bind bytes, checked before retaining each next argument.
@@ -207,13 +209,11 @@ pub(crate) struct RenderContext {
 }
 
 impl RenderContext {
-    /// Reject other dialects until M2 provides their real renderers.
+    /// Start isolated quoting, bind numbering and budget state for the chosen renderer.
     pub(crate) fn new(dialect: DialectId) -> Result<Self> {
-        if dialect != DialectId::Sqlite {
-            return Err(unsupported("SQL dialect renderer is not implemented"));
-        }
         Ok(Self {
             binds: Vec::new(),
+            dialect,
             nodes: 0,
             bytes: 0,
         })
@@ -223,19 +223,33 @@ impl RenderContext {
     pub(crate) fn bind(&mut self, value: SqlValue) -> Result<String> {
         self.reserve_bind(&value)?;
         self.binds.push(value);
-        Ok("?".into())
+        Ok(self.marker())
     }
 
     /// Validate borrowed input before cloning it into the retained argument list.
     pub(crate) fn bind_ref(&mut self, value: &SqlValue) -> Result<String> {
         self.reserve_bind(value)?;
         self.binds.push(value.clone());
-        Ok("?".into())
+        Ok(self.marker())
+    }
+
+    /// Number PostgreSQL placeholders from AST bind traversal, never by replacing SQL text.
+    fn marker(&self) -> String {
+        if self.dialect == DialectId::Postgres {
+            format!("${}", self.binds.len())
+        } else {
+            "?".into()
+        }
     }
 
     /// Reserve count/bytes atomically so failed binds leave accounting unchanged.
     fn reserve_bind(&mut self, value: &SqlValue) -> Result<()> {
         value.validate()?;
+        if self.dialect == DialectId::Postgres
+            && matches!(value, SqlValue::Text(text) if text.contains('\0'))
+        {
+            return Err(unsupported("PostgreSQL text cannot contain NUL"));
+        }
         let limits = QueryLimits::default();
         let bytes = self
             .bytes
@@ -250,7 +264,7 @@ impl RenderContext {
 
     /// Freeze the SQL/parameter pair after enforcing the default input budgets.
     pub(crate) fn finish(self, sql: String) -> Result<Query> {
-        Query::bound(DialectId::Sqlite, sql, self.binds)
+        Query::bound(self.dialect, sql, self.binds)
     }
 
     /// Render all selectors with a finite list bound and deterministic bind order.
@@ -277,7 +291,7 @@ impl RenderContext {
             ));
         }
         match expression {
-            Expr::Column(name) => name.quoted(),
+            Expr::Column(name) => name.quoted(self.dialect),
             Expr::Value(value) => self.bind_ref(value),
             Expr::Compare(left, operator, right) => {
                 // SQL equality to NULL is a null test, not an always-unknown comparison.
@@ -329,7 +343,13 @@ impl RenderContext {
                 let escape = self.bind(escape.to_string().into())?;
                 Ok(format!("{operand} LIKE {pattern} ESCAPE {escape}"))
             }
+            Expr::JsonExtract(column, path) if self.dialect != DialectId::Sqlite => {
+                crate::json_render::extract(self, column, path)
+            }
             Expr::JsonExtract(column, path) => self.json_call("json_extract", column, path),
+            Expr::JsonEq(column, path, value) if self.dialect != DialectId::Sqlite => {
+                crate::json_render::equal(self, column, path, value)
+            }
             Expr::JsonEq(column, path, value) => {
                 let kind = value.kind()?;
                 let native_type = self.json_call("json_type", column, path)?;
@@ -344,6 +364,9 @@ impl RenderContext {
                     "({native_type} = {kind_bind} AND {extracted} = {value_bind})"
                 ))
             }
+            Expr::JsonContains(column, path, value) if self.dialect != DialectId::Sqlite => {
+                crate::json_render::contains(self, column, path, value)
+            }
             Expr::JsonContains(column, path, value) => self.json_contains(column, path, value),
             Expr::Trusted(dialect, text, values) => {
                 if text.text().trim().is_empty() {
@@ -354,7 +377,15 @@ impl RenderContext {
                     *dialect,
                     TrustedSql::audited(format!("SELECT ({})", text.text())),
                 );
-                query.render(DialectId::Sqlite)?;
+                if self.dialect == DialectId::Postgres
+                    && !values.is_empty()
+                    && !self.binds.is_empty()
+                {
+                    return Err(unsupported(
+                        "numbered trusted fragments must precede other binds",
+                    ));
+                }
+                query.render(self.dialect)?;
                 for value in values {
                     self.bind_ref(value)?;
                 }
@@ -394,7 +425,7 @@ impl RenderContext {
         column: &Identifier,
         path: &JsonPath,
     ) -> Result<String> {
-        let column = column.quoted()?;
+        let column = column.quoted(self.dialect)?;
         let path = self.bind(path.sqlite_path()?.into())?;
         Ok(format!("{function}({column}, {path})"))
     }
@@ -408,7 +439,7 @@ impl RenderContext {
     ) -> Result<String> {
         let kind = value.kind()?;
         let array_type = self.json_call("json_type", column, path)?;
-        let column = column.quoted()?;
+        let column = column.quoted(self.dialect)?;
         let path = self.bind(path.sqlite_path()?.into())?;
         let kind = self.bind(kind.into())?;
         // The table-valued function contributes only immediate children, never descendants.

@@ -2,14 +2,14 @@
 
 use crate::{ErrorKind, Result, SqlError, SqlValue};
 
-/// A renderer/backend identity; only SQLite execution/rendering is proved at M0.
+/// A renderer/backend identity, independent from installed native adapters.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum DialectId {
     /// Native SQLite.
     Sqlite,
-    /// Reserved renderer identity for a later milestone, not a working adapter.
+    /// Pure network renderer identity; no production network adapter is included.
     Postgres,
-    /// Reserved renderer identity for a later milestone, not a working adapter.
+    /// Pure network renderer identity; no production network adapter is included.
     Mysql,
 }
 
@@ -135,7 +135,7 @@ impl TrustedSql {
     }
 }
 
-/// Detached trusted raw statement. Only anonymous positional `?` markers are admitted.
+/// Detached trusted raw statement. SQLite/MySQL use anonymous `?`; PostgreSQL uses native `$n`.
 #[derive(Clone, Debug)]
 pub struct Sql {
     query: Query,
@@ -169,14 +169,8 @@ impl Render for Sql {
     /// Reject unsupported dialects, batches, transaction control and nonanonymous binds.
     fn render(&self, dialect: DialectId) -> Result<Query> {
         let query = self.query.render(dialect)?;
-        if dialect != DialectId::Sqlite {
-            return Err(SqlError::new(
-                ErrorKind::Unsupported,
-                "renderer not implemented at M0",
-            ));
-        }
         query.validate(QueryLimits::default())?;
-        validate_statement(&query.sql)?;
+        validate_statement(&query.sql, dialect)?;
         Ok(query)
     }
 }
@@ -189,8 +183,8 @@ fn invalid_sql() -> SqlError {
     )
 }
 
-/// Admit one SQLite statement while respecting comments and every SQLite quote form.
-fn validate_statement(sql: &str) -> Result<()> {
+/// Admit one statement using the selected dialect's bounded lexical subset.
+fn validate_statement(sql: &str, dialect: DialectId) -> Result<()> {
     let bytes = sql.as_bytes();
     if bytes.contains(&0) {
         return Err(invalid_sql());
@@ -205,13 +199,20 @@ fn validate_statement(sql: &str) -> Result<()> {
             index += 1;
             continue;
         }
-        if bytes[index..].starts_with(b"--") {
+        if (bytes[index..].starts_with(b"--")
+            && (dialect != DialectId::Mysql
+                || bytes.get(index + 2).is_none_or(u8::is_ascii_whitespace)))
+            || (dialect == DialectId::Mysql && byte == b'#')
+        {
             while index < bytes.len() && bytes[index] != b'\n' {
                 index += 1;
             }
             continue;
         }
         if bytes[index..].starts_with(b"/*") {
+            if dialect == DialectId::Mysql && bytes.get(index + 2) == Some(&b'!') {
+                return Err(invalid_sql());
+            }
             index += 2;
             while index + 1 < bytes.len() && !bytes[index..].starts_with(b"*/") {
                 index += 1;
@@ -231,12 +232,50 @@ fn validate_statement(sql: &str) -> Result<()> {
             index += 1;
             continue;
         }
+        if dialect == DialectId::Postgres && byte == b'$' {
+            let tail = &sql[index + 1..];
+            let digits = tail.bytes().take_while(u8::is_ascii_digit).count();
+            if digits > 0 {
+                let ordinal = tail[..digits].parse::<usize>().map_err(|_| invalid_sql())?;
+                if ordinal == 0 || ordinal > QueryLimits::default().binds {
+                    return Err(invalid_sql());
+                }
+                index += digits + 1;
+                continue;
+            }
+            // Dollar-quoted literals retain semicolons/question marks without replacement.
+            let tag_end = tail.find('$').ok_or_else(invalid_sql)?;
+            if !tail[..tag_end]
+                .bytes()
+                .all(|byte| byte.is_ascii_alphanumeric() || byte == b'_')
+            {
+                return Err(invalid_sql());
+            }
+            let delimiter = &sql[index..index + tag_end + 2];
+            let body = index + delimiter.len();
+            let end = sql[body..].find(delimiter).ok_or_else(invalid_sql)?;
+            index = body + end + delimiter.len();
+            continue;
+        }
+        if dialect == DialectId::Postgres && bytes[index..].starts_with(b"::") {
+            index += 2;
+            continue;
+        }
+        if dialect == DialectId::Postgres && byte == b'?' {
+            return Err(invalid_sql());
+        }
         if matches!(byte, b'\'' | b'"' | b'`' | b'[') {
             let close = if byte == b'[' { b']' } else { byte };
             index += 1;
             loop {
                 if index >= bytes.len() || bytes[index] == 0 {
                     return Err(invalid_sql());
+                }
+                if dialect != DialectId::Sqlite && bytes[index] == b'\\' {
+                    return Err(SqlError::new(
+                        ErrorKind::Unsupported,
+                        "raw network SQL backslash quoting is outside the lexical subset; bind data instead",
+                    ));
                 }
                 if bytes[index] == close {
                     index += 1;

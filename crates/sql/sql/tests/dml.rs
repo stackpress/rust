@@ -549,10 +549,7 @@ fn detached_data_and_dialect_selection() {
     let delete = Delete::new("p").all_rows();
     for dialect in [DialectId::Postgres, DialectId::Mysql] {
         for query in [&base as &dyn Render, &insert, &update, &delete] {
-            assert_eq!(
-                query.render(dialect).unwrap_err().kind(),
-                ErrorKind::Unsupported
-            );
+            assert_eq!(query.render(dialect).unwrap().dialect(), dialect);
         }
     }
     assert!(sqlite(&insert.clone().values([2])).binds().len() == 2);

@@ -17,6 +17,14 @@ struct Calls {
     fail_run: bool,
     /// Force rollback failure without replacing the primary error.
     fail_rollback: bool,
+    /// Statement ordinal at which to fail, for ordered plan tests.
+    fail_at: Option<usize>,
+    /// Statement ordinal whose future remains pending until the owner is cancelled.
+    pending_at: Option<usize>,
+    /// Durable fake state, populated only by an explicit session commit.
+    committed: Vec<String>,
+    /// Leases currently owned by published sessions.
+    active_sessions: usize,
 }
 
 /// Runtime-free immediate driver for inspecting only the core forwarding boundary.
@@ -34,10 +42,15 @@ impl Database for Driver {
     }
     /// Publish an owned exclusive test session, recording acquisition explicitly.
     fn begin(&self, _: TransactionOptions) -> SqlFuture<'_, Box<dyn TransactionSession>> {
-        self.0.lock().unwrap().events.push("begin");
-        Box::pin(std::future::ready(Ok(
-            Box::new(Session(self.0.clone())) as Box<dyn TransactionSession>
-        )))
+        let mut calls = self.0.lock().unwrap();
+        calls.events.push("begin");
+        calls.active_sessions += 1;
+        Box::pin(std::future::ready(Ok(Box::new(Session {
+            calls: self.0.clone(),
+            completed: false,
+            staged: Vec::new(),
+        })
+            as Box<dyn TransactionSession>)))
     }
     /// Record explicit close without any runtime dependency.
     fn close(&self) -> SqlFuture<'_, ()> {
@@ -47,23 +60,55 @@ impl Database for Driver {
 }
 
 /// Test-only exclusive driver session. Native rollback-on-drop is adapter-owned.
-struct Session(Arc<Mutex<Calls>>);
+struct Session {
+    /// Shared committed state and observable test driver calls.
+    calls: Arc<Mutex<Calls>>,
+    /// Completion consumes the session and prevents a second rollback during Drop.
+    completed: bool,
+    /// Successful session statements become durable only if commit moves them to Calls.
+    staged: Vec<String>,
+}
+
+impl Drop for Session {
+    /// Model the driver contract so cancellation proves the core drops its owned session.
+    fn drop(&mut self) {
+        if !self.completed {
+            let mut calls = self.calls.lock().unwrap();
+            calls.events.push("drop-rollback");
+            calls.active_sessions -= 1;
+            self.staged.clear();
+        }
+    }
+}
 
 impl TransactionSession for Session {
     /// Observe transaction-local forwarding independently from shared run.
     fn run(&mut self, query: Query, limits: QueryLimits) -> SqlFuture<'_, QueryResult> {
-        self.0.lock().unwrap().events.push("session-run");
-        run(&self.0, query, limits)
+        self.calls.lock().unwrap().events.push("session-run");
+        let sql = query.sql().to_owned();
+        let future = run(&self.calls, query, limits);
+        Box::pin(async move {
+            let result = future.await?;
+            self.staged.push(sql);
+            Ok(result)
+        })
     }
     /// Observe consuming completion.
-    fn commit(self: Box<Self>) -> SqlFuture<'static, ()> {
-        self.0.lock().unwrap().events.push("commit");
+    fn commit(mut self: Box<Self>) -> SqlFuture<'static, ()> {
+        self.completed = true;
+        let mut calls = self.calls.lock().unwrap();
+        calls.events.push("commit");
+        calls.active_sessions -= 1;
+        calls.committed.append(&mut self.staged);
         Box::pin(std::future::ready(Ok(())))
     }
     /// Return a secondary cleanup failure only when explicitly configured.
-    fn rollback(self: Box<Self>) -> SqlFuture<'static, ()> {
-        let mut calls = self.0.lock().unwrap();
+    fn rollback(mut self: Box<Self>) -> SqlFuture<'static, ()> {
+        self.completed = true;
+        let mut calls = self.calls.lock().unwrap();
         calls.events.push("rollback");
+        calls.active_sessions -= 1;
+        self.staged.clear();
         let result = if calls.fail_rollback {
             Err(SqlError::new(ErrorKind::Closed, "test cleanup failed"))
         } else {
@@ -81,12 +126,19 @@ fn run(
 ) -> SqlFuture<'static, QueryResult> {
     let mut calls = calls.lock().unwrap();
     calls.queries.push((query, limits));
-    let result = if calls.fail_run {
-        Err(SqlError::new(ErrorKind::Driver, "test statement failed"))
+    if calls.pending_at == Some(calls.queries.len()) {
+        return Box::pin(std::future::pending());
+    }
+    let result = if calls.fail_run || calls.fail_at == Some(calls.queries.len()) {
+        Err(SqlError::with_source(
+            ErrorKind::Driver,
+            "test statement failed",
+            std::io::Error::other("primary native source"),
+        ))
     } else {
         Ok(QueryResult {
             rows: vec![Row::new(vec![("id".into(), 7.into())])],
-            affected: 1,
+            affected: calls.queries.len() as u64,
             insert_id: Some(7),
         })
     };
@@ -269,4 +321,126 @@ fn engine_conveniences_never_attach_or_execute() {
     );
     assert!(engine.truncate("p").render(DialectId::Sqlite).is_ok());
     assert!(calls.lock().unwrap().events.is_empty());
+}
+
+/// Three ordered DDL statements make failure at N and outcome order observable.
+fn three_statement_plan(dialect: DialectId) -> QueryPlan {
+    Create::new("plan")
+        .add_field(Field::new("id", SqlType::Integer))
+        .add_index(Index::new("one", ["id"]))
+        .add_index(Index::new("two", ["id"]).unique())
+        .render(dialect)
+        .unwrap()
+}
+
+/// The engine acquires once, returns each owned outcome in order and commits only at the end.
+#[test]
+fn engine_plan_success_and_caller_owned_transaction() {
+    let calls = Arc::new(Mutex::new(Calls::default()));
+    let engine = Engine::new(Driver(calls.clone()));
+    let plan = three_statement_plan(DialectId::Sqlite);
+    let results = complete(engine.execute_plan(&plan)).unwrap();
+    assert_eq!(
+        results
+            .iter()
+            .map(|result| result.affected)
+            .collect::<Vec<_>>(),
+        [1, 2, 3]
+    );
+    assert_eq!(
+        calls.lock().unwrap().committed,
+        plan.queries()
+            .iter()
+            .map(|query| query.sql().to_owned())
+            .collect::<Vec<_>>()
+    );
+    assert_eq!(calls.lock().unwrap().active_sessions, 0);
+    assert_eq!(
+        calls.lock().unwrap().events,
+        [
+            "begin",
+            "session-run",
+            "session-run",
+            "session-run",
+            "commit"
+        ]
+    );
+    let mut transaction = complete(engine.begin()).unwrap();
+    assert_eq!(complete(transaction.execute_plan(&plan)).unwrap().len(), 3);
+    assert_eq!(calls.lock().unwrap().events.last(), Some(&"session-run"));
+    complete(transaction.rollback()).unwrap();
+    assert_eq!(calls.lock().unwrap().events.last(), Some(&"rollback"));
+}
+
+/// Failure stops at N, rolls back and preserves primary plus optional secondary cleanup errors.
+#[test]
+fn engine_plan_failure_preserves_original_and_cleanup_errors() {
+    for fail_rollback in [false, true] {
+        let calls = Arc::new(Mutex::new(Calls {
+            fail_at: Some(2),
+            fail_rollback,
+            ..Calls::default()
+        }));
+        let engine = Engine::new(Driver(calls.clone()));
+        let error =
+            complete(engine.execute_plan(&three_statement_plan(DialectId::Sqlite))).unwrap_err();
+        assert_eq!(error.kind(), ErrorKind::Driver);
+        assert_eq!(
+            std::error::Error::source(&error).unwrap().to_string(),
+            "primary native source"
+        );
+        assert_eq!(error.cleanup_error().is_some(), fail_rollback);
+        if let Some(cleanup) = error.cleanup_error() {
+            assert_eq!(cleanup.kind(), ErrorKind::Closed);
+        }
+        let calls = calls.lock().unwrap();
+        assert_eq!(calls.queries.len(), 2);
+        assert!(calls.committed.is_empty());
+        assert_eq!(calls.active_sessions, 0);
+        assert_eq!(
+            calls.events,
+            ["begin", "session-run", "session-run", "rollback"]
+        );
+    }
+}
+
+/// Dialect/budget rejection precedes acquisition; cancellation drops the actual owned session.
+#[test]
+fn engine_plan_validation_and_cancelled_owner() {
+    let calls = Arc::new(Mutex::new(Calls::default()));
+    let engine = Engine::new(Driver(calls.clone()));
+    assert_eq!(
+        complete(engine.execute_plan(&three_statement_plan(DialectId::Postgres)))
+            .unwrap_err()
+            .kind(),
+        ErrorKind::Unsupported
+    );
+    assert!(calls.lock().unwrap().events.is_empty());
+    let limited = Engine::new(Driver(calls.clone())).with_limits(QueryLimits {
+        sql_bytes: 5,
+        ..QueryLimits::default()
+    });
+    assert_eq!(
+        complete(limited.execute_plan(&three_statement_plan(DialectId::Sqlite)))
+            .unwrap_err()
+            .kind(),
+        ErrorKind::Limit
+    );
+    assert!(calls.lock().unwrap().events.is_empty());
+    calls.lock().unwrap().pending_at = Some(2);
+    let plan = three_statement_plan(DialectId::Sqlite);
+    let mut future = Box::pin(engine.execute_plan(&plan));
+    let mut context = Context::from_waker(Waker::noop());
+    assert!(future.as_mut().poll(&mut context).is_pending());
+    assert_eq!(calls.lock().unwrap().active_sessions, 1);
+    assert!(calls.lock().unwrap().committed.is_empty());
+    drop(future);
+    let calls = calls.lock().unwrap();
+    assert_eq!(calls.active_sessions, 0);
+    assert!(calls.committed.is_empty());
+    assert_eq!(
+        calls.events,
+        ["begin", "session-run", "session-run", "drop-rollback"]
+    );
+    assert_eq!(calls.queries.len(), 2);
 }

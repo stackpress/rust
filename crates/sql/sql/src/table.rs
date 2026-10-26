@@ -1,7 +1,7 @@
 //! Explicit destructive/rename table statements, detached from execution.
 
 use crate::expr::RenderContext;
-use crate::identifier::{invalid, quote, unsupported};
+use crate::identifier::invalid;
 use crate::{DialectId, Query, Render, Result};
 
 /// Checked single-table operations. Applications choose when to execute them.
@@ -69,29 +69,39 @@ impl Render for TableCommand {
                 if_exists,
                 cascade,
             } => {
-                let table = quote(table)?;
-                if *cascade {
-                    return Err(unsupported("SQLite DROP cascade is unsupported"));
-                }
+                let table = dialect.quote(table)?;
+                dialect.require(
+                    !*cascade || dialect.capabilities().cascade,
+                    "dialect DROP cascade is unsupported",
+                )?;
                 format!(
-                    "DROP TABLE {}{table}",
-                    if *if_exists { "IF EXISTS " } else { "" }
+                    "DROP TABLE {}{table}{}",
+                    if *if_exists { "IF EXISTS " } else { "" },
+                    if *cascade { " CASCADE" } else { "" }
                 )
             }
             Self::Rename { from, to } => {
-                let source = quote(from)?;
-                let target = quote(to)?;
+                let source = dialect.quote(from)?;
+                let target = dialect.quote(to)?;
                 if from.eq_ignore_ascii_case(to) {
                     return Err(invalid("table rename requires distinct names"));
                 }
                 format!("ALTER TABLE {source} RENAME TO {target}")
             }
             Self::Truncate { table, cascade } => {
-                let table = quote(table)?;
-                if *cascade {
-                    return Err(unsupported("SQLite truncate cascade is unsupported"));
+                let table = dialect.quote(table)?;
+                dialect.require(
+                    !*cascade || dialect.capabilities().cascade,
+                    "dialect truncate cascade is unsupported",
+                )?;
+                if dialect == DialectId::Sqlite {
+                    format!("DELETE FROM {table}")
+                } else {
+                    format!(
+                        "TRUNCATE TABLE {table}{}",
+                        if *cascade { " CASCADE" } else { "" }
+                    )
                 }
-                format!("DELETE FROM {table}")
             }
         };
         context.finish(sql)

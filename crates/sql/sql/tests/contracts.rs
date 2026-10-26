@@ -38,7 +38,7 @@ fn detached_builder_separates_identifiers_and_values() {
     );
     assert!(base.render(DialectId::Sqlite).unwrap().binds().is_empty());
     assert!(query.render(DialectId::Postgres).is_err());
-    assert!(base.render(DialectId::Mysql).is_err());
+    assert!(base.render(DialectId::Mysql).is_ok());
     for name in ["", "a\0b", "a\nb"] {
         assert!(
             Select::new([name])
@@ -105,7 +105,7 @@ fn lexical_gate_distinguishes_code_from_quoted_text() {
     assert!(
         Sql::literal(DialectId::Postgres, "SELECT 1")
             .render(DialectId::Postgres)
-            .is_err()
+            .is_ok()
     );
 }
 

@@ -1,6 +1,6 @@
 //! Checked identifier segments and explicit table/selector aliases.
 
-use crate::{ErrorKind, Result, SqlError};
+use crate::{DialectId, ErrorKind, Result, SqlError};
 
 /// A name with explicit qualification; a string containing dots stays one segment.
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -17,15 +17,15 @@ impl Identifier {
         &self.0
     }
 
-    /// Validate and quote each segment independently for the SQLite renderer.
-    pub(crate) fn quoted(&self) -> Result<String> {
+    /// Validate and quote each segment independently for the selected native renderer.
+    pub(crate) fn quoted(&self, dialect: DialectId) -> Result<String> {
         // Bound qualification depth as well as each segment before allocating SQL.
         if self.0.is_empty() || self.0.len() > 64 {
             return Err(invalid("invalid SQL identifier qualification"));
         }
         self.0
             .iter()
-            .map(|part| quote(part))
+            .map(|part| dialect.quote(part))
             .collect::<Result<Vec<_>>>()
             .map(|parts| parts.join("."))
     }
@@ -70,11 +70,11 @@ impl TableRef {
     }
 
     /// Quote the relation and alias through their separate identifier boundaries.
-    pub(crate) fn quoted(&self) -> Result<String> {
-        let mut sql = self.name.quoted()?;
+    pub(crate) fn quoted(&self, dialect: DialectId) -> Result<String> {
+        let mut sql = self.name.quoted(dialect)?;
         if let Some(alias) = &self.alias {
             // An alias is always one segment rather than another qualified name.
-            sql.push_str(&format!(" AS {}", quote(alias)?));
+            sql.push_str(&format!(" AS {}", dialect.quote(alias)?));
         }
         Ok(sql)
     }

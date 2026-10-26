@@ -1,4 +1,4 @@
-//! Detached SELECT/INSERT/UPDATE/DELETE data and SQLite rendering.
+//! Detached SELECT/INSERT/UPDATE/DELETE data and native dialect rendering.
 //!
 //! Builders never acquire connections. Render validates the complete statement first;
 //! unfiltered mutations require an explicit all-rows choice.
@@ -225,13 +225,17 @@ impl Render for Select {
             "SELECT {}{} FROM {}",
             if data.distinct { "DISTINCT " } else { "" },
             context.selectors(&data.selectors)?,
-            table.quoted()?
+            table.quoted(dialect)?
         );
         // Render joins in their original order before filters so parameter order matches SQL.
         if data.joins.len() > 64 {
             return Err(invalid("too many SQL joins"));
         }
         for join in &data.joins {
+            dialect.require(
+                join.kind != JoinKind::Full || dialect.capabilities().full_join,
+                "dialect does not support FULL JOIN",
+            )?;
             let kind = match join.kind {
                 JoinKind::Inner => "INNER",
                 JoinKind::Left => "LEFT",
@@ -242,7 +246,7 @@ impl Render for Select {
             if (join.kind == JoinKind::Cross) == join.on.is_some() {
                 return Err(invalid("invalid SQL join condition"));
             }
-            sql.push_str(&format!(" {kind} JOIN {}", join.table.quoted()?));
+            sql.push_str(&format!(" {kind} JOIN {}", join.table.quoted(dialect)?));
             if let Some(on) = &join.on {
                 sql.push_str(&format!(" ON {}", context.expression(on, 0)?));
             }
@@ -271,7 +275,11 @@ impl Render for Select {
         if let Some(offset) = data.offset {
             // SQLite requires LIMIT with OFFSET; -1 means unbounded, not an invented row cap.
             if data.limit.is_none() {
-                sql.push_str(" LIMIT -1");
+                match dialect {
+                    DialectId::Sqlite => sql.push_str(" LIMIT -1"),
+                    DialectId::Mysql => sql.push_str(" LIMIT 18446744073709551615"),
+                    DialectId::Postgres => {}
+                }
             }
             sql.push_str(&format!(" OFFSET {}", page_value(offset)?));
         }
@@ -282,6 +290,8 @@ impl Render for Select {
 /// Explicit write-cell state: a bound NULL differs from a requested database default.
 #[derive(Clone, Debug, PartialEq)]
 pub enum WriteValue {
+    /// Explicit structured JSON: bound text is cast to the dialect's native JSON storage.
+    Json(crate::JsonValue),
     /// Owned native bind, including SQL NULL.
     Value(SqlValue),
     /// Omit/use the column's default; SQLite allows this only for a whole omitted column.
@@ -374,12 +384,16 @@ impl Render for Insert {
     fn render(&self, dialect: DialectId) -> Result<Query> {
         let mut context = RenderContext::new(dialect)?;
         let data = &self.data;
-        let mut sql = format!("INSERT INTO {}", data.table.quoted()?);
+        let mut sql = format!("INSERT INTO {}", data.table.quoted(dialect)?);
         if data.default_values {
             if !data.columns.is_empty() || !data.rows.is_empty() {
                 return Err(invalid("DEFAULT VALUES conflicts with insert data"));
             }
-            sql.push_str(" DEFAULT VALUES");
+            sql.push_str(if dialect == DialectId::Mysql {
+                " () VALUES ()"
+            } else {
+                " DEFAULT VALUES"
+            });
         } else {
             checked_columns(&data.columns)?;
             if data.rows.is_empty() || data.rows.len() > 1000 {
@@ -393,10 +407,11 @@ impl Render for Insert {
             // SQLite has no per-cell DEFAULT token. Entire defaulted columns can be omitted.
             let included = (0..data.columns.len())
                 .filter(|index| {
-                    !data
-                        .rows
-                        .iter()
-                        .all(|row| matches!(row[*index], WriteValue::Default))
+                    dialect != DialectId::Sqlite
+                        || !data
+                            .rows
+                            .iter()
+                            .all(|row| matches!(row[*index], WriteValue::Default))
                 })
                 .collect::<Vec<_>>();
             if included.is_empty() {
@@ -409,7 +424,7 @@ impl Render for Insert {
             } else {
                 let columns = included
                     .iter()
-                    .map(|index| quote(&data.columns[*index]))
+                    .map(|index| dialect.quote(&data.columns[*index]))
                     .collect::<Result<Vec<_>>>()?;
                 let mut rows = Vec::new();
                 for row in &data.rows {
@@ -564,14 +579,14 @@ impl Render for Update {
             .map(|(column, value)| {
                 Ok(format!(
                     "{} = {}",
-                    quote(column)?,
+                    dialect.quote(column)?,
                     render_write(value, &mut context)?
                 ))
             })
             .collect::<Result<Vec<_>>>()?;
         let mut sql = format!(
             "UPDATE {} SET {}",
-            self.scope.table.quoted()?,
+            self.scope.table.quoted(dialect)?,
             assignments.join(", ")
         );
         append_filters(&mut sql, &self.scope.filters, &mut context)?;
@@ -653,7 +668,7 @@ impl Render for Delete {
     fn render(&self, dialect: DialectId) -> Result<Query> {
         let mut context = RenderContext::new(dialect)?;
         self.scope.validate_scope()?;
-        let mut sql = format!("DELETE FROM {}", self.scope.table.quoted()?);
+        let mut sql = format!("DELETE FROM {}", self.scope.table.quoted(dialect)?);
         append_filters(&mut sql, &self.scope.filters, &mut context)?;
         append_returning(&mut sql, &self.scope.returning, &mut context)?;
         context.finish(sql)
@@ -679,8 +694,20 @@ fn checked_columns(columns: &[String]) -> Result<()> {
 /// Render one explicit write state, never substituting NULL for DEFAULT.
 fn render_write(value: &WriteValue, context: &mut RenderContext) -> Result<String> {
     match value {
+        WriteValue::Json(value) => {
+            if context.dialect == DialectId::Postgres {
+                crate::json::validate_postgres_json(value)?;
+            }
+            let marker = context.bind(value.to_json()?.into())?;
+            Ok(match context.dialect {
+                DialectId::Sqlite => marker,
+                DialectId::Postgres => format!("CAST({marker} AS JSONB)"),
+                DialectId::Mysql => format!("CAST({marker} AS JSON)"),
+            })
+        }
         WriteValue::Value(value) => context.bind_ref(value),
         WriteValue::Expression(expression) => context.expression(expression, 0),
+        WriteValue::Default if context.dialect != DialectId::Sqlite => Ok("DEFAULT".into()),
         WriteValue::Default => Err(crate::identifier::unsupported(
             "SQLite cannot use per-cell DEFAULT here",
         )),
@@ -706,6 +733,10 @@ fn append_returning(
     context: &mut RenderContext,
 ) -> Result<()> {
     if !selectors.is_empty() {
+        context.dialect.require(
+            context.dialect.capabilities().returning,
+            "dialect does not support RETURNING",
+        )?;
         sql.push_str(&format!(" RETURNING {}", context.selectors(selectors)?));
     }
     Ok(())

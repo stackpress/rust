@@ -1,6 +1,6 @@
-//! Detached CREATE/ALTER descriptions and wholly validated ordered SQLite DDL plans.
+//! Detached CREATE/ALTER descriptions and wholly validated ordered native DDL plans.
 //!
-//! Plans carry no executor. Atomic execution on one session is a later adapter milestone;
+//! Plans carry no executor. Engine explicitly executes supported plans on one transaction;
 //! inspecting or rendering a plan never installs, introspects or migrates a database.
 
 use crate::expr::{RenderContext, join_sql};
@@ -38,9 +38,14 @@ impl QueryPlan {
     }
 
     /// Freeze an entirely rendered builder plan under the default budgets.
-    fn new(queries: Vec<Query>) -> Result<Self> {
+    pub(crate) fn new(queries: Vec<Query>) -> Result<Self> {
         let plan = Self { queries };
-        plan.validate(DialectId::Sqlite, QueryLimits::default())?;
+        let dialect = plan
+            .queries
+            .first()
+            .ok_or_else(|| invalid("empty SQL DDL plan"))?
+            .dialect();
+        plan.validate(dialect, QueryLimits::default())?;
         Ok(plan)
     }
 }
@@ -136,19 +141,34 @@ impl Create {
             if !names.insert(foreign_key.name.to_ascii_lowercase()) {
                 return Err(invalid("duplicate SQL foreign constraint"));
             }
+            // A declared primary key carries NOT NULL semantics independently of the
+            // field's default nullable flag; SET NULL cannot fulfill that definition.
+            if [foreign_key.on_delete, foreign_key.on_update]
+                .contains(&crate::ReferentialAction::SetNull)
+                && foreign_key.columns.iter().any(|column| {
+                    data.primary
+                        .iter()
+                        .any(|primary| primary.eq_ignore_ascii_case(column))
+                })
+            {
+                return Err(invalid("SET NULL cannot target primary-key columns"));
+            }
             // This pure renderer validates local fields, arity and SET NULL/DEFAULT constraints.
             foreign_key.sqlite(&data.fields)?;
         }
         Ok(data)
     }
 
-    /// Render a complete SQLite table/index batch without executing effects.
+    /// Render a complete native table/index batch without executing effects.
     ///
     /// # Errors
     /// Rejects unsupported annotations/types or invalid auto-increment/key combinations.
     pub fn render(&self, dialect: DialectId) -> Result<QueryPlan> {
         RenderContext::new(dialect)?;
         let data = self.build()?;
+        if dialect != DialectId::Sqlite {
+            return crate::network_ddl::create(&data, dialect);
+        }
         let primary =
             if !data.primary.is_empty() && !data.fields.iter().any(|field| field.auto_increment) {
                 Some(Ok(format!("PRIMARY KEY ({})", column_list(&data.primary)?)))
@@ -330,10 +350,13 @@ impl Alter {
     /// Validate the entire operation set and return ordered native SQLite statements.
     ///
     /// # Errors
-    /// Any type/nullability/primary/FK change returns Unsupported before a plan is exposed.
+    /// On SQLite, type/nullability/primary/FK changes return Unsupported before a plan is exposed.
     pub fn render(&self, dialect: DialectId) -> Result<QueryPlan> {
         RenderContext::new(dialect)?;
         let data = self.build()?;
+        if dialect != DialectId::Sqlite {
+            return crate::network_ddl::alter(&data, dialect);
+        }
         let table = quote(&data.table)?;
         let mut queries = Vec::new();
         for operation in &data.operations {
@@ -392,8 +415,17 @@ fn validate_fields(fields: &[Field]) -> Result<()> {
         return Err(invalid("invalid SQL field list"));
     }
     let mut names = std::collections::HashSet::new();
+    let mut retained_defaults = 0_usize;
     for field in fields {
         field.validate()?;
+        if let Some(DefaultValue::Value(value)) = &field.default {
+            retained_defaults = retained_defaults
+                .checked_add(value.retained_bytes())
+                .ok_or_else(|| invalid("SQL field default byte budget overflow"))?;
+            if retained_defaults > QueryLimits::default().bytes {
+                return Err(invalid("SQL field defaults exceed input byte budget"));
+            }
+        }
         if !names.insert(field.name.to_ascii_lowercase()) {
             return Err(invalid("duplicate SQL field"));
         }
@@ -476,6 +508,7 @@ fn reconcile(data: &AlterData) -> Result<Vec<AlterOperation>> {
     let mut emitted_indexes = std::collections::HashSet::new();
     let mut field_operations = std::collections::HashSet::new();
     let mut operations = Vec::new();
+    let mut current_fields = data.source_fields.clone();
     for (index, operation) in data.operations.iter().enumerate() {
         if skipped.contains(&index) {
             continue;
@@ -497,12 +530,15 @@ fn reconcile(data: &AlterData) -> Result<Vec<AlterOperation>> {
                 if !field_operations.insert(field.name.to_ascii_lowercase()) {
                     return Err(invalid("conflicting SQL field operations"));
                 }
+                current_fields.retain(|previous| previous.name != field.name);
+                current_fields.push(field.clone());
             }
             AlterOperation::RemoveField(name) => {
                 quote(name)?;
                 if !field_operations.insert(name.to_ascii_lowercase()) {
                     return Err(invalid("conflicting SQL field operations"));
                 }
+                current_fields.retain(|field| &field.name != name);
             }
             AlterOperation::RemoveIndex(name) | AlterOperation::RemoveForeignKey(name) => {
                 quote(name)?;
@@ -511,7 +547,12 @@ fn reconcile(data: &AlterData) -> Result<Vec<AlterOperation>> {
                 column_list(columns)?;
             }
             AlterOperation::AddForeignKey(foreign) => {
-                foreign.sqlite(&data.source_fields)?;
+                foreign.sqlite(&current_fields)?;
+            }
+            AlterOperation::RenameField { from, to } => {
+                if let Some(field) = current_fields.iter_mut().find(|field| &field.name == from) {
+                    field.name = to.clone();
+                }
             }
             _ => {}
         }
@@ -527,3 +568,7 @@ fn reconcile(data: &AlterData) -> Result<Vec<AlterOperation>> {
 fn ddl_query(sql: String) -> Result<Query> {
     Query::bound(DialectId::Sqlite, sql, Vec::new())
 }
+
+#[cfg(test)]
+#[path = "tests/plan_validation.rs"]
+mod tests;
