@@ -9,7 +9,7 @@ use crate::{DialectId, Result, SqlValue, TrustedSql};
 /// Known storage types; arbitrary SQL strings require an explicit trusted type.
 ///
 /// Types describe native storage, not an application codec. DateTime uses text
-/// (SQLite/PostgreSQL TEXT, MySQL VARCHAR(30)); call [`crate::SqlValue::utc_text`] to
+/// (SQLite TEXT, PostgreSQL/MySQL VARCHAR(30)); call [`crate::SqlValue::utc_text`] to
 /// validate canonical UTC input explicitly. JSON uses SQLite text, PostgreSQL JSONB
 /// and MySQL JSON. Use [`crate::WriteValue::Json`] for native JSON writes. Decimal is
 /// unsupported in SQLite; PostgreSQL/MySQL require valid precision/scale metadata.
@@ -132,9 +132,10 @@ pub enum SqlType {
     /// ```
     /// use stackpress_sql::{Create, DialectId, Field, Render, SqlType};
     /// let field = Field::new("value", SqlType::DateTime);
-    /// Create::new("example")
+    /// let plan = Create::new("example")
     ///     .add_field(field)
     ///     .render(DialectId::Postgres)?;
+    /// assert!(plan.queries()[0].sql().contains("VARCHAR(30)"));
     /// # Ok::<(), stackpress_sql::SqlError>(())
     /// ```
     DateTime,
@@ -1038,6 +1039,22 @@ impl ForeignKey {
             on_delete: ReferentialAction::NoAction,
             on_update: ReferentialAction::NoAction,
         }
+    }
+
+    /// Reject SET NULL on explicitly declared primary columns, independent of nullable metadata.
+    pub(crate) fn validate_primary(
+        &self,
+        primary: &std::collections::HashSet<String>,
+    ) -> Result<()> {
+        if [self.on_delete, self.on_update].contains(&ReferentialAction::SetNull)
+            && self
+                .columns
+                .iter()
+                .any(|column| primary.contains(&column.to_ascii_lowercase()))
+        {
+            return Err(invalid("SET NULL cannot target primary-key columns"));
+        }
+        Ok(())
     }
 
     /// Validate local nullability/default constraints before rendering the relationship.

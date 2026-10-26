@@ -171,6 +171,19 @@ impl SqlValue {
         Ok(())
     }
 
+    /// Validate ordinary bound data against its native representation before copying or IO.
+    pub(crate) fn validate_bind(&self, dialect: crate::DialectId) -> Result<()> {
+        self.validate()?;
+        if dialect == crate::DialectId::Postgres
+            && matches!(self, Self::Text(text) if text.contains('\0'))
+        {
+            return Err(crate::identifier::unsupported(
+                "PostgreSQL text cannot contain NUL",
+            ));
+        }
+        Ok(())
+    }
+
     /// Count retained value bytes, excluding allocator/container overhead.
     ///
     /// # Examples

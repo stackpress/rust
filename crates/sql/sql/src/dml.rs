@@ -1373,23 +1373,27 @@ impl Render for Insert {
                 }
                 sql.push_str(" DEFAULT VALUES");
             } else {
-                let columns = included
-                    .iter()
-                    .map(|index| dialect.quote(&data.columns[*index]))
-                    .collect::<Result<Vec<_>>>()?;
-                let mut rows = Vec::new();
-                for row in &data.rows {
-                    let values = included
+                let columns = join_sql(
+                    included
                         .iter()
-                        .map(|index| render_write(&row[*index], &mut context))
-                        .collect::<Result<Vec<_>>>()?;
-                    rows.push(format!("({})", values.join(", ")));
-                }
-                sql.push_str(&format!(
-                    " ({}) VALUES {}",
-                    columns.join(", "),
-                    rows.join(", ")
-                ));
+                        .map(|index| dialect.quote(&data.columns[*index])),
+                    ", ",
+                )?;
+                // Both a row and the full VALUES body are admitted incrementally. DEFAULT
+                // and trusted expressions can grow SQL without consuming the bind budget.
+                let rows = join_sql(
+                    data.rows.iter().map(|row| {
+                        let values = join_sql(
+                            included
+                                .iter()
+                                .map(|index| render_write(&row[*index], &mut context)),
+                            ", ",
+                        )?;
+                        Ok(format!("({values})"))
+                    }),
+                    ", ",
+                )?;
+                sql.push_str(&format!(" ({columns}) VALUES {rows}"));
             }
         }
         append_returning(&mut sql, &data.returning, &mut context)?;
@@ -1737,21 +1741,21 @@ impl Render for Update {
             .map(|(column, _)| column.clone())
             .collect::<Vec<_>>();
         checked_columns(&columns)?;
-        let assignments = self
-            .assignments
-            .iter()
-            .map(|(column, value)| {
+        // Bound generated text even for assignments with no ordinary bind values.
+        let assignments = join_sql(
+            self.assignments.iter().map(|(column, value)| {
                 Ok(format!(
                     "{} = {}",
                     dialect.quote(column)?,
                     render_write(value, &mut context)?
                 ))
-            })
-            .collect::<Result<Vec<_>>>()?;
+            }),
+            ", ",
+        )?;
         let mut sql = format!(
             "UPDATE {} SET {}",
             self.scope.table.quoted(dialect)?,
-            assignments.join(", ")
+            assignments
         );
         append_filters(&mut sql, &self.scope.filters, &mut context)?;
         append_returning(&mut sql, &self.scope.returning, &mut context)?;
@@ -1979,10 +1983,8 @@ fn checked_columns(columns: &[String]) -> Result<()> {
 fn render_write(value: &WriteValue, context: &mut RenderContext) -> Result<String> {
     match value {
         WriteValue::Json(value) => {
-            if context.dialect == DialectId::Postgres {
-                crate::json::validate_postgres_json(value)?;
-            }
-            let marker = context.bind(value.to_json()?.into())?;
+            let encoded = crate::json::encode_for_dialect(value, context.dialect)?;
+            let marker = context.bind(encoded.into())?;
             Ok(match context.dialect {
                 DialectId::Sqlite => marker,
                 DialectId::Postgres => format!("CAST({marker} AS JSONB)"),

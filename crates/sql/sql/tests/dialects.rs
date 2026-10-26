@@ -1,6 +1,56 @@
 //! M2 PostgreSQL/MySQL source inventory: all six families, types/defaults, JSON,
 //! idempotence, quoting and explicit unsupported capabilities. Network IO lives elsewhere.
 use stackpress_sql::*;
+
+/// Quoted PostgreSQL source names require exact case; SQLite/MySQL column lookup does not.
+#[test]
+fn postgres_alter_source_names_preserve_quoted_case() {
+    let source = Field::new("Name", SqlType::Text);
+    for alteration in [
+        Alter::new("p")
+            .source_field(source.clone())
+            .rename_field("name", "display"),
+        Alter::new("p")
+            .source_field(source)
+            .change_field(Field::new("name", SqlType::Text).not_null()),
+    ] {
+        assert_eq!(
+            alteration.render(DialectId::Postgres).unwrap_err().kind(),
+            ErrorKind::InvalidQuery
+        );
+        assert!(alteration.render(DialectId::Mysql).is_ok());
+    }
+    assert!(
+        Alter::new("p")
+            .source_field(Field::new("Name", SqlType::Text))
+            .rename_field("Name", "display")
+            .render(DialectId::Postgres)
+            .is_ok()
+    );
+    assert!(
+        Alter::new("p")
+            .source_field(Field::new("Name", SqlType::Text))
+            .rename_field("name", "display")
+            .render(DialectId::Sqlite)
+            .is_ok()
+    );
+}
+
+/// Common ALTER metadata follows the same case-insensitive source matching used by rename validation.
+#[test]
+fn alter_case_insensitive_metadata_follows_rename_and_removal() {
+    let rename = Alter::new("p")
+        .source_field(Field::new("ID", SqlType::Integer))
+        .rename_field("id", "renamed")
+        .add_foreign_key(ForeignKey::new("parent_fk", ["renamed"], "parent", ["id"]));
+    assert!(rename.build().is_ok());
+    assert!(rename.render(DialectId::Mysql).is_ok());
+    let removed = Alter::new("p")
+        .source_field(Field::new("ID", SqlType::Integer))
+        .remove_field("id")
+        .add_foreign_key(ForeignKey::new("parent_fk", ["ID"], "parent", ["id"]));
+    assert!(removed.build().is_err());
+}
 /// Render without a native driver.
 fn render(query: &impl Render, dialect: DialectId) -> Query {
     query.render(dialect).unwrap()

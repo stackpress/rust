@@ -16,6 +16,8 @@ use crate::{
 /// constructor. [`Self::validate`] checks all dialect tags and input budgets.
 /// Execution additionally requires transactional DDL support. MySQL plans can be
 /// inspected, but execute_plan rejects them before IO because atomicity is unavailable.
+/// Plans retain every rendered statement. Limits are per statement rather than a shared
+/// byte budget for an entire schema batch.
 ///
 /// # Examples
 ///
@@ -454,6 +456,11 @@ impl Create {
         if data.foreign_keys.len() > 1000 {
             return Err(invalid("too many SQL foreign keys"));
         }
+        let primary = data
+            .primary
+            .iter()
+            .map(|name| name.to_ascii_lowercase())
+            .collect();
         let mut names = std::collections::HashSet::new();
         for foreign_key in &data.foreign_keys {
             if !names.insert(foreign_key.name.to_ascii_lowercase()) {
@@ -461,16 +468,7 @@ impl Create {
             }
             // A declared primary key carries NOT NULL semantics independently of the
             // field's default nullable flag; SET NULL cannot fulfill that definition.
-            if [foreign_key.on_delete, foreign_key.on_update]
-                .contains(&crate::ReferentialAction::SetNull)
-                && foreign_key.columns.iter().any(|column| {
-                    data.primary
-                        .iter()
-                        .any(|primary| primary.eq_ignore_ascii_case(column))
-                })
-            {
-                return Err(invalid("SET NULL cannot target primary-key columns"));
-            }
+            foreign_key.validate_primary(&primary)?;
             // This pure renderer validates local fields, arity and SET NULL/DEFAULT constraints.
             foreign_key.sqlite(&data.fields)?;
         }
@@ -1157,9 +1155,13 @@ impl Alter {
             validate_fields(&self.data.source_fields)?;
         }
         let operations = reconcile(&self.data)?;
-        let mut data = self.data.clone();
-        data.operations = operations;
-        Ok(data)
+        validate_foreign_nullability(&self.data.source_fields, &operations)?;
+        // Copy retained metadata once; do not clone the unreconciled operations only to discard them.
+        Ok(AlterData {
+            table: self.data.table.clone(),
+            source_fields: self.data.source_fields.clone(),
+            operations,
+        })
     }
 
     /// Validate the entire operation set and return ordered statements for the selected dialect.
@@ -1301,7 +1303,18 @@ fn reconcile(data: &AlterData) -> Result<Vec<AlterOperation>> {
                 return Err(invalid("conflicting SQL field rename"));
             }
             let source = find_field(&data.source_fields, from)?;
-            let removals = data.operations.iter().enumerate().filter(|(_, operation)| matches!(operation, AlterOperation::RemoveField(name) if name.eq_ignore_ascii_case(from))).map(|(index, _)| index).collect::<Vec<_>>();
+            // Retain source positions so the second pass can skip only reconciled halves.
+            let removals = data
+                .operations
+                .iter()
+                .enumerate()
+                .filter_map(|(index, operation)| match operation {
+                    AlterOperation::RemoveField(name) if name.eq_ignore_ascii_case(from) => {
+                        Some(index)
+                    }
+                    _ => None,
+                })
+                .collect::<Vec<_>>();
             let additions = data
                 .operations
                 .iter()
@@ -1367,7 +1380,7 @@ fn reconcile(data: &AlterData) -> Result<Vec<AlterOperation>> {
                 if !field_operations.insert(field.name.to_ascii_lowercase()) {
                     return Err(invalid("conflicting SQL field operations"));
                 }
-                current_fields.retain(|previous| previous.name != field.name);
+                current_fields.retain(|previous| !previous.name.eq_ignore_ascii_case(&field.name));
                 current_fields.push(field.clone());
             }
             AlterOperation::RemoveField(name) => {
@@ -1375,7 +1388,7 @@ fn reconcile(data: &AlterData) -> Result<Vec<AlterOperation>> {
                 if !field_operations.insert(name.to_ascii_lowercase()) {
                     return Err(invalid("conflicting SQL field operations"));
                 }
-                current_fields.retain(|field| &field.name != name);
+                current_fields.retain(|field| !field.name.eq_ignore_ascii_case(name));
             }
             AlterOperation::RemoveIndex(name) | AlterOperation::RemoveForeignKey(name) => {
                 quote(name)?;
@@ -1387,7 +1400,10 @@ fn reconcile(data: &AlterData) -> Result<Vec<AlterOperation>> {
                 foreign.sqlite(&current_fields)?;
             }
             AlterOperation::RenameField { from, to } => {
-                if let Some(field) = current_fields.iter_mut().find(|field| &field.name == from) {
+                if let Some(field) = current_fields
+                    .iter_mut()
+                    .find(|field| field.name.eq_ignore_ascii_case(from))
+                {
                     field.name = to.clone();
                 }
             }
@@ -1399,6 +1415,81 @@ fn reconcile(data: &AlterData) -> Result<Vec<AlterOperation>> {
         }
     }
     Ok(operations)
+}
+
+/// Carry known nullability and newly added foreign actions through ordered alterations.
+/// Existing keys are not introspected; explicit metadata/operations are the available evidence.
+fn validate_foreign_nullability(fields: &[Field], operations: &[AlterOperation]) -> Result<()> {
+    let mut nonnullable = fields
+        .iter()
+        .filter(|field| !field.nullable)
+        .map(|field| field.name.to_ascii_lowercase())
+        .collect::<std::collections::HashSet<_>>();
+    let mut foreign: std::collections::HashMap<String, Vec<String>> =
+        std::collections::HashMap::new();
+    for operation in operations {
+        match operation {
+            AlterOperation::AddPrimary(columns) => {
+                // Dropping the key later does not remove the native column's NOT NULL property.
+                nonnullable.extend(columns.iter().map(|column| column.to_ascii_lowercase()));
+            }
+            AlterOperation::AddField(field) | AlterOperation::ChangeField(field) => {
+                let name = field.name.to_ascii_lowercase();
+                if field.nullable {
+                    nonnullable.remove(&name);
+                } else {
+                    nonnullable.insert(name);
+                }
+            }
+            AlterOperation::RemoveField(name) => {
+                nonnullable.remove(&name.to_ascii_lowercase());
+            }
+            AlterOperation::RenameField { from, to } => {
+                let from = from.to_ascii_lowercase();
+                let to = to.to_ascii_lowercase();
+                if nonnullable.remove(&from) {
+                    nonnullable.insert(to.clone());
+                }
+                // Added constraints follow a column rename; retain their local identity below.
+                for columns in foreign.values_mut() {
+                    for column in columns {
+                        if *column == from {
+                            *column = to.clone();
+                        }
+                    }
+                }
+            }
+            AlterOperation::AddForeignKey(key) => {
+                let name = key.name.to_ascii_lowercase();
+                if [key.on_delete, key.on_update].contains(&crate::ReferentialAction::SetNull) {
+                    foreign.insert(
+                        name,
+                        key.columns
+                            .iter()
+                            .map(|column| column.to_ascii_lowercase())
+                            .collect::<Vec<_>>(),
+                    );
+                } else {
+                    foreign.remove(&name);
+                }
+            }
+            AlterOperation::RemoveForeignKey(name) => {
+                foreign.remove(&name.to_ascii_lowercase());
+            }
+            _ => {}
+        }
+    }
+    // A later explicit nullable change can make SET NULL valid, while key removal alone cannot.
+    if foreign
+        .values()
+        .flatten()
+        .any(|column| nonnullable.contains(column))
+    {
+        return Err(invalid(
+            "SET NULL requires nullable non-primary local fields",
+        ));
+    }
+    Ok(())
 }
 
 /// Freeze one AST-generated rowless statement without routing through trusted raw text.

@@ -578,7 +578,14 @@ impl SchemaDiff {
             return Err(invalid("no pending schema changes to rename"));
         };
         let mut operations = alteration.build()?.operations;
-        if !operations.iter().any(|operation| matches!(operation, AlterOperation::RemoveField(name) if name == from)) || !operations.iter().any(|operation| matches!(operation, AlterOperation::AddField(field) if field.name == to)) {
+        // Both pending halves must exist before a rename can replace their effects.
+        let has_removal = operations.iter().any(
+            |operation| matches!(operation, AlterOperation::RemoveField(name) if name == from),
+        );
+        let has_addition = operations.iter().any(
+            |operation| matches!(operation, AlterOperation::AddField(field) if field.name == to),
+        );
+        if !has_removal || !has_addition {
             return Err(invalid("schema rename requires both pending field changes"));
         }
         // Reconcile before adding dependent keys so native index/FK statements see the new name.
@@ -615,6 +622,9 @@ impl SchemaDiff {
     /// # Errors
     ///
     /// Returns definition, limit or native-capability errors before exposing any partial plan.
+    /// A native append cannot insert a field between existing columns. Reconcile a pending
+    /// remove/add as a rename to retain its ordinal; other unrealizable target orders return
+    /// [`crate::ErrorKind::Unsupported`] and require table reconstruction.
     ///
     /// # Examples
     ///
@@ -636,10 +646,54 @@ impl SchemaDiff {
     /// # Ok::<(), stackpress_sql::SqlError>(())
     /// ```
     pub fn render(&self, dialect: DialectId) -> Result<Option<QueryPlan>> {
-        self.alteration()
-            .map(|alteration| alteration.render(dialect))
-            .transpose()
+        let Self::Changes {
+            source,
+            target,
+            alteration,
+        } = self
+        else {
+            return Ok(None);
+        };
+        // Native ADD appends while RENAME/CHANGE retain position. Check the final
+        // physical order after reconciliation, when explicit renames are known.
+        validate_field_order(source, target, &alteration.build()?.operations)?;
+        alteration.render(dialect).map(Some)
     }
+}
+
+/// Reject a plan whose native append/remove/rename effects cannot realize target ordinals.
+fn validate_field_order(
+    source: &TableDefinition,
+    target: &TableDefinition,
+    operations: &[AlterOperation],
+) -> Result<()> {
+    let mut names = source
+        .fields
+        .iter()
+        .map(|field| field.name.as_str())
+        .collect::<Vec<_>>();
+    for operation in operations {
+        match operation {
+            AlterOperation::AddField(field) => names.push(&field.name),
+            AlterOperation::RemoveField(name) => names.retain(|current| current != name),
+            AlterOperation::RenameField { from, to } => {
+                if let Some(name) = names.iter_mut().find(|name| **name == from) {
+                    *name = to;
+                }
+            }
+            // Attribute and key changes never move a stored column.
+            _ => {}
+        }
+    }
+    if !names
+        .into_iter()
+        .eq(target.fields.iter().map(|field| field.name.as_str()))
+    {
+        return Err(crate::identifier::unsupported(
+            "target field order requires table reconstruction or explicit rename reconciliation",
+        ));
+    }
+    Ok(())
 }
 
 /// Carry explicit source metadata into the ordinary ALTER normalization boundary.

@@ -518,11 +518,14 @@ fn json_limit() -> SqlError {
     SqlError::new(ErrorKind::Limit, "SQL JSON limit exceeded")
 }
 
-/// Reject PostgreSQL JSONB's unsupported U+0000 strings/keys before generating SQL.
-pub(crate) fn validate_postgres_json(value: &JsonValue) -> Result<()> {
-    // Encoding establishes finite depth/nodes first; the following recursive walk is bounded.
-    value.to_json()?;
-    postgres_json_strings(value)
+/// Encode under shared budgets and validate native JSON content without a second encoding.
+pub(crate) fn encode_for_dialect(value: &JsonValue, dialect: crate::DialectId) -> Result<String> {
+    // Encoding establishes finite depth/nodes before the optional PostgreSQL NUL walk.
+    let encoded = value.to_json()?;
+    if dialect == crate::DialectId::Postgres {
+        postgres_json_strings(value)?;
+    }
+    Ok(encoded)
 }
 
 /// Walk an already bounded JSON document without allocating replacement strings.

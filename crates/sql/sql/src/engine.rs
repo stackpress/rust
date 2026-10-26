@@ -86,7 +86,7 @@ pub struct TransactionOptions {}
 /// # Ok::<(), stackpress_sql::SqlError>(())
 /// ```
 pub trait Database: Send + Sync + 'static {
-    /// Return the native renderer identity.
+    /// Return a stable native renderer identity for this adapter's lifetime.
     ///
     /// # Examples
     ///
@@ -488,7 +488,9 @@ impl Engine {
     }
     /// Execute a wholly validated DDL plan on one owned transaction.
     ///
-    /// Results are owned and ordered exactly like [`crate::QueryPlan::queries`]. Validation
+    /// Results are owned and ordered exactly like [`crate::QueryPlan::queries`]. Budgets
+    /// apply per statement; the returned vector retains all outcomes until the caller drops it.
+    /// Validation
     /// precedes acquisition; the first statement error stops execution and rolls back,
     /// preserving both the original error and any secondary cleanup error. Cancellation
     /// drops the owned session and initiates the adapter's rollback-on-drop contract.
@@ -1142,6 +1144,14 @@ impl Engine {
 /// #         Ok::<(), stackpress_sql::SqlError>(())
 /// #     })?;
 /// # Ok::<(), stackpress_sql::SqlError>(())
+/// ```
+///
+/// The guard can move between executor threads, but shared concurrent access is unavailable:
+///
+/// ```compile_fail
+/// use stackpress_sql::Transaction;
+/// fn require_sync<T: Sync>() {}
+/// require_sync::<Transaction>();
 /// ```
 pub struct Transaction {
     /// One exclusive driver-owned session; never cloned or implicitly shared.

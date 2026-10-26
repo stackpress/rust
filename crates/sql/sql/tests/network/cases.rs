@@ -476,6 +476,36 @@ async fn alter(connection: &mut Native, dialect: DialectId) -> TestResult<()> {
             .await?,
         [1]
     );
+    // A dropped primary leaves native NOT NULL until an explicit column change.
+    // Prove the valid restoration path and its SET NULL relationship on each real server.
+    connection
+        .plan(
+            &Create::new("nullable_primary")
+                .add_field(Field::new("id", SqlType::Integer))
+                .render(dialect)?,
+        )
+        .await?;
+    let mut foreign = ForeignKey::new("nullable_parent", ["id"], "parent", ["id"]);
+    foreign.on_delete = ReferentialAction::SetNull;
+    let restore = Alter::new("nullable_primary")
+        .source_field(Field::new("id", SqlType::Integer))
+        .primary_key(["id"])
+        .remove_primary_key()
+        .change_field(Field::new("id", SqlType::Integer))
+        .add_foreign_key(foreign);
+    connection.plan(&restore.render(dialect)?).await?;
+    connection
+        .run(
+            &Insert::new("nullable_primary")
+                .default_values()
+                .render(dialect)?,
+        )
+        .await?;
+    let query = Select::new([Selector::expression(Expr::value(1_i64))])
+        .from("nullable_primary")
+        .where_eq("id", SqlValue::Null)
+        .render(dialect)?;
+    assert_eq!(connection.run(&query).await?, [1]);
     Ok(())
 }
 /// A changed-definition rename keeps both operations and preserves the original row.

@@ -444,3 +444,47 @@ fn engine_plan_validation_and_cancelled_owner() {
     );
     assert_eq!(calls.queries.len(), 2);
 }
+
+/// Failure or cancellation of a borrowed batch retains the caller's session until rollback.
+#[test]
+fn caller_owned_plan_retains_guard_after_failure_or_cancellation() {
+    for cancelled in [false, true] {
+        let calls = Arc::new(Mutex::new(Calls {
+            fail_at: (!cancelled).then_some(2),
+            pending_at: cancelled.then_some(2),
+            ..Calls::default()
+        }));
+        let engine = Engine::new(Driver(calls.clone()));
+        let mut transaction = complete(engine.begin()).unwrap();
+        let plan = three_statement_plan(DialectId::Sqlite);
+        if cancelled {
+            let mut future = Box::pin(transaction.execute_plan(&plan));
+            assert!(
+                future
+                    .as_mut()
+                    .poll(&mut Context::from_waker(Waker::noop()))
+                    .is_pending()
+            );
+            drop(future);
+            assert_eq!(calls.lock().unwrap().active_sessions, 1);
+            complete(transaction.rollback()).unwrap();
+        } else {
+            let primary = complete(transaction.execute_plan(&plan)).unwrap_err();
+            assert_eq!(calls.lock().unwrap().active_sessions, 1);
+            let original = complete(transaction.rollback_after(primary));
+            assert_eq!(original.kind(), ErrorKind::Driver);
+            assert_eq!(
+                std::error::Error::source(&original).unwrap().to_string(),
+                "primary native source"
+            );
+        }
+        let calls = calls.lock().unwrap();
+        assert_eq!(calls.queries.len(), 2);
+        assert_eq!(calls.active_sessions, 0);
+        assert!(calls.committed.is_empty());
+        assert_eq!(
+            calls.events,
+            ["begin", "session-run", "session-run", "rollback"]
+        );
+    }
+}
