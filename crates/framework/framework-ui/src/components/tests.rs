@@ -103,3 +103,27 @@ fn list_layout_and_notifications() {
     });
     owner.cleanup();
 }
+
+/// Advanced slots retain semantic tables, closed dialogs and typed validation outcomes.
+#[test]
+fn advanced_components_are_native_and_inert_before_javascript() {
+    let owner = Owner::new();
+    owner.with(|| {
+        for state in [FormState::Editing,FormState::Invalid(vec![FieldError{field:"name".into(),message:"Enter a name".into()}]),FormState::Saved] {
+            let state=RwSignal::new(state);
+            let open=RwSignal::new(false);
+            let html=view! {
+                <Table caption="Profiles"><thead><tr><th scope="col">"Name"</th></tr></thead><tbody><tr><th scope="row">"Ada"</th></tr></tbody></Table>
+                <Dialog id="edit" open title="Edit"><Form id="editor" state submit=Callback::new(|()|FormState::Saved)><button type="submit">"Save"</button></Form></Dialog>
+            }.to_html();
+            assert!(html.contains("<caption>Profiles</caption>"));
+            assert!(html.contains("scope=\"col\""));
+            assert!(html.contains("aria-labelledby=\"edit-title\""));
+            assert!(html.contains("id=\"edit\""));
+            assert!(!html.contains(" open"));
+            assert!(html.contains("id=\"editor\""));
+            assert_eq!(html.contains("Enter a name"),!state.get().errors().is_empty());
+        }
+    });
+    owner.cleanup();
+}

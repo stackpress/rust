@@ -1,0 +1,33 @@
+[package]
+name = "stackpress-example-ui-gallery-shared"
+description = "Slice 8 bounded shared UI proof"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[features]
+default = []
+ssr = ["stackpress-framework-ui/ssr"]
+hydrate = ["stackpress-framework-ui/hydrate"]
+csr = ["stackpress-framework-ui/csr"]
+
+[dependencies]
+leptos = { version = "=0.8.22", default-features = false }
+stackpress-framework-ui = { path = "../../../crates/framework/framework-ui", features = ["rich", "async"] }
+serde = { version = "1", features = ["derive"] }
+futures = "0.3"
+serde_json = "1"
+stackpress-framework-language = { path = "../../../crates/framework/framework-language" }
+stackpress-framework-view = { path = "../../../crates/framework/framework-view" }
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+tokio = { version = "1", features = ["rt"] }
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = "=0.2.129"
+wasm-bindgen-futures = "0.4"
+web-sys = { version = "0.3", features = ["Window", "Document", "Location", "History", "Response", "RequestInit", "AbortController", "AbortSignal", "Headers"] }
+
+[lints]
+workspace = true

@@ -8,9 +8,11 @@ publish.workspace = true
 
 [features]
 default = []
-ssr = ["leptos/ssr", "leptos_meta/ssr", "leptos_router/ssr", "dep:futures", "dep:any_spawner", "dep:tokio", "stackpress-framework-view/server"]
+ssr = ["leptos/ssr", "leptos_meta/ssr", "leptos_router/ssr", "async", "dep:hydration_context", "dep:serde_json", "dep:any_spawner", "dep:tokio", "stackpress-framework-view/server"]
 hydrate = ["leptos/hydrate"]
 csr = ["leptos/csr"]
+async = ["dep:futures", "dep:serde_json"]
+rich = ["dep:ammonia", "dep:pulldown-cmark"]
 
 [dependencies]
 stackpress-framework-view = { path = "../framework-view" }
@@ -19,6 +21,14 @@ leptos_meta = { version = "=0.8.7", default-features = false }
 leptos_router = { version = "=0.8.17", default-features = false }
 futures = { version = "0.3", optional = true }
 serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", optional = true }
+hydration_context = { version = "=0.3.2", default-features = false, optional = true }
+ammonia = { version = "=4.2.4", optional = true }
+pulldown-cmark = { version = "=0.13.5", default-features = false, features = ["html"], optional = true }
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = "=0.2.129"
+web-sys = { version = "0.3", features = ["Window", "Document", "Element", "Node", "HtmlElement", "HtmlDialogElement", "DomRect", "NodeList", "KeyboardEvent"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 any_spawner = { version = "=0.3.0", features = ["tokio"], optional = true }

@@ -77,3 +77,7 @@ pub use stackpress_sql_mysql as sql_mysql;
 pub use stackpress_sql_postgres as sql_postgres;
 #[cfg(feature = "sql-sqlite")]
 pub use stackpress_sql_sqlite as sql_sqlite;
+
+/// Checked locale selection and preference action policy.
+#[cfg(feature = "framework-language")]
+pub use stackpress_framework_language as framework_language;
