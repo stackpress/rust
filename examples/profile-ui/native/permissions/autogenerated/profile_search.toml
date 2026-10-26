@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-profile-search"
+description = "Enables the profile_search command without any pre-configured scope."
+commands.allow = ["profile_search"]
+
+[[permission]]
+identifier = "deny-profile-search"
+description = "Denies the profile_search command without any pre-configured scope."
+commands.deny = ["profile_search"]

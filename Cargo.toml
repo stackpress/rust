@@ -3,6 +3,9 @@ members = [
     "crates/lib", "crates/server", "tools/cli", "examples/capability-host",
     "crates/idea/idea-parser", "crates/idea/idea-transformer", "crates/idea/idea",
     "examples/generated-profile/codegen", "examples/generated-profile/app",
+    "crates/framework/framework-view", "crates/framework/framework-ui",
+    "examples/profile-ui/contracts", "examples/profile-ui/shared",
+    "examples/profile-ui/web", "examples/profile-ui/client", "examples/profile-ui/native",
 ]
 resolver = "3"
 
@@ -30,6 +33,8 @@ stackpress-server = { path = "crates/server", optional = true, default-features 
 stackpress-idea-parser = { path = "crates/idea/idea-parser", optional = true }
 stackpress-idea-transformer = { path = "crates/idea/idea-transformer", optional = true }
 stackpress-idea = { path = "crates/idea/idea", optional = true }
+stackpress-framework-view = { path = "crates/framework/framework-view", optional = true }
+stackpress-framework-ui = { path = "crates/framework/framework-ui", optional = true }
 
 [features]
 default = []
@@ -38,6 +43,11 @@ server-http = ["server", "stackpress-server/http"]
 idea-parser = ["dep:stackpress-idea-parser"]
 idea-transformer = ["dep:stackpress-idea-transformer"]
 idea = ["dep:stackpress-idea"]
+framework-view = ["dep:stackpress-framework-view"]
+framework-ui = ["framework-view", "dep:stackpress-framework-ui"]
+framework-ui-ssr = ["framework-ui", "stackpress-framework-ui/ssr"]
+framework-ui-hydrate = ["framework-ui", "stackpress-framework-ui/hydrate"]
+framework-ui-csr = ["framework-ui", "stackpress-framework-ui/csr"]
 
 [dev-dependencies]
 serde = { version = "1", features = ["derive"] }

@@ -9,6 +9,10 @@
 //! wrapper. None is selected by default. The wrapper also re-exports both component crates.
 //! The transformer and wrapper are native build tools; browser targets are not verified.
 //!
+//! UI is opt-in with `framework-ui-ssr`, `framework-ui-hydrate` or `framework-ui-csr`.
+//! Build these mutually exclusive render modes separately. Native buffered SSR requires
+//! `framework_ui::render::initialize_ssr()` during startup inside an active Tokio runtime.
+//!
 //! # Examples
 //!
 //! ```
@@ -31,6 +35,10 @@
 //! # }
 //! ```
 
+#[cfg(feature = "framework-ui")]
+pub use stackpress_framework_ui as framework_ui;
+#[cfg(feature = "framework-view")]
+pub use stackpress_framework_view as framework_view;
 #[cfg(feature = "idea")]
 pub use stackpress_idea as idea;
 #[cfg(feature = "idea-parser")]

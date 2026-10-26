@@ -1,0 +1,15 @@
+[package]
+name = "stackpress-example-profile-ui-contracts"
+description = "Client-safe Profile source reuse and typed search wire contracts"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+stackpress-framework-view = { path = "../../../crates/framework/framework-view" }
+
+[lints]
+workspace = true
