@@ -67,6 +67,7 @@ Approved with G12–G16 and coordinator DX changes; only M0 is released. Load th
 - [00006 Slice 3 Idea](tasks/00006-slice-3-idea.md): load for the Idea parser assessment, transformer, and generation task, its Gaps, and its receipts.
 - [00006A Idea usage and API docs](tasks/00006A-idea-docs.md): load for the parser, transformer, and wrapper documentation task.
 - [00007 Slice 4 SQL](tasks/00007-slice-4-sql.md): load for the SQL, first backend, and framework-sql task.
+- [00007A SQL usage and API docs](tasks/00007A-sql-docs.md): load for the SQL core and SQLite documentation task.
 - [00008 Slice 5 UI](tasks/00008-slice-5-ui.md): load for the Leptos view/UI and Tauri hosting task.
 - [Slice 2 lane A rounds receipt](slice-2-receipt-lane-a-rounds.md): load for the server-core refactor rounds 1–4 (module split, lifecycle readability, examples, safety evidence) and final server coverage.
 - [Slice 2 lane B CLI receipt](slice-2-receipt-lane-b-cli.md): load for the `stackpress-cli` parsing/control/prompt/TTY implementation, its upstream inventory disposition, rounds 1–4, and verification.
