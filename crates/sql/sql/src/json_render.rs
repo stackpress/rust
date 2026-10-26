@@ -11,10 +11,10 @@ pub(crate) fn extract(
     column: &Identifier,
     path: &JsonPath,
 ) -> Result<String> {
-    path.sqlite_path()?;
+    let encoded_path = path.sqlite_path()?;
     let column = column.quoted(context.dialect)?;
     if context.dialect == DialectId::Mysql {
-        let marker = context.bind(path.sqlite_path()?.into())?;
+        let marker = context.bind(encoded_path.into())?;
         return Ok(format!("JSON_EXTRACT({column}, {marker})"));
     }
     let mut expression = format!("CAST({column} AS JSONB)");
@@ -67,10 +67,8 @@ pub(crate) fn contains(
 /// Bind canonical scalar JSON and cast explicitly so bool/number/text/null never coerce.
 fn scalar(context: &mut RenderContext, value: &JsonScalar) -> Result<String> {
     let value = JsonValue::Scalar(value.clone());
-    if context.dialect == DialectId::Postgres {
-        crate::json::validate_postgres_json(&value)?;
-    }
-    let marker = context.bind(value.to_json()?.into())?;
+    let encoded = crate::json::encode_for_dialect(&value, context.dialect)?;
+    let marker = context.bind(encoded.into())?;
     Ok(format!(
         "CAST({marker} AS {})",
         if context.dialect == DialectId::Postgres {

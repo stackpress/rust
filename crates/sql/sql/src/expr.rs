@@ -143,6 +143,8 @@ impl Compare {
 /// Detached typed expression. Empty groups and more than 64 nested levels are errors.
 ///
 /// Rendering permits at most 64 nested levels and 10,000 expression nodes.
+/// Those checks apply to rendering; constructing a tree and derived Clone/Debug/PartialEq
+/// or ordinary recursive destruction do not run the renderer's validation.
 /// Empty groups/IN lists are invalid. JSON equality distinguishes missing, JSON null,
 /// boolean, number and text; PostgreSQL/MySQL numeric equality treats 1 and 1.0
 /// as equal (see [`crate::DialectCapabilities::distinct_json_number_kinds`]).
@@ -721,12 +723,7 @@ impl RenderContext {
 
     /// Reserve count/bytes atomically so failed binds leave accounting unchanged.
     fn reserve_bind(&mut self, value: &SqlValue) -> Result<()> {
-        value.validate()?;
-        if self.dialect == DialectId::Postgres
-            && matches!(value, SqlValue::Text(text) if text.contains('\0'))
-        {
-            return Err(unsupported("PostgreSQL text cannot contain NUL"));
-        }
+        value.validate_bind(self.dialect)?;
         let limits = QueryLimits::default();
         let bytes = self
             .bytes

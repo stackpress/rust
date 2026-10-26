@@ -141,6 +141,7 @@ mod json_render;
 mod network_ddl;
 mod query;
 mod schema;
+mod statement;
 mod table;
 mod value;
 

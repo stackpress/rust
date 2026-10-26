@@ -1,5 +1,6 @@
 //! PostgreSQL/MySQL DDL rendering. No network connection or driver is owned here.
 
+use crate::expr::join_sql;
 use crate::identifier::{invalid, unsupported};
 use crate::{
     AlterData, AlterOperation, CreateData, DefaultValue, DialectId, Field, ForeignKey, Index,
@@ -13,60 +14,79 @@ pub(crate) fn create(data: &CreateData, dialect: DialectId) -> Result<QueryPlan>
     for index in &data.indexes {
         validate_columns(&index.columns, &data.fields, dialect, true)?;
     }
-    let mut parts = data
-        .fields
-        .iter()
-        .map(|field| definition(field, &data.primary, dialect))
-        .collect::<Result<Vec<_>>>()?;
-    if !data.primary.is_empty() {
+    // Render the table body incrementally; stop before retaining an oversized next clause.
+    let primary = (!data.primary.is_empty()).then(|| {
         let name = if dialect == DialectId::Postgres {
             format!("CONSTRAINT {} ", dialect.quote(&primary_name(&data.table))?)
         } else {
             String::new()
         };
-        parts.push(format!(
+        Ok(format!(
             "{name}PRIMARY KEY ({})",
             columns(&data.primary, dialect)?
-        ));
-    }
-    for key in &data.foreign_keys {
-        parts.push(foreign(key, &data.fields, dialect)?);
-    }
-    // MySQL has no CREATE INDEX IF NOT EXISTS. Inline indexes make table idempotence exact.
-    if dialect == DialectId::Mysql {
-        for index in &data.indexes {
-            parts.push(format!(
+        ))
+    });
+    let inline_indexes = data
+        .indexes
+        .iter()
+        .filter(|_| dialect == DialectId::Mysql)
+        .map(|index| {
+            Ok(format!(
                 "{}INDEX {} ({})",
                 if index.unique { "UNIQUE " } else { "" },
                 dialect.quote(&index.name)?,
                 columns(&index.columns, dialect)?
-            ));
-        }
-    }
-    let mut sql = vec![format!(
-        "CREATE TABLE {}{table} ({})",
-        if data.if_not_exists {
-            "IF NOT EXISTS "
-        } else {
-            ""
-        },
-        parts.join(", ")
-    )];
+            ))
+        });
+    let parts = join_sql(
+        data.fields
+            .iter()
+            .map(|field| definition(field, &data.primary, dialect))
+            .chain(primary)
+            .chain(
+                data.foreign_keys
+                    .iter()
+                    .map(|key| foreign(key, &data.fields, dialect)),
+            )
+            .chain(inline_indexes),
+        ", ",
+    )?;
+    let mut queries = vec![Query::bound(
+        dialect,
+        format!(
+            "CREATE TABLE {}{table} ({})",
+            if data.if_not_exists {
+                "IF NOT EXISTS "
+            } else {
+                ""
+            },
+            parts
+        ),
+        Vec::new(),
+    )?];
     if dialect == DialectId::Postgres {
         for index in &data.indexes {
-            sql.push(index_sql(index, &data.table, data.if_not_exists, dialect)?);
+            queries.push(Query::bound(
+                dialect,
+                index_sql(index, &data.table, data.if_not_exists, dialect)?,
+                Vec::new(),
+            )?);
         }
         for field in &data.fields {
             if let Some(comment) = &field.comment {
-                sql.push(format!(
-                    "COMMENT ON COLUMN {table}.{} IS {}",
-                    dialect.quote(&field.name)?,
-                    text_literal(comment, dialect)?
-                ));
+                queries.push(Query::bound(
+                    dialect,
+                    format!(
+                        "COMMENT ON COLUMN {table}.{} IS {}",
+                        dialect.quote(&field.name)?,
+                        text_literal(comment, dialect)?
+                    ),
+                    Vec::new(),
+                )?);
             }
         }
     }
-    plan(dialect, sql)
+    QueryPlan::new(queries)
 }
 
 /// Render all operations before exposing a plan, carrying field state through renames.
@@ -74,6 +94,7 @@ pub(crate) fn alter(data: &AlterData, dialect: DialectId) -> Result<QueryPlan> {
     let table = dialect.quote(&data.table)?;
     let mut fields = data.source_fields.clone();
     let mut statements = Vec::new();
+    let mut queries = Vec::new();
     for operation in &data.operations {
         match operation {
             AlterOperation::AddField(field) => {
@@ -93,7 +114,7 @@ pub(crate) fn alter(data: &AlterData, dialect: DialectId) -> Result<QueryPlan> {
                     "ALTER TABLE {table} DROP COLUMN {}",
                     dialect.quote(name)?
                 ));
-                fields.retain(|field| &field.name != name);
+                fields.retain(|field| !native_name_matches(&field.name, name, dialect));
             }
             AlterOperation::RenameField { from, to } => {
                 statements.push(format!(
@@ -103,7 +124,7 @@ pub(crate) fn alter(data: &AlterData, dialect: DialectId) -> Result<QueryPlan> {
                 ));
                 let source = fields
                     .iter_mut()
-                    .find(|field| field.name.eq_ignore_ascii_case(from))
+                    .find(|field| native_name_matches(&field.name, from, dialect))
                     .ok_or_else(|| invalid("missing rename source field"))?;
                 source.name = to.clone();
             }
@@ -120,7 +141,7 @@ pub(crate) fn alter(data: &AlterData, dialect: DialectId) -> Result<QueryPlan> {
                 )?;
                 let previous = fields
                     .iter_mut()
-                    .find(|previous| previous.name.eq_ignore_ascii_case(&field.name))
+                    .find(|previous| native_name_matches(&previous.name, &field.name, dialect))
                     .ok_or_else(|| invalid("missing changed field source"))?;
                 if previous.auto_increment != field.auto_increment {
                     return Err(unsupported(
@@ -230,8 +251,13 @@ pub(crate) fn alter(data: &AlterData, dialect: DialectId) -> Result<QueryPlan> {
                 dialect.quote(name)?
             )),
         }
+        // Freeze one operation before generating the next; an invalid oversized statement
+        // cannot accumulate behind later operations. Draining preserves exact source order.
+        for sql in statements.drain(..) {
+            queries.push(Query::bound(dialect, sql, Vec::new())?);
+        }
     }
-    plan(dialect, statements)
+    QueryPlan::new(queries)
 }
 
 /// Known field syntax, with native support checks instead of silently discarded attributes.
@@ -488,13 +514,7 @@ fn validate_columns(
     for name in names {
         let field = fields
             .iter()
-            .find(|field| {
-                if dialect == DialectId::Postgres {
-                    &field.name == name
-                } else {
-                    field.name.eq_ignore_ascii_case(name)
-                }
-            })
+            .find(|field| native_name_matches(&field.name, name, dialect))
             .ok_or_else(|| invalid("native key references an absent quoted field"))?;
         if dialect == DialectId::Mysql
             && index
@@ -511,12 +531,11 @@ fn validate_columns(
     Ok(())
 }
 
-/// Freeze all statements only after every native operation has validated.
-fn plan(dialect: DialectId, statements: Vec<String>) -> Result<QueryPlan> {
-    QueryPlan::new(
-        statements
-            .into_iter()
-            .map(|sql| Query::bound(dialect, sql, Vec::new()))
-            .collect::<Result<Vec<_>>>()?,
-    )
+/// Preserve quoted PostgreSQL case while matching MySQL's case-insensitive column names.
+fn native_name_matches(defined: &str, referenced: &str, dialect: DialectId) -> bool {
+    if dialect == DialectId::Postgres {
+        defined == referenced
+    } else {
+        defined.eq_ignore_ascii_case(referenced)
+    }
 }

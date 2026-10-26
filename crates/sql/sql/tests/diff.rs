@@ -307,3 +307,52 @@ fn physical_field_reordering_is_explicitly_unsupported() {
         ErrorKind::Unsupported
     );
 }
+
+/// Appending an SQL column cannot fulfill a target that inserts it before existing fields.
+#[test]
+fn diff_rejects_unrealizable_new_field_ordinals() {
+    let source = source();
+    let mut target = source.clone();
+    target.fields.insert(1, Field::new("middle", SqlType::Text));
+    let diff = source.diff(&target).unwrap();
+    for dialect in [DialectId::Sqlite, DialectId::Postgres, DialectId::Mysql] {
+        assert_eq!(
+            diff.render(dialect).unwrap_err().kind(),
+            ErrorKind::Unsupported
+        );
+    }
+    // A genuine append is realizable and must not be rejected by an overbroad order guard.
+    target.fields.swap(1, 2);
+    for dialect in [DialectId::Sqlite, DialectId::Postgres, DialectId::Mysql] {
+        assert!(source.diff(&target).unwrap().render(dialect).is_ok());
+    }
+}
+
+/// Explicit rename retains an earlier ordinal that a remove/add pair would lose.
+#[test]
+fn reconciled_rename_preserves_middle_field_ordinal() {
+    let source = Create::new("p")
+        .add_field(Field::new("first", SqlType::Text))
+        .add_field(Field::new("old", SqlType::Text))
+        .add_field(Field::new("last", SqlType::Text))
+        .definition()
+        .unwrap();
+    let mut target = source.clone();
+    target.fields[1].name = "new".into();
+    let diff = source.diff(&target).unwrap();
+    for dialect in [DialectId::Sqlite, DialectId::Postgres, DialectId::Mysql] {
+        assert_eq!(
+            diff.render(dialect).unwrap_err().kind(),
+            ErrorKind::Unsupported
+        );
+        let plan = diff
+            .clone()
+            .rename_field("old", "new")
+            .unwrap()
+            .render(dialect)
+            .unwrap()
+            .unwrap();
+        assert_eq!(plan.queries().len(), 1);
+        assert!(plan.queries()[0].sql().contains("RENAME COLUMN"));
+    }
+}
