@@ -4377,6 +4377,7 @@ dependencies = [
  "serde",
  "serde_json",
  "stackpress-framework-language",
+ "stackpress-framework-preferences",
  "stackpress-framework-ui",
  "stackpress-framework-view",
  "stackpress-idea",
@@ -4595,10 +4596,73 @@ dependencies = [
 ]
 
 [[package]]
+name = "stackpress-example-ui-preferences-client"
+version = "0.1.0"
+dependencies = [
+ "js-sys",
+ "leptos",
+ "serde",
+ "serde_json",
+ "stackpress-example-ui-preferences-shared",
+ "stackpress-framework-language",
+ "stackpress-framework-preferences",
+ "stackpress-framework-ui",
+ "stackpress-framework-view",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "stackpress-example-ui-preferences-shared"
+version = "0.1.0"
+dependencies = [
+ "js-sys",
+ "leptos",
+ "serde",
+ "serde_json",
+ "stackpress-framework-language",
+ "stackpress-framework-preferences",
+ "stackpress-framework-ui",
+ "stackpress-framework-view",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "web-sys",
+]
+
+[[package]]
+name = "stackpress-example-ui-preferences-web"
+version = "0.1.0"
+dependencies = [
+ "http",
+ "leptos",
+ "serde",
+ "serde_json",
+ "stackpress-example-ui-preferences-shared",
+ "stackpress-framework-language",
+ "stackpress-framework-preferences",
+ "stackpress-framework-ui",
+ "stackpress-framework-view",
+ "stackpress-lib",
+ "stackpress-server",
+ "tokio",
+]
+
+[[package]]
 name = "stackpress-framework-language"
 version = "0.1.0"
 dependencies = [
  "serde",
+ "stackpress-framework-view",
+ "url",
+]
+
+[[package]]
+name = "stackpress-framework-preferences"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "stackpress-framework-language",
  "stackpress-framework-view",
  "url",
 ]

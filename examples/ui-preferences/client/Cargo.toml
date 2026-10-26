@@ -1,0 +1,34 @@
+[package]
+name = "stackpress-example-ui-preferences-client"
+description = "Finite Slice 8 preferences proof"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = []
+ssr = ["stackpress-example-ui-preferences-shared/ssr"]
+hydrate = ["stackpress-example-ui-preferences-shared/hydrate"]
+csr = ["stackpress-example-ui-preferences-shared/csr"]
+
+[dependencies]
+leptos = { version = "=0.8.22", default-features = false }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+stackpress-framework-language = { path = "../../../crates/framework/framework-language" }
+stackpress-framework-preferences = { path = "../../../crates/framework/framework-preferences" }
+stackpress-framework-view = { path = "../../../crates/framework/framework-view" }
+stackpress-framework-ui = { path = "../../../crates/framework/framework-ui" }
+stackpress-example-ui-preferences-shared = { path = "../shared" }
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = "=0.2.129"
+js-sys = "0.3"
+web-sys = { version = "0.3", features = ["Window", "Document", "Element", "HtmlElement", "HtmlInputElement"] }
+
+[lints]
+workspace = true

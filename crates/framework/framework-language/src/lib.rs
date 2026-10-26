@@ -11,8 +11,10 @@ use std::collections::{BTreeMap, BTreeSet};
 
 /// Fixed cookie key; its value is only a registered canonical locale token.
 pub const LOCALE_COOKIE: &str = "stackpress-locale";
-/// Bounded action/cookie input before parsing or policy evaluation.
+/// Bounded action input before parsing or policy evaluation.
 pub const MAX_PREFERENCE_BYTES: usize = 1024;
+/// Total cookie header budget, including unrelated scoped presentation cookies.
+pub const MAX_COOKIE_BYTES: usize = 4096;
 
 /// Stable public preference failure without reflecting private/raw input.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -81,7 +83,7 @@ fn valid_token(token: &str) -> bool {
         && token.len() <= 64
         && token
             .bytes()
-            .all(|byte| byte.is_ascii_alphanumeric() || byte == b'-')
+            .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'-' | b'_'))
 }
 
 impl LocaleRegistry {
@@ -137,7 +139,7 @@ impl LocaleRegistry {
     ) -> Result<Selection, PreferenceError> {
         PublicLocation::new(location).map_err(|_| PreferenceError::Request)?;
         let local = base.strip(location).ok_or(PreferenceError::Request)?;
-        if cookie.len() > MAX_PREFERENCE_BYTES {
+        if cookie.len() > MAX_COOKIE_BYTES {
             return Err(PreferenceError::Limit);
         }
         // Mount stripping guarantees the first slash; ASCII separators preserve
@@ -161,15 +163,20 @@ impl LocaleRegistry {
             });
         }
         // Duplicate locale cookies are ambiguous and intentionally ignored.
-        let saved: Vec<_> = cookie
-            .split(';')
-            .filter_map(|entry| entry.trim().split_once('='))
-            .filter(|(name, _)| *name == LOCALE_COOKIE)
-            .map(|(_, value)| value)
-            .collect();
-        if saved.len() == 1 && self.locales.contains(saved[0]) {
+        let mut saved = None;
+        let mut duplicate = false;
+        for entry in cookie.split(';').map(str::trim) {
+            // A bare matching key still counts, so malformed duplicates cannot
+            // disappear during split_once and elevate a second value.
+            let (name, value) = entry.split_once('=').unwrap_or((entry, ""));
+            if name == LOCALE_COOKIE {
+                duplicate |= saved.is_some();
+                saved = Some(value);
+            }
+        }
+        if !duplicate && let Some(saved) = saved.filter(|saved| self.locales.contains(*saved)) {
             return Ok(Selection {
-                locale: saved[0].to_owned(),
+                locale: saved.to_owned(),
                 source: LocaleSource::Cookie,
                 route: local.to_owned(),
             });
@@ -180,6 +187,40 @@ impl LocaleRegistry {
             source: LocaleSource::Default,
             route: local.to_owned(),
         })
+    }
+
+    /// Enumerate compiled canonical and alias prefixes for host route registration.
+    ///
+    /// Legacy unprefixed routes are included first. The host registers these routes
+    /// before handling requests; locale selection never re-enters a top-level lifecycle.
+    pub fn prefixes(&self) -> Vec<String> {
+        std::iter::once(String::new())
+            .chain(
+                self.locales
+                    .iter()
+                    .chain(self.aliases.keys())
+                    .map(|key| format!("/{key}")),
+            )
+            .collect()
+    }
+
+    /// Replace a recognized prefix, preserving mount and exact encoded query bytes.
+    ///
+    /// # Errors
+    /// Rejects unknown locale tokens, unsafe paths and paths outside the mount.
+    pub fn location(
+        &self,
+        base: &BasePath,
+        location: &str,
+        locale: &str,
+    ) -> Result<String, PreferenceError> {
+        let locale = self.canonical(locale).ok_or(PreferenceError::Locale)?;
+        let current = self.select(base, location, "")?;
+        // Only the first registered prefix is removed; a duplicate remains a route
+        // segment, so a host catalog can reject it rather than silently repairing it.
+        base.join(&format!("/{locale}{}", current.route))
+            .map(|value| value.as_str().to_owned())
+            .map_err(|_| PreferenceError::Request)
     }
 }
 
@@ -275,13 +316,9 @@ impl PreferenceAction {
             .ok_or(PreferenceError::Locale)?
             .to_owned();
         // Re-prefix only the checked app path; encoded query text is preserved.
-        let current = self.registry.select(&self.base, &update.location, "")?;
         let location = self
-            .base
-            .join(&format!("/{locale}{}", current.route))
-            .map_err(|_| PreferenceError::Request)?
-            .as_str()
-            .to_owned();
+            .registry
+            .location(&self.base, &update.location, &locale)?;
         let path = if self.base.as_str().is_empty() {
             "/"
         } else {
