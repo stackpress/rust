@@ -1,0 +1,11 @@
+error[E0599]: no method named `clone` found for struct `stackpress_lib::Request` in the current scope
+ --> tests/ui/stateful_clone.rs:9:28
+  |
+9 |     let _ = Request::new().clone();
+  |                            ^^^^^ method not found in `stackpress_lib::Request`
+
+error[E0599]: no method named `clone` found for struct `Response` in the current scope
+  --> tests/ui/stateful_clone.rs:10:29
+   |
+10 |     let _ = Response::new().clone();
+   |                             ^^^^^ method not found in `Response`
