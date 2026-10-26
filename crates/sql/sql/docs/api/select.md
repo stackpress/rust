@@ -10,7 +10,7 @@ fn main() -> Result<()> {
         .select("name")
         .from("profile")
         .distinct()
-        .where_eq("active", false)
+        .where_eq("id", 7)
         .where_eq("active", true)
         .and_where(Expr::eq("team_id", 3))
         .order_by("name", Order::Desc)
@@ -22,14 +22,17 @@ fn main() -> Result<()> {
         .limit(0)
         .offset(0);
     let data = select.build();
-    assert_eq!(data.filters.len(), 2);
+    assert_eq!(data.filters.len(), 3);
     assert_eq!(data.limit, Some(0));
-    assert_eq!(select.render(DialectId::Sqlite)?.binds().len(), 2);
+    assert_eq!(
+        select.render(DialectId::Sqlite)?.binds(),
+        &[7.into(), true.into(), 3.into()]
+    );
     Ok(())
 }
 ```
 
-Repeated `where_eq` replaces the one equality slot, preserving appended predicates. Default
+Repeated `where_eq` appends predicates joined with AND in call order. Default
 selects `*`, so `.select("name")` appends to that wildcard; use `new(["name"])` for an exact list.
 
 Contents: [Select](#1-select) · [Inspectable data](#2-selectdata) · [Join and sort](#3-join-sort-and-enums)
@@ -47,7 +50,7 @@ limit, or offset. `new` takes an explicit projection list; an empty list is a re
 | `from(self, table)` | `impl Into<TableRef>` | Set/replace the source. |
 | `distinct(self)` | none | Enable duplicate elimination. |
 | `join(self, join)` | `Join` | Append a join. |
-| `where_eq(self, column, value)` | `impl Into<Identifier>`, `impl Into<SqlValue>` | Set/replace the equality slot. |
+| `where_eq(self, column, value)` | `impl Into<Identifier>`, `impl Into<SqlValue>` | Append equality. |
 | `and_where(self, expression)` | `Expr` | Append a predicate. |
 | `where_json(self, column, path, value)` | `impl Into<Identifier>`, `JsonPath`, `JsonScalar` | Append exact JSON scalar equality. |
 | `where_json_contains(self, column, path, value)` | same types | Append direct scalar array membership. |

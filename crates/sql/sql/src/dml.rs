@@ -511,8 +511,8 @@ pub struct SelectData {
 ///
 /// Builders retain owned data and defer validation to [`crate::Render::render`].
 /// [`Self::build`] borrows an inspection snapshot and performs no validation.
-/// [`Self::where_eq`] replaces the previous equality set by that method; use
-/// [`Self::and_where`] to append equalities. No filter is allowed for SELECT.
+/// [`Self::where_eq`] and [`Self::and_where`] append predicates joined with AND
+/// in call order. SELECT may omit filters.
 /// `limit(0)` requests zero rows; absent limit leaves the adapter output budget in force.
 ///
 /// # Examples
@@ -556,8 +556,6 @@ pub struct SelectData {
 pub struct Select {
     /// All mutable builder state; only consumed fluent calls can change it.
     data: SelectData,
-    /// Location of the M0 replacement-style equality predicate, separate from additive filters.
-    equality_index: Option<usize>,
 }
 
 impl Default for Select {
@@ -590,7 +588,6 @@ impl Select {
                 offset: None,
                 distinct: false,
             },
-            equality_index: None,
         }
     }
 
@@ -696,8 +693,7 @@ impl Select {
         self
     }
 
-    /// Set the M0 equality condition, replacing its previous value if present.
-    /// Use [`Self::and_where`] with [`crate::Expr::eq`] to append multiple equalities.
+    /// Append a bound equality predicate, joined with AND in call order.
     ///
     /// # Examples
     ///
@@ -705,24 +701,18 @@ impl Select {
     /// use stackpress_sql::{DialectId, Render, Select, SqlValue};
     /// let query = Select::default()
     ///     .from("profile")
-    ///     .where_eq("id", 1)
-    ///     .where_eq("id", 2);
+    ///     .where_eq("id", 7)
+    ///     .where_eq("active", true);
+    /// let rendered = query.render(DialectId::Sqlite)?;
     /// assert_eq!(
-    ///     query.render(DialectId::Sqlite)?.binds(),
-    ///     &[SqlValue::Integer(2)]
+    ///     rendered.sql(),
+    ///     "SELECT * FROM \"profile\" WHERE \"id\" = ? AND \"active\" = ?"
     /// );
+    /// assert_eq!(rendered.binds(), &[SqlValue::Integer(7), SqlValue::Bool(true)]);
     /// # Ok::<(), stackpress_sql::SqlError>(())
     /// ```
-    pub fn where_eq(mut self, column: impl Into<Identifier>, value: impl Into<SqlValue>) -> Self {
-        let expression = Expr::eq(column, value);
-        if let Some(index) = self.equality_index {
-            // Preserve replacement without discarding other predicate kinds.
-            self.data.filters[index] = expression;
-        } else {
-            self.equality_index = Some(self.data.filters.len());
-            self.data.filters.push(expression);
-        }
-        self
+    pub fn where_eq(self, column: impl Into<Identifier>, value: impl Into<SqlValue>) -> Self {
+        self.and_where(Expr::eq(column, value))
     }
 
     /// Append a typed condition while preserving group parentheses.

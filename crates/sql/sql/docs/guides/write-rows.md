@@ -47,7 +47,8 @@ names and empty updates are render errors.
 
 Use `returning(...)` or `returning_all()` to request changed rows on SQLite/PostgreSQL. MySQL
 rejects RETURNING. Read affected rows and any insert ID from this statement's `QueryResult`;
-use RETURNING for native SQLite generated IDs. No engine-wide last-ID state is maintained.
+use RETURNING when every SQLite generated key is required. No engine-wide last-ID state is
+maintained.
 
 You can now distinguish missing/default/NULL values and verify a mutation's scope before IO.
 Look up [Insert and WriteValue](../api/insert.md), [Update](../api/update.md), and

@@ -98,8 +98,9 @@ QueryResult is Debug/Default, with these public fields and no inherent operation
 
 Results are statement-local; no shared last-ID slot exists. Adapter-specific insert-ID and
 affected-row semantics remain native behavior rather than predicted values. SQLite observes
-rowid transitions, so a successful insert can still have no insert_id; use RETURNING for an
-authoritative key. See the [SQLite outcome rules](../../../sql-sqlite/docs/api/database.md).
+rowid transitions, so successful inserts with reused explicit IDs or WITHOUT ROWID tables can
+still have no insert_id. Use RETURNING when every generated key is required. See the
+[SQLite outcome rules](../../../sql-sqlite/docs/api/database.md).
 Core makes no total-operation memory bound for a vector of many plan outcomes.
 
 Related: [decode guide](../guides/decode-rows.md), [values](values.md), [Engine](engine.md),
