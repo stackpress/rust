@@ -6,9 +6,48 @@ use stackpress_example_profile_ui_contracts::{
     ReplyDecodeError, SearchFailure, SearchInput, SearchReply, TransportFailure,
 };
 use stackpress_example_profile_ui_shared::{
-    ProfileSearch, SearchCancellation, SearchCompletion, SearchTransport,
+    Navigation, ProfilePage, SearchCancellation, SearchCompletion, SearchTransport,
 };
 use wasm_bindgen::{JsCast, prelude::*};
+#[wasm_bindgen(module = "/src/navigation.js")]
+extern "C" {
+    /// Install DOM listeners; returned disposer removes both listeners.
+    #[wasm_bindgen(js_name = installNavigation)]
+    fn install_navigation(receive: &js_sys::Function) -> js_sys::Function;
+    /// Publish only Rust-checked canonical locations.
+    #[wasm_bindgen(js_name = writeNavigation)]
+    fn write_navigation(location: &str, push: bool);
+}
+
+/// Owned DOM listener lease; root disposal removes listeners before releasing callbacks.
+struct NavigationLease {
+    stop: js_sys::Function,
+    _receive: Closure<dyn FnMut(String, bool)>,
+}
+impl Drop for NavigationLease {
+    fn drop(&mut self) {
+        let _ = self.stop.call0(&JsValue::NULL);
+    }
+}
+
+/// Host acquisition adapter only; parsing and history decisions remain shared Rust.
+fn navigation() -> Navigation {
+    let request = RwSignal::new(None);
+    let receive = Closure::wrap(Box::new(move |location, push| {
+        request.try_set(Some((location, push)));
+    }) as Box<dyn FnMut(String, bool)>);
+    let stop = install_navigation(receive.as_ref().unchecked_ref());
+    StoredValue::new_local(NavigationLease {
+        stop,
+        _receive: receive,
+    });
+    Navigation {
+        request,
+        write: UnsyncCallback::new(move |(location, push): (String, bool)| {
+            write_navigation(&location, push)
+        }),
+    }
+}
 #[cfg(feature = "hydrate")]
 use wasm_bindgen_futures::JsFuture;
 
@@ -168,9 +207,7 @@ pub fn start() -> Result<js_sys::Function, JsValue> {
             return Err(JsValue::from_str(&message));
         }
     };
-    let endpoint = initial
-        .base
-        .join("/ui-api/v1/profile-search")
+    let endpoint = stackpress_example_profile_ui_contracts::routes::search_api(&initial.base)
         .map_err(|_| JsValue::from_str("Page location invalid. Refresh to continue."))?
         .as_str()
         .to_owned();
@@ -178,7 +215,8 @@ pub fn start() -> Result<js_sys::Function, JsValue> {
         stackpress_framework_ui::leptos_meta::provide_meta_context();
         stackpress_framework_ui::routing::provide_route_context(initial.base.clone());
         let (transport, cancel) = transport(endpoint);
-        view! { <ProfileSearch seed=initial.page transport cancel
+        let navigation = navigation();
+        view! { <ProfilePage seed=initial.page page=initial.page_id status=initial.status transport cancel navigation
         initial_language=initial.language initial_theme=initial.theme
         initial_search=cfg!(feature = "csr")/> }
     };

@@ -299,11 +299,14 @@ async fn encoded_route_contract() {
         .unwrap();
     let seed = PageSnapshot::<SearchPage>::decode(text, REVISION, BUILD).unwrap();
     assert_eq!(seed.data.input.id, "雪/+&0");
-    assert_eq!(seed.location, request.as_str());
+    assert_eq!(seed.location, format!("{}?return=abc", request.as_str()));
+    assert_eq!(seed.status.code(), 404);
+    assert!(html.contains("Profile not found"));
+    assert_eq!(seed.data.detail.as_ref().unwrap().search_prefix, "abc");
     let (status, html, _) = call(
         &app,
         "GET",
-        "/demo/ui/profiles/abc456?id=abc123",
+        "/demo/ui/profiles/abc456?return=abc123",
         "text/plain",
         vec![],
     )
@@ -334,4 +337,39 @@ async fn public_error_envelope_contract() {
             "code":400,"status":"Bad Request","error":"Page version changed. Refresh to continue.","errors":{},"total":0
         })
     );
+}
+
+/// The same native page root consumes explicit French/dark settings and real detail seeds.
+#[tokio::test]
+async fn initial_settings_and_detail_projection() {
+    let app = stackpress_example_profile_ui_web::application()
+        .await
+        .unwrap();
+    for (id, code, heading) in [
+        ("abc456", 200, "Grace Hopper"),
+        ("missing", 404, "Profil introuvable"),
+    ] {
+        let path = format!("/ui/profiles/{id}?return=abc");
+        let (status, html, _) = call(&app, "GET", &path, "text/plain", vec![]).await;
+        assert_eq!(status, code);
+        let text = html
+            .split("id=\"stackpress-page\">")
+            .nth(1)
+            .unwrap()
+            .split("</script>")
+            .next()
+            .unwrap();
+        let mut seed = PageSnapshot::<SearchPage>::decode(text, REVISION, BUILD).unwrap();
+        assert_eq!(seed.location, path);
+        seed.locale = "fr".into();
+        seed.theme = "dark".into();
+        let html = stackpress_example_profile_ui_web::render_snapshot(seed)
+            .await
+            .unwrap();
+        assert!(html.contains("lang=\"fr\""));
+        assert!(html.contains("data-theme=\"dark\""));
+        assert!(html.contains(heading));
+        assert!(html.contains("Retour à la recherche"));
+        assert!(html.contains("<title>Profil</title>"));
+    }
 }

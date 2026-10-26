@@ -15,6 +15,10 @@ use stackpress_framework_view::PageSnapshot;
 
 /// Checked public page and initial presentation settings admitted before mounting.
 pub(crate) struct ClientSeed {
+    /// Checked page identity, used by the shared page root.
+    pub(crate) page_id: String,
+    /// Exact public native status, including not-found.
+    pub(crate) status: stackpress_example_profile_ui_contracts::PublicStatus,
     /// Asset-declared trusted mount, supplied to both routing and fixed HTTP calls.
     pub(crate) base: BasePath,
     /// Exact native-loaded result, consumed without refetch during hydration.
@@ -37,6 +41,27 @@ pub(crate) fn decode(text: &str, assets: &str) -> Result<ClientSeed, String> {
     }
     snapshot.data.input.validate().map_err(str::to_owned)?;
     snapshot.data.reply.validate().map_err(str::to_owned)?;
+    stackpress_example_profile_ui_contracts::validate_page(
+        snapshot.page.as_str(),
+        &snapshot.status,
+        &snapshot.data,
+    )
+    .map_err(str::to_owned)?;
+    let canonical = match &snapshot.data.detail {
+        Some(detail) => stackpress_example_profile_ui_contracts::routes::detail_location(
+            &assets.base,
+            &detail.id,
+            &detail.search_prefix,
+        ),
+        None => stackpress_example_profile_ui_contracts::routes::search_location(
+            &assets.base,
+            &snapshot.data.input.id,
+        ),
+    }
+    .map_err(|_| "Page location invalid. Refresh to continue.")?;
+    if canonical.as_str() != snapshot.location {
+        return Err("Page location invalid. Refresh to continue.".into());
+    }
     let language = profile_language(&snapshot.locale).map_err(str::to_owned)?;
     let theme = match snapshot.theme.as_str() {
         "light" => Theme::Light,
@@ -44,6 +69,8 @@ pub(crate) fn decode(text: &str, assets: &str) -> Result<ClientSeed, String> {
         _ => return Err("Page theme invalid. Refresh to continue.".into()),
     };
     Ok(ClientSeed {
+        page_id: snapshot.page.as_str().into(),
+        status: snapshot.status,
         base: assets.base,
         page: snapshot.data,
         language,
@@ -55,8 +82,11 @@ pub(crate) fn decode(text: &str, assets: &str) -> Result<ClientSeed, String> {
 #[cfg(any(feature = "csr", test))]
 pub(crate) fn packaged() -> Result<ClientSeed, String> {
     Ok(ClientSeed {
+        page_id: "profiles".into(),
+        status: Default::default(),
         base: BasePath::default(),
         page: SearchPage {
+            detail: None,
             input: SearchInput::new("abc".into()).map_err(str::to_owned)?,
             reply: SearchReply {
                 revision: stackpress_example_profile_ui_contracts::REVISION,

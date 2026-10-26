@@ -4,6 +4,9 @@
 //! It does not import the generated application's native dependencies.
 
 mod reply;
+/// One compiled route and query codec shared by both execution hosts and the UI.
+#[path = "../../route-contract.rs"]
+pub mod routes;
 pub use reply::{
     HostError, ReplyDecodeError, SearchFailure, SearchFailureKind, SearchOutcome, TransportFailure,
     decode_search_reply,
@@ -13,12 +16,12 @@ pub use reply::{
 mod generated_profile;
 pub use generated_profile::Profile;
 use serde::{Deserialize, Serialize};
-use stackpress_framework_view::{PageId, PageSnapshot, PublicStatus};
+pub use stackpress_framework_view::{PageId, PageSnapshot, PublicStatus};
 
 /// Current public search/page wire revision.
 pub const REVISION: u32 = 1;
 /// Build ID shared by the locked hydration and CSR assets.
-pub const BUILD: &str = "profile-ui-m1-1";
+pub const BUILD: &str = "profile-ui-m2-2";
 /// Maximum encoded search DTO size.
 pub const MAX_REQUEST_BYTES: usize = 64 * 1024;
 
@@ -123,6 +126,53 @@ pub struct SearchPage {
     pub input: SearchInput,
     /// Initial output, consumed without a second call during hydration.
     pub reply: SearchReply,
+    /// Exact detail identity and independent originating prefix, absent for search.
+    pub detail: Option<DetailContext>,
+}
+
+/// Public detail navigation context; the origin is never inferred from the ID.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct DetailContext {
+    /// Exact record requested by the detail path.
+    pub id: String,
+    /// Validated prefix used for the return-to-search destination.
+    pub search_prefix: String,
+}
+
+/// Public seed used identically by SSR and browser/native client roots.
+pub type ProfileSnapshot = PageSnapshot<SearchPage>;
+
+/// Check identity/data/status agreement before selecting the shared page root.
+///
+/// # Errors
+/// Rejects unknown page IDs, malformed context and mismatched success/not-found data.
+pub fn validate_page(
+    page: &str,
+    status: &PublicStatus,
+    data: &SearchPage,
+) -> Result<(), &'static str> {
+    data.input.validate()?;
+    data.reply.validate()?;
+    match (page, &data.detail) {
+        ("profiles", None) if status.code() == 200 => Ok(()),
+        ("profile-detail", Some(detail)) => {
+            SearchInput::new(detail.search_prefix.clone())?;
+            if detail.id != data.input.id
+                || routes::detail_location(&Default::default(), &detail.id, &detail.search_prefix)
+                    .is_err()
+            {
+                return Err("Invalid detail context");
+            }
+            let found = data.reply.rows.iter().any(|row| row.id == detail.id);
+            if status.code() == if found { 200 } else { 404 } {
+                Ok(())
+            } else {
+                Err("Invalid detail status")
+            }
+        }
+        _ => Err("Invalid page identity"),
+    }
 }
 
 /// Construct explicit initial public metadata around owned page data.
@@ -132,25 +182,34 @@ pub struct SearchPage {
 pub fn snapshot(
     data: SearchPage,
 ) -> Result<PageSnapshot<SearchPage>, stackpress_framework_view::ViewError> {
-    // Serialize only the public prefix into the canonical same-origin query.
-    let mut query = String::new();
-    for byte in data.input.id.bytes() {
-        if byte.is_ascii_alphanumeric() || matches!(byte, b'-' | b'_' | b'.' | b'~') {
-            query.push(char::from(byte));
-        } else {
-            use std::fmt::Write;
-            // Writing into String cannot fail; percent encoding retains UTF-8 bytes exactly.
-            let _ = write!(query, "%{byte:02X}");
-        }
-    }
+    let base = Default::default();
+    let (page, location, status) = match &data.detail {
+        Some(detail) => (
+            "profile-detail",
+            routes::detail_location(&base, &detail.id, &detail.search_prefix)?,
+            PublicStatus::new(
+                if data.reply.rows.iter().any(|row| row.id == detail.id) {
+                    200
+                } else {
+                    404
+                },
+                None,
+            )?,
+        ),
+        None => (
+            "profiles",
+            routes::search_location(&base, &data.input.id)?,
+            PublicStatus::ok(),
+        ),
+    };
     Ok(PageSnapshot {
         revision: REVISION,
         build: BUILD.into(),
-        page: PageId::try_from("profiles".to_owned())?,
-        location: format!("/ui/profiles?id={query}"),
+        page: PageId::try_from(page.to_owned())?,
+        location: location.into(),
         locale: "en".into(),
         theme: "light".into(),
-        status: PublicStatus::ok(),
+        status,
         data,
     })
 }

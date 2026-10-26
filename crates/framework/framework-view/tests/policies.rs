@@ -213,3 +213,33 @@ fn serialization_preserves_cause_without_disclosure() {
     );
     assert_eq!(error.clone(), error);
 }
+/// Compiled captures preserve encoded boundaries and never select outside their mount.
+#[test]
+fn compiled_capture_boundaries() {
+    use stackpress_framework_view::{BasePath, PageRoute, PublicLocation, RouteSegment};
+    let route = PageRoute::new(
+        "detail",
+        &[RouteSegment::Static("items"), RouteSegment::Param("key")],
+    )
+    .unwrap();
+    let base = BasePath::new("/app").unwrap();
+    let location = PublicLocation::new("/app/items/%E9%9B%AA%2F%2B?return=a").unwrap();
+    assert_eq!(
+        route.captures(&base, &location).unwrap(),
+        vec![("key", "%E9%9B%AA%2F%2B")]
+    );
+    for path in [
+        "/application/items/a",
+        "/app/items/",
+        "/app/items/a/b",
+        "/app/other/a",
+        "/app/items",
+    ] {
+        assert!(
+            route
+                .captures(&base, &PublicLocation::new(path).unwrap())
+                .is_none(),
+            "{path}"
+        );
+    }
+}

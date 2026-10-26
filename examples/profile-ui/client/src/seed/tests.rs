@@ -18,6 +18,8 @@ fn public_seed_admission() {
     let mut snapshot = stackpress_example_profile_ui_contracts::snapshot(initial.page).unwrap();
     let decoded = decode(&serde_json::to_string(&snapshot).unwrap(), &assets()).unwrap();
     assert_eq!(decoded.page.input.id, "abc");
+    assert_eq!(decoded.page_id, "profiles");
+    assert_eq!(decoded.status.code(), 200);
     assert_eq!(decoded.language.text("Profiles", &[]), "Profiles");
     assert_eq!(decoded.theme, Theme::Light);
     snapshot.locale = "fr".into();

@@ -32,8 +32,99 @@ pub fn catalog(base: BasePath) -> Result<RouteCatalog, ViewError> {
 
 /// Public search locations carry only the explicitly allowlisted prefix.
 pub fn search_location(base: &BasePath, id: &str) -> Result<PublicLocation, ViewError> {
+    valid_prefix(id)?;
     let path = search()?.location(base, &[])?;
     PublicLocation::new(format!("{}?id={}", path.as_str(), encode_uri_component(id)))
+}
+
+/// Canonical detail URL carries an independent, explicitly encoded return prefix.
+///
+/// # Errors
+/// Rejects invalid IDs, prefixes or unsafe/oversized locations.
+pub fn detail_location(
+    base: &BasePath,
+    detail_id: &str,
+    search_prefix: &str,
+) -> Result<PublicLocation, ViewError> {
+    valid_prefix(search_prefix)?;
+    let path = detail()?.location(base, &[("id", detail_id)])?;
+    PublicLocation::new(format!(
+        "{}?return={}",
+        path.as_str(),
+        encode_uri_component(search_prefix)
+    ))
+}
+
+/// Decode a detail query exactly once; absence has an explicit caller-selected default.
+///
+/// # Errors
+/// Rejects unknown/duplicate keys, empty values, raw plus aliases and malformed UTF-8/escapes.
+pub fn decode_return_prefix(query: &str) -> Result<Option<String>, ViewError> {
+    if query.is_empty() {
+        return Ok(None);
+    }
+    let value = query
+        .strip_prefix("return=")
+        .ok_or(ViewError::InvalidSnapshot)?;
+    if value.contains(['&', '+', '=']) {
+        return Err(ViewError::InvalidSnapshot);
+    }
+    let value = decode_query_value(value)?;
+    valid_prefix(&value)?;
+    Ok(Some(value))
+}
+
+/// Checked navigation target, independent of browser history or DOM APIs.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum Destination {
+    /// Search at the exact public prefix.
+    Search(String),
+    /// Detail identity plus its independent return prefix.
+    Detail {
+        /// Exact decoded record ID.
+        id: String,
+        /// Independently decoded originating search prefix.
+        search_prefix: String,
+    },
+}
+
+/// Resolve only catalog locations; transport adapters never duplicate route parsing.
+///
+/// # Errors
+/// Rejects foreign mounts, unknown paths and malformed/ambiguous queries.
+pub fn resolve(base: &BasePath, location: &str) -> Result<Destination, ViewError> {
+    let checked = PublicLocation::new(location)?;
+    let query = location.split_once('?').map_or("", |(_, query)| query);
+    if search()?.captures(base, &checked).is_some() {
+        let value = query
+            .strip_prefix("id=")
+            .ok_or(ViewError::InvalidSnapshot)?;
+        if value.contains(['&', '+', '=']) {
+            return Err(ViewError::InvalidSnapshot);
+        }
+        return Ok(Destination::Search(decode_query_value(value)?));
+    }
+    let captures = detail()?
+        .captures(base, &checked)
+        .ok_or(ViewError::InvalidSnapshot)?;
+    let encoded = captures
+        .iter()
+        .find(|(name, _)| *name == "id")
+        .map(|(_, value)| *value)
+        .ok_or(ViewError::InvalidSnapshot)?;
+    Ok(Destination::Detail {
+        id: decode_parameter(encoded)?,
+        search_prefix: decode_return_prefix(query)?.unwrap_or_else(|| "abc".into()),
+    })
+}
+
+/// Prefix bounds agree with SearchInput, without depending on a host crate.
+fn valid_prefix(value: &str) -> Result<(), ViewError> {
+    if value.is_empty() || value.len() > 1024 {
+        Err(ViewError::InvalidSnapshot)
+    } else {
+        Ok(())
+    }
 }
 
 /// The fixed operation endpoint cannot be selected by a caller field.
@@ -46,6 +137,15 @@ pub fn search_api(base: &BasePath) -> Result<PublicLocation, ViewError> {
 /// # Errors
 /// Rejects malformed escapes, invalid UTF-8, dot aliases and unbounded identifiers.
 pub fn decode_parameter(value: &str) -> Result<String, ViewError> {
+    let decoded = decode_query_value(value)?;
+    if matches!(decoded.as_str(), "." | "..") {
+        return Err(ViewError::InvalidSnapshot);
+    }
+    Ok(decoded)
+}
+
+/// Decode a bounded encoded component once, preserving plus and Unicode as data.
+fn decode_query_value(value: &str) -> Result<String, ViewError> {
     if value.len() > 4096 {
         return Err(ViewError::InvalidSnapshot);
     }
@@ -73,7 +173,7 @@ pub fn decode_parameter(value: &str) -> Result<String, ViewError> {
         }
     }
     let decoded = String::from_utf8(decoded).map_err(|_| ViewError::InvalidSnapshot)?;
-    if decoded.is_empty() || decoded.len() > 1024 || matches!(decoded.as_str(), "." | "..") {
+    if decoded.is_empty() || decoded.len() > 1024 {
         return Err(ViewError::InvalidSnapshot);
     }
     Ok(decoded)

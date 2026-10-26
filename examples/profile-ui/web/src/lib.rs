@@ -1,9 +1,9 @@
 //! Buffered typed pages and a fixed HTTP operation over the existing lifecycle.
 
 use stackpress_example_profile_ui_contracts::{
-    BUILD, MAX_REQUEST_BYTES, REVISION, SearchInput, SearchPage, SearchReply,
+    BUILD, DetailContext, MAX_REQUEST_BYTES, REVISION, SearchInput, SearchPage, SearchReply,
 };
-use stackpress_example_profile_ui_shared::ProfileSearch;
+use stackpress_example_profile_ui_shared::ProfilePage;
 use stackpress_framework_ui::{leptos::prelude::*, render::LeptosRenderer};
 use stackpress_framework_view::{
     BasePath, PageAssets, PageContract, PageLoad, PageRenderer, PageSnapshot, PageSpec,
@@ -68,7 +68,8 @@ pub fn register_pages(app: &mut ServerBuilder, base: BasePath) -> Result<()> {
         load_detail,
     )?
     .location(move |page: &SearchPage| {
-        routes::detail()?.location(&detail_base, &[("id", &page.input.id)])
+        let detail = page.detail.as_ref().ok_or(ViewError::InvalidSnapshot)?;
+        routes::detail_location(&detail_base, &detail.id, &detail.search_prefix)
     });
     app.page(detail, renderer(base).map_err(Error::from_source)?)?;
     Ok(())
@@ -138,7 +139,11 @@ pub async fn load_profiles(
         return Ok(PageLoad::Abort);
     }
     let reply = SearchReply::from_envelope(&res.try_to_json()?).map_err(Error::invalid)?;
-    Ok(PageLoad::Ready(SearchPage { input, reply }))
+    Ok(PageLoad::Ready(SearchPage {
+        input,
+        reply,
+        detail: None,
+    }))
 }
 
 /// Project an exact detail from the unchanged generated prefix-search capability.
@@ -158,6 +163,10 @@ pub async fn load_detail(
         .get("id")
         .ok_or_else(|| Error::invalid("missing detail capture"))?;
     let id = routes::decode_parameter(encoded).map_err(Error::from_source)?;
+    let query = req.url.query().unwrap_or_default();
+    let search_prefix = routes::decode_return_prefix(query)
+        .map_err(Error::from_source)?
+        .unwrap_or_else(|| "abc".into());
     req.data.set("id", id)?;
     let mut page = match load_profiles(req, res, inv).await? {
         PageLoad::Abort => return Ok(PageLoad::Abort),
@@ -166,6 +175,10 @@ pub async fn load_detail(
     // The read capability remains generated; only page-specific presentation is narrowed.
     page.reply.rows.retain(|row| row.id == page.input.id);
     page.reply.total = page.reply.rows.len() as u64;
+    page.detail = Some(DetailContext {
+        id: page.input.id.clone(),
+        search_prefix,
+    });
     if page.reply.rows.is_empty() {
         res.status_code(404, None)?;
     }
@@ -174,7 +187,18 @@ pub async fn load_detail(
 
 /// A checked native renderer; only the public snapshot reaches its component factory.
 fn renderer(base: BasePath) -> std::result::Result<impl PageRenderer<SearchPage>, ViewError> {
-    let contract = PageContract::new(REVISION, BUILD)?;
+    renderer_with_settings(base, "en", "light")
+}
+
+/// Explicit trusted display settings, shared by fixtures and normal native registration.
+fn renderer_with_settings(
+    base: BasePath,
+    locale: &str,
+    theme: &str,
+) -> std::result::Result<impl PageRenderer<SearchPage>, ViewError> {
+    let mut contract = PageContract::new(REVISION, BUILD)?;
+    contract.locale = locale.into();
+    contract.theme = theme.into();
     let assets = PageAssets {
         build: BUILD.into(),
         base,
@@ -188,7 +212,11 @@ fn renderer(base: BasePath) -> std::result::Result<impl PageRenderer<SearchPage>
             serde_json::to_value(&snapshot.data).map_err(ViewError::from_source)?,
         )
         .map_err(ViewError::from_source)?;
-        Ok(view! { <ProfileSearch seed/> })
+        Ok(
+            view! { <ProfilePage seed page=snapshot.page.as_str().to_owned() status=snapshot.status.clone()
+            initial_language=stackpress_example_profile_ui_shared::profile_language(&snapshot.locale).map_err(|_| ViewError::InvalidSnapshot)?
+            initial_theme=if snapshot.theme == "dark" { stackpress_framework_ui::state::Theme::Dark } else { stackpress_framework_ui::state::Theme::Light }/> },
+        )
     })
 }
 
@@ -212,7 +240,19 @@ pub async fn page(req: &mut Request, res: &mut Response, inv: Invocation<'_>) ->
 /// # Errors
 /// Returns bounded seed/HTML failures and missing native SSR initialization.
 pub async fn render_snapshot(snapshot: PageSnapshot<SearchPage>) -> Result<String> {
-    let renderer = renderer(BasePath::default()).map_err(Error::from_source)?;
+    render_snapshot_with_base(snapshot, BasePath::default()).await
+}
+
+/// Render explicit public settings under the same trusted mount as assets and links.
+///
+/// # Errors
+/// Preserves checked snapshot, display policy and render-boundary failures.
+pub async fn render_snapshot_with_base(
+    snapshot: PageSnapshot<SearchPage>,
+    base: BasePath,
+) -> Result<String> {
+    let renderer = renderer_with_settings(base, &snapshot.locale, &snapshot.theme)
+        .map_err(Error::from_source)?;
     Ok(renderer
         .render(snapshot)
         .await

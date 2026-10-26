@@ -132,9 +132,12 @@ const render = () => cp.execFileSync(host, [], { encoding: 'utf8', timeout: 1000
       Response.prototype.text = window.originalResponseText;
     });
 
+    assert.equal(await page.locator('p[role=status]').textContent(), '1 profile');
     await page.getByRole('button', { name: 'Français', exact: true }).click();
     await page.waitForFunction(() => document.documentElement.lang === 'fr' && document.title === 'Profils');
     assert.equal(await page.getByLabel('Préfixe de l’identifiant').count(), 1);
+    assert.equal(await page.locator('p[role=status]').textContent(), '1 profil');
+    assert.equal(await page.locator('[aria-label=\"About these profiles\"] p').textContent(), '1 profil public affiché.');
     assert.equal(await page.locator('meta[name=description]').count(), 1);
     assert.equal(await page.locator('meta[name=description]').getAttribute('content'), 'Rechercher des profils publics');
     assert.equal(await page.locator('style#stackpress-ui').count(), 1);

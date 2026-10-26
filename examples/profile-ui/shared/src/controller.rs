@@ -13,6 +13,10 @@ use stackpress_framework_ui::state::{NoticeKind, Notifications};
 pub(super) struct SearchController {
     /// Current editable prefix.
     pub(super) id: RwSignal<String>,
+    /// Last successful input, independent of edits and retained rows.
+    pub(super) prefix: RwSignal<String>,
+    /// Successful publication counter; browser effects only observe completed work.
+    pub(super) published: RwSignal<u64>,
     /// Last useful rows, retained until a successful replacement arrives.
     pub(super) rows: RwSignal<Vec<(String, String)>>,
     /// Last successful returned-row count, preserving zero.
@@ -35,6 +39,8 @@ impl SearchController {
     /// Consume the public seed once without starting any transport work.
     pub(super) fn new(seed: SearchPage) -> Self {
         Self {
+            prefix: RwSignal::new(seed.input.id.clone()),
+            published: RwSignal::new(0),
             id: RwSignal::new(seed.input.id),
             rows: RwSignal::new(
                 seed.reply
@@ -54,7 +60,7 @@ impl SearchController {
     }
 
     /// Invalidate old publication rights before cancellation can settle a promise.
-    fn invalidate(self, cancel: Option<SearchCancellation>) {
+    pub(super) fn invalidate(self, cancel: Option<SearchCancellation>) {
         self.generation.update(|generation| {
             // Exhaustion permanently revokes publication rather than reusing a generation.
             *generation = generation.and_then(|value| value.checked_add(1));
@@ -87,6 +93,7 @@ impl SearchController {
             return;
         };
         self.pending.set(true);
+        let prefix = input.id.clone();
         let done: SearchCompletion =
             std::sync::Arc::new(move |reply: Result<SearchReply, SearchFailure>| {
                 // Cleanup removes the generation signal; supersession changes its value.
@@ -109,6 +116,7 @@ impl SearchController {
                     Ok(reply) => {
                         // Replace rows/count together in one reactive batch after wire validation.
                         batch(|| {
+                            self.prefix.set(prefix.clone());
                             self.total.set(reply.total);
                             self.rows.set(
                                 reply
@@ -117,6 +125,8 @@ impl SearchController {
                                     .map(|row| (row.id, row.name))
                                     .collect(),
                             );
+                            self.published
+                                .update(|value| *value = value.saturating_add(1));
                         });
                     }
                     Err(failure) => {

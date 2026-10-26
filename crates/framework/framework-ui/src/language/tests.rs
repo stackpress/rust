@@ -45,6 +45,63 @@ fn phrase_and_text_policy() {
     );
 }
 
+/// Counted text and node templates share locale categories, including French zero.
+#[test]
+fn integer_plural_categories_and_text() {
+    for locale in ["en", "en-US", "fr", "fr-FR", "FR_CA"] {
+        let fixture = language(
+            locale,
+            &[("%s item", "%s article"), ("%s items", "%s articles")],
+            "%s",
+        );
+        for count in [0, 1, 2] {
+            let one = count == 1 || (locale.to_ascii_lowercase().starts_with("fr") && count == 0);
+            assert_eq!(
+                fixture.plural_category(count),
+                if one {
+                    PluralCategory::One
+                } else {
+                    PluralCategory::Other
+                }
+            );
+            assert_eq!(
+                fixture.plural_text(count, "%s item", "%s items", &[count.to_string()]),
+                format!("{count} {}", if one { "article" } else { "articles" })
+            );
+        }
+    }
+    assert_eq!(
+        language("unmapped", &[], "%s").plural_text(2, "%s item", "%s items", &["2".into()]),
+        "2 items"
+    );
+}
+
+/// Real view slots stay nodes while grammar follows count and locale.
+#[cfg(feature = "ssr")]
+#[test]
+fn counted_node_translation() {
+    for locale in ["en", "fr"] {
+        let owner = Owner::new();
+        owner.with(|| {
+            let context = LanguageContext::new(language(locale, &[], "%s"));
+            for count in [0_u64, 1, 2] {
+                let html = view! { <Translate language=context one="%s item" phrase="%s items" count=Signal::derive(move || count)
+                    slots=vec![ViewFn::from(move || view! { <strong>{count}</strong> })]/> }.to_html();
+                assert!(html.contains(&format!("<strong>{count}</strong>")));
+                assert_eq!(html.contains("items"), !(count == 1 || (locale == "fr" && count == 0)));
+            }
+            let count = RwSignal::new(0_u64);
+            let text = Memo::new(move |_| context.plural_text(count.get(), "%s item", "%s items", &[count.get().to_string()]));
+            assert_eq!(text.get(), if locale == "fr" { "0 item" } else { "0 items" });
+            count.set(1); assert_eq!(text.get(), "1 item");
+            count.set(2); assert_eq!(text.get(), "2 items");
+            context.change(language(if locale == "fr" { "en" } else { "fr" }, &[], "%s"));
+            count.set(0); assert_eq!(text.get(), if locale == "fr" { "0 items" } else { "0 item" });
+        });
+        owner.cleanup();
+    }
+}
+
 /// Invalid maps cannot replace a mounted locale; boundaries count UTF-8 bytes.
 #[test]
 fn checked_language_bounds() {

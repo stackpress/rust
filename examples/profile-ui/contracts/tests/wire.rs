@@ -48,6 +48,7 @@ fn strict_input_and_public_projection() {
     assert!(reply.validate().is_err());
     reply.rows[0].name = "Ada".into();
     let page = snapshot(SearchPage {
+        detail: None,
         input: SearchInput::new("abc".into()).unwrap(),
         reply,
     })
@@ -55,6 +56,7 @@ fn strict_input_and_public_projection() {
     page.validate(REVISION, BUILD).unwrap();
     assert_eq!(page.location, "/ui/profiles?id=abc");
     let unicode = snapshot(SearchPage {
+        detail: None,
         input: SearchInput::new("é &".into()).unwrap(),
         reply: empty,
     })

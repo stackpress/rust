@@ -243,13 +243,24 @@ pub fn List(
     #[prop(into)]
     empty: Signal<String>,
 ) -> impl IntoView {
+    // Keyed rows retain their DOM identity, while label/href read the latest value.
+    // Leptos For does not rerun its child factory when an existing key's props change.
+    let current = Memo::new(move |_| {
+        items
+            .get()
+            .into_iter()
+            .map(|row| (row.id.clone(), row))
+            .collect::<std::collections::BTreeMap<_, _>>()
+    });
     view! {
         <p class="sp-empty" hidden=move || !items.get().is_empty()>{move || empty.get()}</p>
         <ul class="sp-list"><For each=move || items.get() key=|row| row.id.clone() children=move |row| {
-            view! { <li data-profile-id=row.id>{match row.href {
+            let id = row.id;
+            let key = id.clone();
+            view! { <li data-profile-id=id>{move || current.with(|rows| rows.get(&key).cloned()).map(|row| match row.href {
                 Some(href) => view! { <Link href label=row.label/> }.into_any(),
                 None => row.label.into_any(),
-            }}</li> }
+            })}</li> }
         }/></ul>
     }
 }

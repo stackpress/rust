@@ -8,9 +8,129 @@ use std::{cell::RefCell, rc::Rc};
 /// Seed one meaningful public result without duplicating domain search logic.
 fn seed() -> SearchPage {
     SearchPage {
+        detail: None,
         input: SearchInput::new("abc".into()).unwrap(),
         reply: reply("Ada Lovelace"),
     }
+}
+
+/// The real profile dictionary handles 0/1/2 consistently for text and node phrases.
+#[cfg(feature = "ssr")]
+#[test]
+fn counted_profile_phrases() {
+    for locale in ["en", "fr"] {
+        for count in [0_u64, 1, 2] {
+            let owner = Owner::new();
+            owner.with(|| {
+                stackpress_framework_ui::leptos_meta::provide_meta_context();
+                let data = SearchPage { input: SearchInput::new("abc".into()).unwrap(), detail: None,
+                    reply: SearchReply { revision: REVISION, total: count,
+                        rows: (0..count).map(|index| Profile { id: format!("abc{index}"), name: "Public fixture".into() }).collect() } };
+                let html = view! { <ProfileSearch seed=data initial_language=profile_language(locale).unwrap()/> }.to_html();
+                let singular = count == 1 || (locale == "fr" && count == 0);
+                let noun = match (locale, singular) { ("fr", true) => "profil", ("fr", false) => "profils", (_, true) => "profile", _ => "profiles" };
+                assert!(html.contains(&format!("{count} {noun}</p>")), "{locale}/{count}: {html}");
+                let suffix = match (locale, singular) { ("fr", true) => " profil public affiché.", ("fr", false) => " profils publics affichés.", (_, true) => " public profile.", _ => " public profiles." };
+                assert!(html.contains(&format!("<strong>{count}</strong>{suffix}")), "{locale}/{count}: {html}");
+            });
+            owner.cleanup();
+        }
+    }
+}
+
+/// Navigation restores useful public state and independently preserves the return prefix.
+#[test]
+fn catalog_navigation_and_retained_history() {
+    use super::navigation::{Navigation, PageNavigation};
+    let owner = Owner::new();
+    owner.with(|| {
+        assert!(PageNavigation::new(Default::default(), None, "").is_err());
+        let controller = SearchController::new(seed());
+        let navigation = PageNavigation::new(Default::default(), None, "abc").unwrap();
+        let writes = Rc::new(RefCell::new(Vec::new()));
+        let output = writes.clone();
+        let adapter = Navigation {
+            request: RwSignal::new(None),
+            write: UnsyncCallback::new(move |value| output.borrow_mut().push(value)),
+        };
+        let completions = Rc::new(RefCell::new(Vec::<SearchCompletion>::new()));
+        let pending = completions.clone();
+        let transport = UnsyncCallback::new(move |(_, done)| pending.borrow_mut().push(done));
+        navigation.go(
+            "/foreign".into(),
+            true,
+            controller,
+            transport,
+            None,
+            adapter,
+        );
+        assert!(writes.borrow().is_empty());
+        navigation.go(
+            "/ui/profiles/abc?return=ab".into(),
+            true,
+            controller,
+            transport,
+            None,
+            adapter,
+        );
+        assert_eq!(
+            navigation.detail.get_untracked().unwrap().search_prefix,
+            "ab"
+        );
+        completions.borrow()[0](Ok(reply("Detail")));
+        navigation.completed(controller, adapter);
+        assert_eq!(
+            writes.borrow().last().unwrap().0,
+            "/ui/profiles/abc?return=ab"
+        );
+        navigation.go(
+            "/ui/profiles?id=abc".into(),
+            false,
+            controller,
+            transport,
+            None,
+            adapter,
+        );
+        assert!(navigation.detail.get_untracked().is_none());
+        assert_eq!(controller.rows.get_untracked()[0].1, "Ada Lovelace");
+        assert_eq!(
+            completions.borrow().len(),
+            1,
+            "history restores without a read"
+        );
+        navigation.go(
+            "/ui/profiles/abc?return=ab".into(),
+            false,
+            controller,
+            transport,
+            None,
+            adapter,
+        );
+        assert_eq!(controller.rows.get_untracked()[0].1, "Detail");
+        navigation.go(
+            "/ui/profiles?id=ab".into(),
+            true,
+            controller,
+            transport,
+            None,
+            adapter,
+        );
+        assert!(navigation.detail.get_untracked().is_none());
+        assert_eq!(controller.id.get_untracked(), "ab");
+        // An uncached return performs the selected prefix read, never infers it from ID.
+        assert_eq!(completions.borrow().len(), 2);
+        navigation.go(
+            "/ui/profiles?id=abc".into(),
+            false,
+            controller,
+            transport,
+            None,
+            adapter,
+        );
+        completions.borrow()[1](Ok(reply("Late return")));
+        assert_eq!(controller.rows.get_untracked()[0].1, "Ada Lovelace");
+    });
+    owner.cleanup();
 }
 
 /// Make a typed public result with no duplicated search implementation.
@@ -32,6 +152,7 @@ fn controller_preserves_newest_result_and_disposal() {
     let completions = Rc::new(RefCell::new(Vec::<SearchCompletion>::new()));
     let (controller, transport) = owner.with(|| {
         let controller = SearchController::new(SearchPage {
+            detail: None,
             input: SearchInput::new("abc".into()).unwrap(),
             reply: reply("Seed"),
         });

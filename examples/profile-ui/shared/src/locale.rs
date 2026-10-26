@@ -11,6 +11,15 @@ pub fn profile_language(locale: &str) -> Result<Language, &'static str> {
     let phrases = if locale == "fr" {
         [
             ("Profiles", "Profils"),
+            ("Profile", "Profil"),
+            ("Public profile detail", "Détail du profil public"),
+            ("Profile not found", "Profil introuvable"),
+            ("Profile ID", "Identifiant du profil"),
+            ("Return to search", "Retour à la recherche"),
+            (
+                "Try another ID prefix to find a profile.",
+                "Essayez un autre préfixe pour trouver un profil.",
+            ),
             (
                 "Search public demo profiles",
                 "Rechercher des profils publics",
@@ -23,7 +32,9 @@ pub fn profile_language(locale: &str) -> Result<Language, &'static str> {
             ("For example, abc", "Par exemple, abc"),
             ("Search", "Rechercher"),
             ("Searching…", "Recherche en cours…"),
+            ("%s profile", "%s profil"),
             ("%s profiles", "%s profils"),
+            ("Showing %s public profile.", "%s profil public affiché."),
             (
                 "Showing %s public profiles.",
                 "%s profils publics affichés.",
