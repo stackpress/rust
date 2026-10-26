@@ -9,7 +9,15 @@ const root = path.resolve(__dirname, '../../..');
 const host = process.env.PROFILE_UI_HOST;
 if (!host) throw Error('set PROFILE_UI_HOST to the built finite web fixture binary');
 const assets = path.join(root, 'examples/profile-ui/dist/hydrate');
-const render = (hostile) => cp.execFileSync(host, hostile ? ["hostile"] : [], { encoding: 'utf8', timeout: 10000 });
+const render = (hostile) => withM1Assets(cp.execFileSync(host, hostile ? ["hostile"] : [], { encoding: 'utf8', timeout: 10000 }));
+/** Temporary M1 bootstrap fixture; remove when the merged host emits its own assets. */
+function withM1Assets(html) {
+  if (html.includes('id="stackpress-assets"')) return html;
+  const data = JSON.parse(html.match(/id="stackpress-page">(.*?)<\/script>/s)[1]);
+  const assets = JSON.stringify({ build: data.build, base: "", module: "/assets/start.js", stylesheet: null });
+  return html.replace('</head>', '<script type="application/json" id="stackpress-assets">' + assets + '</script></head>');
+}
+
 (async () => {
   const browser = await chromium.launch({ headless: true });
   const errors = [];
@@ -50,14 +58,14 @@ const render = (hostile) => cp.execFileSync(host, hostile ? ["hostile"] : [], { 
     assert.equal(await page.evaluate(() => window.inputBefore === document.querySelector('input') && document.activeElement === window.inputBefore), true, 'preserved DOM/focus');
     assert.equal(await page.locator('li').count(), 3);
     await page.locator('input').fill('abc456');
-    await page.locator('button').click();
+    await page.locator('form button[type=submit]').click();
     await page.waitForFunction(() => document.querySelectorAll('li').length === 1 && document.querySelector('li').textContent === 'Grace Hopper');
     assert.equal(calls, 1);
     // Owner disposal aborts the active transport and cannot publish its late completion.
     hold = true;
     const barrier = new Promise(resolve => { requested = resolve; });
     await page.locator('input').fill('abc123');
-    await page.locator('button').click();
+    await page.locator('form button[type=submit]').click();
     await barrier;
     await page.evaluate(() => window.disposeProfileUi());
     release();

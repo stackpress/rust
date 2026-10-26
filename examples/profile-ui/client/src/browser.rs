@@ -1,9 +1,11 @@
 //! Local transport ownership and strict initial-seed admission.
 
+use crate::seed::ClientSeed;
 use leptos::prelude::*;
-use stackpress_example_profile_ui_contracts::{REVISION, SearchInput, SearchPage, SearchReply};
-use stackpress_example_profile_ui_shared::{ProfileSearch, SearchCompletion, SearchTransport};
-use stackpress_framework_view::MAX_SNAPSHOT_BYTES;
+use stackpress_example_profile_ui_contracts::{SearchInput, SearchReply};
+use stackpress_example_profile_ui_shared::{
+    ProfileSearch, SearchCancellation, SearchCompletion, SearchTransport,
+};
 use wasm_bindgen::{JsCast, prelude::*};
 #[cfg(feature = "hydrate")]
 use wasm_bindgen_futures::JsFuture;
@@ -38,11 +40,14 @@ impl Drop for ActiveCall {
 }
 
 /// Create an Owner-bound local transport, with no Send wrapper around DOM values.
-fn transport() -> SearchTransport {
+fn transport(endpoint: String) -> (SearchTransport, SearchCancellation) {
     let active = StoredValue::new_local(None::<ActiveCall>);
     let serial = StoredValue::new(0_u64);
     // StoredValue disposal drops the active call; async work cannot retain this root.
-    UnsyncCallback::new(move |(input, done): (SearchInput, SearchCompletion)| {
+    let cancel = UnsyncCallback::new(move |()| {
+        active.update_value(|call| *call = None);
+    });
+    let search = UnsyncCallback::new(move |(input, done): (SearchInput, SearchCompletion)| {
         active.update_value(|call| *call = None);
         serial.update_value(|value| *value = value.saturating_add(1));
         let id = format!("profile-{}", serial.get_value());
@@ -59,11 +64,13 @@ fn transport() -> SearchTransport {
             id: id.clone(),
             abort: controller,
         }));
+        let endpoint = endpoint.clone();
         leptos::task::spawn_local(async move {
             // The completion checks disposed/generation state before any signal access.
-            done(search(input, &id, signal).await);
+            done(search(input, &id, signal, &endpoint).await);
         });
-    })
+    });
+    (search, cancel)
 }
 
 /// Execute the explicitly compiled transport and validate its bounded public reply.
@@ -71,6 +78,7 @@ async fn search(
     input: SearchInput,
     id: &str,
     signal: web_sys::AbortSignal,
+    endpoint: &str,
 ) -> Result<SearchReply, String> {
     let json = serde_json::to_string(&input).map_err(|_| "Invalid search input")?;
     #[cfg(feature = "hydrate")]
@@ -81,9 +89,8 @@ async fn search(
         options.set_body(&JsValue::from_str(&json));
         options.set_signal(Some(&signal));
         options.set_mode(web_sys::RequestMode::SameOrigin);
-        let request =
-            web_sys::Request::new_with_str_and_init("/ui-api/v1/profile-search", &options)
-                .map_err(|_| "Search could not start")?;
+        let request = web_sys::Request::new_with_str_and_init(endpoint, &options)
+            .map_err(|_| "Search could not start")?;
         request
             .headers()
             .set("content-type", "application/json")
@@ -105,49 +112,34 @@ async fn search(
     };
     #[cfg(feature = "csr")]
     let text = {
-        let _ = signal;
+        let _ = (signal, endpoint);
         profile_search(id, &json)
             .await
             .map_err(|_| "Search cancelled or denied")?
             .as_string()
             .ok_or("Invalid search response")?
     };
-    if text.len() > MAX_SNAPSHOT_BYTES {
-        return Err("Search reply is too large".into());
-    }
-    let reply: SearchReply = serde_json::from_str(&text).map_err(|_| "Invalid search response")?;
-    reply.validate().map_err(str::to_owned)?;
-    Ok(reply)
+    crate::seed::reply(&text)
 }
 
-/// Decode textContent before creating reactive state or trusting rendered markup.
-fn seed(document: &web_sys::Document) -> Result<SearchPage, String> {
+/// Acquire DOM text only; all wire/settings decisions are tested in the seed module.
+fn seed(document: &web_sys::Document) -> Result<ClientSeed, String> {
     #[cfg(feature = "hydrate")]
     {
-        use stackpress_example_profile_ui_contracts::BUILD;
-        use stackpress_framework_view::PageSnapshot;
         let text = document
             .get_element_by_id("stackpress-page")
             .and_then(|element| element.text_content())
             .ok_or("Page data missing. Refresh to continue.")?;
-        let snapshot = PageSnapshot::<SearchPage>::decode(&text, REVISION, BUILD)
-            .map_err(|error| error.to_string())?;
-        snapshot.data.input.validate().map_err(str::to_owned)?;
-        snapshot.data.reply.validate().map_err(str::to_owned)?;
-        Ok(snapshot.data)
+        let assets = document
+            .get_element_by_id("stackpress-assets")
+            .and_then(|element| element.text_content())
+            .ok_or("Page assets missing. Refresh to continue.")?;
+        crate::seed::decode(&text, &assets)
     }
     #[cfg(feature = "csr")]
     {
         let _ = document;
-        // No duplicated domain rows: packaged CSR obtains them through permitted IPC.
-        Ok(SearchPage {
-            input: SearchInput::new("abc".into()).map_err(str::to_owned)?,
-            reply: SearchReply {
-                revision: REVISION,
-                rows: Vec::new(),
-                total: 0,
-            },
-        })
+        crate::seed::packaged()
     }
 }
 
@@ -168,10 +160,21 @@ pub fn start() -> Result<js_sys::Function, JsValue> {
             return Err(JsValue::from_str(&message));
         }
     };
+    let endpoint = initial
+        .base
+        .join("/ui-api/v1/profile-search")
+        .map_err(|_| JsValue::from_str("Page location invalid. Refresh to continue."))?
+        .as_str()
+        .to_owned();
     let root = move || {
         stackpress_framework_ui::leptos_meta::provide_meta_context();
-        let transport = transport();
-        view! { <ProfileSearch seed=initial transport/> }
+        stackpress_example_profile_ui_shared::m1_compat::provide_route_context(
+            initial.base.clone(),
+        );
+        let (transport, cancel) = transport(endpoint);
+        view! { <ProfileSearch seed=initial.page transport cancel
+        initial_language=initial.language initial_theme=initial.theme
+        initial_search=cfg!(feature = "csr")/> }
     };
     #[cfg(feature = "hydrate")]
     let handle = leptos::mount::hydrate_from(app, root);

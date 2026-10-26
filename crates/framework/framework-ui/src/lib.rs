@@ -17,6 +17,13 @@ pub use leptos_meta;
 /// Client routing remains distinct from native Stackpress route selection.
 pub use leptos_router;
 
+/// Reusable shared UI components and layouts.
+pub mod components;
+/// Scoped locale and safe phrase/node translation.
+pub mod language;
+/// Scoped theme and notification state.
+pub mod state;
+
 #[cfg(all(feature = "ssr", target_arch = "wasm32"))]
 compile_error!("ssr is a native mode; use hydrate or csr for wasm32");
 

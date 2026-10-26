@@ -21,7 +21,7 @@ with tempfile.TemporaryDirectory(prefix="profile-ui-launch-") as directory:
     if not receipt.exists():
         raise SystemExit(f"packaged proof produced no receipt (exit {process.returncode})\n" + output)
     report = json.loads(receipt.read_text())
-    Path("/private/tmp/stackpress-s5-m0-launch-receipt.json").write_text(json.dumps(report, indent=2))
+    Path(os.environ.get("PROFILE_UI_LAUNCH_REPORT", "/private/tmp/stackpress-s5-m0-launch-receipt.json")).write_text(json.dumps(report, indent=2))
     if process.returncode != 0 or sorted(report["events"]) != ["denied-ok", "main-ok"] or report["in_flight"] != 0:
         raise SystemExit(json.dumps(report) + "\n" + output)
     print(json.dumps(report))

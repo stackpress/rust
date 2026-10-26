@@ -33,7 +33,7 @@ for binary in ("profile-ui", "stackpress-example-profile-ui-web"):
 command = [str(llvm / "llvm-cov"), "export", "-format=text", f"-instr-profile={merged}"]
 for obj in objects: command.extend(["-object", str(obj)])
 raw = subprocess.check_output(command, text=True)
-output = Path("/private/tmp/stackpress-s5-m0-complete-coverage.json")
+output = Path(os.environ.get("PROFILE_UI_COVERAGE_REPORT", "/private/tmp/stackpress-s5-m0-complete-coverage.json"))
 output.write_text(raw)
 totals = defaultdict(lambda: [0, 0])
 for file in json.loads(raw)["data"][0]["files"]:

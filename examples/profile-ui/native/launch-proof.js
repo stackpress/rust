@@ -18,14 +18,36 @@
       return;
     }
     const input = document.querySelector('input');
-    input.value = 'abc';
-    input.dispatchEvent(new Event('input', { bubbles: true }));
-    document.querySelector('form').dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
-    await until(() => document.querySelectorAll('li').length === 3);
+    const submit = id => {
+      input.value = id;
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      document.querySelector('form').dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+    };
+    const clickLabel = label => {
+      const button = Array.from(document.querySelectorAll('button')).find(button => button.textContent === label);
+      if (!button) throw Error('missing control ' + label);
+      button.click();
+    };
+    // Packaged CSR obtains its first rows automatically over the permitted local adapter.
+    await until(() => document.querySelectorAll('.sp-list li').length === 3);
     if (!document.querySelector('main').textContent.includes('Ada Lovelace')) throw Error('missing generated row');
+    submit('');
+    await until(() => input.getAttribute('aria-invalid') === 'true');
+    if (!document.querySelector('#profile-id-error').textContent) throw Error('missing associated validation');
+    submit('zzz');
+    await until(() => document.querySelectorAll('.sp-list li').length === 0 && !document.querySelector('.sp-empty').hidden);
+    submit('abc456');
+    await until(() => document.querySelector('.sp-list li')?.textContent === 'Grace Hopper');
+    clickLabel('Français');
+    await until(() => document.documentElement.lang === 'fr' && document.title === 'Profils');
+    clickLabel('Thème sombre');
+    await until(() => document.querySelector('.sp-root').dataset.theme === 'dark');
+    clickLabel('Thème clair');
+    submit('abc');
+    await until(() => document.querySelectorAll('.sp-list li').length === 3);
     if (location.origin !== 'tauri://localhost') throw Error('not packaged origin');
     window.disposeProfileUi();
-    window.location.href = 'proof://main-ok';
+    window.location.href = 'proof://main-ok?controls=bootstrap-invalid-empty-search-locale-theme-disposal';
   } catch (error) {
     window.location.href = 'proof://failed?message=' + encodeURIComponent(String(error));
   }
