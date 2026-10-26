@@ -50,7 +50,7 @@ impl ProjectLoader {
         let canonical = fs::canonicalize(path)
             .map_err(|cause| LoadError::with_cause("source canonicalization failed", cause))?;
         let kind = paths::kind(&canonical)?;
-        let mut file = File::open(&canonical)
+        let mut file = open_regular(&canonical)
             .map_err(|cause| LoadError::with_cause("source open failed", cause))?;
         let before = file
             .metadata()
@@ -60,7 +60,10 @@ impl ProjectLoader {
             return Err(LoadError::new("schema source is not a regular file"));
         }
         if before.len() > max_bytes as u64 {
-            return Err(LoadError::new("source byte budget exceeded"));
+            return Err(LoadError::classified(
+                crate::TransformErrorKind::Limit,
+                "source byte budget exceeded",
+            ));
         }
         let mut bytes = Vec::new();
         (&mut file)
@@ -68,7 +71,10 @@ impl ProjectLoader {
             .read_to_end(&mut bytes)
             .map_err(|cause| LoadError::with_cause("source read failed", cause))?;
         if bytes.len() > max_bytes {
-            return Err(LoadError::new("source byte budget exceeded"));
+            return Err(LoadError::classified(
+                crate::TransformErrorKind::Limit,
+                "source byte budget exceeded",
+            ));
         }
         let after = file
             .metadata()
@@ -125,4 +131,23 @@ impl SourceLoader for ProjectLoader {
             std::io::Error::from(std::io::ErrorKind::NotFound),
         ))
     }
+}
+
+/// Follow source symlinks and reject special files before open, then validate the opened handle.
+///
+/// This cooperative-path policy detects ordinary replacements but is not race-free against a
+/// writer swapping a FIFO between metadata and open. Regular-file OS reads may still stall.
+pub(crate) fn open_regular(path: &Path) -> std::io::Result<File> {
+    // A FIFO with no writer must be rejected before the blocking open call.
+    if !fs::metadata(path)?.is_file() {
+        return Err(std::io::Error::other("schema source is not a regular file"));
+    }
+    let file = File::open(path)?;
+    // A changed handle must not enter the bounded reader merely because preflight passed.
+    if !file.metadata()?.is_file() {
+        return Err(std::io::Error::other(
+            "opened schema source is not a regular file",
+        ));
+    }
+    Ok(file)
 }

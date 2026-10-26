@@ -12,7 +12,7 @@ impl OutputWorkspace {
     /// Run the M0 interruption seam against the same production transition runner.
     fn install_with(
         &self,
-        plan: OutputPlan,
+        plan: &OutputPlan,
         after_backup: impl FnOnce() -> Result<()>,
     ) -> Result<CheckReport> {
         let mut after_backup = Some(after_backup);
@@ -79,7 +79,7 @@ fn interruption_requires_explicit_recovery() {
         if initially_present {
             workspace.install(plan("old")).unwrap();
         }
-        let result = workspace.install_with(plan("new"), || {
+        let result = workspace.install_with(&plan("new"), || {
             Err(TransformError::new("injected interruption after backup"))
         });
         assert!(result.is_err());
@@ -279,7 +279,7 @@ fn complete_install_failure_matrix() {
                 workspace.install(plan("old")).unwrap();
             }
             let error = workspace
-                .install_at(plan("new"), |current| {
+                .install_at(&plan("new"), |current| {
                     if current == phase {
                         Err(std::io::Error::new(
                             match phase {
@@ -398,7 +398,7 @@ fn recovery_validates_all_trees_before_mutation() {
         workspace.install(plan("old")).unwrap();
         assert!(
             workspace
-                .install_at(plan("new"), |phase| {
+                .install_at(&plan("new"), |phase| {
                     if phase == Phase::BackupRetained {
                         Err(TransformError::new("interrupt"))
                     } else {
@@ -438,7 +438,7 @@ fn recovery_resumes_partial_cleanup_without_accepting_manual_files() {
         workspace.install(plan("old")).unwrap();
         assert!(
             workspace
-                .install_at(plan("new"), |phase| {
+                .install_at(&plan("new"), |phase| {
                     if phase == Phase::CleanupTree {
                         Err(TransformError::new("delete interrupted"))
                     } else {
@@ -580,7 +580,7 @@ fn interrupted_install_child() {
     let workspace = OutputWorkspace::new(std::env::var_os("IDEA_KILL_ROOT").unwrap()).unwrap();
     let phase = std::env::var("IDEA_KILL_PHASE").unwrap();
     workspace
-        .install_at(plan("new"), |current| {
+        .install_at(&plan("new"), |current| {
             if format!("{current:?}") == phase {
                 fs::write(workspace.root.parent().unwrap().join("ready"), b"ready").unwrap();
                 let deadline = Instant::now() + Duration::from_secs(10);
@@ -728,7 +728,7 @@ fn native_delete_permission_failure_is_recoverable() {
     let temp = temporary();
     let workspace = OutputWorkspace::new(temp.path().join("generated")).unwrap();
     workspace.install(plan("old")).unwrap();
-    let result = workspace.install_at(plan("new"), |phase| {
+    let result = workspace.install_at(&plan("new"), |phase| {
         if phase == Phase::CleanupTree {
             fs::set_permissions(
                 workspace.backup.join("data"),
@@ -834,7 +834,7 @@ fn initially_empty_root_recovers_across_install_boundaries() {
         let workspace = OutputWorkspace::new(&root).unwrap();
         assert!(
             workspace
-                .install_at(plan("new"), |phase| {
+                .install_at(&plan("new"), |phase| {
                     if phase == target {
                         Err(TransformError::new("empty-root interruption"))
                     } else {
@@ -926,7 +926,7 @@ fn cleanup_keeps_marker_until_last_entry_and_recovers_each_failure() {
         let workspace = OutputWorkspace::new(temp.path().join("generated")).unwrap();
         workspace.install(plan("old")).unwrap();
         let mut entries = 0;
-        let result = workspace.install_at(plan("new"), |phase| {
+        let result = workspace.install_at(&plan("new"), |phase| {
             if phase == Phase::CleanupEntry {
                 entries += 1;
                 if entries == stop_at {

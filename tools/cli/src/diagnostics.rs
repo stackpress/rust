@@ -3,7 +3,7 @@
 use std::error::Error as StdError;
 use std::io::Write;
 
-use stackpress_lib::{Error, Result};
+use stackpress_lib::{Error, ErrorKind, Result};
 
 use crate::control::{Control, Level, OutputEnvironment};
 use crate::prompt::PromptError;
@@ -18,9 +18,21 @@ pub(crate) fn write(
     // Borrowed writers have no native TTY identity: Auto stays plain; Always overrides explicitly.
     control
         .write(writer, OutputEnvironment::default(), level, message, &[])
-        .map_err(Error::from_source)?;
+        .map_err(|cause| {
+            Error::new("CLI diagnostic write failed")
+                .with_kind(ErrorKind::External)
+                .with_code(500)
+                .with_public_message("Internal Server Error")
+                .with_cause(cause)
+        })?;
     // Flush is part of delivery; a failed stderr flush cannot be reported as a successful command.
-    writer.flush().map_err(Error::from_source)
+    writer.flush().map_err(|cause| {
+        Error::new("CLI diagnostic flush failed")
+            .with_kind(ErrorKind::External)
+            .with_code(500)
+            .with_public_message("Internal Server Error")
+            .with_cause(cause)
+    })
 }
 
 /// Recognize explicit typed prompt cancellation without guessing from a message or status number.
@@ -58,3 +70,6 @@ pub(crate) fn developer(error: &(dyn StdError + 'static)) -> String {
     }
     text
 }
+
+#[cfg(test)]
+mod tests;

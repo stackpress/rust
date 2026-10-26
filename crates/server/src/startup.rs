@@ -27,6 +27,7 @@ pub enum StartupStage {
 }
 
 /// Explicit phase ordering and diagnostics for one startup task.
+#[must_use = "the configured value must be used"]
 pub struct StartupSpec {
     /// Config, Listen or Route; Registration is not a task phase.
     pub(crate) stage: StartupStage,
@@ -240,6 +241,10 @@ impl StartupContext {
     }
 
     /// Register a deliberately named instance during Config only.
+    ///
+    /// # Errors
+    /// Rejects calls outside Config, invalid/duplicate names, or registry budgets.
+    /// Previously registered services remain unchanged.
     #[track_caller]
     pub fn register_named<T: Any + Send + Sync>(
         &mut self,
@@ -252,6 +257,10 @@ impl StartupContext {
     }
 
     /// Customize an existing singleton explicitly during Config only.
+    ///
+    /// # Errors
+    /// Rejects calls outside Config or a missing concrete singleton. The prior service
+    /// and its provenance remain unchanged on rejection.
     #[track_caller]
     pub fn replace_service<T: Any + Send + Sync>(&mut self, value: Arc<T>) -> Result<()> {
         self.require_config()?;
@@ -260,6 +269,9 @@ impl StartupContext {
     }
 
     /// Borrow a named service with a checked concrete type.
+    ///
+    /// # Errors
+    /// Returns an error when the name is absent or its concrete type differs.
     pub fn service_named<T: Any + Send + Sync>(&self, name: &str) -> Result<&T> {
         // No registry lock is held during subsequent application awaits.
         self.services.named(name)
@@ -357,6 +369,10 @@ impl ServerBuilder {
     }
 
     /// Wrap startup identity around an existing TaskHandler without changing lib's erasure.
+    ///
+    /// # Errors
+    /// Rejects invalid diagnostic labels or the non-queued Registration stage. Existing
+    /// queued callbacks remain unchanged. Callback failures occur later in [`Self::build`].
     #[track_caller]
     pub fn startup(
         &mut self,

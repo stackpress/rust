@@ -5,7 +5,7 @@ use std::fmt;
 use std::sync::Arc;
 
 use stackpress_lib::{
-    DispatchOutcome, Error, HandlerFuture, Invocation, Request, Response, Result,
+    DispatchOutcome, Error, ErrorKind, HandlerFuture, Invocation, Request, Response, Result,
 };
 
 use crate::report::{LifecycleStage, StageFailure};
@@ -39,12 +39,19 @@ impl HostContext {
     }
 
     /// Borrow a named service only when its registered concrete type agrees.
+    ///
+    /// # Errors
+    /// Returns an error for a missing name or mismatched concrete type, and on invocation
+    /// shortcuts also for absent host context. No registry state is changed.
     pub fn service_named<T: Any + Send + Sync>(&self, name: &str) -> Result<&T> {
         // Named slots are immutable after Config, just like singleton slots.
         self.services.named(name)
     }
 
     /// Inspect original and replacement singleton sites without exposing service contents.
+    ///
+    /// # Errors
+    /// Returns an error when the concrete singleton service was not registered.
     pub fn service_sites<T: Any + Send + Sync>(
         &self,
     ) -> Result<(
@@ -106,6 +113,9 @@ impl std::error::Error for DelegationError {}
 /// Handler shortcuts over the host context; authors import this trait, never implement it.
 pub trait ServerInvocationExt {
     /// Access the complete immutable host context, or error for a non-host lib invocation.
+    ///
+    /// # Errors
+    /// Returns an error when the invocation carries no Stackpress host context.
     fn host(&self) -> Result<&HostContext>;
     /// Borrow a typed service directly from the current invocation.
     ///
@@ -133,6 +143,9 @@ pub trait ServerInvocationExt {
     /// # Ok(())
     /// # }
     /// ```
+    ///
+    /// # Errors
+    /// Returns an error for absent host context or an unregistered concrete service type.
     fn service<T: Any + Send + Sync>(&self) -> Result<&T>;
     /// Borrow a typed config section directly from the current invocation.
     ///
@@ -159,18 +172,38 @@ pub trait ServerInvocationExt {
     /// # Ok(())
     /// # }
     /// ```
+    ///
+    /// # Errors
+    /// Returns an error for absent host context or an unregistered concrete config type.
     fn config<T: Any + Send + Sync>(&self) -> Result<&T>;
     /// Explicitly retain a service Arc directly from the current invocation.
+    ///
+    /// # Errors
+    /// Returns an error for absent host context or an unregistered service type;
+    /// no new service allocation is created.
     fn shared_service<T: Any + Send + Sync>(&self) -> Result<Arc<T>>;
     /// Inspect the inherited root stage, or error without host context.
+    ///
+    /// # Errors
+    /// Returns an error when the invocation has no Stackpress host context.
     fn stage(&self) -> Result<LifecycleStage>;
     /// Inspect a top-level correlation, None for raw host dispatch roots.
+    ///
+    /// # Errors
+    /// Returns an error without host context; a raw host root instead returns Ok(None).
     fn correlation_id(&self) -> Result<Option<&str>>;
     /// Inspect the retained original failure during an Error offer and its nested calls.
+    ///
+    /// # Errors
+    /// Returns an error without host context; no active Error offer instead returns Ok(None).
     fn failure(&self) -> Result<Option<&StageFailure>>;
     /// Borrow typed trusted adapter metadata, absent for ordinary raw roots/lib calls.
     fn adapter_context<T: Any + Send + Sync>(&self) -> Option<&T>;
     /// Borrow a deliberately named service from the current host.
+    ///
+    /// # Errors
+    /// Returns an error for a missing name or mismatched concrete type, and on invocation
+    /// shortcuts also for absent host context. No registry state is changed.
     fn service_named<T: Any + Send + Sync>(&self, name: &str) -> Result<&T>;
     /// Delegate explicitly: child Abort maps to Abort, completion to Continue, missing to error.
     ///
@@ -201,6 +234,11 @@ pub trait ServerInvocationExt {
     /// # Ok(())
     /// # }
     /// ```
+    ///
+    /// # Errors
+    /// Returns nested dispatch/handler failures or a typed [`DelegationError::NoListener`].
+    /// Completed request/response mutations are retained; cancellation drops the active
+    /// child future without rolling back application side effects.
     fn delegate<'a>(
         &'a self,
         event: &'a str,
@@ -281,11 +319,13 @@ impl ServerInvocationExt for Invocation<'_> {
                 DispatchOutcome::Completed => Ok(stackpress_lib::Flow::Continue),
                 DispatchOutcome::Aborted => Ok(stackpress_lib::Flow::Abort),
                 DispatchOutcome::NoListener => {
-                    Err(Error::from_source(DelegationError::NoListener {
-                        event: event.to_owned(),
-                    })
-                    .with_code(404)
-                    .with_public_message("Not Found"))
+                    Err(Error::new("required capability delegation failed")
+                        .with_kind(ErrorKind::External)
+                        .with_cause(DelegationError::NoListener {
+                            event: event.to_owned(),
+                        })
+                        .with_code(404)
+                        .with_public_message("Not Found"))
                 }
             }
         })

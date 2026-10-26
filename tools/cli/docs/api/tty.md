@@ -80,7 +80,9 @@ keeps restoration flags for Drop's final attempt. Drop cannot guarantee OS succe
 
 Non-Clone async PromptInput owning one raw guard, one named worker, and a 32-event native queue. The
 worker only polls/maps events; it never runs application validation or writers. Drop requests stop
-and synchronously joins, with a 20-ms poll/backpressure interval under exclusive-reader assumptions;
+without waiting. A prestarted cleanup owner retains and joins the exact reader, keeping the
+terminal lease until restoration finishes. Explicit close awaits that result. The 20-ms
+poll/backpressure interval applies under exclusive-reader assumptions;
 OS stalls/direct competing crossterm calls are outside that bound.
 
 Keys map Enter/Tab/Backspace, Ctrl-C or Esc to Cancel, Ctrl-D to Eof, and printable scalars to Text.
@@ -129,7 +131,7 @@ immediately afterward.
 
 `async fn close(&mut self) -> io::Result<()>`
 
-Signal stop, close backpressure, await completion, then join this exact worker.
+Signal stop, close backpressure, and await the cleanup owner joining this exact worker.
 
 ```rust
 async fn close_input() -> std::io::Result<()> {
@@ -141,8 +143,12 @@ async fn close_input() -> std::io::Result<()> {
 
 **Returns** Unit or worker panic/raw-mode restoration error from the worker result. Native polling
 errors are forwarded through next. Repeated close is idempotent. Dropping a pending close still
-stops/joins via Drop. Drop cannot report cleanup errors; use explicit close when evidence is
-required.
+signals stop while the cleanup owner joins. Cancelling close retains its completion receiver,
+so a subsequent close still awaits restoration. Drop cannot report cleanup errors; use explicit
+close when evidence is required. If the prestarted cleanup owner unexpectedly fails before the initial handle transfer,
+acquisition retains the reader handle, signals stop and joins synchronously as an exceptional
+fallback. Arbitrary OS stalls cannot be bounded on that fallback. Cleanup-owner startup failure
+creates no reader; worker startup failure releases the provisional terminal guard.
 
 ### 2.4. PromptInput::next
 

@@ -52,6 +52,11 @@ impl Server {
     /// # Ok(())
     /// # }
     /// ```
+    ///
+    /// # Errors
+    /// Returns an outer error only when host correlation allocation is exhausted, before
+    /// callbacks or input effects. Input/stage failures are retained in the returned report.
+    /// Cancellation drops the active future; completed caller/application mutations remain.
     pub async fn handle(
         &self,
         event: &str,
@@ -64,6 +69,10 @@ impl Server {
     }
 
     /// Run one lifecycle with trusted adapter metadata inherited by every nested dispatch.
+    ///
+    /// # Errors
+    /// Has the same allocation/error-report and cancellation contract as [`Self::handle`].
+    /// Trusted metadata does not change stage-error precedence.
     pub async fn handle_with_options(
         &self,
         event: &str,
@@ -103,6 +112,11 @@ impl Server {
     /// # Ok(())
     /// # }
     /// ```
+    ///
+    /// # Errors
+    /// Returns an outer error on correlation exhaustion before input conversion. Conversion
+    /// and handler errors instead produce a reply with retained failure reports. Cancellation
+    /// drops active work without rolling back completed application side effects.
     pub async fn call<I: IntoRequest>(&self, event: &str, input: I) -> Result<HostReply> {
         // Reserve one identity before conversion can fail; the normalized path reuses this report.
         let report = self.start_report(event)?;
@@ -154,6 +168,9 @@ impl Server {
     /// # Ok(())
     /// # }
     /// ```
+    ///
+    /// # Errors
+    /// Has the same correlation, stage-failure and cancellation contract as [`Self::handle`].
     pub async fn handle_route(
         &self,
         req: &mut Request,
@@ -167,6 +184,10 @@ impl Server {
     }
 
     /// Resolve a method/path event with host context, without lifecycle/loading/default status.
+    ///
+    /// # Errors
+    /// Rejects invalid/oversized selectors and propagates input-conversion or dispatch
+    /// failures. Raw dispatch has no lifecycle recovery or rollback of completed effects.
     pub fn resolve_route<'a, I: IntoRequest + 'a>(
         &'a self,
         method: Method,

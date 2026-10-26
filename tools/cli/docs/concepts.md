@@ -101,7 +101,8 @@ cancellation-safe and nonblocking; synchronous callbacks/writers can still block
 
 With default feature `tty`, TtyInput owns one process-wide framework stdin lease, raw-mode guard,
 32-event queue, and joined polling worker. A second framework reader is rejected. Drop requests stop
-and joins; explicit close reports restoration/worker errors. Cleanup preserves preexisting raw mode,
+without waiting; a prestarted cleanup owner joins the reader while its terminal lease remains held.
+Explicit async close awaits restoration and reports worker errors. Cleanup preserves preexisting raw mode,
 but OS failure and competing direct crossterm calls remain outside the guarantee.
 
 Native non-TTY stdin uses an explicit/default answer or immediately returns NonInteractive; it never

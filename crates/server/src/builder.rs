@@ -136,6 +136,12 @@ impl ServerBuilder {
     /// # Ok(())
     /// # }
     /// ```
+    ///
+    /// # Errors
+    /// Rejects invalid specification metadata, duplicate IDs, sealed selection, or the
+    /// selection-count limit without changing previous selections. This queues registration;
+    /// missing dependencies, cycles/order violations and callback failures surface from
+    /// [`Self::build`] before a Server is published.
     #[track_caller]
     pub fn plugin_with(
         &mut self,
@@ -187,6 +193,10 @@ impl ServerBuilder {
     /// # Ok(())
     /// # }
     /// ```
+    ///
+    /// # Errors
+    /// Rejects aggregate layer byte/count/depth/node limits. Earlier accepted layers remain
+    /// unchanged; the supplied owned layers are consumed on either result.
     pub fn config_layers(&mut self, layers: ConfigLayers) -> Result<&mut Self> {
         // Layers remain data-only and cannot enable a plugin.
         self.layers.append(layers)?;
@@ -222,6 +232,11 @@ impl ServerBuilder {
     /// # Ok(())
     /// # }
     /// ```
+    ///
+    /// # Errors
+    /// Rejects invalid/duplicate section keys or concrete types, serialization failure, or
+    /// default-value budgets before retaining the section. Typed decoding and validation
+    /// run later during [`Self::build`]; a failed build publishes no Server.
     #[track_caller]
     pub fn config_section<T>(
         &mut self,
@@ -241,6 +256,11 @@ impl ServerBuilder {
     ///
     /// Plugin callbacks still run after direct contributions; imported direct registrations
     /// retain their original owner metadata. Neither builder may have started construction.
+    ///
+    /// # Errors
+    /// Rejects sealed/excessive or duplicate plugin selections, conflicting section keys/types,
+    /// layer budgets, or listener sequence exhaustion. The receiver remains unchanged;
+    /// the supplied builder is consumed on success or failure.
     pub fn extend(&mut self, other: Self) -> Result<&mut Self> {
         // Check singleton and selection conflicts before moving any receiver contributions.
         if self.sealed || other.sealed || self.plugins.len() + other.plugins.len() > 1024 {
@@ -276,6 +296,10 @@ impl ServerBuilder {
     }
 
     /// Configure a printable host-local correlation prefix; does not create global uniqueness.
+    ///
+    /// # Errors
+    /// Rejects empty, oversized or control-containing diagnostic identities without
+    /// changing the previous prefix.
     pub fn correlation_prefix(&mut self, prefix: &str) -> Result<&mut Self> {
         crate::plugin::identity(prefix)?;
         // Prefix is explicit application configuration, never an incoming header.
@@ -308,7 +332,8 @@ impl ServerBuilder {
     /// Consume registration and all three phases before publishing an immutable Server.
     ///
     /// # Errors
-    /// Returns the original callback failure or a named startup-abort error. Failure,
+    /// Returns plugin dependency/order failures, configuration decoding/validation/budget
+    /// failures, the original callback error, or a named startup-abort error. Failure,
     /// cancellation and panic never return a partially registered runtime or retry owner.
     ///
     /// # Examples

@@ -36,6 +36,7 @@ pub enum CapturePolicy {
 /// # Ok::<(), stackpress_lib::Error>(())
 /// ```
 #[derive(Debug)]
+#[must_use = "the configured value must be used"]
 pub struct RouteSpec {
     /// Checked method matcher, including Any and extension verbs.
     pub(crate) method: MethodPattern,

@@ -5,20 +5,20 @@ uses its distinct LoadError. Both preserve causes without automatically renderin
 Sources: [lib.rs](../../src/lib.rs) and [source/mod.rs](../../src/source/mod.rs).
 
 ```rust
-use stackpress_idea_transformer::{LoadError, TransformError, read_source};
+use stackpress_idea_transformer::{LoadError, TransformError, TransformErrorKind, read_source};
 use std::error::Error;
 ```
 
 Each following snippet uses this setup independently. Exact contextual message strings are
-not structured error variants; inspect typed causes for parser/IO diagnostics.
+not the classification contract; inspect `kind()` and then typed causes for diagnostics.
 
 ## 1. TransformError
 
-TransformError is Debug, Display, and Error with private message/cause fields. Display shows
+TransformError is Debug, Display, and Error with private kind/message/cause fields. Display shows
 the phase/ownership explanation; `Error::source()` exposes retained causes. `From<io::Error>`
 uses `generation filesystem operation failed` and keeps the original IO error. `From<IdeaError>`
-retains the diagnostic and its logical coordinates. Contextual callback failures wrap the
-original TransformError; legacy callbacks return their error directly. Panics are not converted.
+uses `Idea parsing failed` and retains the original diagnostic and logical coordinates privately. Contextual callback failures wrap the
+original TransformError; legacy callbacks retain their existing Display/source chain with kind Callback. Panics are not converted.
 
 ### 1.1. TransformError::new
 
@@ -35,8 +35,28 @@ assert!(error.source().is_none());
 | --- | --- | --- |
 | `message` | `impl Into<String>` | Caller-owned explanation; avoid secrets or source excerpts. |
 
-**Returns** An error with no underlying cause. Messages are not automatically sanitized when
+**Returns** An error with kind Other and no underlying cause. Messages are not automatically sanitized when
 the caller constructs them; the application adapter owns public disclosure policy.
+
+### 1.2. kind and TransformErrorKind
+
+`kind(&self) -> TransformErrorKind` returns a Copy, Eq, non-exhaustive enum. Existing
+`new`/conversion signatures remain compatible; callers must retain a wildcard match arm.
+
+| Kind | Meaning |
+| --- | --- |
+| Other | Custom error or an invariant without a narrower category. |
+| Io | Native file, encoding or subprocess IO failure. |
+| Parse | Idea/JSON parse, normalization or import topology failure. |
+| LockExists | Cooperative writer lock is already present. |
+| RecoveryRequired | Retained installation state requires explicit recovery. |
+| Ownership | Path, partition, manifest or installed-byte ownership conflict. |
+| Selection | Invalid selection, prerequisite, contract or auxiliary input declaration. |
+| Limit | Acquisition, metadata, planning or subprocess resource limit. |
+| Callback | A selected callback returned an error. |
+
+Install phase wrappers retain the inner kind and source. Contextual callback errors have kind
+Callback; inspect their source for an underlying planning/IO kind. Message wording is not stable.
 
 ## 2. LoadError
 
@@ -92,7 +112,7 @@ into public Display. Custom messages remain the adapter author's disclosure resp
 
 `read_source(path: &Path, max_bytes: usize) -> Result<String>`
 
-Read bounded UTF-8 from an already appropriate native source path.
+Read bounded UTF-8 from a regular file, following input symlinks.
 
 ```rust
 let parent = std::env::temp_dir().canonicalize()?;
@@ -110,11 +130,12 @@ The example needs `tempfile`; it proves the byte bound on an ordinary file.
 | `path` | `&Path` | File to open. |
 | `max_bytes` | `usize` | Maximum accepted bytes; one extra byte detects overflow. |
 
-**Returns** UTF-8 text, preserved IO errors, or budget/invalid-UTF-8 errors. This low-level helper
-does not itself reject symlinks or special files before opening and does not bound IO latency.
-Prefer [ProjectLoader](project-loader.md) for source acquisition and
-[OutputWorkspace](output-workspace.md) for managed output, whose callers perform the required
-regular-file/symlink checks.
+**Returns** UTF-8 text, retained IO/encoding causes, or a Limit error. Like
+[ProjectLoader](project-loader.md), it rejects nonregular files before open and validates the
+opened handle. Source symlinks are followed; [OutputWorkspace](output-workspace.md) separately
+rejects output symlinks. Pre/open/post checks assume cooperative path writers and are not
+race-free against a concurrent special-file replacement. The byte ceiling does not bound OS IO
+latency; no wall-clock cancellation of regular-file reads is promised.
 
 Related: [parser diagnostics](../../../idea-parser/docs/README.md),
 [source contract](source-loader.md). Walk cause chains with a finite application-owned bound

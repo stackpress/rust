@@ -170,6 +170,7 @@ impl Default for PromptLimits {
 }
 
 /// Owned prompt policy; no process streams, locks, signals or runtime tasks are retained.
+#[must_use = "the configured value must be used"]
 pub struct PromptOptions {
     /// Question text; terminal control characters are sanitized by the renderer.
     pub message: String,

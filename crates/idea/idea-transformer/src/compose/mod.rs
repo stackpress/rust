@@ -110,6 +110,7 @@ pub struct ComposedSchema {
 }
 
 /// Immutable configuration and source adapter for independent synchronous composition runs.
+#[must_use = "the configured value must be used"]
 pub struct Composer<L> {
     /// Caller-owned adapter; no mutable cache survives a compose call.
     loader: L,
@@ -159,10 +160,12 @@ impl<L: SourceLoader> Composer<L> {
         let mut run = Run::new(self);
         let root = run.visit(None, entry)?;
         // The root is complete; move it out rather than cloning an already charged snapshot.
-        let snapshot = run
-            .cache
-            .remove(&root)
-            .ok_or_else(|| TransformError::new("completed composition snapshot missing"))?;
+        let snapshot = run.cache.remove(&root).ok_or_else(|| {
+            TransformError::classified(
+                crate::TransformErrorKind::Other,
+                "completed composition snapshot missing",
+            )
+        })?;
         Ok(ComposedSchema {
             config: snapshot.config,
             sources: run.sources,
@@ -227,14 +230,18 @@ impl<'a, L: SourceLoader> Run<'a, L> {
         if let Some(position) = self.positions.get(&id) {
             // Detect inconsistent custom/native snapshots rather than silently using stale data.
             if self.sources[*position] != loaded {
-                return Err(TransformError::new(
+                return Err(TransformError::classified(
+                    crate::TransformErrorKind::Parse,
                     "canonical source changed during composition",
                 ));
             }
             return Ok(id);
         }
         if self.sources.len() >= self.composer.limits.max_files {
-            return Err(TransformError::new("canonical input file budget exceeded"));
+            return Err(TransformError::classified(
+                crate::TransformErrorKind::Limit,
+                "canonical input file budget exceeded",
+            ));
         }
         let mut snapshot = compile_source(&loaded, &self.composer.inputs, self.composer.limits)?;
         charge(
@@ -258,10 +265,12 @@ impl<'a, L: SourceLoader> Run<'a, L> {
             let child = self
                 .visit(Some(&id), &specifier)
                 .map_err(|cause| context(format!("import from {importer_name} failed"), cause))?;
-            let child = self
-                .cache
-                .get(&child)
-                .ok_or_else(|| TransformError::new("completed imported snapshot missing"))?;
+            let child = self.cache.get(&child).ok_or_else(|| {
+                TransformError::classified(
+                    crate::TransformErrorKind::Other,
+                    "completed imported snapshot missing",
+                )
+            })?;
             charge(
                 &child.config,
                 &child.references,
@@ -279,10 +288,16 @@ impl<'a, L: SourceLoader> Run<'a, L> {
         let limits = self.composer.limits;
         // Check depth/edges before loading another potentially large source.
         if self.active.len() >= limits.max_depth.min(CompositionLimits::HARD_DEPTH) {
-            return Err(TransformError::new("import depth budget exceeded"));
+            return Err(TransformError::classified(
+                crate::TransformErrorKind::Limit,
+                "import depth budget exceeded",
+            ));
         }
         if importer.is_some() && self.imports.len() >= limits.max_imports {
-            return Err(TransformError::new("import edge budget exceeded"));
+            return Err(TransformError::classified(
+                crate::TransformErrorKind::Limit,
+                "import edge budget exceeded",
+            ));
         }
         let budget = limits.max_source_bytes.min(self.remaining_bytes);
         let loaded = self
@@ -292,7 +307,10 @@ impl<'a, L: SourceLoader> Run<'a, L> {
             .map_err(|cause| context("source acquisition failed", cause))?;
         // Defend against custom adapters returning more text than the negotiated budget.
         if loaded.text.len() > budget {
-            return Err(TransformError::new("source adapter exceeded byte budget"));
+            return Err(TransformError::classified(
+                crate::TransformErrorKind::Limit,
+                "source adapter exceeded byte budget",
+            ));
         }
         self.remaining_bytes -= loaded.text.len();
         let id = loaded.id.clone();
@@ -312,7 +330,10 @@ impl<'a, L: SourceLoader> Run<'a, L> {
                 .chain(std::iter::once(loaded.name.as_str()))
                 .collect::<Vec<_>>()
                 .join(" -> ");
-            return Err(TransformError::new(format!("import cycle: {chain}")));
+            return Err(TransformError::classified(
+                crate::TransformErrorKind::Parse,
+                format!("import cycle: {chain}"),
+            ));
         }
         Ok(loaded)
     }
@@ -323,7 +344,21 @@ fn context(
     message: impl Into<String>,
     cause: impl std::error::Error + Send + Sync + 'static,
 ) -> TransformError {
+    let source = &cause as &(dyn std::error::Error + 'static);
+    let kind = if let Some(error) = source.downcast_ref::<TransformError>() {
+        error.kind()
+    } else if let Some(error) = source.downcast_ref::<crate::LoadError>() {
+        error.kind
+    } else if source
+        .downcast_ref::<stackpress_idea_parser::IdeaError>()
+        .is_some_and(|error| error.code == stackpress_idea_parser::ErrorCode::Limit)
+    {
+        crate::TransformErrorKind::Limit
+    } else {
+        crate::TransformErrorKind::Parse
+    };
     TransformError {
+        kind,
         message: message.into(),
         cause: Some(Box::new(cause)),
     }
@@ -335,12 +370,22 @@ fn charge(config: &SchemaConfig, references: &[Reference], remaining: &mut usize
     let mut counter = Counter {
         remaining: *remaining,
     };
-    serde_json::to_writer(&mut counter, config)
-        .map_err(|cause| context("composed config expansion budget exceeded", cause))?;
+    serde_json::to_writer(&mut counter, config).map_err(|cause| {
+        TransformError::caused(
+            crate::TransformErrorKind::Limit,
+            "composed config expansion budget exceeded",
+            cause,
+        )
+    })?;
     // Real reference payloads are copied with their owner; charge them before the merge too.
     if !references.is_empty() {
-        serde_json::to_writer(&mut counter, references)
-            .map_err(|cause| context("composed reference expansion budget exceeded", cause))?;
+        serde_json::to_writer(&mut counter, references).map_err(|cause| {
+            TransformError::caused(
+                crate::TransformErrorKind::Limit,
+                "composed reference expansion budget exceeded",
+                cause,
+            )
+        })?;
     }
     *remaining = counter.remaining;
     Ok(())

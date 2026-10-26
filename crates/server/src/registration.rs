@@ -12,7 +12,8 @@ impl StartupContext {
     /// Register an exact runtime listener, retaining plugin and actual caller provenance.
     ///
     /// # Errors
-    /// Returns the foundation's matcher/identity/metadata errors.
+    /// Rejects calls outside Registration/Listen or foundation matcher/identity/metadata
+    /// and sequence-budget failures. Prior registrations remain unchanged.
     ///
     /// # Examples
     ///
@@ -66,6 +67,11 @@ impl StartupContext {
     /// # Ok(())
     /// # }
     /// ```
+    ///
+    /// # Errors
+    /// Rejects calls outside Registration/Listen, invalid matcher/identity/metadata,
+    /// or exhausted listener sequence budgets. Prior registrations remain unchanged;
+    /// callbacks execute only during dispatch.
     #[track_caller]
     pub fn on_priority(
         &mut self,
@@ -101,6 +107,11 @@ impl StartupContext {
     /// # Ok(())
     /// # }
     /// ```
+    ///
+    /// # Errors
+    /// Rejects calls outside Registration/Listen, invalid matcher/identity/metadata,
+    /// or exhausted listener sequence budgets. Prior registrations remain unchanged;
+    /// callbacks execute only during dispatch.
     #[track_caller]
     pub fn listen(
         &mut self,
@@ -113,6 +124,11 @@ impl StartupContext {
     }
 
     /// Replace an owned contribution while retaining any host capture wrapper.
+    ///
+    /// # Errors
+    /// Rejects the wrong registration phase or a foreign listener handle. Prior
+    /// listener/capture policy remains unchanged on failure. Removing an already
+    /// absent owned contribution returns false; replacement requires a live contribution.
     #[track_caller]
     pub fn replace(&mut self, id: &ListenerId, action: impl Handler + 'static) -> Result<()> {
         if let Some(policy) = self.routes.get(id).copied() {
@@ -126,6 +142,11 @@ impl StartupContext {
     }
 
     /// Remove exactly the contribution identified by its stable handle.
+    ///
+    /// # Errors
+    /// Rejects the wrong registration phase or a foreign listener handle. Prior
+    /// listener/capture policy remains unchanged on failure. Removing an already
+    /// absent owned contribution returns false; replacement requires a live contribution.
     pub fn remove(&mut self, id: &ListenerId) -> Result<bool> {
         if self.routes.contains_key(id) {
             self.require_route()?;
@@ -191,6 +212,9 @@ impl StartupContext {
     /// # Ok(())
     /// # }
     /// ```
+    ///
+    /// # Errors
+    /// Uses the phase, matcher, metadata and retained-state contract of [`Self::route_with`].
     #[track_caller]
     pub fn route(
         &mut self,
@@ -230,6 +254,11 @@ impl StartupContext {
     /// # Ok(())
     /// # }
     /// ```
+    ///
+    /// # Errors
+    /// Rejects calls outside Registration/Route, invalid method/path patterns or
+    /// listener metadata/sequence budgets. Prior routes remain unchanged; capture
+    /// policy is published only after successful listener registration.
     #[track_caller]
     pub fn route_with(
         &mut self,
@@ -269,6 +298,9 @@ impl StartupContext {
     /// # Ok(())
     /// # }
     /// ```
+    ///
+    /// # Errors
+    /// Uses the phase, matcher, metadata and retained-state contract of [`Self::route_with`].
     #[track_caller]
     pub fn get(&mut self, path: &str, action: impl Handler + 'static) -> Result<ListenerId> {
         // Convenience preserves the same matcher and all-matching priority contract.
@@ -299,6 +331,9 @@ impl StartupContext {
     /// # Ok(())
     /// # }
     /// ```
+    ///
+    /// # Errors
+    /// Uses the phase, matcher, metadata and retained-state contract of [`Self::route_with`].
     #[track_caller]
     pub fn post(&mut self, path: &str, action: impl Handler + 'static) -> Result<ListenerId> {
         // Convenience preserves the same matcher and all-matching priority contract.
@@ -329,6 +364,9 @@ impl StartupContext {
     /// # Ok(())
     /// # }
     /// ```
+    ///
+    /// # Errors
+    /// Uses the phase, matcher, metadata and retained-state contract of [`Self::route_with`].
     #[track_caller]
     pub fn put(&mut self, path: &str, action: impl Handler + 'static) -> Result<ListenerId> {
         // Convenience preserves the same matcher and all-matching priority contract.
@@ -359,6 +397,9 @@ impl StartupContext {
     /// # Ok(())
     /// # }
     /// ```
+    ///
+    /// # Errors
+    /// Uses the phase, matcher, metadata and retained-state contract of [`Self::route_with`].
     #[track_caller]
     pub fn patch(&mut self, path: &str, action: impl Handler + 'static) -> Result<ListenerId> {
         // Convenience preserves the same matcher and all-matching priority contract.
@@ -389,6 +430,9 @@ impl StartupContext {
     /// # Ok(())
     /// # }
     /// ```
+    ///
+    /// # Errors
+    /// Uses the phase, matcher, metadata and retained-state contract of [`Self::route_with`].
     #[track_caller]
     pub fn delete(&mut self, path: &str, action: impl Handler + 'static) -> Result<ListenerId> {
         // Convenience preserves the same matcher and all-matching priority contract.
@@ -419,6 +463,9 @@ impl StartupContext {
     /// # Ok(())
     /// # }
     /// ```
+    ///
+    /// # Errors
+    /// Uses the phase, matcher, metadata and retained-state contract of [`Self::route_with`].
     #[track_caller]
     pub fn head(&mut self, path: &str, action: impl Handler + 'static) -> Result<ListenerId> {
         // Convenience preserves the same matcher and all-matching priority contract.
@@ -449,6 +496,9 @@ impl StartupContext {
     /// # Ok(())
     /// # }
     /// ```
+    ///
+    /// # Errors
+    /// Uses the phase, matcher, metadata and retained-state contract of [`Self::route_with`].
     #[track_caller]
     pub fn options(&mut self, path: &str, action: impl Handler + 'static) -> Result<ListenerId> {
         // Convenience preserves the same matcher and all-matching priority contract.
@@ -479,6 +529,9 @@ impl StartupContext {
     /// # Ok(())
     /// # }
     /// ```
+    ///
+    /// # Errors
+    /// Uses the phase, matcher, metadata and retained-state contract of [`Self::route_with`].
     #[track_caller]
     pub fn connect(&mut self, path: &str, action: impl Handler + 'static) -> Result<ListenerId> {
         // Convenience preserves the same matcher and all-matching priority contract.
@@ -509,6 +562,9 @@ impl StartupContext {
     /// # Ok(())
     /// # }
     /// ```
+    ///
+    /// # Errors
+    /// Uses the phase, matcher, metadata and retained-state contract of [`Self::route_with`].
     #[track_caller]
     pub fn trace(&mut self, path: &str, action: impl Handler + 'static) -> Result<ListenerId> {
         // Convenience preserves the same matcher and all-matching priority contract.
@@ -539,6 +595,9 @@ impl StartupContext {
     /// # Ok(())
     /// # }
     /// ```
+    ///
+    /// # Errors
+    /// Uses the phase, matcher, metadata and retained-state contract of [`Self::route_with`].
     #[track_caller]
     pub fn all(&mut self, path: &str, action: impl Handler + 'static) -> Result<ListenerId> {
         // Convenience preserves the same matcher and all-matching priority contract.
@@ -595,6 +654,10 @@ impl ServerBuilder {
     /// app.on_priority("greet", 10, greet)?;
     /// # Ok::<(), stackpress_lib::Error>(())
     /// ```
+    ///
+    /// # Errors
+    /// Uses the same checked registration and retained-state contract as
+    /// [`StartupContext::on_priority`]. No callback executes during registration.
     #[track_caller]
     pub fn on_priority(
         &mut self,
@@ -621,6 +684,10 @@ impl ServerBuilder {
     /// app.listen(stackpress_lib::ListenerSpec::exact("greet").label("greeting"), greet)?;
     /// # Ok::<(), stackpress_lib::Error>(())
     /// ```
+    ///
+    /// # Errors
+    /// Uses the same checked registration and retained-state contract as
+    /// [`StartupContext::listen`]. No callback executes during registration.
     #[track_caller]
     pub fn listen(
         &mut self,
@@ -646,6 +713,10 @@ impl ServerBuilder {
     /// app.route(stackpress_lib::MethodPattern::GET, "/hello", greet)?;
     /// # Ok::<(), stackpress_lib::Error>(())
     /// ```
+    ///
+    /// # Errors
+    /// Uses the same checked registration and retained-state contract as
+    /// [`StartupContext::route`]. No callback executes during registration.
     #[track_caller]
     pub fn route(
         &mut self,
@@ -676,6 +747,10 @@ impl ServerBuilder {
     /// app.route_with(spec, greet)?;
     /// # Ok::<(), stackpress_lib::Error>(())
     /// ```
+    ///
+    /// # Errors
+    /// Uses the same checked registration and retained-state contract as
+    /// [`StartupContext::route_with`]. No callback executes during registration.
     #[track_caller]
     pub fn route_with(
         &mut self,
@@ -687,6 +762,10 @@ impl ServerBuilder {
     }
 
     /// Forward replace during direct/plugin registration with the actual caller site.
+    ///
+    /// # Errors
+    /// Uses the same checked registration and retained-state contract as
+    /// [`StartupContext::replace`]. No callback executes during registration.
     #[track_caller]
     pub fn replace(&mut self, id: &ListenerId, action: impl Handler + 'static) -> Result<()> {
         // StartupContext enforces phase and stable handle/capture policy.
@@ -694,6 +773,10 @@ impl ServerBuilder {
     }
 
     /// Forward remove during direct/plugin registration with the actual caller site.
+    ///
+    /// # Errors
+    /// Uses the same checked registration and retained-state contract as
+    /// [`StartupContext::remove`]. No callback executes during registration.
     #[track_caller]
     pub fn remove(&mut self, id: &ListenerId) -> Result<bool> {
         // StartupContext enforces phase and stable handle/capture policy.
@@ -715,6 +798,10 @@ impl ServerBuilder {
     /// app.get("/hello", greet)?;
     /// # Ok::<(), stackpress_lib::Error>(())
     /// ```
+    ///
+    /// # Errors
+    /// Uses the same checked registration and retained-state contract as
+    /// [`StartupContext::get`]. No callback executes during registration.
     #[track_caller]
     pub fn get(&mut self, path: &str, action: impl Handler + 'static) -> Result<ListenerId> {
         // StartupContext enforces phase and stable handle/capture policy.
@@ -736,6 +823,10 @@ impl ServerBuilder {
     /// app.post("/hello", greet)?;
     /// # Ok::<(), stackpress_lib::Error>(())
     /// ```
+    ///
+    /// # Errors
+    /// Uses the same checked registration and retained-state contract as
+    /// [`StartupContext::post`]. No callback executes during registration.
     #[track_caller]
     pub fn post(&mut self, path: &str, action: impl Handler + 'static) -> Result<ListenerId> {
         // StartupContext enforces phase and stable handle/capture policy.
@@ -757,6 +848,10 @@ impl ServerBuilder {
     /// app.put("/hello", greet)?;
     /// # Ok::<(), stackpress_lib::Error>(())
     /// ```
+    ///
+    /// # Errors
+    /// Uses the same checked registration and retained-state contract as
+    /// [`StartupContext::put`]. No callback executes during registration.
     #[track_caller]
     pub fn put(&mut self, path: &str, action: impl Handler + 'static) -> Result<ListenerId> {
         // StartupContext enforces phase and stable handle/capture policy.
@@ -778,6 +873,10 @@ impl ServerBuilder {
     /// app.patch("/hello", greet)?;
     /// # Ok::<(), stackpress_lib::Error>(())
     /// ```
+    ///
+    /// # Errors
+    /// Uses the same checked registration and retained-state contract as
+    /// [`StartupContext::patch`]. No callback executes during registration.
     #[track_caller]
     pub fn patch(&mut self, path: &str, action: impl Handler + 'static) -> Result<ListenerId> {
         // StartupContext enforces phase and stable handle/capture policy.
@@ -799,6 +898,10 @@ impl ServerBuilder {
     /// app.delete("/hello", greet)?;
     /// # Ok::<(), stackpress_lib::Error>(())
     /// ```
+    ///
+    /// # Errors
+    /// Uses the same checked registration and retained-state contract as
+    /// [`StartupContext::delete`]. No callback executes during registration.
     #[track_caller]
     pub fn delete(&mut self, path: &str, action: impl Handler + 'static) -> Result<ListenerId> {
         // StartupContext enforces phase and stable handle/capture policy.
@@ -820,6 +923,10 @@ impl ServerBuilder {
     /// app.head("/hello", greet)?;
     /// # Ok::<(), stackpress_lib::Error>(())
     /// ```
+    ///
+    /// # Errors
+    /// Uses the same checked registration and retained-state contract as
+    /// [`StartupContext::head`]. No callback executes during registration.
     #[track_caller]
     pub fn head(&mut self, path: &str, action: impl Handler + 'static) -> Result<ListenerId> {
         // StartupContext enforces phase and stable handle/capture policy.
@@ -841,6 +948,10 @@ impl ServerBuilder {
     /// app.options("/hello", greet)?;
     /// # Ok::<(), stackpress_lib::Error>(())
     /// ```
+    ///
+    /// # Errors
+    /// Uses the same checked registration and retained-state contract as
+    /// [`StartupContext::options`]. No callback executes during registration.
     #[track_caller]
     pub fn options(&mut self, path: &str, action: impl Handler + 'static) -> Result<ListenerId> {
         // StartupContext enforces phase and stable handle/capture policy.
@@ -862,6 +973,10 @@ impl ServerBuilder {
     /// app.connect("/hello", greet)?;
     /// # Ok::<(), stackpress_lib::Error>(())
     /// ```
+    ///
+    /// # Errors
+    /// Uses the same checked registration and retained-state contract as
+    /// [`StartupContext::connect`]. No callback executes during registration.
     #[track_caller]
     pub fn connect(&mut self, path: &str, action: impl Handler + 'static) -> Result<ListenerId> {
         // StartupContext enforces phase and stable handle/capture policy.
@@ -883,6 +998,10 @@ impl ServerBuilder {
     /// app.trace("/hello", greet)?;
     /// # Ok::<(), stackpress_lib::Error>(())
     /// ```
+    ///
+    /// # Errors
+    /// Uses the same checked registration and retained-state contract as
+    /// [`StartupContext::trace`]. No callback executes during registration.
     #[track_caller]
     pub fn trace(&mut self, path: &str, action: impl Handler + 'static) -> Result<ListenerId> {
         // StartupContext enforces phase and stable handle/capture policy.
@@ -904,6 +1023,10 @@ impl ServerBuilder {
     /// app.all("/hello", greet)?;
     /// # Ok::<(), stackpress_lib::Error>(())
     /// ```
+    ///
+    /// # Errors
+    /// Uses the same checked registration and retained-state contract as
+    /// [`StartupContext::all`]. No callback executes during registration.
     #[track_caller]
     pub fn all(&mut self, path: &str, action: impl Handler + 'static) -> Result<ListenerId> {
         // StartupContext enforces phase and stable handle/capture policy.

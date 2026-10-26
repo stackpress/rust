@@ -39,6 +39,7 @@ pub type ContextTransform = fn(&TransformContext<'_>, &mut OutputPlan) -> Result
 
 /// Compiled plugin metadata checked as a complete selection before callbacks execute.
 #[derive(Debug)]
+#[must_use = "the configured value must be used"]
 pub struct TransformSpec {
     /// Unique ID, independent of the function's Rust symbol.
     id: String,
@@ -93,21 +94,33 @@ impl TransformSpec {
         // Required and optional lists share syntax/duplicate checks, but not presence policy.
         for requirements in [&self.requires, &self.optional] {
             if requirements.len() > 1024 {
-                return Err(TransformError::new("prerequisite budget"));
+                return Err(TransformError::classified(
+                    crate::TransformErrorKind::Limit,
+                    "prerequisite budget",
+                ));
             }
             for (index, id) in requirements.iter().enumerate() {
                 if id.is_empty() || id.len() > 128 || requirements[..index].contains(id) {
-                    return Err(TransformError::new("invalid or duplicate prerequisite"));
+                    return Err(TransformError::classified(
+                        crate::TransformErrorKind::Selection,
+                        "invalid or duplicate prerequisite",
+                    ));
                 }
             }
         }
         if self.contracts.len() > 1024 || self.partitions.len() > 1024 {
-            return Err(TransformError::new("transform metadata budget"));
+            return Err(TransformError::classified(
+                crate::TransformErrorKind::Limit,
+                "transform metadata budget",
+            ));
         }
         for (index, (id, revision)) in self.contracts.iter().enumerate() {
             context::valid_contract(id, revision)?;
             if self.contracts[..index].iter().any(|(prior, _)| prior == id) {
-                return Err(TransformError::new("duplicate required runtime contract"));
+                return Err(TransformError::classified(
+                    crate::TransformErrorKind::Selection,
+                    "duplicate required runtime contract",
+                ));
             }
         }
         Ok(())
@@ -188,7 +201,11 @@ impl Registry {
 
     /// Validate a whole registration before granting it output authority.
     fn insert(&mut self, spec: TransformSpec, callback: Callback) -> Result<()> {
-        valid_path(&spec.id)?;
+        valid_path(&spec.id).map_err(|mut error| {
+            // A generator identity is selection metadata, not an output path claim.
+            error.kind = crate::TransformErrorKind::Selection;
+            error
+        })?;
         if spec.id.is_empty()
             || spec.id.len() > 128
             || spec.id == "aggregate"
@@ -198,7 +215,12 @@ impl Registry {
                 .iter()
                 .any(|item| item.spec.id == spec.id)
         {
-            return Err(TransformError::new(
+            return Err(TransformError::classified(
+                if self.registrations.len() >= 1024 {
+                    crate::TransformErrorKind::Limit
+                } else {
+                    crate::TransformErrorKind::Selection
+                },
                 "empty, reserved or duplicate generator ID or budget",
             ));
         }
@@ -225,7 +247,10 @@ impl Registry {
                         .any(|prior| prior.eq_ignore_ascii_case(part))
                 })
             {
-                return Err(TransformError::new("generator partition conflict"));
+                return Err(TransformError::classified(
+                    crate::TransformErrorKind::Ownership,
+                    "generator partition conflict",
+                ));
             }
         }
         Ok(())
@@ -297,7 +322,8 @@ impl Registry {
                         .any(|part| part.eq_ignore_ascii_case(&file.path))
                 })
             {
-                return Err(TransformError::new(
+                return Err(TransformError::classified(
+                    crate::TransformErrorKind::Selection,
                     "invalid aggregate path or partition collision",
                 ));
             }
@@ -311,7 +337,11 @@ impl Registry {
             match item.callback {
                 Callback::Legacy(transform) => {
                     // Legacy callbacks still use the same exact partition and collision checks.
-                    for file in transform(schema)? {
+                    for file in transform(schema).map_err(|mut error| {
+                        // Legacy callbacks retain their existing display and private source chain.
+                        error.kind = crate::TransformErrorKind::Callback;
+                        error
+                    })? {
                         plan.write(file.path, file.contents)?;
                     }
                 }
@@ -323,6 +353,7 @@ impl Registry {
                         used: &used,
                     };
                     transform(&context, &mut plan).map_err(|error| TransformError {
+                        kind: crate::TransformErrorKind::Callback,
                         message: format!("transform callback failed for {}", spec.id),
                         cause: Some(Box::new(error)),
                     })?;
@@ -347,7 +378,8 @@ impl Registry {
             .collect();
         let declared: Vec<_> = schema.plugin.keys().map(String::as_str).collect();
         if !declared.is_empty() && declared != selected {
-            return Err(TransformError::new(
+            return Err(TransformError::classified(
+                crate::TransformErrorKind::Selection,
                 "Idea plugins must match selected generator order",
             ));
         }
@@ -359,7 +391,8 @@ impl Registry {
                         Some(position) if position < index => {}
                         None if !required => {}
                         _ => {
-                            return Err(TransformError::new(
+                            return Err(TransformError::classified(
+                                crate::TransformErrorKind::Selection,
                                 "missing or out-of-order prerequisite",
                             ));
                         }
@@ -368,7 +401,8 @@ impl Registry {
             }
             for (id, revision) in &item.spec.contracts {
                 if selection.contracts.get(id) != Some(revision) {
-                    return Err(TransformError::new(
+                    return Err(TransformError::classified(
+                        crate::TransformErrorKind::Selection,
                         "selected runtime contract revision mismatch",
                     ));
                 }

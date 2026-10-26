@@ -31,21 +31,74 @@ pub use registry::{ContextTransform, TransformContext, TransformRegistry, Transf
 pub use registry::{GeneratedFile, OutputPlan, Registry, Transform};
 pub use registry::{TransformInputs, TransformSpec};
 
+/// Stable phase classification, independent of diagnostic wording and private cause text.
+///
+/// Additional categories may be added; downstream matches must allow unknown variants.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[non_exhaustive]
+pub enum TransformErrorKind {
+    /// Caller-created error or an internal invariant without a narrower category.
+    Other,
+    /// Native acquisition, encoding or process IO failed; inspect the private source.
+    Io,
+    /// Idea/JSON parsing, normalization or import topology is invalid.
+    Parse,
+    /// Another cooperative writer owns the output lock.
+    LockExists,
+    /// Retained installation state requires explicit recovery.
+    RecoveryRequired,
+    /// Output paths, partitions, manifests or existing bytes violate ownership.
+    Ownership,
+    /// The compiled selection, prerequisites or runtime contracts are invalid.
+    Selection,
+    /// An acquisition, planning, metadata or subprocess resource budget was exceeded.
+    Limit,
+    /// A selected callback failed; contextual callbacks retain the error as their source.
+    /// Legacy callbacks preserve their existing Display and source chain.
+    Callback,
+}
+
 /// A build-tool failure retaining IO causes without automatically dumping source contents.
 #[derive(Debug)]
 pub struct TransformError {
+    /// Stable category chosen at the failing operation, never inferred from its message.
+    kind: TransformErrorKind,
     /// Safe phase or ownership explanation.
     message: String,
-    /// Original IO failure, when the host filesystem failed.
+    /// Original filesystem, parser or callback diagnostic, disclosed only by explicit source traversal.
     cause: Option<Box<dyn std::error::Error + Send + Sync>>,
 }
 
 impl TransformError {
-    /// Describe a plan, selection or ownership conflict.
+    /// Describe a caller-created failure with kind Other and no source.
     pub fn new(message: impl Into<String>) -> Self {
+        Self::classified(TransformErrorKind::Other, message)
+    }
+
+    /// Inspect the stable category without disclosing the private source chain.
+    pub fn kind(&self) -> TransformErrorKind {
+        self.kind
+    }
+
+    /// Create an owned failure at the operation that knows its category.
+    fn classified(kind: TransformErrorKind, message: impl Into<String>) -> Self {
         Self {
+            kind,
             message: message.into(),
             cause: None,
+        }
+    }
+
+    /// Retain a private source while adding a distinct safe phase explanation.
+    fn caused(
+        kind: TransformErrorKind,
+        message: impl Into<String>,
+        cause: impl std::error::Error + Send + Sync + 'static,
+    ) -> Self {
+        Self {
+            kind,
+            message: message.into(),
+            cause: Some(Box::new(cause)),
         }
     }
 }
@@ -68,6 +121,7 @@ impl From<std::io::Error> for TransformError {
     /// Preserve the OS error while keeping its potentially private path out of Display.
     fn from(cause: std::io::Error) -> Self {
         Self {
+            kind: TransformErrorKind::Io,
             message: "generation filesystem operation failed".into(),
             cause: Some(Box::new(cause)),
         }
@@ -78,7 +132,12 @@ impl From<stackpress_idea_parser::IdeaError> for TransformError {
     /// Keep logical source coordinates and the original typed diagnostic.
     fn from(cause: stackpress_idea_parser::IdeaError) -> Self {
         Self {
-            message: cause.to_string(),
+            kind: if cause.code == stackpress_idea_parser::ErrorCode::Limit {
+                TransformErrorKind::Limit
+            } else {
+                TransformErrorKind::Parse
+            },
+            message: "Idea parsing failed".into(),
             cause: Some(Box::new(cause)),
         }
     }
@@ -89,18 +148,26 @@ pub type Result<T> = std::result::Result<T, TransformError>;
 
 /// Read at most the declared byte budget, distinguishing invalid UTF-8 from missing files.
 ///
+/// Source symlinks are followed. Pre/open/post checks assume cooperative path writers;
+/// they are not race-free against concurrent replacement and do not bound OS IO latency.
+///
 /// # Errors
 /// Returns original IO causes, a budget error, or invalid UTF-8 without lossy conversion.
 pub fn read_source(path: &Path, max_bytes: usize) -> Result<String> {
     let mut bytes = Vec::new();
     // Read one detection byte beyond the bound; never allocate for the full untrusted file.
-    std::fs::File::open(path)?
+    source::open_regular(path)?
         .take(max_bytes.saturating_add(1) as u64)
         .read_to_end(&mut bytes)?;
     if bytes.len() > max_bytes {
-        return Err(TransformError::new("source byte budget exceeded"));
+        return Err(TransformError::classified(
+            crate::TransformErrorKind::Limit,
+            "source byte budget exceeded",
+        ));
     }
-    String::from_utf8(bytes).map_err(|_| TransformError::new("source is not UTF-8"))
+    String::from_utf8(bytes).map_err(|cause| {
+        TransformError::caused(TransformErrorKind::Io, "source is not UTF-8", cause)
+    })
 }
 
 /// Merge one imported type into the accumulated local declaration in source import order.
@@ -130,3 +197,7 @@ pub fn merge_type(
     columns.append(&mut local.columns);
     local.columns = columns;
 }
+
+#[cfg(test)]
+#[path = "../tests/support/watchdog.rs"]
+mod watchdog;

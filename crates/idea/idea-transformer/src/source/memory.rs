@@ -88,7 +88,10 @@ impl SourceLoader for MemoryLoader {
             // Only canonical files exist; absent candidates fall through in declared order.
             if let Some(text) = self.files.get(canonical) {
                 if text.len() > max_bytes {
-                    return Err(LoadError::new("source byte budget exceeded"));
+                    return Err(LoadError::classified(
+                        crate::TransformErrorKind::Limit,
+                        "source byte budget exceeded",
+                    ));
                 }
                 return Ok(LoadedSource {
                     id: SourceId::new(canonical.clone()),

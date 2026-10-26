@@ -4,7 +4,7 @@ use std::io::Write;
 use std::path::PathBuf;
 use std::sync::Arc;
 
-use stackpress_lib::{DeliveryState, Error, Request, Response, Result};
+use stackpress_lib::{DeliveryState, Error, ErrorKind, Request, Response, Result};
 use stackpress_server::{HandleOptions, HandleReport, OutputGuard, Server};
 
 use crate::control::Level;
@@ -204,8 +204,20 @@ async fn deliver(
     let result = guard
         .dispatch(response, move |_| async move {
             // write_all may accept a prefix before failing; this one attempt is never restarted.
-            stdout.write_all(&bytes).map_err(Error::from_source)?;
-            stdout.flush().map_err(Error::from_source)
+            stdout.write_all(&bytes).map_err(|cause| {
+                Error::new("CLI response write failed")
+                    .with_kind(ErrorKind::External)
+                    .with_code(500)
+                    .with_public_message("Internal Server Error")
+                    .with_cause(cause)
+            })?;
+            stdout.flush().map_err(|cause| {
+                Error::new("CLI response flush failed")
+                    .with_kind(ErrorKind::External)
+                    .with_code(500)
+                    .with_public_message("Internal Server Error")
+                    .with_cause(cause)
+            })
         })
         .await;
     match result {
@@ -219,7 +231,13 @@ async fn deliver(
 fn envelope(response: &Response) -> Result<Vec<u8>> {
     // The detached envelope's default limits must not replace the owning response's policy.
     let json = response.try_to_json()?;
-    let mut bytes = serde_json::to_vec(&json).map_err(Error::from)?;
+    let mut bytes = serde_json::to_vec(&json).map_err(|cause| {
+        Error::new("CLI response serialization failed")
+            .with_kind(ErrorKind::External)
+            .with_code(500)
+            .with_public_message("Internal Server Error")
+            .with_cause(cause)
+    })?;
     // Escape handling is finished before the sole raw line delimiter is appended.
     bytes.push(b'\n');
     Ok(bytes)
