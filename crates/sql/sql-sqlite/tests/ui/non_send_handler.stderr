@@ -1,0 +1,20 @@
+error: future cannot be sent between threads safely
+  --> tests/ui/non_send_handler.rs:14:44
+   |
+14 | fn main() { ServerBuilder::new().on("sql", local).unwrap(); }
+   |                                            ^^^^^ future returned by `local` is not `Send`
+   |
+   = help: within `impl for<'a> Future<Output = Result<Flow, stackpress_lib::Error>>`, the trait `Send` is not implemented for `Rc<i32>`
+note: future is not `Send` as this value is used across an await
+  --> tests/ui/non_send_handler.rs:9:30
+   |
+ 7 |     let local = Rc::new(7);
+   |         ----- has type `Rc<i32>` which is not `Send`
+ 8 |     let _engine = inv.service::<Engine>()?;
+ 9 |     tokio::task::yield_now().await;
+   |                              ^^^^^ await occurs here, with `local` maybe used later
+note: required by a bound in `stackpress_server::registration::<impl ServerBuilder>::on`
+  --> $WORKSPACE/crates/server/src/registration.rs
+   |
+   |     pub fn on(&mut self, event: &str, action: impl Handler + 'static) -> Result<ListenerId> {
+   |                                                    ^^^^^^^ required by this bound in `stackpress_server::registration::<impl ServerBuilder>::on`

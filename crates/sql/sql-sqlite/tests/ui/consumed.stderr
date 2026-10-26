@@ -1,0 +1,15 @@
+error[E0382]: use of moved value: `tx`
+ --> tests/ui/consumed.rs:5:5
+  |
+3 | async fn completed(tx: Transaction) {
+  |                    -- move occurs because `tx` has type `Transaction`, which does not implement the `Copy` trait
+4 |     tx.commit().await.unwrap();
+  |        -------- `tx` moved due to this method call
+5 |     tx.rollback().await.unwrap();
+  |     ^^ value used here after move
+  |
+note: `Transaction::commit` takes ownership of the receiver `self`, which moves `tx`
+ --> $WORKSPACE/crates/sql/sql/src/engine.rs
+  |
+  |     pub async fn commit(self) -> Result<()> {
+  |                         ^^^^
