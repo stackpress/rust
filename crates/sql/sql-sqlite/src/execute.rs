@@ -3,7 +3,7 @@
 use std::future::poll_fn;
 
 use sqlx::sqlite::SqliteStatement;
-use sqlx::{Either, Executor, SqlSafeStr, SqliteConnection, Statement};
+use sqlx::{Connection, Either, Executor, SqlSafeStr, SqliteConnection, Statement};
 use stackpress_sql::{
     DialectId, ErrorKind, Query, QueryLimits, QueryResult, Result, SqlError, SqlValue,
 };
@@ -53,6 +53,7 @@ pub(crate) async fn run(
         ));
     }
     query.validate(limits)?;
+    refresh_schema(connection).await?;
     // sqlite3_changes() is sticky across SELECT/DDL. Snapshot the native cumulative
     // counter on this exclusive lease so an unchanged statement cannot inherit it.
     let before = NativeCounters::read(connection).await?;
@@ -98,6 +99,22 @@ pub(crate) async fn run(
         result.insert_id = Some(after.insert_rowid);
     }
     Ok(result)
+}
+
+/// Refresh native schema and discard driver metadata after another connection's DDL.
+async fn refresh_schema(connection: &mut SqliteConnection) -> Result<()> {
+    // Preparing against an old schema can interpret a new quoted column as a string.
+    // Stepping this bounded schema read refreshes SQLite's view before native prepare.
+    connection
+        .execute("SELECT 1 FROM main.sqlite_schema LIMIT 0")
+        .await
+        .map_err(driver_error)?;
+    // SQLite's automatic recompile does not update SQLx's saved column metadata.
+    // Invalidate it on every statement, accepting reprepare cost without global cache state.
+    connection
+        .clear_cached_statements()
+        .await
+        .map_err(driver_error)
 }
 
 /// Connection-local native observations, captured only under one exclusive lease.

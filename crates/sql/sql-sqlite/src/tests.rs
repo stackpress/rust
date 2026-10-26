@@ -2,6 +2,7 @@
 
 mod host;
 mod m1;
+mod m2;
 mod transitions;
 mod watchdog;
 
