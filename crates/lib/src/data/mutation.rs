@@ -15,6 +15,28 @@ pub(super) struct Step {
     array: bool,
 }
 
+/// Original container shape, before any descendant or membership change is committed.
+#[derive(Clone, Copy)]
+enum ContainerBefore {
+    /// Setting below a missing parent reserves a new object before possible normalization.
+    Missing,
+    /// Existing literal keys already contribute their UTF-8 bytes to usage.
+    Object,
+    /// Existing dense indices contribute no key bytes until an object conversion.
+    Array,
+}
+
+/// One key's membership outcome; replacement and descendant edits leave membership unchanged.
+#[derive(Clone, Copy)]
+enum MembershipChange {
+    /// Replacement or descendant mutation retains this key's membership.
+    Unchanged,
+    /// A new child contributes exactly one new member.
+    Added,
+    /// Removing an existing leaf subtracts exactly one member.
+    Removed,
+}
+
 /// Independent added/removed totals allow representation changes to cancel exactly.
 #[derive(Default)]
 pub(super) struct Change {
@@ -114,14 +136,14 @@ impl Preparation<'_> {
     ) -> Result<bool> {
         // Resolve one selected child, recurse before mutation, then decide this container's final
         // shape.
-        let (object, array) = match container {
+        let (before, object, array) = match container {
             // Objects and arrays are inspected through immutable borrows; no payload is copied.
-            Some(Value::Object(values)) => (Some(values), None),
-            Some(Value::Array(values)) => (None, Some(values)),
+            Some(Value::Object(values)) => (ContainerBefore::Object, Some(values), None),
+            Some(Value::Array(values)) => (ContainerBefore::Array, None, Some(values)),
             None => {
                 // Only self.setting reaches a missing intermediate; it creates one container.
                 self.change.add(Usage { nodes: 1, bytes: 0 })?;
-                (None, None)
+                (ContainerBefore::Missing, None, None)
             }
             _ => return Err(Error::invalid("cannot traverse scalar value")),
         };
@@ -159,43 +181,39 @@ impl Preparation<'_> {
         }
         let step = &mut self.steps[position];
         let length = object.map_or_else(|| array.map_or(0, Vec::len), DataMap::len);
-        let added = self.setting && child.is_none();
-        let removed = !self.setting && last;
-        // Count key membership changes independently of payload replacement.
-        let final_length = if added {
-            checked_add(length, 1)?
-        } else if removed {
-            length - 1
+        let membership = if self.setting && child.is_none() {
+            MembershipChange::Added
+        } else if !self.setting && last {
+            MembershipChange::Removed
         } else {
-            length
+            MembershipChange::Unchanged
+        };
+        // Count key membership changes independently of payload replacement.
+        let final_length = match membership {
+            MembershipChange::Added => checked_add(length, 1)?,
+            // A missing leaf returned above, so removal cannot underflow.
+            MembershipChange::Removed => length - 1,
+            MembershipChange::Unchanged => length,
         };
         // Root remains an object. Deleting an array element deliberately preserves holes.
         step.array = !root
             && (self.setting || (array.is_some() && !last))
             && final_length > 0
             && if array.is_some() {
-                !added || index == Some(length)
+                !matches!(membership, MembershipChange::Added) || index == Some(length)
             } else {
                 // A map becomes an array only when every final canonical numeric key exists.
                 (0..final_length).all(|index| {
                     let key = index.to_string();
                     if key == step.key {
-                        !removed
+                        !matches!(membership, MembershipChange::Removed)
                     } else {
                         object.is_some_and(|values| values.contains_key(&key))
                     }
                 })
             };
         // Account representation changes after the recursive payload delta is known.
-        account_keys(
-            object.is_some(),
-            array.is_some(),
-            added,
-            removed,
-            final_length,
-            step,
-            &mut self.change,
-        )?;
+        account_keys(before, membership, final_length, step, &mut self.change)?;
         Ok(true)
     }
 }
@@ -229,10 +247,8 @@ fn resolve(
 
 /// Adjust key bytes when inserting/removing a map key or changing container form.
 fn account_keys(
-    object: bool,
-    array: bool,
-    added: bool,
-    removed: bool,
+    before: ContainerBefore,
+    membership: MembershipChange,
     length: usize,
     step: &Step,
     change: &mut Change,
@@ -240,52 +256,48 @@ fn account_keys(
     // Object keys consume bytes; vectors do not, so shape changes need an explicit key adjustment.
 
     // Map and newly created containers initially charge literal key bytes.
-    if object || !array {
-        if added {
-            change.add(Usage {
-                nodes: 0,
-                bytes: step.key.len(),
-            })?;
+    match before {
+        ContainerBefore::Missing | ContainerBefore::Object => {
+            account_membership(membership, &step.key, change)?;
+            // Only a planner-proven dense object may be materialized as a vector.
+            if step.array {
+                change.remove(Usage {
+                    nodes: 0,
+                    bytes: numeric_key_bytes(length)?,
+                })?;
+            }
         }
-        if removed {
-            change.remove(Usage {
-                nodes: 0,
-                bytes: step.key.len(),
-            })?;
+        ContainerBefore::Array if !step.array => {
+            // A retained dense vector has no key-byte cost; only sparse conversion adds indices.
+            // An array-to-map transition materializes retained index keys exactly once.
+            let old_length = match membership {
+                MembershipChange::Added => length - 1,
+                // Reconstruct the existing vector length, already representable as usize.
+                MembershipChange::Removed => length + 1,
+                MembershipChange::Unchanged => length,
+            };
+            let bytes = numeric_key_bytes(old_length)?;
+            change.add(Usage { nodes: 0, bytes })?;
+            account_membership(membership, &step.key, change)?;
         }
-        // Only a planner-proven dense object may be materialized as a vector.
-        if step.array {
-            change.remove(Usage {
-                nodes: 0,
-                bytes: numeric_key_bytes(length)?,
-            })?;
-        }
-    } else if !step.array {
-        // A retained dense vector has no key-byte cost; only sparse conversion adds indices.
-        // An array-to-map transition materializes retained index keys exactly once.
-        let old_length = if added {
-            length - 1
-        } else if removed {
-            length + 1
-        } else {
-            length
-        };
-        let bytes = numeric_key_bytes(old_length)?;
-        change.add(Usage { nodes: 0, bytes })?;
-        if added {
-            change.add(Usage {
-                nodes: 0,
-                bytes: step.key.len(),
-            })?;
-        }
-        if removed {
-            change.remove(Usage {
-                nodes: 0,
-                bytes: step.key.len(),
-            })?;
-        }
+        // Retained arrays store no key bytes, including dense appends and replacements.
+        ContainerBefore::Array => {}
     }
     Ok(())
+}
+
+/// Charge literal key membership once, independently of the container-transition adjustment.
+fn account_membership(membership: MembershipChange, key: &str, change: &mut Change) -> Result<()> {
+    let usage = Usage {
+        nodes: 0,
+        bytes: key.len(),
+    };
+    // Callers select this phase's position so checked arithmetic retains its existing precedence.
+    match membership {
+        MembershipChange::Added => change.add(usage),
+        MembershipChange::Removed => change.remove(usage),
+        MembershipChange::Unchanged => Ok(()),
+    }
 }
 
 /// Sum decimal index lengths in logarithmic time, including the single digit zero.

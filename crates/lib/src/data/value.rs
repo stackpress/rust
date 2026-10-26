@@ -167,6 +167,8 @@ impl fmt::Debug for SharedNative {
 ///
 /// Missing is represented by Option at lookup, distinct from present Null.
 /// Serialize accepts JSON variants and rejects all non-JSON variants deliberately.
+/// It checks default budgets and all variants before calling the serializer, then
+/// borrows the tree. A serializer's own later failure may still leave partial output.
 #[derive(Clone, Debug)]
 pub enum Value {
     /// A present null value.
@@ -495,6 +497,9 @@ impl Value {
     ///
     /// # Errors
     /// Rejects exceeded limits or non-JSON variants at their nested path.
+    /// The whole tree's budgets are checked before conversion checks variants in
+    /// insertion/index order; a budget failure therefore wins over unsupported data.
+    /// No partial JSON tree is returned and the source value remains unchanged.
     ///
     /// # Examples
     ///
@@ -515,7 +520,7 @@ impl Value {
     }
 
     /// Convert a validated tree while carrying a useful error path.
-    fn json_at(&self, path: &str) -> Result<serde_json::Value> {
+    pub(super) fn json_at(&self, path: &str) -> Result<serde_json::Value> {
         // Carry relative field/index context into every child so unsupported variants identify
         // their location.
         Ok(match self {
@@ -634,7 +639,7 @@ impl Serialize for Value {
     fn serialize<S: Serializer>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error> {
         // Complete rich-to-JSON validation first; a generic serializer must never silently erase a
         // native variant.
-        self.to_json()
+        super::json::Json::checked(self, &ParseLimits::default())
             .map_err(serde::ser::Error::custom)?
             .serialize(serializer)
     }

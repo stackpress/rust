@@ -120,7 +120,9 @@ assert_eq!(error.kind(), ErrorKind::Limit);
 
 `Error::from_source(cause: impl std::error::Error + Send + Sync + 'static) -> Self`
 
-Own an external error, retaining its concrete source for chain inspection/downcasting.
+Own an external error, retaining its concrete source for chain inspection/downcasting. Display is
+`external operation failed`; the source alone carries the underlying explanation. This is an
+intentional change from copying the cause's Display into both layers.
 
 ```rust
 let cause = "invalid".parse::<u32>().expect_err("fixture");
@@ -130,7 +132,7 @@ assert_eq!(error.kind(), ErrorKind::External);
 
 | Parameter | Type | Meaning |
 | --- | --- | --- |
-| `cause` | `impl std::error::Error + Send + Sync + 'static` | Owned concrete source; developer message starts as cause.to_string(). |
+| `cause` | `impl std::error::Error + Send + Sync + 'static` | Owned concrete source; its Display remains available through source traversal. |
 
 **Returns** An External Error with code 500 and default private-public separation. No blanket
 From<E> exists; map arbitrary sources with map_err(Error::from_source).
@@ -140,6 +142,8 @@ From<E> exists; map arbitrary sources with map_err(Error::from_source).
 `with_cause(self, cause: impl std::error::Error + Send + Sync + 'static) -> Self`
 
 Attach or replace a cause without changing current classification/message/status.
+Choose a wrapper message describing distinct operation context. Developer formatters print the
+wrapper and each source once; callers must keep public disclosure explicit through `public_view`.
 
 ```rust
 let error = error.with_cause(std::io::Error::other("reader detail"));
@@ -401,8 +405,9 @@ errors are retained unchanged.
 
 `Error::from(cause) for serde_json::Error, std::io::Error, std::num::ParseIntError`
 
-Use the three concrete conversions with `?`; they preserve an owned source using from_source and
-External classification.
+Use the three concrete conversions with `?`; they preserve the owned concrete source and External
+classification. Their Display messages are respectively `JSON operation failed`, `I/O operation
+failed`, and `integer parsing failed`. Source traversal supplies the detailed explanation.
 
 ```rust
 let parsed: Result<u32> = "invalid".parse::<u32>().map_err(Error::from);

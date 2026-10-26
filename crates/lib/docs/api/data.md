@@ -283,8 +283,9 @@ assert!(decoded.is_object());
 | `json` | `serde_json::Value` | For TryFrom; raw input still needs default-budget validation. |
 
 **Returns** From produces Value infallibly without tree validation; TryFrom validates default tree
-limits. Serialize uses `to_json()` and reports non-JSON/default-limit failures through the
-serializer. Deserialize reads JSON-compatible values under default limits and cannot create native
+limits. Serialize checks budgets and all variants before calling the serializer, then borrows the
+tree without copying it into owned JSON. It reports non-JSON/default-limit failures before output
+begins. Deserialize reads JSON-compatible values under default limits and cannot create native
 variants.
 
 ## 3. Native and buffered values
@@ -762,6 +763,10 @@ assert_eq!(
 **Returns** Ok(None) when lookup is absent. A present null is deserialized into T (for example T =
 Option<String> gives Some(None)). Invalid path syntax, incompatible T, non-JSON variants, or
 selected-budget failures return path-qualified errors.
+The selected tree's budgets and JSON compatibility are checked before the target runs, including
+ignored fields. Ordinary containers are borrowed and owned scalar outputs are created on demand.
+Enum and newtype decoding retain an owned JSON fallback; numeric and boolean map keys use small
+scratch maps to preserve serde_json's exact coercion rules.
 
 ## 7. Nest mutations and JSON
 
