@@ -56,6 +56,7 @@ Design checkpoint prepared on 2026-10-25. Start with [Slice 4 decisions and reco
   - the expected compile failures reproduced: `aliasing` E0499, `clone` E0599, `non_sync` E0277.
 - **Material finding carried into M0:** native SQLite binds a missing parameter as NULL, so the adapter must validate prepared-parameter arity.
 - **Owner decisions:** recorded as [G24](../decisions.md). Every recommendation S4-D01 to D07 was accepted, and the D08 dependency budget is approved by the coordinator.
+- **Amendment [G26](../decisions.md), 2026-10-26:** from M1, opt-in tests run the rendered PostgreSQL and MySQL SQL against the owner's local development servers. Each run uses a throwaway database of its own; network drivers are dev-only; production adapters stay S4-N.
 
 ## Acceptance notes
 
