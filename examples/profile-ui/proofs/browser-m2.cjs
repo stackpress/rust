@@ -52,7 +52,7 @@ const render = () => cp.execFileSync(host, [], { encoding: 'utf8', timeout: 1000
   });
   const input = page.locator('#profile-id');
   const submit = async id => { await input.fill(id); await input.press('Enter'); };
-  const rows = () => page.locator('.sp-list li');
+  const rows = () => page.locator('.sp-list li[data-item-id]');
   const release = id => { const resolve = held.get(id); assert.ok(resolve, `missing barrier ${id}`); held.delete(id); resolve(); };
   try {
     await page.goto(`https://profiles.invalid${base}/ui/profiles?id=abc`);

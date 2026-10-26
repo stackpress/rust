@@ -83,7 +83,7 @@ pub(crate) async fn run(
             // Native completion acknowledges execution. Read SQLite's 64-bit SQL
             // changes() below rather than SQLx's sqlite3_changes() integer count.
             Either::Left(_) => {}
-            Either::Right(native) => result.rows.push(budget.decode(native)?),
+            Either::Right(native) => result.rows.push(budget.decode(&native)?),
         }
     }
     drop(stream);

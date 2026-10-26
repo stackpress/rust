@@ -63,6 +63,8 @@ impl AssetBundle {
     ///
     /// # Errors
     /// Names the offending asset path for missing, symlinked, oversized or mismatched files.
+    /// IO/JSON failures retain concrete sources under distinct read/decode context.
+    /// Failure publishes no bundle or routes and never changes the files.
     pub fn load(folder: &Path) -> io::Result<Self> {
         if std::fs::symlink_metadata(folder)
             .map_err(|error| at(folder, error))?
@@ -79,8 +81,17 @@ impl AssetBundle {
         {
             return Err(invalid(&path, "manifest too large"));
         }
-        let manifest: Manifest = serde_json::from_slice(&read_bounded(&path, 64 * 1024)?)
-            .map_err(|error| invalid(&path, &error.to_string()))?;
+        let manifest: Manifest =
+            serde_json::from_slice(&read_bounded(&path, 64 * 1024)?).map_err(|cause| {
+                io::Error::new(
+                    io::ErrorKind::InvalidData,
+                    AssetReadError {
+                        path: path.clone(),
+                        operation: "asset manifest could not be decoded",
+                        cause: Box::new(cause),
+                    },
+                )
+            })?;
         if manifest.format != 1
             || manifest.revision != REVISION
             || manifest.build != BUILD
@@ -302,7 +313,8 @@ fn at(path: &Path, cause: io::Error) -> io::Error {
         cause.kind(),
         AssetReadError {
             path: path.to_path_buf(),
-            cause,
+            operation: "asset could not be read",
+            cause: Box::new(cause),
         },
     )
 }
@@ -312,18 +324,20 @@ fn at(path: &Path, cause: io::Error) -> io::Error {
 struct AssetReadError {
     /// Exact trusted startup path being checked/read.
     path: std::path::PathBuf,
-    /// Original I/O failure for explicit source-chain inspection.
-    cause: io::Error,
+    /// Original IO/JSON failure for explicit source-chain inspection.
+    cause: Box<dyn std::error::Error + Send + Sync>,
+    /// Distinct startup operation; the cause owns its underlying explanation.
+    operation: &'static str,
 }
 impl std::fmt::Display for AssetReadError {
-    /// Include both path and original failure in the operator startup error.
+    /// Name the startup operation and path; the native explanation stays in source().
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}: {}", self.path.display(), self.cause)
+        write!(f, "{}: {}", self.operation, self.path.display())
     }
 }
 impl std::error::Error for AssetReadError {
     /// Native diagnostics keep the actual I/O cause instead of a string surrogate.
     fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
-        Some(&self.cause)
+        Some(self.cause.as_ref())
     }
 }

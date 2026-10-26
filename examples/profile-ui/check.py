@@ -61,6 +61,7 @@ def main():
     LOGS.mkdir(parents=True, exist_ok=True)
     (LOGS / "summary.json").unlink(missing_ok=True)
     preflight()
+    run("proof-wrapper-tests", [sys.executable, "examples/profile-ui/proofs/test_proofs.py"])
     run("manifest-tests", [sys.executable, "examples/profile-ui/proofs/test_assets.py"])
     run("fmt", ["cargo", "fmt", "--all", "--", "--check"])
     run("generated-freshness", ["cargo", "run", "--locked", "-p", "stackpress-example-profile-codegen", "--", "emit", "generate", "--check", "true"])

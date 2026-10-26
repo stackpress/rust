@@ -955,6 +955,7 @@ impl Engine {
     /// #     })?;
     /// # Ok::<(), stackpress_sql::SqlError>(())
     /// ```
+    #[must_use = "use the returned value to retain this configuration"]
     pub fn with_limits(mut self, limits: QueryLimits) -> Self {
         self.limits = limits;
         self

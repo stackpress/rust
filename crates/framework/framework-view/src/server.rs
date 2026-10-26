@@ -15,6 +15,18 @@ use stackpress_server::{ServerBuilder, StartupContext};
 use std::{future::Future, sync::Arc};
 
 /// A checked GET page definition with explicit public location projection.
+///
+/// ```compile_fail
+/// #![deny(unused_must_use)]
+/// use stackpress_framework_view::{PageLoad, PageSpec, PublicLocation};
+/// use stackpress_lib::{Invocation, Request, Response, Result};
+/// async fn load(_: &mut Request, _: &mut Response, _: Invocation<'_>) -> Result<PageLoad<String>> {
+///     Ok(PageLoad::Ready("public".into()))
+/// }
+/// PageSpec::get("/welcome", "welcome", load).unwrap()
+///     .location(|_: &String| PublicLocation::new("/welcome"));
+/// ```
+#[must_use = "use the configured value or operation"]
 pub struct PageSpec<T, L> {
     /// Native method/path matching stays under the existing server adapter.
     path: String,
@@ -37,7 +49,8 @@ impl<T: Send + 'static, L: PageLoader<T>> PageSpec<T, L> {
     /// actual pathname. Query data is never forwarded implicitly.
     ///
     /// # Errors
-    /// Returns checked foundation pattern errors or invalid catalog identity.
+    /// Returns checked foundation pattern errors, an unsafe/query-bearing public
+    /// location or an invalid catalog identity. Rejection queues no startup work.
     pub fn get(path: &str, id: &str, loader: L) -> Result<Self> {
         EventPattern::express(path, '/')?;
         PublicLocation::new(path).map_err(Error::from_source)?;

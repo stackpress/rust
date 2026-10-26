@@ -92,7 +92,9 @@ pub fn Button(
     /// Escaped label or deliberate child views.
     children: Children,
 ) -> impl IntoView {
-    let class = format!("sp-button {class}");
+    // Leptos props own this buffer; reuse it for the rendered class attribute.
+    let mut class = class;
+    class.insert_str(0, "sp-button ");
     match href {
         Some(href) => {
             let safe = safe_href(&href);
@@ -257,7 +259,7 @@ pub fn List(
         <ul class="sp-list"><For each=move || items.get() key=|row| row.id.clone() children=move |row| {
             let id = row.id;
             let key = id.clone();
-            view! { <li data-profile-id=id>{move || current.with(|rows| rows.get(&key).cloned()).map(|row| match row.href {
+            view! { <li data-item-id=id>{move || current.with(|rows| rows.get(&key).cloned()).map(|row| match row.href {
                 Some(href) => view! { <Link href label=row.label/> }.into_any(),
                 None => row.label.into_any(),
             })}</li> }

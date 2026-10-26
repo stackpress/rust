@@ -408,7 +408,15 @@ impl TrustedSql {
 /// assert_eq!(query.binds(), &[SqlValue::Integer(7)]);
 /// # Ok::<(), stackpress_sql::SqlError>(())
 /// ```
+///
+/// A discarded builder loses its configured operation.
+///
+/// ```compile_fail
+/// #![deny(unused_must_use)]
+/// stackpress_sql::Sql::literal(stackpress_sql::DialectId::Sqlite, "SELECT ?").bind(1);
+/// ```
 #[derive(Clone, Debug)]
+#[must_use = "use the configured value or operation"]
 pub struct Sql {
     query: Query,
 }

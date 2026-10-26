@@ -12,8 +12,16 @@ use stackpress_sql::{ErrorKind, Result, SqlError};
 /// Writable files use WAL/FULL; read-only connections preserve the file's journal mode.
 /// Foreign keys and bounded worker/row channels apply to every connection. In-memory
 /// mode is not exposed because it cannot satisfy the file persistence contract.
+///
+/// A discarded builder loses its configured operation.
+///
+/// ```compile_fail
+/// #![deny(unused_must_use)]
+/// stackpress_sql_sqlite::SqliteOptions::file("items.sqlite").read_only(true);
+/// ```
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
+#[must_use = "use the configured value or operation"]
 pub struct SqliteOptions {
     /// Explicit file path supplied by the application.
     pub path: PathBuf,
@@ -72,6 +80,11 @@ impl SqliteOptions {
     }
 
     /// Reject unsupported targets and invalid/unbounded budgets before opening a worker.
+    ///
+    /// # Errors
+    /// Returns Configuration for empty/non-UTF-8, control-containing, URI or memory paths,
+    /// conflicting read-only/creation settings, or a budget outside its documented range.
+    /// Validation borrows the options and performs no native IO or mutation.
     pub fn validate(&self) -> Result<()> {
         // SQLx sets SQLITE_OPEN_URI even with filename(). Reject URI modes and memory
         // targets before they can override the explicit file/persistence contract.

@@ -92,6 +92,7 @@ impl From<String> for Identifier {
 /// # Ok::<(), stackpress_sql::SqlError>(())
 /// ```
 #[derive(Clone, Debug, Eq, PartialEq)]
+#[must_use = "use the configured value or operation"]
 pub struct TableRef {
     /// Qualified relation name; aliasing never changes its segments.
     ///
