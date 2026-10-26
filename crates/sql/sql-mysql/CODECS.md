@@ -12,6 +12,10 @@
 | Supported type with SQL NULL | Null | Native typed NULL bit; casts/columns supply the target |
 | DECIMAL, DATE/TIME/DATETIME/TIMESTAMP, ENUM/SET, geometry, other types | Decode error, also for typed NULL | Explicitly cast unsupported output to a supported wire type |
 
+A bare parameter result can advertise text metadata even for a Blob bind. Request
+an explicit `CAST(? AS BINARY)` or select a binary column when a Blob result is
+required; decoding follows the advertised native type/charset.
+
 JSON null is Text("null"), distinct from SQL NULL. JSON decoding preserves numeric
 wire tokens without converting through f64 and rejects duplicate keys visible on
 the wire. MySQL can normalize JSON before
@@ -79,7 +83,8 @@ external nontransactional schemas have no rollback guarantee.
 ## Native verification
 
 Plain tests report ignored native groups when STACKPRESS_TEST_MYSQL_URL is unset.
-Opt-in M0/M1 runners create one unique database each, watchdog their child cases,
+Opt-in M0/M1/M2 runners create one unique database each, watchdog their child cases,
 close their own connections and drop only that exact owned database. MySQL 8.0.27
-is the characterized server. Other versions, TLS, pool stress and generated-store
+is the characterized server. M2 adds the shared Database/TransactionSession
+suite and bounded concurrent pool stress. Other versions, TLS and generated-store
 integration require separate evidence.

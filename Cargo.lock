@@ -4565,6 +4565,7 @@ dependencies = [
  "serde_json",
  "sqlx",
  "stackpress-sql",
+ "stackpress-sql-sqlite",
  "tokio",
 ]
 

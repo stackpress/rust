@@ -22,6 +22,11 @@ pub(crate) struct Cleanup {
     failure: Mutex<Option<SqlError>>,
 }
 impl Cleanup {
+    /// Test-only count of cleanup ownership still visible to close.
+    #[cfg(test)]
+    pub(crate) fn pending(&self) -> usize {
+        self.active.load(Ordering::SeqCst)
+    }
     /// Wait until every registered retirement has disposed of its transport.
     pub(crate) async fn wait(&self) -> Result<()> {
         loop {
@@ -81,6 +86,8 @@ impl Lease {
         // Lease owns the only release path. Keep SQLx's flag clear until retirement:
         // its flagged Drop always spawns, even after detach, which would panic outside
         // a runtime. Lease Drop below prevents every uncertain return-to-pool path.
+        #[cfg(test)]
+        crate::probe::event(crate::probe::Event::Acquire);
         Self {
             parts: Some((connection, permit)),
             timeout,
@@ -121,6 +128,8 @@ impl Lease {
             }
             // Only this acknowledged/reset path can invoke SQLx's normal return-to-pool Drop.
             if let Some((connection, permit)) = self.parts.take() {
+                #[cfg(test)]
+                crate::probe::event(crate::probe::Event::Reuse);
                 drop(connection);
                 drop(permit);
             }
@@ -134,6 +143,8 @@ impl Lease {
         let Some((connection, permit)) = self.parts.take() else {
             return Ok(());
         };
+        #[cfg(test)]
+        crate::probe::event(crate::probe::Event::Retire);
         // The close future owns the native capacity guard; timeout drops that future/socket.
         let result = close(connection, self.timeout).await;
         drop(permit);
@@ -146,6 +157,8 @@ impl Drop for Lease {
         let Some((mut connection, permit)) = self.parts.take() else {
             return;
         };
+        #[cfg(test)]
+        crate::probe::event(crate::probe::Event::Retire);
         if let Ok(runtime) = tokio::runtime::Handle::try_current() {
             // Arm driver retirement before transferring uncertain native IO to a task.
             connection.close_on_drop();

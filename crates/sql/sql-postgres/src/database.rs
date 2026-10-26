@@ -62,6 +62,20 @@ impl PostgresDatabase {
             cleanup_timeout: options.cleanup_timeout(),
         })
     }
+    /// Test-only scalar resource snapshot; no native pool handle leaves its owner.
+    #[cfg(test)]
+    #[allow(
+        dead_code,
+        reason = "only the M2 executable consumes this private snapshot"
+    )]
+    pub(crate) fn pool_state(&self) -> (u32, usize, usize, usize) {
+        (
+            self.pool.size(),
+            self.pool.num_idle(),
+            self.cleanup.pending(),
+            self.admission.available_permits(),
+        )
+    }
     /// Bound pending work immediately; no unbounded admission queue is created.
     fn admit(&self) -> Result<OwnedSemaphorePermit> {
         self.admission

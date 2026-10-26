@@ -27,3 +27,8 @@ workspace = true
 name = "m1"
 path = "src/m1.rs"
 harness = false
+
+[[test]]
+name = "m2"
+path = "src/m2.rs"
+harness = false

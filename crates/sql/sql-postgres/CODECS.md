@@ -59,7 +59,10 @@ secondary retirement errors remain separately available through `cleanup_error`.
 ## Native verification
 
 Plain tests report ignored native groups when STACKPRESS_TEST_POSTGRES_URL is
-unset. Opt-in M0/M1 runners create one unique database each, watchdog their child
+unset. Opt-in M0/M1/M2 runners create one unique database each, watchdog their child
 scenarios, close their own connections and drop only their exact owned database.
 PostgreSQL 12.2 is the characterized local server; other versions, TLS, external
-poolers, pool stress and generated-store integration need separate evidence.
+poolers and generated-store integration need separate evidence. M2 adds a shared
+Database/TransactionSession suite against both network backends and the existing
+SQLite reference, plus bounded concurrent load and resource accounting. SQLite
+runs offline through the PostgreSQL M2 target; only the network cases are gated.
