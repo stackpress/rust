@@ -63,6 +63,7 @@ pub(crate) async fn run(
         .map_err(driver_error)?;
     validate_arity(&statement, query.binds().len())?;
     let mut bound = statement.query();
+    // Own variable-size parameters for SQLx's worker; no caller data is interpolated.
     for value in query.binds() {
         bound = match value {
             SqlValue::Null => bound.bind(Option::<i64>::None),
@@ -87,7 +88,7 @@ pub(crate) async fn run(
     }
     drop(stream);
     let after = NativeCounters::read(connection).await?;
-    if before.changes != after.changes {
+    if before.total_changes != after.total_changes {
         result.affected = u64::try_from(after.statement_changes).map_err(|error| {
             SqlError::with_source(ErrorKind::Driver, "invalid SQLite change count", error)
         })?;
@@ -122,7 +123,7 @@ struct NativeCounters {
     /// SQLite's SQL changes() function returns the exact 64-bit statement count.
     statement_changes: i64,
     /// Cumulative change counter, used to distinguish a sticky changes() result.
-    changes: i64,
+    total_changes: i64,
     /// Last rowid, compared before/after rather than reused blindly on every outcome.
     insert_rowid: i64,
 }
@@ -130,14 +131,14 @@ struct NativeCounters {
 impl NativeCounters {
     /// Read native counters in one round trip; no SQL-text result detection.
     async fn read(connection: &mut SqliteConnection) -> Result<Self> {
-        let (statement_changes, changes, insert_rowid) =
+        let (statement_changes, total_changes, insert_rowid) =
             sqlx::query_as("SELECT changes(), total_changes(), last_insert_rowid()")
                 .fetch_one(connection)
                 .await
                 .map_err(driver_error)?;
         Ok(Self {
             statement_changes,
-            changes,
+            total_changes,
             insert_rowid,
         })
     }

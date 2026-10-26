@@ -13,7 +13,7 @@ use stackpress_sql::Engine;
 use super::{SqliteDatabase, TempDir, options, sql, watchdog};
 
 /// Read schema identity/content through ordinary public statements for before/after checks.
-async fn schema(engine: &Engine) -> Vec<stackpress_sql::Row> {
+pub(super) async fn schema(engine: &Engine) -> Vec<stackpress_sql::Row> {
     engine
         .fetch(&sql(
             "SELECT type, name, tbl_name, sql FROM sqlite_master ORDER BY type, name",

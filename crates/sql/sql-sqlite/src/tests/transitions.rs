@@ -327,10 +327,8 @@ pub(super) async fn failures() {
     connection.execute("BEGIN").await.unwrap();
     connection.execute("ROLLBACK").await.unwrap();
     let permit = single.admit().unwrap();
-    let session = super::super::SqliteSession {
-        lease: super::super::lease::Lease::new(connection, permit),
-        rollback_only: false,
-    };
+    let session =
+        super::super::SqliteSession::new(super::super::lease::Lease::new(connection, permit));
     let error = Box::new(session).rollback().await.unwrap_err();
     assert!(error.source().is_some());
     let tx = single.begin(TransactionOptions::default()).await.unwrap();

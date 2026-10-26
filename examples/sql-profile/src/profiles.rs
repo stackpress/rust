@@ -89,6 +89,8 @@ pub async fn profile_search(
     res: &mut Response,
     inv: Invocation<'_>,
 ) -> Result<Flow> {
+    // Match reference validation exactly: missing becomes empty; non-strings fail decoding.
+    // Do not trim or normalize a valid prefix, including spaces, Unicode and embedded NUL.
     let id = req.data.path_as::<String>("id")?.unwrap_or_default();
     if id.is_empty() {
         return Err(Error::invalid("profile search requires a nonempty id"));

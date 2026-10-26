@@ -3,6 +3,7 @@
 mod host;
 mod m1;
 mod m2;
+mod rounds;
 mod transitions;
 mod watchdog;
 
@@ -431,6 +432,29 @@ fn watchdog_kills_negative_control() {
     let (success, expired, _) =
         watchdog::run("tests::stuck_child", "stuck", Duration::from_millis(150));
     assert!(!success && expired);
+}
+
+/// A finite overrun followed by a stall must fail on output size, before its time budget.
+#[test]
+fn watchdog_rejects_output_overrun() {
+    let (success, expired, output) =
+        watchdog::run("tests::noisy_child", "noisy", Duration::from_millis(500));
+    assert!(!success && !expired);
+    assert!(output.len() <= 64 * 1024);
+}
+
+/// Exceed capture once, then park; the parent must kill/reap without waiting for timeout.
+#[test]
+#[ignore = "output-limit negative control"]
+fn noisy_child() {
+    use std::io::Write;
+
+    std::io::stdout()
+        .write_all(&vec![b'x'; 64 * 1024 + 1])
+        .unwrap();
+    loop {
+        std::thread::park();
+    }
 }
 
 /// Compile failures get an independent finite compilation deadline too.
