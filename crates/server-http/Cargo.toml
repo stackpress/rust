@@ -1,0 +1,31 @@
+[package]
+name = "stackpress-server-http"
+description = "Owned HTTP/1 IO hosting for Stackpress"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[features]
+default = []
+tls = ["dep:rustls", "dep:tokio-rustls"]
+
+[dependencies]
+stackpress-lib = { path = "../lib" }
+stackpress-server = { path = "../server", features = ["http-stream"] }
+hyper = { version = "=1.10.1", default-features = false, features = ["http1", "server"] }
+hyper-util = { version = "=0.1.20", default-features = false, features = ["tokio"] }
+http = "=1.5.0"
+http-body = "=1.1.0"
+http-body-util = "=0.1.4"
+bytes = "=1.12.1"
+futures-core = "=0.3.34"
+tokio = { version = "1", features = ["macros", "io-util", "sync", "time"] }
+rustls = { version = "=0.23.46", optional = true, default-features = false, features = ["ring", "std", "tls12"] }
+tokio-rustls = { version = "=0.26.6", optional = true, default-features = false, features = ["ring", "tls12"] }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+
+[lints]
+workspace = true

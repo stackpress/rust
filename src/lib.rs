@@ -17,6 +17,10 @@
 //! Build these mutually exclusive render modes separately. Native buffered SSR requires
 //! `framework_ui::render::initialize_ssr()` during startup inside an active Tokio runtime.
 //!
+//! `server-http` retains the buffered adapter only. `server-http-host` separately
+//! exposes the supplied-IO HTTP/1 host as `server_http_host`; `server-http-host-tls`
+//! also selects its Rustls integration. None is selected by default.
+//!
 //! # Examples
 //!
 //! ```
@@ -62,6 +66,8 @@ pub use stackpress_lib::{
 };
 #[cfg(feature = "server")]
 pub use stackpress_server as server;
+#[cfg(feature = "server-http-host")]
+pub use stackpress_server_http as server_http_host;
 #[cfg(feature = "sql")]
 pub use stackpress_sql as sql;
 #[cfg(feature = "sql-sqlite")]
