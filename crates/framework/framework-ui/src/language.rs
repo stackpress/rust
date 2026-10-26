@@ -6,6 +6,15 @@
 use leptos::prelude::*;
 use std::collections::BTreeMap;
 
+/// Integer cardinal categories supported by the initial counted-phrase policy.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum PluralCategory {
+    /// Singular form (French includes zero; English includes only one).
+    One,
+    /// All remaining supported integer counts.
+    Other,
+}
+
 /// Bounded public locale, phrase map and literal placeholder token.
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 #[serde(try_from = "LanguageData")]
@@ -86,6 +95,42 @@ impl Language {
         &self.locale
     }
 
+    /// Select an integer cardinal category from the explicit locale.
+    ///
+    /// English uses One only for 1; French uses One for 0 and 1. Regional
+    /// variants share their base-language rule. Other locales currently use
+    /// the English one/other fallback; fractional and additional categories
+    /// are outside this initial policy.
+    pub fn plural_category(&self, count: u64) -> PluralCategory {
+        let base = self.locale.split(['-', '_']).next().unwrap_or_default();
+        let one = if base.eq_ignore_ascii_case("fr") {
+            count <= 1
+        } else {
+            count == 1
+        };
+        if one {
+            PluralCategory::One
+        } else {
+            PluralCategory::Other
+        }
+    }
+
+    /// Select a source phrase before dictionary lookup or text/node interpolation.
+    pub fn plural_phrase<'a>(&self, count: u64, one: &'a str, other: &'a str) -> &'a str {
+        match self.plural_category(count) {
+            PluralCategory::One => one,
+            PluralCategory::Other => other,
+        }
+    }
+
+    /// Select the locale's counted phrase and format its ordinary text slots.
+    ///
+    /// Count selects grammar; explicit slot values retain the same escaping,
+    /// whitespace and missing/excess policies as [`Self::text`].
+    pub fn plural_text(&self, count: u64, one: &str, other: &str, values: &[String]) -> String {
+        self.text(self.plural_phrase(count, one, other), values)
+    }
+
     /// Look up the phrase, retaining the original phrase when no entry exists.
     pub fn phrase<'a>(&'a self, phrase: &'a str) -> &'a str {
         self.phrases
@@ -157,6 +202,12 @@ impl LanguageContext {
     pub fn text(self, phrase: &str, values: &[String]) -> String {
         self.0.with(|language| language.text(phrase, values))
     }
+
+    /// Reactively select grammar and format text from the same scoped language.
+    pub fn plural_text(self, count: u64, one: &str, other: &str, values: &[String]) -> String {
+        self.0
+            .with(|language| language.plural_text(count, one, other, values))
+    }
 }
 
 /// Read the current root's language, diagnosing a missing provider explicitly.
@@ -184,15 +235,25 @@ pub fn Translate(
     /// Stable phrase key, including its literal placeholder positions.
     #[prop(into)]
     phrase: String,
+    /// Optional One phrase; when supplied, phrase is the Other form.
+    #[prop(optional, into)]
+    one: Option<String>,
+    /// Integer count selecting grammar, independent of the deliberate node slots.
+    #[prop(default = Signal::derive(|| 0), into)]
+    count: Signal<u64>,
     /// Slots occupy placeholders in order; missing are empty, excess ignored.
     #[prop(default = Vec::new())]
     slots: Vec<ViewFn>,
 ) -> impl IntoView {
     // Rebuild only this translation's fragments when its scoped language changes.
     move || {
+        let language = language.get();
+        // Both text and node callers select from the identical locale category policy.
+        let selected = one.as_deref().map_or(phrase.as_str(), |one| {
+            language.plural_phrase(count.get(), one, &phrase)
+        });
         language
-            .get()
-            .template(&phrase)
+            .template(selected)
             .into_iter()
             .enumerate()
             .map(|(index, fragment)| {

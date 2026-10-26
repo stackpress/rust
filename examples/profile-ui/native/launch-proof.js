@@ -1,9 +1,10 @@
 // Opt-in finite packaged-WKWebView launch proof. No server or extra IPC command.
 (async () => {
+  let stage = "startup";
   const deadline = performance.now() + 15000;
   const until = async predicate => {
     while (!predicate()) {
-      if (performance.now() > deadline) throw Error('proof deadline');
+      if (performance.now() > deadline) throw Error('proof deadline at ' + stage + ' path=' + location.pathname + location.search + ' rows=' + Array.from(document.querySelectorAll('.sp-list li')).map(row => row.textContent).join(',') + ' detail=' + document.querySelector('[data-detail-page]')?.getAttribute('aria-busy'));
       await new Promise(resolve => setTimeout(resolve, 20));
     }
   };
@@ -39,6 +40,7 @@
     await until(() => document.querySelectorAll('.sp-list li').length === 0 && !document.querySelector('.sp-empty').hidden);
     submit('abc456');
     await until(() => document.querySelector('.sp-list li')?.textContent === 'Grace Hopper');
+    if (document.querySelector('p[role=status]').textContent !== '1 profile') throw Error('English singular lost');
     // A proof-only selected native listener rejects through the real lifecycle and IPC.
     submit('host-error');
     await until(() => document.querySelector('[data-search-failure]')?.dataset.searchFailure === 'host');
@@ -48,8 +50,41 @@
     input.dispatchEvent(new Event('input', { bubbles: true }));
     clickLabel('Retry search');
     await until(() => document.querySelectorAll('.sp-list li').length === 3 && document.querySelector('[data-search-failure]')?.dataset.searchFailure === undefined);
+    // Same catalog and retained state in packaged WKWebView, including history traversal.
+    const grace = () => Array.from(document.querySelectorAll('.sp-list a')).find(link => link.textContent === 'Grace Hopper');
+    stage = "detail";
+    grace().click();
+    await until(() => document.querySelector('[data-detail-page] h2')?.textContent === 'Grace Hopper' && document.querySelector('[data-detail-page]')?.getAttribute('aria-busy') === 'false');
+    if (!location.href.includes('return=abc') || document.title !== 'Profile') throw Error('detail URL/head disagreed');
+    stage = "back";
+    history.back();
+    await until(() => !document.querySelector('[data-detail-page]') && document.querySelectorAll('.sp-list li').length === 3);
+    if (input.value !== 'abc') throw Error('back lost prefix');
+    stage = "forward";
+    history.forward();
+    await until(() => document.querySelector('[data-detail-page] h2')?.textContent === 'Grace Hopper');
+    stage += '-return';
+    document.querySelector('[data-detail-page] a').click();
+    await until(() => !document.querySelector('[data-detail-page]') && document.querySelectorAll('.sp-list li').length === 3);
+    const missing = document.createElement('a');
+    missing.href = '/ui/profiles/missing?return=abc456';
+    document.querySelector('#app').append(missing);
+    stage = "missing";
+    missing.click();
+    missing.remove();
+    await until(() => document.querySelector('[data-detail-page] h2')?.textContent === 'Profile not found' && document.querySelector('[data-detail-page]')?.getAttribute('aria-busy') === 'false');
+    stage += '-return';
+    document.querySelector('[data-detail-page] a').click();
+    await until(() => !document.querySelector('[data-detail-page]') && document.querySelector('.sp-list li')?.textContent === 'Grace Hopper');
+    if (input.value !== 'abc456') throw Error('return inferred detail ID');
+    submit('abc');
+    await until(() => document.querySelectorAll('.sp-list li').length === 3);
+    stage = 'locale';
+    submit('abc456');
+    await until(() => document.querySelectorAll('.sp-list li').length === 1);
     clickLabel('Français');
     await until(() => document.documentElement.lang === 'fr' && document.title === 'Profils');
+    if (document.querySelector('p[role=status]').textContent !== '1 profil' || document.querySelector('[aria-label=\"About these profiles\"] p').textContent !== '1 profil public affiché.') throw Error('French singular lost');
     clickLabel('Thème sombre');
     await until(() => document.querySelector('.sp-root').dataset.theme === 'dark');
     clickLabel('Thème clair');
@@ -57,7 +92,7 @@
     await until(() => document.querySelectorAll('.sp-list li').length === 3);
     if (location.origin !== 'tauri://localhost') throw Error('not packaged origin');
     window.disposeProfileUi();
-    window.location.href = 'proof://main-ok?controls=bootstrap-invalid-empty-search-native-host-error-retry-denied-transport-locale-theme-disposal';
+    window.location.href = 'proof://main-ok?controls=bootstrap-invalid-empty-search-native-host-error-retry-denied-transport-detail-history-return-missing-locale-theme-disposal';
   } catch (error) {
     window.location.href = 'proof://failed?message=' + encodeURIComponent(String(error));
   }

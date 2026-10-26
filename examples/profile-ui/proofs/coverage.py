@@ -9,14 +9,17 @@ import sys
 
 root = Path(__file__).resolve().parents[3]
 base = Path(os.environ.get("PROFILE_UI_COVERAGE_TARGET", str(root / "target" / "profile-ui-native")))
-if len(sys.argv) > 1 and sys.argv[1] == "build-native":
+if len(sys.argv) > 1 and sys.argv[1] in ("build-native", "build-web"):
     import shlex
     env = dict(os.environ, CARGO_TARGET_DIR=str(base))
     settings = subprocess.check_output(["cargo", "llvm-cov", "show-env"], cwd=root, env=env, text=True)
     for line in settings.splitlines():
         key, value = line.split("=", 1)
         env[key] = shlex.split(value)[0] if value else ""
-    subprocess.run(["cargo", "build", "--locked", "-p", "stackpress-example-profile-ui-native", "--features", "app"], cwd=root, env=env, check=True)
+    native = sys.argv[1] == "build-native"
+    command = ["cargo", "build", "--locked", "-p", "stackpress-example-profile-ui-native" if native else "stackpress-example-profile-ui-web"]
+    if native: command.extend(["--features", "app"])
+    subprocess.run(command, cwd=root, env=env, check=True)
     raise SystemExit(0)
 sysroot = Path(subprocess.check_output(["rustc", "--print", "sysroot"], text=True).strip())
 llvm = sysroot / "lib/rustlib/aarch64-apple-darwin/bin"
@@ -25,7 +28,7 @@ if not profiles:
     raise SystemExit("no profiles; run the scoped cargo llvm-cov command after cleaning first")
 merged = base / "profile-ui-complete.profdata"
 subprocess.run([str(llvm / "llvm-profdata"), "merge", "-sparse", *map(str, profiles), "-o", str(merged)], check=True)
-prefixes = ("stackpress_example_profile_ui_", "stackpress_framework_", "pages-", "contracts-", "executor-", "cleanup-", "wire-", "lifecycle-", "policies-", "routing-", "codec-", "reply-")
+prefixes = ("stackpress_example_profile_ui_", "stackpress_framework_", "pages-", "contracts-", "executor-", "cleanup-", "wire-", "lifecycle-", "policies-", "routing-", "codec-", "reply-", "routes-", "page-")
 objects = [p for p in (base / "debug/deps").iterdir() if p.is_file() and p.suffix == "" and p.name.startswith(prefixes) and os.access(p, os.X_OK)]
 for binary in ("profile-ui", "stackpress-example-profile-ui-web"):
     p = base / "debug" / binary

@@ -15,6 +15,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             Profile, REVISION, SearchInput, SearchPage, SearchReply, snapshot,
         };
         let seed = snapshot(SearchPage {
+            detail: None,
             input: SearchInput::new("abc".into())?,
             reply: SearchReply {
                 revision: REVISION,
@@ -58,7 +59,33 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     match adapter.handle(&app, request).await?.output {
         HttpOutput::Response(response) => {
             use std::io::Write;
-            std::io::stdout().write_all(response.body())?;
+            if std::env::var("PROFILE_UI_DISPLAY").as_deref() == Ok("fr-dark")
+                && arguments.first().map(String::as_str) != Some("search")
+            {
+                // Trusted finite proof configuration: re-render the actual loaded public seed.
+                let html = std::str::from_utf8(response.body())?;
+                let text = html
+                    .split("id=\"stackpress-page\">")
+                    .nth(1)
+                    .ok_or("seed missing")?
+                    .split("</script>")
+                    .next()
+                    .ok_or("seed missing")?;
+                let mut seed = stackpress_framework_view::PageSnapshot::<
+                    stackpress_example_profile_ui_contracts::SearchPage,
+                >::decode(
+                    text,
+                    stackpress_example_profile_ui_contracts::REVISION,
+                    stackpress_example_profile_ui_contracts::BUILD,
+                )?;
+                seed.locale = "fr".into();
+                seed.theme = "dark".into();
+                let html = stackpress_example_profile_ui_web::render_snapshot_with_base(seed, base)
+                    .await?;
+                std::io::stdout().write_all(html.as_bytes())?;
+            } else {
+                std::io::stdout().write_all(response.body())?;
+            }
         }
         _ => return Err("output unavailable".into()),
     }

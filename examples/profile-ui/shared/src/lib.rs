@@ -5,12 +5,14 @@
 
 mod controller;
 mod locale;
+mod navigation;
+pub use navigation::Navigation;
 
 use controller::SearchController;
 use leptos::prelude::*;
 pub use locale::profile_language;
 use stackpress_example_profile_ui_contracts::{
-    SearchFailure, SearchInput, SearchPage, SearchReply,
+    PublicStatus, SearchFailure, SearchInput, SearchPage, SearchReply, routes, validate_page,
 };
 use stackpress_framework_ui::{
     components::{
@@ -32,16 +34,50 @@ pub type SearchTransport = UnsyncCallback<(SearchInput, SearchCompletion)>;
 /// Explicit root-local cancellation; no implicit retry or rollback is promised.
 pub type SearchCancellation = UnsyncCallback<()>;
 
+/// Checked shared root; native status and catalog identity select the initial page.
+#[component]
+pub fn ProfilePage(
+    /// Owned public data, consumed once by SSR and hydration.
+    seed: SearchPage,
+    /// Checked snapshot catalog ID, never a browser-only initial branch.
+    page: String,
+    /// Public native status; missing detail must agree with 404.
+    status: PublicStatus,
+    /// Explicit locale fixture decoded before component evaluation.
+    initial_language: Language,
+    /// Explicit initial theme.
+    initial_theme: Theme,
+    /// Selected fixed operation adapter.
+    #[prop(optional_no_strip, into)]
+    transport: Option<SearchTransport>,
+    /// Root-local cancellation.
+    #[prop(optional_no_strip, into)]
+    cancel: Option<SearchCancellation>,
+    /// Thin host navigation adapter, absent during native rendering.
+    #[prop(optional_no_strip, into)]
+    navigation: Option<Navigation>,
+    /// Packaged bootstrap requests its first local read explicitly.
+    #[prop(default = false)]
+    initial_search: bool,
+) -> impl IntoView {
+    if validate_page(&page, &status, &seed).is_err() {
+        return view! { <p role="alert">"Page data invalid. Refresh to continue."</p> }.into_any();
+    }
+    view! { <ProfileSearch seed initial_language initial_theme initial_search
+    transport=transport cancel=cancel navigation=navigation/> }
+    .into_any()
+}
+
 /// Component input is an owned public seed, never a live invocation or host handle.
 #[component]
 pub fn ProfileSearch(
     /// Public initial data, consumed without an initial fetch.
     seed: SearchPage,
     /// Explicit browser/IPC adapter, absent for synchronous server rendering.
-    #[prop(optional)]
+    #[prop(optional_no_strip, into)]
     transport: Option<SearchTransport>,
     /// Cancels the current adapter request on invalid input or explicit cancellation.
-    #[prop(optional)]
+    #[prop(optional_no_strip, into)]
     cancel: Option<SearchCancellation>,
     /// Checked explicit locale/map. Omission selects the example's English fixture.
     #[prop(optional)]
@@ -49,6 +85,9 @@ pub fn ProfileSearch(
     /// Explicit seed theme; browser media queries and cookies are never consulted.
     #[prop(default = Theme::Light)]
     initial_theme: Theme,
+    /// Root-local browser navigation adapter.
+    #[prop(optional_no_strip, into)]
+    navigation: Option<Navigation>,
     /// Packaged CSR may request its first local read; hydration always leaves this false.
     #[prop(default = false)]
     initial_search: bool,
@@ -66,14 +105,54 @@ pub fn ProfileSearch(
     };
     let theme = ThemeState::new(initial_theme);
     let base = use_route_context().base;
-    let form_action = match base.join("/ui/profiles") {
+    let form_action = match routes::search().and_then(|route| route.location(&base, &[])) {
         Ok(location) => location.as_str().to_owned(),
         Err(_) => {
             return view! { <p role="alert">"Page location invalid. Refresh to continue."</p> }
                 .into_any();
         }
     };
+    let navigation_state =
+        match navigation::PageNavigation::new(base.clone(), seed.detail.clone(), &seed.input.id) {
+            Ok(state) => state,
+            Err(message) => return view! { <p role="alert">{message}</p> }.into_any(),
+        };
+    let detail = navigation_state.detail;
+    let link_base = StoredValue::new(base);
     let controller = SearchController::new(seed);
+    if let Some(adapter) = navigation {
+        // Effects run only after hydration; initial native data never dispatches a read.
+        Effect::new(move |_| {
+            if controller.published.get() > 0 {
+                navigation_state.completed(controller, adapter);
+            }
+        });
+        Effect::new(move |_| {
+            if let (Some((location, push)), Some(transport)) = (adapter.request.get(), transport) {
+                navigation_state.go(location, push, controller, transport, cancel, adapter);
+            }
+        });
+    }
+    let title = move || {
+        language.text(
+            if detail.get().is_some() {
+                "Profile"
+            } else {
+                "Profiles"
+            },
+            &[],
+        )
+    };
+    let description = move || {
+        language.text(
+            if detail.get().is_some() {
+                "Public profile detail"
+            } else {
+                "Search public demo profiles"
+            },
+            &[],
+        )
+    };
     let SearchController {
         id,
         rows,
@@ -103,9 +182,15 @@ pub fn ProfileSearch(
         rows.get()
             .into_iter()
             .map(|(id, name)| ListItem {
-                id,
+                id: id.clone(),
                 label: name,
-                href: None,
+                href: routes::detail_location(
+                    &link_base.get_value(),
+                    &id,
+                    &controller.prefix.get(),
+                )
+                .ok()
+                .map(Into::into),
             })
             .collect()
     });
@@ -113,22 +198,22 @@ pub fn ProfileSearch(
     let head = view! {
         // Buffered Head assembly outlives the render Owner, so SSR metadata owns strings.
         <Html attr:lang=language.get().locale().to_owned()/>
-        <Title text=language.text("Profiles", &[])/>
-        <Meta name="description" content=language.text("Search public demo profiles", &[])/>
+        <Title text=title()/>
+        <Meta name="description" content=description()/>
     };
     #[cfg(not(feature = "ssr"))]
     let head = view! {
         // Interactive metadata remains reactive while its client Owner is mounted.
         <Html attr:lang=move || language.get().locale().to_owned()/>
-        <Title text=move || language.text("Profiles", &[])/>
-        <Meta name="description" content=move || language.text("Search public demo profiles", &[])/>
+        <Title text=move || title()/>
+        <Meta name="description" content=move || description()/>
     };
     // No Effect/Resource starts a search: hydration adopts exactly the server seed.
     view! {
         {head}
         <LanguageProvider language><LayoutProvider theme notifications=notices><LayoutBlank>
             <LayoutHead>
-                <div><h1>{move || language.text("Profiles", &[])}</h1><p>{move || language.text("Find a person by profile ID.", &[])}</p></div>
+                <div><h1>{move || title()}</h1><p>{move || language.text("Find a person by profile ID.", &[])}</p></div>
                 <LayoutMenu label="Display preferences">
                     <Button on:click=move |_| {
                         // The checked fixture replaces the entire dictionary, without fetching.
@@ -141,6 +226,7 @@ pub fn ProfileSearch(
             <LayoutPanel>
                 <LayoutLeft label="Search guidance"><p>{move || language.text("Use the first characters of a profile ID. IDs are case sensitive.", &[])}</p></LayoutLeft>
                 <LayoutMain>
+                    <div hidden=move || detail.get().is_some()>
                     <form method="get" action=form_action on:submit=submit>
                         <FieldControl for_id="profile-id" label=Signal::derive(move || language.text("Profile ID prefix", &[]))
                             help=Signal::derive(move || language.text("For example, abc", &[])) error=field_error>
@@ -150,7 +236,11 @@ pub fn ProfileSearch(
                         <Button button_type=ButtonType::Submit>{move || language.text("Search", &[])}</Button>
                     </form>
                     <Loader busy=pending label=Signal::derive(move || language.text("Searching…", &[]))/>
-                    <p role="status" aria-live="polite">{move || language.text("%s profiles", &[total.get().to_string()])}</p>
+                    <p role="status" aria-live="polite">{move || language.plural_text(total.get(), "%s profile", "%s profiles", &[total.get().to_string()])}</p>
+                    <LoaderContainer busy=pending>
+                        <List items empty=Signal::derive(move || language.text("No profiles match this ID prefix. Try another prefix.", &[]))/>
+                    </LoaderContainer>
+                    </div>
                     <div data-search-failure=move || failure_kind.get().map(|kind| kind.as_str())>
                         <Alert message=error/>
                     </div>
@@ -162,13 +252,22 @@ pub fn ProfileSearch(
                             <Button on:click=move |_| controller.cancel(cancel)>{move || language.text("Cancel search", &[])}</Button>
                         </Show>
                     </div>
-                    <LoaderContainer busy=pending>
-                        <List items empty=Signal::derive(move || language.text("No profiles match this ID prefix. Try another prefix.", &[]))/>
-                    </LoaderContainer>
+                    {move || detail.get().map(|context| {
+                        let reply = SearchReply {
+                            revision: stackpress_example_profile_ui_contracts::REVISION,
+                            rows: rows.get().into_iter().map(|(id, name)| stackpress_example_profile_ui_contracts::Profile { id, name }).collect(),
+                            total: total.get(),
+                        };
+                        let return_href = routes::search_location(&link_base.get_value(), &context.search_prefix).map(|location| location.as_str().to_owned()).unwrap_or_default();
+                        view! { <section data-detail-page aria-busy=move || pending.get().to_string()>
+                            <Loader busy=pending/>
+                            <div hidden=move || pending.get() || !error.get().is_empty()><ProfileDetail id=context.id reply return_href/></div>
+                        </section> }
+                    })}
                     <NotifierContainer notifications=notices/>
                 </LayoutMain>
                 <LayoutRight label="About these profiles">
-                    <p><Translate language phrase="Showing %s public profiles." slots=vec![ViewFn::from(move || view! { <strong>{move || total.get()}</strong> })]/></p>
+                    <p><Translate language one="Showing %s public profile." phrase="Showing %s public profiles." count=total slots=vec![ViewFn::from(move || view! { <strong>{move || total.get()}</strong> })]/></p>
                 </LayoutRight>
             </LayoutPanel>
         </LayoutBlank></LayoutProvider></LanguageProvider>
@@ -191,13 +290,17 @@ pub fn ProfileDetail(
     return_href: String,
 ) -> impl IntoView {
     let profile = reply.rows.into_iter().find(|profile| profile.id == id);
+    let language = stackpress_framework_ui::language::use_language().ok();
+    let text = move |phrase: &'static str| {
+        language.map_or_else(|| phrase.to_owned(), |language| language.text(phrase, &[]))
+    };
     view! {
         <section aria-label="Profile detail">
             {match profile {
-                Some(profile) => view! { <h2>{profile.name}</h2><dl><dt>"Profile ID"</dt><dd>{profile.id}</dd></dl> }.into_any(),
-                None => view! { <h2>"Profile not found"</h2><p>"Try another ID prefix to find a profile."</p> }.into_any(),
+                Some(profile) => view! { <h2>{profile.name}</h2><dl><dt>{move || text("Profile ID")}</dt><dd>{profile.id}</dd></dl> }.into_any(),
+                None => view! { <h2>{move || text("Profile not found")}</h2><p>{move || text("Try another ID prefix to find a profile.")}</p> }.into_any(),
             }}
-            <Link href=return_href label="Return to search"/>
+            <Link href=return_href label=Signal::derive(move || text("Return to search"))/>
         </section>
     }
 }

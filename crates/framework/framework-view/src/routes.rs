@@ -72,6 +72,33 @@ impl PageRoute {
             .collect()
     }
 
+    /// Match a checked public pathname against these exact compiled segments.
+    ///
+    /// Captures remain encoded and borrowed; the application owns parameter decoding
+    /// and query policy. This client/data helper does not alter native all-listener dispatch.
+    pub fn captures<'a>(
+        &self,
+        base: &BasePath,
+        location: &'a PublicLocation,
+    ) -> Option<Vec<(&'static str, &'a str)>> {
+        let local = base.strip(location.as_str())?;
+        let path = local.split('?').next()?;
+        let parts = path.strip_prefix('/')?.split('/').collect::<Vec<_>>();
+        if parts.len() != self.segments.len() {
+            return None;
+        }
+        let mut captures = Vec::new();
+        for (segment, value) in self.segments.iter().zip(parts) {
+            match segment {
+                RouteSegment::Static(expected) if *expected != value => return None,
+                RouteSegment::Param(_) if value.is_empty() => return None,
+                RouteSegment::Param(name) => captures.push((*name, value)),
+                RouteSegment::Static(_) => {}
+            }
+        }
+        Some(captures)
+    }
+
     /// Build an encoded public path from an exact named parameter set.
     ///
     /// # Errors
