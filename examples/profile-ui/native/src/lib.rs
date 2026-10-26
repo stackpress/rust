@@ -6,14 +6,33 @@
 use stackpress_example_profile_ui_contracts::{
     HostError, MAX_REQUEST_BYTES, SearchInput, SearchReply,
 };
-use stackpress_lib::{Request, Response};
-use stackpress_server::{HandleOptions, Server};
+use stackpress_lib::{DeliveryState, Request, Response};
+use stackpress_server::{HandleOptions, HandleReport, OutputGuard, Server};
 use std::{
     collections::HashMap,
     sync::{Arc, Mutex},
     time::Duration,
 };
-use tokio::sync::watch;
+use tokio::sync::{Notify, watch};
+
+// M4 supplies this shared source. Feature-off builds do not resolve it; no native copy exists.
+#[cfg(feature = "demo-customization")]
+#[path = "../../customization.rs"]
+#[rustfmt::skip]
+mod customization;
+
+/// Register generated operations followed by the optional shared labels plugin.
+///
+/// # Errors
+/// Returns registration failures without building a partial application.
+pub fn register_application(
+    builder: &mut stackpress_server::ServerBuilder,
+) -> stackpress_lib::Result<()> {
+    stackpress_example_generated_profile::generated::register(builder)?;
+    #[cfg(feature = "demo-customization")]
+    customization::register(builder)?;
+    Ok(())
+}
 
 /// Maximum simultaneous reads per trusted window.
 const MAX_CALLS: usize = 32;
@@ -31,6 +50,10 @@ pub enum NativeError {
     Cancelled,
     /// Read exceeded its finite deadline.
     Deadline,
+    /// The lifecycle deliberately returned no typed search content.
+    NoContent,
+    /// The lifecycle explicitly suppressed native output.
+    Suppressed,
     /// Native lifecycle, poisoned state or public projection failed.
     Unavailable,
 }
@@ -43,11 +66,50 @@ impl std::fmt::Display for NativeError {
             Self::Busy => "Search busy",
             Self::Cancelled => "Search cancelled",
             Self::Deadline => "Search timed out",
+            Self::NoContent => "Search returned no content",
+            Self::Suppressed => "Search output suppressed",
             Self::Unavailable => "Search unavailable",
         })
     }
 }
 impl std::error::Error for NativeError {}
+
+impl NativeError {
+    /// Stable safe bridge token; native diagnostics are never used as IPC errors.
+    pub fn code(self) -> &'static str {
+        match self {
+            Self::Denied => "denied",
+            Self::Busy => "busy",
+            Self::Cancelled => "cancelled",
+            Self::Deadline => "deadline",
+            Self::NoContent => "no-content",
+            Self::Suppressed => "suppressed",
+            Self::Unavailable => "unavailable",
+        }
+    }
+}
+
+/// Check native WebView metadata before input can enter the selected operation.
+///
+/// # Errors
+/// Rejects other windows, origins and schemes. These values must come from the
+/// authoritative native WebView, never from fields supplied to invoke().
+pub fn validate_caller(window: &str, scheme: &str, host: Option<&str>) -> Result<(), NativeError> {
+    if window == "main" && scheme == "tauri" && host == Some("localhost") {
+        Ok(())
+    } else {
+        Err(NativeError::Denied)
+    }
+}
+
+/// Authoritative adapter metadata inherited by raw nested dispatch, never caller data.
+#[derive(Debug)]
+pub struct NativeCallContext {
+    /// Checked native window label.
+    pub window: String,
+    /// Checked opaque ID belonging to that native window.
+    pub call_id: String,
+}
 
 /// Mutable cancellation metadata only; the mutex is never held across await.
 #[derive(Default)]
@@ -59,29 +121,37 @@ struct Registry {
 }
 
 /// Immutable native host plus explicitly shared cancellation state.
+#[derive(Clone)]
 pub struct NativeHost {
     /// Same generated registration used by CLI, HTTP and the page loader.
-    server: Server,
+    server: Arc<Server>,
     /// No entry retains this host or a request; the ownership graph is acyclic.
     registry: Arc<Mutex<Registry>>,
+    /// Ticket disposal wakes shutdown after the actual borrowing future is dropped.
+    drained: Arc<Notify>,
+    /// Trusted finite execution policy; production uses the five-second deadline.
+    deadline: Duration,
 }
 
 impl NativeHost {
-    /// Build the generated read-only application unchanged.
+    /// Build the generated read-only application with the selected shared customization.
     ///
     /// # Errors
     /// Returns normal generated startup/configuration failures.
     pub async fn new() -> stackpress_server::BuildResult<Self> {
-        let server =
-            stackpress_example_generated_profile::build_application(Default::default()).await?;
+        let mut builder = stackpress_server::ServerBuilder::new();
+        register_application(&mut builder)?;
+        let server = builder.build().await?;
         Ok(Self::from_server(server))
     }
 
     /// Attach an already-built application, preserving its lifecycle/plugin policies.
     pub fn from_server(server: Server) -> Self {
         Self {
-            server,
+            server: Arc::new(server),
             registry: Arc::new(Mutex::new(Registry::default())),
+            drained: Arc::new(Notify::new()),
+            deadline: DEADLINE,
         }
     }
 
@@ -109,44 +179,90 @@ impl NativeHost {
         tokio::select! {
             biased;
             _ = ticket.cancelled.changed() => Err(NativeError::Cancelled),
-            _ = tokio::time::sleep(DEADLINE) => Err(NativeError::Deadline),
-            reply = self.run(input) => reply,
+            _ = tokio::time::sleep(self.deadline) => Err(NativeError::Deadline),
+            reply = self.run(input, NativeCallContext { window: window.into(), call_id: call_id.into() }) => reply,
         }
     }
 
     /// Execute precisely one top-level lifecycle and project only public result data.
-    async fn run(&self, input: SearchInput) -> Result<String, NativeError> {
+    async fn run(
+        &self,
+        input: SearchInput,
+        context: NativeCallContext,
+    ) -> Result<String, NativeError> {
         let mut request = Request::builder()
             .data(serde_json::json!({"id": input.id}))
             .build()
             .map_err(|_| NativeError::Unavailable)?;
         let mut response = Response::new();
-        let report = self
+        let mut report = self
             .server
             .handle_with_options(
                 "profile-search",
                 &mut request,
                 &mut response,
-                HandleOptions::default(),
+                HandleOptions {
+                    adapter_context: Some(Arc::new(context)),
+                },
             )
             .await
             .map_err(|_| NativeError::Unavailable)?;
-        if !report.is_success(&response) {
-            // A completed lifecycle rejection is public response data, not bridge failure.
-            let envelope = response
-                .try_to_json()
+        // Adapter authority is independent of a handler replacing its entire Response.
+        let mut guard = OutputGuard::default();
+        if response.delivery_state() != DeliveryState::Open {
+            guard
+                .dispatch(&mut response, |_| async { Ok(()) })
+                .await
                 .map_err(|_| NativeError::Unavailable)?;
-            let error =
-                HostError::from_envelope(&envelope).map_err(|_| NativeError::Unavailable)?;
-            return serde_json::to_string(&error).map_err(|_| NativeError::Unavailable);
+            report.record_output(&response);
+            return Err(NativeError::Suppressed);
         }
-        let reply = SearchReply::from_envelope(
-            &response
-                .try_to_json()
-                .map_err(|_| NativeError::Unavailable)?,
-        )
-        .map_err(|_| NativeError::Unavailable)?;
-        serde_json::to_string(&reply).map_err(|_| NativeError::Unavailable)
+        let text = project(&response, &report)?;
+        let mut published = None;
+        guard
+            .dispatch(&mut response, |_| async {
+                published = Some(text);
+                Ok(())
+            })
+            .await
+            .map_err(|_| NativeError::Unavailable)?;
+        report.record_output(&response);
+        published.ok_or(NativeError::Suppressed)
+    }
+
+    /// Close admission, cancel all calls and await actual ticket/future disposal.
+    ///
+    /// # Errors
+    /// Preserves poisoned-state failures or a bounded shutdown deadline. No success
+    /// is reported while registry entries remain, and no detached domain task exists.
+    pub async fn shutdown(&self) -> Result<(), NativeError> {
+        self.close()?;
+        let deadline = tokio::time::Instant::now() + DEADLINE;
+        loop {
+            // Register before inspecting the map so a last-ticket wake cannot be lost.
+            let notified = self.drained.notified();
+            tokio::pin!(notified);
+            notified.as_mut().enable();
+            if self.in_flight()? == 0 {
+                return Ok(());
+            }
+            tokio::time::timeout_at(deadline, notified)
+                .await
+                .map_err(|_| NativeError::Deadline)?;
+        }
+    }
+
+    /// Inspect bounded in-flight metadata without exposing request contents.
+    ///
+    /// # Errors
+    /// Returns a safe failure for poisoned state.
+    pub fn in_flight(&self) -> Result<usize, NativeError> {
+        Ok(self
+            .registry
+            .lock()
+            .map_err(|_| NativeError::Unavailable)?
+            .calls
+            .len())
     }
 
     /// Insert one cancellation ticket after checking capacity and duplicate IDs.
@@ -161,6 +277,7 @@ impl NativeHost {
         registry.calls.insert(key.clone(), sender);
         Ok(Ticket {
             registry: Arc::clone(&self.registry),
+            drained: Arc::clone(&self.drained),
             key,
             cancelled,
         })
@@ -179,7 +296,7 @@ impl NativeHost {
         Ok(())
     }
 
-    /// Close admission, then cancel all owned work; callers await their own futures.
+    /// Close admission before signalling all owned calls. Use shutdown to await disposal.
     ///
     /// # Errors
     /// Returns a safe failure for poisoned state; poison is never silently cleared.
@@ -191,19 +308,28 @@ impl NativeHost {
         }
         Ok(())
     }
+}
 
-    /// Inspect bounded in-flight metadata without exposing request contents.
-    ///
-    /// # Errors
-    /// Returns a safe failure for poisoned state.
-    pub fn in_flight(&self) -> Result<usize, NativeError> {
-        Ok(self
-            .registry
-            .lock()
-            .map_err(|_| NativeError::Unavailable)?
-            .calls
-            .len())
+/// Project the chosen final public response; dispatch outcome alone cannot decide success.
+fn project(response: &Response, report: &HandleReport) -> Result<String, NativeError> {
+    if response.status().is_some_and(|status| status.code == 204) {
+        return Err(NativeError::NoContent);
     }
+    if !report.is_success(response) {
+        // A completed lifecycle rejection is public response data, not bridge failure.
+        let envelope = response
+            .try_to_json()
+            .map_err(|_| NativeError::Unavailable)?;
+        let error = HostError::from_envelope(&envelope).map_err(|_| NativeError::Unavailable)?;
+        return serde_json::to_string(&error).map_err(|_| NativeError::Unavailable);
+    }
+    let reply = SearchReply::from_envelope(
+        &response
+            .try_to_json()
+            .map_err(|_| NativeError::Unavailable)?,
+    )
+    .map_err(|_| NativeError::Unavailable)?;
+    serde_json::to_string(&reply).map_err(|_| NativeError::Unavailable)
 }
 
 /// Validate authoritative window identity and the caller-owned opaque ID.
@@ -228,14 +354,22 @@ struct Ticket {
     key: (String, String),
     /// Receiver is exclusively owned by the borrowing native search future.
     cancelled: watch::Receiver<bool>,
+    /// Shared completion notification, with no ownership edge back to the host.
+    drained: Arc<Notify>,
 }
 
 impl Drop for Ticket {
     /// Poison remains an error for later callers; cleanup never panics during unwind.
     fn drop(&mut self) {
-        if let Ok(mut registry) = self.registry.lock() {
-            registry.calls.remove(&self.key);
-        }
+        // Even during unwind, discard this ticket's metadata without clearing poison.
+        // Operational APIs still return Unavailable rather than retrying poisoned state.
+        let mut registry = self
+            .registry
+            .lock()
+            .unwrap_or_else(|poison| poison.into_inner());
+        registry.calls.remove(&self.key);
+        drop(registry);
+        self.drained.notify_waiters();
     }
 }
 

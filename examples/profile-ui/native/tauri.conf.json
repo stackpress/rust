@@ -9,7 +9,7 @@
     "windows": [],
     "security": {
       "capabilities": ["main-search"],
-      "csp": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; connect-src 'self' ipc: http://ipc.localhost; style-src 'self' 'unsafe-inline'; img-src 'self' data:"
+      "csp": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; connect-src 'self' ipc: http://ipc.localhost; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'self'; frame-src 'none'"
     }
   },
   "bundle": { "active": true, "targets": ["app"], "icon": ["icons/icon.png"] }

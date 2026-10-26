@@ -82,6 +82,15 @@ fn setup(builder: &mut ServerBuilder, probe: &Arc<Probe>) {
 
 /// Compare a generated nested call and admission failures with exact lifecycle counts.
 async fn lifecycle_and_denial() {
+    for (window, scheme, origin, allowed) in [
+        ("main", "tauri", Some("localhost"), true),
+        ("other", "tauri", Some("localhost"), false),
+        ("main", "https", Some("localhost"), false),
+        ("main", "tauri", Some("evil.invalid"), false),
+        ("main", "tauri", None, false),
+    ] {
+        assert_eq!(validate_caller(window, scheme, origin).is_ok(), allowed);
+    }
     let probe = Arc::new(Probe::default());
     let mut builder = ServerBuilder::new();
     setup(&mut builder, &probe);
@@ -209,6 +218,82 @@ async fn public_host_rejection() {
     assert_eq!(host.in_flight().unwrap(), 0);
 }
 
+/// Deadline and coordinated shutdown dispose real suspended handler stacks, not just IDs.
+async fn deadline_and_shutdown() {
+    let probe = Arc::new(Probe::default());
+    let mut builder = ServerBuilder::new();
+    setup(&mut builder, &probe);
+    builder.on("profile-search", hang).unwrap();
+    let mut host = NativeHost::from_server(builder.build().await.unwrap());
+    host.deadline = Duration::from_millis(30);
+    let mut call = Box::pin(host.search("main", "deadline", r#"{"revision":1,"id":"abc"}"#));
+    tokio::select! { _ = probe.entered.notified() => {}, result = &mut call => panic!("never entered: {result:?}") }
+    assert_eq!(call.await, Err(NativeError::Deadline));
+    assert_eq!(probe.drops.load(Ordering::SeqCst), 1);
+    assert_eq!(host.in_flight().unwrap(), 0);
+    host.deadline = DEADLINE;
+    let mut tasks = tokio::task::JoinSet::new();
+    for index in 0..8 {
+        let host = host.clone();
+        tasks.spawn(async move {
+            host.search(
+                "main",
+                &format!("shutdown-{index}"),
+                r#"{"revision":1,"id":"abc"}"#,
+            )
+            .await
+        });
+    }
+    // The counter plus retained notification permit is an entry barrier, not a timed guess.
+    while probe.requests.load(Ordering::SeqCst) < 9 {
+        probe.entered.notified().await;
+    }
+    assert_eq!(host.in_flight().unwrap(), 8);
+    host.shutdown().await.unwrap();
+    while let Some(result) = tasks.join_next().await {
+        assert_eq!(result.unwrap(), Err(NativeError::Cancelled));
+    }
+    assert_eq!(probe.drops.load(Ordering::SeqCst), 9);
+    assert_eq!(host.in_flight().unwrap(), 0);
+    assert_eq!(
+        host.search("main", "closed", r#"{"revision":1,"id":"abc"}"#)
+            .await,
+        Err(NativeError::Busy)
+    );
+    host.shutdown().await.unwrap();
+}
+
+/// Poison is retained as an operational failure while RAII still discards its metadata.
+async fn poisoned_cleanup() {
+    let host = NativeHost::new().await.unwrap();
+    let ticket = host.admit("main", "poison").unwrap();
+    let registry = Arc::clone(&host.registry);
+    let weak = Arc::downgrade(&host.registry);
+    assert!(
+        std::thread::spawn(move || {
+            let _guard = registry.lock().unwrap();
+            panic!("controlled registry poison");
+        })
+        .join()
+        .is_err()
+    );
+    drop(ticket);
+    assert!(host.registry.is_poisoned());
+    assert_eq!(
+        host.registry.lock().err().unwrap().into_inner().calls.len(),
+        0
+    );
+    assert_eq!(host.cancel("main", "poison"), Err(NativeError::Unavailable));
+    assert_eq!(host.shutdown().await, Err(NativeError::Unavailable));
+    assert_eq!(
+        host.search("main", "poison", r#"{"revision":1,"id":"abc"}"#)
+            .await,
+        Err(NativeError::Unavailable)
+    );
+    drop(host);
+    assert!(weak.upgrade().is_none());
+}
+
 /// Native cancellation/poison cases cannot silently hang the test process.
 #[test]
 fn native_cases() {
@@ -218,6 +303,8 @@ fn native_cases() {
             lifecycle_and_denial().await;
             cancellation_and_disposal().await;
             public_host_rejection().await;
+            deadline_and_shutdown().await;
+            poisoned_cleanup().await;
         });
         return;
     }

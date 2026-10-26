@@ -1,45 +1,45 @@
-//! Minimal macOS packaged host; no local server or remote frontend is started.
+//! Minimal packaged host: fixed commands, authoritative admission and bounded shutdown.
 
-use stackpress_example_profile_ui_native::NativeHost;
+mod proof;
+use proof::Proof;
+use stackpress_example_profile_ui_native::{
+    NativeError, NativeHost, register_application, validate_caller,
+};
+use std::sync::{
+    Arc,
+    atomic::{AtomicBool, Ordering},
+};
 use tauri::{Manager, WebviewUrl, WebviewWindow, WebviewWindowBuilder};
 
-/// Proof-only listener, selected before building the host; ordinary app startup omits it.
-async fn proof_rejection(
-    request: &mut stackpress_lib::Request,
-    _: &mut stackpress_lib::Response,
-    _: stackpress_lib::Invocation<'_>,
-) -> stackpress_lib::Result<stackpress_lib::Flow> {
-    // Only the finite proof's explicit prefix selects this controlled public rejection.
-    if request.data.path_as::<String>("id")?.as_deref() == Some("host-error") {
-        return Err(stackpress_lib::Error::new("PRIVATE_PROOF_CAUSE")
-            .with_code(422)
-            .with_public_message("Choose another prefix."));
-    }
-    Ok(stackpress_lib::Flow::Continue)
+/// Only one bounded shutdown coordinator may run; later exit events await its completion.
+#[derive(Default)]
+struct Shutdown {
+    started: AtomicBool,
+    finished: AtomicBool,
+    failed: AtomicBool,
 }
 
-/// Build the unchanged generated operation, optionally adding one explicit proof listener.
-async fn application(proof: bool) -> stackpress_server::BuildResult<NativeHost> {
-    if !proof {
+/// Normal startup reuses the generated application. Proof fixtures are explicitly selected.
+async fn application(proof: Option<&Arc<Proof>>) -> stackpress_server::BuildResult<NativeHost> {
+    let Some(proof) = proof else {
         return NativeHost::new().await;
-    }
+    };
     let mut builder = stackpress_server::ServerBuilder::new();
-    stackpress_example_generated_profile::generated::register(&mut builder)?;
-    // Registration is proof-only; no command, privilege or domain implementation is added.
-    builder.on("profile-search", proof_rejection)?;
+    register_application(&mut builder)?;
+    proof.register(&mut builder)?;
     Ok(NativeHost::from_server(builder.build().await?))
 }
 
-/// Bind admission to the authoritative calling WebView and packaged origin.
+/// Read native WebView identity; callers cannot supply these values as DTO fields.
 fn trusted(window: &WebviewWindow) -> Result<(), String> {
-    let url = window.url().map_err(|_| "Search denied")?;
-    if window.label() != "main" || url.scheme() != "tauri" || url.host_str() != Some("localhost") {
-        return Err("Search denied".into());
-    }
-    Ok(())
+    let url = window
+        .url()
+        .map_err(|_| NativeError::Denied.code().to_owned())?;
+    validate_caller(window.label(), url.scheme(), url.host_str())
+        .map_err(|error| error.code().to_owned())
 }
 
-/// Run one admitted fixed read through the existing native lifecycle.
+/// One fixed read owns its host clone; no registry mutex crosses await.
 #[tauri::command]
 async fn profile_search(
     window: WebviewWindow,
@@ -48,12 +48,14 @@ async fn profile_search(
     json: String,
 ) -> Result<String, String> {
     trusted(&window)?;
-    host.search(window.label(), &call_id, &json)
+    let native = host.inner().clone();
+    native
+        .search(window.label(), &call_id, &json)
         .await
-        .map_err(|error| error.to_string())
+        .map_err(|error| error.code().to_owned())
 }
 
-/// Cancellation cannot name an event, service or a different originating window.
+/// Cancellation is qualified by the authoritative window, never by a caller-provided identity.
 #[tauri::command]
 fn cancel_profile_search(
     window: WebviewWindow,
@@ -62,60 +64,136 @@ fn cancel_profile_search(
 ) -> Result<(), String> {
     trusted(&window)?;
     host.cancel(window.label(), &call_id)
-        .map_err(|error| error.to_string())
+        .map_err(|error| error.code().to_owned())
 }
 
-/// Build real packaged windows and reject navigation away from bundled assets.
+/// Close admission first, then await disposal before permitting the event loop to exit.
+fn shutdown(handle: &tauri::AppHandle, code: i32) {
+    let state = handle.state::<Arc<Shutdown>>().inner().clone();
+    if state.started.swap(true, Ordering::SeqCst) {
+        return;
+    }
+    let host = handle.state::<NativeHost>().inner().clone();
+    let handle = handle.clone();
+    tauri::async_runtime::spawn(async move {
+        let result = host.shutdown().await;
+        state.failed.store(result.is_err(), Ordering::SeqCst);
+        state.finished.store(true, Ordering::SeqCst);
+        handle.exit(if result.is_ok() { code } else { 1 });
+    });
+}
+
+/// Build real packaged windows; no network listener, remote frontend or plugin grant is used.
 fn main() {
-    let proof = std::env::var_os("PROFILE_UI_PROOF").map(std::path::PathBuf::from);
-    let host = tauri::async_runtime::block_on(application(proof.is_some()))
+    let proof = Proof::from_env();
+    let host = tauri::async_runtime::block_on(application(proof.as_ref()))
         .expect("valid generated Profile host");
-    tauri::Builder::default()
+    let selected = proof.clone();
+    let app = tauri::Builder::default()
         .manage(host)
-        .invoke_handler(tauri::generate_handler![profile_search, cancel_profile_search])
+        .manage(Arc::new(Shutdown::default()))
+        .invoke_handler(tauri::generate_handler![
+            profile_search,
+            cancel_profile_search
+        ])
         .setup(move |app| {
-            let receipt = std::sync::Arc::new(std::sync::Mutex::new(Vec::<String>::new()));
-            let labels: &[&str] = if proof.is_some() { &["main", "ungranted"] } else { &["main"] };
+            let labels: &[&str] = if selected
+                .as_ref()
+                .is_some_and(|proof| proof.mode == "navigation")
+            {
+                &["main", "ungranted"]
+            } else {
+                &["main"]
+            };
             for label in labels {
-                let target = proof.clone();
-                let receipt = receipt.clone();
+                let proof = selected.clone();
                 let handle = app.handle().clone();
-                let mut window = WebviewWindowBuilder::new(app, *label, WebviewUrl::App("index.html".into()))
-                    .title("Stackpress Profiles")
-                    .visible(*label == "main")
-                    .on_navigation(move |url| {
-                        if let Some(target) = &target
-                            && url.scheme() == "proof"
-                        {
+                let mut window =
+                    WebviewWindowBuilder::new(app, *label, WebviewUrl::App("index.html".into()))
+                        .title("Stackpress Profiles")
+                        .visible(*label == "main")
+                        .on_navigation(move |url| {
+                            if proof.is_some() {
+                                eprintln!("packaged proof navigation: {url}");
+                            }
+                            if let Some(proof) = &proof
+                                && url.scheme() == "proof"
+                            {
                                 let event = url.host_str().unwrap_or("failed").to_owned();
-                                if let Ok(mut events) = receipt.lock() {
+                                let mut complete = event == "failed";
+                                if let Ok(mut events) = proof.events.lock() {
                                     events.push(event.clone());
-                                    if event == "failed" || (events.iter().any(|s| s == "main-ok") && events.iter().any(|s| s == "denied-ok")) {
-                                        let host = handle.state::<NativeHost>();
-                                        let count = host.in_flight().unwrap_or(usize::MAX);
-                                        let report = serde_json::json!({"events": *events, "in_flight": count, "packaged_origin": "tauri://localhost", "details": url.query()});
-                                        let _ = std::fs::write(target, report.to_string());
-                                        let _ = host.close();
-                                        handle.exit(if event == "failed" || count != 0 { 1 } else { 0 });
-                                    }
+                                    complete |= events.iter().any(|event| event == "main-ok")
+                                        && events.iter().any(|event| event == "denied-ok");
                                 }
-                            return false;
-                        }
-                        url.scheme() == "tauri" && url.host_str() == Some("localhost")
-                    });
-                if proof.is_some() {
-                    window = window.initialization_script(format!("window.profileProofWindow = '{}';\n{}", label, include_str!("../launch-proof.js")));
+                                if let Ok(mut details) = proof.details.lock() {
+                                    *details = url.query().map(str::to_owned);
+                                }
+                                if event == "audit"
+                                    && let Some(window) = handle.get_webview_window("main")
+                                {
+                                    let _ = window.eval("window.profileAuditAccepted=true;window.dispatchEvent(new Event('profile-proof-progress'));");
+                                }
+                                if complete {
+                                    handle.exit(i32::from(event == "failed"));
+                                }
+                                return false;
+                            }
+                            // History stays on packaged resources; native navigation cannot open a remote origin.
+                            url.scheme() == "tauri" && url.host_str() == Some("localhost")
+                        });
+                if let Some(proof) = &selected {
+                    window = window.initialization_script(format!(
+                        "window.profileProofWindow='{}';window.profileProofMode='{}';window.profileProofCustomization={};\n{}",
+                        label,
+                        proof.mode,
+                        cfg!(feature = "demo-customization"),
+                        include_str!("../launch-proof.js")
+                    ));
                 }
                 window.build()?;
+            }
+            if let Some(proof) = &selected {
+                proof.monitor(app.handle().clone());
             }
             Ok(())
         })
         .on_window_event(|window, event| {
-            // Closing the permitted window closes admission before cancelling owned work.
-            if window.label() == "main" && matches!(event, tauri::WindowEvent::Destroyed) {
-                let _ = window.state::<NativeHost>().close();
+            if window.label() == "main" {
+                match event {
+                    tauri::WindowEvent::CloseRequested { api, .. } => {
+                        api.prevent_close();
+                        shutdown(window.app_handle(), 0);
+                    }
+                    tauri::WindowEvent::Destroyed => {
+                        let _ = window.state::<NativeHost>().close();
+                    }
+                    _ => {}
+                }
             }
         })
-        .run(tauri::generate_context!())
-        .expect("Tauri event loop");
+        .build(tauri::generate_context!())
+        .expect("valid packaged application");
+    app.run(move |handle, event| match event {
+        tauri::RunEvent::ExitRequested { api, code, .. } => {
+            if !handle
+                .state::<Arc<Shutdown>>()
+                .finished
+                .load(Ordering::SeqCst)
+            {
+                api.prevent_exit();
+                shutdown(handle, code.unwrap_or(0));
+            }
+        }
+        tauri::RunEvent::Exit => {
+            if let Some(proof) = &proof {
+                let state = handle.state::<Arc<Shutdown>>();
+                proof.finish(
+                    &handle.state::<NativeHost>(),
+                    state.finished.load(Ordering::SeqCst) && !state.failed.load(Ordering::SeqCst),
+                );
+            }
+        }
+        _ => {}
+    });
 }

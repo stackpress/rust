@@ -9,6 +9,7 @@ publish.workspace = true
 [features]
 default = []
 app = ["dep:tauri", "dep:tauri-build"]
+demo-customization = []
 
 [[bin]]
 name = "profile-ui"

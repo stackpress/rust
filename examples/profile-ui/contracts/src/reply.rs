@@ -158,6 +158,12 @@ pub fn decode_search_reply(
 /// Acquisition/admission failures have fixed safe messages, independent of host data.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum TransportFailure {
+    /// The bounded local operation deadline expired.
+    Timeout,
+    /// Native admission is closed, full or already owns the requested ID.
+    Busy,
+    /// The selected operation deliberately produced no typed result.
+    NoContent,
     /// Browser/IPC acquisition could not start.
     Start,
     /// The connection or native bridge is unavailable.
@@ -170,10 +176,26 @@ impl std::fmt::Display for TransportFailure {
     /// Avoid serializing native rejection causes into the product UI.
     fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         formatter.write_str(match self {
+            Self::Timeout => "Search timed out. Try again.",
+            Self::Busy => "Search busy. Try again.",
+            Self::NoContent => "Search returned no content. Try again.",
             Self::Start => "Search could not start. Try again.",
             Self::Unavailable => "Search unavailable. Check the connection and try again.",
             Self::CancelledOrDenied => "Search cancelled or denied. Try again.",
         })
+    }
+}
+
+impl TransportFailure {
+    /// Admit only fixed native bridge tokens; unknown rejection text is never echoed.
+    pub fn from_native_code(code: Option<&str>) -> Self {
+        match code {
+            Some("deadline") => Self::Timeout,
+            Some("busy") => Self::Busy,
+            Some("no-content" | "suppressed") => Self::NoContent,
+            Some("unavailable") => Self::Unavailable,
+            _ => Self::CancelledOrDenied,
+        }
     }
 }
 
