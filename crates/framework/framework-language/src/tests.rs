@@ -76,7 +76,7 @@ fn precedence_and_routes() {
         Err(PreferenceError::Request)
     );
     assert_eq!(
-        registry.select(&base, "/demo/v1/gallery", &"x".repeat(1025)),
+        registry.select(&base, "/demo/v1/gallery", &"x".repeat(4097)),
         Err(PreferenceError::Limit)
     );
 }
@@ -200,4 +200,49 @@ fn action_admission_and_persistence() {
         .unwrap();
     assert!(!reply.cookie.contains("Secure"));
     assert!(reply.cookie.contains("Path=/;"));
+}
+
+/// Route catalog and replacement preserve legacy/alias meaning and one-decode query bytes.
+#[test]
+fn compiled_prefixes_and_exact_return_context() {
+    let registry = registry();
+    assert_eq!(
+        registry
+            .select(
+                &BasePath::default(),
+                "/gallery",
+                "stackpress-locale; stackpress-locale=fr"
+            )
+            .unwrap()
+            .source,
+        LocaleSource::Default
+    );
+    assert_eq!(registry.prefixes(), vec!["", "/en", "/fr", "/fr-FR"]);
+    let base = BasePath::new("/demo/v1").unwrap();
+    assert_eq!(
+        registry
+            .location(&base, "/demo/v1/en/gallery?q=a%2Fb&return=%252F", "fr-FR")
+            .unwrap(),
+        "/demo/v1/fr/gallery?q=a%2Fb&return=%252F"
+    );
+    assert_eq!(
+        registry
+            .select(&base, "/demo/v1/en/fr/gallery", "")
+            .unwrap()
+            .route,
+        "/fr/gallery"
+    );
+    for path in [
+        "/demo/v1/%2e%2e/gallery",
+        "/demo/v1/gallery?q=%",
+        "//evil.invalid",
+        "/else/gallery",
+    ] {
+        assert!(registry.location(&base, path, "fr").is_err());
+    }
+    assert!(
+        registry
+            .location(&base, "/demo/v1/gallery", "missing")
+            .is_err()
+    );
 }
