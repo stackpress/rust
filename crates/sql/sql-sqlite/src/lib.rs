@@ -8,7 +8,9 @@
 //! Cancelling a future loses observation: a write/commit may already have happened.
 //! Drop initiates worker close and native rollback; it does not synchronously acknowledge it.
 //! Result limits bound retained first-party values, not SQLite VM memory/time or a
-//! native cell's allocation before decoding. M1 verification covers native aarch64 macOS only.
+//! native cell's allocation before decoding. Verification covers native aarch64 macOS only.
+//! Statements refresh the native schema and discard cached statement metadata before prepare,
+//! favoring correct results after explicit DDL over reuse of prepared statement caches.
 //!
 //! Native insert IDs are reported only when this statement changes data and changes
 //! the connection's last-rowid observation. Reused explicit rowids and WITHOUT ROWID
@@ -65,9 +67,16 @@ impl SqliteDatabase {
     /// Invalid options, unavailable files, permissions and native/open timeouts fail;
     /// there is no fallback to a different file or an in-memory database.
     pub async fn open(options: SqliteOptions) -> Result<Self> {
+        Self::open_pool(options, SqlitePoolOptions::new()).await
+    }
+
+    /// Apply the adapter's finite policy before eagerly opening the native pool.
+    /// Keeping pool construction here also permits safe, private transition hooks in tests;
+    /// callers of the public API cannot install callbacks or change connection policy.
+    async fn open_pool(options: SqliteOptions, pool: SqlitePoolOptions) -> Result<Self> {
         options.validate()?;
         let connect = options.connect_options();
-        let pool = SqlitePoolOptions::new()
+        let pool = pool
             .max_connections(options.max_connections)
             .min_connections(0)
             .acquire_timeout(options.acquire_timeout())
