@@ -3,29 +3,14 @@
 mod cancellation;
 mod ddl;
 mod json;
+mod plans;
 mod queries;
 
 use std::time::Duration;
 
-use stackpress_sql::{DialectId, Engine, QueryPlan, QueryResult, Result};
+use stackpress_sql::Engine;
 
 use super::{SqliteDatabase, TempDir, options, sql, watchdog};
-
-/// Exercise the coordinator-approved explicit-session path until core execute_plan merges.
-/// Every query validates before begin; any native failure rolls back the same transaction.
-async fn plan(engine: &Engine, plan: &QueryPlan) -> Result<Vec<QueryResult>> {
-    plan.validate(DialectId::Sqlite, Default::default())?;
-    let mut transaction = engine.begin().await?;
-    let mut results = Vec::new();
-    for query in plan.queries() {
-        match transaction.execute(query).await {
-            Ok(result) => results.push(result),
-            Err(primary) => return Err(transaction.rollback_after(primary).await),
-        }
-    }
-    transaction.commit().await?;
-    Ok(results)
-}
 
 /// Read schema identity/content through ordinary public statements for before/after checks.
 async fn schema(engine: &Engine) -> Vec<stackpress_sql::Row> {
@@ -56,6 +41,9 @@ fn native_execution_under_watchdog() {
         "open_cancel",
         "native_failures",
         "contention",
+        "plan_validation",
+        "plan_cancel",
+        "plan_transaction",
     ] {
         let (success, expired, output) =
             watchdog::run("tests::m2::native_child", scenario, Duration::from_secs(10));
@@ -88,6 +76,9 @@ async fn native_child() {
             "open_cancel" => cancellation::open().await,
             "native_failures" => cancellation::native_failures().await,
             "contention" => cancellation::contention().await,
+            "plan_validation" => plans::validation().await,
+            "plan_cancel" => plans::cancellation().await,
+            "plan_transaction" => plans::caller_transaction().await,
             _ => panic!("unknown M2 scenario"),
         }
     };
