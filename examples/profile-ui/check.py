@@ -47,6 +47,9 @@ def preflight():
 
 def main():
     """Freshness → native SSR → separate client modes → manifests → feature/behavior checks."""
+    # A failed rerun must not leave the previous run's successful machine receipt.
+    LOGS.mkdir(parents=True, exist_ok=True)
+    (LOGS / "summary.json").unlink(missing_ok=True)
     preflight()
     run("manifest-tests", [sys.executable, "examples/profile-ui/proofs/test_assets.py"])
     run("fmt", ["cargo", "fmt", "--all", "--", "--check"])

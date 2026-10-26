@@ -373,3 +373,118 @@ async fn initial_settings_and_detail_projection() {
         assert!(html.contains("<title>Profil</title>"));
     }
 }
+
+/// Unsupported reactive Head becomes a sanitized HTTP error; the host serves the next page.
+#[tokio::test]
+async fn reactive_head_failure_does_not_escape_the_request() {
+    use stackpress_framework_ui::{leptos::prelude::*, render::LeptosRenderer};
+    use stackpress_framework_view::{
+        PageAssets, PageContract, PageLoad, PageSpec, PublicLocation, ServerBuilderViewExt,
+    };
+    use stackpress_lib::{Invocation, Request, Response, Result};
+    use stackpress_server::ServerBuilder;
+
+    /// Select the deliberate failure from a fixed path, with no native resources in the seed.
+    async fn load(
+        req: &mut Request,
+        _: &mut Response,
+        _: Invocation<'_>,
+    ) -> Result<PageLoad<bool>> {
+        Ok(PageLoad::Ready(req.url.path().ends_with("reactive")))
+    }
+
+    stackpress_example_profile_ui_web::initialize_renderer().unwrap();
+    let renderer = LeptosRenderer::new(
+        PageContract::new(1, "test").unwrap(),
+        PageAssets {
+            build: "test".into(),
+            base: BasePath::default(),
+            module: PublicLocation::new("/start.js").unwrap(),
+            stylesheet: None,
+        },
+        |snapshot: &PageSnapshot<bool>| {
+            let title = RwSignal::new("Independent title".to_owned());
+            Ok(if snapshot.data {
+                view! { <stackpress_framework_ui::leptos_meta::Title text=move || title.get()/> }
+                    .into_any()
+            } else {
+                view! { <stackpress_framework_ui::leptos_meta::Title text=title.get()/> }.into_any()
+            })
+        },
+    )
+    .unwrap();
+    let mut app = ServerBuilder::new();
+    app.page(
+        PageSpec::get("/head/:mode", "head", load).unwrap(),
+        renderer,
+    )
+    .unwrap();
+    let app = app.build().await.unwrap();
+    let (status, text, _) = call(&app, "GET", "/head/reactive", "text/plain", vec![]).await;
+    assert_eq!(status, 500);
+    for private in [
+        "reactive_graph",
+        "disposed",
+        "eager owned",
+        "tests/codec.rs",
+    ] {
+        assert!(
+            !text.contains(private),
+            "private diagnostics in public reply: {text}"
+        );
+    }
+    let (status, html, _) = call(&app, "GET", "/head/owned", "text/plain", vec![]).await;
+    assert_eq!(status, 200);
+    assert!(html.contains("<title>Independent title</title>"));
+}
+
+/// Component encoding preserves literal percent/plus/control data and decodes only once.
+#[test]
+fn route_component_edge_table() {
+    use stackpress_example_profile_ui_web::routes;
+    use stackpress_framework_view::encode_uri_component;
+    let base = BasePath::new("/demo").unwrap();
+    for value in ["%2e%2e", "a/b", "a\\b", "雪☃", "a+b", "a&b=c?d", "\0\r\n"] {
+        let encoded = encode_uri_component(value);
+        assert_eq!(routes::decode_parameter(&encoded).unwrap(), value);
+        let search = routes::search_location(&base, value).unwrap();
+        assert_eq!(
+            routes::resolve(&base, search.as_str()).unwrap(),
+            routes::Destination::Search(value.into())
+        );
+        let detail = routes::detail_location(&base, value, value).unwrap();
+        assert_eq!(
+            routes::resolve(&base, detail.as_str()).unwrap(),
+            routes::Destination::Detail {
+                id: value.into(),
+                search_prefix: value.into()
+            }
+        );
+    }
+    for malformed in [
+        "%",
+        "%0",
+        "%GG",
+        "%FF",
+        "%C0%AF",
+        "%ED%A0%80",
+        "%F4%90%80%80",
+        ".",
+        "..",
+        "%2E.",
+    ] {
+        assert!(routes::decode_parameter(malformed).is_err(), "{malformed}");
+    }
+    for query in [
+        "return=",
+        "return=a&return=b",
+        "return=a+b",
+        "other=a",
+        "return=%FF",
+    ] {
+        assert!(routes::decode_return_prefix(query).is_err(), "{query}");
+    }
+    let longest = "x".repeat(1024);
+    assert_eq!(routes::decode_parameter(&longest).unwrap(), longest);
+    assert!(routes::decode_parameter(&"x".repeat(1025)).is_err());
+}

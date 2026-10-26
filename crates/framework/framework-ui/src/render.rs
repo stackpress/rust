@@ -1,6 +1,10 @@
 //! Synchronous component evaluation followed by owned metadata assembly.
+//!
+//! SSR Head values must be eager owned strings, including Title text/formatters.
+//! Resolve signals while evaluating the component; reactive SSR Head is deferred
+//! with S5-F6. A Head evaluation panic becomes a safe [`ViewError::Failure`].
 
-use futures::{StreamExt, stream};
+use futures::{FutureExt, StreamExt, stream};
 use leptos::prelude::*;
 use leptos_meta::{ServerMetaContext, ServerMetaContextOutput};
 use serde::Serialize;
@@ -18,6 +22,7 @@ static INITIALIZED: AtomicBool = AtomicBool::new(false);
 /// Call once during host startup inside an active Tokio runtime. Repeated calls
 /// and an already-initialized Leptos executor succeed. This enables buffered Head
 /// assembly only; it does not enable general asynchronous component SSR.
+/// SSR Head props must be eager owned values; reactive SSR Head is S5-F6.
 ///
 /// # Errors
 /// Returns [`ViewError::ExecutorUnavailable`] outside an active Tokio runtime.
@@ -40,7 +45,7 @@ fn require_executor() -> Result<(), ViewError> {
     Ok(())
 }
 
-/// An owned staging buffer; no Owner, request or host service crosses its await.
+/// Staged output without the render Owner; Head must obey the eager-data contract.
 pub struct PreparedPage {
     /// Complete body/seed shell awaiting leptos_meta's buffered Head injection.
     html: String,
@@ -66,6 +71,8 @@ impl LeptosRenderer<()> {
     /// Component evaluation is synchronous. The Owner is cleaned on success or
     /// unwind before returning; no global render lock is required.
     /// Call [`initialize_ssr`] during startup and render inside a Tokio runtime.
+    /// Head values must be eager owned text: read signals before constructing
+    /// Title props. Reactive SSR Head is deferred with S5-F6.
     ///
     /// # Errors
     /// Rejects missing SSR startup/runtime and oversized/malformed public seed
@@ -95,6 +102,8 @@ impl LeptosRenderer<()> {
     /// [`PageRenderer::render`] entry. Missing initialization is a typed error.
     /// Factories are trusted synchronous code: byte ceilings bound staged output,
     /// not CPU time or allocations performed inside an arbitrary component.
+    /// Head values/formatters must eagerly own their data, never read disposed
+    /// signals during assembly. Reactive SSR Head is deferred with S5-F6.
     ///
     /// # Panics
     /// A component panic propagates after request-local Owner cleanup. The host
@@ -122,28 +131,97 @@ impl LeptosRenderer<()> {
 
 impl PreparedPage {
     /// Finish leptos_meta's owned buffered Head injection, never component async SSR.
+    /// Head values must be eager owned text (reactive SSR Head is S5-F6).
     ///
     /// # Errors
     /// Rejects the final complete HTML ceiling before the host can publish bytes.
+    /// A panicking Head getter/formatter returns [`ViewError::Failure`]; its native
+    /// cause names the eager Head requirement, while public Display stays safe.
     pub async fn finish(self) -> Result<RenderedPage, ViewError> {
         require_executor()?;
-        // Only owned Send buffers survive this metadata tick; all rendering is already done.
-        let chunks = self
-            .head
-            .inject_meta_context(stream::iter([self.html]))
-            .await;
-        let html = chunks.collect::<Vec<_>>().await.concat();
-        RenderedPage::with_limits(html, self.limits)
+        // No Owner or borrow guard survives this metadata tick. Catch only this
+        // consumed assembly future: an unwind drops it; it is never resumed/retried.
+        let limits = self.limits;
+        let assembly = async move {
+            let chunks = self
+                .head
+                .inject_meta_context(stream::iter([self.html]))
+                .await;
+            chunks.collect::<Vec<_>>().await.concat()
+        };
+        let html = std::panic::AssertUnwindSafe(assembly)
+            .catch_unwind()
+            .await
+            .map_err(|payload| ViewError::from_source(HeadPanic::new(payload)))?;
+        RenderedPage::with_limits(html, limits)
     }
 }
 
-/// Scope guard makes cleanup explicit even when a trusted component panics.
-struct RenderOwner(Owner);
+/// Native-only diagnostics for a failed getter; ViewError never displays this publicly.
+#[derive(Debug)]
+struct HeadPanic(String);
+
+impl HeadPanic {
+    /// Retain a textual panic cause without exposing arbitrary payloads in a response.
+    fn new(payload: Box<dyn std::any::Any + Send>) -> Self {
+        let message = payload
+            .downcast_ref::<String>()
+            .map(String::as_str)
+            .or_else(|| payload.downcast_ref::<&str>().copied())
+            .unwrap_or("non-text panic payload");
+        Self(format!(
+            "SSR Head requires eager owned values (reactive SSR Head is S5-F6): {message}"
+        ))
+    }
+}
+
+impl std::fmt::Display for HeadPanic {
+    /// Only explicit native cause traversal receives the getter's failure details.
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter.write_str(&self.0)
+    }
+}
+impl std::error::Error for HeadPanic {}
+
+/// Scope guard owns cleanup and preserves the caller's thread-local reactive context.
+struct RenderOwner {
+    /// Fresh state belongs only to this synchronous component evaluation.
+    owner: Owner,
+    /// Strongly retain the prior Owner until restoration, including an unwind.
+    previous: Option<Owner>,
+}
+
+impl RenderOwner {
+    /// Capture context before creating the request-local child Owner.
+    fn new() -> Self {
+        Self {
+            previous: Owner::current(),
+            owner: Owner::new(),
+        }
+    }
+}
 
 impl Drop for RenderOwner {
     /// Clean signals/effects before the render exits or unwinds.
     fn drop(&mut self) {
-        self.0.cleanup();
+        // Leptos 0.8's Owner::with restores only on normal return. Keep restoration
+        // in its own guard so even a cleanup callback panic restores caller context.
+        let _restore = RestoreOwner(self.previous.take());
+        self.owner.cleanup();
+    }
+}
+
+/// Restore thread-local ownership without carrying a guard across metadata awaits.
+struct RestoreOwner(Option<Owner>);
+
+impl Drop for RestoreOwner {
+    /// Restore the original Owner, or clear a render left current during unwind.
+    fn drop(&mut self) {
+        if let Some(previous) = &self.0 {
+            previous.set();
+        } else if let Some(current) = Owner::current() {
+            current.unset();
+        }
     }
 }
 
@@ -157,6 +235,7 @@ where
         &self.contract
     }
     /// Evaluate local reactive state before returning the Send owned-buffer future.
+    /// Head props must be eager owned data; reactive SSR Head is S5-F6.
     fn render(&self, snapshot: PageSnapshot<T>) -> RenderFuture<'_> {
         let staged = prepare(&snapshot, &self.contract, &self.assets, || {
             (self.component)(&snapshot)
@@ -181,9 +260,9 @@ fn prepare<T: Serialize, V: IntoView>(
     let seed = snapshot.script_json_with(contract.limits)?;
     let bootstrap = assets.script_json()?;
     let module = assets.base.join(assets.module.as_str())?;
-    let owner = RenderOwner(Owner::new());
+    let owner = RenderOwner::new();
     let (meta, head) = ServerMetaContext::new();
-    let body = owner.0.with(|| {
+    let body = owner.owner.with(|| {
         provide_context(meta);
         leptos_meta::provide_meta_context();
         crate::routing::provide_route_context(assets.base.clone());
