@@ -50,15 +50,35 @@ As defined in the coordinated workflow, with coordinator re-verification at ever
 
 ## Acceptance criteria
 
-To be proposed at the design checkpoint and accepted by the owner.
+Owner-accepted on 2026-10-26: controls 00008-001 to 00008-008 in [Slice 5 risks, milestones and acceptance](../slice-5-design-verification.md#proposed-owner-visual-acceptance). They cover:
+
+- SSR content before JavaScript, with no-flash hydration;
+- keyboard search with error, empty and retry states;
+- navigation and refresh;
+- 375 px and 1280 px layouts and 200% zoom;
+- Head and locale updates;
+- the packaged macOS app working with networking off;
+- stale or missing asset recovery;
+- one plugin customization staying consistent across every adapter.
+
+Styling is neutral grayscale; a third-party widget is deferred to S5-F2.
 
 ## Implementation notes
 
-Pending.
+Design checkpoint prepared on 2026-10-25. Start with [Slice 5 decisions and recommendations](../slice-5-design-decisions.md), which routes to the assessment, architecture, API, the Reactus/view, Frui and r22n inventories, and the risks, milestones and acceptance plan. Probes ran only in `/private/tmp/stackpress-s5-probe/`; no production code or manifests changed.
 
 ## Verification notes
 
-Pending.
+**Design checkpoint review (coordinator, 2026-10-26): approved; M0 released.**
+
+- **Reviewed:** decisions, assessment, the M0 plan and the visual acceptance criteria.
+- **Probe evidence (implementer):**
+  - buffered Leptos SSR through the existing `HttpAdapter` renders the generated `profile-search`;
+  - Send checks pass;
+  - native Tauri v2 compiles and links;
+  - the WASM check fails with E0463 because the target is missing (an install gate).
+- **Coordinator check of the probes:** they use only the in-process adapter, with no listener. The coordinator's independent tool-MSRV lookup was blocked by a transient tooling failure, so the Trunk 1.96.1 claim stands on implementer evidence. The chosen route doesn't use Trunk.
+- **Owner decisions:** recorded as [G25](../decisions.md), with every recommendation S5-D01 to D08 accepted. Installs approved: `wasm32-unknown-unknown`, `wasm-bindgen-cli 0.2.129`, `tauri-cli 2.12.4`.
 
 ## Acceptance notes
 

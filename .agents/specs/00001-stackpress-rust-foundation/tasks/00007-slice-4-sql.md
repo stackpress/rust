@@ -43,11 +43,19 @@ Acceptance criteria: none
 
 ## Implementation notes
 
-Pending.
+Design checkpoint prepared on 2026-10-25. Start with [Slice 4 decisions and recommendations](../slice-4-design-decisions.md), which routes to the core and framework inventories, the test dispositions for all 226 upstream tests, the driver assessment, the API, the execution contracts, and the risks and milestones. Probes ran only in `/private/tmp/stackpress-s4-probe/`; no production code or manifests changed.
 
 ## Verification notes
 
-Pending.
+**Design checkpoint review (coordinator, 2026-10-26): approved; M0 released.**
+
+- **Reviewed:** decisions, API, assessment, and the risks and milestones plan.
+- **DX:** a standalone query needs no host or Idea schema. SQL joins the server as an ordinary typed service through the existing `ServerBuilder` API, with no shared-crate changes.
+- **Probes rerun by the coordinator** with `--offline --locked`:
+  - SQLx 13/13 and tokio-rusqlite 3/3 passed;
+  - the expected compile failures reproduced: `aliasing` E0499, `clone` E0599, `non_sync` E0277.
+- **Material finding carried into M0:** native SQLite binds a missing parameter as NULL, so the adapter must validate prepared-parameter arity.
+- **Owner decisions:** recorded as [G24](../decisions.md). Every recommendation S4-D01 to D07 was accepted, and the D08 dependency budget is approved by the coordinator.
 
 ## Acceptance notes
 

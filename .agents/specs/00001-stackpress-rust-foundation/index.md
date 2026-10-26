@@ -15,6 +15,18 @@ Entry point for the Stackpress Rust build program: slices 0–5 coordinated betw
 - [Slice 3 generation and dependency contract](slice-3-design-generation.md): load for acyclic bootstrap, pre-build CLI selection, output ownership/recovery, generated-code partitions, the first proof and dependency budget.
 - [Slice 3 decisions and recommendations](slice-3-design-decisions.md): load before releasing M0 for pending Q08/Q09 answers, compatibility/scope choices and the checkpoint coverage map.
 - [Slice 3 risks and verification](slice-3-design-verification.md): load for R01–R33, M0 and later milestone stops, lane ownership, fail-fast tests, per-crate coverage and rounds 1–4.
+- [Slice 4 decisions and recommendations](slice-4-design-decisions.md): load first for the accepted Slice 4 (SQL) scope (G24); it routes to the inventories, test dispositions, driver assessment, API, execution contracts, and risks and milestones.
+- [Slice 4 driver assessment](slice-4-design-assessment.md): load for the SQLx, tokio-rusqlite and rusqlite comparison, pinned versions and probe evidence.
+- [Slice 4 API](slice-4-design-api.md): load for the standalone query, server service and future store sketches.
+- [Slice 4 execution contracts](slice-4-design-execution.md): load for ownership, pooling, transactions, cancellation, values and dialects.
+- [Slice 4 risks and milestones](slice-4-design-verification.md): load for the risk register, M0, the two-lane plan and stop gates.
+- [Slice 4 core inventory](slice-4-design-inventory-core.md), [framework inventory](slice-4-design-inventory-framework.md), [core tests](slice-4-design-tests-core.md), [integration tests](slice-4-design-tests-integration.md): load for upstream dispositions.
+- [Slice 5 decisions and recommendations](slice-5-design-decisions.md): load first for the accepted Slice 5 (UI) scope (G25); it routes to the assessment, architecture, API, inventories, and risks and acceptance.
+- [Slice 5 assessment](slice-5-design-assessment.md): load for Leptos and Tauri versions, host tooling, probes and installs.
+- [Slice 5 architecture](slice-5-design-architecture.md): load for page lifecycle, routing, snapshots, target dependencies, transports and cancellation.
+- [Slice 5 API](slice-5-design-api.md): load for the page, shared component and registration sketches.
+- [Slice 5 risks, milestones and acceptance](slice-5-design-verification.md): load for the risk inventory, M0, lanes and owner visual acceptance 00008-001 to 008.
+- [Slice 5 view inventory](slice-5-design-inventory-view.md), [Frui inventory](slice-5-design-inventory-frui.md), [language inventory](slice-5-design-inventory-language.md): load for upstream dispositions.
 
 ## Slice 1 design
 
