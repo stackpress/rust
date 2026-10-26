@@ -11,7 +11,7 @@ stackpress-sql = { path = "../sql" }
 sqlx = { version = "=0.9.0", default-features = false, features = ["runtime-tokio", "mysql", "tls-rustls-ring", "json"] }
 tokio = { version = "1", features = ["rt", "sync", "time"] }
 serde = { version = "1", features = ["derive"] }
-serde_json = "1"
+serde_json = { version = "1", features = ["raw_value"] }
 
 [dev-dependencies]
 tokio = { version = "1", features = ["macros", "rt-multi-thread", "sync", "time"] }
@@ -22,3 +22,8 @@ harness = false
 
 [lints]
 workspace = true
+
+[[test]]
+name = "m1"
+path = "src/m1.rs"
+harness = false

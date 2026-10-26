@@ -1,6 +1,7 @@
 //! Offline configuration, strict budgets, and diagnostic ownership checks.
 
 use super::*;
+use stackpress_sql::{ErrorKind, QueryLimits, Result, SqlError};
 
 #[test]
 /// Invalid options fail before IO and Debug never reveals connection fields.
@@ -102,4 +103,63 @@ fn postgres_type_identity_is_not_guessed_from_names() {
     );
     assert_eq!(execute::scalar_type(&PgTypeInfo::with_name("INT4")), None);
     assert_eq!(execute::scalar_type(&PgTypeInfo::with_oid(Oid(1700))), None);
+}
+
+#[test]
+/// JSON decoding preserves SQL/JSON null separation, deterministic objects and numeric digits.
+fn json_is_bounded_and_lossless() {
+    use serde_json::value::RawValue;
+    let raw = RawValue::from_string("{\"z\": 123456789012345678901234567890, \"a\":null}".into())
+        .unwrap();
+    assert_eq!(
+        crate::json::canonical(&raw, 1000).unwrap(),
+        "{\"a\":null,\"z\":123456789012345678901234567890}"
+    );
+    assert_eq!(
+        crate::json::canonical(&raw, 1).unwrap_err().kind(),
+        ErrorKind::Limit
+    );
+    let null = RawValue::from_string("null".into()).unwrap();
+    assert_eq!(crate::json::canonical(&null, 4).unwrap(), "null");
+    assert!(RawValue::from_string("invalid".into()).is_err());
+}
+
+#[test]
+/// Duplicate keys cannot disappear during canonicalization, including nested objects.
+fn duplicate_json_keys_are_rejected() {
+    for source in [r#"{"a":1,"a":2}"#, r#"{"nested":{"a":1,"a":2}}"#] {
+        let raw = serde_json::value::RawValue::from_string(source.into()).unwrap();
+        assert_eq!(
+            crate::json::canonical(&raw, 1000).unwrap_err().kind(),
+            ErrorKind::Decode
+        );
+    }
+}
+
+#[test]
+/// Raw traversal preserves huge/exponent tokens and JSON strings without global number features.
+fn json_raw_token_and_depth_boundaries() {
+    use serde_json::value::RawValue;
+    let raw = RawValue::from_string(
+        r#"{"z":[1e999,123456789012345678901234567890],"a":"\u0061"}"#.into(),
+    )
+    .unwrap();
+    assert_eq!(
+        crate::json::canonical(&raw, 1000).unwrap(),
+        r#"{"a":"a","z":[1e999,123456789012345678901234567890]}"#
+    );
+    let duplicate = RawValue::from_string(r#"[{"a":1,"\u0061":2}]"#.into()).unwrap();
+    assert_eq!(
+        crate::json::validate(&duplicate).unwrap_err().kind(),
+        ErrorKind::Decode
+    );
+    let nested = format!("{}0{}", "[".repeat(128), "]".repeat(128));
+    let raw = RawValue::from_string(nested).unwrap();
+    assert_eq!(
+        crate::json::canonical(&raw, 1000).unwrap_err().kind(),
+        ErrorKind::Decode
+    );
+    let allowed = format!("{}0{}", "[".repeat(127), "]".repeat(127));
+    let raw = RawValue::from_string(allowed.clone()).unwrap();
+    assert_eq!(crate::json::canonical(&raw, 1000).unwrap(), allowed);
 }

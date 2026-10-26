@@ -57,17 +57,32 @@ pub(crate) async fn control(
     command: &'static str,
     timeout: Duration,
 ) -> Result<()> {
-    tokio::time::timeout(timeout, connection.execute(command))
-        .await
-        .map_err(|cause| {
-            SqlError::with_source(
-                ErrorKind::Driver,
-                "PostgreSQL transaction deadline exceeded; outcome uncertain",
-                cause,
-            )
-        })?
-        .map(|_| ())
-        .map_err(driver_error)
+    tokio::time::timeout(timeout, async {
+        #[cfg(test)]
+        crate::probe::at(match command {
+            "BEGIN" => crate::probe::Phase::BeforeBegin,
+            "COMMIT" => crate::probe::Phase::BeforeCommit,
+            _ => crate::probe::Phase::BeforeRollback,
+        })
+        .await?;
+        connection.execute(command).await.map_err(driver_error)?;
+        #[cfg(test)]
+        crate::probe::at(match command {
+            "BEGIN" => crate::probe::Phase::AfterBegin,
+            "COMMIT" => crate::probe::Phase::AfterCommit,
+            _ => crate::probe::Phase::AfterRollback,
+        })
+        .await?;
+        Ok(())
+    })
+    .await
+    .map_err(|cause| {
+        SqlError::with_source(
+            ErrorKind::Driver,
+            "Postgres transaction deadline exceeded; outcome uncertain",
+            cause,
+        )
+    })?
 }
 /// Prepare metadata and execute the same SQL on the exclusively borrowed socket.
 async fn run(
@@ -77,10 +92,14 @@ async fn run(
 ) -> Result<QueryResult> {
     // This is the only dynamic SQL audit marker. Query has separate, owned binds;
     // the core renderer already validated its single trusted ordinary statement.
+    #[cfg(test)]
+    crate::probe::at(crate::probe::Phase::BeforePrepare).await?;
     let statement = connection
         .prepare(sqlx::AssertSqlSafe(query.sql()).into_sql_str())
         .await
         .map_err(driver_error)?;
+    #[cfg(test)]
+    crate::probe::at(crate::probe::Phase::AfterPrepare).await?;
     let types = match statement.parameters() {
         Some(Either::Left(types)) => types,
         _ => {
@@ -97,6 +116,8 @@ async fn run(
         bound = bind(bound, value, native_type)?;
     }
     // Poll rows incrementally; never allocate an unbounded fetch_all collection.
+    #[cfg(test)]
+    crate::probe::at(crate::probe::Phase::BeforeExecute).await?;
     let mut stream = connection.fetch_many(bound);
     let mut result = QueryResult::default();
     let mut budget = OutputBudget::new(limits);
@@ -107,9 +128,15 @@ async fn run(
                 result.affected = outcome.rows_affected();
                 // PostgreSQL has no statement-local insert ID; RETURNING rows carry keys.
             }
-            Either::Right(native) => result.rows.push(budget.decode(&native)?),
+            Either::Right(native) => {
+                #[cfg(test)]
+                crate::probe::at(crate::probe::Phase::AfterRow).await?;
+                result.rows.push(budget.decode(&native)?);
+            }
         }
     }
+    #[cfg(test)]
+    crate::probe::at(crate::probe::Phase::AfterExecute).await?;
     Ok(result)
 }
 /// Report a native parameter count mismatch before executing any bound statement.
@@ -137,6 +164,27 @@ fn bind<'q>(
         )
     })?;
     Ok(match (name, value) {
+        ("JSON" | "JSONB", SqlValue::Null) => {
+            query.bind(Option::<sqlx::types::Json<serde_json::Value>>::None)
+        }
+        ("JSON" | "JSONB", SqlValue::Text(value)) => {
+            // Parameter metadata supplies the explicit JSON target; ordinary TEXT is unchanged.
+            let raw = serde_json::value::RawValue::from_string(value.clone()).map_err(|cause| {
+                SqlError::with_source(
+                    ErrorKind::InvalidQuery,
+                    "invalid PostgreSQL JSON bind",
+                    cause,
+                )
+            })?;
+            crate::json::validate(&raw).map_err(|cause| {
+                SqlError::with_source(
+                    ErrorKind::InvalidQuery,
+                    "invalid PostgreSQL JSON bind",
+                    cause,
+                )
+            })?;
+            query.bind(sqlx::types::Json(raw))
+        }
         ("BOOL", SqlValue::Null) => query.bind(Option::<bool>::None),
         ("INT2", SqlValue::Null) => query.bind(Option::<i16>::None),
         ("INT4", SqlValue::Null) => query.bind(Option::<i32>::None),
@@ -190,7 +238,9 @@ fn bind<'q>(
 
 /// Identify only actual PostgreSQL built-in scalar OIDs, never a user-defined lookalike name.
 /// These OIDs are fixed in PostgreSQL's built-in pg_type catalog and SQLx 0.9's PgType map;
-/// unresolved name-only metadata and domains/custom types deliberately remain unsupported.
+/// unresolved name-only metadata and advertised custom/domain/unknown OIDs are rejected.
+/// Results are decoded by their wire type; domains over supported base types decode
+/// as that base type when PostgreSQL flattens their identity in RowDescription.
 pub(crate) fn scalar_type(info: &sqlx::postgres::PgTypeInfo) -> Option<&'static str> {
     // Exact OIDs avoid Type::compatible/type_eq treating a domain as its base type.
     Some(match info.oid()?.0 {
@@ -203,6 +253,8 @@ pub(crate) fn scalar_type(info: &sqlx::postgres::PgTypeInfo) -> Option<&'static 
         25 => "TEXT",
         1043 => "VARCHAR",
         17 => "BYTEA",
+        114 => "JSON",
+        3802 => "JSONB",
         _ => return None,
     })
 }

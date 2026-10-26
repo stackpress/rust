@@ -61,7 +61,7 @@ impl Drop for CleanupGuard {
         self.0.changed.notify_waiters();
     }
 }
-/// Exclusive connection ownership; every M0 lease retires rather than using a cache.
+/// Exclusive connection ownership; only acknowledged, reset leases may return to their pool.
 pub(crate) struct Lease {
     /// Taken only by explicit completion or Drop; never returned uncertain to the pool.
     parts: Option<(PoolConnection<Postgres>, OwnedSemaphorePermit)>,
@@ -93,6 +93,41 @@ impl Lease {
             .as_mut()
             .map(|(connection, _)| &mut **connection)
             .ok_or_else(|| SqlError::new(ErrorKind::Closed, "PostgreSQL lease has completed"))
+    }
+    /// Recycle only after full acknowledgement and backend-specific reset complete.
+    pub(crate) async fn finish<T>(mut self, primary: Result<T>, reusable: bool) -> Result<T> {
+        if primary.is_ok() && reusable {
+            // Keep the lease intact across reset; any cancellation still runs retiring Drop.
+            let timeout = self.timeout;
+            let reset = tokio::time::timeout(timeout, async {
+                #[cfg(test)]
+                crate::probe::at(crate::probe::Phase::BeforeReuse).await?;
+                crate::reuse::reset(self.connection()?).await?;
+                #[cfg(test)]
+                crate::probe::at(crate::probe::Phase::AfterReset).await?;
+                Ok(())
+            })
+            .await
+            .map_err(|cause| {
+                SqlError::with_source(
+                    ErrorKind::Driver,
+                    "database reset deadline exceeded; outcome uncertain",
+                    cause,
+                )
+            })
+            .and_then(|result| result);
+            if let Err(primary) = reset {
+                return completed(Err(primary), self.retire().await);
+            }
+            // Only this acknowledged/reset path can invoke SQLx's normal return-to-pool Drop.
+            if let Some((connection, permit)) = self.parts.take() {
+                drop(connection);
+                drop(permit);
+            }
+            primary
+        } else {
+            completed(primary, self.retire().await)
+        }
     }
     /// Retire explicitly so a caller can retain primary and cleanup failures separately.
     pub(crate) async fn retire(mut self) -> Result<()> {
@@ -139,16 +174,29 @@ impl Drop for Lease {
 async fn close(mut connection: PoolConnection<Postgres>, timeout: Duration) -> Result<()> {
     // The flag protects a close future dropped before it first polls/takes the socket.
     connection.close_on_drop();
-    tokio::time::timeout(timeout, connection.close())
-        .await
-        .map_err(|cause| {
-            SqlError::with_source(
-                ErrorKind::Driver,
-                "PostgreSQL cleanup deadline exceeded; remote outcome uncertain",
-                cause,
-            )
-        })?
-        .map_err(driver_error)
+    tokio::time::timeout(timeout, async move {
+        // Poll the consuming SQLx close once before a private test can pause. SQLx has
+        // transferred the raw socket and capacity guard out of PoolConnection by then;
+        // dropping a pending close therefore disposes the socket instead of recycling it.
+        let mut closing = Box::pin(connection.close());
+        let first =
+            std::future::poll_fn(|context| std::task::Poll::Ready(closing.as_mut().poll(context)))
+                .await;
+        #[cfg(test)]
+        crate::probe::at(crate::probe::Phase::BeforeClose).await?;
+        match first {
+            std::task::Poll::Ready(result) => result.map_err(driver_error),
+            std::task::Poll::Pending => closing.await.map_err(driver_error),
+        }
+    })
+    .await
+    .map_err(|cause| {
+        SqlError::with_source(
+            ErrorKind::Driver,
+            "Postgres cleanup deadline exceeded; remote outcome uncertain",
+            cause,
+        )
+    })?
 }
 /// Keep an operation's primary failure distinct from transport cleanup failure.
 pub(crate) fn completed<T>(primary: Result<T>, cleanup: Result<()>) -> Result<T> {

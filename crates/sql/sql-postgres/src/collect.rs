@@ -81,6 +81,14 @@ impl OutputBudget {
                 native.try_get::<f32, _>(index).map_err(driver_error)?,
             ))?,
             "FLOAT8" => self.real(native.try_get(index).map_err(driver_error)?)?,
+            "JSON" | "JSONB" => {
+                // Borrow and validate through SQLx's explicit JSON codec before copying.
+                let sqlx::types::Json(raw): sqlx::types::Json<&serde_json::value::RawValue> =
+                    native.try_get(index).map_err(driver_error)?;
+                let value = crate::json::canonical(raw, self.limits.bytes - self.bytes)?;
+                self.charge(value.len())?;
+                SqlValue::Text(value)
+            }
             "TEXT" | "VARCHAR" => {
                 let value: &str = native.try_get(index).map_err(driver_error)?;
                 self.charge(value.len())?;
@@ -95,7 +103,7 @@ impl OutputBudget {
         })
     }
     /// Reject nonfinite native arithmetic before exposing the stable strict value shape.
-    fn real(&mut self, value: f64) -> Result<SqlValue> {
+    pub(crate) fn real(&mut self, value: f64) -> Result<SqlValue> {
         if !value.is_finite() {
             return Err(SqlError::new(
                 ErrorKind::Decode,
@@ -114,6 +122,6 @@ fn output_limit() -> SqlError {
 fn unsupported() -> SqlError {
     SqlError::new(
         ErrorKind::Decode,
-        "unsupported PostgreSQL native output type in M0",
+        "unsupported PostgreSQL native output type",
     )
 }

@@ -80,6 +80,7 @@ impl OutputBudget {
                 | "MEDIUMBLOB"
                 | "LONGBLOB"
                 | "NULL"
+                | "JSON"
         ) {
             return Err(unsupported());
         }
@@ -112,6 +113,14 @@ impl OutputBudget {
                 native.try_get::<f32, _>(index).map_err(driver_error)?,
             ))?,
             "DOUBLE" => self.real(native.try_get(index).map_err(driver_error)?)?,
+            "JSON" => {
+                // Borrow and validate through SQLx's explicit JSON codec before copying.
+                let sqlx::types::Json(raw): sqlx::types::Json<&serde_json::value::RawValue> =
+                    native.try_get(index).map_err(driver_error)?;
+                let value = crate::json::canonical(raw, self.limits.bytes - self.bytes)?;
+                self.charge(value.len())?;
+                SqlValue::Text(value)
+            }
             "CHAR" | "VARCHAR" | "TINYTEXT" | "TEXT" | "MEDIUMTEXT" | "LONGTEXT" => {
                 let value: &str = native.try_get(index).map_err(driver_error)?;
                 self.charge(value.len())?;
@@ -126,7 +135,7 @@ impl OutputBudget {
         })
     }
     /// Reject nonfinite native arithmetic before exposing the stable strict value shape.
-    fn real(&mut self, value: f64) -> Result<SqlValue> {
+    pub(crate) fn real(&mut self, value: f64) -> Result<SqlValue> {
         if !value.is_finite() {
             return Err(SqlError::new(
                 ErrorKind::Decode,
@@ -143,8 +152,5 @@ fn output_limit() -> SqlError {
 }
 /// Keep unsupported native type details out of public error strings.
 fn unsupported() -> SqlError {
-    SqlError::new(
-        ErrorKind::Decode,
-        "unsupported MySQL native output type in M0",
-    )
+    SqlError::new(ErrorKind::Decode, "unsupported MySQL native output type")
 }

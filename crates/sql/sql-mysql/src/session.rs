@@ -1,9 +1,6 @@
 //! Exclusive transaction affinity, rollback-only failures, and consuming completion.
 
-use crate::{
-    execute,
-    lease::{self, Lease},
-};
+use crate::{execute, lease::Lease};
 use stackpress_sql::{
     ErrorKind, Query, QueryLimits, QueryResult, SqlError, SqlFuture, TransactionSession,
 };
@@ -17,6 +14,8 @@ pub(crate) struct MysqlSession {
     rollback_only: bool,
     /// Whole operation deadline inherited from database startup.
     timeout: Duration,
+    /// Cleared before each run; only acknowledged allowlisted success restores it.
+    reusable: bool,
 }
 impl MysqlSession {
     /// Establish a usable session after BEGIN succeeds.
@@ -25,6 +24,7 @@ impl MysqlSession {
             lease,
             rollback_only: false,
             timeout,
+            reusable: true,
         }
     }
 }
@@ -37,11 +37,14 @@ impl TransactionSession for MysqlSession {
             }
             // Poison even rejected statements consistently with SQLite's session contract.
             self.rollback_only = true;
+            let reusable = self.reusable && crate::reuse::allowed(&query);
+            self.reusable = false;
             execute::validate_transaction(&query)?;
             let result =
                 execute::timed_run(self.lease.connection()?, query, limits, self.timeout).await;
             if result.is_ok() {
                 self.rollback_only = false;
+                self.reusable = reusable;
             }
             result
         })
@@ -53,6 +56,7 @@ impl TransactionSession for MysqlSession {
                 mut lease,
                 rollback_only: failed,
                 timeout,
+                reusable,
             } = *self;
             let result = if failed {
                 Err(rollback_only())
@@ -60,17 +64,20 @@ impl TransactionSession for MysqlSession {
                 // Completion can race cancellation; never retry or promise rollback.
                 execute::control(lease.connection()?, "COMMIT", timeout).await
             };
-            lease::completed(result, lease.retire().await)
+            lease.finish(result, reusable && !failed).await
         })
     }
     /// Permit explicit rollback after any rejected, failed, or cancelled statement.
     fn rollback(self: Box<Self>) -> SqlFuture<'static, ()> {
         Box::pin(async move {
             let Self {
-                mut lease, timeout, ..
+                mut lease,
+                timeout,
+                reusable,
+                ..
             } = *self;
             let result = execute::control(lease.connection()?, "ROLLBACK", timeout).await;
-            lease::completed(result, lease.retire().await)
+            lease.finish(result, reusable).await
         })
     }
 }
