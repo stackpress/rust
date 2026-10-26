@@ -6,6 +6,11 @@
 use serde::{Deserialize, Serialize, de::DeserializeOwned};
 use std::fmt;
 
+mod policy;
+mod routes;
+pub use policy::{BasePath, PageAssets, PageContract, PageLimits, PublicLocation, PublicStatus};
+pub use routes::{PageRoute, RouteCatalog, RouteSegment, encode_uri_component};
+
 /// Maximum serialized snapshot bytes before script escaping.
 pub const MAX_SNAPSHOT_BYTES: usize = 1024 * 1024;
 /// Maximum complete buffered document bytes, including escaped seed and assets.
@@ -15,6 +20,13 @@ pub const MAX_HTML_BYTES: usize = 2 * 1024 * 1024;
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(try_from = "String", into = "String")]
 pub struct PageId(String);
+
+impl PageId {
+    /// Borrow the catalog identity without treating it as a module or file path.
+    pub fn as_str(&self) -> &str {
+        &self.0
+    }
+}
 
 impl TryFrom<String> for PageId {
     type Error = ViewError;
@@ -66,6 +78,9 @@ pub struct PageSnapshot<T> {
     pub locale: String,
     /// Explicit initial theme; no initial browser/environment guess.
     pub theme: String,
+    /// Deliberately disclosed application status, separate from lifecycle outcome.
+    #[serde(default)]
+    pub status: PublicStatus,
     /// Application-owned public projection.
     pub data: T,
 }
@@ -80,16 +95,15 @@ impl<T> PageSnapshot<T> {
         if self.revision != revision || self.build != build {
             return Err(ViewError::ContractMismatch);
         }
-        // Only bounded same-origin paths and explicit demo settings are accepted.
-        if !self.location.starts_with('/')
-            || self.location.starts_with("//")
-            || self.location.len() > 4096
-            || self.location.chars().any(char::is_control)
-            || self.locale != "en"
-            || self.theme != "light"
-        {
-            return Err(ViewError::InvalidSnapshot);
+        PublicLocation::new(self.location.clone())?;
+        PageContract {
+            revision: self.revision,
+            build: self.build.clone(),
+            locale: self.locale.clone(),
+            theme: self.theme.clone(),
+            limits: PageLimits::default(),
         }
+        .validate()?;
         Ok(())
     }
 }
@@ -100,24 +114,22 @@ impl<T: Serialize> PageSnapshot<T> {
     /// # Errors
     /// Rejects serialization failures and the pre-escape snapshot byte ceiling.
     pub fn script_json(&self) -> Result<String, ViewError> {
-        let json = serde_json::to_string(self).map_err(|_| ViewError::InvalidSnapshot)?;
+        self.script_json_with(PageLimits::default())
+    }
+
+    /// Serialize under a checked application policy, preserving the standard escape contract.
+    ///
+    /// # Errors
+    /// Rejects invalid policy, serialization failure and a logical byte-limit excess.
+    pub fn script_json_with(&self, limits: PageLimits) -> Result<String, ViewError> {
+        limits.validate()?;
+        self.validate(self.revision, &self.build)?;
+        let json = serde_json::to_string(self).map_err(ViewError::from_source)?;
         // Check original bytes separately; the complete HTML limit covers escape expansion.
-        if json.len() > MAX_SNAPSHOT_BYTES {
+        if json.len() > limits.snapshot_bytes {
             return Err(ViewError::SnapshotLimit);
         }
-        let mut safe = String::with_capacity(json.len());
-        for character in json.chars() {
-            // HTML parsers recognize script terminators even in non-executable script tags.
-            match character {
-                '<' => safe.push_str("\\u003c"),
-                '>' => safe.push_str("\\u003e"),
-                '&' => safe.push_str("\\u0026"),
-                '\u{2028}' => safe.push_str("\\u2028"),
-                '\u{2029}' => safe.push_str("\\u2029"),
-                other => safe.push(other),
-            }
-        }
-        Ok(safe)
+        Ok(escape_script_json(&json))
     }
 }
 
@@ -127,16 +139,30 @@ impl<T: DeserializeOwned + Serialize> PageSnapshot<T> {
     /// # Errors
     /// Rejects malformed/oversized JSON or incompatible metadata.
     pub fn decode(json: &str, revision: u32, build: &str) -> Result<Self, ViewError> {
+        Self::decode_with(json, revision, build, PageLimits::default())
+    }
+
+    /// Decode under the same checked policy used by the native page registration.
+    ///
+    /// # Errors
+    /// Rejects unsafe metadata, drift, malformed JSON and either encoded/logical size excess.
+    pub fn decode_with(
+        json: &str,
+        revision: u32,
+        build: &str,
+        limits: PageLimits,
+    ) -> Result<Self, ViewError> {
+        limits.validate()?;
         // Escaping can expand each byte to six characters; retain a finite decoder ceiling.
-        if json.len() > MAX_SNAPSHOT_BYTES * 6 {
+        if json.len() > limits.snapshot_bytes * 6 {
             return Err(ViewError::SnapshotLimit);
         }
         let snapshot: Self = serde_json::from_str(json).map_err(|_| ViewError::InvalidSnapshot)?;
         // The escape allowance must not admit an oversized unescaped logical snapshot.
         if serde_json::to_vec(&snapshot)
-            .map_err(|_| ViewError::InvalidSnapshot)?
+            .map_err(ViewError::from_source)?
             .len()
-            > MAX_SNAPSHOT_BYTES
+            > limits.snapshot_bytes
         {
             return Err(ViewError::SnapshotLimit);
         }
@@ -155,7 +181,16 @@ impl RenderedPage {
     /// # Errors
     /// Returns [`ViewError::HtmlLimit`] for an oversized complete document.
     pub fn new(html: String) -> Result<Self, ViewError> {
-        if html.len() > MAX_HTML_BYTES {
+        Self::with_limits(html, PageLimits::default())
+    }
+
+    /// Stage a complete document under a lowerable application policy.
+    ///
+    /// # Errors
+    /// Rejects invalid policy or an oversized completed document.
+    pub fn with_limits(html: String, limits: PageLimits) -> Result<Self, ViewError> {
+        limits.validate()?;
+        if html.len() > limits.html_bytes {
             return Err(ViewError::HtmlLimit);
         }
         Ok(Self(html))
@@ -168,8 +203,12 @@ impl RenderedPage {
 }
 
 /// Safe public page failures; developer reports stay outside this envelope.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone)]
 pub enum ViewError {
+    /// Original serialization/render cause retained only for native diagnostics.
+    Failure(std::sync::Arc<dyn std::error::Error + Send + Sync>),
+    /// Trusted page/asset configuration violates its checked policy.
+    InvalidPolicy,
     /// Native SSR requires initialize_ssr() inside an active Tokio runtime.
     ExecutorUnavailable,
     /// Malformed or unapproved public input.
@@ -186,6 +225,8 @@ impl fmt::Display for ViewError {
     /// Provide stable safe messages without echoing caller input or native diagnostics.
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         formatter.write_str(match self {
+            Self::Failure(_) => "Could not render page",
+            Self::InvalidPolicy => "Invalid page configuration",
             Self::ExecutorUnavailable => {
                 "Native SSR requires initialize_ssr() inside an active Tokio runtime"
             }
@@ -197,4 +238,65 @@ impl fmt::Display for ViewError {
     }
 }
 
-impl std::error::Error for ViewError {}
+impl ViewError {
+    /// Preserve a developer cause while keeping its text out of public Display.
+    pub fn from_source(cause: impl std::error::Error + Send + Sync + 'static) -> Self {
+        Self::Failure(std::sync::Arc::new(cause))
+    }
+}
+impl PartialEq for ViewError {
+    /// Stable policy failures compare by kind; native causes compare by shared identity.
+    fn eq(&self, other: &Self) -> bool {
+        match (self, other) {
+            (Self::Failure(a), Self::Failure(b)) => std::sync::Arc::ptr_eq(a, b),
+            _ => std::mem::discriminant(self) == std::mem::discriminant(other),
+        }
+    }
+}
+impl Eq for ViewError {}
+impl std::error::Error for ViewError {
+    /// Explicit diagnostic traversal can inspect the original retained failure.
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        match self {
+            Self::Failure(cause) => Some(cause.as_ref()),
+            _ => None,
+        }
+    }
+}
+
+/// Owned buffered metadata assembly future; no live reactive state may cross it.
+pub type RenderFuture<'a> = std::pin::Pin<
+    Box<dyn std::future::Future<Output = Result<RenderedPage, ViewError>> + Send + 'a>,
+>;
+
+/// Native renderer boundary over owned explicitly public page data.
+pub trait PageRenderer<T>: Send + Sync + 'static {
+    /// Immutable version/settings/limit contract checked before native registration.
+    fn contract(&self) -> &PageContract;
+    /// Stage and finish complete output without native output authority.
+    fn render(&self, page: PageSnapshot<T>) -> RenderFuture<'_>;
+}
+
+#[cfg(all(feature = "server", target_arch = "wasm32"))]
+compile_error!("framework-view/server is a native adapter; use default contracts on wasm32");
+#[cfg(all(feature = "server", not(target_arch = "wasm32")))]
+mod server;
+#[cfg(all(feature = "server", not(target_arch = "wasm32")))]
+pub use server::{PageLoader, PageSpec, ServerBuilderViewExt};
+
+/// Escape JSON text for an inert script element without altering roundtrip data.
+pub(crate) fn escape_script_json(json: &str) -> String {
+    let mut safe = String::with_capacity(json.len());
+    for character in json.chars() {
+        // HTML parsers recognize script terminators even in non-executable script tags.
+        match character {
+            '<' => safe.push_str("\\u003c"),
+            '>' => safe.push_str("\\u003e"),
+            '&' => safe.push_str("\\u0026"),
+            '\u{2028}' => safe.push_str("\\u2028"),
+            '\u{2029}' => safe.push_str("\\u2029"),
+            other => safe.push(other),
+        }
+    }
+    safe
+}

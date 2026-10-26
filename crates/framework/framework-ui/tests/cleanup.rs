@@ -15,6 +15,7 @@ fn seed() -> PageSnapshot<()> {
         location: "/".into(),
         locale: "en".into(),
         theme: "light".into(),
+        status: stackpress_framework_view::PublicStatus::ok(),
         data: (),
     }
 }

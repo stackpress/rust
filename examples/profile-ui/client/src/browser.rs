@@ -38,7 +38,7 @@ impl Drop for ActiveCall {
 }
 
 /// Create an Owner-bound local transport, with no Send wrapper around DOM values.
-fn transport() -> SearchTransport {
+fn transport(base: String) -> SearchTransport {
     let active = StoredValue::new_local(None::<ActiveCall>);
     let serial = StoredValue::new(0_u64);
     // StoredValue disposal drops the active call; async work cannot retain this root.
@@ -59,9 +59,10 @@ fn transport() -> SearchTransport {
             id: id.clone(),
             abort: controller,
         }));
+        let base = base.clone();
         leptos::task::spawn_local(async move {
             // The completion checks disposed/generation state before any signal access.
-            done(search(input, &id, signal).await);
+            done(search(input, &id, signal, &base).await);
         });
     })
 }
@@ -71,6 +72,7 @@ async fn search(
     input: SearchInput,
     id: &str,
     signal: web_sys::AbortSignal,
+    base: &str,
 ) -> Result<SearchReply, String> {
     let json = serde_json::to_string(&input).map_err(|_| "Invalid search input")?;
     #[cfg(feature = "hydrate")]
@@ -81,9 +83,11 @@ async fn search(
         options.set_body(&JsValue::from_str(&json));
         options.set_signal(Some(&signal));
         options.set_mode(web_sys::RequestMode::SameOrigin);
-        let request =
-            web_sys::Request::new_with_str_and_init("/ui-api/v1/profile-search", &options)
-                .map_err(|_| "Search could not start")?;
+        let request = web_sys::Request::new_with_str_and_init(
+            &format!("{base}/ui-api/v1/profile-search"),
+            &options,
+        )
+        .map_err(|_| "Search could not start")?;
         request
             .headers()
             .set("content-type", "application/json")
@@ -105,7 +109,7 @@ async fn search(
     };
     #[cfg(feature = "csr")]
     let text = {
-        let _ = signal;
+        let _ = (signal, base);
         profile_search(id, &json)
             .await
             .map_err(|_| "Search cancelled or denied")?
@@ -161,7 +165,22 @@ pub fn start() -> Result<js_sys::Function, JsValue> {
         .get_element_by_id("app")
         .ok_or_else(|| JsValue::from_str("Page root missing"))?
         .dyn_into()?;
-    let initial = match seed(&document) {
+    #[cfg(feature = "hydrate")]
+    let base = document
+        .get_element_by_id("stackpress-assets")
+        .and_then(|element| element.text_content())
+        .ok_or_else(|| "Page assets missing. Refresh to continue.".to_owned())
+        .and_then(|text| {
+            stackpress_framework_view::PageAssets::decode(
+                &text,
+                stackpress_example_profile_ui_contracts::BUILD,
+            )
+            .map_err(|error| error.to_string())
+        })
+        .map(|assets| assets.base);
+    #[cfg(feature = "csr")]
+    let base: Result<stackpress_framework_view::BasePath, String> = Ok(Default::default());
+    let (initial, base) = match seed(&document).and_then(|seed| base.map(|base| (seed, base))) {
         Ok(seed) => seed,
         Err(message) => {
             app.set_text_content(Some(&message));
@@ -170,7 +189,8 @@ pub fn start() -> Result<js_sys::Function, JsValue> {
     };
     let root = move || {
         stackpress_framework_ui::leptos_meta::provide_meta_context();
-        let transport = transport();
+        stackpress_framework_ui::routing::provide_route_context(base.clone());
+        let transport = transport(base.as_str().to_owned());
         view! { <ProfileSearch seed=initial transport/> }
     };
     #[cfg(feature = "hydrate")]

@@ -15,6 +15,7 @@ async fn startup_is_explicit_idempotent_and_checked() {
         location: "/".into(),
         locale: "en".into(),
         theme: "light".into(),
+        status: stackpress_framework_view::PublicStatus::ok(),
         data: (),
     };
     let result = LeptosRenderer::prepare(&seed, || view! { <p>"ready"</p> });

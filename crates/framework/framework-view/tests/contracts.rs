@@ -11,6 +11,7 @@ fn seed(data: String) -> PageSnapshot<String> {
         location: "/ui/profiles?id=abc".into(),
         locale: "en".into(),
         theme: "light".into(),
+        status: PublicStatus::ok(),
         data,
     }
 }

@@ -6,7 +6,10 @@ use stackpress_server::http::{HttpAdapter, HttpOutput};
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let arguments = std::env::args().skip(1).collect::<Vec<_>>();
-    let app = stackpress_example_profile_ui_web::application().await?;
+    let base = stackpress_framework_view::BasePath::new(
+        std::env::var("PROFILE_UI_BASE").unwrap_or_default(),
+    )?;
+    let app = stackpress_example_profile_ui_web::application_with_base(base.clone()).await?;
     if arguments.first().map(String::as_str) == Some("hostile") {
         use stackpress_example_profile_ui_contracts::{
             Profile, REVISION, SearchInput, SearchPage, SearchReply, snapshot,
@@ -32,7 +35,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let request = if arguments.first().map(String::as_str) == Some("search") {
         http::Request::builder()
             .method("POST")
-            .uri("/ui-api/v1/profile-search")
+            .uri(format!("{}/ui-api/v1/profile-search", base.as_str()))
             .header("content-type", "application/json")
             .body(
                 arguments
@@ -42,12 +45,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     .to_vec(),
             )?
     } else {
+        let default_path = format!("{}/ui/profiles?id=abc", base.as_str());
         http::Request::builder()
             .uri(
                 arguments
                     .first()
                     .map(String::as_str)
-                    .unwrap_or("/ui/profiles?id=abc"),
+                    .unwrap_or(&default_path),
             )
             .body(Vec::new())?
     };

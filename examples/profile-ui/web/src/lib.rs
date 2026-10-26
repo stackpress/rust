@@ -1,38 +1,118 @@
-//! Buffered native page adapter using the generated domain operation unchanged.
+//! Buffered typed pages and a fixed HTTP operation over the existing lifecycle.
 
-use stackpress_example_profile_ui_contracts::{SearchInput, SearchPage, SearchReply, snapshot};
+use stackpress_example_profile_ui_contracts::{
+    BUILD, MAX_REQUEST_BYTES, REVISION, SearchInput, SearchPage, SearchReply,
+};
 use stackpress_example_profile_ui_shared::ProfileSearch;
 use stackpress_framework_ui::{leptos::prelude::*, render::LeptosRenderer};
-use stackpress_framework_view::PageLoad;
-use stackpress_lib::{Error, Flow, Invocation, Request, Response, Result};
+use stackpress_framework_view::{
+    BasePath, PageAssets, PageContract, PageLoad, PageRenderer, PageSnapshot, PageSpec,
+    PublicLocation, ServerBuilderViewExt, ViewError,
+};
+use stackpress_lib::{Body, Error, Flow, Invocation, Request, Response, Result};
 use stackpress_server::{BuildResult, Server, ServerBuilder, ServerInvocationExt};
 
-/// Build an ordinary immutable host with the generated plugin and one UI route.
+#[path = "../../route-contract.rs"]
+pub mod routes;
+
+/// Build the public read-only example at the root mount.
 ///
 /// # Errors
-/// Preserves checked plugin/startup/registration failures.
+/// Preserves checked plugin/startup/page-registration failures.
 pub async fn application() -> BuildResult<Server> {
+    application_with_base(BasePath::default()).await
+}
+
+/// Build one explicit mount; caller headers never select the route/asset base.
+///
+/// # Errors
+/// Returns checked startup, route, asset or generated plugin failures.
+pub async fn application_with_base(base: BasePath) -> BuildResult<Server> {
     stackpress_framework_ui::render::initialize_ssr().map_err(Error::from_source)?;
     let mut app = ServerBuilder::new();
     stackpress_example_generated_profile::generated::register(&mut app)?;
-    app.get("/ui/profiles", page)?;
-    app.post("/ui-api/v1/profile-search", search_api)?;
+    register_pages(&mut app, base.clone())?;
+    app.post(
+        routes::search_api(&base)
+            .map_err(Error::from_source)?
+            .as_str(),
+        search_api,
+    )?;
     app.build().await
 }
 
-/// Fixed HTTP operation entry; caller fields never select the delegated event.
+/// Register native pages from the same compiled catalog used by client path descriptors.
 ///
 /// # Errors
-/// Preserves validation/domain errors through the existing lifecycle.
+/// Returns checked page policy and ordinary server registration errors.
+pub fn register_pages(app: &mut ServerBuilder, base: BasePath) -> Result<()> {
+    let catalog = routes::catalog(base.clone()).map_err(Error::from_source)?;
+    let search_base = base.clone();
+    let search = PageSpec::get(
+        catalog
+            .pattern("profiles")
+            .map_err(Error::from_source)?
+            .as_str(),
+        "profiles",
+        load_profiles,
+    )?
+    .location(move |page: &SearchPage| routes::search_location(&search_base, &page.input.id));
+    app.page(search, renderer(base.clone()).map_err(Error::from_source)?)?;
+    let detail_base = base.clone();
+    let detail = PageSpec::get(
+        catalog
+            .pattern("profile-detail")
+            .map_err(Error::from_source)?
+            .as_str(),
+        "profile-detail",
+        load_detail,
+    )?
+    .location(move |page: &SearchPage| {
+        routes::detail()?.location(&detail_base, &[("id", &page.input.id)])
+    });
+    app.page(detail, renderer(base).map_err(Error::from_source)?)?;
+    Ok(())
+}
+
+/// Decode only the fixed JSON body, independently of merged query/path data.
+fn decode_search(req: &Request) -> Result<SearchInput> {
+    if req.mimetype().split(';').next().map(str::trim) != Some("application/json") {
+        return Err(Error::invalid("search requires JSON")
+            .with_public_message("Send a JSON search request."));
+    }
+    let bytes = match req.body() {
+        Body::Bytes(bytes) => bytes.as_slice(),
+        Body::Text(text) => text.as_bytes(),
+        _ => return Err(Error::invalid("search requires a buffered JSON body")),
+    };
+    if bytes.len() > MAX_REQUEST_BYTES {
+        return Err(Error::limit("search request exceeds finite limit"));
+    }
+    let input: SearchInput = serde_json::from_slice(bytes).map_err(|error| {
+        Error::from_source(error)
+            .with_code(400)
+            .with_public_message("Invalid search request.")
+    })?;
+    input.validate().map_err(|message| {
+        Error::invalid("invalid public search input").with_public_message(message)
+    })?;
+    Ok(input)
+}
+
+/// Fixed JSON operation entry; no DTO field can choose an event or native service.
+///
+/// # Errors
+/// Preserves malformed input/domain causes through the existing error lifecycle;
+/// public responses use its sanitized error envelope, never a HandleReport.
 pub async fn search_api(
     req: &mut Request,
     res: &mut Response,
     inv: Invocation<'_>,
 ) -> Result<Flow> {
-    let revision = req.data.path_as::<u32>("revision")?.unwrap_or_default();
-    if revision != stackpress_example_profile_ui_contracts::REVISION {
-        return Err(Error::invalid("Page version changed. Refresh to continue."));
-    }
+    let input = decode_search(req)?;
+    // Replace the one allowed domain field after strict body validation. Query fields
+    // cannot override it, and unknown body fields were rejected by the DTO decoder.
+    req.data.set("id", input.id)?;
     match load_profiles(req, res, inv).await? {
         PageLoad::Abort => Ok(Flow::Abort),
         PageLoad::Ready(page) => {
@@ -42,10 +122,10 @@ pub async fn search_api(
     }
 }
 
-/// Load owned public data by raw nested delegation inside the current lifecycle.
+/// Load owned public data by raw delegation inside the current top-level lifecycle.
 ///
 /// # Errors
-/// Preserves input/domain failures; malformed public projection becomes an error.
+/// Preserves input/domain failures; invalid public projection becomes an error.
 pub async fn load_profiles(
     req: &mut Request,
     res: &mut Response,
@@ -53,7 +133,7 @@ pub async fn load_profiles(
 ) -> Result<PageLoad<SearchPage>> {
     let id = req.data.path_as::<String>("id")?.unwrap_or_default();
     let input = SearchInput::new(id).map_err(Error::invalid)?;
-    // No call()/handle() here: the page already owns the one top-level lifecycle.
+    // No call()/handle() here: the current page owns exactly one lifecycle.
     if inv.delegate("profile-search", req, res).await? == Flow::Abort {
         return Ok(PageLoad::Abort);
     }
@@ -61,39 +141,81 @@ pub async fn load_profiles(
     Ok(PageLoad::Ready(SearchPage { input, reply }))
 }
 
-/// Named Send handler: complete the loader before constructing reactive state.
+/// Project an exact detail from the unchanged generated prefix-search capability.
 ///
 /// # Errors
-/// Returns loader/render errors through the existing host error lifecycle.
+/// Preserves domain errors and checked response-status changes.
+pub async fn load_detail(
+    req: &mut Request,
+    res: &mut Response,
+    inv: Invocation<'_>,
+) -> Result<PageLoad<SearchPage>> {
+    // Native route captures are exact encoded pathname text. Decode once before
+    // the shared input boundary; caller query fields cannot replace this capture.
+    let encoded = inv
+        .captures()
+        .params
+        .get("id")
+        .ok_or_else(|| Error::invalid("missing detail capture"))?;
+    let id = routes::decode_parameter(encoded).map_err(Error::from_source)?;
+    req.data.set("id", id)?;
+    let mut page = match load_profiles(req, res, inv).await? {
+        PageLoad::Abort => return Ok(PageLoad::Abort),
+        PageLoad::Ready(page) => page,
+    };
+    // The read capability remains generated; only page-specific presentation is narrowed.
+    page.reply.rows.retain(|row| row.id == page.input.id);
+    page.reply.total = page.reply.rows.len() as u64;
+    if page.reply.rows.is_empty() {
+        res.status_code(404, None)?;
+    }
+    Ok(PageLoad::Ready(page))
+}
+
+/// A checked native renderer; only the public snapshot reaches its component factory.
+fn renderer(base: BasePath) -> std::result::Result<impl PageRenderer<SearchPage>, ViewError> {
+    let contract = PageContract::new(REVISION, BUILD)?;
+    let assets = PageAssets {
+        build: BUILD.into(),
+        base,
+        module: PublicLocation::new("/assets/start.js")?,
+        stylesheet: None,
+    };
+    LeptosRenderer::new(contract, assets, |snapshot: &PageSnapshot<SearchPage>| {
+        // Generated Profile is intentionally non-Clone: independent wire projections
+        // avoid adding a hidden sharing contract to the generated domain type.
+        let seed = serde_json::from_value(
+            serde_json::to_value(&snapshot.data).map_err(ViewError::from_source)?,
+        )
+        .map_err(ViewError::from_source)?;
+        Ok(view! { <ProfileSearch seed/> })
+    })
+}
+
+/// Compatibility named handler for applications selecting a single root page.
+///
+/// # Errors
+/// Returns loader/render errors through the existing lifecycle.
 pub async fn page(req: &mut Request, res: &mut Response, inv: Invocation<'_>) -> Result<Flow> {
     let data = match load_profiles(req, res, inv).await? {
         PageLoad::Ready(data) => data,
         PageLoad::Abort => return Ok(Flow::Abort),
     };
-    // Serialize two independent owned projections, without cloning the generated Profile type.
-    let snapshot = snapshot(data).map_err(Error::from_source)?;
-    let html = render_snapshot(snapshot).await?;
-    res.html(html)?;
+    let snapshot =
+        stackpress_example_profile_ui_contracts::snapshot(data).map_err(Error::from_source)?;
+    res.html(render_snapshot(snapshot).await?)?;
     Ok(Flow::Continue)
 }
 
-/// Render owned public data using the same component/seed path as an HTTP page.
+/// Render an explicit public snapshot through the same bounded component factory.
 ///
 /// # Errors
-/// Returns bounded seed/HTML errors and missing native SSR initialization.
-pub async fn render_snapshot(
-    snapshot: stackpress_framework_view::PageSnapshot<SearchPage>,
-) -> Result<String> {
-    let seed =
-        serde_json::from_value(serde_json::to_value(&snapshot.data).map_err(Error::from_source)?)
-            .map_err(Error::from_source)?;
-    let prepared = LeptosRenderer::prepare(&snapshot, || view! { <ProfileSearch seed/> })
-        .map_err(Error::from_source)?;
-    // Only owned Send HTML/Head buffers survive this await; the Owner is already disposed.
-    let html = prepared
-        .finish()
+/// Returns bounded seed/HTML failures and missing native SSR initialization.
+pub async fn render_snapshot(snapshot: PageSnapshot<SearchPage>) -> Result<String> {
+    let renderer = renderer(BasePath::default()).map_err(Error::from_source)?;
+    Ok(renderer
+        .render(snapshot)
         .await
         .map_err(Error::from_source)?
-        .into_html();
-    Ok(html)
+        .into_html())
 }

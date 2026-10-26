@@ -100,6 +100,12 @@ pub fn ProfileSearch(
     #[prop(optional)]
     transport: Option<SearchTransport>,
 ) -> impl IntoView {
+    let action = format!(
+        "{}/ui/profiles",
+        stackpress_framework_ui::routing::use_route_context()
+            .base
+            .as_str()
+    );
     let controller = SearchController::new(seed);
     let SearchController {
         id,
@@ -123,7 +129,7 @@ pub fn ProfileSearch(
         <Meta name="description" content="Search public demo profiles"/>
         <main>
             <h1>"Profiles"</h1>
-            <form method="get" action="/ui/profiles" on:submit=submit>
+            <form method="get" action=action on:submit=submit>
                 <label for="profile-id">"Profile ID prefix"</label>
                 <input id="profile-id" name="id" value=move || id.get()
                     on:input=move |event| id.set(event_target_value(&event))
