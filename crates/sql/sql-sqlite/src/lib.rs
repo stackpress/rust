@@ -1,6 +1,6 @@
 //! Native Tokio/SQLx SQLite execution, with finite pool and query budgets.
 //!
-//! Open is eager and file-backed. Transactions own a lease across awaits; M0 retires
+//! Open is eager and file-backed. Transactions own a lease across awaits; the adapter retires
 //! every transaction connection on completion/drop, conservatively covering uncertain
 //! native state. Ordinary statement leases are reused. No database is opened by import,
 //! no listeners are started, and no SQL operation is automatically retried.
@@ -8,7 +8,12 @@
 //! Cancelling a future loses observation: a write/commit may already have happened.
 //! Drop initiates worker close and native rollback; it does not synchronously acknowledge it.
 //! Result limits bound retained first-party values, not SQLite VM memory/time or a
-//! native cell's allocation before decoding. Only native aarch64 macOS is proved at M0.
+//! native cell's allocation before decoding. M1 verification covers native aarch64 macOS only.
+//!
+//! Native insert IDs are reported only when this statement changes data and changes
+//! the connection's last-rowid observation. Reused explicit rowids and WITHOUT ROWID
+//! tables can yield `None`; use `INSERT ... RETURNING` for an authoritative generated
+//! key on every insert. UPDATE/DELETE/SELECT do not inherit a previous statement's ID.
 //!
 //! ```no_run
 //! use stackpress_sql::{DialectId, Engine, Sql};
@@ -25,6 +30,7 @@
 //! # }
 //! ```
 
+mod collect;
 mod execute;
 mod lease;
 mod options;
@@ -52,7 +58,8 @@ pub struct SqliteDatabase {
 }
 
 impl SqliteDatabase {
-    /// Validate options and eagerly open a real file using WAL/FULL and foreign keys.
+    /// Validate options and eagerly open a real file with FULL synchronous and foreign keys.
+    /// Writable connections request WAL; read-only connections preserve the file's mode.
     ///
     /// # Errors
     /// Invalid options, unavailable files, permissions and native/open timeouts fail;
