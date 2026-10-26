@@ -80,6 +80,28 @@ Design checkpoint prepared on 2026-10-25. Start with [Slice 5 decisions and reco
 - **Coordinator check of the probes:** they use only the in-process adapter, with no listener. The coordinator's independent tool-MSRV lookup was blocked by a transient tooling failure, so the Trunk 1.96.1 claim stands on implementer evidence. The chosen route doesn't use Trunk.
 - **Owner decisions:** recorded as [G25](../decisions.md), with every recommendation S5-D01 to D08 accepted. Installs approved: `wasm32-unknown-unknown`, `wasm-bindgen-cli 0.2.129`, `tauri-cli 2.12.4`.
 
+**M0 re-verification (coordinator, 2026-10-26): passed; merged as `2685caf`; M1 released.** Details are in the [M0 receipt](../slice-5-receipt-m0.md).
+
+- **Checks rerun by the coordinator** in a fresh target outside the shared-crate rlib-mixing defect:
+  - fmt passed, Clippy `-D warnings` clean, `cargo +1.96.0 check --workspace --all-targets` passed;
+  - 274 workspace tests passed, 0 failed, and 430 doctests passed.
+  - After merging with Slice 4, the integrated tree also passes: 284 tests, 432 doctests, Clippy clean, `--locked` against the regenerated lockfile, and `sql-sqlite` + `framework-ui-ssr` features checked together.
+- **End-to-end proofs rerun by the coordinator:**
+  - **Headless Chromium hydration** (request interception, no listener) reported `{"hydration":"unchanged DOM and focus","initialCalls":0,"secondTypedQuery":"Grace Hopper","disposed":true,"hostileSeed":"inert exact roundtrip","mismatch":"visible refresh required","errors":[]}`.
+  - **Packaged macOS `.app`** reported `{"events":["denied-ok","main-ok"],"in_flight":0,"packaged_origin":"tauri://localhost"}`; the ungranted window gets Tauri's ACL rejection, and no process was left running.
+- **Isolation:** `cargo tree` for the wasm32 client has no Tokio, Tauri, server, CLI, Idea transformer or SQL edge. The default facade gains no Leptos, Tauri or framework edge. No shared-crate edits.
+- **Coordinator-approved dependency exception:** `any_spawner =0.3.0` with `tokio`, native SSR only, for buffered `leptos_meta` Head assembly.
+  - `initialize_ssr()` is idempotent;
+  - an uninitialized executor returns the typed `ViewError::ExecutorUnavailable` instead of panicking;
+  - the browser trees carry no any_spawner Tokio feature.
+- **Coverage:** the native per-crate range is 87.84–100%; see the receipt table.
+  - **WASM disposition (coordinator):** numeric line coverage of the browser-only `client/src/browser.rs` adapter isn't measurable with native LLVM coverage, so it's excluded from the numeric gate. It's exercised behaviorally by the real Chromium and WKWebView proofs above.
+  - Condition carried forward: browser-only modules stay thin transport and DOM adapters. Decision and state logic lives in natively tested shared crates. The closeout re-checks this.
+- **Findings carried forward:**
+  1. The shared-crate compile-fail harnesses in `crates/lib/tests/handler_signature.rs` and `crates/server/tests/ownership.rs` pick the newest rlib by mtime, so a target holding several feature builds can pair incompatible builds. This is scheduled as a G23 shared-crate fix.
+  2. The browser proof depends on Playwright from a user-local npx cache, which is a reproducibility limitation.
+  3. The design packet's bare `--check` is not CLI syntax; use `--check true`.
+
 ## Acceptance notes
 
 Pending.

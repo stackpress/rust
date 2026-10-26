@@ -29,4 +29,8 @@ Spec file of [00001 Stackpress Rust foundation](index.md). Load to see freeze re
 
 ## Next action
 
-Slice 4 M0 and Slice 5 M0 run in parallel in separate worktrees. The coordinator re-verifies each one before any milestone work. Decisions G24 and G25 hold the accepted scope.
+Both M0 proofs are verified and merged. The work in flight and queued:
+
+- **Slice 4 M1:** lanes A (core) and B (SQLite) are running.
+- **Slice 5 M1:** release pending.
+- **Queued G23 fix:** the compile-fail harness rlib selection in lib/server tests.
