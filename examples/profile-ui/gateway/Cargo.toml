@@ -1,0 +1,32 @@
+[package]
+name = "stackpress-example-profile-ui-gateway"
+description = "Finite example-only HTTP/1 gateway for the shared Profile UI"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[features]
+default = []
+demo-customization = ["stackpress-example-profile-ui-web/demo-customization"]
+
+[dependencies]
+stackpress-lib = { path = "../../../crates/lib" }
+stackpress-server = { path = "../../../crates/server", features = ["http"] }
+stackpress-framework-view = { path = "../../../crates/framework/framework-view" }
+stackpress-example-profile-ui-web = { path = "../web" }
+stackpress-example-profile-ui-contracts = { path = "../contracts" }
+hyper = { version = "1", default-features = false, features = ["server", "http1"] }
+hyper-util = { version = "0.1", default-features = false, features = ["tokio"] }
+http-body-util = "0.1"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "net", "time", "signal", "sync", "io-util"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "=0.10.9"
+
+[dev-dependencies]
+hyper = { version = "1", default-features = false, features = ["client", "http1"] }
+tempfile = "3"
+
+[lints]
+workspace = true

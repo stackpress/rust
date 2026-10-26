@@ -1800,6 +1800,7 @@ dependencies = [
  "http",
  "http-body",
  "httparse",
+ "httpdate",
  "itoa",
  "pin-project-lite",
  "smallvec",
@@ -4296,6 +4297,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "stackpress-example-profile-ui-gateway"
+version = "0.1.0"
+dependencies = [
+ "http-body-util",
+ "hyper",
+ "hyper-util",
+ "serde",
+ "serde_json",
+ "sha2 0.10.9",
+ "stackpress-example-profile-ui-contracts",
+ "stackpress-example-profile-ui-web",
+ "stackpress-framework-view",
+ "stackpress-lib",
+ "stackpress-server",
+ "tempfile",
+ "tokio",
+]
+
+[[package]]
 name = "stackpress-example-profile-ui-native"
 version = "0.1.0"
 dependencies = [
@@ -4325,6 +4345,7 @@ dependencies = [
  "http",
  "leptos",
  "serde_json",
+ "stackpress-cli",
  "stackpress-example-generated-profile",
  "stackpress-example-profile-ui-contracts",
  "stackpress-example-profile-ui-shared",
@@ -5022,6 +5043,7 @@ dependencies = [
  "libc",
  "mio",
  "pin-project-lite",
+ "signal-hook-registry",
  "socket2",
  "tokio-macros",
  "windows-sys 0.61.2",

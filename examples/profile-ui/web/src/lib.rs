@@ -15,6 +15,18 @@ use stackpress_server::{BuildResult, Server, ServerBuilder, ServerInvocationExt}
 #[path = "../../route-contract.rs"]
 pub mod routes;
 
+#[cfg(feature = "demo-customization")]
+#[path = "../../customization.rs"]
+pub mod customization;
+
+/// Initialize the native render requirement at an explicit execution-host startup boundary.
+///
+/// # Errors
+/// Returns a typed missing-runtime/SSR-executor error.
+pub fn initialize_renderer() -> Result<()> {
+    stackpress_framework_ui::render::initialize_ssr().map_err(Error::from_source)
+}
+
 /// Build the public read-only example at the root mount.
 ///
 /// # Errors
@@ -30,15 +42,38 @@ pub async fn application() -> BuildResult<Server> {
 pub async fn application_with_base(base: BasePath) -> BuildResult<Server> {
     stackpress_framework_ui::render::initialize_ssr().map_err(Error::from_source)?;
     let mut app = ServerBuilder::new();
-    stackpress_example_generated_profile::generated::register(&mut app)?;
-    register_pages(&mut app, base.clone())?;
+    configure_application(&mut app, base.clone())?;
+    app.build().await
+}
+
+/// Register the unchanged generated domain, optional compiled plugin and page/API routes.
+///
+/// # Errors
+/// Returns ordinary plugin, route and renderer registration errors.
+pub fn configure_application(app: &mut ServerBuilder, base: BasePath) -> Result<()> {
+    configure_application_with_module(app, base, "/assets/start.js")
+}
+
+/// Select a checked content-addressed bootstrap module for the example gateway.
+///
+/// # Errors
+/// Returns invalid module, plugin and page registration errors.
+pub fn configure_application_with_module(
+    app: &mut ServerBuilder,
+    base: BasePath,
+    module: &str,
+) -> Result<()> {
+    stackpress_example_generated_profile::generated::register(app)?;
+    #[cfg(feature = "demo-customization")]
+    app.plugin("profile-ui-labels", customization::register)?;
+    register_pages_with_module(app, base.clone(), module)?;
     app.post(
         routes::search_api(&base)
             .map_err(Error::from_source)?
             .as_str(),
         search_api,
     )?;
-    app.build().await
+    Ok(())
 }
 
 /// Register native pages from the same compiled catalog used by client path descriptors.
@@ -46,6 +81,11 @@ pub async fn application_with_base(base: BasePath) -> BuildResult<Server> {
 /// # Errors
 /// Returns checked page policy and ordinary server registration errors.
 pub fn register_pages(app: &mut ServerBuilder, base: BasePath) -> Result<()> {
+    register_pages_with_module(app, base, "/assets/start.js")
+}
+
+/// Register the same catalog with an explicit checked application-relative asset module.
+fn register_pages_with_module(app: &mut ServerBuilder, base: BasePath, module: &str) -> Result<()> {
     let catalog = routes::catalog(base.clone()).map_err(Error::from_source)?;
     let search_base = base.clone();
     let search = PageSpec::get(
@@ -57,7 +97,10 @@ pub fn register_pages(app: &mut ServerBuilder, base: BasePath) -> Result<()> {
         load_profiles,
     )?
     .location(move |page: &SearchPage| routes::search_location(&search_base, &page.input.id));
-    app.page(search, renderer(base.clone()).map_err(Error::from_source)?)?;
+    app.page(
+        search,
+        renderer_with_settings(base.clone(), "en", "light", module).map_err(Error::from_source)?,
+    )?;
     let detail_base = base.clone();
     let detail = PageSpec::get(
         catalog
@@ -71,7 +114,10 @@ pub fn register_pages(app: &mut ServerBuilder, base: BasePath) -> Result<()> {
         let detail = page.detail.as_ref().ok_or(ViewError::InvalidSnapshot)?;
         routes::detail_location(&detail_base, &detail.id, &detail.search_prefix)
     });
-    app.page(detail, renderer(base).map_err(Error::from_source)?)?;
+    app.page(
+        detail,
+        renderer_with_settings(base, "en", "light", module).map_err(Error::from_source)?,
+    )?;
     Ok(())
 }
 
@@ -185,16 +231,12 @@ pub async fn load_detail(
     Ok(PageLoad::Ready(page))
 }
 
-/// A checked native renderer; only the public snapshot reaches its component factory.
-fn renderer(base: BasePath) -> std::result::Result<impl PageRenderer<SearchPage>, ViewError> {
-    renderer_with_settings(base, "en", "light")
-}
-
 /// Explicit trusted display settings, shared by fixtures and normal native registration.
 fn renderer_with_settings(
     base: BasePath,
     locale: &str,
     theme: &str,
+    module: &str,
 ) -> std::result::Result<impl PageRenderer<SearchPage>, ViewError> {
     let mut contract = PageContract::new(REVISION, BUILD)?;
     contract.locale = locale.into();
@@ -202,7 +244,7 @@ fn renderer_with_settings(
     let assets = PageAssets {
         build: BUILD.into(),
         base,
-        module: PublicLocation::new("/assets/start.js")?,
+        module: PublicLocation::new(module)?,
         stylesheet: None,
     };
     LeptosRenderer::new(contract, assets, |snapshot: &PageSnapshot<SearchPage>| {
@@ -251,8 +293,9 @@ pub async fn render_snapshot_with_base(
     snapshot: PageSnapshot<SearchPage>,
     base: BasePath,
 ) -> Result<String> {
-    let renderer = renderer_with_settings(base, &snapshot.locale, &snapshot.theme)
-        .map_err(Error::from_source)?;
+    let renderer =
+        renderer_with_settings(base, &snapshot.locale, &snapshot.theme, "/assets/start.js")
+            .map_err(Error::from_source)?;
     Ok(renderer
         .render(snapshot)
         .await

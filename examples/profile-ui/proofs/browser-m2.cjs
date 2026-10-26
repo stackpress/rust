@@ -155,7 +155,7 @@ const render = () => cp.execFileSync(host, [], { encoding: 'utf8', timeout: 1000
         geometry.push({ width, cssZoom: zoom, fits: true });
       }
       await page.evaluate(() => { document.documentElement.style.zoom = 1; });
-      await page.screenshot({ path: `/private/tmp/stackpress-s5-b-m2-${width}.png`, fullPage: true });
+      await page.screenshot({ path: `${process.env.PROFILE_UI_SCREENSHOT_PREFIX || "/private/tmp/stackpress-s5-b-m2"}-${width}.png`, fullPage: true });
     }
     // Disposal revokes active transport and safely ignores its eventual response.
     await submit('abc789');
