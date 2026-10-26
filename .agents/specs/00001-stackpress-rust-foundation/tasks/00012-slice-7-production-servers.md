@@ -59,7 +59,12 @@ Design checkpoint delivered on 2026-10-26: start at [Slice 7 design decisions](.
 
 ## Verification notes
 
-Pending.
+**M0, coordinator review on 2026-10-27.** Both lanes verified and merged into `trial/3`.
+
+- **SQL lane** ([receipt](00012-receipt-sql-m0.md); merge `4a1901d`): coordinator reran fmt, Clippy `-D warnings`, offline tests and the opt-in native tests against the local PostgreSQL 12.2 and MySQL 8.0.27 servers; all passed. The coordinator's own runs created and dropped `stackpress_s7_m0_16ad8_18e221e0a9e2f120` and `stackpress_s7_m0_16adc_18e221e0cdea1620`; a MySQL listing limited to `stackpress\_s7\_m0\_%` showed no leftovers. Coverage (implementer): PostgreSQL 78.56%, MySQL 82.93%. M0 retires every lease; safe reuse is an M1 item.
+- **HTTP lane** ([receipt](00012-receipt-http-m0.md); merge `43a8c21`): coordinator reran fmt, Clippy for server `http-stream` and host `tls`, and tests for server default/`http-stream` and host default/`tls`; all passed. The pre-existing facade `server-http` feature has zero Hyper/Tokio/Rustls normal edges. Coverage (implementer): server 92.82%, server-http with TLS 95.33%. No listener was opened.
+- **Combined `trial/3`:** `cargo test --workspace --all-targets --locked` passed (491 passed, 0 failed, 62 ignored).
+- **M1 released to both lanes.** SQL M1: the owner-level SQLx fork was declined by the coordinator; MySQL reuse follows a conservative retire-unless-proven-stateless rule. HTTP M1: a pinned direct `httparse =1.10.1` preflight (already locked under Hyper) is approved, reject-only and bounded, so duplicate Content-Length and CL+TE can be rejected before Hyper normalizes them.
 
 ## Acceptance notes
 
