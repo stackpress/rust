@@ -167,6 +167,7 @@ impl Compare {
 /// # Ok::<(), stackpress_sql::SqlError>(())
 /// ```
 #[derive(Clone, Debug, PartialEq)]
+#[must_use = "use the configured value or operation"]
 pub enum Expr {
     /// A separately checked identifier.
     ///
@@ -555,6 +556,7 @@ impl Expr {
 /// # Ok::<(), stackpress_sql::SqlError>(())
 /// ```
 #[derive(Clone, Debug, PartialEq)]
+#[must_use = "use the configured value or operation"]
 pub struct Selector {
     /// None selects `*` (optionally qualified); Some renders the expression.
     expression: Option<Expr>,

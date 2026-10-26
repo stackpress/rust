@@ -61,7 +61,9 @@ fn generation_error(error: TransformError) -> Error {
     for _ in 0..=CompositionLimits::HARD_DEPTH + 4 {
         let Some(current) = cause else { break };
         if let Some(diagnostic) = current.downcast_ref::<stackpress_idea::parser::IdeaError>() {
-            return Error::invalid(diagnostic.to_string()).with_cause(error);
+            return Error::invalid("Profile schema could not be parsed")
+                .with_public_message(diagnostic.to_string())
+                .with_cause(error);
         }
         // A finite walk also protects the adapter from a malformed cyclic plugin error chain.
         cause = current.source();
@@ -115,4 +117,29 @@ pub async fn build_tool(layers: ConfigLayers) -> BuildResult<Server> {
     app.config_layers(layers)?;
     app.on("generate", generate_event)?;
     app.build().await
+}
+
+#[cfg(test)]
+mod diagnostic_tests {
+    use super::*;
+
+    /// Public parser coordinates survive without copying their explanation into native wrappers.
+    #[test]
+    fn parser_context_and_disclosure_are_separate() {
+        let directory = tempfile::tempdir_in(std::env::temp_dir().canonicalize().unwrap()).unwrap();
+        let path = directory.path().join("schema.idea");
+        std::fs::write(&path, "model X {").unwrap();
+        let error = generate(&path, &directory.path().join("output"), true).unwrap_err();
+        let error = generation_error(error);
+        assert_eq!(error.to_string(), "Profile schema could not be parsed");
+        assert_eq!(error.public_view().code, 400);
+        assert!(error.public_view().error.contains("schema.idea:1:"));
+        assert!(
+            error
+                .source()
+                .unwrap()
+                .downcast_ref::<TransformError>()
+                .is_some()
+        );
+    }
 }

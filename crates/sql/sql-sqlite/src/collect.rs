@@ -49,14 +49,14 @@ impl OutputBudget {
         Ok(())
     }
 
-    /// Decode one owned row using runtime storage types and ordered native column names.
-    pub(crate) fn decode(&mut self, native: SqliteRow) -> Result<Row> {
+    /// Decode one borrowed native row into owned values using runtime storage types and ordered native column names.
+    pub(crate) fn decode(&mut self, native: &SqliteRow) -> Result<Row> {
         self.start_row()?;
         let mut cells = Vec::with_capacity(native.len());
         for (index, column) in native.columns().iter().enumerate() {
             // Reserve the borrowed name before creating any owned metadata string.
             self.charge(column.name().len())?;
-            let value = self.decode_cell(&native, index)?;
+            let value = self.decode_cell(native, index)?;
             cells.push((column.name().to_owned(), value));
         }
         Ok(Row::new(cells))

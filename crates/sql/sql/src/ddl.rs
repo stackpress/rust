@@ -257,7 +257,15 @@ pub struct CreateData {
 /// assert_eq!(create.render(DialectId::Sqlite)?.queries().len(), 2);
 /// # Ok::<(), stackpress_sql::SqlError>(())
 /// ```
+///
+/// A discarded builder loses its configured operation.
+///
+/// ```compile_fail
+/// #![deny(unused_must_use)]
+/// stackpress_sql::Create::new("items").if_not_exists();
+/// ```
 #[derive(Clone, Debug, PartialEq)]
+#[must_use = "use the configured value or operation"]
 pub struct Create {
     data: CreateData,
 }
@@ -846,7 +854,15 @@ pub struct AlterData {
 /// );
 /// # Ok::<(), stackpress_sql::SqlError>(())
 /// ```
+///
+/// A discarded builder loses its configured operation.
+///
+/// ```compile_fail
+/// #![deny(unused_must_use)]
+/// stackpress_sql::Alter::new("items").remove_field("old");
+/// ```
 #[derive(Clone, Debug, PartialEq)]
+#[must_use = "use the configured value or operation"]
 pub struct Alter {
     data: AlterData,
 }

@@ -6,6 +6,10 @@ use stackpress_framework_view::{
 };
 
 /// The public search page; native and Leptos adapters consume these exact segments.
+///
+/// # Errors
+/// Returns InvalidPolicy if the compiled page identity or fixed segments are invalid;
+/// this is a definition error and queues no native registration.
 pub fn search() -> Result<PageRoute, ViewError> {
     PageRoute::new(
         "profiles",
@@ -14,6 +18,10 @@ pub fn search() -> Result<PageRoute, ViewError> {
 }
 
 /// The public detail path, with an encoded single-segment identifier.
+///
+/// # Errors
+/// Returns InvalidPolicy if the compiled identity/segments are invalid or parameter
+/// names repeat. The current fixed definition has one unique parameter.
 pub fn detail() -> Result<PageRoute, ViewError> {
     PageRoute::new(
         "profile-detail",
@@ -26,11 +34,19 @@ pub fn detail() -> Result<PageRoute, ViewError> {
 }
 
 /// Check the complete page inventory at the explicitly configured mount.
+///
+/// # Errors
+/// Propagates invalid compiled page definitions, or rejects an empty/excessive
+/// inventory or duplicate identity/path. No routes are registered here.
 pub fn catalog(base: BasePath) -> Result<RouteCatalog, ViewError> {
     RouteCatalog::new(base, vec![search()?, detail()?])
 }
 
 /// Public search locations carry only the explicitly allowlisted prefix.
+///
+/// # Errors
+/// Rejects an empty or >1024-byte prefix, invalid compiled route metadata or an
+/// unsafe/oversized final location. Input and mount remain unchanged.
 pub fn search_location(base: &BasePath, id: &str) -> Result<PublicLocation, ViewError> {
     valid_prefix(id)?;
     let path = search()?.location(base, &[])?;
@@ -128,6 +144,10 @@ fn valid_prefix(value: &str) -> Result<(), ViewError> {
 }
 
 /// The fixed operation endpoint cannot be selected by a caller field.
+///
+/// # Errors
+/// Returns the mount join error if the combined endpoint exceeds PublicLocation
+/// bounds or its fixed suffix becomes invalid. No endpoint is registered here.
 pub fn search_api(base: &BasePath) -> Result<PublicLocation, ViewError> {
     base.join("/ui-api/v1/profile-search")
 }

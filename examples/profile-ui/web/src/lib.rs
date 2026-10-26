@@ -76,6 +76,10 @@ pub fn configure_application(app: &mut ServerBuilder, base: BasePath) -> Result<
 ///
 /// # Errors
 /// Returns invalid module, plugin and page registration errors.
+#[expect(
+    clippy::needless_pass_by_value,
+    reason = "retain the public owned mount API while sharing it across page and operation registration"
+)]
 pub fn configure_application_with_module(
     app: &mut ServerBuilder,
     base: BasePath,

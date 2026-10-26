@@ -56,10 +56,9 @@ pub fn startup_error(failure: BuildError) -> BuildError {
         let mut failure = failure;
         // Only the database plugin owns this remedy; validation failures keep theirs.
         if failure.plugin.as_deref() == Some("database") {
-            failure.error = Error::new(format!(
-                "SQLite profile UI requires an installed sqlite.path; run sql-profile-setup explicitly: {}",
-                failure.error
-            )).with_cause(failure.error);
+            failure.error = Error::new(
+                "SQLite profile UI requires an installed sqlite.path; run sql-profile-setup explicitly"
+            ).with_cause(failure.error);
         }
         failure
     }

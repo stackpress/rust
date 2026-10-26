@@ -61,6 +61,9 @@ impl ThemeState {
 }
 
 /// Obtain an ancestor's theme without silently constructing a global default.
+///
+/// # Errors
+/// Returns a static diagnostic without installing state when no ancestor provides ThemeState.
 pub fn use_theme() -> Result<ThemeState, &'static str> {
     use_context().ok_or("Theme state requires LayoutProvider")
 }
@@ -227,6 +230,9 @@ impl Notifications {
 }
 
 /// Obtain scoped notifications, with a useful missing-provider diagnostic.
+///
+/// # Errors
+/// Returns a static diagnostic without installing state when no ancestor provides Notifications.
 pub fn use_notifications() -> Result<Notifications, &'static str> {
     use_context().ok_or("Notification state requires LayoutProvider")
 }

@@ -34,7 +34,7 @@ Retained keys read current label/href values rather than stale child-factory dat
 
 The Clone/Debug/PartialEq/Eq row has public fields `id: String`, `label: String`, and
 `href: Option<String>`. A present href uses Link's safety policy; absent href renders text.
-IDs must be unique within the collection; List does not validate/deduplicate them. The
-current row markup uses `data-profile-id` for the supplied stable key.
+IDs must be unique within the collection; List does not validate/deduplicate them.
+The domain-neutral row markup uses `data-item-id` for the supplied stable key.
 
 Related: [Link](link.md).

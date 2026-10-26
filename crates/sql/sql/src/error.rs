@@ -348,6 +348,7 @@ impl SqlError {
     /// assert_eq!(primary.cleanup_error().unwrap().kind(), ErrorKind::Closed);
     /// # Ok::<(), stackpress_sql::SqlError>(())
     /// ```
+    #[must_use = "use the returned value to retain this configuration"]
     pub fn with_cleanup(mut self, cleanup: SqlError) -> Self {
         self.cleanup = Some(Box::new(cleanup));
         self

@@ -552,7 +552,15 @@ pub struct SelectData {
 /// );
 /// # Ok::<(), stackpress_sql::SqlError>(())
 /// ```
+///
+/// A discarded builder loses its configured operation.
+///
+/// ```compile_fail
+/// #![deny(unused_must_use)]
+/// stackpress_sql::Select::new(["id"]).limit(1);
+/// ```
 #[derive(Clone, Debug, PartialEq)]
+#[must_use = "use the configured value or operation"]
 pub struct Select {
     /// All mutable builder state; only consumed fluent calls can change it.
     data: SelectData,
@@ -1157,7 +1165,15 @@ pub struct InsertData {
 /// assert_eq!(insert.render(DialectId::Sqlite)?.binds().len(), 2);
 /// # Ok::<(), stackpress_sql::SqlError>(())
 /// ```
+///
+/// A discarded builder loses its configured operation.
+///
+/// ```compile_fail
+/// #![deny(unused_must_use)]
+/// stackpress_sql::Insert::new("items").default_values();
+/// ```
 #[derive(Clone, Debug, PartialEq)]
+#[must_use = "use the configured value or operation"]
 pub struct Insert {
     data: InsertData,
 }
@@ -1497,7 +1513,15 @@ impl MutationData {
 /// assert!(query.render(DialectId::Sqlite)?.sql().contains("RETURNING"));
 /// # Ok::<(), stackpress_sql::SqlError>(())
 /// ```
+///
+/// A discarded builder loses its configured operation.
+///
+/// ```compile_fail
+/// #![deny(unused_must_use)]
+/// stackpress_sql::Update::new("items").all_rows();
+/// ```
 #[derive(Clone, Debug, PartialEq)]
+#[must_use = "use the configured value or operation"]
 pub struct Update {
     /// Shared target, predicates and returned projections.
     scope: MutationData,
@@ -1771,7 +1795,15 @@ impl Render for Update {
 /// assert!(query.render(DialectId::Sqlite)?.sql().contains("RETURNING"));
 /// # Ok::<(), stackpress_sql::SqlError>(())
 /// ```
+///
+/// A discarded builder loses its configured operation.
+///
+/// ```compile_fail
+/// #![deny(unused_must_use)]
+/// stackpress_sql::Delete::new("items").all_rows();
+/// ```
 #[derive(Clone, Debug, PartialEq)]
+#[must_use = "use the configured value or operation"]
 pub struct Delete {
     scope: MutationData,
 }

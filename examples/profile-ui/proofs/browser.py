@@ -16,7 +16,7 @@ def run(command, env, log):
         output.write("$ " + " ".join(map(str, command)) + "\n")
         output.flush()
         subprocess.run(list(map(str, command)), cwd=ROOT, env=env, stdout=output,
-                       stderr=subprocess.STDOUT, timeout=120, check=True)
+                       stderr=subprocess.STDOUT, timeout=600 if command[0] == "cargo" else 120, check=True)
     print(f"PASS {log.stem}", flush=True)
 
 
@@ -43,7 +43,7 @@ def startup_failures(native, database, env, log):
 def main():
     """Use only explicit temporary setup, then intercept all real Chromium traffic."""
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--sqlite", action="store_true", help="use already built SQLite feature binaries")
+    parser.add_argument("--sqlite", action="store_true", help="build and prove the SQLite feature binaries")
     args = parser.parse_args()
     native = Path(os.environ.get("PROFILE_UI_NATIVE_TARGET", ROOT / "target/profile-ui-native")).resolve()
     logs = Path(os.environ.get("PROFILE_UI_BROWSER_LOGS", ROOT / "examples/profile-ui/dist/browser-logs")).resolve()
@@ -51,10 +51,19 @@ def main():
     # A failed run must not retain a previous successful receipt.
     (logs / "summary.json").unlink(missing_ok=True)
     env = dict(os.environ, PROFILE_UI_HOST=str(native / "debug/stackpress-example-profile-ui-web"),
-               PROFILE_UI_GATEWAY_PROBE=str(native / "debug/probe"))
+               PROFILE_UI_GATEWAY_PROBE=str(native / "debug/probe"), CARGO_TARGET_DIR=str(native))
     env.pop("PROFILE_UI_CONFIG", None)
     env.pop("PROFILE_UI_DISPLAY", None)
     env.pop("PROFILE_UI_CUSTOMIZED", None)
+    # Cargo selects the exact feature mode even when another run reused this target.
+    # A failed build stops before startup probes, setup or any browser invocation.
+    features = ["--features", "sqlite"] if args.sqlite else []
+    run(["cargo", "build", "--locked", "-p", "stackpress-example-profile-ui-web",
+         "-p", "stackpress-example-profile-ui-gateway", "--bins", *features],
+        env, logs / "selected-backend-build.log")
+    if args.sqlite:
+        run(["cargo", "build", "--locked", "-p", "stackpress-example-sql-profile",
+             "--bin", "sql-profile-setup"], env, logs / "setup-build.log")
     with tempfile.TemporaryDirectory(prefix="profile-ui-browser-") as directory:
         if args.sqlite:
             database = Path(directory) / "profiles.sqlite"

@@ -134,7 +134,8 @@ impl PreparedPage {
     /// Head values must be eager owned text (reactive SSR Head is S5-F6).
     ///
     /// # Errors
-    /// Rejects the final complete HTML ceiling before the host can publish bytes.
+    /// Rejects missing SSR startup/runtime or the final complete HTML ceiling before
+    /// the host can publish bytes. Consuming this staged page never retries Head work.
     /// A panicking Head getter/formatter returns [`ViewError::Failure`]; its native
     /// cause names the eager Head requirement, while public Display stays safe.
     pub async fn finish(self) -> Result<RenderedPage, ViewError> {
@@ -152,7 +153,7 @@ impl PreparedPage {
         let html = std::panic::AssertUnwindSafe(assembly)
             .catch_unwind()
             .await
-            .map_err(|payload| ViewError::from_source(HeadPanic::new(payload)))?;
+            .map_err(|payload| ViewError::from_source(HeadPanic::new(payload.as_ref())))?;
         RenderedPage::with_limits(html, limits)
     }
 }
@@ -163,7 +164,7 @@ struct HeadPanic(String);
 
 impl HeadPanic {
     /// Retain a textual panic cause without exposing arbitrary payloads in a response.
-    fn new(payload: Box<dyn std::any::Any + Send>) -> Self {
+    fn new(payload: &(dyn std::any::Any + Send)) -> Self {
         let message = payload
             .downcast_ref::<String>()
             .map(String::as_str)
@@ -271,7 +272,9 @@ fn prepare<T: Serialize, V: IntoView>(
         let body = component()?.to_html();
         // leptos_meta 0.8.7 injects title text as raw text. Reserve its final formatter
         // for escaping so an untrusted plain-text title cannot terminate the title tag.
-        let _ = view! { <leptos_meta::Title formatter=escape_html/> }.to_html();
+        // The thin adapter retains Leptos's required owned-String callback contract.
+        let _ =
+            view! { <leptos_meta::Title formatter=|value: String| escape_html(&value)/> }.to_html();
         let _ =
             view! { <leptos_meta::Link rel="canonical" href=snapshot.location.clone()/> }.to_html();
         if let Some(style) = &assets.stylesheet {
@@ -286,7 +289,7 @@ fn prepare<T: Serialize, V: IntoView>(
         "<!DOCTYPE html><html lang=\"{}\" data-theme=\"{}\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><!--HEAD--></head><body><div id=\"app\">{body}</div><script type=\"application/json\" id=\"stackpress-page\">{seed}</script><script type=\"application/json\" id=\"stackpress-assets\">{bootstrap}</script><script type=\"module\" src=\"{}\"></script></body></html>",
         snapshot.locale,
         snapshot.theme,
-        escape_html(module.into())
+        escape_html(module.as_str())
     );
     Ok(PreparedPage {
         html,
@@ -296,7 +299,7 @@ fn prepare<T: Serialize, V: IntoView>(
 }
 
 /// Encode plain text for HTML text/attribute contexts; browser Title uses its safe DOM API.
-fn escape_html(value: String) -> String {
+fn escape_html(value: &str) -> String {
     let mut encoded = String::with_capacity(value.len());
     for character in value.chars() {
         match character {
@@ -309,4 +312,18 @@ fn escape_html(value: String) -> String {
         }
     }
     encoded
+}
+
+#[cfg(test)]
+mod escaping_tests {
+    use super::escape_html;
+
+    /// Escaping borrows reusable input and preserves Unicode and all HTML delimiters.
+    #[test]
+    fn escaping_borrows_text() {
+        let input = String::from("雪 & < > \" '");
+        assert_eq!(escape_html(&input), "雪 &amp; &lt; &gt; &quot; &#39;");
+        assert_eq!(input, "雪 & < > \" '");
+        assert_eq!(escape_html(""), "");
+    }
 }

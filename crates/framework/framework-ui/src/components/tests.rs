@@ -95,7 +95,7 @@ fn list_layout_and_notifications() {
         assert!(html.contains("<main id=\"main-content\""));
         assert!(html.contains("aria-label=\"Search help\""));
         assert!(html.contains("aria-label=\"About\""));
-        assert!(html.contains("data-profile-id=\"1\""));
+        assert!(html.contains("data-item-id=\"1\""));
         assert!(html.contains("&lt;Ada&gt;"));
         assert!(html.contains("Empty list"));
         assert!(html.contains("&lt;b&gt;Done&lt;/b&gt;"));

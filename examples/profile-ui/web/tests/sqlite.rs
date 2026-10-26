@@ -147,6 +147,14 @@ async fn startup_has_no_setup_effects() {
         .err()
         .unwrap();
     assert!(error.to_string().contains("sql-profile-setup"));
+    assert_eq!(
+        error.error.to_string(),
+        "SQLite profile UI requires an installed sqlite.path; run sql-profile-setup explicitly"
+    );
+    let cause = std::error::Error::source(&error.error).unwrap();
+    assert!(cause.downcast_ref::<stackpress_lib::Error>().is_some());
+    assert!(std::error::Error::source(cause).is_some());
+
     assert!(!path.exists());
     std::fs::write(&path, []).unwrap();
     let error = application_with_config(BasePath::default(), layers(&path, 3))

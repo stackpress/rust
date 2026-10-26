@@ -211,6 +211,10 @@ impl LanguageContext {
 }
 
 /// Read the current root's language, diagnosing a missing provider explicitly.
+///
+/// # Errors
+/// Returns a static diagnostic when this Owner has no ancestor language provider.
+/// No fallback language or context is installed.
 pub fn use_language() -> Result<LanguageContext, &'static str> {
     use_context().ok_or("Translations require LanguageProvider")
 }

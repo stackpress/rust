@@ -327,6 +327,7 @@ fn safety_under_watchdog() {
         "plan",
         "transaction_plan",
         "failed_plan_cleanup",
+        "borrowed_decode",
         "acquire",
         "disclosure",
     ] {
@@ -353,6 +354,7 @@ async fn native_child() {
         match scenario.as_str() {
             "acquire" => acquisition().await,
             "disclosure" => disclosure().await,
+            "borrowed_decode" => borrowed_decode().await,
             "failed_plan_cleanup" => failed_plan_cleanup().await,
             phase => suspensions(phase).await,
         }
@@ -428,4 +430,21 @@ fn shutdown_under_watchdog() {
         Duration::from_secs(10),
     );
     assert!(success && !expired, "shutdown: timeout={expired}\n{output}");
+}
+
+/// Decoding keeps the native row reusable while returning independent owned values.
+async fn borrowed_decode() {
+    let root = tempfile::tempdir().unwrap();
+    let database = SqliteDatabase::open(options(&root, 1)).await.unwrap();
+    let native = sqlx::query("SELECT '雪' AS name, x'0102' AS bytes")
+        .fetch_one(&database.pool)
+        .await
+        .unwrap();
+    let mut budget = crate::collect::OutputBudget::new(stackpress_sql::QueryLimits::default());
+    let row = budget.decode(&native).unwrap();
+    assert_eq!(row.try_get::<String>("name").unwrap(), "雪");
+    assert_eq!(row.try_get::<Vec<u8>>("bytes").unwrap(), [1, 2]);
+    assert_eq!(sqlx::Row::get::<String, _>(&native, "name"), "雪");
+    assert_eq!(budget.decode(&native).unwrap().cells(), row.cells());
+    database.pool.close().await;
 }

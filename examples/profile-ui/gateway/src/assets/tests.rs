@@ -146,3 +146,43 @@ fn fail_closed_with_asset_path() {
     }
     assert!(read_bounded(Path::new("/does-not-exist"), 10).is_err());
 }
+
+/// Native asset wrappers add operation context once and retain concrete leaf failures.
+#[test]
+fn asset_failures_keep_distinct_context_and_sources() {
+    use std::error::Error as _;
+    let directory = fixture();
+    let path = directory.path().join("manifest.json");
+    std::fs::write(&path, b"{").unwrap();
+    let error = AssetBundle::load(directory.path()).err().unwrap();
+    assert!(
+        error
+            .to_string()
+            .contains("asset manifest could not be decoded")
+    );
+    assert!(!error.to_string().contains("EOF"));
+    // io::Error delegates source() to its contained contextual error.
+    assert!(
+        error
+            .source()
+            .unwrap()
+            .downcast_ref::<serde_json::Error>()
+            .is_some()
+    );
+    let error = at(
+        &path,
+        io::Error::new(io::ErrorKind::PermissionDenied, "private native failure"),
+    );
+    assert!(error.to_string().contains("asset could not be read"));
+    assert!(!error.to_string().contains("private native failure"));
+    assert_eq!(error.kind(), io::ErrorKind::PermissionDenied);
+    assert_eq!(
+        error
+            .source()
+            .unwrap()
+            .downcast_ref::<io::Error>()
+            .unwrap()
+            .kind(),
+        io::ErrorKind::PermissionDenied
+    );
+}

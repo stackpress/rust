@@ -352,7 +352,15 @@ impl<T: Into<SqlValue>> From<T> for DefaultValue {
 /// assert!(field.comment.is_none());
 /// # Ok::<(), stackpress_sql::SqlError>(())
 /// ```
+///
+/// A discarded builder loses its configured operation.
+///
+/// ```compile_fail
+/// #![deny(unused_must_use)]
+/// stackpress_sql::Field::new("id", stackpress_sql::SqlType::Integer).not_null();
+/// ```
 #[derive(Clone, Debug, PartialEq)]
+#[must_use = "use the configured value or operation"]
 pub struct Field {
     /// One literal column name.
     ///
@@ -694,6 +702,7 @@ impl Field {
 /// # Ok::<(), stackpress_sql::SqlError>(())
 /// ```
 #[derive(Clone, Debug, Eq, PartialEq)]
+#[must_use = "use the configured value or operation"]
 pub struct Index {
     /// Literal index name.
     ///
