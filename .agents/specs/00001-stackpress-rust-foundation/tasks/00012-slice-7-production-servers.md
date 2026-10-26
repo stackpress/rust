@@ -55,7 +55,7 @@ Acceptance criteria: none (library work).
 
 ## Implementation notes
 
-Design checkpoint delivered on 2026-10-26: start at [Slice 7 design decisions](../slice-7-design-decisions.md). It awaits owner decisions; M0 is not released.
+Design checkpoint delivered on 2026-10-26: start at [Slice 7 design decisions](../slice-7-design-decisions.md). Owner decisions recorded as G28/G30 on 2026-10-26; M0 released on 2026-10-27.
 
 ## Verification notes
 

@@ -35,11 +35,13 @@ As in the coordinated workflow and task 00008: browser and packaged-app proofs, 
 
 ## Acceptance criteria
 
-To be proposed at the design checkpoint and accepted by the owner.
+Visual acceptance controls 00013-001 to 00013-013 in [Slice 8 verification](../slice-8-design-verification.md#proposed-owner-visual-acceptance), accepted by the owner on 2026-10-26 (G29). Controls for generated CRUD, mobile and streaming stay pending their dependency and target gates.
 
 ## Implementation notes
 
-Design checkpoint delivered on 2026-10-26: start at [Slice 8 design decisions](../slice-8-design-decisions.md). It awaits owner decisions and the installation approval; M0 is not released.
+Design checkpoint delivered on 2026-10-26: start at [Slice 8 design decisions](../slice-8-design-decisions.md). Owner decisions recorded as G29/G30 on 2026-10-26; M0 released on 2026-10-27.
+
+**Mobile installs (coordinator, 2026-10-27, owner-approved).** Rust `aarch64-apple-ios-sim` and `aarch64-linux-android` on 1.96.0. Temurin JDK 17.0.21+9 (ARM64) unpacked to `~/Library/Java/JavaVirtualMachines/jdk-17.0.21+9`; its published SHA-256 `78b08c7f…69ed1c15` matched. Note: `/usr/libexec/java_home` without a version now resolves to this JDK; Zulu 11 remains installed. Android command-line tools 19.0 (`commandlinetools-mac-13114758_latest.zip`, SHA-1 `c3e06a19…605f6f7c1d24`, matching Google's repository manifest) at `~/Library/Android/sdk/cmdline-tools/latest`. Via its sdkmanager, using only previously accepted licenses: `platforms;android-37.0` rev 2 (Google's current name for API 37), `build-tools;36.0.0`, `ndk;29.0.13846066` (rc3, as pinned by Tauri CLI 2.12.4), `platform-tools` 37.0.1, `emulator` 37.2.12 and `system-images;android-37.0;google_apis;arm64-v8a` rev 8. iOS 27.1 simulator runtime (24A94232, ARM64) via `xcodebuild -downloadPlatform`. With owner approval, the replaced iOS 15.4/18.5 runtimes, Android 30/33 system images and NDK 27.1 were removed; the owner's existing AVD definitions were left in place.
 
 ## Verification notes
 

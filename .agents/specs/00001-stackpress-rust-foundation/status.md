@@ -29,4 +29,4 @@ Spec file of [00001 Stackpress Rust foundation](index.md). Load to see freeze re
 
 ## Next action
 
-The design checkpoints for Slices 6, 7 and 8 (tasks 00011–00013) are running in parallel. The coordinator reviews them, then brings the owner's decisions in plain language. The owner is reviewing GitHub issues #1–#13, which are fixed on `trial/3`.
+The owner accepted all recommendations of the Slice 6, 7 and 8 designs (tasks 00011–00013; G27–G30) and approved the iOS and Android tooling, now installed. Their first proof steps (M0) run in parallel. The owner is reviewing GitHub issues #1–#13, which are fixed on `trial/3`.
