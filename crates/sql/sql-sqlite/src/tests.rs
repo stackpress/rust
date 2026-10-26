@@ -1,6 +1,7 @@
 //! M0 production-type proofs. Async scenarios run only under an external watchdog.
 
 mod host;
+mod m1;
 mod transitions;
 mod watchdog;
 
@@ -74,7 +75,7 @@ async fn statements() {
         .unwrap();
     assert_eq!(result.rows[0].try_get::<i64>("id").unwrap(), 1);
     assert_eq!(result.affected, 1);
-    assert_eq!(result.insert_id, None);
+    assert_eq!(result.insert_id, Some(1));
     assert_eq!(
         engine
             .execute(&sql("SELECT 1 AS n"))
