@@ -82,7 +82,18 @@ Before the task-note write, the Agent Workspace validator reported **146 errors 
 
 ## Verification notes
 
-Pending.
+Coordinator review on 2026-10-26. Result: **verified**; merged into `trial/3`.
+
+- **Scope:** only the profile-ui web/gateway/proofs/check/README, the root manifest/lock edges and this task file. sql-profile and `crates/**` are unchanged.
+- **Checks rerun by the coordinator:**
+  - `check.py` passed, in both default and `--sqlite` modes;
+  - 443 workspace tests passed, 0 failed; Clippy `-D warnings` clean; `cargo +1.96.0 check` passed;
+  - all 16 browser proofs passed (8 per backend, root and `/demo/v1`).
+- **First default browser run:** it failed only because it ran after the `--sqlite` check had rebuilt the shared `target/profile-ui-native` web binary with the SQLite feature. The binary correctly refused to start without an installed database. A rerun immediately after a default build passed 8/8.
+- **Coverage:** web 93.24%, gateway 88.82% (implementer figures).
+- **Follow-ups queued in task 00010's third pass:**
+  1. The default and SQLite builds share one binary path, so the proof wrapper should rebuild for its backend or detect a wrong-mode binary.
+  2. The startup error in `web/src/backend.rs` interpolates its cause Display into the wrapper message ("…: SQLite operation failed"), which violates the #11 wrapping policy merged afterwards.
 
 ## Acceptance notes
 

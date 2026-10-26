@@ -20,5 +20,5 @@ Status values follow the spec task implementation workflow: `proposed`, `open`, 
 | [00007B Consistent where_eq and insert_id Rustdoc](00007B-sql-where-eq-and-insert-id-docs.md) | verified | Side quest of 00007A, owner-approved and coordinator-verified 2026-10-26. Acceptance criteria: none. |
 | [00008 Slice 5 UI](00008-slice-5-ui.md) | accepted | Owner accepted 2026-10-25 (G25); M0–M4 and rounds 1–4 merged; coordinator closeout verified and owner visual acceptance 2026-10-26. |
 | [00008A UI usage and API docs](00008A-ui-docs.md) | verified | Owner requested 2026-10-26; 52 pages across framework-view and framework-ui; coordinator-reviewed 2026-10-26. Acceptance criteria: none. |
-| [00009 Profile UI backed by SQLite](00009-profile-ui-on-sqlite.md) | started | Owner requested 2026-10-26 (option B). Acceptance criteria: none; output parity with the accepted UI. |
+| [00009 Profile UI backed by SQLite](00009-profile-ui-on-sqlite.md) | verified | Owner requested 2026-10-26 (option B); coordinator-verified 2026-10-26; both backends pass all proofs. |
 | [00010 Owner review issues #1–#13](00010-owner-review-issues.md) | started | Owner filed 2026-10-26 and allowed early start; two crate-disjoint lanes. Acceptance criteria: none. |
