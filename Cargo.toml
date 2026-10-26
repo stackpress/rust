@@ -7,6 +7,7 @@ members = [
     "crates/framework/framework-view", "crates/framework/framework-ui",
     "examples/profile-ui/contracts", "examples/profile-ui/shared",
     "examples/profile-ui/web", "examples/profile-ui/client", "examples/profile-ui/native",
+    "examples/profile-ui/gateway",
 ]
 resolver = "3"
 
