@@ -39,7 +39,7 @@ To be proposed at the design checkpoint and accepted by the owner.
 
 ## Implementation notes
 
-Pending.
+Design checkpoint delivered on 2026-10-26: start at [Slice 8 design decisions](../slice-8-design-decisions.md). It awaits owner decisions and the installation approval; M0 is not released.
 
 ## Verification notes
 
