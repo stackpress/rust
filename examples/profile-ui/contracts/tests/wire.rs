@@ -1,6 +1,37 @@
 //! Strict input/reply codecs and generated public source reuse.
 use stackpress_example_profile_ui_contracts::*;
 
+/// Every admitted public row must have an unambiguous key for rendering and detail links.
+#[test]
+fn replies_reject_ambiguous_row_identity() {
+    for ids in [vec![""], vec!["abc", "abc"]] {
+        let rows = ids
+            .into_iter()
+            .map(|id| Profile {
+                id: id.into(),
+                name: "Public fixture".into(),
+            })
+            .collect::<Vec<_>>();
+        let reply = SearchReply {
+            revision: REVISION,
+            total: rows.len() as u64,
+            rows,
+        };
+        assert!(
+            reply.validate().is_err(),
+            "ambiguous identity must not enter the keyed UI"
+        );
+        let body = serde_json::to_string(&reply).unwrap();
+        assert!(decode_search_reply(&body, None).is_err());
+        assert!(
+            SearchReply::from_envelope(
+                &serde_json::json!({"results":reply.rows,"total":reply.total})
+            )
+            .is_err()
+        );
+    }
+}
+
 /// Public boundaries reject drift, malformed envelopes and unbounded fields.
 #[test]
 fn strict_input_and_public_projection() {

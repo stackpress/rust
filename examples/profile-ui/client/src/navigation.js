@@ -1,6 +1,7 @@
 // DOM/history transport only. Rust owns catalog matching, state and admission.
 let displayedPath;
 
+/** Install listeners for the single mounted example root; return its explicit disposer. */
 export function installNavigation(receive) {
   displayedPath = location.pathname;
   const pop = () => receive(location.pathname + location.search, false);
@@ -21,6 +22,7 @@ export function installNavigation(receive) {
   };
 }
 
+/** Publish a Rust-checked location and update only DOM/history presentation. */
 export function writeNavigation(location, push) {
   const nextPath = new URL(location, window.location.href).pathname;
   const changedPage = displayedPath !== nextPath;

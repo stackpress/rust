@@ -14,6 +14,44 @@ fn seed() -> SearchPage {
     }
 }
 
+/// An ambiguous acquired reply cannot replace useful prior rows or enter the keyed view.
+#[test]
+fn controller_rejects_ambiguous_rows_without_publishing() {
+    let owner = Owner::new();
+    owner.with(|| {
+        let controller = SearchController::new(seed());
+        let transport = UnsyncCallback::new(move |(_, done): (SearchInput, SearchCompletion)| {
+            done(Ok(SearchReply {
+                revision: REVISION,
+                total: 2,
+                rows: vec![
+                    Profile {
+                        id: "abc".into(),
+                        name: "First duplicate".into(),
+                    },
+                    Profile {
+                        id: "abc".into(),
+                        name: "Second duplicate".into(),
+                    },
+                ],
+            }));
+        });
+        controller.submit(transport, None);
+        assert_eq!(
+            controller.rows.get_untracked(),
+            vec![("abc".into(), "Ada Lovelace".into())]
+        );
+        assert_eq!(controller.total.get_untracked(), 1);
+        assert_eq!(controller.published.get_untracked(), 0);
+        assert_eq!(
+            controller.failure_kind.get_untracked(),
+            Some(SearchFailureKind::Protocol)
+        );
+        assert!(!controller.pending.get_untracked());
+    });
+    owner.cleanup();
+}
+
 /// The real profile dictionary handles 0/1/2 consistently for text and node phrases.
 #[cfg(feature = "ssr")]
 #[test]

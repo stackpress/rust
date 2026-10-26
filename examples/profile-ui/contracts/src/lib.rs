@@ -80,17 +80,22 @@ impl SearchReply {
     /// Validate an external reply before mutating any UI state.
     ///
     /// # Errors
-    /// Rejects contract drift or an inconsistent/unbounded result shape.
+    /// Rejects contract drift, empty/duplicate row identities or inconsistent/unbounded data.
     pub fn validate(&self) -> Result<(), &'static str> {
         if self.revision != REVISION {
             return Err("Page version changed. Refresh to continue.");
         }
+        // A public row must name one detail and one stable keyed-list entry.
+        // Check identities here so every transport/seed/controller shares that invariant.
+        let mut identities = std::collections::BTreeSet::new();
         if self.rows.len() > 100
             || self.total != self.rows.len() as u64
-            || self
-                .rows
-                .iter()
-                .any(|row| row.id.len() > 1024 || row.name.len() > 4096)
+            || self.rows.iter().any(|row| {
+                row.id.is_empty()
+                    || row.id.len() > 1024
+                    || row.name.len() > 4096
+                    || !identities.insert(row.id.as_str())
+            })
         {
             return Err("Invalid profile reply");
         }
@@ -118,7 +123,7 @@ impl SearchReply {
     }
 }
 
-/// Page seed contains only search input plus public search output.
+/// Page seed contains public input/reply and optional exact detail/return context.
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct SearchPage {

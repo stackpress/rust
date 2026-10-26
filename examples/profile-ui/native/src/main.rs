@@ -113,30 +113,8 @@ fn main() {
                         .title("Stackpress Profiles")
                         .visible(*label == "main")
                         .on_navigation(move |url| {
-                            if proof.is_some() {
-                                eprintln!("packaged proof navigation: {url}");
-                            }
-                            if let Some(proof) = &proof
-                                && url.scheme() == "proof"
-                            {
-                                let event = url.host_str().unwrap_or("failed").to_owned();
-                                let mut complete = event == "failed";
-                                if let Ok(mut events) = proof.events.lock() {
-                                    events.push(event.clone());
-                                    complete |= events.iter().any(|event| event == "main-ok")
-                                        && events.iter().any(|event| event == "denied-ok");
-                                }
-                                if let Ok(mut details) = proof.details.lock() {
-                                    *details = url.query().map(str::to_owned);
-                                }
-                                if event == "audit"
-                                    && let Some(window) = handle.get_webview_window("main")
-                                {
-                                    let _ = window.eval("window.profileAuditAccepted=true;window.dispatchEvent(new Event('profile-proof-progress'));");
-                                }
-                                if complete {
-                                    handle.exit(i32::from(event == "failed"));
-                                }
+                            // Only an explicitly selected fixture may consume its diagnostic URLs.
+                            if proof.as_ref().is_some_and(|proof| proof.record_navigation(&handle, url)) {
                                 return false;
                             }
                             // History stays on packaged resources; native navigation cannot open a remote origin.

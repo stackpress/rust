@@ -15,13 +15,21 @@ use tokio::sync::watch;
 
 /// Native-only receipts and entry barriers. No field points back to the host or app.
 pub(super) struct Proof {
+    /// Launcher-owned output path, written only after the real shutdown drain.
     path: PathBuf,
+    /// Explicit finite fixture: navigation, window-close or app-quit.
     pub(super) mode: String,
-    pub(super) events: Mutex<Vec<String>>,
-    pub(super) details: Mutex<Option<String>>,
+    /// Diagnostic report events; these never admit application operations.
+    events: Mutex<Vec<String>>,
+    /// Public network/control receipt acknowledged before shutdown may begin.
+    details: Mutex<Option<String>>,
+    /// Actual suspended-handler entries, rather than submitted UI intentions.
     entries: AtomicUsize,
+    /// Actual stack disposal; it must match entries after successful shutdown.
     drops: Arc<AtomicUsize>,
+    /// Retained entry versions avoid timing guesses in the observer.
     entered: watch::Sender<usize>,
+    /// Registry size at the native close/quit entry barrier.
     before_shutdown: AtomicUsize,
 }
 impl Proof {
@@ -56,6 +64,36 @@ impl Proof {
         app.on("profile-search", operation)?;
         Ok(())
     }
+
+    /// Consume only fixture report URLs; normal navigation still uses the host origin gate.
+    pub(super) fn record_navigation(&self, handle: &tauri::AppHandle, url: &tauri::Url) -> bool {
+        eprintln!("packaged proof navigation: {url}");
+        if url.scheme() != "proof" {
+            return false;
+        }
+        // Reports are data for the opt-in launcher, never permissions or operation selectors.
+        let event = url.host_str().unwrap_or("failed").to_owned();
+        let mut complete = event == "failed";
+        if let Ok(mut events) = self.events.lock() {
+            events.push(event.clone());
+            complete |= events.iter().any(|event| event == "main-ok")
+                && events.iter().any(|event| event == "denied-ok");
+        }
+        if let Ok(mut details) = self.details.lock() {
+            *details = url.query().map(str::to_owned);
+        }
+        // The audit must be recorded before native entry may request close/quit.
+        if event == "audit"
+            && let Some(window) = handle.get_webview_window("main")
+        {
+            let _ = window.eval("window.profileAuditAccepted=true;window.dispatchEvent(new Event('profile-proof-progress'));");
+        }
+        if complete {
+            handle.exit(i32::from(event == "failed"));
+        }
+        true
+    }
+
     /// Report real entry to JS, or trigger a real close/exit request while a call is suspended.
     pub(super) fn monitor(self: &Arc<Self>, handle: tauri::AppHandle) {
         let proof = Arc::clone(self);
@@ -122,6 +160,7 @@ impl Proof {
 /// The actual suspended handler stack owns this receipt; map cleanup alone is insufficient.
 struct Suspended(Arc<AtomicUsize>);
 impl Drop for Suspended {
+    /// The owned handler stack, not registry cleanup alone, confirms disposal.
     fn drop(&mut self) {
         self.0.fetch_add(1, Ordering::SeqCst);
     }
