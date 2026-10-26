@@ -1,4 +1,4 @@
-//! A lease retains admission until native completion, including cancelled futures.
+//! Coupled work/admission ownership, with acknowledged cleanup while its runtime remains alive.
 
 use sqlx::pool::PoolConnection;
 use sqlx::{Sqlite, SqliteConnection};
@@ -30,6 +30,8 @@ impl Lease {
     /// Return a fully acknowledged ordinary statement's connection for reuse.
     pub(crate) fn release(mut self) {
         if let Some((connection, permit)) = self.parts.take() {
+            // Application SQL is acknowledged. SQLx may return/ping the idle connection
+            // asynchronously, while its own pool slot still bounds connection count.
             drop(connection);
             drop(permit);
         }

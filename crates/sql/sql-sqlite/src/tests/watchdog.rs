@@ -28,21 +28,31 @@ pub(super) fn run(test: &str, scenario: &str, deadline: Duration) -> (bool, bool
         .stderr(Stdio::from(output));
     let mut child = ChildGuard(command.spawn().unwrap());
     let start = Instant::now();
-    let (status, expired) = loop {
+    let (status, expired, exceeded) = loop {
+        // Reject a noisy child before its deadline, so diagnostics cannot fill the disk.
+        if log.as_file().metadata().unwrap().len() > 64 * 1024 {
+            let _ = child.0.kill();
+            break (child.0.wait().unwrap(), false, true);
+        }
         if let Some(status) = child.0.try_wait().unwrap() {
-            break (status, false);
+            break (status, false, false);
         }
         if start.elapsed() >= deadline {
             child.0.kill().unwrap();
-            break (child.0.wait().unwrap(), true);
+            break (child.0.wait().unwrap(), true, false);
         }
         std::thread::sleep(Duration::from_millis(10));
     };
-    let mut output = String::new();
+    // One extra byte detects growth after the last poll, including a child that exited.
+    let mut output = Vec::new();
     File::open(log.path())
         .unwrap()
-        .take(64 * 1024)
-        .read_to_string(&mut output)
+        .take(64 * 1024 + 1)
+        .read_to_end(&mut output)
         .unwrap();
-    (status.success(), expired, output)
+    let exceeded = exceeded || output.len() > 64 * 1024;
+    output.truncate(64 * 1024);
+    // Native diagnostics can contain non-UTF-8 bytes or end midway through a code point.
+    let output = String::from_utf8_lossy(&output).into_owned();
+    (status.success() && !exceeded, expired, output)
 }

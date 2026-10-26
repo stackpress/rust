@@ -6,6 +6,7 @@ use std::process::ExitCode;
 /// Accept exactly one explicit file path, install once and report failures without raw SQL/data.
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> ExitCode {
+    // Preserve native path spelling, and refuse extra arguments before opening any file.
     let mut args = std::env::args_os().skip(1);
     let path = match (args.next(), args.next()) {
         (Some(path), None) => PathBuf::from(path),

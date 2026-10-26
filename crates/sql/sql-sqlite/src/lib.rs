@@ -7,6 +7,8 @@
 //!
 //! Cancelling a future loses observation: a write/commit may already have happened.
 //! Drop initiates worker close and native rollback; it does not synchronously acknowledge it.
+//! Outside a live runtime, teardown is best effort; neither worker completion nor continued
+//! admission coupling is acknowledged. Await close before shutting down the owning runtime.
 //! Result limits bound retained first-party values, not SQLite VM memory/time or a
 //! native cell's allocation before decoding. Verification covers native aarch64 macOS only.
 //! Statements refresh the native schema and discard cached statement metadata before prepare,
@@ -36,6 +38,7 @@ mod collect;
 mod execute;
 mod lease;
 mod options;
+mod session;
 
 use std::sync::Arc;
 
@@ -48,6 +51,7 @@ use stackpress_sql::{
 use tokio::sync::{OwnedSemaphorePermit, Semaphore, TryAcquireError};
 
 use lease::Lease;
+use session::SqliteSession;
 
 pub use options::SqliteOptions;
 
@@ -55,7 +59,7 @@ pub use options::SqliteOptions;
 pub struct SqliteDatabase {
     /// Bounded pool; only fully acknowledged ordinary statements reuse a connection.
     pool: SqlitePool,
-    /// Counts admitted work through native completion, including detached cleanup.
+    /// Retains admission through native completion while the cleanup runtime remains alive.
     admission: Arc<Semaphore>,
 }
 
@@ -66,6 +70,9 @@ impl SqliteDatabase {
     /// # Errors
     /// Invalid options, unavailable files, permissions and native/open timeouts fail;
     /// there is no fallback to a different file or an in-memory database.
+    ///
+    /// Cancellation drops an unpublished pool and its initialized connections. Opening with
+    /// creation enabled can leave a new empty file; file creation is not transactional.
     pub async fn open(options: SqliteOptions) -> Result<Self> {
         Self::open_pool(options, SqlitePoolOptions::new()).await
     }
@@ -115,6 +122,8 @@ impl Database for SqliteDatabase {
     fn run(&self, query: Query, limits: QueryLimits) -> SqlFuture<'_, QueryResult> {
         Box::pin(async move {
             query.validate(limits)?;
+            // Admission bounds even callers waiting for a connection. Cancellation during
+            // acquisition drops the permit; no application SQL has been queued yet.
             let permit = self.admit()?;
             let connection = self.pool.acquire().await.map_err(execute::driver_error)?;
             let mut lease = Lease::new(connection, permit);
@@ -131,6 +140,8 @@ impl Database for SqliteDatabase {
     /// Own one native transaction without self-references or lifetime widening.
     fn begin(&self, _: TransactionOptions) -> SqlFuture<'_, Box<dyn TransactionSession>> {
         Box::pin(async move {
+            // Couple the permit to its acquired connection before the first native command.
+            // Cancelling acquisition itself leaves SQLx responsible for unpublished IO.
             let permit = self.admit()?;
             let connection = self.pool.acquire().await.map_err(execute::driver_error)?;
             let mut lease = Lease::new(connection, permit);
@@ -141,10 +152,7 @@ impl Database for SqliteDatabase {
                 .execute("BEGIN")
                 .await
                 .map_err(execute::driver_error)?;
-            Ok(Box::new(SqliteSession {
-                lease,
-                rollback_only: false,
-            }) as Box<dyn TransactionSession>)
+            Ok(Box::new(SqliteSession::new(lease)) as Box<dyn TransactionSession>)
         })
     }
 
@@ -156,68 +164,6 @@ impl Database for SqliteDatabase {
             Ok(())
         })
     }
-}
-
-/// One native transaction on a leased connection; lease Drop closes/rolls back native state.
-struct SqliteSession {
-    /// Owns the connection/admission until completion or native cleanup acknowledgement.
-    lease: Lease,
-    /// Set before execution, cleared only after a successful acknowledgement.
-    rollback_only: bool,
-}
-
-impl TransactionSession for SqliteSession {
-    /// Retain exclusive affinity and make cancellation/error rollback-only.
-    fn run(&mut self, query: Query, limits: QueryLimits) -> SqlFuture<'_, QueryResult> {
-        Box::pin(async move {
-            if self.rollback_only {
-                return Err(rollback_only());
-            }
-            self.rollback_only = true;
-            let result = execute::run(self.lease.connection()?, query, limits).await;
-            // Dropping this future before acknowledgement leaves rollback_only set.
-            if result.is_ok() {
-                self.rollback_only = false;
-            }
-            result
-        })
-    }
-
-    /// Consume ownership; cancellation may leave a committed or rolled-back outcome.
-    fn commit(mut self: Box<Self>) -> SqlFuture<'static, ()> {
-        Box::pin(async move {
-            if self.rollback_only {
-                return Err(rollback_only());
-            }
-            self.lease
-                .connection()?
-                .execute("COMMIT")
-                .await
-                .map_err(execute::driver_error)?;
-            // The consumed session retires its lease after native acknowledgement.
-            Ok(())
-        })
-    }
-
-    /// Explicitly roll back even after a statement failure; retirement covers cleanup failure.
-    fn rollback(mut self: Box<Self>) -> SqlFuture<'static, ()> {
-        Box::pin(async move {
-            self.lease
-                .connection()?
-                .execute("ROLLBACK")
-                .await
-                .map_err(execute::driver_error)?;
-            Ok(())
-        })
-    }
-}
-
-/// Explain why an uncertain/failed statement cannot be followed by commit or another query.
-fn rollback_only() -> SqlError {
-    SqlError::new(
-        ErrorKind::RollbackOnly,
-        "SQLite transaction requires rollback",
-    )
 }
 
 #[cfg(test)]

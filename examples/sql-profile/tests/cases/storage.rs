@@ -95,6 +95,30 @@ pub(crate) async fn setup() {
         .await
         .is_err()
     );
+
+    // Competing explicit installers must never merge/reseed partial installations. The
+    // native schema transaction admits one winner; the loser retains its failure source.
+    let concurrent = root.path().join("concurrent.sqlite");
+    let (left, right) = tokio::join!(
+        stackpress_example_sql_profile::setup::install_and_seed(&concurrent),
+        stackpress_example_sql_profile::setup::install_and_seed(&concurrent)
+    );
+    let loser = match (left, right) {
+        (Ok(()), Err(error)) | (Err(error), Ok(())) => error,
+        results => panic!("expected exactly one installer: {results:?}"),
+    };
+    assert!(loser.source().is_some());
+    let database = writable(&concurrent).await;
+    assert_eq!(
+        database
+            .fetch(&sql(
+                "SELECT ordinal, id, name FROM profile ORDER BY ordinal"
+            ))
+            .await
+            .unwrap(),
+        rows
+    );
+    database.close().await.unwrap();
 }
 
 /// Startup opens only existing valid schema, without creating files, installing tables or seeding rows.
