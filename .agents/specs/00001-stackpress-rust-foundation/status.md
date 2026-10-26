@@ -25,13 +25,14 @@ Spec file of [00001 Stackpress Rust foundation](index.md). Load to see freeze re
 | 2 | Verified; committed on `trial/3` | Task 00005; 143 workspace tests, 394 doctests; coverage lib 92.96%, server 92.62%/94.23% (http), CLI 96.32%, example 100%; CLI = HTTP = direct-call proof. |
 | 3 | Verified; committed on `trial/3` | Task 00006; 262 workspace tests, 430 doctests; coverage parser 94.44%, transformer 96.38%, wrapper 100%, codegen 95.27%, generated app 81.31%; imports compose end to end; generated app has no generator dependency. |
 | 4 | Verified; committed on `trial/3` | Task 00007; 423 workspace tests, 854 doctests; coverage sql 95.43%, sql-sqlite 95.41%, sql-profile example 89.53%; live PostgreSQL/MySQL renderer validation 16/16; default facade driver-free. |
-| 5 | Started (task 00008): M0 | Owner accepted 2026-10-25; parallel with Slice 4 under G23. |
+| 5 | Accepted; committed on `trial/3` | Task 00008; owner visual acceptance 2026-10-26; 442 workspace tests, 855 doctests; coverage framework-view 94.52%, framework-ui 98.12%; SSR, hydration, CSR and a packaged macOS app with networking-free local operation. |
 
 ## Next action
 
-In flight:
+All planned slices (0–5) are verified, and Slice 5 is accepted. In flight:
 
-- **Slice 4, lane A M2:** the network renderers, validated against the owner's local PostgreSQL 12.2 and MySQL 8.0.27.
-- **Slice 5, lane B:** integration and M2 completion.
+- 00008A, UI docs;
+- 00009, the profile UI on SQLite;
+- 00010, owner review issues #1–#13, in two lanes.
 
-The compile-fail harness fix was merged as `1e957a4` ([receipt](fix-compile-fail-harness-receipt.md)). Both harnesses now use trybuild against the exact build. The coordinator reproduced the failure with three mixed-feature builds in one target, and the same sequence now passes.
+Deferred and proposed follow-ups are listed in the slice design files. KB promotion is deferred at the owner's request.

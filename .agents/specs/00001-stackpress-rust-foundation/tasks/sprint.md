@@ -39,7 +39,7 @@ Acceptance criteria: none for library tasks, because they have no human-reviewab
 | [00007](00007-slice-4-sql.md) | 4 | `stackpress-sql`, first backend, and `framework-sql` integration; parallel with 00008 (G23). | verified |
 | [00007A](00007A-sql-docs.md) | 4 | Follow-up: SQL core and SQLite usage/API docs (chrisai-docing). | verified |
 | [00007B](00007B-sql-where-eq-and-insert-id-docs.md) | 4 | Side quest of 00007A: `Select::where_eq` appends like Update/Delete; current `insert_id` Rustdoc. | verified |
-| [00008](00008-slice-5-ui.md) | 5 | `framework-view`/`framework-ui` Leptos SSR with hydration, and a Tauri client; parallel with 00007 (G23). | started |
+| [00008](00008-slice-5-ui.md) | 5 | `framework-view`/`framework-ui` Leptos SSR with hydration, and a Tauri client; parallel with 00007 (G23). | accepted |
 | [00008A](00008A-ui-docs.md) | 5 | Follow-up: framework-view and framework-ui usage/API docs (chrisai-docing). | started |
 | [00009](00009-profile-ui-on-sqlite.md) | 4+5 | Connect the profile UI web host and gateway to the SQLite-backed profile-search. | started |
 | [00010](00010-owner-review-issues.md) | 1–3 | Owner review issues #1–#13: error policy, blocking IO, limits, API hygiene. | started |
