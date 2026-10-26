@@ -1,0 +1,21 @@
+[package]
+name = "stackpress-example-profile-ui-shared"
+description = "One Profile component for SSR, hydration and packaged CSR"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[features]
+default = []
+ssr = ["stackpress-framework-ui/ssr"]
+hydrate = ["stackpress-framework-ui/hydrate"]
+csr = ["stackpress-framework-ui/csr"]
+
+[dependencies]
+leptos = { version = "=0.8.22", default-features = false }
+stackpress-framework-ui = { path = "../../../crates/framework/framework-ui" }
+stackpress-example-profile-ui-contracts = { path = "../contracts" }
+
+[lints]
+workspace = true

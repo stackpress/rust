@@ -13,6 +13,10 @@
 //! native Tokio/SQLx SQLite adapter. Neither feature is enabled by default; a re-export
 //! does not open a database or expose a query capability.
 //!
+//! UI is opt-in with `framework-ui-ssr`, `framework-ui-hydrate` or `framework-ui-csr`.
+//! Build these mutually exclusive render modes separately. Native buffered SSR requires
+//! `framework_ui::render::initialize_ssr()` during startup inside an active Tokio runtime.
+//!
 //! # Examples
 //!
 //! ```
@@ -35,6 +39,10 @@
 //! # }
 //! ```
 
+#[cfg(feature = "framework-ui")]
+pub use stackpress_framework_ui as framework_ui;
+#[cfg(feature = "framework-view")]
+pub use stackpress_framework_view as framework_view;
 #[cfg(feature = "idea")]
 pub use stackpress_idea as idea;
 #[cfg(feature = "idea-parser")]

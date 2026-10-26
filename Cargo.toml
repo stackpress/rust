@@ -4,6 +4,9 @@ members = [
     "crates/idea/idea-parser", "crates/idea/idea-transformer", "crates/idea/idea",
     "examples/generated-profile/codegen", "examples/generated-profile/app",
     "crates/sql/sql", "crates/sql/sql-sqlite",
+    "crates/framework/framework-view", "crates/framework/framework-ui",
+    "examples/profile-ui/contracts", "examples/profile-ui/shared",
+    "examples/profile-ui/web", "examples/profile-ui/client", "examples/profile-ui/native",
 ]
 resolver = "3"
 
@@ -33,6 +36,8 @@ stackpress-idea-transformer = { path = "crates/idea/idea-transformer", optional 
 stackpress-idea = { path = "crates/idea/idea", optional = true }
 stackpress-sql = { path = "crates/sql/sql", optional = true }
 stackpress-sql-sqlite = { path = "crates/sql/sql-sqlite", optional = true }
+stackpress-framework-view = { path = "crates/framework/framework-view", optional = true }
+stackpress-framework-ui = { path = "crates/framework/framework-ui", optional = true }
 
 [features]
 default = []
@@ -43,6 +48,11 @@ idea-transformer = ["dep:stackpress-idea-transformer"]
 idea = ["dep:stackpress-idea"]
 sql = ["dep:stackpress-sql"]
 sql-sqlite = ["sql", "dep:stackpress-sql-sqlite"]
+framework-view = ["dep:stackpress-framework-view"]
+framework-ui = ["framework-view", "dep:stackpress-framework-ui"]
+framework-ui-ssr = ["framework-ui", "stackpress-framework-ui/ssr"]
+framework-ui-hydrate = ["framework-ui", "stackpress-framework-ui/hydrate"]
+framework-ui-csr = ["framework-ui", "stackpress-framework-ui/csr"]
 
 [dev-dependencies]
 serde = { version = "1", features = ["derive"] }
