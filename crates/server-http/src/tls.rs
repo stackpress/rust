@@ -6,7 +6,7 @@ use rustls::{
     pki_types::{CertificateDer, PrivateKeyDer},
 };
 use stackpress_lib::Result;
-use std::{future::Future, net::SocketAddr, sync::Arc, time::Duration};
+use std::{future::Future, net::SocketAddr, sync::Arc};
 use tokio::io::{AsyncRead, AsyncWrite};
 
 /// Validated HTTP/1-only server configuration with explicit ring TLS 1.2/1.3 support.
@@ -36,11 +36,12 @@ impl TlsConfig {
     }
 }
 impl HttpServer {
-    /// Handshake supplied IO with a fixed five-second M0 deadline, then serve HTTP/1.1.
+    /// Admit supplied IO before a finite configured handshake, then serve bounded HTTP/1.1.
     ///
     /// Stop during handshake drops it immediately. Failure never falls back to plaintext
     /// and never invokes application lifecycle callbacks. Reports retain the native cause.
-    /// This seam establishes TLS behavior; configurable handshake admission is M1/M2.
+    /// Connection and handshake budgets are acquired synchronously before native TLS work.
+    /// Excess IO closes immediately; the report records 503 without plaintext fallback.
     pub async fn serve_tls_io<I, F>(
         &self,
         io: I,
@@ -52,39 +53,57 @@ impl HttpServer {
         I: AsyncRead + AsyncWrite + Unpin + Send + 'static,
         F: Future<Output = ()> + Send,
     {
-        // Measure the rejected handshake too; it has no framework HandleReport of its own.
-        let started = std::time::Instant::now();
+        let Some(admission) = self.admit(true) else {
+            drop(io);
+            return crate::report::rejected(
+                stackpress_lib::Error::new("TLS admission exhausted"),
+                503,
+            );
+        };
+        self.serve_tls_admitted(io, peer, tls, stop, admission, tokio::time::Instant::now())
+            .await
+    }
+    /// Retain a connection permit and release the handshake permit before HTTP starts.
+    pub(crate) async fn serve_tls_admitted<I, F>(
+        &self,
+        io: I,
+        peer: SocketAddr,
+        tls: TlsConfig,
+        stop: F,
+        mut admission: crate::Admission,
+        started: tokio::time::Instant,
+    ) -> ConnectionReport
+    where
+        I: AsyncRead + AsyncWrite + Unpin + Send + 'static,
+        F: Future<Output = ()> + Send,
+    {
+        let measured = std::time::Instant::now();
         tokio::pin!(stop);
         let acceptor = tokio_rustls::TlsAcceptor::from(tls.0);
-        // Stop wins before handshake polling, so an already-stopped connection allocates no host.
+        // Both budgets begin at admission; task scheduling and TLS cannot reset connection age.
+        let deadline = (started + self.limits.handshake_timeout)
+            .min(started + self.limits.connection_lifetime);
         let handshake = tokio::select! {
             biased;
-            () = &mut stop => return ConnectionReport { exchanges: Vec::new(), failure: None, shutdown: true, forced: false },
-            result = tokio::time::timeout(Duration::from_secs(5), acceptor.accept(io)) => result,
+            ()=&mut stop=>return ConnectionReport{exchanges:Vec::new(),failure:None,shutdown:true,forced:false},
+            result=tokio::time::timeout_at(deadline,acceptor.accept(io))=>result,
         };
         match handshake {
-            Ok(Ok(io)) => self.serve_connection(io, peer, "https", stop).await,
+            Ok(Ok(io)) => {
+                admission._handshake.take();
+                self.serve_connection(io, peer, "https", stop, started)
+                    .await
+            }
             result => {
                 let error = match result {
                     Ok(Err(cause)) => external("TLS handshake failed", cause),
-                    Err(cause) => external("TLS handshake deadline exceeded", cause),
+                    Err(cause) => external("TLS handshake deadline exceeded", cause).with_code(408),
                     Ok(Ok(_)) => unreachable!("successful handshake returned above"),
                 };
-                // No HTTP request parts exist at this boundary; never fabricate a host report.
-                let error = Arc::new(error);
-                ConnectionReport {
-                    exchanges: vec![crate::HttpExchangeReport {
-                        exchange_id: 1,
-                        host: None,
-                        delivery: crate::HttpDelivery::RejectedBeforeHost,
-                        bytes: 0,
-                        elapsed: started.elapsed(),
-                        failure: Some(Arc::clone(&error)),
-                    }],
-                    failure: Some(error),
-                    shutdown: false,
-                    forced: false,
-                }
+                let status = if error.code() == 408 { 408 } else { 400 };
+                let mut report = crate::report::rejected(error, status);
+                report.exchanges[0].elapsed = measured.elapsed();
+                report
             }
         }
     }
