@@ -29,11 +29,4 @@ Spec file of [00001 Stackpress Rust foundation](index.md). Load to see freeze re
 
 ## Next action
 
-All planned slices (0–5) and follow-ups through task 00010 are verified, and Slice 5 is accepted. The owner's GitHub issues #1–#13 are fixed on `trial/3` and remain open until the fixes reach `main`.
-
-The owner chooses the next step. The proposed options are:
-
-- generated data layer (Idea → SQL stores and operations);
-- production HTTP server and PostgreSQL/MySQL adapters;
-- more UI;
-- KB promotion, which is deferred.
+The design checkpoints for Slices 6, 7 and 8 (tasks 00011–00013) are running in parallel. The coordinator reviews them, then brings the owner's decisions in plain language. The owner is reviewing GitHub issues #1–#13, which are fixed on `trial/3`.

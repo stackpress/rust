@@ -22,3 +22,6 @@ Status values follow the spec task implementation workflow: `proposed`, `open`, 
 | [00008A UI usage and API docs](00008A-ui-docs.md) | verified | Owner requested 2026-10-26; 52 pages across framework-view and framework-ui; coordinator-reviewed 2026-10-26. Acceptance criteria: none. |
 | [00009 Profile UI backed by SQLite](00009-profile-ui-on-sqlite.md) | verified | Owner requested 2026-10-26 (option B); coordinator-verified 2026-10-26; both backends pass all proofs. |
 | [00010 Owner review issues #1–#13](00010-owner-review-issues.md) | verified | All 13 fixed in three passes; coordinator-verified 2026-10-26; notes posted on each GitHub issue (open until on `main`). Acceptance criteria: none. |
+| [00011 Slice 6 generated data layer](00011-slice-6-generated-data-layer.md) | started | Owner accepted 2026-10-26; design checkpoint in progress. |
+| [00012 Slice 7 production servers](00012-slice-7-production-servers.md) | started | Owner accepted 2026-10-26; design checkpoint in progress. |
+| [00013 Slice 8 more UI](00013-slice-8-more-ui.md) | started | Owner accepted 2026-10-26; design checkpoint in progress; visual acceptance criteria proposed at design. |

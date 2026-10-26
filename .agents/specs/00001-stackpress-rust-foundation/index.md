@@ -73,6 +73,9 @@ Approved with G12–G16 and coordinator DX changes; only M0 is released. Load th
 - [00008A UI usage and API docs](tasks/00008A-ui-docs.md): load for the framework-view/framework-ui documentation task.
 - [00009 Profile UI backed by SQLite](tasks/00009-profile-ui-on-sqlite.md): load for wiring the UI example to the SQLite-backed search.
 - [00010 Owner review issues #1–#13](tasks/00010-owner-review-issues.md): load for the GitHub review-issue batch across lib, server, CLI and transformer.
+- [00011 Slice 6 generated data layer](tasks/00011-slice-6-generated-data-layer.md): load for the Idea-to-SQL stores, operations and migrations task.
+- [00012 Slice 7 production servers](tasks/00012-slice-7-production-servers.md): load for the production HTTP server and PostgreSQL/MySQL adapters task.
+- [00013 Slice 8 more UI](tasks/00013-slice-8-more-ui.md): load for advanced components, schema-to-UI, language/session, native targets and streamed SSR.
 - [Slice 2 lane A rounds receipt](slice-2-receipt-lane-a-rounds.md): load for the server-core refactor rounds 1–4 (module split, lifecycle readability, examples, safety evidence) and final server coverage.
 - [Slice 2 lane B CLI receipt](slice-2-receipt-lane-b-cli.md): load for the `stackpress-cli` parsing/control/prompt/TTY implementation, its upstream inventory disposition, rounds 1–4, and verification.
 - [Slice 2 lane B CLI execution receipt](slice-2-receipt-lane-b-run.md): load for `run`/`main_with`, stdout/stderr and exit-code policy, output authority, and verification.

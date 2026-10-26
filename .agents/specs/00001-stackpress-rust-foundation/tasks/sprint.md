@@ -43,5 +43,8 @@ Acceptance criteria: none for library tasks, because they have no human-reviewab
 | [00008A](00008A-ui-docs.md) | 5 | Follow-up: framework-view and framework-ui usage/API docs (chrisai-docing). | verified |
 | [00009](00009-profile-ui-on-sqlite.md) | 4+5 | Connect the profile UI web host and gateway to the SQLite-backed profile-search. | verified |
 | [00010](00010-owner-review-issues.md) | 1–3 | Owner review issues #1–#13: error policy, blocking IO, limits, API hygiene. | verified |
+| [00011](00011-slice-6-generated-data-layer.md) | 6 | Generated data layer: framework-schema, framework-sql stores/operations, revisions and migrations (S4-F, S4-M). | started |
+| [00012](00012-slice-7-production-servers.md) | 7 | Production servers: HTTP server adapter and PostgreSQL/MySQL adapters (S2-Network, S4-N). | started |
+| [00013](00013-slice-8-more-ui.md) | 8 | More UI: components, rich content, schema-to-UI, language/session, native targets, async/streamed SSR (S5-F1 to F6). | started |
 
 Proposed tasks get task files only after the owner accepts them. Proposed numbers were shifted by one on 2026-10-24 when the owner requested task 00004; none had been accepted, so no stable number changed.
