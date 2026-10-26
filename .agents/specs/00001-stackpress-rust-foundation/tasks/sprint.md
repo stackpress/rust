@@ -42,6 +42,6 @@ Acceptance criteria: none for library tasks, because they have no human-reviewab
 | [00008](00008-slice-5-ui.md) | 5 | `framework-view`/`framework-ui` Leptos SSR with hydration, and a Tauri client; parallel with 00007 (G23). | accepted |
 | [00008A](00008A-ui-docs.md) | 5 | Follow-up: framework-view and framework-ui usage/API docs (chrisai-docing). | verified |
 | [00009](00009-profile-ui-on-sqlite.md) | 4+5 | Connect the profile UI web host and gateway to the SQLite-backed profile-search. | verified |
-| [00010](00010-owner-review-issues.md) | 1–3 | Owner review issues #1–#13: error policy, blocking IO, limits, API hygiene. | started |
+| [00010](00010-owner-review-issues.md) | 1–3 | Owner review issues #1–#13: error policy, blocking IO, limits, API hygiene. | verified |
 
 Proposed tasks get task files only after the owner accepts them. Proposed numbers were shifted by one on 2026-10-24 when the owner requested task 00004; none had been accepted, so no stable number changed.

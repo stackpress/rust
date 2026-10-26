@@ -51,11 +51,29 @@ Acceptance criteria: none
 
 ## Implementation notes
 
-Pending.
+All 13 issues are implemented in three passes. Each pass has its own receipt:
+
+- [lane 1, lib](00010-receipt-lib.md): #11 (error-wrapping policy), #1, #2, #5, and the lib parts of #4 and #7. Merged as `64a5b70`.
+- [lane 2, server, CLI and transformer](00010-receipt-host.md): #10, #3, #8, #9, #13, #12, and these crates' parts of #4, #6 and #7, plus the #11 consistency pass. Merged as `ff7a251`.
+- [final pass, SQL and framework](00010-receipt-final.md): the remaining parts of #4, #6 and #7; the `List` `data-profile-id` → `data-item-id` rename; #11 applied to the SQLite profile-UI startup error; proof wrappers that rebuild hosts per backend. Merged as `7031282`.
+
+The one approved observable change is #11's Display text: generic `Error::from_source` now shows `external operation failed` instead of copying the cause. The `data-item-id` rename is the approved markup change.
 
 ## Verification notes
 
-Pending.
+Coordinator review on 2026-10-26. Result: **verified**.
+
+- **Regression-first evidence:** each lane recorded every behavior fix failing before the change. Examples:
+  - #11: the wrapper Display duplicated its cause;
+  - #8: bootstrap blocked a sibling future;
+  - #9: a FIFO hung until the watchdog killed it;
+  - #4: discarded builder chains compiled without warning.
+- **Checks rerun by the coordinator on each lane and on the integrated `trial/3`:**
+  - fmt passed; Clippy and Rustdoc `-D warnings` clean; `cargo +1.96.0 check` passed;
+  - final integrated tree: **470 workspace tests and 867 doctests** passed;
+  - the profile-UI check passed for both backends, with all 16 browser proofs. The SQLite build ran deliberately before the default browser proofs, which pass now that the wrapper rebuilds per backend.
+- **Coverage, all above 70%:** lib 93.64%, server 91.61%, CLI 93.15%, transformer 93.62%. In the final-pass crates, the web example reads 75.85% because that run measured cargo tests only; task 00009's 93.24% also counted instrumented browser runs of the web executable.
+- **GitHub:** the coordinator posted a verified note on every issue (#1–#13) with commits, changes and evidence. The issues stay open until the fixes reach `main`.
 
 ## Acceptance notes
 

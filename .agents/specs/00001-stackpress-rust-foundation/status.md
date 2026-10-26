@@ -29,10 +29,11 @@ Spec file of [00001 Stackpress Rust foundation](index.md). Load to see freeze re
 
 ## Next action
 
-All planned slices (0–5) are verified, and Slice 5 is accepted. In flight:
+All planned slices (0–5) and follow-ups through task 00010 are verified, and Slice 5 is accepted. The owner's GitHub issues #1–#13 are fixed on `trial/3` and remain open until the fixes reach `main`.
 
-- 00008A, UI docs;
-- 00009, the profile UI on SQLite;
-- 00010, owner review issues #1–#13, in two lanes.
+The owner chooses the next step. The proposed options are:
 
-Deferred and proposed follow-ups are listed in the slice design files. KB promotion is deferred at the owner's request.
+- generated data layer (Idea → SQL stores and operations);
+- production HTTP server and PostgreSQL/MySQL adapters;
+- more UI;
+- KB promotion, which is deferred.
