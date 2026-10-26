@@ -247,3 +247,38 @@ pub(crate) fn json_string(value: &str) -> Result<String> {
 fn json_limit() -> SqlError {
     SqlError::new(ErrorKind::Limit, "SQL JSON limit exceeded")
 }
+
+/// Reject PostgreSQL JSONB's unsupported U+0000 strings/keys before generating SQL.
+pub(crate) fn validate_postgres_json(value: &JsonValue) -> Result<()> {
+    // Encoding establishes finite depth/nodes first; the following recursive walk is bounded.
+    value.to_json()?;
+    postgres_json_strings(value)
+}
+
+/// Walk an already bounded JSON document without allocating replacement strings.
+fn postgres_json_strings(value: &JsonValue) -> Result<()> {
+    match value {
+        JsonValue::Scalar(JsonScalar::String(text)) if text.contains('\0') => {
+            return Err(crate::identifier::unsupported(
+                "PostgreSQL JSONB cannot retain NUL strings",
+            ));
+        }
+        JsonValue::Array(values) => {
+            for value in values {
+                postgres_json_strings(value)?;
+            }
+        }
+        JsonValue::Object(values) => {
+            for (key, value) in values {
+                if key.contains('\0') {
+                    return Err(crate::identifier::unsupported(
+                        "PostgreSQL JSONB cannot retain NUL keys",
+                    ));
+                }
+                postgres_json_strings(value)?;
+            }
+        }
+        _ => {}
+    }
+    Ok(())
+}

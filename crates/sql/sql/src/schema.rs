@@ -126,6 +126,13 @@ impl Field {
     /// Validate dialect-independent field shape, without inferring SQL expressions.
     pub(crate) fn validate(&self) -> Result<()> {
         quote(&self.name)?;
+        if self
+            .comment
+            .as_ref()
+            .is_some_and(|comment| comment.len() > 1024 * 1024 || comment.contains('\0'))
+        {
+            return Err(invalid("invalid SQL field comment"));
+        }
         match (self.length, &self.data_type) {
             (None, _) => {}
             (Some(Length::Size(value)), SqlType::Varchar) if value > 0 => {}
@@ -135,6 +142,9 @@ impl Field {
         }
         if let Some(DefaultValue::Value(value)) = &self.default {
             value.validate()?;
+            if value.retained_bytes() > 1024 * 1024 {
+                return Err(invalid("SQL default exceeds input byte budget"));
+            }
             if matches!(value, SqlValue::Null) && !self.nullable {
                 return Err(invalid("NULL default requires nullable field"));
             }
@@ -277,7 +287,7 @@ pub enum ReferentialAction {
 
 impl ReferentialAction {
     /// Render only a finite native action keyword.
-    fn sql(self) -> &'static str {
+    pub(crate) fn sql(self) -> &'static str {
         match self {
             Self::NoAction => "NO ACTION",
             Self::Restrict => "RESTRICT",

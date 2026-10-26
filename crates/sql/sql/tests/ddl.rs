@@ -586,18 +586,8 @@ fn ddl_hostile_input_dialect_and_clone_independence() {
         );
     }
     for dialect in [DialectId::Postgres, DialectId::Mysql] {
-        assert_eq!(
-            table().render(dialect).unwrap_err().kind(),
-            ErrorKind::Unsupported
-        );
-        assert_eq!(
-            Alter::new("p")
-                .remove_field("x")
-                .render(dialect)
-                .unwrap_err()
-                .kind(),
-            ErrorKind::Unsupported
-        );
+        assert!(table().render(dialect).is_ok());
+        assert!(Alter::new("p").remove_field("x").render(dialect).is_ok());
     }
     let base = table();
     assert_eq!(
@@ -634,4 +624,22 @@ fn ddl_hostile_input_dialect_and_clone_independence() {
             .render(DialectId::Sqlite)
             .is_err()
     );
+}
+
+/// A primary key implies NOT NULL even if the field's nullable flag was left at its default.
+#[test]
+fn foreign_set_null_cannot_target_primary_columns() {
+    for action_on_delete in [true, false] {
+        let mut foreign = ForeignKey::new("fk", ["id"], "parent", ["id"]);
+        if action_on_delete {
+            foreign.on_delete = ReferentialAction::SetNull;
+        } else {
+            foreign.on_update = ReferentialAction::SetNull;
+        }
+        let create = Create::new("p")
+            .add_field(Field::new("id", SqlType::Integer))
+            .primary_key(["id"])
+            .add_foreign_key(foreign);
+        assert!(create.build().is_err());
+    }
 }

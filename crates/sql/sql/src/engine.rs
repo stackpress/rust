@@ -3,7 +3,7 @@
 use std::future::Future;
 use std::pin::Pin;
 
-use crate::{DialectId, Query, QueryLimits, QueryResult, Render, Result, Row, SqlError};
+use crate::{DialectId, Query, QueryLimits, QueryPlan, QueryResult, Render, Result, Row, SqlError};
 
 /// A driver future that can cross executor threads without widening borrowed lifetimes.
 pub type SqlFuture<'a, T> = Pin<Box<dyn Future<Output = Result<T>> + Send + 'a>>;
@@ -46,6 +46,41 @@ pub struct Engine {
 }
 
 impl Engine {
+    /// Compare explicit storage definitions without querying the adapter or inferring renames.
+    pub fn diff(
+        &self,
+        source: &crate::TableDefinition,
+        target: &crate::TableDefinition,
+    ) -> Result<crate::SchemaDiff> {
+        crate::SchemaDiff::between(source, target)
+    }
+    /// Execute a wholly validated DDL plan on one owned transaction.
+    ///
+    /// Results are owned and ordered exactly like [`QueryPlan::queries`]. Validation
+    /// precedes acquisition; the first statement error stops execution and rolls back,
+    /// preserving both the original error and any secondary cleanup error. Cancellation
+    /// drops the owned session and initiates the adapter's rollback-on-drop contract.
+    /// Commit cancellation/failure can have an unknown outcome and is never retried.
+    ///
+    /// # Errors
+    /// Returns validation/acquisition/statement/commit failures. Dialects without
+    /// transactional DDL (MySQL) are rejected before any connection is acquired.
+    pub async fn execute_plan(&self, plan: &QueryPlan) -> Result<Vec<QueryResult>> {
+        plan.validate(self.database.dialect(), self.limits)?;
+        self.database.dialect().require(
+            self.database.dialect().capabilities().transactional_ddl,
+            "dialect does not support transactional DDL plans",
+        )?;
+        let mut transaction = self.begin().await?;
+        let results = match transaction.execute_plan(plan).await {
+            Ok(results) => results,
+            Err(primary) => return Err(transaction.rollback_after(primary).await),
+        };
+        // Commit only after every statement has returned a complete owned outcome.
+        transaction.commit().await?;
+        Ok(results)
+    }
+
     /// Inspect the adapter's dialect without acquiring a native connection.
     pub fn dialect(&self) -> DialectId {
         self.database.dialect()
@@ -163,6 +198,29 @@ pub struct Transaction {
 }
 
 impl Transaction {
+    /// Execute a validated plan inside this caller-owned transaction, in source order.
+    ///
+    /// Returns one owned outcome per statement. This method never commits or consumes
+    /// the transaction; on failure the caller chooses explicit rollback/rollback_after.
+    /// Cancelling this borrowed future retains caller ownership; the adapter's active
+    /// statement cancellation policy still applies. Dropping the owner initiates rollback.
+    ///
+    /// # Errors
+    /// Rejects a mismatched/invalid/nontransactional-DDL plan before the first run.
+    pub async fn execute_plan(&mut self, plan: &QueryPlan) -> Result<Vec<QueryResult>> {
+        plan.validate(self.dialect, self.limits)?;
+        self.dialect.require(
+            self.dialect.capabilities().transactional_ddl,
+            "dialect does not support transactional DDL plans",
+        )?;
+        let mut results = Vec::with_capacity(plan.queries().len());
+        for query in plan.queries() {
+            // A single mutable session borrow keeps every statement on the same lease.
+            results.push(self.session.run(query.clone(), self.limits).await?);
+        }
+        Ok(results)
+    }
+
     /// Execute on the already leased connection, without implicit pool reacquisition.
     pub async fn execute(&mut self, query: &(impl Render + Sync)) -> Result<QueryResult> {
         let query = query.render(self.dialect)?;
