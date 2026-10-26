@@ -3,7 +3,7 @@ members = [
     "crates/lib", "crates/server", "tools/cli", "examples/capability-host",
     "crates/idea/idea-parser", "crates/idea/idea-transformer", "crates/idea/idea",
     "examples/generated-profile/codegen", "examples/generated-profile/app",
-    "crates/sql/sql", "crates/sql/sql-sqlite",
+    "crates/sql/sql", "crates/sql/sql-sqlite", "examples/sql-profile",
     "crates/framework/framework-view", "crates/framework/framework-ui",
     "examples/profile-ui/contracts", "examples/profile-ui/shared",
     "examples/profile-ui/web", "examples/profile-ui/client", "examples/profile-ui/native",

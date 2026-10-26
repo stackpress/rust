@@ -4336,6 +4336,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "stackpress-example-sql-profile"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "stackpress-cli",
+ "stackpress-example-capability-host",
+ "stackpress-lib",
+ "stackpress-server",
+ "stackpress-sql",
+ "stackpress-sql-sqlite",
+ "tempfile",
+ "tokio",
+]
+
+[[package]]
 name = "stackpress-framework-ui"
 version = "0.1.0"
 dependencies = [
