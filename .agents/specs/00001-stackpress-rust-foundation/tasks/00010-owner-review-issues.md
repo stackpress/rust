@@ -33,7 +33,7 @@ The SQL and framework parts of #4, #6 and #7 follow in a short third pass after 
 - Every behavior fix needs a regression test that fails first. Concurrency, IO and process tests run under the existing watchdog patterns.
 - Public API changes are limited to what an issue asks for: #3's additive kind, #4's attributes, and #11's message-composition policy. Anything else comes to the coordinator first.
 - G23 sequencing applies: lane 1 owns lib, lane 2 owns server, CLI and the transformer.
-- Don't comment on or close the GitHub issues; the owner decides that. Commit messages reference the issue numbers.
+- Implementers stay read-only on GitHub. The owner allowed the coordinator to comment on the issues (2026-10-26). After verifying a fix, the coordinator posts a note with the commit, what changed and how it was tested. An issue is closed only once its fix is on `main`, unless the owner says otherwise. Commit messages reference the issue numbers.
 
 ## Verification process
 
