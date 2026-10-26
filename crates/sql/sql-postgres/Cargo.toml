@@ -14,6 +14,7 @@ serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1", features = ["raw_value"] }
 
 [dev-dependencies]
+stackpress-sql-sqlite = { path = "../sql-sqlite" }
 tokio = { version = "1", features = ["macros", "rt-multi-thread", "sync", "time"] }
 
 [[test]]
@@ -26,4 +27,9 @@ workspace = true
 [[test]]
 name = "m1"
 path = "src/m1.rs"
+harness = false
+
+[[test]]
+name = "m2"
+path = "src/m2.rs"
 harness = false

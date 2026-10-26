@@ -89,3 +89,29 @@ pub(crate) async fn at(phase: Phase) -> Result<()> {
     }
     Ok(())
 }
+
+/// Test-only ownership transitions; each acquired lease has exactly one terminal action.
+#[derive(Clone, Copy)]
+pub(crate) enum Event {
+    /// A connection and admission permit have been coupled.
+    Acquire,
+    /// Acknowledged/reset connection returned normally.
+    Reuse,
+    /// Uncertain or disallowed connection transferred to disposal.
+    Retire,
+}
+/// Monotonic counters allow scoped deltas without races from resetting global state.
+static EVENTS: [std::sync::atomic::AtomicUsize; 3] =
+    [const { std::sync::atomic::AtomicUsize::new(0) }; 3];
+/// Observe only private test builds, preserving the production ownership path.
+pub(crate) fn event(event: Event) {
+    EVENTS[event as usize].fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+}
+/// Snapshot acquisition/reuse/retirement counts after a test has quiesced.
+#[allow(
+    dead_code,
+    reason = "only the M2 executable consumes these private counters"
+)]
+pub(crate) fn counts() -> [usize; 3] {
+    std::array::from_fn(|index| EVENTS[index].load(std::sync::atomic::Ordering::SeqCst))
+}
