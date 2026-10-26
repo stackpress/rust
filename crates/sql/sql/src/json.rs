@@ -7,17 +7,81 @@ use crate::identifier::invalid;
 use crate::{ErrorKind, Result, SqlError, SqlValue};
 
 /// An exact JSON scalar; JSON null is distinct from SQL NULL.
+///
+/// # Examples
+///
+/// ```
+/// use stackpress_sql::{JsonScalar, JsonValue, SqlValue};
+/// let document = JsonValue::Object(vec![(
+///     "tags".into(),
+///     JsonValue::Array(vec![
+///         JsonValue::Scalar(JsonScalar::String("admin".into())),
+///         JsonValue::Scalar(JsonScalar::Null),
+///     ]),
+/// )]);
+/// assert_eq!(document.to_json()?, r#"{"tags":["admin",null]}"#);
+/// assert_ne!(
+///     SqlValue::json(&JsonValue::Scalar(JsonScalar::Null))?,
+///     SqlValue::Null
+/// );
+/// # Ok::<(), stackpress_sql::SqlError>(())
+/// ```
 #[derive(Clone, Debug, PartialEq)]
 pub enum JsonScalar {
     /// JSON null.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{JsonScalar, JsonValue};
+    /// let document = JsonValue::Scalar(JsonScalar::Null);
+    /// assert!(!document.to_json()?.is_empty());
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Null,
     /// JSON boolean, distinct from the JSON number 0/1.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{JsonScalar, JsonValue};
+    /// let document = JsonValue::Scalar(JsonScalar::Bool(true));
+    /// assert!(!document.to_json()?.is_empty());
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Bool(bool),
     /// Exact signed integer.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{JsonScalar, JsonValue};
+    /// let document = JsonValue::Scalar(JsonScalar::Integer(7));
+    /// assert!(!document.to_json()?.is_empty());
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Integer(i64),
     /// Finite floating-point number.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{JsonScalar, JsonValue};
+    /// let document = JsonValue::Scalar(JsonScalar::Real(1.5));
+    /// assert!(!document.to_json()?.is_empty());
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Real(f64),
     /// JSON string, including empty strings and escaped controls.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{JsonScalar, JsonValue};
+    /// let document = JsonValue::Scalar(JsonScalar::String("Ada".into()));
+    /// assert!(!document.to_json()?.is_empty());
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     String(String),
 }
 
@@ -48,13 +112,62 @@ impl JsonScalar {
 }
 
 /// Explicit structured JSON input with finite depth, node and byte budgets on encoding.
+///
+/// # Examples
+///
+/// ```
+/// use stackpress_sql::{JsonScalar, JsonValue, SqlValue};
+/// let document = JsonValue::Object(vec![(
+///     "tags".into(),
+///     JsonValue::Array(vec![
+///         JsonValue::Scalar(JsonScalar::String("admin".into())),
+///         JsonValue::Scalar(JsonScalar::Null),
+///     ]),
+/// )]);
+/// assert_eq!(document.to_json()?, r#"{"tags":["admin",null]}"#);
+/// assert_ne!(
+///     SqlValue::json(&JsonValue::Scalar(JsonScalar::Null))?,
+///     SqlValue::Null
+/// );
+/// # Ok::<(), stackpress_sql::SqlError>(())
+/// ```
 #[derive(Clone, Debug, PartialEq)]
 pub enum JsonValue {
     /// One JSON scalar.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{JsonScalar, JsonValue};
+    /// let document = JsonValue::Scalar(JsonScalar::Null);
+    /// assert!(!document.to_json()?.is_empty());
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Scalar(JsonScalar),
     /// Ordered array members.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::JsonValue;
+    /// let document = JsonValue::Array(vec![]);
+    /// assert!(!document.to_json()?.is_empty());
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Array(Vec<JsonValue>),
     /// Ordered unique keys; duplicate keys are rejected rather than overwritten.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{JsonScalar, JsonValue};
+    /// let document = JsonValue::Object(vec![(
+    ///     "active".into(),
+    ///     JsonValue::Scalar(JsonScalar::Bool(true)),
+    /// )]);
+    /// assert!(!document.to_json()?.is_empty());
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Object(Vec<(String, JsonValue)>),
 }
 
@@ -63,6 +176,25 @@ impl JsonValue {
     ///
     /// # Errors
     /// Rejects duplicate object keys, nonfinite reals and resource-budget overflow.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{JsonScalar, JsonValue, SqlValue};
+    /// let document = JsonValue::Object(vec![(
+    ///     "tags".into(),
+    ///     JsonValue::Array(vec![
+    ///         JsonValue::Scalar(JsonScalar::String("admin".into())),
+    ///         JsonValue::Scalar(JsonScalar::Null),
+    ///     ]),
+    /// )]);
+    /// assert_eq!(document.to_json()?, r#"{"tags":["admin",null]}"#);
+    /// assert_ne!(
+    ///     SqlValue::json(&JsonValue::Scalar(JsonScalar::Null))?,
+    ///     SqlValue::Null
+    /// );
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn to_json(&self) -> Result<String> {
         let mut output = String::new();
         let mut nodes = 0;
@@ -132,18 +264,79 @@ impl JsonValue {
 }
 
 /// One checked path component; the key `"01"` is never inferred to be an index.
+///
+/// # Examples
+///
+/// ```
+/// use stackpress_sql::{Index, JsonPath, JsonPathOptions, JsonSegment};
+/// let path = JsonPath::parse("tags:01", JsonPathOptions { separator: ':' })?;
+/// assert_eq!(
+///     path.segments(),
+///     &[
+///         JsonSegment::Key("tags".into()),
+///         JsonSegment::Key("01".into())
+///     ]
+/// );
+/// let indexed = JsonPath::new([JsonSegment::Key("tags".into()), JsonSegment::Index(0)]);
+/// assert_eq!(indexed.segments().len(), 2);
+/// # Ok::<(), stackpress_sql::SqlError>(())
+/// ```
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum JsonSegment {
     /// A literal object key.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{JsonPath, JsonSegment};
+    /// let path = JsonPath::new([JsonSegment::Key("01".into())]);
+    /// assert_eq!(path.segments().len(), 1);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Key(String),
     /// A nonnegative array index, limited to signed 32-bit range by validation.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Index, JsonPath, JsonSegment};
+    /// let path = JsonPath::new([JsonSegment::Index(0)]);
+    /// assert_eq!(path.segments().len(), 1);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Index(u32),
 }
 
 /// Per-query parsing options for a convenience key path; no mutable global dialect state.
+///
+/// # Examples
+///
+/// ```
+/// use stackpress_sql::{Index, JsonPath, JsonPathOptions, JsonSegment};
+/// let path = JsonPath::parse("tags:01", JsonPathOptions { separator: ':' })?;
+/// assert_eq!(
+///     path.segments(),
+///     &[
+///         JsonSegment::Key("tags".into()),
+///         JsonSegment::Key("01".into())
+///     ]
+/// );
+/// let indexed = JsonPath::new([JsonSegment::Key("tags".into()), JsonSegment::Index(0)]);
+/// assert_eq!(indexed.segments().len(), 2);
+/// # Ok::<(), stackpress_sql::SqlError>(())
+/// ```
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct JsonPathOptions {
     /// Separator between literal keys. Array indices use the explicit segment API.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::JsonPathOptions;
+    /// let value = JsonPathOptions::default();
+    /// assert_eq!(value.separator, '.');
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub separator: char,
 }
 
@@ -155,16 +348,76 @@ impl Default for JsonPathOptions {
 }
 
 /// A JSON path with at most 64 components and 16 KiB of encoded text.
+///
+/// The empty typed path selects the root. Convenience parsing is key-only, uses
+/// a per-query separator (default `.`), and rejects empty components. Numeric-looking
+/// keys stay keys. Typed paths are validated at render time: at most 64 components,
+/// 16 KiB encoded path text, and indices at most i32::MAX. Paths remain data, not SQL.
+///
+/// # Examples
+///
+/// ```
+/// use stackpress_sql::{Index, JsonPath, JsonPathOptions, JsonSegment};
+/// let path = JsonPath::parse("tags:01", JsonPathOptions { separator: ':' })?;
+/// assert_eq!(
+///     path.segments(),
+///     &[
+///         JsonSegment::Key("tags".into()),
+///         JsonSegment::Key("01".into())
+///     ]
+/// );
+/// let indexed = JsonPath::new([JsonSegment::Key("tags".into()), JsonSegment::Index(0)]);
+/// assert_eq!(indexed.segments().len(), 2);
+/// # Ok::<(), stackpress_sql::SqlError>(())
+/// ```
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct JsonPath(Vec<JsonSegment>);
 
 impl JsonPath {
     /// Construct a root or explicitly typed key/index path, validated at render time.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Index, JsonPath, JsonPathOptions, JsonSegment};
+    /// let path = JsonPath::parse("tags:01", JsonPathOptions { separator: ':' })?;
+    /// assert_eq!(
+    ///     path.segments(),
+    ///     &[
+    ///         JsonSegment::Key("tags".into()),
+    ///         JsonSegment::Key("01".into())
+    ///     ]
+    /// );
+    /// let indexed = JsonPath::new([JsonSegment::Key("tags".into()), JsonSegment::Index(0)]);
+    /// assert_eq!(indexed.segments().len(), 2);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn new(segments: impl IntoIterator<Item = JsonSegment>) -> Self {
         Self(segments.into_iter().collect())
     }
 
     /// Parse a key-only convenience path; empty/ambiguous components are errors.
+    ///
+    /// # Errors
+    ///
+    /// Rejects invalid separators, empty components and path depth/size/index violations.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Index, JsonPath, JsonPathOptions, JsonSegment};
+    /// let path = JsonPath::parse("tags:01", JsonPathOptions { separator: ':' })?;
+    /// assert_eq!(
+    ///     path.segments(),
+    ///     &[
+    ///         JsonSegment::Key("tags".into()),
+    ///         JsonSegment::Key("01".into())
+    ///     ]
+    /// );
+    /// let indexed = JsonPath::new([JsonSegment::Key("tags".into()), JsonSegment::Index(0)]);
+    /// assert_eq!(indexed.segments().len(), 2);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn parse(path: &str, options: JsonPathOptions) -> Result<Self> {
         if options.separator.is_control()
             || options.separator.is_alphanumeric()
@@ -191,6 +444,23 @@ impl JsonPath {
     }
 
     /// Inspect typed components in their traversal order.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Index, JsonPath, JsonPathOptions, JsonSegment};
+    /// let path = JsonPath::parse("tags:01", JsonPathOptions { separator: ':' })?;
+    /// assert_eq!(
+    ///     path.segments(),
+    ///     &[
+    ///         JsonSegment::Key("tags".into()),
+    ///         JsonSegment::Key("01".into())
+    ///     ]
+    /// );
+    /// let indexed = JsonPath::new([JsonSegment::Key("tags".into()), JsonSegment::Index(0)]);
+    /// assert_eq!(indexed.segments().len(), 2);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn segments(&self) -> &[JsonSegment] {
         &self.0
     }

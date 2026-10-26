@@ -3,16 +3,49 @@
 use crate::{DialectId, ErrorKind, Result, SqlError};
 
 /// A name with explicit qualification; a string containing dots stays one segment.
+///
+/// Construction retains input; names are validated when rendered. Empty/control-byte
+/// segments, excessive depth, and dialect length limits are errors at that boundary.
+///
+/// # Examples
+///
+/// ```
+/// use stackpress_sql::Identifier;
+/// let name = Identifier::qualified(["profile", "id"]);
+/// assert_eq!(name.segments(), ["profile", "id"]);
+/// assert_eq!(Identifier::from("profile.id").segments(), ["profile.id"]);
+/// # Ok::<(), stackpress_sql::SqlError>(())
+/// ```
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Identifier(Vec<String>);
 
 impl Identifier {
     /// Construct explicit qualification, such as `["profile", "id"]`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Identifier;
+    /// let name = Identifier::qualified(["profile", "id"]);
+    /// assert_eq!(name.segments(), ["profile", "id"]);
+    /// assert_eq!(Identifier::from("profile.id").segments(), ["profile.id"]);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn qualified(parts: impl IntoIterator<Item = impl Into<String>>) -> Self {
         Self(parts.into_iter().map(Into::into).collect())
     }
 
     /// Inspect the original segments without interpreting their contents as SQL.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Identifier;
+    /// let name = Identifier::qualified(["profile", "id"]);
+    /// assert_eq!(name.segments(), ["profile", "id"]);
+    /// assert_eq!(Identifier::from("profile.id").segments(), ["profile.id"]);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn segments(&self) -> &[String] {
         &self.0
     }
@@ -46,16 +79,58 @@ impl From<String> for Identifier {
 }
 
 /// An explicitly named relation with an optional single-segment alias.
+///
+/// # Examples
+///
+/// ```
+/// use stackpress_sql::{DialectId, Identifier, Render, Select, TableRef};
+/// let table = TableRef::new("profile").alias("p");
+/// assert_eq!(table.name.segments(), ["profile"]);
+/// assert_eq!(table.alias.as_deref(), Some("p"));
+/// let query = Select::new([Identifier::qualified(["p", "id"])]).from(table);
+/// assert!(query.render(DialectId::Sqlite)?.sql().contains(" AS \"p\""));
+/// # Ok::<(), stackpress_sql::SqlError>(())
+/// ```
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct TableRef {
     /// Qualified relation name; aliasing never changes its segments.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::TableRef;
+    /// let value = TableRef::new("profile").alias("p");
+    /// assert_eq!(value.name.segments(), ["profile"]);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub name: Identifier,
     /// An optional literal alias validated at rendering.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::TableRef;
+    /// let value = TableRef::new("profile").alias("p");
+    /// assert_eq!(value.alias.as_deref(), Some("p"));
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub alias: Option<String>,
 }
 
 impl TableRef {
     /// Name a table without a live connection.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{DialectId, Identifier, Render, Select, TableRef};
+    /// let table = TableRef::new("profile").alias("p");
+    /// assert_eq!(table.name.segments(), ["profile"]);
+    /// assert_eq!(table.alias.as_deref(), Some("p"));
+    /// let query = Select::new([Identifier::qualified(["p", "id"])]).from(table);
+    /// assert!(query.render(DialectId::Sqlite)?.sql().contains(" AS \"p\""));
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn new(name: impl Into<Identifier>) -> Self {
         Self {
             name: name.into(),
@@ -64,6 +139,18 @@ impl TableRef {
     }
 
     /// Select a literal alias; dots and quotes have no special syntax.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{DialectId, Identifier, Render, Select, TableRef};
+    /// let table = TableRef::new("profile").alias("p");
+    /// assert_eq!(table.name.segments(), ["profile"]);
+    /// assert_eq!(table.alias.as_deref(), Some("p"));
+    /// let query = Select::new([Identifier::qualified(["p", "id"])]).from(table);
+    /// assert!(query.render(DialectId::Sqlite)?.sql().contains(" AS \"p\""));
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn alias(mut self, alias: impl Into<String>) -> Self {
         self.alias = Some(alias.into());
         self

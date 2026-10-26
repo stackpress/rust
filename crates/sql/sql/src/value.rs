@@ -3,25 +3,137 @@
 use crate::{ErrorKind, Result, SqlError};
 
 /// Explicit native scalar values. JSON and dates are explicitly validated text inputs.
+///
+/// Conversions preserve storage types. Real construction can retain nonfinite
+/// input, but rendering rejects it before IO. JSON/date conversion is explicit;
+/// ordinary Text is never guessed to be either. u64 conversion is checked against
+/// i64::MAX; output decoding never silently truncates or coerces strings/numbers.
+///
+/// # Examples
+///
+/// ```
+/// use stackpress_sql::SqlValue;
+/// assert_eq!(SqlValue::try_from(7_u64)?, SqlValue::Integer(7));
+/// assert!(SqlValue::try_from(u64::MAX).is_err());
+/// assert_eq!(SqlValue::from("Ada").retained_bytes(), 3);
+/// assert!(SqlValue::utc_text("2026-10-26T12:30:00Z").is_ok());
+/// assert!(SqlValue::utc_text("2026-02-30T12:30:00Z").is_err());
+/// # Ok::<(), stackpress_sql::SqlError>(())
+/// ```
 #[derive(Clone, Debug, PartialEq)]
 pub enum SqlValue {
     /// SQL NULL, distinct from missing input.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{DialectId, Render, Sql, SqlValue};
+    /// let value = SqlValue::Null;
+    /// let query = Sql::literal(DialectId::Sqlite, "SELECT ?")
+    ///     .bind(value.clone())
+    ///     .render(DialectId::Sqlite)?;
+    /// assert_eq!(query.binds(), &[value]);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Null,
     /// Bound as a boolean; SQLite stores an integer.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{DialectId, Render, Sql, SqlValue};
+    /// let value = SqlValue::Bool(true);
+    /// let query = Sql::literal(DialectId::Sqlite, "SELECT ?")
+    ///     .bind(value.clone())
+    ///     .render(DialectId::Sqlite)?;
+    /// assert_eq!(query.binds(), &[value]);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Bool(bool),
     /// Exact signed 64-bit integer.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{DialectId, Render, Sql, SqlValue};
+    /// let value = SqlValue::Integer(7);
+    /// let query = Sql::literal(DialectId::Sqlite, "SELECT ?")
+    ///     .bind(value.clone())
+    ///     .render(DialectId::Sqlite)?;
+    /// assert_eq!(query.binds(), &[value]);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Integer(i64),
     /// Finite real number; validation rejects NaN and infinity before IO.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{DialectId, Render, Sql, SqlValue};
+    /// let value = SqlValue::Real(1.5);
+    /// let query = Sql::literal(DialectId::Sqlite, "SELECT ?")
+    ///     .bind(value.clone())
+    ///     .render(DialectId::Sqlite)?;
+    /// assert_eq!(query.binds(), &[value]);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Real(f64),
     /// Owned UTF-8 text.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{DialectId, Render, Sql, SqlValue};
+    /// let value = SqlValue::Text("Ada".into());
+    /// let query = Sql::literal(DialectId::Sqlite, "SELECT ?")
+    ///     .bind(value.clone())
+    ///     .render(DialectId::Sqlite)?;
+    /// assert_eq!(query.binds(), &[value]);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Text(String),
     /// Owned binary bytes.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{DialectId, Render, Sql, SqlValue};
+    /// let value = SqlValue::Blob(vec![0, 1]);
+    /// let query = Sql::literal(DialectId::Sqlite, "SELECT ?")
+    ///     .bind(value.clone())
+    ///     .render(DialectId::Sqlite)?;
+    /// assert_eq!(query.binds(), &[value]);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     Blob(Vec<u8>),
 }
 
 impl SqlValue {
     /// Encode a bounded structured JSON document explicitly as native text.
     /// JSON null encodes as `"null"`; it is never converted to SQL NULL.
+    ///
+    /// # Errors
+    ///
+    /// Rejects duplicate JSON keys, nonfinite numbers and JSON depth/node/byte budget overflow.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{JsonScalar, JsonValue, SqlValue};
+    /// let document = JsonValue::Object(vec![(
+    ///     "tags".into(),
+    ///     JsonValue::Array(vec![
+    ///         JsonValue::Scalar(JsonScalar::String("admin".into())),
+    ///         JsonValue::Scalar(JsonScalar::Null),
+    ///     ]),
+    /// )]);
+    /// assert_eq!(document.to_json()?, r#"{"tags":["admin",null]}"#);
+    /// assert_ne!(
+    ///     SqlValue::json(&JsonValue::Scalar(JsonScalar::Null))?,
+    ///     SqlValue::Null
+    /// );
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn json(value: &crate::JsonValue) -> Result<Self> {
         Ok(Self::Text(value.to_json()?))
     }
@@ -31,6 +143,18 @@ impl SqlValue {
     /// # Errors
     /// Rejects impossible calendar/time values, timezone offsets and leap seconds.
     /// No ambient timezone or invalid-date epoch fallback is used.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::SqlValue;
+    /// assert_eq!(SqlValue::try_from(7_u64)?, SqlValue::Integer(7));
+    /// assert!(SqlValue::try_from(u64::MAX).is_err());
+    /// assert_eq!(SqlValue::from("Ada").retained_bytes(), 3);
+    /// assert!(SqlValue::utc_text("2026-10-26T12:30:00Z").is_ok());
+    /// assert!(SqlValue::utc_text("2026-02-30T12:30:00Z").is_err());
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn utc_text(value: &str) -> Result<Self> {
         validate_utc(value)?;
         Ok(Self::Text(value.into()))
@@ -48,6 +172,18 @@ impl SqlValue {
     }
 
     /// Count retained value bytes, excluding allocator/container overhead.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::SqlValue;
+    /// assert_eq!(SqlValue::try_from(7_u64)?, SqlValue::Integer(7));
+    /// assert!(SqlValue::try_from(u64::MAX).is_err());
+    /// assert_eq!(SqlValue::from("Ada").retained_bytes(), 3);
+    /// assert!(SqlValue::utc_text("2026-10-26T12:30:00Z").is_ok());
+    /// assert!(SqlValue::utc_text("2026-02-30T12:30:00Z").is_err());
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn retained_bytes(&self) -> usize {
         match self {
             Self::Text(value) => value.len(),
@@ -121,8 +257,37 @@ impl From<&str> for SqlValue {
 }
 
 /// Strict conversion from an owned row cell, with no lossy coercion.
+///
+/// Implement this trait for application-specific scalar decoding; use [`crate::Row`]
+/// lookups to compose independent DTOs. Returned data must own its contents.
+///
+/// # Errors
+/// Return [`crate::ErrorKind::Decode`] on incompatible storage types or out-of-range values.
+///
+/// # Examples
+///
+/// ```
+/// use stackpress_sql::{FromSqlValue, SqlValue};
+/// assert_eq!(i64::from_sql(&SqlValue::Integer(7))?, 7);
+/// assert!(i64::from_sql(&SqlValue::Text("7".into())).is_err());
+/// assert_eq!(Option::<i64>::from_sql(&SqlValue::Null)?, None);
+/// # Ok::<(), stackpress_sql::SqlError>(())
+/// ```
 pub trait FromSqlValue: Sized {
     /// Return an owned value or a typed NULL/type/range error.
+    ///
+    /// # Errors
+    /// Returns a decode error for incompatible types/ranges; no implicit string coercion.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{FromSqlValue, SqlValue};
+    /// assert_eq!(i64::from_sql(&SqlValue::Integer(7))?, 7);
+    /// assert!(i64::from_sql(&SqlValue::Text("7".into())).is_err());
+    /// assert_eq!(Option::<i64>::from_sql(&SqlValue::Null)?, None);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     fn from_sql(value: &SqlValue) -> Result<Self>;
 }
 
@@ -202,28 +367,190 @@ macro_rules! integer_decoders {
 integer_decoders!(i8, i16, i32, u8, u16, u32, u64, usize);
 
 /// Ordered native column metadata. Duplicate names remain separate at distinct ordinals.
+///
+/// # Examples
+///
+/// ```
+/// use stackpress_sql::{ColumnMetadata, ColumnMetadataRef, Row};
+/// let row = Row::new(vec![("id".into(), 7.into()), ("name".into(), "Ada".into())])
+///     .with_metadata(vec![
+///         ColumnMetadata {
+///             name: "id".into(),
+///             ordinal: 0,
+///             declared_type: Some("INTEGER".into()),
+///         },
+///         ColumnMetadata {
+///             name: "name".into(),
+///             ordinal: 1,
+///             declared_type: None,
+///         },
+///     ])?;
+/// assert_eq!(row.try_get::<i64>("id")?, 7);
+/// assert_eq!(row.try_get_at::<String>(1)?, "Ada");
+/// assert_eq!(row.cells().len(), 2);
+/// let column: ColumnMetadataRef<'_> = row.columns().next().unwrap();
+/// assert_eq!(
+///     (column.name, column.ordinal, column.declared_type),
+///     ("id", 0, Some("INTEGER"))
+/// );
+/// assert_eq!(row.retained_bytes()?, 24);
+/// # Ok::<(), stackpress_sql::SqlError>(())
+/// ```
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ColumnMetadata {
     /// Result-column name or explicit projection alias.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::ColumnMetadata;
+    /// let value = ColumnMetadata {
+    ///     name: "id".into(),
+    ///     ordinal: 0,
+    ///     declared_type: Some("INTEGER".into()),
+    /// };
+    /// assert_eq!(value.name, "id");
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub name: String,
     /// Zero-based ordinal in this result row.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::ColumnMetadata;
+    /// let value = ColumnMetadata {
+    ///     name: "id".into(),
+    ///     ordinal: 0,
+    ///     declared_type: Some("INTEGER".into()),
+    /// };
+    /// assert_eq!(value.ordinal, 0);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub ordinal: usize,
     /// Driver-reported declaration, when known; never used to coerce storage values.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::ColumnMetadata;
+    /// let value = ColumnMetadata {
+    ///     name: "id".into(),
+    ///     ordinal: 0,
+    ///     declared_type: Some("INTEGER".into()),
+    /// };
+    /// assert_eq!(value.declared_type.as_deref(), Some("INTEGER"));
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub declared_type: Option<String>,
 }
 
 /// Borrowed result metadata; names borrow row cells instead of duplicating retained bytes.
+///
+/// # Examples
+///
+/// ```
+/// use stackpress_sql::{ColumnMetadata, ColumnMetadataRef, Row};
+/// let row = Row::new(vec![("id".into(), 7.into()), ("name".into(), "Ada".into())])
+///     .with_metadata(vec![
+///         ColumnMetadata {
+///             name: "id".into(),
+///             ordinal: 0,
+///             declared_type: Some("INTEGER".into()),
+///         },
+///         ColumnMetadata {
+///             name: "name".into(),
+///             ordinal: 1,
+///             declared_type: None,
+///         },
+///     ])?;
+/// assert_eq!(row.try_get::<i64>("id")?, 7);
+/// assert_eq!(row.try_get_at::<String>(1)?, "Ada");
+/// assert_eq!(row.cells().len(), 2);
+/// let column: ColumnMetadataRef<'_> = row.columns().next().unwrap();
+/// assert_eq!(
+///     (column.name, column.ordinal, column.declared_type),
+///     ("id", 0, Some("INTEGER"))
+/// );
+/// assert_eq!(row.retained_bytes()?, 24);
+/// # Ok::<(), stackpress_sql::SqlError>(())
+/// ```
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct ColumnMetadataRef<'a> {
     /// Result-column name or projection alias.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Row;
+    /// let row = Row::new(vec![("id".into(), 7.into())]);
+    /// let value = row.columns().next().unwrap();
+    /// assert_eq!(value.name, "id");
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub name: &'a str,
     /// Zero-based ordinal.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Row;
+    /// let row = Row::new(vec![("id".into(), 7.into())]);
+    /// let value = row.columns().next().unwrap();
+    /// assert_eq!(value.ordinal, 0);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub ordinal: usize,
     /// Optional native declaration, independent from the actual value's storage type.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::Row;
+    /// let row = Row::new(vec![("id".into(), 7.into())]);
+    /// let value = row.columns().next().unwrap();
+    /// assert_eq!(value.declared_type, None);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub declared_type: Option<&'a str>,
 }
 
 /// Ordered names and values, including duplicate names from joins.
+///
+/// Names need not be unique. [`Self::try_get`] errors on duplicate/missing names;
+/// [`Self::try_get_at`] selects the exact ordinal. Native declarations are diagnostic
+/// metadata and never force value coercion. Rows own all data after leases release.
+/// Built-in decoding supports strict String/i64/finite f64/bytes, checked integer
+/// ranges, bool from Bool or integer 0/1, and `Option<T>` for SQL NULL.
+///
+/// # Examples
+///
+/// ```
+/// use stackpress_sql::{ColumnMetadata, ColumnMetadataRef, Row};
+/// let row = Row::new(vec![("id".into(), 7.into()), ("name".into(), "Ada".into())])
+///     .with_metadata(vec![
+///         ColumnMetadata {
+///             name: "id".into(),
+///             ordinal: 0,
+///             declared_type: Some("INTEGER".into()),
+///         },
+///         ColumnMetadata {
+///             name: "name".into(),
+///             ordinal: 1,
+///             declared_type: None,
+///         },
+///     ])?;
+/// assert_eq!(row.try_get::<i64>("id")?, 7);
+/// assert_eq!(row.try_get_at::<String>(1)?, "Ada");
+/// assert_eq!(row.cells().len(), 2);
+/// let column: ColumnMetadataRef<'_> = row.columns().next().unwrap();
+/// assert_eq!(
+///     (column.name, column.ordinal, column.declared_type),
+///     ("id", 0, Some("INTEGER"))
+/// );
+/// assert_eq!(row.retained_bytes()?, 24);
+/// # Ok::<(), stackpress_sql::SqlError>(())
+/// ```
 #[derive(Clone, Debug, PartialEq)]
 pub struct Row {
     /// Ordered names/values retained for compatibility with native adapter collection.
@@ -234,6 +561,35 @@ pub struct Row {
 
 impl Row {
     /// Construct an owned ordered row in an adapter.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{ColumnMetadata, ColumnMetadataRef, Row};
+    /// let row = Row::new(vec![("id".into(), 7.into()), ("name".into(), "Ada".into())])
+    ///     .with_metadata(vec![
+    ///         ColumnMetadata {
+    ///             name: "id".into(),
+    ///             ordinal: 0,
+    ///             declared_type: Some("INTEGER".into()),
+    ///         },
+    ///         ColumnMetadata {
+    ///             name: "name".into(),
+    ///             ordinal: 1,
+    ///             declared_type: None,
+    ///         },
+    ///     ])?;
+    /// assert_eq!(row.try_get::<i64>("id")?, 7);
+    /// assert_eq!(row.try_get_at::<String>(1)?, "Ada");
+    /// assert_eq!(row.cells().len(), 2);
+    /// let column: ColumnMetadataRef<'_> = row.columns().next().unwrap();
+    /// assert_eq!(
+    ///     (column.name, column.ordinal, column.declared_type),
+    ///     ("id", 0, Some("INTEGER"))
+    /// );
+    /// assert_eq!(row.retained_bytes()?, 24);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn new(cells: Vec<(String, SqlValue)>) -> Self {
         // Even adapters without declared types retain complete names and column order.
         let declared_types = vec![None; cells.len()];
@@ -244,6 +600,39 @@ impl Row {
     }
 
     /// Attach explicit adapter metadata, checking row/name/ordinal consistency.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`crate::ErrorKind::Decode`] if count, names or zero-based ordinals disagree with cells.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{ColumnMetadata, ColumnMetadataRef, Row};
+    /// let row = Row::new(vec![("id".into(), 7.into()), ("name".into(), "Ada".into())])
+    ///     .with_metadata(vec![
+    ///         ColumnMetadata {
+    ///             name: "id".into(),
+    ///             ordinal: 0,
+    ///             declared_type: Some("INTEGER".into()),
+    ///         },
+    ///         ColumnMetadata {
+    ///             name: "name".into(),
+    ///             ordinal: 1,
+    ///             declared_type: None,
+    ///         },
+    ///     ])?;
+    /// assert_eq!(row.try_get::<i64>("id")?, 7);
+    /// assert_eq!(row.try_get_at::<String>(1)?, "Ada");
+    /// assert_eq!(row.cells().len(), 2);
+    /// let column: ColumnMetadataRef<'_> = row.columns().next().unwrap();
+    /// assert_eq!(
+    ///     (column.name, column.ordinal, column.declared_type),
+    ///     ("id", 0, Some("INTEGER"))
+    /// );
+    /// assert_eq!(row.retained_bytes()?, 24);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn with_metadata(mut self, columns: Vec<ColumnMetadata>) -> Result<Self> {
         if columns.len() != self.cells.len()
             || columns
@@ -266,6 +655,35 @@ impl Row {
     }
 
     /// Inspect every ordered metadata entry, including duplicate names.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{ColumnMetadata, ColumnMetadataRef, Row};
+    /// let row = Row::new(vec![("id".into(), 7.into()), ("name".into(), "Ada".into())])
+    ///     .with_metadata(vec![
+    ///         ColumnMetadata {
+    ///             name: "id".into(),
+    ///             ordinal: 0,
+    ///             declared_type: Some("INTEGER".into()),
+    ///         },
+    ///         ColumnMetadata {
+    ///             name: "name".into(),
+    ///             ordinal: 1,
+    ///             declared_type: None,
+    ///         },
+    ///     ])?;
+    /// assert_eq!(row.try_get::<i64>("id")?, 7);
+    /// assert_eq!(row.try_get_at::<String>(1)?, "Ada");
+    /// assert_eq!(row.cells().len(), 2);
+    /// let column: ColumnMetadataRef<'_> = row.columns().next().unwrap();
+    /// assert_eq!(
+    ///     (column.name, column.ordinal, column.declared_type),
+    ///     ("id", 0, Some("INTEGER"))
+    /// );
+    /// assert_eq!(row.retained_bytes()?, 24);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn columns(&self) -> impl ExactSizeIterator<Item = ColumnMetadataRef<'_>> {
         self.cells.iter().zip(&self.declared_types).enumerate().map(
             |(ordinal, ((name, _), declared_type))| ColumnMetadataRef {
@@ -278,6 +696,39 @@ impl Row {
 
     /// Count retained names, values and native type text with checked arithmetic.
     /// Adapters attaching declarations should include this complete value in their budgets.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`crate::ErrorKind::Limit`] if complete byte accounting overflows usize.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{ColumnMetadata, ColumnMetadataRef, Row};
+    /// let row = Row::new(vec![("id".into(), 7.into()), ("name".into(), "Ada".into())])
+    ///     .with_metadata(vec![
+    ///         ColumnMetadata {
+    ///             name: "id".into(),
+    ///             ordinal: 0,
+    ///             declared_type: Some("INTEGER".into()),
+    ///         },
+    ///         ColumnMetadata {
+    ///             name: "name".into(),
+    ///             ordinal: 1,
+    ///             declared_type: None,
+    ///         },
+    ///     ])?;
+    /// assert_eq!(row.try_get::<i64>("id")?, 7);
+    /// assert_eq!(row.try_get_at::<String>(1)?, "Ada");
+    /// assert_eq!(row.cells().len(), 2);
+    /// let column: ColumnMetadataRef<'_> = row.columns().next().unwrap();
+    /// assert_eq!(
+    ///     (column.name, column.ordinal, column.declared_type),
+    ///     ("id", 0, Some("INTEGER"))
+    /// );
+    /// assert_eq!(row.retained_bytes()?, 24);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn retained_bytes(&self) -> Result<usize> {
         let mut bytes = 0_usize;
         for ((name, value), declaration) in self.cells.iter().zip(&self.declared_types) {
@@ -291,6 +742,39 @@ impl Row {
     }
 
     /// Decode by ordinal, including otherwise ambiguous duplicate named columns.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`crate::ErrorKind::Decode`] for an absent ordinal or incompatible value types/ranges.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{ColumnMetadata, ColumnMetadataRef, Row};
+    /// let row = Row::new(vec![("id".into(), 7.into()), ("name".into(), "Ada".into())])
+    ///     .with_metadata(vec![
+    ///         ColumnMetadata {
+    ///             name: "id".into(),
+    ///             ordinal: 0,
+    ///             declared_type: Some("INTEGER".into()),
+    ///         },
+    ///         ColumnMetadata {
+    ///             name: "name".into(),
+    ///             ordinal: 1,
+    ///             declared_type: None,
+    ///         },
+    ///     ])?;
+    /// assert_eq!(row.try_get::<i64>("id")?, 7);
+    /// assert_eq!(row.try_get_at::<String>(1)?, "Ada");
+    /// assert_eq!(row.cells().len(), 2);
+    /// let column: ColumnMetadataRef<'_> = row.columns().next().unwrap();
+    /// assert_eq!(
+    ///     (column.name, column.ordinal, column.declared_type),
+    ///     ("id", 0, Some("INTEGER"))
+    /// );
+    /// assert_eq!(row.retained_bytes()?, 24);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn try_get_at<T: FromSqlValue>(&self, index: usize) -> Result<T> {
         let (_, value) = self
             .cells
@@ -300,11 +784,73 @@ impl Row {
     }
 
     /// Inspect every ordered column without overwriting duplicate names.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{ColumnMetadata, ColumnMetadataRef, Row};
+    /// let row = Row::new(vec![("id".into(), 7.into()), ("name".into(), "Ada".into())])
+    ///     .with_metadata(vec![
+    ///         ColumnMetadata {
+    ///             name: "id".into(),
+    ///             ordinal: 0,
+    ///             declared_type: Some("INTEGER".into()),
+    ///         },
+    ///         ColumnMetadata {
+    ///             name: "name".into(),
+    ///             ordinal: 1,
+    ///             declared_type: None,
+    ///         },
+    ///     ])?;
+    /// assert_eq!(row.try_get::<i64>("id")?, 7);
+    /// assert_eq!(row.try_get_at::<String>(1)?, "Ada");
+    /// assert_eq!(row.cells().len(), 2);
+    /// let column: ColumnMetadataRef<'_> = row.columns().next().unwrap();
+    /// assert_eq!(
+    ///     (column.name, column.ordinal, column.declared_type),
+    ///     ("id", 0, Some("INTEGER"))
+    /// );
+    /// assert_eq!(row.retained_bytes()?, 24);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn cells(&self) -> &[(String, SqlValue)] {
         &self.cells
     }
 
     /// Decode a unique named cell; missing/ambiguous names are errors.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`crate::ErrorKind::Decode`] for missing/duplicate names or incompatible value types/ranges.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{ColumnMetadata, ColumnMetadataRef, Row};
+    /// let row = Row::new(vec![("id".into(), 7.into()), ("name".into(), "Ada".into())])
+    ///     .with_metadata(vec![
+    ///         ColumnMetadata {
+    ///             name: "id".into(),
+    ///             ordinal: 0,
+    ///             declared_type: Some("INTEGER".into()),
+    ///         },
+    ///         ColumnMetadata {
+    ///             name: "name".into(),
+    ///             ordinal: 1,
+    ///             declared_type: None,
+    ///         },
+    ///     ])?;
+    /// assert_eq!(row.try_get::<i64>("id")?, 7);
+    /// assert_eq!(row.try_get_at::<String>(1)?, "Ada");
+    /// assert_eq!(row.cells().len(), 2);
+    /// let column: ColumnMetadataRef<'_> = row.columns().next().unwrap();
+    /// assert_eq!(
+    ///     (column.name, column.ordinal, column.declared_type),
+    ///     ("id", 0, Some("INTEGER"))
+    /// );
+    /// assert_eq!(row.retained_bytes()?, 24);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn try_get<T: FromSqlValue>(&self, name: &str) -> Result<T> {
         let mut matches = self.cells.iter().filter(|(column, _)| column == name);
         let (_, value) = matches
@@ -374,12 +920,69 @@ fn validate_utc(value: &str) -> Result<()> {
 }
 
 /// One statement's outcome, never shared mutable last-insert state.
+///
+/// All values are owned and statement-local. An absent insert_id differs from zero;
+/// there is no shared engine last-ID slot. Driver-specific RETURNING/affected-row
+/// semantics remain explicit, rather than predicting IDs for bulk inserts.
+///
+/// # Examples
+///
+/// ```
+/// use stackpress_sql::{QueryResult, Row};
+/// let result = QueryResult {
+///     rows: vec![Row::new(vec![("id".into(), 7.into())])],
+///     affected: 1,
+///     insert_id: Some(7),
+/// };
+/// assert_eq!(result.rows[0].try_get::<i64>("id")?, 7);
+/// assert_eq!((result.affected, result.insert_id), (1, Some(7)));
+/// # Ok::<(), stackpress_sql::SqlError>(())
+/// ```
 #[derive(Debug, Default)]
 pub struct QueryResult {
     /// Owned ordered rows.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::QueryResult;
+    /// let value = QueryResult {
+    ///     rows: vec![],
+    ///     affected: 0,
+    ///     insert_id: None,
+    /// };
+    /// assert!(value.rows.is_empty());
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub rows: Vec<Row>,
     /// Native affected-row count for this statement.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::QueryResult;
+    /// let value = QueryResult {
+    ///     rows: vec![],
+    ///     affected: 0,
+    ///     insert_id: None,
+    /// };
+    /// assert_eq!(value.affected, 0);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub affected: u64,
     /// Insert IDs are not yet exposed by the M0 adapter; use RETURNING instead.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::QueryResult;
+    /// let value = QueryResult {
+    ///     rows: vec![],
+    ///     affected: 0,
+    ///     insert_id: None,
+    /// };
+    /// assert_eq!(value.insert_id, None);
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub insert_id: Option<i64>,
 }
