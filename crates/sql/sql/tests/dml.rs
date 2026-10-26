@@ -8,6 +8,71 @@ fn sqlite(query: &impl Render) -> Query {
     query.render(DialectId::Sqlite).unwrap()
 }
 
+/// Repeated SELECT equalities retain both predicates and their bind order.
+#[test]
+fn select_where_eq_appends_in_call_order() {
+    let query = Select::default()
+        .from("profile")
+        .where_eq("team_id", 3)
+        .where_eq("active", true);
+
+    // A second equality must narrow the lookup without dropping the first filter.
+    let rendered = sqlite(&query);
+    assert_eq!(
+        rendered.sql(),
+        "SELECT * FROM \"profile\" WHERE \"team_id\" = ? AND \"active\" = ?"
+    );
+    assert_eq!(rendered.binds(), &[3.into(), true.into()]);
+}
+
+/// SELECT, UPDATE and DELETE append equalities consistently in every renderer.
+#[test]
+fn where_eq_is_consistent_across_dml_builders() {
+    let select = Select::default()
+        .from("profile")
+        .where_eq("team_id", 3)
+        .where_eq("active", true);
+    let update = Update::new("profile")
+        .set("name", "Ada")
+        .where_eq("team_id", 3)
+        .where_eq("active", true);
+    let delete = Delete::new("profile")
+        .where_eq("team_id", 3)
+        .where_eq("active", true);
+
+    // Compare the shared WHERE suffix while retaining UPDATE's earlier assignment bind.
+    for (dialect, filter_sql, update_filter_sql) in [
+        (
+            DialectId::Sqlite,
+            "\"team_id\" = ? AND \"active\" = ?",
+            "\"team_id\" = ? AND \"active\" = ?",
+        ),
+        (
+            DialectId::Postgres,
+            "\"team_id\" = $1 AND \"active\" = $2",
+            "\"team_id\" = $2 AND \"active\" = $3",
+        ),
+        (
+            DialectId::Mysql,
+            "`team_id` = ? AND `active` = ?",
+            "`team_id` = ? AND `active` = ?",
+        ),
+    ] {
+        let selected = select.render(dialect).unwrap();
+        let updated = update.render(dialect).unwrap();
+        let deleted = delete.render(dialect).unwrap();
+        assert_eq!(selected.sql().split_once(" WHERE ").unwrap().1, filter_sql);
+        assert_eq!(deleted.sql().split_once(" WHERE ").unwrap().1, filter_sql);
+        assert_eq!(
+            updated.sql().split_once(" WHERE ").unwrap().1,
+            update_filter_sql
+        );
+        assert_eq!(selected.binds(), &[3.into(), true.into()]);
+        assert_eq!(deleted.binds(), selected.binds());
+        assert_eq!(updated.binds(), &["Ada".into(), 3.into(), true.into()]);
+    }
+}
+
 /// Explicit selectors, aliases, qualified operands and joins preserve order and binding.
 #[test]
 fn select_build_and_complete_sql() {
@@ -538,12 +603,22 @@ fn detached_data_and_dialect_selection() {
     let base = Select::default().from("p");
     assert!(base.clone().where_eq("id", 1).build().filters.len() == 1);
     assert!(base.build().filters.is_empty());
-    let replacement = base
+    // Mixed predicate methods and repeated columns retain their original call order.
+    let filtered = base
         .clone()
         .where_eq("id", 1)
         .and_where(Expr::eq("active", true))
         .where_eq("id", 2);
-    assert_eq!(sqlite(&replacement).binds(), &[2.into(), true.into()]);
+    assert_eq!(filtered.build().filters.len(), 3);
+    assert_eq!(
+        sqlite(&filtered).sql(),
+        "SELECT * FROM \"p\" WHERE \"id\" = ? AND \"active\" = ? AND \"id\" = ?"
+    );
+    assert_eq!(
+        sqlite(&filtered).binds(),
+        &[1.into(), true.into(), 2.into()]
+    );
+    assert!(base.build().filters.is_empty());
     let insert = Insert::new("p").columns(["x"]).values([1]);
     let update = Update::new("p").set("x", 1).all_rows();
     let delete = Delete::new("p").all_rows();

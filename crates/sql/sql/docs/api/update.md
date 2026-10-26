@@ -25,7 +25,7 @@ fn main() -> Result<()> {
 }
 ```
 
-Unlike Select, repeated mutation `where_eq` appends predicates. Setting all_rows permits an
+Repeated `where_eq` appends predicates joined with AND in call order. Setting all_rows permits an
 unfiltered mutation but does not discard filters already present.
 
 ## 1. Update operations

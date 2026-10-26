@@ -29,6 +29,12 @@ pub(super) async fn builders() {
     let original = query.clone();
     assert_eq!(engine.execute(&query).await.unwrap().rows.len(), 3);
     assert_eq!(query, original);
+    // Only the hostile-name row is inactive. Dropping either equality would return rows.
+    let narrowed = Select::new(["id"])
+        .from("profile")
+        .where_eq("active", true)
+        .where_eq("name", hostile);
+    assert!(engine.fetch(&narrowed).await.unwrap().is_empty());
     let defaulted = engine
         .execute(
             &Insert::new("profile")

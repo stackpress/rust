@@ -27,8 +27,8 @@ fn main() -> Result<()> {
                 ),
             ),
         })
-        .and_where(Expr::eq(Identifier::qualified(["p", "active"]), true))
-        .and_where(Expr::eq(Identifier::qualified(["t", "name"]), "Research"))
+        .where_eq(Identifier::qualified(["p", "active"]), true)
+        .where_eq(Identifier::qualified(["t", "name"]), "Research")
         .limit(20);
     let query = lookup.render(DialectId::Sqlite)?;
     assert!(query.sql().contains("INNER JOIN"));
@@ -38,9 +38,9 @@ fn main() -> Result<()> {
 }
 ```
 
-The ON comparison uses two column expressions; the filters bind ordinary values. `and_where`
-appends conditions. In contrast, repeated `Select::where_eq` replaces its one equality slot,
-so use `and_where(Expr::eq(...))` when both equalities must survive.
+The ON comparison uses two column expressions; the filters bind ordinary values. `where_eq`
+and `and_where` append conditions joined with AND in call order on Select, Update and Delete.
+Use `and_where` for predicates that need an explicit expression.
 
 ## Group alternatives and page the result
 

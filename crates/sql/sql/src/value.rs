@@ -983,7 +983,12 @@ pub struct QueryResult {
     /// # Ok::<(), stackpress_sql::SqlError>(())
     /// ```
     pub affected: u64,
-    /// Insert IDs are not yet exposed by the M0 adapter; use RETURNING instead.
+    /// Optional statement-local insert ID reported by the adapter.
+    ///
+    /// SQLite returns `Some(id)` for an observed native rowid transition. Successful
+    /// inserts can still return `None`, including reused explicit IDs and WITHOUT
+    /// ROWID tables. Use `INSERT ... RETURNING`, where supported, to retrieve every
+    /// generated key from [`Self::rows`].
     ///
     /// # Examples
     ///
