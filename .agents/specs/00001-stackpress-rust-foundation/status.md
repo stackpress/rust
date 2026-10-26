@@ -29,8 +29,9 @@ Spec file of [00001 Stackpress Rust foundation](index.md). Load to see freeze re
 
 ## Next action
 
-Both M0 proofs are verified and merged. The work in flight and queued:
+In flight:
 
-- **Slice 4 M1:** lanes A (core) and B (SQLite) are running.
-- **Slice 5 M1:** release pending.
-- **Queued G23 fix:** the compile-fail harness rlib selection in lib/server tests.
+- **Slice 4, lane A M2:** the network renderers, validated against the owner's local PostgreSQL 12.2 and MySQL 8.0.27.
+- **Slice 5, lane B:** integration and M2 completion.
+
+The compile-fail harness fix was merged as `1e957a4` ([receipt](fix-compile-fail-harness-receipt.md)). Both harnesses now use trybuild against the exact build. The coordinator reproduced the failure with three mixed-feature builds in one target, and the same sequence now passes.

@@ -102,6 +102,18 @@ Design checkpoint prepared on 2026-10-25. Start with [Slice 5 decisions and reco
   2. The browser proof depends on Playwright from a user-local npx cache, which is a reproducibility limitation.
   3. The design packet's bare `--check` is not CLI syntax; use `--check true`.
 
+**Lane A M1 re-verification (coordinator, 2026-10-26): passed; merged as `d86c3e7`.** Details are in the [lane A M1 receipt](../slice-5-receipt-lane-a-m1.md).
+
+- **Checks:** fmt passed and Clippy `-D warnings` is clean; `cargo +1.96.0 check` passed; 297 workspace tests and 433 doctests passed, 0 failed.
+- **Proofs rerun by the coordinator:**
+  - the hydrate build passed;
+  - Chromium at the root and at the `/demo/v1` base both reported unchanged DOM and focus, `initialCalls: 0`, the typed second query returning Grace Hopper, disposal, the mismatch refresh, and no console errors;
+  - the packaged `.app` reported `denied-ok`/`main-ok`, `in_flight: 0`, and no process left behind.
+- **Defect found and fixed by the implementer:** native captures arrive percent-encoded. The detail loader now decodes once before validation and re-encodes for the public location.
+- **Coordinator integration edit:** `proofs/launch.py` was aligned to lane B's `PROFILE_UI_LAUNCH_REPORT` line, so both branches are identical.
+- **Pinned host error envelope:** `code`, `status`, safe `error`, `errors`, `total: 0`. The shared decoder is assigned to lane B as an M2 integration item.
+- **Lane B (2026-10-26):** independent M2 work committed on its branch as `5e51ac3`. Lane B now merges trial/3, replaces its shims with lane A's real route, asset and snapshot APIs, finishes detail and back/forward navigation, and adds the shared error decoder.
+
 ## Acceptance notes
 
 Pending.
