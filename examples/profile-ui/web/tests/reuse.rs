@@ -1,4 +1,6 @@
 //! One compiled plugin changes every adapter at the generated operation boundary.
+
+mod support;
 use stackpress_cli::{CliSinks, Terminal};
 use stackpress_lib::ParseLimits;
 use stackpress_server::http::{HttpAdapter, HttpOutput};
@@ -6,7 +8,7 @@ use stackpress_server::http::{HttpAdapter, HttpOutput};
 /// Compare native/direct, actual CLI, typed HTTP and SSR, including the seeded public data.
 #[tokio::test]
 async fn one_operation_one_compiled_customization() {
-    let app = stackpress_example_profile_ui_web::application()
+    let (_directory, app) = support::application(stackpress_framework_view::BasePath::default())
         .await
         .unwrap();
     let direct = app

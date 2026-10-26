@@ -1,5 +1,7 @@
 //! Real HTTP/lifecycle/render integration, including early Abort and failed load.
 
+mod support;
+
 use stackpress_lib::{Flow, Invocation, Request, Response, Result};
 use stackpress_server::{
     ServerBuilder,
@@ -26,7 +28,7 @@ async fn html(app: &stackpress_server::Server, path: &str) -> (u16, String) {
 /// Real generated operation output is already present before client execution.
 #[tokio::test(flavor = "multi_thread")]
 async fn generated_html_and_safe_seed() {
-    let app = stackpress_example_profile_ui_web::application()
+    let (_directory, app) = support::application(stackpress_framework_view::BasePath::default())
         .await
         .unwrap();
     let (a, b) = tokio::join!(

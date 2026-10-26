@@ -9,6 +9,7 @@ publish.workspace = true
 [features]
 default = []
 demo-customization = ["stackpress-example-profile-ui-web/demo-customization"]
+sqlite = ["stackpress-example-profile-ui-web/sqlite"]
 
 [dependencies]
 stackpress-lib = { path = "../../../crates/lib" }
@@ -27,6 +28,7 @@ sha2 = "=0.10.9"
 [dev-dependencies]
 hyper = { version = "1", default-features = false, features = ["client", "http1"] }
 tempfile = "3"
+stackpress-example-sql-profile = { path = "../../sql-profile" }
 
 [lints]
 workspace = true

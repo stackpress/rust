@@ -4,20 +4,40 @@ use std::time::Duration;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 
 /// Construct a real immutable app using a tiny independently stored asset inventory.
-async fn host(limits: GatewayLimits) -> Arc<Gateway> {
+async fn host(limits: GatewayLimits) -> (tempfile::TempDir, Arc<Gateway>) {
     let directory = assets::tests::fixture();
     let assets = assets::AssetBundle::load(directory.path()).unwrap();
-    Arc::new(
-        Gateway::new(BasePath::new("/demo").unwrap(), assets, limits)
+    let layers = fixture_layers(directory.path()).await;
+    let host = Arc::new(
+        Gateway::with_config(BasePath::new("/demo").unwrap(), assets, limits, layers)
             .await
             .unwrap(),
-    )
+    );
+    (directory, host)
+}
+
+/// Install fixture data explicitly before the gateway opens its read-only service.
+async fn fixture_layers(_directory: &std::path::Path) -> ConfigLayers {
+    #[cfg(feature = "sqlite")]
+    {
+        let path = _directory.join("profiles.sqlite");
+        stackpress_example_sql_profile::setup::install_and_seed(&path)
+            .await
+            .unwrap();
+        let mut layers = ConfigLayers::new();
+        layers
+            .value("fixture", serde_json::json!({"sqlite":{"path":path}}))
+            .unwrap();
+        layers
+    }
+    #[cfg(not(feature = "sqlite"))]
+    ConfigLayers::new()
 }
 
 /// Pages, strict POST errors and exact static paths all traverse HttpAdapter.
 #[tokio::test]
 async fn page_api_assets_and_errors() {
-    let host = host(GatewayLimits::default()).await;
+    let (_directory, host) = host(GatewayLimits::default()).await;
     for (method, path, body, status, contains) in [
         ("GET", "/demo/ui/profiles?id=abc", "", 200, "Ada Lovelace"),
         (
@@ -103,7 +123,7 @@ async fn page_api_assets_and_errors() {
 /// Streamed unknown-length input has the same ceiling as declared Content-Length.
 #[tokio::test]
 async fn bounded_headers_and_bodies() {
-    let host = host(GatewayLimits {
+    let (_directory, host) = host(GatewayLimits {
         body_bytes: 32,
         header_bytes: 128,
         headers: 4,
@@ -139,7 +159,7 @@ async fn bounded_headers_and_bodies() {
 /// Partial headers, slow bodies, disconnect and graceful draining all finish inside deadlines.
 #[tokio::test]
 async fn deadlines_disconnect_and_shutdown() {
-    let host = host(GatewayLimits {
+    let (_directory, host) = host(GatewayLimits {
         header_timeout: Duration::from_millis(40),
         body_timeout: Duration::from_millis(40),
         drain_timeout: Duration::from_millis(60),
@@ -207,6 +227,8 @@ fn launch_and_policy() {
         vec!["--port"],
         vec!["--port", "3000", "--port", "3001"],
         vec!["--port", "3000", "--duration-seconds", "0"],
+        vec!["--port", "3000", "--config"],
+        vec!["--port", "3000", "--config", "a", "--config", "b"],
     ] {
         assert!(
             LaunchOptions::parse(
@@ -227,6 +249,8 @@ fn launch_and_policy() {
             "/demo",
             "--duration-seconds",
             "1",
+            "--config",
+            "config.json",
         ]
         .map(String::from),
         Some("3002"),
@@ -235,6 +259,10 @@ fn launch_and_policy() {
     assert_eq!(options.port, 3001);
     assert_eq!(options.duration, Duration::from_secs(1));
     assert_eq!(options.base.as_str(), "/demo");
+    assert_eq!(
+        options.config.as_deref(),
+        Some(std::path::Path::new("config.json"))
+    );
     assert!(
         GatewayLimits {
             connections: 9,
@@ -279,7 +307,7 @@ async fn acquisition_failure_table() {
             }
         }
     }
-    let host = host(GatewayLimits {
+    let (_directory, host) = host(GatewayLimits {
         body_bytes: 4,
         body_timeout: Duration::from_millis(30),
         ..Default::default()
@@ -316,7 +344,7 @@ async fn acquisition_failure_table() {
         }))
         .await;
     assert_eq!(response.status(), 408);
-    let short = host_for_request_deadline().await;
+    let (_short_directory, short) = host_for_request_deadline().await;
     assert_eq!(
         short
             .handle(Request::new(Frames {
@@ -330,7 +358,7 @@ async fn acquisition_failure_table() {
 }
 
 /// Give the entire request a shorter budget than its body acquisition.
-async fn host_for_request_deadline() -> Arc<Gateway> {
+async fn host_for_request_deadline() -> (tempfile::TempDir, Arc<Gateway>) {
     host(GatewayLimits {
         request_timeout: Duration::from_millis(20),
         ..Default::default()
@@ -342,7 +370,7 @@ async fn host_for_request_deadline() -> Arc<Gateway> {
 #[tokio::test]
 async fn runner_owns_all_admitted_connections() {
     use std::collections::VecDeque;
-    let host = host(GatewayLimits {
+    let (_directory, host) = host(GatewayLimits {
         connections: 1,
         drain_timeout: Duration::from_millis(30),
         ..Default::default()
@@ -385,7 +413,7 @@ async fn runner_owns_all_admitted_connections() {
 /// A pre-stopped connection cannot wait forever for another notification.
 #[tokio::test]
 async fn already_stopped_connection() {
-    let host = host(GatewayLimits::default()).await;
+    let (_directory, host) = host(GatewayLimits::default()).await;
     let (_client, server) = tokio::io::duplex(1024);
     let (stop, signal) = watch::channel(true);
     let result = timeout(

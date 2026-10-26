@@ -13,10 +13,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let method = args.first().ok_or("method required")?;
     let uri = args.get(1).ok_or("URI required")?;
     let path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../dist/hydrate");
-    let host = Gateway::new(
+    let config = std::env::var_os("PROFILE_UI_CONFIG").map(PathBuf::from);
+    let layers = stackpress_example_profile_ui_web::backend::configuration(config.as_deref())?;
+    let host = Gateway::with_config(
         BasePath::new(std::env::var("PROFILE_UI_BASE").unwrap_or_default())?,
         AssetBundle::load(&path)?,
         GatewayLimits::default(),
+        layers,
     )
     .await?;
     let request = Request::builder()

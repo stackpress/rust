@@ -78,6 +78,8 @@ pub struct LaunchOptions {
     pub port: u16,
     /// Previously built hydrate assets and manifest.
     pub assets: PathBuf,
+    /// Optional JSON file using the selected backend's registered sections.
+    pub config: Option<PathBuf>,
     /// Explicit public application mount.
     pub base: BasePath,
     /// Finite process lifetime; devmetrics may stop it sooner.
@@ -102,13 +104,19 @@ impl LaunchOptions {
         let mut values = std::collections::BTreeMap::new();
         for pair in args.chunks(2) {
             if pair.len() != 2
-                || !["--port", "--assets", "--base", "--duration-seconds"]
-                    .contains(&pair[0].as_str())
+                || ![
+                    "--port",
+                    "--assets",
+                    "--base",
+                    "--duration-seconds",
+                    "--config",
+                ]
+                .contains(&pair[0].as_str())
                 || values.insert(pair[0].as_str(), pair[1].as_str()).is_some()
             {
                 return Err(io::Error::new(
                     io::ErrorKind::InvalidInput,
-                    "usage: --port N [--assets DIR] [--base /demo] [--duration-seconds N]",
+                    "usage: --port N [--assets DIR] [--base /demo] [--duration-seconds N] [--config FILE]",
                 ));
             }
         }
@@ -136,6 +144,7 @@ impl LaunchOptions {
         }
         Ok(Self {
             port,
+            config: values.get("--config").map(PathBuf::from),
             assets: values.get("--assets").map_or_else(
                 || PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../dist/hydrate"),
                 PathBuf::from,

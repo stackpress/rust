@@ -9,6 +9,7 @@ publish.workspace = true
 [features]
 default = []
 demo-customization = []
+sqlite = ["dep:stackpress-example-sql-profile"]
 
 [dependencies]
 leptos = { version = "=0.8.22", default-features = false }
@@ -17,6 +18,7 @@ stackpress-server = { path = "../../../crates/server", features = ["http"] }
 stackpress-framework-view = { path = "../../../crates/framework/framework-view", features = ["server"] }
 stackpress-framework-ui = { path = "../../../crates/framework/framework-ui", features = ["ssr"] }
 stackpress-example-generated-profile = { path = "../../generated-profile/app" }
+stackpress-example-sql-profile = { path = "../../sql-profile", optional = true }
 stackpress-example-profile-ui-contracts = { path = "../contracts" }
 stackpress-example-profile-ui-shared = { path = "../shared", features = ["ssr"] }
 serde_json = "1"
@@ -25,6 +27,7 @@ tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 
 [dev-dependencies]
 stackpress-cli = { path = "../../../tools/cli" }
+tempfile = "3"
 
 [lints]
 workspace = true

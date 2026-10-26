@@ -13,7 +13,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         std::env::var("PORT").ok().as_deref(),
     )?;
     let assets = AssetBundle::load(&options.assets)?;
-    let gateway = Arc::new(Gateway::new(options.base, assets, GatewayLimits::default()).await?);
+    let layers =
+        stackpress_example_profile_ui_web::backend::configuration(options.config.as_deref())?;
+    let gateway = Arc::new(
+        Gateway::with_config(options.base, assets, GatewayLimits::default(), layers).await?,
+    );
     // This is the only bind in the example. No check/proof invokes this executable.
     let listener =
         tokio::net::TcpListener::bind((std::net::Ipv4Addr::LOCALHOST, options.port)).await?;

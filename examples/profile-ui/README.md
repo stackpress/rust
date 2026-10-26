@@ -8,9 +8,10 @@ From the repository root, use already installed Rust 1.96, Python 3.11+, the `wa
 
 ```sh
 python3 examples/profile-ui/check.py
+python3 examples/profile-ui/check.py --sqlite
 ```
 
-The command checks generated freshness with `--check true`, builds native SSR, builds hydrate and CSR separately, verifies their asset/seed manifests, checks the facade feature matrix and browser dependency graphs, then runs the web/gateway tests, doctests and warning-denied Clippy. Its final service probe opens no port. It never installs a tool or starts a listener. Missing prerequisites or the first failing command stop the sequence with a log path.
+Each command checks generated freshness with `--check true`, builds native SSR, builds hydrate and CSR separately, verifies their asset/seed manifests, checks the facade feature matrix and browser dependency graphs, then runs the web/gateway tests, doctests and warning-denied Clippy. The default selects in-memory data; `--sqlite` selects the read-only database backend and checks its native dependency edges. Its final service probe opens no port and uses an explicitly installed temporary database for SQLite. It never installs a tool or starts a listener. Missing prerequisites or the first failing command stop the sequence with a log path.
 
 Expected result: `All checks passed`. Logs and `summary.json` are under `examples/profile-ui/dist/check-logs`. Cargo uses exactly two build directories: `target/profile-ui-native` and `target/profile-ui-wasm`. Set `PROFILE_UI_NATIVE_TARGET`, `PROFILE_UI_TARGET` and `PROFILE_UI_CHECK_LOGS` to use other locations; retain those same two targets across checks. `CARGO_NET_OFFLINE=true` uses only cached dependencies. Cargo otherwise fetches the locked dependencies as needed; tool installation is always separate.
 
@@ -25,6 +26,23 @@ devmetrics start --summary "Stackpress profile UI preview" -- 'CARGO_TARGET_DIR=
 Use the port assigned by devmetrics and open `/demo/ui/profiles?id=abc`. Initial HTML contains Ada, Grace and Margaret; hydration preserves it without a second initial query. Search for `abc456`, open Grace's detail page, then return to the original search. Direct refresh and back/forward use the shared route/return-query codec.
 
 If you changed `PROFILE_UI_NATIVE_TARGET`, use that same path for `CARGO_TARGET_DIR` in the managed command. Never run the listener command directly. The gateway accepts a port only from `--port` or `PORT`; it has no default port. It binds loopback, stops after at most two hours (or `--duration-seconds 1..7200`), and drains on Ctrl-C or Unix SIGTERM. devmetrics also manages its lifetime. `--assets DIR` selects an existing hydrate output; `--base /demo` selects the trusted public mount.
+
+## Select SQLite explicitly
+
+The web host and gateway have a compile-time `sqlite` feature. It reuses [sql-profile](../sql-profile)'s database and profiles plugins, including literal case-sensitive byte-prefix search and stable seed order. The in-memory generated capability stays the default; the Tauri app stays in-memory. Shared/client/contracts and visible UI are unchanged.
+
+After building the assets with `check.py --sqlite`, create a temporary database and JSON configuration from the repository root:
+
+```sh
+PROFILE_UI_DEMO_DIR=$(mktemp -d /private/tmp/profile-ui-demo.XXXXXX)
+CARGO_TARGET_DIR=target/profile-ui-native cargo run --locked -p stackpress-example-sql-profile --bin sql-profile-setup -- "$PROFILE_UI_DEMO_DIR/profiles.sqlite"
+python3 -c 'import json,pathlib,sys; p=pathlib.Path(sys.argv[1]); (p/"config.json").write_text(json.dumps({"sqlite":{"path":str(p/"profiles.sqlite")},"profiles":{"limit":3}}))' "$PROFILE_UI_DEMO_DIR"
+devmetrics start --summary "Stackpress SQLite profile UI preview" -- "CARGO_TARGET_DIR=target/profile-ui-native cargo run --locked -p stackpress-example-profile-ui-gateway --features sqlite --bin stackpress-example-profile-ui-gateway -- --port {port} --base /demo/v1 --config '$PROFILE_UI_DEMO_DIR/config.json'"
+```
+
+Open `/demo/v1/ui/profiles?id=abc` on the assigned port. Keep the temporary directory until the managed preview stops, then remove it. Setup is an explicit one-shot transaction and refuses an existing installation. Startup opens the file read-only and checks its schema; a missing file or missing schema fails before the gateway binds. Startup and requests never install, migrate or seed. Relative `sqlite.path` values resolve from the process working directory; `profiles.limit` accepts `1..=100` and cannot be overridden by requests.
+
+Embedding callers pass `ConfigLayers` to `web::application_with_config(base, layers)` or `Gateway::with_config(base, assets, limits, layers)`. The managed gateway reads only an explicit `--config FILE`; finite web/probe executables use `PROFILE_UI_CONFIG=FILE`. An omitted config uses the selected plugins' defaults (`profiles.sqlite` for SQLite), without creating a file. Invalid JSON, unknown sections and invalid policy fail startup.
 
 ## Asset and version agreement
 
@@ -54,7 +72,17 @@ PROFILE_UI_HOST=target/profile-ui-native/debug/stackpress-example-profile-ui-web
 PROFILE_UI_HOST=target/profile-ui-native/debug/stackpress-example-profile-ui-web node examples/profile-ui/proofs/browser-navigation.cjs
 ```
 
-Chromium uses a synthetic HTTPS origin and request interception over browser pipes. `probe` calls the actual gateway service API and emits one response, then exits. It cannot bind a socket. The gateway proof covers hashed assets, initial seed, version/build mismatch, missing JS/WASM, explicit reload recovery and a second typed search. The other proofs cover unchanged DOM/focus, hostile seed, errors/retry, disposal, responsive/keyboard behavior, navigation and initial French/dark agreement. `PROFILE_UI_BASE=/demo` can exercise mounted navigation.
+Chromium uses a synthetic HTTPS origin and request interception over browser pipes. `probe` calls the actual gateway service API and emits one response, then exits. It cannot bind a socket. The gateway proof covers hashed assets, initial seed, version/build mismatch, missing JS/WASM, explicit reload recovery and a second typed search. The other proofs cover unchanged DOM/focus, hostile seed and literal hostile prefixes, errors/retry, disposal, responsive/keyboard behavior, navigation and initial French/dark agreement. `PROFILE_UI_BASE=/demo/v1` exercises mounted behavior for every proof.
+
+Run the complete eight-proof matrix against the backend binaries most recently built by the corresponding check command:
+
+```sh
+python3 examples/profile-ui/proofs/browser.py
+# After check.py --sqlite (also builds the explicit setup binary):
+python3 examples/profile-ui/proofs/browser.py --sqlite
+```
+
+The runner invokes all four scripts at the root and `/demo/v1`, creates and installs SQLite only inside a temporary directory when selected, and retains proof logs and a machine receipt in `dist/browser-logs`. Before setup, the SQLite runner checks both finite executables against missing and uninstalled files: startup must explain the setup remedy and leave each file untouched. Set `PROFILE_UI_BROWSER_LOGS` to retain separate backend receipts. `PROFILE_UI_NATIVE_TARGET` selects the same native target used by checks. Rust parity tests additionally compare complete SSR HTML, typed HTTP bytes/headers and detail/error statuses against the actual generated in-memory host, including empty, `%`, `_`, quotes, backslash, Unicode and NUL prefixes.
 
 Gateway tests use `tokio::io::duplex` and the same Hyper connection/runner code as the executable. They exercise raw chunked requests, bounded body/header acquisition, incomplete/slow input, disconnect, excess admission and graceful shutdown without a TCP listener.
 

@@ -41,7 +41,44 @@ Acceptance criteria: none. The UI was visually accepted in task 00008; this task
 
 ## Implementation notes
 
-Pending.
+Implemented on `trial/3-profile-ui-sqlite`, based on `9290b40`, on 2026-10-26. Work is uncommitted and awaits coordinator verification.
+
+### Behavior and ownership
+
+- `sqlite` is an opt-in compile-time feature on the native web host and gateway. Default builds retain the generated in-memory operation. Shared/client/contracts, visible UI, Tauri and `crates/**` were not changed.
+- `web::backend` selects the existing sql-profile database and profiles plugins with their prerequisite order. Its existing public exports were sufficient: no sql-profile changes or copied persistence code were needed. Cargo.lock adds only the new example/development dependency edges; no registry versions changed.
+- Embedders pass `ConfigLayers` to `application_with_config` or `Gateway::with_config`. The managed gateway accepts `--config FILE`; finite web/probe executables read `PROFILE_UI_CONFIG`. JSON retains `sqlite.path` / `profiles.limit`, with database paths relative to the working directory.
+- Configuration reads have a finite byte budget and require an operator-owned regular file. Omitted configuration uses registered defaults. Startup reuses sql-profile's eager read-only open/schema check and never creates, installs or seeds a database. Database startup errors preserve their cause and explain the separate `sql-profile-setup` remedy.
+- Backend parity tests compare actual generated in-memory and SQLite hosts: complete SSR bytes/headers/status, typed HTTP bytes/headers/status and detail/not-found results at the root and `/demo/v1`, with limits 1 and 3. Inputs include empty, case differences, `%`, `_`, both quote forms, backslash, Unicode, injection-shaped text and NUL.
+- Existing web and duplex gateway regressions exercise the selected backend using explicitly installed temporary files. Browser interaction proofs now support both mounts and literal hostile prefixes. `proofs/browser.py` runs every script at both mounts; SQLite preflight also checks both finite executables against missing/uninstalled files without setup effects.
+- `check.py --sqlite` covers feature builds/tests/doctests/Clippy, expected native SQLite edges, isolated hydrate/CSR graphs and a temporary-database service proof. The README documents explicit setup, configuration, the proof matrix and the devmetrics-only preview command.
+
+### Test-verified rounds
+
+1. Logic/complexity: reviewed default/SQLite selection, config failure order, explicit setup and fixture lifetimes. Added bounded regular-file configuration checks and cause-preserving startup remedies; tests assert missing/uninstalled files remain untouched. All selected-backend tests/doctests passed (`/private/tmp/task00009-round1.log`).
+2. Responsibility/abstraction: reviewed ownership across backend composition, persistence, routes/rendering and adapters. No further extraction was justified: one native backend module reuses the SQL plugins and both hosts share the presentation registration. Tests passed with SQLite plus `demo-customization`, including complete parity (`task00009-round2.log`).
+3. Consistency/Rustdoc/comments: updated backend-sensitive declarations/comments, documented config and setup boundaries and tested config-option parsing. Selected-backend tests/doctests passed (`task00009-round3.log`); final formatting, Clippy and warning-denied Rustdoc passed.
+4. Safety/soundness: reviewed read-only service publication, cause preservation, temporary-file lifetime, public input boundaries, cancellation inheritance and dependency placement. Added real finite-executable startup checks; all passed. No unsafe code or new concurrency/persistence mechanism was introduced. The existing SQL literal-positive and storage proofs also passed in the workspace suite.
+
+### Verification receipt
+
+All code/proof gates below passed. Commands ran with `CARGO_INCREMENTAL=0`, `CARGO_PROFILE_DEV_DEBUG=0`, one reused native target (`target/profile-ui-native`) and one WASM target (`target/profile-ui-wasm`).
+
+- `python3 examples/profile-ui/check.py` and `python3 examples/profile-ui/check.py --sqlite`: both passed. Separate logs and machine receipts: `/private/tmp/task00009-check-memory/` and `/private/tmp/task00009-check-sqlite/`.
+- `cargo test --workspace --all-targets --locked`: passed; opt-in/ignored tests remain explicitly ignored. `cargo test --workspace --doc --locked`: passed. Logs: `task00009-workspace-tests.log` and `task00009-workspace-doctests.log` under `/private/tmp/`.
+- `cargo clippy --workspace --all-targets --locked -- -D warnings`, `cargo +1.96.0 check --workspace --all-targets --locked` and warning-denied `cargo doc --workspace --no-deps --locked`: passed. Corresponding logs: `task00009-workspace-clippy.log`, `task00009-workspace-msrv.log`, `task00009-workspace-doc.log`.
+- SQLite-specific 1.96 all-target checks and warning-denied Rustdoc also passed for web/gateway; selected-feature doctests/Clippy passed through check.py. Logs: `task00009-sqlite-msrv.log`, `task00009-sqlite-doc.log` and the SQLite check directory.
+- `browser.cjs`, `browser-m2.cjs`, `browser-navigation.cjs` and `browser-gateway.cjs` passed at both the root and `/demo/v1` for both backends: 16 runs, zero unexpected browser errors. Receipts: `/private/tmp/task00009-browser-memory/` and `/private/tmp/task00009-browser-sqlite/`. The complete SQLite matrix and executable startup preflight passed again using instrumented binaries in `/private/tmp/task00009-browser-coverage/`.
+- Native executable-line coverage used cargo-llvm-cov 0.8.6 / Rust 1.96.0 (`aarch64-apple-darwin`), default and SQLite feature test runs, plus instrumented finite web/probe browser runs. Web: **455/488 = 93.24%**. Gateway: **540/608 = 88.82%**. Both exceed the 70% development floor. LLVM profile diagnostics were empty.
+- Coverage includes actual production example source/binaries and the linked route source. Tests, dependencies and non-Rust tooling are outside the changed-crate denominator; optional customization was tested separately. Incidental partial coverage rows for unchanged dependency crates are not their complete coverage results. Browser/WASM behavior is proven by Chromium, not claimed as native numerical coverage.
+- Coverage commands: scoped `cargo llvm-cov --no-report --locked` for default and SQLite, followed by `cargo llvm-cov show-env` instrumented binary builds and `proofs/coverage.py`. Set `CARGO_LLVM_COV_TARGET_DIR` to the same native target. Raw export: `/private/tmp/task00009-coverage.json`; summary: `task00009-coverage-summary.log`; machine scope receipt: `task00009-coverage-receipt.json`; build/test logs: `task00009-cov-*.log`.
+- Both Cargo targets were deleted after verification; logs, browser assets and coverage export remain reviewable. Every database used for this task was in temporary storage. No listener was started; the gateway listener executable was built, never run. No commit, push, publishing, deployment or KB reindex occurred.
+
+### Boundaries and KB validation
+
+This is the native web/gateway SQLite integration. Tauri database packaging/location, new persistence APIs, production hosting and publication remain outside this task. PostgreSQL/MySQL opt-in servers were not used. Coordinator verification/status remain pending.
+
+Before the task-note write, the Agent Workspace validator reported **146 errors and 21 warnings**, all from existing KB material (chiefly sibling-source links absent in this worktree). The post-write comparison is recorded separately; unrelated KB repair is outside scope.
 
 ## Verification notes
 
