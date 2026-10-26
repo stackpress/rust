@@ -124,6 +124,24 @@ Design checkpoint prepared on 2026-10-25. Start with [Slice 5 decisions and reco
 - **Gap found:** lane A's M1 lacked the return-query codec and detail seed, and the renderer always selected search presentation. The coordinator's M1 verification missed this, because those proofs exercised only search.
 - **Correction assigned to lane B as a single owner,** with a scoped exception to edit lane A's route, web and render files: a shared detail-location codec, a `{ id, search_prefix }` detail seed, a canonical return query, a page root selected from the snapshot, navigation, and an initial French/dark SSR-to-hydration proof.
 
+**M2 completion re-verification (coordinator, 2026-10-26): passed; merged as `440b333`; M3 (native, lane B) and M4 DX (lane A) released in parallel.**
+
+- **Delivered (lane B, with a scoped exception into lane A files):**
+  - the shared detail-location codec and strict return-prefix decoder;
+  - the `{ id, search_prefix }` detail seed;
+  - a canonical return query;
+  - a snapshot-selected page root (native 404 renders detail not-found);
+  - navigation and history, plus initial French/dark SSR-to-hydration equality.
+- **Defects found and fixed:**
+  - keyed rows reused across a prefix change kept stale return links, found by the packaged proof;
+  - French and English count phrases ignored plural categories ("1 profils"), found by the coordinator in the M2 screenshots and now fixed with per-locale plural categories tested for 0, 1 and 2.
+- **Checks rerun by the coordinator:**
+  - fmt, Clippy and the 1.96 check clean; 399 tests and 444 doctests passed;
+  - the hydrate and CSR builds passed;
+  - browser.cjs (root and `/demo/v1`), browser-m2.cjs and browser-navigation.cjs (root and `/demo/v1`) all passed with `errors: []`;
+  - the packaged `.app` passed the full control list (bootstrap, invalid, empty, search, native host error and retry, denied transport, detail, history, return, missing, locale, theme, disposal), with `in_flight: 0` and no process left behind.
+- **Acceptance progress:** 00008-002 and 003 have implementer and coordinator evidence. 004 and 005 are covered for native geometry, locale and Head. 006 to 008 remain for M3 and M4. Owner visual sign-off is still pending.
+
 ## Acceptance notes
 
 Pending.
