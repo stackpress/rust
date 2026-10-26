@@ -112,6 +112,33 @@ Design checkpoint prepared on 2026-10-25. Start with [Slice 4 decisions and reco
   - PostgreSQL primary-key removal assumes the generated `<table>_pkey` name.
 - **Disk:** free space fell to 4.4 GB during M3. The coordinator deleted superseded build output only (logs kept) and restored about 30 GB.
 
+**Rounds 1–4 and slice closeout (coordinator, 2026-10-26): verified.** Details are in the rounds receipts for the [core lane](../slice-4-receipt-lane-a-rounds.md) and the [SQLite and example lane](../slice-4-receipt-lane-b-rounds.md).
+
+- **Core rounds (merged as `83c150e`):** five defects were fixed, each with a regression that failed first.
+  - Schema diffs whose target column order native ADD can't realize are rejected.
+  - PostgreSQL source names require exact case.
+  - ALTER reconciliation uses one matching rule.
+  - The primary-key `SET NULL` check now also applies to ALTER.
+  - Raw PostgreSQL NUL binds are rejected through the shared value validator.
+
+  The incremental SQL budget now also covers INSERT, UPDATE and CREATE bodies. API and dependencies are unchanged.
+- **SQLite and example rounds (merged as `629ef07`):**
+  - transaction ownership moved into `session.rs`;
+  - a dedicated soundness round: cancellation sweeps across begin/run/commit/rollback and both `execute_plan` paths, failed-rollback and queued-acquisition cancellation, disclosure, thread bounds, runtime teardown, and concurrent installers;
+  - a test-infrastructure fix: the watchdog now rejects growing output;
+  - production behavior is unchanged.
+- **Coordinator re-verification on the integrated `trial/3`:**
+  - 423 workspace tests and 854 doctests passed;
+  - Clippy `-D warnings` and Rustdoc `-D warnings` are clean, and `cargo +1.96.0 check` passed;
+  - per-crate coverage after a clean: `stackpress-sql` **95.43%**, `stackpress-sql-sqlite` **95.41%**, `stackpress-example-sql-profile` **89.53%**;
+  - G26 live renderer validation: **16/16** on PostgreSQL 12.2 and MySQL 8.0.27, with both owned databases dropped and no leftover MySQL test databases;
+  - capability-host parity rerun: 12/12 byte-identical;
+  - the core has zero normal dependencies, and the default facade, lib and server are driver-free.
+- **Not covered and remaining deferrals:**
+  - native macOS ARM64 only;
+  - production network adapters (S4-N), PGlite/serverless (S4-H), migrations and SQLite reconstruction (S4-M), framework stores (S4-F) and query middleware (S4-X);
+  - full crate usage and API docs are a separately released follow-up task.
+
 ## Acceptance notes
 
 Library work has no visual acceptance artifact under the spec workflow; this task finishes at `verified` after coordinator review.

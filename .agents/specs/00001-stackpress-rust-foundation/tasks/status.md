@@ -15,5 +15,5 @@ Status values follow the spec task implementation workflow: `proposed`, `open`, 
 | [00005A Server and CLI docs](00005A-server-and-cli-docs.md) | verified | Owner accepted 2026-10-24; coordinator-reviewed 2026-10-24. Acceptance criteria: none. |
 | [00006 Slice 3 Idea](00006-slice-3-idea.md) | verified | Owner accepted 2026-10-24; four parallel lanes merged; coordinator closeout verified 2026-10-25. Acceptance criteria: none. |
 | [00006A Idea usage and API docs](00006A-idea-docs.md) | verified | Owner requested 2026-10-25; 43 pages across parser, transformer and wrapper; coordinator-reviewed 2026-10-25. Acceptance criteria: none. |
-| [00007 Slice 4 SQL](00007-slice-4-sql.md) | started | Owner accepted 2026-10-25, in parallel with 00008 (G23). Design approved 2026-10-26 (G24); M0 released. Acceptance criteria: none. |
+| [00007 Slice 4 SQL](00007-slice-4-sql.md) | verified | Owner accepted 2026-10-25 (G24/G26); M0–M3 and rounds 1–4 merged; coordinator closeout verified 2026-10-26. Acceptance criteria: none. |
 | [00008 Slice 5 UI](00008-slice-5-ui.md) | started | Owner accepted 2026-10-25, in parallel with 00007 (G23). Design approved 2026-10-26 (G25); M0 released. Visual acceptance 00008-001 to 008 accepted. |

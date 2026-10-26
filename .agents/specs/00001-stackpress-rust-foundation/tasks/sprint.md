@@ -36,7 +36,7 @@ Acceptance criteria: none for library tasks, because they have no human-reviewab
 | [00005A](00005A-server-and-cli-docs.md) | 2 | Follow-up: server and CLI usage/API docs (chrisai-docing). | verified |
 | [00006](00006-slice-3-idea.md) | 3 | Idea parser assessment against current fixtures, transformer, and generation of one model. | verified |
 | [00006A](00006A-idea-docs.md) | 3 | Follow-up: Idea parser, transformer and wrapper usage/API docs (chrisai-docing). | verified |
-| [00007](00007-slice-4-sql.md) | 4 | `stackpress-sql`, first backend, and `framework-sql` integration; parallel with 00008 (G23). | started |
+| [00007](00007-slice-4-sql.md) | 4 | `stackpress-sql`, first backend, and `framework-sql` integration; parallel with 00008 (G23). | verified |
 | [00008](00008-slice-5-ui.md) | 5 | `framework-view`/`framework-ui` Leptos SSR with hydration, and a Tauri client; parallel with 00007 (G23). | started |
 
 Proposed tasks get task files only after the owner accepts them. Proposed numbers were shifted by one on 2026-10-24 when the owner requested task 00004; none had been accepted, so no stable number changed.
