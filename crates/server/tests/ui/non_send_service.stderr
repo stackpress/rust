@@ -1,0 +1,29 @@
+error[E0277]: `Rc<()>` cannot be sent between threads safely
+ --> tests/ui/non_send_service.rs:5:20
+  |
+5 |     start.register(Arc::new(Rc::new(()))).unwrap();
+  |           -------- ^^^^^^^^^^^^^^^^^^^^^ `Rc<()>` cannot be sent between threads safely
+  |           |
+  |           required by a bound introduced by this call
+  |
+  = help: the trait `Send` is not implemented for `Rc<()>`
+note: required by a bound in `StartupContext::register`
+ --> src/startup.rs
+  |
+  |     pub fn register<T: Any + Send + Sync>(&mut self, value: Arc<T>) -> Result<()> {
+  |                              ^^^^ required by this bound in `StartupContext::register`
+
+error[E0277]: `Rc<()>` cannot be shared between threads safely
+ --> tests/ui/non_send_service.rs:5:20
+  |
+5 |     start.register(Arc::new(Rc::new(()))).unwrap();
+  |           -------- ^^^^^^^^^^^^^^^^^^^^^ `Rc<()>` cannot be shared between threads safely
+  |           |
+  |           required by a bound introduced by this call
+  |
+  = help: the trait `Sync` is not implemented for `Rc<()>`
+note: required by a bound in `StartupContext::register`
+ --> src/startup.rs
+  |
+  |     pub fn register<T: Any + Send + Sync>(&mut self, value: Arc<T>) -> Result<()> {
+  |                                     ^^^^ required by this bound in `StartupContext::register`

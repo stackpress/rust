@@ -1,0 +1,29 @@
+error[E0277]: `Rc<()>` cannot be sent between threads safely
+  --> tests/ui/non_sync_context.rs:10:74
+   |
+10 |     let _ = emitter.emit_with_context("no-listener", &mut req, &mut res, &state);
+   |                     -----------------                                    ^^^^^^ `Rc<()>` cannot be sent between threads safely
+   |                     |
+   |                     required by a bound introduced by this call
+   |
+   = help: the trait `Send` is not implemented for `Rc<()>`
+note: required by a bound in `EventEmitter::emit_with_context`
+  --> src/event.rs
+   |
+   |     pub fn emit_with_context<'a, T: Any + Send + Sync>(
+   |                                           ^^^^ required by this bound in `EventEmitter::emit_with_context`
+
+error[E0277]: `Rc<()>` cannot be shared between threads safely
+  --> tests/ui/non_sync_context.rs:10:74
+   |
+10 |     let _ = emitter.emit_with_context("no-listener", &mut req, &mut res, &state);
+   |                     -----------------                                    ^^^^^^ `Rc<()>` cannot be shared between threads safely
+   |                     |
+   |                     required by a bound introduced by this call
+   |
+   = help: the trait `Sync` is not implemented for `Rc<()>`
+note: required by a bound in `EventEmitter::emit_with_context`
+  --> src/event.rs
+   |
+   |     pub fn emit_with_context<'a, T: Any + Send + Sync>(
+   |                                                  ^^^^ required by this bound in `EventEmitter::emit_with_context`

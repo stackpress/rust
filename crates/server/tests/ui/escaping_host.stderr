@@ -1,0 +1,14 @@
+error: lifetime may not live long enough
+ --> tests/ui/escaping_host.rs:4:50
+  |
+4 | fn escape(inv: Invocation<'_>) -> &'static u64 { inv.service::<u64>().unwrap() }
+  |           --- has type `Invocation<'1>`          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ returning this value requires that `'1` must outlive `'static`
+
+error[E0515]: cannot return value referencing function parameter `inv`
+ --> tests/ui/escaping_host.rs:4:50
+  |
+4 | fn escape(inv: Invocation<'_>) -> &'static u64 { inv.service::<u64>().unwrap() }
+  |                                                  ---^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |                                                  |
+  |                                                  returns a value referencing data owned by the current function
+  |                                                  `inv` is borrowed here
