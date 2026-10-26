@@ -45,7 +45,13 @@ Design checkpoint delivered on 2026-10-26: start at [Slice 8 design decisions](.
 
 ## Verification notes
 
-Pending.
+**M0, coordinator review on 2026-10-27** ([receipt](00013-receipt-m0.md); merge after `d5cc21d`). Result: **verified**; merged into `trial/3`.
+
+- **First checkpoint:** the implementer stopped on a real counterexample: pinned Leptos/any_spawner detaches Resource loaders with no cancel handle. The coordinator directed cooperative cancellation (Owner cleanup fires an `Abortable` handle) instead of reopening the executor design. It holds within bounded scheduler yields for yielding loaders; CPU-bound loaders remain bounded by host deadlines.
+- **Checks rerun by the coordinator:** fmt; Clippy `-D warnings` for framework-ui `ssr,rich` and framework-language; framework-ui tests with `ssr` and `ssr,rich`; framework-language and framework-view tests; the gallery build and its Chromium proof (4/4 at root and `/demo/v1`, no listener). Merged workspace: 537 passed, 0 failed, 75 ignored; workspace Clippy clean. The only conflict was the root members list.
+- **Coverage (implementer):** framework-ui 97.92%, framework-view 95.82%, framework-language 97.32%, gallery-shared 92.47%, gallery-web 90.22%.
+- **Coordinator screenshot review notes for M1:** adjacent buttons render with no gap; in the full-page 375 px dialog capture the backdrop stops partway down the page (verify the viewport-fixed backdrop, not just the screenshot mode).
+- **License note:** `ammonia` brings `cssparser` 0.38.0 under MPL-2.0, the first file-level copyleft dependency; only in the opt-in `rich` feature. Reported to the owner.
 
 ## Acceptance notes
 
