@@ -15,10 +15,9 @@ use std::{
 };
 use tokio::sync::{Notify, watch};
 
-// M4 supplies this shared source. Feature-off builds do not resolve it; no native copy exists.
+// Compile the same optional plugin source used by the direct/CLI/HTTP/SSR hosts.
 #[cfg(feature = "demo-customization")]
 #[path = "../../customization.rs"]
-#[rustfmt::skip]
 mod customization;
 
 /// Register generated operations followed by the optional shared labels plugin.
@@ -30,7 +29,7 @@ pub fn register_application(
 ) -> stackpress_lib::Result<()> {
     stackpress_example_generated_profile::generated::register(builder)?;
     #[cfg(feature = "demo-customization")]
-    customization::register(builder)?;
+    builder.plugin("profile-ui-labels", customization::register)?;
     Ok(())
 }
 

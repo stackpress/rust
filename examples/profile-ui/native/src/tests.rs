@@ -82,6 +82,11 @@ fn setup(builder: &mut ServerBuilder, probe: &Arc<Probe>) {
 
 /// Compare a generated nested call and admission failures with exact lifecycle counts.
 async fn lifecycle_and_denial() {
+    // These bounds are part of the native command/worker contract, not UI signal sharing.
+    /// Fail compilation if native worker metadata loses its cross-thread contract.
+    fn send_sync<T: Send + Sync>() {}
+    send_sync::<NativeHost>();
+    send_sync::<NativeCallContext>();
     for (window, scheme, origin, allowed) in [
         ("main", "tauri", Some("localhost"), true),
         ("other", "tauri", Some("localhost"), false),
@@ -294,12 +299,27 @@ async fn poisoned_cleanup() {
     assert!(weak.upgrade().is_none());
 }
 
+/// Every adapter must select the same named plugin in the same registration order.
+async fn selected_plugin_identity() {
+    let host = NativeHost::new().await.unwrap();
+    let plugins = host
+        .server
+        .plugins()
+        .map(|plugin| plugin.id.as_str())
+        .collect::<Vec<_>>();
+    #[cfg(not(feature = "demo-customization"))]
+    assert_eq!(plugins, ["profiles"]);
+    #[cfg(feature = "demo-customization")]
+    assert_eq!(plugins, ["profiles", "profile-ui-labels"]);
+}
+
 /// Native cancellation/poison cases cannot silently hang the test process.
 #[test]
 fn native_cases() {
     if std::env::var_os("PROFILE_UI_NATIVE_CHILD").is_some() {
         let runtime = tokio::runtime::Runtime::new().unwrap();
         runtime.block_on(async {
+            selected_plugin_identity().await;
             lifecycle_and_denial().await;
             cancellation_and_disposal().await;
             public_host_rejection().await;

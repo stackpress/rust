@@ -2,6 +2,9 @@
 //!
 //! Construct state inside a Leptos Owner and provide it through LayoutProvider.
 //! Dropping that Owner disposes all signals; no global registry retains them.
+//! Mutations are synchronous actions in that root's UI execution context. Hosts
+//! marshal completions back to the root; signal handles are not a concurrent
+//! cross-thread notification queue, even when their Rust types are Send/Sync.
 
 use leptos::prelude::*;
 

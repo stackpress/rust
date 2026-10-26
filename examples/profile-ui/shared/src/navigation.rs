@@ -21,18 +21,26 @@ pub struct Navigation {
 /// Owned history projection; never a live transport, Owner or host capability.
 #[derive(Clone)]
 struct Entry {
+    /// Exact detail identity and its independent return prefix, or a search page.
     detail: Option<DetailContext>,
+    /// Editable input at departure, which can differ from the last successful prefix.
     input: String,
+    /// Prefix that produced these useful rows, independent of an unfinished edit.
     prefix: String,
+    /// Owned public projection only; no transport, native host or reactive owner.
     rows: Vec<(String, String)>,
 }
 
 /// Root-local navigation state. History contains public results only and is bounded.
 #[derive(Clone, Copy)]
 pub(super) struct PageNavigation {
+    /// Selected page context shared with the visible detail view.
     pub(super) detail: RwSignal<Option<DetailContext>>,
+    /// Last checked canonical location published through the host adapter.
     location: RwSignal<String>,
+    /// Bounded root-local snapshots for history traversal without a refetch.
     history: StoredValue<BTreeMap<String, Entry>>,
+    /// Explicit checked mount, never inferred from an untrusted location.
     base: StoredValue<BasePath>,
 }
 

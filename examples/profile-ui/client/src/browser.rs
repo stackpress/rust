@@ -21,10 +21,13 @@ extern "C" {
 
 /// Owned DOM listener lease; root disposal removes listeners before releasing callbacks.
 struct NavigationLease {
+    /// JS disposer removes the DOM listeners before the Rust callback is released.
     stop: js_sys::Function,
+    /// Keep the callback callable for precisely the listener lease lifetime.
     _receive: Closure<dyn FnMut(String, bool)>,
 }
 impl Drop for NavigationLease {
+    /// Revoke DOM entry before releasing the WASM callback it can invoke.
     fn drop(&mut self) {
         let _ = self.stop.call0(&JsValue::NULL);
     }
