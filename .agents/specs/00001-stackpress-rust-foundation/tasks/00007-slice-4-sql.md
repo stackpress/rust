@@ -96,6 +96,22 @@ Design checkpoint prepared on 2026-10-25. Start with [Slice 4 decisions and reco
   - A first-run PostgreSQL 12 cleanup-syntax failure (`WITH (FORCE)` needs PG13+) left one owned database. It was dropped by an audited, prefix- and nonce-bounded recovery, and cleanup is now plain `DROP DATABASE IF EXISTS`.
 - **Integrated `trial/3`:** Clippy clean; 365 tests and 441 doctests passed.
 
+**M3 re-verification and before-rounds review (coordinator, 2026-10-26): passed; rounds 1–4 released.** Details are in the receipts for the [core lane](../slice-4-receipt-lane-a-m3.md) and the [SQLite and example lane](../slice-4-receipt-lane-b-m3.md).
+
+- **Core docs (merged as `fae98c8`):** a crate-root first-success guide and task table; 852 workspace doctests run, with no ignored doc examples; four standalone examples run; 391 tests passed; Rustdoc `-D warnings` clean.
+- **sql-profile example (merged as `9f9f787`):**
+  - The coordinator ran the SQLite app and the in-memory capability-host app over 12 inputs (prefixes, case variants, no match, `%`, `_`, quote, backslash, accented text, empty), with **12/12 byte-identical** CLI envelopes.
+  - Prefix matching is a byte-substring comparison on bound values, not LIKE.
+  - Setup refuses an existing installation, and startup is read-only.
+  - 395 tests and 445 doctests passed; Clippy and the 1.96 check are clean.
+  - The default `stackpress`, `stackpress-lib` and `stackpress-server` trees have no `sqlx`/`libsqlite3`.
+- **Accepted deviations:**
+  - MySQL nullable columns without an explicit default omit DEFAULT.
+  - No read-only observation hook (deferred with S4-X).
+  - Physical reorder, identity conversion and prefix/expression indexes return Unsupported.
+  - PostgreSQL primary-key removal assumes the generated `<table>_pkey` name.
+- **Disk:** free space fell to 4.4 GB during M3. The coordinator deleted superseded build output only (logs kept) and restored about 30 GB.
+
 ## Acceptance notes
 
 Library work has no visual acceptance artifact under the spec workflow; this task finishes at `verified` after coordinator review.
