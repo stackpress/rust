@@ -66,3 +66,7 @@ pub use stackpress_server as server;
 pub use stackpress_sql as sql;
 #[cfg(feature = "sql-sqlite")]
 pub use stackpress_sql_sqlite as sql_sqlite;
+
+/// Checked locale selection and preference action policy.
+#[cfg(feature = "framework-language")]
+pub use stackpress_framework_language as framework_language;

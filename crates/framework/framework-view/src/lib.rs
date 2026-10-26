@@ -277,6 +277,22 @@ pub trait PageRenderer<T>: Send + Sync + 'static {
     fn render(&self, page: PageSnapshot<T>) -> RenderFuture<'_>;
 }
 
+/// Complete asynchronous rendering may own a reactive root through body/replay/Head.
+///
+/// This distinct boundary leaves [`RenderFuture`]/[`PageRenderer`]'s synchronous
+/// staging contract intact. It is a buffered result, never a streaming response.
+pub type AsyncRenderFuture<'a> = std::pin::Pin<
+    Box<dyn std::future::Future<Output = Result<RenderedPage, ViewError>> + Send + 'a>,
+>;
+
+/// Explicit opt-in renderer for component-owned asynchronous work.
+pub trait AsyncPageRenderer<T>: Send + Sync + 'static {
+    /// Immutable public settings and bounded page/asset contract.
+    fn contract(&self) -> &PageContract;
+    /// Own the complete render lifetime; cancellation/disposal is renderer-specific.
+    fn render_async(&self, page: PageSnapshot<T>) -> AsyncRenderFuture<'_>;
+}
+
 #[cfg(all(feature = "server", target_arch = "wasm32"))]
 compile_error!("framework-view/server is a native adapter; use default contracts on wasm32");
 #[cfg(all(feature = "server", not(target_arch = "wasm32")))]
@@ -285,7 +301,7 @@ mod server;
 pub use server::{PageLoader, PageSpec, ServerBuilderViewExt};
 
 /// Escape JSON text for an inert script element without altering roundtrip data.
-pub(crate) fn escape_script_json(json: &str) -> String {
+pub fn escape_script_json(json: &str) -> String {
     let mut safe = String::with_capacity(json.len());
     for character in json.chars() {
         // HTML parsers recognize script terminators even in non-executable script tags.

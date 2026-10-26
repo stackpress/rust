@@ -38,7 +38,7 @@ pub fn initialize_ssr() -> Result<(), ViewError> {
 }
 
 /// Reject missing startup or runtime context before a dependency can panic.
-fn require_executor() -> Result<(), ViewError> {
+pub(super) fn require_executor() -> Result<(), ViewError> {
     if !INITIALIZED.load(Ordering::Acquire) || tokio::runtime::Handle::try_current().is_err() {
         return Err(ViewError::ExecutorUnavailable);
     }
@@ -299,7 +299,7 @@ fn prepare<T: Serialize, V: IntoView>(
 }
 
 /// Encode plain text for HTML text/attribute contexts; browser Title uses its safe DOM API.
-fn escape_html(value: &str) -> String {
+pub(super) fn escape_html(value: &str) -> String {
     let mut encoded = String::with_capacity(value.len());
     for character in value.chars() {
         match character {

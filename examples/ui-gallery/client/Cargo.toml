@@ -1,0 +1,28 @@
+[package]
+name = "stackpress-example-ui-gallery-client"
+description = "Slice 8 bounded shared UI proof"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = []
+hydrate = ["stackpress-example-ui-gallery-shared/hydrate"]
+csr = ["stackpress-example-ui-gallery-shared/csr"]
+
+[dependencies]
+leptos = { version = "=0.8.22", default-features = false }
+stackpress-example-ui-gallery-shared = { path = "../shared" }
+serde_json = "1"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = "=0.2.129"
+js-sys = "0.3"
+web-sys = { version = "0.3", features = ["Window", "Document", "Element", "HtmlElement", "HtmlInputElement"] }
+
+[lints]
+workspace = true

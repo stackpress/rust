@@ -4,10 +4,11 @@ members = [
     "crates/idea/idea-parser", "crates/idea/idea-transformer", "crates/idea/idea",
     "examples/generated-profile/codegen", "examples/generated-profile/app",
     "crates/sql/sql", "crates/sql/sql-sqlite", "examples/sql-profile",
-    "crates/framework/framework-view", "crates/framework/framework-ui",
+    "crates/framework/framework-view", "crates/framework/framework-ui", "crates/framework/framework-language",
     "examples/profile-ui/contracts", "examples/profile-ui/shared",
     "examples/profile-ui/web", "examples/profile-ui/client", "examples/profile-ui/native",
     "examples/profile-ui/gateway",
+    "examples/ui-gallery/shared", "examples/ui-gallery/client", "examples/ui-gallery/web",
 ]
 resolver = "3"
 
@@ -39,6 +40,7 @@ stackpress-sql = { path = "crates/sql/sql", optional = true }
 stackpress-sql-sqlite = { path = "crates/sql/sql-sqlite", optional = true }
 stackpress-framework-view = { path = "crates/framework/framework-view", optional = true }
 stackpress-framework-ui = { path = "crates/framework/framework-ui", optional = true }
+stackpress-framework-language = { path = "crates/framework/framework-language", optional = true }
 
 [features]
 default = []
@@ -55,6 +57,9 @@ framework-ui = ["framework-view", "dep:stackpress-framework-ui"]
 framework-ui-ssr = ["framework-ui", "stackpress-framework-ui/ssr"]
 framework-ui-hydrate = ["framework-ui", "stackpress-framework-ui/hydrate"]
 framework-ui-csr = ["framework-ui", "stackpress-framework-ui/csr"]
+framework-ui-async = ["framework-ui", "stackpress-framework-ui/async"]
+framework-ui-rich = ["framework-ui", "stackpress-framework-ui/rich"]
+framework-language = ["dep:stackpress-framework-language"]
 
 [dev-dependencies]
 serde = { version = "1", features = ["derive"] }
