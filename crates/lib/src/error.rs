@@ -211,6 +211,13 @@ impl Error {
 
     /// Preserve an arbitrary owned Send + Sync cause for normal question-mark flow.
     ///
+    /// Display is `external operation failed`; the underlying explanation is available
+    /// through [`std::error::Error::source`], retaining its concrete type for downcasting.
+    /// This deliberately differs from copying the source's Display into the wrapper.
+    /// At a known operation boundary prefer [`Error::new`] with distinct context and
+    /// [`Error::with_cause`]. Developer formatters should print each layer once;
+    /// neither Display nor source traversal is a public disclosure policy.
+    ///
     /// # Examples
     ///
     /// ```
@@ -222,13 +229,14 @@ impl Error {
     /// ```
     #[track_caller]
     pub fn from_source(cause: impl std::error::Error + Send + Sync + 'static) -> Self {
-        // Own the original cause for downcasting; a formatted message alone would lose its chain.
-        let mut error = Self::new(cause.to_string()).with_kind(ErrorKind::External);
-        // Retain the concrete owned cause after selecting External classification.
-        error.0.cause = Some(Box::new(cause));
-        error
+        // Describe this generic boundary without repeating the original cause's explanation.
+        Self::new("external operation failed")
+            .with_kind(ErrorKind::External)
+            .with_cause(cause)
     }
     /// Attach an owned cause deliberately, preserving its own nested chain.
+    /// The wrapper message should describe distinct operation context rather than
+    /// repeat the cause's Display. This method never flattens or deduplicates sources.
     ///
     /// # Examples
     ///
@@ -238,6 +246,7 @@ impl Error {
     /// assert!(std::error::Error::source(&error).is_some());
     /// # Ok::<(), stackpress_lib::Error>(())
     /// ```
+    #[must_use = "the enriched error must be used"]
     pub fn with_cause(mut self, cause: impl std::error::Error + Send + Sync + 'static) -> Self {
         // Ownership is explicit and non-Clone so attaching a source cannot silently alias a report.
         self.0.cause = Some(Box::new(cause));
@@ -374,6 +383,7 @@ impl Error {
     /// );
     /// # Ok::<(), stackpress_lib::Error>(())
     /// ```
+    #[must_use = "the enriched error must be used"]
     pub fn with_kind(mut self, kind: ErrorKind) -> Self {
         // Change classification without destroying the original message, source or registration
         // frames.
@@ -389,6 +399,7 @@ impl Error {
     /// assert_eq!(Error::new("conflict").with_code(409).code(), 409);
     /// # Ok::<(), stackpress_lib::Error>(())
     /// ```
+    #[must_use = "the enriched error must be used"]
     pub fn with_code(mut self, code: u16) -> Self {
         // Store the application status separately from cooperative dispatch flow.
         self.0.code = code;
@@ -409,6 +420,7 @@ impl Error {
     /// );
     /// # Ok::<(), stackpress_lib::Error>(())
     /// ```
+    #[must_use = "the enriched error must be used"]
     pub fn with_public_message(mut self, message: impl Into<String>) -> Self {
         // Disclosure must be intentional rather than inferred from an internal error Display.
         self.0.public_message = Some(message.into());
@@ -424,6 +436,7 @@ impl Error {
     /// assert_eq!(error.public_view().errors["id"], "required");
     /// # Ok::<(), stackpress_lib::Error>(())
     /// ```
+    #[must_use = "the enriched error must be used"]
     pub fn with_errors(mut self, errors: serde_json::Value) -> Self {
         // Only explicitly supplied validation fields belong in the public error envelope.
         self.0.errors = errors;
@@ -441,6 +454,7 @@ impl Error {
     /// );
     /// # Ok::<(), stackpress_lib::Error>(())
     /// ```
+    #[must_use = "the enriched error must be used"]
     pub fn at_path(mut self, path: impl Into<String>) -> Self {
         // Attach data context while retaining the error's original source location/cause.
         self.0.path = Some(path.into());
@@ -555,7 +569,9 @@ impl From<serde_json::Error> for Error {
     #[track_caller]
     fn from(cause: serde_json::Error) -> Self {
         // Tracked conversion retains the underlying error instead of flattening it to a String.
-        Self::from_source(cause)
+        Self::new("JSON operation failed")
+            .with_kind(ErrorKind::External)
+            .with_cause(cause)
     }
 }
 impl From<std::io::Error> for Error {
@@ -563,7 +579,9 @@ impl From<std::io::Error> for Error {
     #[track_caller]
     fn from(cause: std::io::Error) -> Self {
         // Tracked conversion retains the underlying error instead of flattening it to a String.
-        Self::from_source(cause)
+        Self::new("I/O operation failed")
+            .with_kind(ErrorKind::External)
+            .with_cause(cause)
     }
 }
 impl From<std::num::ParseIntError> for Error {
@@ -571,6 +589,44 @@ impl From<std::num::ParseIntError> for Error {
     #[track_caller]
     fn from(cause: std::num::ParseIntError) -> Self {
         // Tracked conversion retains the underlying error instead of flattening it to a String.
-        Self::from_source(cause)
+        Self::new("integer parsing failed")
+            .with_kind(ErrorKind::External)
+            .with_cause(cause)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{Error, InvocationFrame, SourceLocation};
+    use std::error::Error as _;
+
+    /// Wrapping and enrichment preserve inner origin, logical frames and downcastable causes.
+    #[test]
+    fn contextual_layers_retain_invocation_metadata_and_disclosure() {
+        let frame = InvocationFrame {
+            event: "read".into(),
+            pattern: "read".into(),
+            listener: "r1:l1".into(),
+            label: "reader".into(),
+            plugin: Some("storage".into()),
+            priority: 7,
+            phase: "action".into(),
+            registered: SourceLocation::caller(),
+            replaced: None,
+            phase_registered: None,
+        };
+        let inner = Error::from_source(std::io::Error::other("private path"))
+            .with_frames(vec![frame.clone()]);
+        let origin = inner.origin().clone();
+        // An outer operation owns its own context; the source keeps the inner metadata intact.
+        let outer = Error::new("startup storage read failed").with_cause(inner);
+        let inner = outer.source().unwrap().downcast_ref::<Error>().unwrap();
+        assert_eq!(inner.origin(), &origin);
+        assert_eq!(inner.frames(), &[frame]);
+        assert!(inner.source().unwrap().is::<std::io::Error>());
+        let public = serde_json::to_string(&outer.public_view()).unwrap();
+        assert!(!public.contains("private path"));
+        assert!(!public.contains("startup storage"));
+        assert_eq!(outer.public_view().error, "Internal Server Error");
     }
 }

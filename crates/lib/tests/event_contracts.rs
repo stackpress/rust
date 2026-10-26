@@ -62,6 +62,40 @@ async fn phase(req: &mut Request, _: &mut Response, inv: Invocation<'_>) -> Resu
 
 /// Scheduling compares priorities without subtraction and retains high/low watermarks.
 #[test]
+fn queue_mixed_insertions_keep_the_complete_slice_in_execution_order() -> Result<()> {
+    let mut queue = ItemQueue::new();
+    let mut expected = Vec::new();
+    // Repeated head movement and insertion exercise deque wrap/growth, priority ties and FIFO.
+    for sequence in 0..400 {
+        let priority = (sequence * 17 % 23) - 11;
+        queue.add(sequence, priority)?;
+        expected.push((sequence, priority));
+        expected.sort_by_key(|&(sequence, priority)| (std::cmp::Reverse(priority), sequence));
+        if sequence % 3 == 0 {
+            assert_eq!(queue.pop(), Some(expected.remove(0).0));
+        }
+        assert_eq!(
+            queue
+                .entries()
+                .iter()
+                .map(|entry| (entry.item, entry.priority))
+                .collect::<Vec<_>>(),
+            expected
+        );
+    }
+    for (item, _) in expected {
+        assert_eq!(queue.pop(), Some(item));
+    }
+    queue.push_front(1)?.push_back(2)?;
+    assert_eq!(queue.entries()[0].priority, 12);
+    assert_eq!(queue.entries()[1].priority, -12);
+    assert_eq!(queue.pop(), Some(1));
+    assert_eq!(queue.pop(), Some(2));
+    Ok(())
+}
+
+/// Scheduling compares priorities without subtraction and retains high/low watermarks.
+#[test]
 fn stable_item_queue_ties_extremes_and_drain() -> Result<()> {
     // Use equal and extreme priorities to expose unstable ties and arithmetic overflow.
 

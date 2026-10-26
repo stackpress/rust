@@ -108,6 +108,7 @@ impl fmt::Display for ListenerId {
 }
 
 /// Construction-time matcher, priority and explicit optional owner/label.
+#[must_use = "the listener specification must be registered or explicitly discarded"]
 pub struct ListenerSpec {
     pattern: EventPattern,
     priority: i64,
@@ -850,6 +851,8 @@ impl EmitterBuilder {
     ///
     /// # Errors
     /// Rejects exhausted order arithmetic before moving any registration.
+    /// The receiving builder remains unchanged on error; the consumed source
+    /// builder is dropped. Successful import does not run any listener callbacks.
     ///
     /// # Examples
     ///
@@ -909,6 +912,7 @@ impl EmitterBuilder {
     /// assert_eq!(emitter.listeners().count(), 1);
     /// # Ok::<(), stackpress_lib::Error>(())
     /// ```
+    #[must_use = "the built emitter must be used to dispatch operations"]
     pub fn build(mut self) -> EventEmitter {
         // Sort once while mutable, then move callbacks and hooks into a runtime table with no
         // registry locks.

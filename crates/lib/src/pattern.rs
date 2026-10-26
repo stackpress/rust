@@ -185,7 +185,11 @@ fn compile(source: &str, insensitive: bool) -> Result<regex::Regex> {
         .case_insensitive(insensitive)
         .size_limit(1024 * 1024)
         .build()
-        .map_err(|error| Error::from_source(error).with_kind(ErrorKind::Registration))
+        .map_err(|cause| {
+            Error::new("event pattern could not be compiled")
+                .with_kind(ErrorKind::Registration)
+                .with_cause(cause)
+        })
 }
 
 /// Parse Express tokens and escape every literal fragment before regex compilation.

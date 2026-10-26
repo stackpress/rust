@@ -12,6 +12,7 @@
 //! # Ok::<(), stackpress_lib::Error>(())
 //! ```
 
+mod json;
 mod mutation;
 mod nest;
 mod parsers;

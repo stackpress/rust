@@ -35,6 +35,18 @@ original error back out of the response.
 `Error::invalid` deliberately exposes its supplied message with code 400; `Error::limit` uses that
 same public policy with kind `Limit`. Choose wording accordingly.
 
+At a known wrapping boundary, describe the operation and retain its concrete cause:
+
+```rust
+let error = Error::new("bootstrap configuration could not be read")
+    .with_kind(stackpress_lib::ErrorKind::External)
+    .with_cause(std::io::Error::other("disk unavailable"));
+```
+
+The developer chain is `bootstrap configuration could not be read; caused by: disk unavailable`.
+Avoid inserting the source's Display into the wrapper message. Generic `from_source` now displays
+`external operation failed`, with the detailed explanation available through its source.
+
 ## Propagate handler failures
 
 Return `Result<Flow>` from named handlers and use `?` for failure propagation. This handler rejects

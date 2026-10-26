@@ -762,6 +762,10 @@ impl Session {
     ///
     /// # Errors
     /// Returns codec/attribute validation failures.
+    /// Revisions are encoded in insertion order and processing stops at the first
+    /// failure; no partial header list is returned. Session values and revisions
+    /// remain unchanged, but side effects performed by the supplied codec are not
+    /// rolled back and may run again if the caller retries.
     ///
     /// # Examples
     ///

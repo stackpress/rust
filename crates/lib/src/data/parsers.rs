@@ -326,8 +326,12 @@ pub fn parse_arg_string(text: &str, limits: &ParseLimits) -> Result<Nest> {
 pub fn parse_json_object(text: &str, limits: &ParseLimits) -> Result<Nest> {
     // Check bytes before parsing and rich-tree limits before accepting the object root.
     check_input(text.len(), limits)?;
-    let parsed =
-        serde_json::from_str(text).map_err(|cause| Error::from_source(cause).with_code(400))?;
+    let parsed = serde_json::from_str(text).map_err(|cause| {
+        Error::new("JSON input could not be parsed")
+            .with_kind(crate::ErrorKind::External)
+            .with_code(400)
+            .with_cause(cause)
+    })?;
     Nest::from_value(Value::from_json_with(parsed, limits)?, *limits)
 }
 

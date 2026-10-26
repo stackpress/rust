@@ -404,6 +404,10 @@ impl Nest {
     ///
     /// # Errors
     /// Rejects malformed paths, unsupported wire variants or type mismatches.
+    /// A present value is fully checked against this store's budgets before any
+    /// target deserializer runs, including fields the target would ignore. Budget
+    /// failures take precedence over unsupported variants; both retain nested
+    /// paths. Missing values return `None`, while present null is decoded by `T`.
     ///
     /// # Examples
     ///
@@ -418,9 +422,7 @@ impl Nest {
         // Deserialize only a present value; absence stays None and errors retain the selected path.
         let path = path.into_path()?;
         self.lookup(&path)
-            .map(|value| {
-                serde_json::from_value(value.to_json_with(&self.limits)?).map_err(Error::from)
-            })
+            .map(|value| super::json::Json::checked(value, &self.limits)?.decode())
             .transpose()
             .map_err(|error| qualify_error(error, &path))
     }
@@ -476,6 +478,9 @@ impl Nest {
     ///
     /// # Errors
     /// Rejects traversal through scalars and budget/index overflow.
+    /// Path parsing and incoming-value validation precede structural planning and
+    /// final aggregate-budget checks. Every returned error leaves the tree and
+    /// cached totals unchanged; callers may retry with a valid path/value/budget.
     ///
     /// # Panics
     /// A final Shared native destructor may panic after tree/totals commit.
@@ -529,7 +534,10 @@ impl Nest {
     /// Remove a parsed path without shifting remaining array element identities.
     ///
     /// # Errors
-    /// Rejects traversal through a non-container.
+    /// Rejects malformed paths, scalar traversal, append-index/accounting overflow,
+    /// or budget growth when a dense array's retained indices become object keys.
+    /// Returned errors leave values and cached totals unchanged. A missing path
+    /// returns `None` without creating containers or changing their representation.
     ///
     /// # Examples
     ///
@@ -580,6 +588,9 @@ impl Nest {
     ///
     /// # Errors
     /// Rejects a combined tree exceeding this store's budgets.
+    /// The incoming tree is checked first, then replacement accounting and the
+    /// combined budget. A returned error leaves this store unchanged; the consumed
+    /// incoming store is not returned for retry.
     ///
     /// # Panics
     /// A final Shared native destructor may panic after tree/totals commit.
@@ -759,7 +770,7 @@ impl Serialize for Nest {
         // Delegate to the rich-value serializer so native/date/byte variants never disappear
         // silently.
         // Preserve the store's selected policy instead of Value's independent default wire budget.
-        self.to_json()
+        super::json::Json::checked(&self.root, &self.limits)
             .map_err(serde::ser::Error::custom)?
             .serialize(serializer)
     }
