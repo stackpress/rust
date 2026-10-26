@@ -161,7 +161,11 @@ async fn search(
         let _ = (signal, endpoint);
         let text = profile_search(id, &json)
             .await
-            .map_err(|_| SearchFailure::Transport(TransportFailure::CancelledOrDenied))?
+            .map_err(|error| {
+                SearchFailure::Transport(TransportFailure::from_native_code(
+                    error.as_string().as_deref(),
+                ))
+            })?
             .as_string()
             .ok_or(SearchFailure::Protocol(ReplyDecodeError::Invalid))?;
         (text, None)

@@ -139,3 +139,28 @@ fn non_host_failure_identity() {
         assert!(!failure.to_string().is_empty());
     }
 }
+/// Native bridge failure tokens cannot echo rejection causes into the UI.
+#[test]
+fn safe_native_transport_tokens() {
+    use stackpress_example_profile_ui_contracts::TransportFailure;
+    for (code, expected) in [
+        ("deadline", "Search timed out. Try again."),
+        ("busy", "Search busy. Try again."),
+        ("no-content", "Search returned no content. Try again."),
+        ("suppressed", "Search returned no content. Try again."),
+        (
+            "unavailable",
+            "Search unavailable. Check the connection and try again.",
+        ),
+        ("PRIVATE_CAUSE", "Search cancelled or denied. Try again."),
+    ] {
+        assert_eq!(
+            TransportFailure::from_native_code(Some(code)).to_string(),
+            expected
+        );
+    }
+    assert_eq!(
+        TransportFailure::from_native_code(None),
+        TransportFailure::CancelledOrDenied
+    );
+}
