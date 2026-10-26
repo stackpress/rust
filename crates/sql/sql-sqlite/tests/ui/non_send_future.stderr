@@ -1,0 +1,20 @@
+error: future cannot be sent between threads safely
+  --> tests/ui/non_send_future.rs:5:5
+   |
+ 5 | /     Box::pin(async {
+ 6 | |         let local = Rc::new(7);
+ 7 | |         tokio::task::yield_now().await;
+ 8 | |         assert_eq!(*local, 7);
+ 9 | |         Ok(())
+10 | |     })
+   | |______^ future created by async block is not `Send`
+   |
+   = help: within `{async block@$DIR/tests/ui/non_send_future.rs:5:14: 5:19}`, the trait `Send` is not implemented for `Rc<i32>`
+note: future is not `Send` as this value is used across an await
+  --> tests/ui/non_send_future.rs:7:34
+   |
+ 6 |         let local = Rc::new(7);
+   |             ----- has type `Rc<i32>` which is not `Send`
+ 7 |         tokio::task::yield_now().await;
+   |                                  ^^^^^ await occurs here, with `local` maybe used later
+   = note: required for the cast from `Pin<Box<{async block@$DIR/tests/ui/non_send_future.rs:5:14: 5:19}>>` to `Pin<Box<dyn Future<Output = Result<(), SqlError>> + Send>>`

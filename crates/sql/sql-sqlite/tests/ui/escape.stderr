@@ -1,0 +1,19 @@
+error: lifetime may not live long enough
+ --> tests/ui/escape.rs:4:5
+  |
+3 |   fn escape(tx: &mut Transaction) -> impl Future<Output = stackpress_sql::Result<QueryResult>> + 'static {
+  |                 - let's call the lifetime of this reference `'1`
+4 | /     async move {
+5 | |         tx.execute(&Sql::literal(DialectId::Sqlite, "SELECT 1")).await
+6 | |     }
+  | |_____^ returning this value requires that `'1` must outlive `'static`
+  |
+help: consider changing `impl Future<Output = Result<QueryResult, SqlError>> + 'static`'s explicit `'static` bound to the lifetime of argument `tx`
+  |
+3 - fn escape(tx: &mut Transaction) -> impl Future<Output = stackpress_sql::Result<QueryResult>> + 'static {
+3 + fn escape(tx: &mut Transaction) -> impl Future<Output = stackpress_sql::Result<QueryResult>> + '_ {
+  |
+help: alternatively, add an explicit `'static` bound to this reference
+  |
+3 | fn escape(tx: &'static mut Transaction) -> impl Future<Output = stackpress_sql::Result<QueryResult>> + 'static {
+  |                +++++++

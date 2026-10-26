@@ -1,0 +1,24 @@
+[package]
+name = "stackpress-sql-sqlite"
+description = "Bounded native SQLite adapter for Stackpress SQL"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[dependencies]
+stackpress-sql = { path = "../sql" }
+sqlx = { version = "=0.9.0", default-features = false, features = ["runtime-tokio", "sqlite"] }
+tokio = { version = "1", features = ["rt", "sync", "time"] }
+serde = { version = "1", features = ["derive"] }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["macros", "rt", "rt-multi-thread", "sync", "time"] }
+tempfile = "3"
+trybuild = "1"
+serde_json = "1"
+stackpress-lib = { path = "../../lib" }
+stackpress-server = { path = "../../server" }
+
+[lints]
+workspace = true

@@ -1,0 +1,29 @@
+error[E0599]: no method named `clone` found for struct `Engine` in the current scope
+ --> tests/ui/clone.rs:5:20
+  |
+5 |     let _ = engine.clone();
+  |                    ^^^^^
+  |
+help: there is a method `close` with a similar name
+  |
+5 -     let _ = engine.clone();
+5 +     let _ = engine.close();
+  |
+
+error[E0599]: no method named `clone` found for struct `Transaction` in the current scope
+ --> tests/ui/clone.rs:6:16
+  |
+6 |     let _ = tx.clone();
+  |                ^^^^^ method not found in `Transaction`
+
+error[E0599]: no method named `clone` found for struct `SqliteDatabase` in the current scope
+ --> tests/ui/clone.rs:7:22
+  |
+7 |     let _ = database.clone();
+  |                      ^^^^^
+  |
+help: there is a method `close` with a similar name
+  |
+7 -     let _ = database.clone();
+7 +     let _ = database.close();
+  |

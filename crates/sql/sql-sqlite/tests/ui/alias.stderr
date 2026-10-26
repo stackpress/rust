@@ -1,0 +1,9 @@
+error[E0499]: cannot borrow `*tx` as mutable more than once at a time
+ --> tests/ui/alias.rs:6:18
+  |
+5 |     let first = tx.execute(&query);
+  |                 -- first mutable borrow occurs here
+6 |     let second = tx.execute(&query);
+  |                  ^^ second mutable borrow occurs here
+7 |     let _ = tokio::join!(first, second);
+  |                          ----- first borrow later used here

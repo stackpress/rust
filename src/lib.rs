@@ -9,6 +9,10 @@
 //! wrapper. None is selected by default. The wrapper also re-exports both component crates.
 //! The transformer and wrapper are native build tools; browser targets are not verified.
 //!
+//! `sql` exposes the runtime-independent SQL contracts. `sql-sqlite` also selects the
+//! native Tokio/SQLx SQLite adapter. Neither feature is enabled by default; a re-export
+//! does not open a database or expose a query capability.
+//!
 //! # Examples
 //!
 //! ```
@@ -50,3 +54,7 @@ pub use stackpress_lib::{
 };
 #[cfg(feature = "server")]
 pub use stackpress_server as server;
+#[cfg(feature = "sql")]
+pub use stackpress_sql as sql;
+#[cfg(feature = "sql-sqlite")]
+pub use stackpress_sql_sqlite as sql_sqlite;

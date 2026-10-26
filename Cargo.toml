@@ -3,6 +3,7 @@ members = [
     "crates/lib", "crates/server", "tools/cli", "examples/capability-host",
     "crates/idea/idea-parser", "crates/idea/idea-transformer", "crates/idea/idea",
     "examples/generated-profile/codegen", "examples/generated-profile/app",
+    "crates/sql/sql", "crates/sql/sql-sqlite",
 ]
 resolver = "3"
 
@@ -30,6 +31,8 @@ stackpress-server = { path = "crates/server", optional = true, default-features 
 stackpress-idea-parser = { path = "crates/idea/idea-parser", optional = true }
 stackpress-idea-transformer = { path = "crates/idea/idea-transformer", optional = true }
 stackpress-idea = { path = "crates/idea/idea", optional = true }
+stackpress-sql = { path = "crates/sql/sql", optional = true }
+stackpress-sql-sqlite = { path = "crates/sql/sql-sqlite", optional = true }
 
 [features]
 default = []
@@ -38,6 +41,8 @@ server-http = ["server", "stackpress-server/http"]
 idea-parser = ["dep:stackpress-idea-parser"]
 idea-transformer = ["dep:stackpress-idea-transformer"]
 idea = ["dep:stackpress-idea"]
+sql = ["dep:stackpress-sql"]
+sql-sqlite = ["sql", "dep:stackpress-sql-sqlite"]
 
 [dev-dependencies]
 serde = { version = "1", features = ["derive"] }
