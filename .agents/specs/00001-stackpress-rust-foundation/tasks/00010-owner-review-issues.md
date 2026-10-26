@@ -26,7 +26,7 @@ The work is split into two lanes with disjoint write sets.
 - [ ] #12: blocking cleanup hidden inside Drop (TTY input).
 - [ ] Server, CLI and transformer parts of #4, #6 and #7.
 
-The SQL and framework parts of #4, #6 and #7 follow in a short third pass after both lanes merge, so they don't collide with tasks 00008A and 00009.
+The SQL and framework parts of #4, #6 and #7 follow in a short third pass after both lanes merge, so they don't collide with tasks 00008A and 00009. The third pass also renames the generic `List` component's Profile-specific `data-profile-id` attribute, found in the 00008A docs review. That's a coordinator-approved markup change, and the docs and proofs get updated with it.
 
 ## Rules
 
