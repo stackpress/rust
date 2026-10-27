@@ -6,7 +6,7 @@ import subprocess
 import shutil
 
 ROOT = Path(__file__).resolve().parents[2]
-LOGS = Path('/private/tmp/s8-m0')
+LOGS = Path(os.environ.get('GALLERY_OUTPUT_DIR', '/private/tmp/s8-m0'))
 NATIVE = ROOT / 'target/s8-native'
 WASM = ROOT / 'target/s8-wasm'
 
@@ -31,5 +31,7 @@ def main():
         output.mkdir(parents=True)
         run(f'gallery-{mode}-bindgen',['wasm-bindgen','--target','web','--no-typescript','--out-dir',output,'--out-name','gallery',WASM / 'wasm32-unknown-unknown/debug/stackpress_example_ui_gallery_client.wasm'],WASM)
         shutil.copyfile(ROOT / 'examples/ui-gallery/bootstrap.js', output / 'start.js')
+        import base64
+        (output / 'sample.png').write_bytes(base64.b64decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aMesAAAAASUVORK5CYII='))
 
 if __name__=='__main__': main()

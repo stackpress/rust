@@ -6,7 +6,7 @@ import signal
 import subprocess
 
 ROOT = Path(__file__).resolve().parents[2]
-LOGS = Path('/private/tmp/s8-m0')
+LOGS = Path(os.environ.get('GALLERY_OUTPUT_DIR', '/private/tmp/s8-m0'))
 
 def main():
     """Kill/reap a stuck proof and retain its output, never treating timeout as success."""

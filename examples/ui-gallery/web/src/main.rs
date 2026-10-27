@@ -100,12 +100,12 @@ async fn load_gallery(req: &mut Request, base: &BasePath) -> Result<GallerySeed>
 async fn page(req: &mut Request, res: &mut Response, base: BasePath, csr: bool) -> Result<Flow> {
     let seed = load_gallery(req, &base).await?;
     let mut contract =
-        PageContract::new(1, "s8-m0").map_err(|cause| failure("configure gallery page", cause))?;
+        PageContract::new(1, "s8-m1").map_err(|cause| failure("configure gallery page", cause))?;
     contract.locale = seed.locale.clone();
     contract.theme = seed.theme.clone();
     let snapshot = PageSnapshot {
         revision: 1,
-        build: "s8-m0".into(),
+        build: "s8-m1".into(),
         page: PageId::try_from("gallery".to_owned())
             .map_err(|cause| failure("identify gallery page", cause))?,
         location: seed.location.clone(),
@@ -127,7 +127,7 @@ async fn page(req: &mut Request, res: &mut Response, base: BasePath, csr: bool) 
         )
     } else {
         let assets = PageAssets {
-            build: "s8-m0".into(),
+            build: "s8-m1".into(),
             base,
             module: PublicLocation::new("/assets/start.js")
                 .map_err(|cause| failure("select gallery module", cause))?,
@@ -145,7 +145,7 @@ async fn page(req: &mut Request, res: &mut Response, base: BasePath, csr: bool) 
             .into_html()
     };
     res.headers_mut()?.set("cache-control", "no-store")?;
-    res.headers_mut()?.set("content-security-policy","default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; style-src 'unsafe-inline'; connect-src 'self'; base-uri 'none'; form-action 'self'")?;
+    res.headers_mut()?.set("content-security-policy","default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; style-src 'unsafe-inline'; connect-src 'self'; img-src 'self'; base-uri 'none'; form-action 'self'")?;
     res.html(html)?;
     Ok(Flow::Continue)
 }

@@ -63,7 +63,7 @@ pub fn decode_initial(
 > {
     use stackpress_framework_language::LocaleRegistry;
     use stackpress_framework_view::{BasePath, PageLimits, PageSnapshot, ViewError};
-    let snapshot = PageSnapshot::<GallerySeed>::decode(page, 1, "s8-m0")?;
+    let snapshot = PageSnapshot::<GallerySeed>::decode(page, 1, "s8-m1")?;
     let seed = snapshot.data;
     let base = BasePath::new(&seed.base)?;
     let registry = LocaleRegistry::new(
@@ -103,7 +103,7 @@ mod tests {
     fn page() -> PageSnapshot<GallerySeed> {
         PageSnapshot {
             revision: 1,
-            build: "s8-m0".into(),
+            build: "s8-m1".into(),
             page: PageId::try_from("gallery".to_owned()).unwrap(),
             location: "/demo/fr/gallery".into(),
             locale: "fr".into(),
@@ -129,6 +129,13 @@ mod tests {
         assert!(replay.entries().is_empty());
         assert!(decode_initial("bad", "[]").is_err());
         assert!(decode_initial(&text, "bad").is_err());
+        // An old gallery asset/seed identity is rejected before creating controls.
+        let mut old = page();
+        old.build = "s8-m0".into();
+        assert_eq!(
+            decode_initial(&old.script_json().unwrap(), "[]").unwrap_err(),
+            ViewError::ContractMismatch
+        );
         let mut bad = page();
         bad.revision = 2;
         assert_eq!(

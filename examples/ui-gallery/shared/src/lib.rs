@@ -23,7 +23,9 @@ pub const CORPUS: &[&str] = &[
     "<a href='data:text/html,evil'>data</a><a href='/local'>local</a><p>&lt;script&gt;literal&lt;/script&gt;</p>",
 ];
 
+mod core;
 mod seed;
+pub use core::{CoreDraft, TEXTAREA_PAYLOAD};
 pub use seed::{GallerySeed, decode_initial, decode_preference};
 
 /// Select explicit English/French phrase data without browser-language inference.
@@ -64,6 +66,9 @@ async fn load_resource(base: String) -> String {
 pub fn Gallery(
     /// The same public initial seed on SSR/hydration/CSR.
     seed: GallerySeed,
+    /// Native input edits captured before hydration; no acquisition occurs.
+    #[prop(optional)]
+    initial_core: Option<CoreDraft>,
     /// Adopt an early native input edit before hydrating, without a fetch.
     #[prop(optional)]
     initial_draft: Option<String>,
@@ -122,16 +127,17 @@ pub fn Gallery(
     };
     let french = choose.clone();
     let styles = format!(
-        "{}{}",
+        "{}{}{}",
         include_str!("../../../../crates/framework/framework-ui/src/components/styles.css"),
-        ADVANCED_STYLES
+        ADVANCED_STYLES,
+        stackpress_framework_ui::components::CORE_STYLES
     );
     view! {
         <stackpress_framework_ui::leptos_meta::Title text=move || format!("{} · {}", phrase(&locale.get(), "UI gallery", "Galerie UI"), resource_title.get())/>
         <style>{styles}</style>
         <main class="sp-root" data-theme=seed.theme><div class="sp-blank">
             <header class="sp-head"><h1>{move || phrase(&locale.get(), "UI gallery", "Galerie UI")}</h1>
-                <nav aria-label="Language"><button id="english" type="button" on:click=move |_| choose("en")>"English"</button>
+                <nav class="sp-actions" aria-label="Language"><button id="english" type="button" on:click=move |_| choose("en")>"English"</button>
                 <button id="french" type="button" on:click=move |_| french("fr")>"Français"</button></nav>
             </header>
             <p id="preference-error" role="alert">{move || saved_error.get()}</p>
@@ -143,8 +149,9 @@ pub fn Gallery(
                     <tr data-row-id=id><th scope="row">{id}</th><td>{name}</td><td>"Owned public row"</td></tr>
                 }/></tbody>
             </Table>
-            <Show when=move || trigger.get()><button id="opener" type="button" on:click=move |_| open.set(true)>"Edit profile"</button></Show>
+            <div class="sp-actions" role="group" aria-label="Gallery actions"><Show when=move || trigger.get()><button id="opener" type="button" on:click=move |_| open.set(true)>"Edit profile"</button></Show>
             <button id="restore" type="button" on:click=move |_| { trigger.set(true); mounted.set(true); }>"Restore dialog"</button>
+            <button id="refetch" type="button" on:click=move |_| resource.refetch()>"Reload resource"</button></div>
             <Show when=move || mounted.get()>
                 <Dialog id="editor" open title=move || phrase(&locale.get(), "Edit profile", "Modifier le profil").to_owned() initial_focus_id="profile-name" fallback_focus_id="draft">
                     <Form id="profile-form" state=status submit>
@@ -154,11 +161,11 @@ pub fn Gallery(
                         <button id="save" type="submit">"Save"</button>
                         <button id="close" type="button" on:click=move |_| open.set(false)>"Close"</button>
                     </Form>
-                    <button id="nested-opener" type="button" on:click=move |_| nested.set(true)>"Nested dialog"</button>
+                    <stackpress_framework_ui::components::ActionGroup label="Dialog actions"><button id="nested-opener" type="button" on:click=move |_| nested.set(true)>"Nested dialog"</button>
                     <button id="locked-opener" type="button" on:click=move |_| locked.set(true)>"Explicit close dialog"</button>
                     <button id="remove-opener" type="button" on:click=move |_| trigger.set(false)>"Remove opener"</button>
                     <button id="unmount" type="button" on:click=move |_| { open.set(false); mounted.set(false); }>"Unmount dialog"</button>
-                    <Dialog id="nested" open=nested title="Nested dialog" initial_focus_id="nested-close" fallback_focus_id="profile-name">
+                    </stackpress_framework_ui::components::ActionGroup><Dialog id="nested" open=nested title="Nested dialog" initial_focus_id="nested-close" fallback_focus_id="profile-name">
                         <button id="nested-close" type="button" on:click=move |_| nested.set(false)>"Close nested"</button>
                     </Dialog>
                     <Dialog id="locked" open=locked title="Explicit close dialog" close_on_escape=false initial_focus_id="locked-close" fallback_focus_id="profile-name">
@@ -166,7 +173,6 @@ pub fn Gallery(
                     </Dialog>
                 </Dialog>
             </Show>
-            <button id="refetch" type="button" on:click=move |_| resource.refetch()>"Reload resource"</button>
             <section aria-label="Async resource"><Suspense fallback=|| view! { <p>"Loading resource"</p> }>
                 {move || resource.get().map(move |result| {
                     let value = result.unwrap_or_else(|error| error.to_string());
@@ -178,6 +184,7 @@ pub fn Gallery(
                 {CORPUS.iter().enumerate().map(|(index,input)| view! { <section data-corpus=index><RichContent content=SafeHtml::html(input).expect("bounded fixed corpus")/></section> }).collect_view()}
                 <RichContent content=SafeHtml::markdown("**Markdown** with `safe code` and <img src='https://evil.invalid'>").expect("bounded fixed Markdown")/>
             </section>
+            <core::CoreGallery initial=initial_core.unwrap_or_default() base=seed.base/>
         </div></main>
     }
 }
@@ -215,11 +222,11 @@ mod tests {
         runtime.block_on(async {
             initialize_ssr().unwrap();
             let render = |locale: &str| {
-                let mut contract = PageContract::new(1, "s8-m0").unwrap();
+                let mut contract = PageContract::new(1, "s8-m1").unwrap();
                 contract.locale = locale.into();
                 let snapshot = PageSnapshot {
                     revision: 1,
-                    build: "s8-m0".into(),
+                    build: "s8-m1".into(),
                     page: PageId::try_from("gallery".to_owned()).unwrap(),
                     location: format!("/{locale}/gallery"),
                     locale: locale.into(),
@@ -236,7 +243,7 @@ mod tests {
                 let renderer = AsyncLeptosRenderer::new(
                     contract,
                     PageAssets {
-                        build: "s8-m0".into(),
+                        build: "s8-m1".into(),
                         base: BasePath::default(),
                         module: PublicLocation::new("/assets/start.js").unwrap(),
                         stylesheet: None,

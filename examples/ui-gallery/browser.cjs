@@ -6,10 +6,11 @@ const assert = require('node:assert/strict');
 const playwrightModule = process.env.GALLERY_PLAYWRIGHT || 'playwright';
 const { chromium } = require(playwrightModule);
 const root = path.resolve(__dirname, '../..');
-const output = '/private/tmp/s8-m0';
+const output = process.env.GALLERY_OUTPUT_DIR || '/private/tmp/s8-m0';
 const host = path.join(root, 'target/s8-native/debug/stackpress-example-ui-gallery-web');
 const resourceText = '</script><script>globalThis.pwned=1</script>&"\u2028\u2029';
 const receipts = [];
+const coreProof = require('./core-proof.cjs');
 function deadline(promise, label) {
   let timer;
   return Promise.race([promise, new Promise((_, reject) => { timer = setTimeout(() => reject(Error(label + ' timed out')), 10000); })]).finally(() => clearTimeout(timer));
@@ -54,7 +55,7 @@ function request(base, input) {
           const assets = path.join(output, 'gallery-assets', mode);
           const file = path.resolve(assets, relative);
           if (!file.startsWith(assets + path.sep)) throw Error('asset escaped root');
-          return route.fulfill({ path: file, contentType: file.endsWith('.wasm') ? 'application/wasm' : 'text/javascript' });
+          return route.fulfill({ path: file, contentType: file.endsWith('.wasm') ? 'application/wasm' : file.endsWith('.png') ? 'image/png' : 'text/javascript' });
         }
         if (url.pathname === `${base}/resource`) {
           calls.resource++;
@@ -73,7 +74,8 @@ function request(base, input) {
         await page.goto(`https://gallery.invalid${base}/en/gallery?theme=dark&q=a%20b`, { waitUntil: 'commit' });
         if (mode === 'hydrate') {
           await page.locator('#draft').waitFor();
-          assert.equal(await page.locator('table tbody tr').count(), 3, 'useful SSR table before JS');
+          assert.equal(await page.locator('table').first().locator('tbody tr').count(), 3, 'useful SSR table before JS');
+          await coreProof.early(page);
           await page.locator('#draft').fill('Typed before JavaScript');
           await page.evaluate(() => { window.beforeGallery = document.querySelector('#app').innerHTML; window.beforeDraft = document.querySelector('#draft'); window.beforeDraft.focus(); });
         }
@@ -93,10 +95,13 @@ function request(base, input) {
         const actual = await page.locator('[data-corpus] .sp-rich').evaluateAll(nodes => nodes.map(node => { const clone = node.cloneNode(true); for (const child of [...clone.childNodes]) if (child.nodeType === Node.COMMENT_NODE && !child.textContent) child.remove(); return clone.innerHTML; }));
         assert.deepEqual(actual, expected, 'native/WASM corpus equality');
         assert.equal(await page.locator('.sp-rich script,.sp-rich style,.sp-rich img,.sp-rich svg,.sp-rich math,.sp-rich iframe,.sp-rich input,.sp-rich form').count(), 0);
+        const ordinaryCore = await coreProof.controls(page, mode);
+        await coreProof.spacing(page);
         await page.screenshot({ path: path.join(output, 'screenshots', `${name}-1280.png`), fullPage: true });
 
         await page.locator('#opener').click();
         await page.waitForFunction(() => document.activeElement?.id === 'profile-name');
+        const backdrop = await coreProof.modal(page, output, name);
         await page.locator('#close').evaluate(node => { node.tabIndex = -1; });
         await page.locator('#save').evaluate(node => { node.tabIndex = 1; });
         for (let index = 0; index < 18; index++) {
@@ -109,6 +114,7 @@ function request(base, input) {
         assert.equal(await page.locator('#editor').evaluate(node => node.open), true, 'backdrop does not dismiss');
         await page.keyboard.press('Escape');
         await page.waitForFunction(() => !document.querySelector('#editor').open && document.activeElement?.id === 'opener');
+        assert.notEqual(await page.evaluate(() => getComputedStyle(document.documentElement).overflow),'hidden','closing last modal releases scroll lock');
         await page.locator('#opener').click();
         await page.locator('#opener').evaluate(node => { node.disabled = true; });
         await page.keyboard.press('Escape');
@@ -153,6 +159,7 @@ function request(base, input) {
         await page.reload(); await page.waitForFunction(() => window.galleryReady === true && document.documentElement.lang === 'fr');
         await page.waitForFunction(text => document.querySelector('#resource')?.textContent === text, resourceText);
         assert.equal(calls.preference, before.preference); assert.equal(calls.resource, before.resource + (mode === 'csr' ? 1 : 0));
+        await coreProof.roundtrip(page);
         await page.goto(`https://gallery.invalid${base}/gallery`); await page.waitForFunction(() => window.galleryReady && document.documentElement.lang === 'fr');
         await page.goto(`https://gallery.invalid${base}/en/gallery`); await page.waitForFunction(() => window.galleryReady && document.documentElement.lang === 'en');
         await page.locator('#draft').fill('Preserved after denied preference');
@@ -182,7 +189,7 @@ function request(base, input) {
         assert.deepEqual(errors, []); assert.deepEqual(unexpected, []); assert.equal(denialLogs, 1);
         const denied = request(base, { method: 'POST', path: `${base}/ui-preferences`, origin: 'https://evil.invalid', body: JSON.stringify({ locale: 'fr', location: `${base}/gallery` }) });
         assert.equal(denied.status, 403); assert.equal(denied.headers['set-cookie'], undefined);
-        receipts.push({ name, calls, errors, unexpected, abortedAcquisition: failed.length > 0, expectedDenialLogs: denialLogs, nativeWasmRichParity: true, screenshotPrefix: name });
+        receipts.push({ name, calls, errors, unexpected, abortedAcquisition: failed.length > 0, expectedDenialLogs: denialLogs, nativeWasmRichParity: true, ordinaryCore, backdrop, screenshotPrefix: name });
         console.log('PASS ' + name);
       } finally { bootRelease(); resourceRelease?.(); await context.close(); }
     }
