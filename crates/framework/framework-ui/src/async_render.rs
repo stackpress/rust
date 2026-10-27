@@ -9,7 +9,10 @@
 //! to poll awakened tasks; Drop cannot synchronously join them or interrupt CPU
 //! work. This API buffers a complete page and makes no streaming claim.
 
-use crate::render::{escape_html, require_executor};
+use crate::{
+    owner::RestoreOwner,
+    render::{escape_html, require_executor},
+};
 use futures::{FutureExt, StreamExt};
 use hydration_context::{SharedContext, SsrSharedContext};
 use leptos::prelude::*;
@@ -27,6 +30,22 @@ use std::{
 };
 
 /// Explicit complete-page renderer; the existing synchronous renderer is unchanged.
+///
+/// # Examples
+/// ```
+/// use leptos::prelude::*;
+/// use stackpress_framework_ui::async_render::{AsyncLeptosRenderer};
+/// use stackpress_framework_view::{BasePath, PageAssets, PageContract, PageSnapshot, PublicLocation};
+/// let contract = PageContract::new(1, "app-build")?;
+/// let assets = PageAssets {
+///     build: "app-build".into(), base: BasePath::default(),
+///     module: PublicLocation::new("/start.js")?, stylesheet: None,
+/// };
+/// let _renderer = AsyncLeptosRenderer::new(contract, assets, |page: &PageSnapshot<String>| {
+///     Ok(view! { <p>{page.data.clone()}</p> })
+/// })?;
+/// # Ok::<(), stackpress_framework_view::ViewError>(())
+/// ```
 pub struct AsyncLeptosRenderer<F> {
     /// Immutable contract and lowerable byte budgets for this page.
     contract: PageContract,
@@ -90,26 +109,12 @@ struct OwnedRender {
     inner: Option<AsyncRenderFuture<'static>>,
 }
 
-/// Restore the actual poll/drop caller even if upstream with/cleanup unwinds.
-pub(super) struct Restore(pub(super) Option<Owner>);
-
-impl Drop for Restore {
-    /// Never retain a thread-local entered context across an await boundary.
-    fn drop(&mut self) {
-        if let Some(previous) = &self.0 {
-            previous.set();
-        } else if let Some(current) = Owner::current() {
-            current.unset();
-        }
-    }
-}
-
 impl Future for OwnedRender {
     type Output = Result<RenderedPage, ViewError>;
 
     /// Only the synchronous poll runs under the render Owner.
     fn poll(mut self: Pin<&mut Self>, context: &mut Context<'_>) -> Poll<Self::Output> {
-        let _restore = Restore(Owner::current());
+        let _restore = RestoreOwner(Owner::current());
         let owner = self.owner.clone();
         owner.with(|| {
             self.inner
@@ -124,7 +129,7 @@ impl Future for OwnedRender {
 impl Drop for OwnedRender {
     /// Drop assembly references first, then wake all guarded Resource loaders.
     fn drop(&mut self) {
-        let _restore = Restore(Owner::current());
+        let _restore = RestoreOwner(Owner::current());
         self.inner.take();
         self.owner.cleanup();
         // In pinned hydration_context, consume_buffers takes both queues before
@@ -156,7 +161,7 @@ fn prepare<T: Serialize, V: IntoView>(
     let bootstrap = assets.script_json()?;
     let module = assets.base.join(assets.module.as_str())?;
     let shared = Arc::new(SsrSharedContext::new());
-    let _restore = Restore(Owner::current());
+    let _restore = RestoreOwner(Owner::current());
     let owner = Owner::new_root(Some(shared.clone()));
     // Install the cleanup guard before any trusted component evaluation can unwind.
     let mut render = OwnedRender {

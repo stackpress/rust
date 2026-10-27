@@ -12,8 +12,9 @@ import time
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = Path(os.environ.get('UI_FORMAT_OUTPUT_DIR', '/private/tmp/s8-format'))
-NATIVE = ROOT / 'target/s8-native'
-WASM = ROOT / 'target/s8-wasm'
+# An explicit Cargo target root can share native/WASM output under a disk budget.
+NATIVE = ROOT / os.environ.get('CARGO_TARGET_DIR', 'target/s8-native')
+WASM = ROOT / os.environ.get('CARGO_TARGET_DIR', 'target/s8-wasm')
 ENV = dict(os.environ, CARGO_INCREMENTAL='0', CARGO_PROFILE_DEV_DEBUG='0')
 PACKAGE = 'stackpress-example-ui-format'
 HISTORY = []

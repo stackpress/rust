@@ -27,8 +27,10 @@ fn request(
     body: &str,
     csr: bool,
 ) -> (Value, String) {
-    let directory = std::path::Path::new("/private/tmp/s8-m0");
-    std::fs::create_dir_all(directory).unwrap();
+    let directory = std::env::var_os("GALLERY_OUTPUT_DIR")
+        .map(std::path::PathBuf::from)
+        .unwrap_or_else(|| "/private/tmp/s8-m0".into());
+    std::fs::create_dir_all(&directory).unwrap();
     let file = directory.join(format!("finite-{label}-{}.log", std::process::id()));
     let log = File::create(&file).unwrap();
     let child = Command::new(env!("CARGO_BIN_EXE_stackpress-example-ui-gallery-web"))

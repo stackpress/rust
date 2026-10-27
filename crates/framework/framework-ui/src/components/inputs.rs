@@ -18,6 +18,20 @@ impl std::fmt::Display for ControlError {
 }
 impl std::error::Error for ControlError {}
 
+/// Keep bounded local admission feedback ahead of the application's domain error.
+/// Clearing the local error reveals the current app message without copying ownership.
+pub(super) fn field_error(app: Signal<String>) -> (RwSignal<String>, Signal<String>) {
+    let local = RwSignal::new(String::new());
+    let combined = Signal::derive(move || {
+        let message = local.get();
+        if message.is_empty() {
+            app.get()
+        } else {
+            message
+        }
+    });
+    (local, combined)
+}
 /// One native select option; its value remains distinct from its visible label.
 #[derive(Clone, Debug)]
 pub struct SelectOption {

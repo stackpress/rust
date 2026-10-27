@@ -27,6 +27,24 @@ impl PopupRole {
 ///
 /// Keep initial state closed for deterministic SSR/hydration. Native light-dismiss
 /// synchronizes the controller. This does not trap focus or make the page inert.
+///
+/// # Examples
+/// ```
+/// use leptos::prelude::*;
+/// use stackpress_framework_ui::components::Popover;
+/// let owner = Owner::new();
+/// owner.with(|| {
+///     let open = RwSignal::new(false);
+///     let _view = view! {
+///         <button id="help-trigger" type="button" aria-controls="help"
+///             on:click=move |_| open.set(true)>"Help"</button>
+///         <Popover id="help" anchor="help-trigger" label="Help" open>
+///             <p>"Context for this action"</p>
+///         </Popover>
+///     };
+/// });
+/// owner.cleanup();
+/// ```
 #[component]
 pub fn Popover(
     /// Unique popup identity, referenced by its trigger's aria-controls.
