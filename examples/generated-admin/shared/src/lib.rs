@@ -1,7 +1,8 @@
 //! Actual generated role consumers over the generated-workspace three-model fixture.
 //!
 //! Only public projections enter role wrappers. Stores and host tool dependencies are not
-//! included in this crate's module graph. This example performs no database writes.
+//! included in this crate's module graph. The fixture gallery below has no write transport;
+//! `crud` and `transfer` accept explicitly supplied platform transports.
 
 #[cfg_attr(not(feature = "format"), path = "generated/contracts/mod.rs")]
 #[cfg_attr(feature = "format", path = "generated-format/contracts/mod.rs")]
@@ -114,7 +115,7 @@ fn contents() -> SchemaResult<AnyView> {
         <p>"Fixture data · generated role wrappers · no database writes"</p>
         <section><h2>"Profile"</h2><h3>"List"</h3><ul aria-label="Profile list"><li>{profiles}</li></ul><h3>"View"</h3>{profile_view}<h3>"Fields"</h3><form aria-label="Profile field form" on:submit=move |event| event.prevent_default()>{profile_fields}</form></section>
         <section><h2>"Project"</h2><h3>"List"</h3><ul aria-label="Project list"><li>{projects}</li></ul><h3>"View"</h3>{project_view}<h3>"Fields"</h3><form aria-label="Project field form" on:submit=move |event| event.prevent_default()>{project_fields}</form></section>
-        <section><h2>"Task"</h2><h3>"List"</h3><ul aria-label="Task list"><li>{tasks}</li></ul><h3>"Table"</h3>{table}<h3>"View"</h3>{task_view}<h3>"Fields"</h3><form aria-label="Task field form" on:submit=move |event| event.prevent_default()>{task_fields}</form></section>
+        <section><h2>"Task"</h2><h3>"List"</h3><ul aria-label="Task list"><li>{tasks}</li></ul><h3>"Table"</h3><p class="table-scroll-hint">"Scroll the table sideways to see more columns."</p><div class="admin-table-scroll" role="region" aria-label="Task table" tabindex="0">{table}</div><h3>"View"</h3>{task_view}<h3>"Fields"</h3><form aria-label="Task field form" on:submit=move |event| event.prevent_default()>{task_fields}</form></section>
         <section><h2>"Filters"</h2>{filters}</section><section><h2>"Spans"</h2>{spans}</section>
         <section id="role-proof"><h2>"Nullable and defaults proof"</h2>{proof_roles}
             <output id="proof-draft">{move || { for field in ["text","zero","rows","metadata","score","slug"] {let _ = proof_draft.get(field).map(|value| value.get());} proof_draft.snapshot().map(|value| value.to_string()).unwrap_or_default() }}</output>
@@ -132,3 +133,5 @@ fn codec(cause: serde_json::Error) -> stackpress_framework_schema::SchemaError {
     )
     .with_cause(cause)
 }
+
+mod write_version;

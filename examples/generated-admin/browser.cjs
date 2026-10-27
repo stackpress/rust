@@ -5,7 +5,7 @@ const cp = require('node:child_process');
 const assert = require('node:assert/strict');
 if (!process.env.ADMIN_PLAYWRIGHT) throw Error('ADMIN_PLAYWRIGHT must name the installed module');
 const { chromium } = require(process.env.ADMIN_PLAYWRIGHT);
-const output = '/private/tmp/s8-admin';
+const output = process.env.ADMIN_BROWSER_OUTPUT || path.join(process.env.ADMIN_PROOF_ROOT || '/private/tmp/s8-admin','roles');
 
 // Exercise the adapters' actual draft bridge, including controller-originated mutations.
 async function catalog(page) {
@@ -16,9 +16,10 @@ async function catalog(page) {
   assert.equal((await draft()).zero, 10);
   await page.locator('#proof-field-zero-0').press('Home'); await settle();
   assert.equal((await draft()).zero, 0);
-  await page.locator('#proof-field-zero-presence').selectOption('missing'); await settle();
-  assert.equal('zero' in await draft(), false, 'empty slider presentation does not supply zero');
-  // A native input event at the same displayed number still supplies a concrete value.
+  assert.equal(await page.locator('#proof-field-zero-presence').count(),0,'nonnullable creation control hides presence');
+  await page.locator('#proof-filter-text-presence').selectOption('missing'); await settle();
+  assert.equal(await page.locator('#proof-filter-text-presence').inputValue(),'missing','filters retain explicit omission');
+  // A native input event at the same displayed number retains concrete zero.
   await page.locator('#proof-field-zero-0').evaluate(node => node.dispatchEvent(new Event('input',{bubbles:true}))); await settle();
   assert.equal((await draft()).zero, 0);
   await page.locator('#proof-field-zero-0').press('ArrowRight'); await settle();
@@ -71,7 +72,7 @@ async function catalog(page) {
   await page.locator('#project-field-tags-1-value').fill(''); await settle();
   assert.deepEqual(await page.locator('#project-draft').evaluate(node => JSON.parse(node.textContent).tags),['','0']);
   assert.equal(await page.locator('table caption').textContent(),'Task');
-  assert.equal(await page.locator('thead th[scope=col]').count(),2);
+  assert.deepEqual(await page.locator('thead th[scope=col]').allTextContents(),['title','done','note','priority']);
   assert.equal(await page.locator('tbody tr').count(),1);
   assert.equal(await page.evaluate(() => typeof window.pwned), 'undefined');
 }
@@ -80,11 +81,13 @@ async function catalog(page) {
   const browser = await chromium.launch({ headless: true });
   const results = [];
   fs.mkdirSync(path.join(output, 'screenshots'), { recursive: true });
+  let timer;
   try {
+    await Promise.race([(async () => {
     for (const variant of ['base', 'plugin', 'disabled']) {
       for (const mode of ['hydrate', 'csr']) {
        for (const mount of ['/', '/admin/']) {
-        for (const layout of variant === 'base' ? [{width:1280,zoom:1},{width:375,zoom:2}] : [{width:375,zoom:2}]) {
+        for (const layout of [{width:1280,zoom:1},{width:375,zoom:2}]) {
         const context = await browser.newContext({ viewport: { width: layout.width, height: 1000 } });
         const page = await context.newPage();
         page.setDefaultTimeout(10000);
@@ -159,15 +162,14 @@ async function catalog(page) {
           await page.waitForFunction(() => JSON.parse(document.querySelector('#task-draft').textContent).done === true);
           await page.locator('#task-field-done').uncheck();
           await page.waitForFunction(() => JSON.parse(document.querySelector('#task-draft').textContent).done === false);
-          await page.locator('#task-field-title-presence').selectOption('missing');
-          await page.waitForFunction(() => !('title' in JSON.parse(document.querySelector('#task-draft').textContent)));
+          assert.equal(await page.locator('#task-field-title-presence').count(),0,'required create fields have no value-state selector');
           await page.locator('#task-field-title').fill('');
           await page.locator('#task-field-title').fill('restored');
           await page.waitForFunction(() => JSON.parse(document.querySelector('#task-draft').textContent).title === 'restored');
           await catalog(page);
-          const geometry=await page.evaluate(() => ({width:innerWidth,scroll:document.documentElement.scrollWidth}));
-          assert.ok(geometry.scroll <= geometry.width+1, JSON.stringify(geometry));
+          const geometry=await page.evaluate(() => ({width:innerWidth,scroll:document.documentElement.scrollWidth,overflow:[...document.querySelectorAll('body *')].filter(node=>node.getBoundingClientRect().right>innerWidth+1).map(node=>({tag:node.tagName,id:node.id,class:node.className,right:node.getBoundingClientRect().right,width:node.getBoundingClientRect().width})).slice(-20)}));
           await page.screenshot({ path: path.join(output, 'screenshots', `${variant}-${mode}-${mount==='/'?'root':'admin'}-${layout.width}-${layout.zoom}.png`), fullPage: true });
+          assert.ok(geometry.scroll <= geometry.width+1, JSON.stringify(geometry));
           assert.deepEqual(errors, []); assert.deepEqual(unexpected, []);
           await page.evaluate(() => window.adminDispose());
           assert.equal(await page.locator('#app').textContent(), '');
@@ -177,7 +179,8 @@ async function catalog(page) {
       }
       }
     }
+    })(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('inner role-proof deadline')),105000);})]);
     fs.writeFileSync(path.join(output, 'browser.json'), JSON.stringify(results, null, 2));
     console.log(JSON.stringify(results));
-  } finally { await browser.close(); }
+  } finally { clearTimeout(timer); await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });
