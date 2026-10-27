@@ -88,7 +88,22 @@ async fn lifecycle_and_denial() {
     send_sync::<NativeHost>();
     send_sync::<NativeCallContext>();
     for (window, scheme, origin, allowed) in [
-        ("main", "tauri", Some("localhost"), true),
+        (
+            "main",
+            "tauri",
+            Some("localhost"),
+            !cfg!(target_os = "android"),
+        ),
+        (
+            "main",
+            "http",
+            Some("tauri.localhost"),
+            cfg!(target_os = "android"),
+        ),
+        ("other", "http", Some("tauri.localhost"), false),
+        ("main", "https", Some("tauri.localhost"), false),
+        ("main", "http", Some("localhost"), false),
+        ("main", "http", Some("evil.invalid"), false),
         ("other", "tauri", Some("localhost"), false),
         ("main", "https", Some("localhost"), false),
         ("main", "tauri", Some("evil.invalid"), false),

@@ -4,11 +4,11 @@
 mod proof;
 #[cfg(unix)]
 use crate::preferences::PreferencesHost;
-#[cfg(target_os = "ios")]
+#[cfg(any(target_os = "ios", target_os = "android"))]
 #[path = "mobile_proof.rs"]
 mod mobile_proof;
 use crate::{NativeError, NativeHost, register_application, validate_caller};
-#[cfg(target_os = "ios")]
+#[cfg(any(target_os = "ios", target_os = "android"))]
 use mobile_proof::MobileProof;
 use proof::Proof;
 use std::sync::{
@@ -41,6 +41,10 @@ fn trusted(window: &WebviewWindow) -> Result<(), String> {
     let url = window
         .url()
         .map_err(|_| NativeError::Denied.code().to_owned())?;
+    // Bundled resources have no explicit service port.
+    if url.port().is_some() {
+        return Err(NativeError::Denied.code().to_owned());
+    }
     validate_caller(window.label(), url.scheme(), url.host_str())
         .map_err(|error| error.code().to_owned())
 }
@@ -150,9 +154,9 @@ pub fn run() {
             let preferences_directory = app.path().app_config_dir()?;
             #[cfg(unix)]
             app.manage(Arc::new(PreferencesHost::new(preferences_directory.clone())));
-            #[cfg(target_os = "ios")]
+            #[cfg(any(target_os = "ios", target_os = "android"))]
             let mobile = MobileProof::new(preferences_directory);
-            #[cfg(target_os = "ios")]
+            #[cfg(any(target_os = "ios", target_os = "android"))]
             if let Some(proof) = &mobile { app.manage(proof.clone()); }
             let labels: &[&str] = if selected
                 .as_ref()
@@ -164,7 +168,7 @@ pub fn run() {
             };
             for label in labels {
                 let proof = selected.clone();
-                #[cfg(target_os = "ios")]
+                #[cfg(any(target_os = "ios", target_os = "android"))]
                 let mobile_proof = mobile.clone();
                 let handle = app.handle().clone();
                 let mut window =
@@ -176,10 +180,10 @@ pub fn run() {
                             if proof.as_ref().is_some_and(|proof| proof.record_navigation(&handle, url)) {
                                 return false;
                             }
-                            #[cfg(target_os = "ios")]
+                            #[cfg(any(target_os = "ios", target_os = "android"))]
                             if mobile_proof.as_ref().is_some_and(|proof| proof.navigation(url)) { return false; }
                             // History stays on packaged resources; native navigation cannot open a remote origin.
-                            url.scheme() == "tauri" && url.host_str() == Some("localhost")
+                            url.port().is_none() && validate_caller("main", url.scheme(), url.host_str()).is_ok()
                         });
                 if let Some(proof) = &selected {
                     window = window.initialization_script(format!(
@@ -190,17 +194,17 @@ pub fn run() {
                         include_str!("../launch-proof.js")
                     ));
                 }
-                #[cfg(target_os = "ios")]
+                #[cfg(any(target_os = "ios", target_os = "android"))]
                 if let Some(proof) = &mobile { window = window.initialization_script(proof.script()); }
                 window.build()?;
             }
             if let Some(proof) = &selected { proof.monitor(app.handle().clone()); }
-            #[cfg(target_os = "ios")]
+            #[cfg(any(target_os = "ios", target_os = "android"))]
             if let Some(proof) = &mobile { proof.monitor(app.handle().clone()); }
             Ok(())
         })
         .on_window_event(|window, event| {
-            #[cfg(target_os = "ios")]
+            #[cfg(any(target_os = "ios", target_os = "android"))]
             if let Some(proof) = window.try_state::<Arc<MobileProof>>() {
                 match event {
                     tauri::WindowEvent::Suspended => proof.lifecycle(false),

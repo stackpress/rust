@@ -92,9 +92,17 @@ impl NativeError {
 ///
 /// # Errors
 /// Rejects other windows, origins and schemes. These values must come from the
-/// authoritative native WebView, never from fields supplied to invoke().
+/// authoritative native WebView, never from fields supplied to invoke(). Android
+/// admits only Wry's `http://tauri.localhost` alias; other targets retain
+/// `tauri://localhost`. Neither alias authorizes another window or remote origin.
 pub fn validate_caller(window: &str, scheme: &str, host: Option<&str>) -> Result<(), NativeError> {
-    if window == "main" && scheme == "tauri" && host == Some("localhost") {
+    // Android serves bundled custom-protocol assets through Wry's fixed HTTP
+    // alias. The OS selects this policy; caller DTOs cannot widen it.
+    #[cfg(target_os = "android")]
+    let packaged = scheme == "http" && host == Some("tauri.localhost");
+    #[cfg(not(target_os = "android"))]
+    let packaged = scheme == "tauri" && host == Some("localhost");
+    if window == "main" && packaged {
         Ok(())
     } else {
         Err(NativeError::Denied)
