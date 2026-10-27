@@ -1,0 +1,150 @@
+[
+  {
+    "table": "profile",
+    "values": {
+      "id": {
+        "type": "text",
+        "value": "u1"
+      },
+      "name": {
+        "type": "text",
+        "value": "Ada"
+      }
+    },
+    "upsert": true
+  },
+  {
+    "table": "profile",
+    "values": {
+      "id": {
+        "type": "text",
+        "value": "u2"
+      },
+      "name": {
+        "type": "text",
+        "value": "Grace"
+      }
+    },
+    "upsert": true
+  },
+  {
+    "table": "project",
+    "values": {
+      "id": {
+        "type": "text",
+        "value": "p1"
+      },
+      "title": {
+        "type": "text",
+        "value": "Ship API"
+      },
+      "owner_id": {
+        "type": "text",
+        "value": "u1"
+      }
+    },
+    "upsert": true
+  },
+  {
+    "table": "project",
+    "values": {
+      "id": {
+        "type": "text",
+        "value": "p2"
+      },
+      "title": {
+        "type": "text",
+        "value": "Ship UI"
+      },
+      "owner_id": {
+        "type": "text",
+        "value": "u1"
+      }
+    },
+    "upsert": true
+  },
+  {
+    "table": "project",
+    "values": {
+      "id": {
+        "type": "text",
+        "value": "p3"
+      },
+      "title": {
+        "type": "text",
+        "value": "Write guide"
+      },
+      "owner_id": {
+        "type": "text",
+        "value": "u2"
+      }
+    },
+    "upsert": true
+  },
+  {
+    "table": "task",
+    "values": {
+      "id": {
+        "type": "text",
+        "value": "t1"
+      },
+      "project_id": {
+        "type": "text",
+        "value": "p1"
+      },
+      "title": {
+        "type": "text",
+        "value": "Design endpoint"
+      },
+      "done": {
+        "type": "bool",
+        "value": true
+      }
+    },
+    "upsert": true
+  },
+  {
+    "table": "task",
+    "values": {
+      "id": {
+        "type": "text",
+        "value": "t2"
+      },
+      "project_id": {
+        "type": "text",
+        "value": "p2"
+      },
+      "title": {
+        "type": "text",
+        "value": "Build page"
+      },
+      "done": {
+        "type": "bool",
+        "value": false
+      }
+    },
+    "upsert": true
+  },
+  {
+    "table": "task",
+    "values": {
+      "id": {
+        "type": "text",
+        "value": "t3"
+      },
+      "project_id": {
+        "type": "text",
+        "value": "p2"
+      },
+      "title": {
+        "type": "text",
+        "value": "Review page"
+      },
+      "done": {
+        "type": "bool",
+        "value": false
+      }
+    },
+    "upsert": true
+  }
+]
