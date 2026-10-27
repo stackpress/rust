@@ -38,8 +38,10 @@ impl PopupRole {
 ///     let _view = view! {
 ///         <button id="help-trigger" type="button" aria-controls="help"
 ///             on:click=move |_| open.set(true)>"Help"</button>
-///         <Popover id="help" anchor="help-trigger" label="Help" open>
-///             <p>"Context for this action"</p>
+///         <Popover id="help" anchor="help-trigger" label="Help" open
+///             initial_focus_id="help-close">
+///             <button id="help-close" type="button"
+///                 on:click=move |_| open.set(false)>"Close help"</button>
 ///         </Popover>
 ///     };
 /// });
@@ -61,17 +63,17 @@ pub fn Popover(
     /// Fixed role; interactive tooltip content is deliberately absent.
     #[prop(optional)]
     role: PopupRole,
-    /// Optional descendant target, otherwise no focus move.
+    /// Optional descendant element ID, otherwise no focus move.
     #[prop(optional, into)]
-    initial_focus: String,
+    initial_focus_id: String,
     /// Explicit top-layer content.
     children: Children,
 ) -> impl IntoView {
     let element = NodeRef::<leptos::html::Div>::new();
     #[cfg(target_arch = "wasm32")]
-    super::overlay_dom::install(element, anchor, open, initial_focus, false);
+    super::overlay_dom::install(element, anchor, open, initial_focus_id, false);
     #[cfg(not(target_arch = "wasm32"))]
-    let _ = (anchor, initial_focus, open);
+    let _ = (anchor, initial_focus_id, open);
     view! {<div id=id node_ref=element class="sp-popover" popover="auto" role=role.as_str() aria-label=label
     on:toggle=move |_event|{#[cfg(target_arch="wasm32")] super::overlay_dom::sync_toggle(&_event,open);}>
     {children()}</div>}
