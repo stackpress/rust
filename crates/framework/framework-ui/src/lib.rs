@@ -37,6 +37,10 @@ pub mod replay;
 #[cfg(feature = "rich")]
 pub mod rich;
 
+/// Optional deterministic decimal, ISO date/time and E.164 presentation.
+#[cfg(feature = "format")]
+pub mod format;
+
 #[cfg(all(feature = "ssr", target_arch = "wasm32"))]
 compile_error!("ssr is a native mode; use hydrate or csr for wasm32");
 

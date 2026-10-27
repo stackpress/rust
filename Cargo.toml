@@ -15,6 +15,7 @@ members = [
     "crates/framework/framework-schema", "crates/framework/framework-sql",
     "examples/generated-workspace/tool", "examples/generated-workspace/app",
     "examples/generated-workspace/contracts",
+    "examples/ui-format",
 ]
 resolver = "3"
 
