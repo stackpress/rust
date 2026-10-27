@@ -42,7 +42,15 @@ pub async fn run(event: &str, data: Value) -> stackpress_lib::Result<Value> {
         .ok_or_else(|| Error::invalid("operator options must be an object"))?
         .clone();
     let allowed: &[&str] = match event {
-        "revision" => &["history", "input", "app", "name", "parent"],
+        "revision" => &[
+            "history",
+            "input",
+            "app",
+            "name",
+            "parent",
+            "mysql-collation",
+            "mysql-page-bytes",
+        ],
         "history-check" => &["history"],
         "migration-plan" => &[
             "history",
@@ -147,6 +155,8 @@ fn prepare(event: &str, data: &serde_json::Map<String, Value>) -> stackpress_lib
             ))
         }
         "revision" => {
+            // Validate paired finite target facts before source acquisition/history IO.
+            let mysql_target = mysql_target(data)?;
             let input = optional(data, "input")?
                 .map(PathBuf::from)
                 .unwrap_or_else(|| {
@@ -154,7 +164,7 @@ fn prepare(event: &str, data: &serde_json::Map<String, Value>) -> stackpress_lib
                 });
             let name = required(data, "name")?;
             let app = optional(data, "app")?.unwrap_or("workspace");
-            let snapshot = super::operator_schema::snapshot(&input, app, name)?;
+            let snapshot = super::operator_schema::snapshot(&input, app, name, mysql_target)?;
             let checked = history.check().map_err(data_error)?;
             let parent = optional(data, "parent")?
                 .map(RevisionId::parse)
@@ -450,4 +460,28 @@ fn required<'a>(
 /// Preserve data-layer errors as concrete causes beneath distinct operator context.
 fn data_error(cause: stackpress_framework_sql::DataError) -> Error {
     external("operator plan or history validation failed", cause)
+}
+
+/// Select explicit app-owned MySQL facts; one missing option or an unknown layout refuses.
+fn mysql_target(
+    data: &serde_json::Map<String, Value>,
+) -> stackpress_lib::Result<Option<(&str, u32)>> {
+    let collation = optional(data, "mysql-collation")?;
+    let page = data.get("mysql-page-bytes");
+    match (collation, page) {
+        (None, None) => Ok(None),
+        (Some(collation), Some(page)) => {
+            let page = page
+                .as_u64()
+                .and_then(|page| u32::try_from(page).ok())
+                .ok_or_else(|| Error::invalid("MySQL page bytes require a positive integer"))?;
+            // The core owns the admitted vocabulary and validates borrowed input before cloning it.
+            stackpress_framework_sql::ddl_policy::mysql_definitions(Vec::new(), collation, page)
+                .map_err(data_error)?;
+            Ok(Some((collation, page)))
+        }
+        _ => Err(Error::invalid(
+            "MySQL collation and page bytes must be supplied together",
+        )),
+    }
 }

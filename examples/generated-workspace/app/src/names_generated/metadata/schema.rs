@@ -1,6 +1,6 @@
 //! Compatibility identity shared by generated partitions.
 /// Normalized semantic fingerprint.
-pub const FINGERPRINT: &str = "dbc3f50dcd8942354ff56d52ef513a78f18d1d2e58287306362e6b7c83d46969";
+pub const FINGERPRINT: &str = "7d0ce9d40c9988eecd7e1869f740c6f9af360554e99ba7c206217f55be1abcd4";
 /// Required runtime descriptor revision.
-pub const CONTRACT_REVISION: u32 = 2;
+pub const CONTRACT_REVISION: u32 = 3;
 const _: () = assert!(CONTRACT_REVISION == stackpress_framework_schema::CONTRACT_REVISION);

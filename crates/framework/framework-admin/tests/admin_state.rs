@@ -10,7 +10,7 @@ use stackpress_framework_schema::{
 };
 use stackpress_idea_parser::{SchemaConfig, parse};
 
-/// Actual revision-2 public query capabilities, with an integer zero and Boolean false.
+/// Actual revision-3 public query capabilities, with an integer zero and Boolean false.
 fn model() -> stackpress_framework_schema::UiModel {
     let config:SchemaConfig=parse("fixture.idea", "model Example { id String @id name String @searchable @sortable @filter.input flag Boolean @filter.checkbox count Integer @filter.slider }", &Default::default()).unwrap();
     let mut registry = DefinitionRegistry::standard();

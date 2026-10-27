@@ -10,7 +10,7 @@ use stackpress_framework_sql::{
 use stackpress_sql::{Insert, Row, Select, TableDefinition};
 const _: () = assert!(stackpress_framework_sql::CONTRACT_REVISION == 1);
 /// Shared normalized schema identity.
-pub const FINGERPRINT: &str = "bf1ffb1dcad0a0fa5a1cc6a8df13652e29f1febbc94915fc48a4ee1235520b03";
+pub const FINGERPRINT: &str = "6fd7b32e8beb5934f1b3849c0980fe073093aa29d7ed1f222a0165e986627b43";
 /// Exact ordered stored codecs.
 pub const COLUMNS: &[StorageColumn] = &[
     StorageColumn {
@@ -55,20 +55,20 @@ impl ProjectStore {
     /// Build the checked storage definition; installation is always explicit.
     pub fn table() -> DataResult<TableDefinition> {
         let mut table = stackpress_sql::Create::new("project");
-        // Preserve declared nullability in storage.
+        // Preserve declared nullability and explicit character length in storage.
         let field = stackpress_sql::Field::new("id", stackpress_sql::SqlType::Text).not_null();
         table = table.add_field(field);
-        // Preserve declared nullability in storage.
+        // Preserve declared nullability and explicit character length in storage.
         let field =
             stackpress_sql::Field::new("owner_id", stackpress_sql::SqlType::Text).not_null();
         table = table.add_field(field);
-        // Preserve declared nullability in storage.
+        // Preserve declared nullability and explicit character length in storage.
         let field = stackpress_sql::Field::new("title", stackpress_sql::SqlType::Text).not_null();
         table = table.add_field(field);
-        // Preserve declared nullability in storage.
+        // Preserve declared nullability and explicit character length in storage.
         let field = stackpress_sql::Field::new("state", stackpress_sql::SqlType::Text).not_null();
         table = table.add_field(field);
-        // Preserve declared nullability in storage.
+        // Preserve declared nullability and explicit character length in storage.
         let field = stackpress_sql::Field::new("tags", stackpress_sql::SqlType::Text).not_null();
         table = table.add_field(field);
         table = table.primary_key(["id"]);
@@ -660,6 +660,7 @@ impl ProjectStore {
             .map_err(stackpress_framework_sql::stores::preparation_error)?;
         let mut assignments = stackpress_framework_sql::encode_patch(patch, MUTABLE_COLUMNS)?;
         assignments.extend(timestamp(context)?);
+
         let mut query = stackpress_sql::Update::new("project").and_where(SPEC.key_predicate(key)?);
         for (column, value) in assignments {
             query = query.set(column, value);

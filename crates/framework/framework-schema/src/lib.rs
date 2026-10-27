@@ -12,8 +12,8 @@ use serde::{Deserialize, Serialize};
 #[cfg(feature = "codegen")]
 pub mod codegen;
 
-/// Slice 6 M1 descriptor/generated contract revision for coordinator and Slice 8 review.
-pub const CONTRACT_REVISION: u32 = 2;
+/// Generated schema contract, including explicit optional string storage length (G38).
+pub const CONTRACT_REVISION: u32 = 3;
 
 mod query;
 pub use query::{NullOrder, Predicate, Sort, SortDirection, check_include, query_budget};
@@ -190,6 +190,20 @@ pub struct Field {
     pub column: String,
     /// Checked value/relation kind.
     pub value_type: ValueType,
+    /// Explicit maximum Unicode scalar count for a stored String/Text model field.
+    ///
+    /// Normalized from `@store.length(n)` on stored, non-list String/Text model fields.
+    /// Values are positive and at most i32::MAX, checked again during deserialization.
+    /// Absence remains TEXT; a validation upper bound alone never selects VARCHAR.
+    /// Counts are Unicode scalars, including combining marks, NUL and trailing spaces.
+    /// SQLite records the declaration but does not enforce it; generated validation and
+    /// native store guards do. Private bounds are omitted from browser record snapshots.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "storage_length"
+    )]
+    pub storage_length: Option<u32>,
     /// Whether explicit null is forbidden.
     pub required: bool,
     /// A bounded JSON list when not a virtual model relation.
@@ -228,6 +242,15 @@ pub struct Field {
     pub access: FieldAccess,
     /// Private recognized and foreign attributes.
     pub attributes: Vec<Attribute>,
+}
+
+/// Recheck descriptor input before a storage renderer can narrow the integer type.
+fn storage_length<'de, D: serde::Deserializer<'de>>(decoder: D) -> Result<Option<u32>, D::Error> {
+    let value = Option::<u32>::deserialize(decoder)?;
+    if value.is_some_and(|length| length == 0 || i32::try_from(length).is_err()) {
+        return Err(serde::de::Error::custom("invalid declared storage length"));
+    }
+    Ok(value)
 }
 
 /// Scalar/value/relation families, never guessed from placeholder-looking strings.

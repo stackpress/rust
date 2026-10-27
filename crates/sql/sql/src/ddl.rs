@@ -10,6 +10,48 @@ use crate::{
     DefaultValue, DialectId, Field, ForeignKey, Index, Query, QueryLimits, Result, SqlValue,
 };
 
+/// Checked optional MySQL facts carried by [`CreateData`] and [`crate::TableDefinition`].
+/// Construct through [`Create::mysql_utf8mb4_dynamic`] or [`Create::require_mysql_target`].
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct MysqlStorage {
+    /// None marks a generated table whose app has not supplied its target facts yet.
+    facts: Option<(String, u32)>,
+}
+
+impl MysqlStorage {
+    /// Inspect the explicit collation and expected page bytes; None is an unresolved requirement.
+    pub fn facts(&self) -> Option<(&str, u32)> {
+        self.facts
+            .as_ref()
+            .map(|(collation, page)| (collation.as_str(), *page))
+    }
+
+    /// Recheck a retained policy at the detached builder boundary.
+    fn validate(&self) -> Result<()> {
+        if let Some((collation, page)) = self.facts() {
+            Self::validate_facts(collation, page)?;
+        }
+        Ok(())
+    }
+
+    /// Check borrowed facts before allocating owned metadata or rendering any SQL.
+    fn validate_facts(collation: &str, page: u32) -> Result<()> {
+        if !matches!(
+            collation,
+            "utf8mb4_bin"
+                | "utf8mb4_unicode_ci"
+                | "utf8mb4_general_ci"
+                | "utf8mb4_0900_ai_ci"
+                | "utf8mb4_0900_as_cs"
+                | "utf8mb4_0900_bin"
+        ) || !matches!(page, 4096 | 8192 | 16384 | 32768 | 65536)
+        {
+            return Err(unsupported("unsupported explicit MySQL storage facts"));
+        }
+        Ok(())
+    }
+}
+
 /// A builder-generated batch; every statement validates before any caller can execute it.
 ///
 /// Only validated DDL builders create plans; there is no public arbitrary batch
@@ -150,6 +192,9 @@ impl QueryPlan {
 /// ```
 #[derive(Clone, Debug, PartialEq)]
 pub struct CreateData {
+    /// Explicit generated MySQL policy. None preserves the plain builder's behavior.
+    /// Configure through [`Create::mysql_utf8mb4_dynamic`]; an unresolved requirement refuses.
+    pub mysql_storage: Option<MysqlStorage>,
     /// One literal table name; dots are not qualification syntax.
     ///
     /// # Examples
@@ -295,6 +340,7 @@ impl Create {
     pub fn new(table: impl Into<String>) -> Self {
         Self {
             data: CreateData {
+                mysql_storage: None,
                 table: table.into(),
                 fields: Vec::new(),
                 primary: Vec::new(),
@@ -303,6 +349,50 @@ impl Create {
                 if_not_exists: false,
             },
         }
+    }
+
+    /// Require explicit MySQL storage facts for a generated bounded table.
+    /// PostgreSQL/SQLite ignore MySQL target facts; generated PostgreSQL character limits
+    /// still validate. VARCHAR remains declaration-only in SQLite.
+    pub fn require_mysql_target(mut self) -> Self {
+        self.data
+            .mysql_storage
+            .get_or_insert(MysqlStorage { facts: None });
+        self
+    }
+
+    /// Select the admitted InnoDB DYNAMIC/utf8mb4 layout, checked collation and page size.
+    ///
+    /// These are app-owned expectations, not server discovery. No connection is opened.
+    /// Only 4/8/16/32/64 KiB pages are admitted. Collations are explicitly selected from
+    /// utf8mb4_bin, utf8mb4_unicode_ci, utf8mb4_general_ci, utf8mb4_0900_ai_ci,
+    /// utf8mb4_0900_as_cs and utf8mb4_0900_bin; unsupported server versions may refuse them.
+    /// MySQL application through the atomic DDL executor remains unsupported.
+    ///
+    /// # Examples
+    /// ```
+    /// use stackpress_sql::{Create, DialectId, Field, Length, SqlType};
+    /// let table = Create::new("note")
+    ///     .add_field(Field::new("id", SqlType::Varchar).length(Length::Size(191)))
+    ///     .primary_key(["id"])
+    ///     .mysql_utf8mb4_dynamic("utf8mb4_bin", 16384)?;
+    /// assert!(table.render(DialectId::Mysql)?.queries()[0].sql().contains("ROW_FORMAT=DYNAMIC"));
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
+    pub fn mysql_utf8mb4_dynamic(mut self, collation: &str, page_bytes: u32) -> Result<Self> {
+        MysqlStorage::validate_facts(collation, page_bytes)?;
+        let policy = MysqlStorage {
+            facts: Some((collation.into(), page_bytes)),
+        };
+        policy.validate()?;
+        self.data.mysql_storage = Some(policy);
+        Ok(self)
+    }
+
+    /// Retain already checked policy when reconstructing a detached definition.
+    pub(crate) fn with_mysql_storage(mut self, policy: Option<MysqlStorage>) -> Self {
+        self.data.mysql_storage = policy;
+        self
     }
 
     /// Append a typed field in storage order.
@@ -451,6 +541,9 @@ impl Create {
     /// # Ok::<(), stackpress_sql::SqlError>(())
     /// ```
     pub fn build(&self) -> Result<CreateData> {
+        if let Some(policy) = &self.data.mysql_storage {
+            policy.validate()?;
+        }
         quote(&self.data.table)?;
         validate_fields(&self.data.fields)?;
         let mut data = self.data.clone();

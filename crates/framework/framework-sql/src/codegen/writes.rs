@@ -41,6 +41,24 @@ pub(super) fn emit(
     }
     text.push_str("];\n");
     timestamp(schema, model, text)?;
+    let bounded = model
+        .fields
+        .iter()
+        .any(|field| field.storage_length.is_some());
+    let encode_bounds = if bounded {
+        "Self::storage_bounds(value)?;"
+    } else {
+        ""
+    };
+    let patch_bounds = if model
+        .fields
+        .iter()
+        .any(|field| field.storage_length.is_some() && !field.key && !field.generated)
+    {
+        "Self::patch_bounds(&assignments)?;"
+    } else {
+        ""
+    };
     let (key_type, key_value) = key_argument(model);
     text.push_str(&format!(r#"
 impl {name}Store {{
@@ -49,13 +67,14 @@ pub fn insert(value:&_Stored)->DataResult<Insert>{{
 Ok(Insert::new({table:?}).columns(COLUMNS.iter().map(|column|column.column)).values(Self::encode(value)?).returning(COLUMNS.iter().map(|column|column.column)))
 }}
 /// Encode the exact declared record shape after stored/business validation, without regenerating values.
-pub fn encode(value:&_Stored)->DataResult<Vec<stackpress_sql::SqlValue>>{{value.validate().map_err(stackpress_framework_sql::stores::validation)?;stackpress_framework_sql::encode(value,COLUMNS)}}
+pub fn encode(value:&_Stored)->DataResult<Vec<stackpress_sql::SqlValue>>{{value.validate().map_err(stackpress_framework_sql::stores::validation)?;{encode_bounds}stackpress_framework_sql::encode(value,COLUMNS)}}
 /// Validate one nonempty patch, refresh its timestamp and scope it to the complete identity.
 pub fn update_plan(key:&Key,patch:&Patch,context:&stackpress_framework_schema::ValueContext<'_>)->DataResult<stackpress_sql::Update>{{
 if MUTABLE_COLUMNS.is_empty(){{return Err(DataError::new("model declares no mutable patch fields").with_kind(DataErrorKind::Unsupported));}}
 patch.validate(context).map_err(stackpress_framework_sql::stores::preparation_error)?;
 let mut assignments=stackpress_framework_sql::encode_patch(patch,MUTABLE_COLUMNS)?;
 assignments.extend(timestamp(context)?);
+{patch_bounds}
 let mut query=stackpress_sql::Update::new({table:?}).and_where(SPEC.key_predicate(key)?);
 for (column,value) in assignments {{query=query.set(column,value);}}
 Ok(query.returning(COLUMNS.iter().map(|column|column.column)))

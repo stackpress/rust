@@ -53,7 +53,7 @@ mod generation {
         )
     }
 
-    /// Normalize and project actual revision-2 metadata with original source coordinates.
+    /// Normalize and project actual revision-3 metadata with original source coordinates.
     pub(super) fn normalize(source: &str) -> Result<UiSchema, SchemaError> {
         let (composed, diagnostics, definitions) = fixture(source);
         Schema::normalize_with_diagnostics(
@@ -260,9 +260,14 @@ mod generation {
             assert!(original[start..end].contains("field.string"));
             assert_eq!(cause.path().last().unwrap(), "field.string");
         }
-        ui.contract_revision += 1;
-        assert!(generate(&ui, "safe", "Adapter").is_err());
-        ui.contract_revision -= 1;
+        // An old projected descriptor cannot mix with the selected revision-3 library.
+        assert_eq!(ui.contract_revision, 3);
+        for revision in [2, 4] {
+            ui.contract_revision = revision;
+            assert!(generate(&ui, "safe", "Adapter").is_err());
+        }
+        ui.contract_revision = 3;
+        assert!(generate(&ui, "safe", "Adapter").is_ok());
         let mut relation = ui.clone();
         relation.models[0].fields[1].value_type.value =
             stackpress_framework_schema::ValueType::Model("Other".into());

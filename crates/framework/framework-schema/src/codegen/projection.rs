@@ -192,6 +192,8 @@ pub(super) fn record_schema(schema: &Schema, model: &Model) -> RecordSchema {
         model.documentation = Documentation::default();
         model.query.clear();
         for field in &mut model.fields {
+            // SQL declarations stay on the host; public rules carry approved client bounds.
+            field.storage_length = None;
             for (index, rule) in field.rules.iter_mut().enumerate() {
                 if (!field.access.readable && !field.access.writable || field.access.sensitive)
                     && !rule.args.is_empty()

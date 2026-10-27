@@ -186,6 +186,9 @@ mod contract;
 #[path = "../../../sql-postgres/src/tests/support/stress.rs"]
 mod stress;
 
+#[path = "g37.rs"]
+mod g37;
+
 /// Build a detached statement using the unchanged core trust/lexical contract.
 fn query(sql: &'static str, values: impl IntoIterator<Item = SqlValue>) -> Query {
     let mut builder = Sql::literal(DIALECT, sql);
@@ -240,6 +243,7 @@ pub(crate) fn main() {
                         Ok(())
                     }
                     "stress" => stress::run(&name).await,
+                    "g37-ddl" => g37::run(&name).await,
                     _ => Err("unknown M2 scenario".into()),
                 }
             })
@@ -253,16 +257,26 @@ pub(crate) fn main() {
         }
         return;
     }
+    // The generated-DDL extension is opt-in; the established default groups stay unchanged.
+    let generated_ddl = std::env::args().nth(1).as_deref() == Some("--g37-ddl");
+    let groups: &[&str] = if generated_ddl {
+        &["g37-ddl"]
+    } else {
+        &["contract", "stress"]
+    };
     if std::env::var_os(GATE).is_none() {
         println!("test m2::native_cases ... ignored ({GATE} unset)");
-        println!("test result: ok. 0 passed; 0 failed; 2 ignored");
+        println!(
+            "test result: ok. 0 passed; 0 failed; {} ignored",
+            groups.len()
+        );
         return;
     }
     let result = std::panic::catch_unwind(|| -> TestResult<()> {
         let mut fixture = Fixture::create()?;
         let start = Instant::now();
         let mut primary: TestResult<()> = Ok(());
-        for case in ["contract", "stress"] {
+        for case in groups {
             let remaining = Duration::from_secs(120).saturating_sub(start.elapsed());
             let case_start = Instant::now();
             let status = watchdog(
@@ -293,5 +307,8 @@ pub(crate) fn main() {
         eprintln!("test result: FAILED (M2 setup/scenario/cleanup)");
         std::process::exit(1);
     }
-    println!("test result: ok. 2 M2 native groups passed; 0 ignored");
+    println!(
+        "test result: ok. {} M2 native groups passed; 0 ignored",
+        groups.len()
+    );
 }

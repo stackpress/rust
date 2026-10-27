@@ -23,7 +23,7 @@
     },
     "contracts/public.rs": {
       "owner": "framework-schema",
-      "sha256": "25fe56482d51c2351c2e26785f4d6caca9f70c2b742a89b8bebb6b8149a5f525",
+      "sha256": "4c7311f28f303c2cc26c41b890e4e41a91788b6b84d02823be789b18ea7d6aef",
       "bytes": 140910
     },
     "contracts/truth.rs": {
@@ -38,12 +38,12 @@
     },
     "metadata/schema.rs": {
       "owner": "framework-schema",
-      "sha256": "10c75acf17d31fb48f75f072c143f78664380228fba0ca728c7c285d82c62529",
+      "sha256": "2ad238253f8855e48e38180f1b1a52a0255409af7994e9e9121f49ac580e89f3",
       "bytes": 366
     },
     "metadata/ui.rs": {
       "owner": "framework-schema",
-      "sha256": "4f18e893ea4fdc659a134150f214df1420b5429f830b675fd3b1cc8b9a6912d3",
+      "sha256": "f2aa4261df4e060e45767e18a048d62ef0e4f16606f7e4d1d259945f8cbfe942",
       "bytes": 12392
     },
     "mod.rs": {

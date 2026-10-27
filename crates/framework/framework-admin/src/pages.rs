@@ -142,7 +142,7 @@ impl Action {
 pub struct PageSpec {
     /// Checked portable module/route identity.
     pub module: String,
-    /// Actual revision-2 projected metadata.
+    /// Actual revision-3 projected metadata.
     pub model: UiModel,
     /// Data-layer active field makes remove/restore available.
     pub soft_remove: bool,

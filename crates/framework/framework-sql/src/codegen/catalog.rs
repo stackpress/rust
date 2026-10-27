@@ -101,7 +101,16 @@ pub(super) fn emit(
         let (target, local, foreign) = mapping(schema, model, field)?;
         text.push_str(&format!("stackpress_framework_sql::stores::RelationSpec{{name:{:?},target:{:?},local:{:?},foreign:{:?},many:{},required:{},public:{}}},\n",field.name,target.module,local.name,foreign.name,field.multiple,field.required,public_model.is_some_and(|model|model.fields.iter().any(|item|item.wire_name==field.name&&item.readable))));
     }
-    text.push_str(&format!("],decode:decode_value,project:project_value}};\n/// Validate through the actual owned model before bounded JSON enters the include arena.\nfn decode_value(row:Row)->DataResult<serde_json::Value>{{stackpress_framework_schema::to_bounded_value(&{name}Store::decode(row)?).map_err(stackpress_framework_sql::stores::validation)}}\n/// Project the actual model through the compiled app policy; no stored field is echoed implicitly.\nfn project_value(value:serde_json::Value)->DataResult<serde_json::Value>{{let row:_Stored=serde_json::from_value(value).map_err(stackpress_framework_sql::codec_error)?;stackpress_framework_schema::to_bounded_value(&row.project().map_err(stackpress_framework_sql::stores::projection_error)?).map_err(stackpress_framework_sql::stores::validation)}}\nimpl {name}Store {{\n/// Strict owned decode, including checked nested fields and stored validation.\npub fn decode(row:Row)->DataResult<_Stored>{{let value:_Stored=stackpress_framework_sql::decode(row,COLUMNS)?;value.validate().map_err(|cause|DataError::new(\"stored value validation failed\").with_kind(DataErrorKind::Decode).with_cause(cause))?;Ok(value)}}\n}}\n"));
+    let bounds = if model
+        .fields
+        .iter()
+        .any(|field| field.storage_length.is_some())
+    {
+        "Self::storage_bounds(&value).map_err(|cause|DataError::new(\"stored storage length validation failed\").with_kind(DataErrorKind::Decode).with_cause(cause))?;"
+    } else {
+        ""
+    };
+    text.push_str(&format!("],decode:decode_value,project:project_value}};\n/// Validate through the actual owned model before bounded JSON enters the include arena.\nfn decode_value(row:Row)->DataResult<serde_json::Value>{{stackpress_framework_schema::to_bounded_value(&{name}Store::decode(row)?).map_err(stackpress_framework_sql::stores::validation)}}\n/// Project the actual model through the compiled app policy; no stored field is echoed implicitly.\nfn project_value(value:serde_json::Value)->DataResult<serde_json::Value>{{let row:_Stored=serde_json::from_value(value).map_err(stackpress_framework_sql::codec_error)?;stackpress_framework_schema::to_bounded_value(&row.project().map_err(stackpress_framework_sql::stores::projection_error)?).map_err(stackpress_framework_sql::stores::validation)}}\nimpl {name}Store {{\n/// Strict owned decode, including checked nested fields and stored validation.\npub fn decode(row:Row)->DataResult<_Stored>{{let value:_Stored=stackpress_framework_sql::decode(row,COLUMNS)?;{bounds}value.validate().map_err(|cause|DataError::new(\"stored value validation failed\").with_kind(DataErrorKind::Decode).with_cause(cause))?;Ok(value)}}\n}}\n"));
     // Four explicitly finite depth types encode the depth-three contract without recursive models.
     for depth in 0..=3 {
         for is_public in [false, true] {

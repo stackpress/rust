@@ -10,7 +10,7 @@ use stackpress_framework_sql::{
 use stackpress_sql::{Insert, Row, Select, TableDefinition};
 const _: () = assert!(stackpress_framework_sql::CONTRACT_REVISION == 1);
 /// Shared normalized schema identity.
-pub const FINGERPRINT: &str = "ec47cc709ff7a28fe3c5c2a5ce23fef531351f537e2e3876dbaa85dbc526353c";
+pub const FINGERPRINT: &str = "d7a224aaa8760cd18b45ca0e575a2459e5fca3f2a519023a6ae7f0a0fa14a9d3";
 /// Exact ordered stored codecs.
 pub const COLUMNS: &[StorageColumn] = &[
     StorageColumn {
@@ -48,16 +48,16 @@ impl ProjectStore {
     /// Build the checked storage definition; installation is always explicit.
     pub fn table() -> DataResult<TableDefinition> {
         let mut table = stackpress_sql::Create::new("project");
-        // Preserve declared nullability in storage.
+        // Preserve declared nullability and explicit character length in storage.
         let field = stackpress_sql::Field::new("id", stackpress_sql::SqlType::Text).not_null();
         table = table.add_field(field);
-        // Preserve declared nullability in storage.
+        // Preserve declared nullability and explicit character length in storage.
         let field = stackpress_sql::Field::new("heading", stackpress_sql::SqlType::Text).not_null();
         table = table.add_field(field);
-        // Preserve declared nullability in storage.
+        // Preserve declared nullability and explicit character length in storage.
         let field = stackpress_sql::Field::new("summary", stackpress_sql::SqlType::Text);
         table = table.add_field(field);
-        // Preserve declared nullability in storage.
+        // Preserve declared nullability and explicit character length in storage.
         let field =
             stackpress_sql::Field::new("owner_id", stackpress_sql::SqlType::Text).not_null();
         table = table.add_field(field);
@@ -622,6 +622,7 @@ impl ProjectStore {
             .map_err(stackpress_framework_sql::stores::preparation_error)?;
         let mut assignments = stackpress_framework_sql::encode_patch(patch, MUTABLE_COLUMNS)?;
         assignments.extend(timestamp(context)?);
+
         let mut query = stackpress_sql::Update::new("project").and_where(SPEC.key_predicate(key)?);
         for (column, value) in assignments {
             query = query.set(column, value);

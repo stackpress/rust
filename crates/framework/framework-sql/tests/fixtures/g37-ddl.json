@@ -1,0 +1,21 @@
+{
+  "mysql": [
+    "CREATE TABLE `profile` (`id` VARCHAR(2) NOT NULL, `name` VARCHAR(2) NOT NULL, `secret` VARCHAR(5), `token` VARCHAR(7) NOT NULL, PRIMARY KEY (`id`), INDEX `profile_name_index` (`name`)) ENGINE=InnoDB ROW_FORMAT=DYNAMIC DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin",
+    "CREATE TABLE `project` (`id` VARCHAR(2) NOT NULL, `owner_id` VARCHAR(2) NOT NULL, `title` VARCHAR(2) NOT NULL, PRIMARY KEY (`id`), CONSTRAINT `project_owner_id_fk` FOREIGN KEY (`owner_id`) REFERENCES `profile` (`id`) ON DELETE RESTRICT ON UPDATE NO ACTION, INDEX `project_title_index` (`title`)) ENGINE=InnoDB ROW_FORMAT=DYNAMIC DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin",
+    "CREATE TABLE `task` (`id` VARCHAR(2) NOT NULL, `project_id` VARCHAR(2) NOT NULL, `title` VARCHAR(2) NOT NULL, `done` BOOLEAN NOT NULL, PRIMARY KEY (`id`), CONSTRAINT `task_project_id_fk` FOREIGN KEY (`project_id`) REFERENCES `project` (`id`) ON DELETE RESTRICT ON UPDATE NO ACTION) ENGINE=InnoDB ROW_FORMAT=DYNAMIC DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin"
+  ],
+  "postgres": [
+    "CREATE TABLE \"profile\" (\"id\" VARCHAR(2) NOT NULL, \"name\" VARCHAR(2) NOT NULL, \"secret\" VARCHAR(5), \"token\" VARCHAR(7) NOT NULL, CONSTRAINT \"profile_pkey\" PRIMARY KEY (\"id\"))",
+    "CREATE INDEX \"profile_name_index\" ON \"profile\" (\"name\")",
+    "CREATE TABLE \"project\" (\"id\" VARCHAR(2) NOT NULL, \"owner_id\" VARCHAR(2) NOT NULL, \"title\" VARCHAR(2) NOT NULL, CONSTRAINT \"project_pkey\" PRIMARY KEY (\"id\"), CONSTRAINT \"project_owner_id_fk\" FOREIGN KEY (\"owner_id\") REFERENCES \"profile\" (\"id\") ON DELETE RESTRICT ON UPDATE NO ACTION)",
+    "CREATE INDEX \"project_title_index\" ON \"project\" (\"title\")",
+    "CREATE TABLE \"task\" (\"id\" VARCHAR(2) NOT NULL, \"project_id\" VARCHAR(2) NOT NULL, \"title\" VARCHAR(2) NOT NULL, \"done\" BOOLEAN NOT NULL, CONSTRAINT \"task_pkey\" PRIMARY KEY (\"id\"), CONSTRAINT \"task_project_id_fk\" FOREIGN KEY (\"project_id\") REFERENCES \"project\" (\"id\") ON DELETE RESTRICT ON UPDATE NO ACTION)"
+  ],
+  "sqlite": [
+    "CREATE TABLE \"profile\" (\"id\" VARCHAR(2) NOT NULL, \"name\" VARCHAR(2) NOT NULL, \"secret\" VARCHAR(5), \"token\" VARCHAR(7) NOT NULL, PRIMARY KEY (\"id\"))",
+    "CREATE INDEX \"profile_name_index\" ON \"profile\" (\"name\")",
+    "CREATE TABLE \"project\" (\"id\" VARCHAR(2) NOT NULL, \"owner_id\" VARCHAR(2) NOT NULL, \"title\" VARCHAR(2) NOT NULL, PRIMARY KEY (\"id\"), CONSTRAINT \"project_owner_id_fk\" FOREIGN KEY (\"owner_id\") REFERENCES \"profile\" (\"id\") ON DELETE RESTRICT ON UPDATE NO ACTION)",
+    "CREATE INDEX \"project_title_index\" ON \"project\" (\"title\")",
+    "CREATE TABLE \"task\" (\"id\" VARCHAR(2) NOT NULL, \"project_id\" VARCHAR(2) NOT NULL, \"title\" VARCHAR(2) NOT NULL, \"done\" BOOLEAN NOT NULL, PRIMARY KEY (\"id\"), CONSTRAINT \"task_project_id_fk\" FOREIGN KEY (\"project_id\") REFERENCES \"project\" (\"id\") ON DELETE RESTRICT ON UPDATE NO ACTION)"
+  ]
+}

@@ -18,7 +18,7 @@
     },
     "contracts/public.rs": {
       "owner": "framework-schema",
-      "sha256": "f27da266c5c02b84d912368b14a4d65769a56960be25e5a72fd403a25996feb4",
+      "sha256": "3aaaffea848a3f22b9dd3d5f38c4ca15e9d35cf20ae6c669950f157ac593cb41",
       "bytes": 75055
     },
     "contracts/schema.rs": {
@@ -33,12 +33,12 @@
     },
     "metadata/schema.rs": {
       "owner": "framework-schema",
-      "sha256": "882f909a9930d162a8b1bd1d52362f94579914793a27977b62f35ff0d96650e3",
+      "sha256": "dd74ad6e9f1a5246e0c9fe10bd3c45c81ff34cee750c9c7296d230d642e61ea2",
       "bytes": 366
     },
     "metadata/ui.rs": {
       "owner": "framework-schema",
-      "sha256": "d9736f2c45fb1aed5a8bccc7b441d7639cf72649e567864bf7ae5787b4ba14dd",
+      "sha256": "6544f0e44fd52198b0e2ac2b1c3c52066f57558c361e19fe157df3e239851117",
       "bytes": 4423
     },
     "mod.rs": {
@@ -48,18 +48,18 @@
     },
     "stores/_operations.rs": {
       "owner": "framework-sql",
-      "sha256": "092b605f3f618cba5140383b11a8da704ba0456417ca92493a3ddcae7325248c",
-      "bytes": 38658
+      "sha256": "f714a73cb9976e0bb4947029caac8715d149fa1d59c47a9f019571488407445c",
+      "bytes": 38749
     },
     "stores/_schema.rs": {
       "owner": "framework-sql",
-      "sha256": "65880d66da89d3653cde51d02d59a97b7530c6a4d72294d0e003ed95d0dc16db",
-      "bytes": 40986
+      "sha256": "1f82e821891431f1a842ab319087431194cde8689166a7358c71321502d5197f",
+      "bytes": 41107
     },
     "stores/identity.rs": {
       "owner": "framework-sql",
-      "sha256": "cf67bb5cf3fa180562007eeba99052b5366980f57b9124573b15fca29fb9ee0f",
-      "bytes": 34063
+      "sha256": "fcc2a6c2257f0af585c04e0dcfe90967afd345164ed2fbf32717fa60e435cb3e",
+      "bytes": 34094
     },
     "stores/mod.rs": {
       "owner": "aggregate",
@@ -73,8 +73,8 @@
     },
     "stores/schema.rs": {
       "owner": "framework-sql",
-      "sha256": "279448fad826c9731176269b2aff7a7b6753e52ee18aed1aba6acba6b9ee56d0",
-      "bytes": 700
+      "sha256": "c9958fbe59d93a6faec11e51d7644b727eeba9dc056e6f1a9a4dc7600daf27af",
+      "bytes": 1043
     }
   }
 }

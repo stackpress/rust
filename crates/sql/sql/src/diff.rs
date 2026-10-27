@@ -34,6 +34,9 @@ use crate::{
 /// ```
 #[derive(Clone, Debug, PartialEq)]
 pub struct TableDefinition {
+    /// Explicit MySQL expectations or a generated table's unresolved requirement.
+    /// Configure using [`Create::mysql_utf8mb4_dynamic`]. Plain definitions retain None.
+    pub mysql_storage: Option<crate::ddl::MysqlStorage>,
     /// One logical literal table name.
     ///
     /// # Examples
@@ -125,7 +128,9 @@ impl TableDefinition {
     /// # Ok::<(), stackpress_sql::SqlError>(())
     /// ```
     pub fn create(&self) -> Create {
-        let mut create = Create::new(&self.name).primary_key(self.primary.clone());
+        let mut create = Create::new(&self.name)
+            .primary_key(self.primary.clone())
+            .with_mysql_storage(self.mysql_storage.clone());
         for field in &self.fields {
             create = create.add_field(field.clone());
         }
@@ -202,6 +207,7 @@ impl From<CreateData> for TableDefinition {
     /// Drop creation policy while preserving all storage metadata and order.
     fn from(data: CreateData) -> Self {
         Self {
+            mysql_storage: data.mysql_storage,
             name: data.table,
             fields: data.fields,
             primary: data.primary,
@@ -419,6 +425,19 @@ impl SchemaDiff {
     pub fn between(source: &TableDefinition, target: &TableDefinition) -> Result<Self> {
         let source = source.normalized()?;
         let target = target.normalized()?;
+        if source
+            .mysql_storage
+            .as_ref()
+            .and_then(|policy| policy.facts())
+            != target
+                .mysql_storage
+                .as_ref()
+                .and_then(|policy| policy.facts())
+        {
+            return Err(crate::identifier::unsupported(
+                "changing MySQL target facts requires a separate migration design",
+            ));
+        }
         if source.name != target.name {
             return Err(invalid("schema diff requires the same logical table"));
         }
@@ -502,6 +521,11 @@ impl SchemaDiff {
             }
         }
         if operations.is_empty() {
+            if source.mysql_storage != target.mysql_storage {
+                return Err(crate::identifier::unsupported(
+                    "changing MySQL target requirements alone is not a storage alteration",
+                ));
+            }
             return Ok(Self::NoChanges);
         }
         let alteration = build_alter(&source, operations);
@@ -657,6 +681,10 @@ impl SchemaDiff {
         // Native ADD appends while RENAME/CHANGE retain position. Check the final
         // physical order after reconciliation, when explicit renames are known.
         validate_field_order(source, target, &alteration.build()?.operations)?;
+        // Check the entire target (including compound keys/row layout) before returning ALTER SQL.
+        if source.mysql_storage.is_some() || target.mysql_storage.is_some() {
+            target.create().render(dialect)?;
+        }
         alteration.render(dialect).map(Some)
     }
 }

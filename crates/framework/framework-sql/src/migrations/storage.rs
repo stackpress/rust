@@ -75,6 +75,9 @@ impl Literal {
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub(super) struct TableDto {
+    /// Format-3 generated target policy; absent in the frozen format-2 codec.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    mysql_storage: Option<MysqlDto>,
     /// Exact managed SQL table identity.
     name: String,
     /// Complete logical field definitions, with physical order carried separately by plans.
@@ -85,6 +88,14 @@ pub(super) struct TableDto {
     indexes: Vec<IndexDto>,
     /// Owned outgoing references and native actions.
     foreign_keys: Vec<ForeignDto>,
+}
+
+/// Closed policy vocabulary; engine/row format/charset are fixed by the selected variant.
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[serde(tag = "mode", rename_all = "snake_case", deny_unknown_fields)]
+enum MysqlDto {
+    Required,
+    InnoDbDynamicUtf8mb4 { collation: String, page_bytes: u32 },
 }
 
 /// Complete portable field metadata; unknown types and native expressions are refused.
@@ -187,6 +198,16 @@ impl TableDto {
             })
             .collect::<DataResult<_>>()?;
         Ok(Self {
+            mysql_storage: table
+                .mysql_storage
+                .as_ref()
+                .map(|policy| match policy.facts() {
+                    None => MysqlDto::Required,
+                    Some((collation, page_bytes)) => MysqlDto::InnoDbDynamicUtf8mb4 {
+                        collation: collation.into(),
+                        page_bytes,
+                    },
+                }),
             name: table.name.clone(),
             fields,
             primary: table.primary.clone(),
@@ -216,6 +237,9 @@ impl TableDto {
 
     /// Reconstruct through checked core normalization, never by parsing companion SQL files.
     pub fn checked(&self) -> DataResult<TableDefinition> {
+        if self.fields.len() > 128 {
+            return Err(DataError::new("snapshot column budget exceeded"));
+        }
         let fields = self
             .fields
             .iter()
@@ -252,7 +276,8 @@ impl TableDto {
                 Ok(field)
             })
             .collect::<DataResult<_>>()?;
-        TableDefinition {
+        let table = TableDefinition {
+            mysql_storage: None,
             name: self.name.clone(),
             fields,
             primary: self.primary.clone(),
@@ -281,7 +306,18 @@ impl TableDto {
                 .collect::<DataResult<_>>()?,
         }
         .normalized()
-        .map_err(Into::into)
+        .map_err(DataError::from)?;
+        let create = match &self.mysql_storage {
+            None => table.create(),
+            Some(MysqlDto::Required) => table.create().require_mysql_target(),
+            Some(MysqlDto::InnoDbDynamicUtf8mb4 {
+                collation,
+                page_bytes,
+            }) => table
+                .create()
+                .mysql_utf8mb4_dynamic(collation, *page_bytes)?,
+        };
+        create.definition().map_err(Into::into)
     }
 }
 

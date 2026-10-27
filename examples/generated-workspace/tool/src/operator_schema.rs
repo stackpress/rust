@@ -8,6 +8,7 @@ pub(super) fn snapshot(
     input: &Path,
     app: &str,
     name: &str,
+    mysql_target: Option<(&str, u32)>,
 ) -> stackpress_lib::Result<RevisionSnapshot> {
     let input = std::path::absolute(input)
         .map_err(|cause| external("schema input resolution failed", cause))?;
@@ -44,8 +45,16 @@ pub(super) fn snapshot(
     };
     let schema = super::normalize(&config, &diagnostics)
         .map_err(|cause| external("schema normalization failed", cause))?;
-    let tables = stackpress_framework_sql::codegen::storage_definitions(&schema)
-        .map_err(|cause| external("storage normalization failed", cause))?;
+    // Target facts are explicit operator intent, frozen into signatures before publication.
+    let tables = match mysql_target {
+        None => stackpress_framework_sql::codegen::storage_definitions(&schema),
+        Some((collation, page_bytes)) => {
+            stackpress_framework_sql::codegen::mysql_storage_definitions(
+                &schema, collation, page_bytes,
+            )
+        }
+    }
+    .map_err(|cause| external("storage normalization failed", cause))?;
     RevisionSnapshot::new(app, name, tables)
         .and_then(|s| {
             s.with_provenance(

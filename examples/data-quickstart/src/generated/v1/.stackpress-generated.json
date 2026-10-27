@@ -18,7 +18,7 @@
     },
     "contracts/public.rs": {
       "owner": "framework-schema",
-      "sha256": "8db835702c2f5d4bed7ce312422ba61cfa6d19151bc171c42a0ed1875f7252cc",
+      "sha256": "2cd83aa79193dea15625cb1912f99fd4943b4ceba3b4da8f0ea4f2948af015ad",
       "bytes": 88867
     },
     "contracts/task.rs": {
@@ -33,12 +33,12 @@
     },
     "metadata/schema.rs": {
       "owner": "framework-schema",
-      "sha256": "5005d774bed56bb7d3c114407deb5d523f1d429581479b59bb46c167f38aa999",
+      "sha256": "2252a6a59f56fcf241bdee5c480456519cbd858aca154062b885ad969598848f",
       "bytes": 366
     },
     "metadata/ui.rs": {
       "owner": "framework-schema",
-      "sha256": "6085399d70ffb193c820a4d32d7634c7d617288dd6b73fa3dacd156c72c03199",
+      "sha256": "1582ed49014eab93b271ec136c8ceaac33103a3869da636bacb2d253a428acd4",
       "bytes": 7069
     },
     "mod.rs": {
@@ -58,23 +58,23 @@
     },
     "stores/profile.rs": {
       "owner": "framework-sql",
-      "sha256": "dbcf7aabf604dc76955783c821497c743af19c8ab95e35f1d9cbfa0941a1c71d",
-      "bytes": 37288
+      "sha256": "5b28de7f8dff9f414989ba7f5295a5e6df191d25577c9e9236c93e6649118d67",
+      "bytes": 37349
     },
     "stores/project.rs": {
       "owner": "framework-sql",
-      "sha256": "b987754364d334571a4a3518828da5df962617462550eba9c1f667c3b812e19b",
-      "bytes": 40060
+      "sha256": "8fc144701b5227c0e2ba4a2bf1a69e4bd4a8fb8243beca83fd831df5ab46a2ad",
+      "bytes": 40151
     },
     "stores/schema.rs": {
       "owner": "framework-sql",
-      "sha256": "5e676eac56b53eae21f72fb8578dd26b4f5d1abfaf15a3d74e0ec026cfe05a4d",
-      "bytes": 678
+      "sha256": "fcd91a49ed7edd5afa065108ae19d3a3ded62a64f54bdece9853e6ca82eeca09",
+      "bytes": 1021
     },
     "stores/task.rs": {
       "owner": "framework-sql",
-      "sha256": "4d9946953a1b87a1685ac375f2a82da491a3dd970f7f8c12083205a5e8915e8d",
-      "bytes": 39418
+      "sha256": "76f5f0290bd0220c8e42259a0b114c3ef684ed8dd0c08857769241974455e540",
+      "bytes": 39539
     }
   }
 }

@@ -81,4 +81,4 @@ cargo run -p generated-workspace-tool --locked -- emit generate \
   --output "$PWD/examples/generated-workspace/app/src/names_generated"
 ```
 
-Read the [data-layer documentation](../../crates/framework/framework-sql/docs/README.md) for APIs, limits, transaction ownership and outcome semantics. M3 migration expansion and network generated-CRUD integration are outside this milestone. Schema revision 2, the original descriptors/DTOs/query shapes and the contracts/metadata/stores partition names remain unchanged.
+Read the [data-layer documentation](../../crates/framework/framework-sql/docs/README.md) for APIs, limits, transaction ownership and outcome semantics. M3 migration expansion and network generated-CRUD integration are outside this milestone. Generated schema revision 3 adds explicit optional string storage length; the contracts/metadata/stores partition names stay unchanged. See the [storage-length reference](../../crates/framework/framework-sql/docs/api/storage-length.md).

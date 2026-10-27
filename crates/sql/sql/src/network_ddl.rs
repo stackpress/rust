@@ -9,6 +9,7 @@ use crate::{
 
 /// Render validated table fields/constraints first, then ordered indexes/comments.
 pub(crate) fn create(data: &CreateData, dialect: DialectId) -> Result<QueryPlan> {
+    let suffix = storage_policy(data, dialect)?;
     let table = dialect.quote(&data.table)?;
     validate_columns(&data.primary, &data.fields, dialect, true)?;
     for index in &data.indexes {
@@ -54,7 +55,7 @@ pub(crate) fn create(data: &CreateData, dialect: DialectId) -> Result<QueryPlan>
     let mut queries = vec![Query::bound(
         dialect,
         format!(
-            "CREATE TABLE {}{table} ({})",
+            "CREATE TABLE {}{table} ({}){suffix}",
             if data.if_not_exists {
                 "IF NOT EXISTS "
             } else {
@@ -538,4 +539,141 @@ fn native_name_matches(defined: &str, referenced: &str, dialect: DialectId) -> b
     } else {
         defined.eq_ignore_ascii_case(referenced)
     }
+}
+
+/// Validate only the opt-in generated policy; ordinary Varchar builders keep their behavior.
+fn storage_policy(data: &CreateData, dialect: DialectId) -> Result<String> {
+    let Some(policy) = &data.mysql_storage else {
+        return Ok(String::new());
+    };
+    if dialect == DialectId::Postgres {
+        if data
+            .fields
+            .iter()
+            .any(|field| matches!(field.length, Some(Length::Size(n)) if n > 10_485_760))
+        {
+            return Err(unsupported(
+                "PostgreSQL declared character length exceeds native limit",
+            ));
+        }
+        return Ok(String::new());
+    }
+    if dialect != DialectId::Mysql {
+        return Ok(String::new());
+    }
+    let (collation, page) = policy
+        .facts()
+        .ok_or_else(|| unsupported("generated bounded MySQL DDL requires explicit target facts"))?;
+    let key_limit = match page {
+        4096 => 768,
+        8192 => 1536,
+        _ => 3072,
+    };
+    // Admit a conservative all-inline DYNAMIC layout. Off-page layout estimation is not inferred.
+    // The margin covers fixed record/transaction headers and the page directory.
+    let record_limit = (page / 2).min(16_384) - 200;
+    let null_bytes = u32::try_from(data.fields.iter().filter(|field| field.nullable).count())
+        .map_err(|_| invalid("MySQL nullable column count overflow"))?
+        .div_ceil(8);
+    let mut row_bytes = add_bytes(40, null_bytes)?;
+    for field in &data.fields {
+        row_bytes = add_bytes(row_bytes, inline_bytes(field)?)?;
+    }
+    if row_bytes > 65_535 || row_bytes > record_limit {
+        return Err(unsupported(
+            "generated MySQL row exceeds admitted inline record budget",
+        ));
+    }
+    if data.indexes.len().saturating_add(data.foreign_keys.len()) > 64 {
+        return Err(unsupported(
+            "generated MySQL secondary index count exceeds admitted limit",
+        ));
+    }
+    let mut keys: Vec<&[String]> = Vec::new();
+    if !data.primary.is_empty() {
+        keys.push(&data.primary);
+    }
+    keys.extend(data.indexes.iter().map(|index| index.columns.as_slice()));
+    keys.extend(data.foreign_keys.iter().map(|key| key.columns.as_slice()));
+    for names in keys {
+        if names.is_empty() || names.len() > 16 {
+            return Err(unsupported("MySQL key part count exceeds admitted limit"));
+        }
+        let mut key_bytes = 0;
+        for name in names {
+            let field = mysql_field(data, name)?;
+            let bytes = key_bytes_for(field)?;
+            if bytes > key_limit {
+                return Err(unsupported("MySQL key part exceeds byte budget"));
+            }
+            key_bytes = add_bytes(key_bytes, bytes)?;
+        }
+        if key_bytes > key_limit {
+            return Err(unsupported("MySQL compound key exceeds byte budget"));
+        }
+        // Secondary records append missing primary columns; this is a physical row check,
+        // separate from the declared index's full-key byte limit.
+        let mut record_bytes = add_bytes(40, null_bytes)?;
+        for name in names {
+            record_bytes = add_bytes(record_bytes, inline_bytes(mysql_field(data, name)?)?)?;
+        }
+        for primary in &data.primary {
+            if !names.iter().any(|name| name.eq_ignore_ascii_case(primary)) {
+                record_bytes = add_bytes(record_bytes, inline_bytes(mysql_field(data, primary)?)?)?;
+            }
+        }
+        if record_bytes > record_limit {
+            return Err(unsupported(
+                "MySQL secondary record exceeds admitted budget",
+            ));
+        }
+    }
+    Ok(format!(
+        " ENGINE=InnoDB ROW_FORMAT=DYNAMIC DEFAULT CHARACTER SET utf8mb4 COLLATE {collation}"
+    ))
+}
+
+/// Resolve exact catalog operands under MySQL's existing case-insensitive column policy.
+fn mysql_field<'a>(data: &'a CreateData, name: &str) -> Result<&'a Field> {
+    data.fields
+        .iter()
+        .find(|field| field.name.eq_ignore_ascii_case(name))
+        .ok_or_else(|| invalid("MySQL budget references an absent field"))
+}
+
+/// Reserve worst-case utf8mb4 payload bytes; unknown storage layouts fail closed.
+fn key_bytes_for(field: &Field) -> Result<u32> {
+    match field.data_type {
+        SqlType::Integer | SqlType::Real => Ok(8),
+        SqlType::Boolean => Ok(1),
+        SqlType::DateTime => Ok(120),
+        SqlType::Varchar => match field.length {
+            Some(Length::Size(n)) if (1..=16_383).contains(&n) => u32::try_from(n)
+                .ok()
+                .and_then(|n| n.checked_mul(4))
+                .ok_or_else(|| invalid("MySQL character byte budget overflow")),
+            _ => Err(unsupported(
+                "generated MySQL VARCHAR requires a supported declared length",
+            )),
+        },
+        _ => Err(unsupported(
+            "generated MySQL budget does not admit this storage layout",
+        )),
+    }
+}
+
+/// Include variable-length prefixes without conflating them with the declared key limit.
+fn inline_bytes(field: &Field) -> Result<u32> {
+    let bytes = key_bytes_for(field)?;
+    if matches!(field.data_type, SqlType::Varchar | SqlType::DateTime) {
+        add_bytes(bytes, if bytes > 255 { 2 } else { 1 })
+    } else {
+        Ok(bytes)
+    }
+}
+
+/// Refuse arithmetic overflow rather than wrapping a physical limit comparison.
+fn add_bytes(left: u32, right: u32) -> Result<u32> {
+    left.checked_add(right)
+        .ok_or_else(|| invalid("MySQL storage byte budget overflow"))
 }

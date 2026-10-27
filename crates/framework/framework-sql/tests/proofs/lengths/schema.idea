@@ -1,0 +1,24 @@
+plugin "framework-schema" { }
+plugin "framework-sql" { }
+
+model Profile @query("id" "name") {
+  id String @id @store.length(2)
+  name String @store.length(2) @default("ok") @searchable
+  secret String? @store.length(5) @default("ok")
+  token String @store.length(7) @generated @default("nanoid(2)")
+  projects Project[]
+}
+model Project @query("id" "title" "owner.name") {
+  id String @id @store.length(2)
+  ownerId String @store.length(2)
+  title String @store.length(2) @searchable
+  owner Profile @relation({ local "ownerId" foreign "id" name "projects" })
+  tasks Task[]
+}
+model Task {
+  id String @id @store.length(2)
+  projectId String @store.length(2)
+  title String @store.length(2)
+  done Boolean @default(false)
+  project Project @relation({ local "projectId" foreign "id" name "tasks" })
+}

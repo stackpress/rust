@@ -1,0 +1,44 @@
+{
+  "hash": "dd5f71f7dfc3747af67086a282ae817f8bfe57fe1c919814de8d5b7cc876a464",
+  "snapshot": {
+    "format": 2,
+    "app": "legacy",
+    "revision": "two",
+    "parent": "one",
+    "source_fingerprint": "7a32b8da7f656da8b392f482490c98d754682c9e6eea8ab7c115282fc82d9240",
+    "generator_revision": 1,
+    "definition_revision": "storage-1",
+    "tables": [
+      {
+        "name": "note",
+        "fields": [
+          {
+            "name": "id",
+            "kind": "text",
+            "nullable": false,
+            "length": null,
+            "default": null,
+            "automatic": false,
+            "unsigned": false,
+            "comment": null
+          },
+          {
+            "name": "summary",
+            "kind": "text",
+            "nullable": true,
+            "length": null,
+            "default": null,
+            "automatic": false,
+            "unsigned": false,
+            "comment": null
+          }
+        ],
+        "primary": [
+          "id"
+        ],
+        "indexes": [],
+        "foreign_keys": []
+      }
+    ]
+  }
+}

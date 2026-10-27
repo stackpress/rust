@@ -9,10 +9,10 @@ use stackpress_framework_schema::{
 };
 use stackpress_idea_transformer::{OutputPlan, Result};
 
-/// G34 revision 2 is frozen independently of a future schema library upgrade.
-const UI_CONTRACT_REVISION: u32 = 2;
+/// G38 selects revision 3 explicitly; older descriptors cannot mix with new contracts.
+const UI_CONTRACT_REVISION: u32 = 3;
 
-/// Emit deterministic model role functions from revision-2 public descriptors only.
+/// Emit deterministic model role functions from revision-3 public descriptors only.
 ///
 /// The ordinary function transform must own `ui`. Its sibling schema transform emits the
 /// `contracts::public::Public<Model>` types. Missing roles contribute no function. The import

@@ -17,3 +17,10 @@ pub fn catalog() -> Vec<&'static stackpress_framework_sql::stores::StoreSpec> {
         &super::link::SPEC,
     ]
 }
+/// Supply explicit MySQL target facts and check the entire managed catalog before rendering.
+pub fn mysql_definition(
+    collation: &str,
+    page_bytes: u32,
+) -> stackpress_framework_sql::DataResult<Vec<stackpress_sql::TableDefinition>> {
+    stackpress_framework_sql::ddl_policy::mysql_definitions(definition()?, collation, page_bytes)
+}
