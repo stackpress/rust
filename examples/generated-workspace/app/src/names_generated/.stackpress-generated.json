@@ -48,18 +48,18 @@
     },
     "stores/_operations.rs": {
       "owner": "framework-sql",
-      "sha256": "7336509f462fb9b5a1fe6cb0496fb32a9176a63062d4f1f53877af07106bf3d0",
-      "bytes": 36749
+      "sha256": "5e2a5f403a39f807cb7b4390b1cefc908e7b364bdb19793dd6719d87853e0e7d",
+      "bytes": 37219
     },
     "stores/_schema.rs": {
       "owner": "framework-sql",
-      "sha256": "591f51a33979f0066f10fa825ef6acc37ab642ef5bcc42bcca1f32a6d7ab01fe",
-      "bytes": 39081
+      "sha256": "ee2860ff1e5c245fe13a47818c45a57a255753d45caec4604ef371f2e3f42dac",
+      "bytes": 39551
     },
     "stores/identity.rs": {
       "owner": "framework-sql",
-      "sha256": "6cb7e7d542884fecbd3d4141351c38352208f27ec0d2046ea97be1bea0e317a1",
-      "bytes": 32156
+      "sha256": "363900d982abec49a70b3a5dd114a8dbaab6a70c553081406ab59c624f2994e8",
+      "bytes": 32626
     },
     "stores/mod.rs": {
       "owner": "aggregate",

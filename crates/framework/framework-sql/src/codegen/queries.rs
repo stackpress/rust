@@ -72,8 +72,10 @@ let page=stackpress_framework_sql::stores::search(db,&super::schema::catalog(),&
 let rows=page.rows.into_iter().map(|row|serde_json::from_value(row).map_err(stackpress_framework_sql::codec_error)).collect::<DataResult<Vec<View3>>>()?;
 Ok(Page{{rows,total:page.total,skip:page.skip,take:page.take}})
 }}
-/// Open one owned SQLite read transaction for counts/includes, committing exactly once.
+/// Own one read transaction; snapshot-dependent shapes remain explicitly dialect-gated.
 pub async fn search_atomic(engine:&stackpress_sql::Engine,query:Query)->DataResult<Page<View3>>{{
+// A known dialect refusal must precede BEGIN, even when native acquisition would fail.
+stackpress_framework_sql::stores::preflight_atomic_search(&super::schema::catalog(),&SPEC,&ReadQuery::from_typed(&query)?,engine.dialect())?;
 let mut transaction=engine.begin().await?;
 let outcome=Self::search(&mut DataSession::transaction(&mut transaction),query).await;
 stackpress_framework_sql::finish(transaction,outcome).await

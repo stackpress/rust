@@ -12,6 +12,11 @@
 | Supported type with SQL NULL | Null | Native typed NULL bit; casts/columns supply the target |
 | DECIMAL, DATE/TIME/DATETIME/TIMESTAMP, ENUM/SET, geometry, other types | Decode error, also for typed NULL | Explicitly cast unsupported output to a supported wire type |
 
+A binary text collation such as utf8mb4_bin remains Text. SQLx's display name can
+say VARBINARY/BLOB for its BINARY flag; the public string compatibility check uses
+the wire charset to distinguish such text from actual binary data. Unsupported
+ENUM/SET types remain rejected before this check.
+
 A bare parameter result can advertise text metadata even for a Blob bind. Request
 an explicit `CAST(? AS BINARY)` or select a binary column when a Blob result is
 required; decoding follows the advertised native type/charset.
