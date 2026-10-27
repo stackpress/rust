@@ -15,11 +15,17 @@ use crate::RoleContext;
 
 mod catalog_inputs;
 mod collection_inputs;
+#[cfg(feature = "format")]
+mod formatted;
 mod sync;
 pub use catalog_inputs::{ComboboxField, RatingField, SliderField, SlugField};
 #[cfg(feature = "codegen")]
 pub(crate) use catalog_inputs::{range_scale, rating_limit};
 pub use collection_inputs::{MetadataField, TextListField};
+#[cfg(all(feature = "format", feature = "codegen"))]
+pub(crate) use formatted::configuration as formatted_configuration;
+#[cfg(feature = "format")]
+pub use formatted::{DecimalField, FormattedView, PhoneField, TemporalField};
 
 /// Read exact text, leaving absent/null values distinct in the source signal.
 fn text_seed(context: &RoleContext) -> String {
@@ -51,13 +57,26 @@ fn text_signal(context: &RoleContext) -> RwSignal<String> {
 }
 
 /// Explicit input presence selector; clearing a text box remains a supplied empty string.
-fn presence(context: &RoleContext) -> impl IntoView {
+fn presence(context: &RoleContext) -> AnyView {
+    let patch = use_context::<crate::pages::EditorAction>()
+        .is_some_and(|action| action.0 == crate::pages::Action::Update);
+    let omission = context.role == stackpress_framework_schema::Role::Filter || patch;
+    if !context.field.nullable && !omission {
+        return ().into_any();
+    }
     let state = context.value;
     let field = context.field.clone();
     let id = format!("{}-presence", context.id);
-    let label = format!("{} value state", context.field.label);
+    let label = format!("{} action", context.field.label);
     let disabled = context.bool_prop("disabled", false);
     let empty_number = context.number_prop("min", 0.0);
+    let missing_label = if patch {
+        "Leave unchanged"
+    } else if omission {
+        "Any value"
+    } else {
+        "Not set"
+    };
     view! { <label for=id.clone()>{label}</label>
         <select id=id disabled=disabled on:change=move |event| {
             if disabled { return; }
@@ -74,11 +93,11 @@ fn presence(context: &RoleContext) -> impl IntoView {
             };
             state.set(next);
         }>
-            <option value="missing" selected=move || matches!(state.get(), FieldInput::Missing) prop:selected=move || matches!(state.get(), FieldInput::Missing)>"Omitted"</option>
-            {context.field.nullable.then(|| view! { <option value="null" selected=move || matches!(state.get(), FieldInput::Null) prop:selected=move || matches!(state.get(), FieldInput::Null)>"Null"</option> })}
-            <option value="value" selected=move || matches!(state.get(), FieldInput::Value(_)) prop:selected=move || matches!(state.get(), FieldInput::Value(_))>"Value"</option>
+            <option value="missing" selected=move || matches!(state.get(), FieldInput::Missing) prop:selected=move || matches!(state.get(), FieldInput::Missing)>{missing_label}</option>
+            {context.field.nullable.then(|| view! { <option value="null" selected=move || matches!(state.get(), FieldInput::Null) prop:selected=move || matches!(state.get(), FieldInput::Null)>"Clear (empty)"</option> })}
+            <option value="value" selected=move || matches!(state.get(), FieldInput::Value(_)) prop:selected=move || matches!(state.get(), FieldInput::Value(_))>"Set value"</option>
         </select>
-    }
+    }.into_any()
 }
 
 /// Pair a generated control with deterministic label/help/error associations.
@@ -86,9 +105,19 @@ fn frame(context: RoleContext, control: AnyView) -> AnyView {
     let id = context.id.clone();
     let label = Signal::stored(context.text_prop("label", &context.field.label));
     let state = presence(&context);
+    let error = field_error(&context);
+    view! { <div class="sp-role" data-role=format!("{:?}", context.role).to_lowercase()>
+        <FieldControl for_id=id label error>{control}</FieldControl>{state}
+    </div> }
+    .into_any()
+}
+
+/// One public-rule error path shared by ordinary and formatted controls.
+fn field_error(context: &RoleContext) -> Signal<String> {
     let errors = use_context::<crate::pages::FormIssues>();
     let name = context.field.wire_name.clone();
-    let error = Signal::derive(move || {
+    let field = context.field.clone();
+    Signal::derive(move || {
         errors
             .map(|errors| {
                 errors
@@ -96,16 +125,12 @@ fn frame(context: RoleContext, control: AnyView) -> AnyView {
                     .get()
                     .iter()
                     .filter(|issue| issue.path.first() == Some(&name))
-                    .map(|issue| issue.message.clone())
+                    .map(|issue| crate::presentation::issue_message(&field, issue))
                     .collect::<Vec<_>>()
                     .join("; ")
             })
             .unwrap_or_default()
-    });
-    view! { <div class="sp-role" data-role=format!("{:?}", context.role).to_lowercase()>
-        <FieldControl for_id=id label error>{control}</FieldControl>{state}
-    </div> }
-    .into_any()
+    })
 }
 
 /// Native text control. Public props are typed by the build-host catalog.

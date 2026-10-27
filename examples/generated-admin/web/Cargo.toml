@@ -6,6 +6,10 @@ rust-version.workspace = true
 publish.workspace = true
 
 
+[features]
+default = []
+format = ["stackpress-framework-admin/format", "generated-admin-shared/format"]
+
 [dependencies]
 generated-admin-shared = { path = "../shared", features = ["ssr"] }
 stackpress-framework-ui = { path = "../../../crates/framework/framework-ui" }
