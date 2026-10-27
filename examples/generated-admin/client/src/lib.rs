@@ -7,14 +7,12 @@ mod browser {
     use wasm_bindgen::{JsCast, prelude::*};
 
     /// The exact event registration is removed before its callback is freed on root disposal.
-    struct Receiver(Closure<dyn FnMut(web_sys::Event)>);
+    struct Receiver(&'static str, Closure<dyn FnMut(web_sys::Event)>);
     impl Drop for Receiver {
         fn drop(&mut self) {
             if let Some(window) = web_sys::window() {
-                let _ = window.remove_event_listener_with_callback(
-                    "stackpress-admin-reply",
-                    self.0.as_ref().unchecked_ref(),
-                );
+                let _ = window
+                    .remove_event_listener_with_callback(self.0, self.1.as_ref().unchecked_ref());
             }
         }
     }
@@ -52,7 +50,7 @@ mod browser {
                 receive.as_ref().unchecked_ref(),
             )
             .expect("fixed browser event listener");
-        let _receiver = StoredValue::new_local(Receiver(receive));
+        let _receiver = StoredValue::new_local(Receiver("stackpress-admin-reply", receive));
         Callback::new(move |command: Command| {
             // Exactly one UI command may be in flight in this root; no mutation replay.
             if pending.with_value(|pending| pending.is_some()) {
@@ -93,6 +91,40 @@ mod browser {
             .transpose()?;
         let root = move || match seed {
             Some(snapshot) => {
+                let upload = generated_admin_shared::transfer::UploadState::default();
+                let limits = snapshot.transfer_limits;
+                provide_context(upload);
+                let receive = Closure::wrap(Box::new(move |event: web_sys::Event| {
+                    let Some(raw) = event
+                        .dyn_ref::<web_sys::CustomEvent>()
+                        .and_then(|event| event.detail().as_string())
+                    else {
+                        return;
+                    };
+                    if raw.len() > limits.bytes * 6 + 2048 {
+                        return;
+                    }
+                    let Ok(file) =
+                        serde_json::from_str::<generated_admin_shared::transfer::FileDraft>(&raw)
+                    else {
+                        return;
+                    };
+                    if file.csv.len() > limits.bytes
+                        || file.name.len() > 512
+                        || file.error.len() > 512
+                    {
+                        return;
+                    }
+                    upload.0.set(file);
+                }) as Box<dyn FnMut(web_sys::Event)>);
+                if let Some(window) = web_sys::window() {
+                    let _ = window.add_event_listener_with_callback(
+                        "stackpress-admin-upload",
+                        receive.as_ref().unchecked_ref(),
+                    );
+                }
+                let _receiver =
+                    StoredValue::new_local(Receiver("stackpress-admin-upload", receive));
                 let transport = transport();
                 view! {<generated_admin_shared::crud::Admin snapshot transport/>}.into_any()
             }

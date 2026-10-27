@@ -12,6 +12,7 @@ pub fn operations(start: &mut StartupContext, marker: &mut Registration) -> Resu
             Operation::Search,
             Operation::Create,
             Operation::Update,
+            Operation::Batch,
             Operation::Remove,
             Operation::Restore,
         ],
@@ -26,6 +27,7 @@ pub fn operations(start: &mut StartupContext, marker: &mut Registration) -> Resu
             Operation::Search,
             Operation::Create,
             Operation::Update,
+            Operation::Batch,
         ],
     )?;
     crate::generated::stores::operations::task::register(
@@ -38,6 +40,7 @@ pub fn operations(start: &mut StartupContext, marker: &mut Registration) -> Resu
             Operation::Search,
             Operation::Create,
             Operation::Update,
+            Operation::Batch,
         ],
     )?;
     Ok(())
@@ -54,6 +57,19 @@ pub fn routes(
     builder.get(&format!("{mount}profile/copy"), crate::host::page)?;
     builder.get(&format!("{mount}profile/remove"), crate::host::page)?;
     builder.get(&format!("{mount}profile/restore"), crate::host::page)?;
+    builder.get(&format!("{mount}profile/import"), crate::host::page)?;
+    builder.get(
+        &format!("{mount}profile/export"),
+        crate::host::transfer::export,
+    )?;
+    builder.post(
+        &format!("{mount}api/profile/preview"),
+        crate::host::transfer::import,
+    )?;
+    builder.post(
+        &format!("{mount}api/profile/confirm"),
+        crate::host::transfer::import,
+    )?;
     builder.post(&format!("{mount}api/profile/search"), crate::host::api)?;
     builder.post(&format!("{mount}api/profile/get"), crate::host::api)?;
     builder.post(&format!("{mount}api/profile/detail"), crate::host::api)?;
@@ -66,6 +82,19 @@ pub fn routes(
     builder.get(&format!("{mount}project/create"), crate::host::page)?;
     builder.get(&format!("{mount}project/update"), crate::host::page)?;
     builder.get(&format!("{mount}project/copy"), crate::host::page)?;
+    builder.get(&format!("{mount}project/import"), crate::host::page)?;
+    builder.get(
+        &format!("{mount}project/export"),
+        crate::host::transfer::export,
+    )?;
+    builder.post(
+        &format!("{mount}api/project/preview"),
+        crate::host::transfer::import,
+    )?;
+    builder.post(
+        &format!("{mount}api/project/confirm"),
+        crate::host::transfer::import,
+    )?;
     builder.post(&format!("{mount}api/project/search"), crate::host::api)?;
     builder.post(&format!("{mount}api/project/get"), crate::host::api)?;
     builder.post(&format!("{mount}api/project/detail"), crate::host::api)?;
@@ -76,10 +105,72 @@ pub fn routes(
     builder.get(&format!("{mount}task/create"), crate::host::page)?;
     builder.get(&format!("{mount}task/update"), crate::host::page)?;
     builder.get(&format!("{mount}task/copy"), crate::host::page)?;
+    builder.get(&format!("{mount}task/import"), crate::host::page)?;
+    builder.get(
+        &format!("{mount}task/export"),
+        crate::host::transfer::export,
+    )?;
+    builder.post(
+        &format!("{mount}api/task/preview"),
+        crate::host::transfer::import,
+    )?;
+    builder.post(
+        &format!("{mount}api/task/confirm"),
+        crate::host::transfer::import,
+    )?;
     builder.post(&format!("{mount}api/task/search"), crate::host::api)?;
     builder.post(&format!("{mount}api/task/get"), crate::host::api)?;
     builder.post(&format!("{mount}api/task/detail"), crate::host::api)?;
     builder.post(&format!("{mount}api/task/create"), crate::host::api)?;
     builder.post(&format!("{mount}api/task/update"), crate::host::api)?;
     Ok(())
+}
+/// Authorized import preview only: existence, never a private row projection.
+pub async fn import_exists(
+    module: &str,
+    db: &mut stackpress_framework_sql::DataSession<'_>,
+    value: serde_json::Value,
+) -> stackpress_framework_sql::DataResult<bool> {
+    match module {
+        "profile" => {
+            let key =
+                serde_json::from_value(value).map_err(stackpress_framework_sql::codec_error)?;
+            Ok(
+                crate::generated::stores::profile::Profiles::get_maintenance(
+                    db,
+                    &key,
+                    stackpress_framework_sql::stores::Visibility::All,
+                )
+                .await?
+                .is_some(),
+            )
+        }
+        "project" => {
+            let key =
+                serde_json::from_value(value).map_err(stackpress_framework_sql::codec_error)?;
+            Ok(
+                crate::generated::stores::project::Projects::get_maintenance(
+                    db,
+                    &key,
+                    stackpress_framework_sql::stores::Visibility::All,
+                )
+                .await?
+                .is_some(),
+            )
+        }
+        "task" => {
+            let key =
+                serde_json::from_value(value).map_err(stackpress_framework_sql::codec_error)?;
+            Ok(crate::generated::stores::task::Tasks::get_maintenance(
+                db,
+                &key,
+                stackpress_framework_sql::stores::Visibility::All,
+            )
+            .await?
+            .is_some())
+        }
+        _ => Err(stackpress_framework_sql::DataError::new(
+            "admin import unavailable",
+        )),
+    }
 }

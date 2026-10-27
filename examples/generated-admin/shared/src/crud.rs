@@ -32,6 +32,9 @@ pub fn link(snapshot: &Snapshot, action: Action, key: &Value) -> String {
     ) {
         query.push(format!("key={}", encode(&key.to_string())));
     }
+    if action == Action::Export {
+        query.push(snapshot.query.query().unwrap_or_default());
+    }
     if let Some(parent) = &snapshot.parent {
         query.push(format!(
             "parent={}",
@@ -78,11 +81,14 @@ fn contents(snapshot: Snapshot, transport: Callback<Command>) -> SchemaResult<An
             **action != current.action
                 && (**action == Action::Create
                     || **action == Action::Search
+                    || matches!(**action, Action::Import | Action::Export)
                     || !current.key.as_object().is_none_or(|key| key.is_empty()))
         })
         .map(|action| (*action, link(&current, *action, &current.key)))
         .collect();
-    let body = if current.action == Action::Search {
+    let body = if current.action == Action::Import {
+        crate::transfer::form(current.clone(), transport)
+    } else if current.action == Action::Search {
         search(snapshot, data, status, transport)?
     } else if current.action == Action::Detail {
         detail(snapshot)?
@@ -245,7 +251,7 @@ fn draft_fields(snapshot: &Snapshot) -> Vec<String> {
 }
 
 /// Build only one compiled same-model API endpoint, preserving authorized related scope.
-fn endpoint(snapshot: &Snapshot, action: Action) -> String {
+pub(crate) fn endpoint(snapshot: &Snapshot, action: Action) -> String {
     let mut endpoint = format!(
         "{}api/{}/{}",
         snapshot.mount,
@@ -322,6 +328,7 @@ fn search(
         <button type="submit" disabled=move ||status.get()==WriteState::Pending>"Search"</button></form>{orders}
         <p id="search-total">{move ||data.get().get("total").map(Value::to_string).unwrap_or_else(||"Total unavailable".into())}</p>
         <div class="admin-actions" role="group" aria-label="Pagination"><a id="search-deep-link" href=move ||{let seed=snapshot.get_value();format!("{}?{}{}",link(&Snapshot {parent:None,..seed.clone()},Action::Search,&json!({})),query.get().query().unwrap_or_default(),seed.parent.as_ref().map(|parent|format!("&parent={}",encode(&serde_json::to_string(parent).expect("public scope")))).unwrap_or_default())}>"Link to this search"</a>
+        {snapshot.get_value().allowed.contains(&Action::Export).then(||view!{<a id="export-csv" href=move ||{let seed=snapshot.get_value();link(&Snapshot{query:query.get(),..seed},Action::Export,&json!({}))}>"Export all filtered rows (CSV)"</a>})}
         <button id="previous-page" disabled=move ||query.get().skip==0 || status.get()==WriteState::Pending on:click=move |_|{let mut next=query.get();next.skip=next.skip.saturating_sub(u64::from(next.limit));request.run(next);}>"Previous"</button>
         <button id="next-page" disabled=move ||{let query=query.get();status.get()==WriteState::Pending || data.get().get("total").and_then(Value::as_u64).is_none_or(|total|query.skip+u64::from(query.limit)>=total)} on:click=move |_|{let mut next=query.get();next.skip=next.skip.saturating_add(u64::from(next.limit));request.run(next);}>"Next"</button></div>
         <div id="public-table">{move ||ui::pages::table(&snapshot.get_value().spec.module,&data.get(),"admin-list").unwrap_or_else(|_|view!{<p role="alert">"Invalid public rows"</p>}.into_any())}</div>
