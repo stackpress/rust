@@ -24,5 +24,5 @@ Status values follow the spec task implementation workflow: `proposed`, `open`, 
 | [00010 Owner review issues #1–#13](00010-owner-review-issues.md) | verified | All 13 fixed in three passes; coordinator-verified 2026-10-26; notes posted on each GitHub issue (open until on `main`). Acceptance criteria: none. |
 | [00011 Slice 6 generated data layer](00011-slice-6-generated-data-layer.md) | started | Design accepted (decisions recorded); M0 in progress since 2026-10-27. |
 | [00012 Slice 7 production servers](00012-slice-7-production-servers.md) | started | Design accepted (decisions recorded); M0 in progress since 2026-10-27. |
-| [00013 Slice 8 more UI](00013-slice-8-more-ui.md) | started | Design accepted, including visual acceptance criteria and mobile installs; M0, lane M1s, streamed SSR, rich/formatting M3, iOS and generated role wrappers (M4) verified; Lane A M2 and Android in review. |
+| [00013 Slice 8 more UI](00013-slice-8-more-ui.md) | started | Design accepted, including visual acceptance criteria and mobile installs; M0, lane M1s, streamed SSR, rich/formatting M3, iOS and generated role wrappers (M4) and Lane A M2 verified; Android emulator proof in progress. |
 | [00014 SQLite contention-sensitive test](00014-sqlite-contention-test.md) | verified | Load-sensitive tests made deterministic; merged 2026-10-27. |
