@@ -86,8 +86,24 @@ fn frame(context: RoleContext, control: AnyView) -> AnyView {
     let id = context.id.clone();
     let label = Signal::stored(context.text_prop("label", &context.field.label));
     let state = presence(&context);
+    let errors = use_context::<crate::pages::FormIssues>();
+    let name = context.field.wire_name.clone();
+    let error = Signal::derive(move || {
+        errors
+            .map(|errors| {
+                errors
+                    .0
+                    .get()
+                    .iter()
+                    .filter(|issue| issue.path.first() == Some(&name))
+                    .map(|issue| issue.message.clone())
+                    .collect::<Vec<_>>()
+                    .join("; ")
+            })
+            .unwrap_or_default()
+    });
     view! { <div class="sp-role" data-role=format!("{:?}", context.role).to_lowercase()>
-        <FieldControl for_id=id label>{control}</FieldControl>{state}
+        <FieldControl for_id=id label error>{control}</FieldControl>{state}
     </div> }
     .into_any()
 }

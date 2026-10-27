@@ -1,4 +1,4 @@
-//! Public role drafts and Leptos adapters. No database operations or routes are registered.
+//! Public role drafts, typed page state and Leptos adapters. Imports register no capabilities.
 //!
 //! `codegen` is a build-host capability; browser consumers select only `hydrate` or `csr`.
 //! Generated callers pass only projected fields to [`Draft`]. Components never evaluate props
@@ -17,3 +17,5 @@ pub use draft::{Draft, RoleContext};
 #[cfg(feature = "codegen")]
 pub mod codegen;
 pub mod components;
+pub mod pages;
+pub mod search;

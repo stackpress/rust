@@ -10,7 +10,7 @@ use stackpress_framework_sql::{
 use stackpress_sql::{Insert, Row, Select, TableDefinition};
 const _: () = assert!(stackpress_framework_sql::CONTRACT_REVISION == 1);
 /// Shared normalized schema identity.
-pub const FINGERPRINT: &str = "ed7339d88345035c2d45e410c7349278ec7e85bc9880a88c691f3f3ddfccfcf3";
+pub const FINGERPRINT: &str = "bf1ffb1dcad0a0fa5a1cc6a8df13652e29f1febbc94915fc48a4ee1235520b03";
 /// Exact ordered stored codecs.
 pub const COLUMNS: &[StorageColumn] = &[
     StorageColumn {
@@ -41,6 +41,20 @@ pub const COLUMNS: &[StorageColumn] = &[
         required: true,
         nonempty: false,
     },
+    StorageColumn {
+        wire: "note",
+        column: "note",
+        codec: StorageCodec::Text,
+        required: false,
+        nonempty: false,
+    },
+    StorageColumn {
+        wire: "priority",
+        column: "priority",
+        codec: StorageCodec::Integer,
+        required: true,
+        nonempty: false,
+    },
 ];
 /// Pure inspectable table, query and codec functions.
 pub struct TaskStore;
@@ -60,6 +74,13 @@ impl TaskStore {
         table = table.add_field(field);
         // Preserve declared nullability in storage.
         let field = stackpress_sql::Field::new("done", stackpress_sql::SqlType::Boolean).not_null();
+        table = table.add_field(field);
+        // Preserve declared nullability in storage.
+        let field = stackpress_sql::Field::new("note", stackpress_sql::SqlType::Text);
+        table = table.add_field(field);
+        // Preserve declared nullability in storage.
+        let field =
+            stackpress_sql::Field::new("priority", stackpress_sql::SqlType::Integer).not_null();
         table = table.add_field(field);
         table = table.primary_key(["id"]);
         // Explicit owning FK; reverse collections have no column.
@@ -111,7 +132,7 @@ pub static SPEC: StoreSpec = StoreSpec {
             choices: "[]",
             searchable: false,
             sortable: false,
-            public_filter: false,
+            public_filter: true,
             public_sort: false,
             public_search: false,
         },
@@ -142,6 +163,40 @@ pub static SPEC: StoreSpec = StoreSpec {
             },
             multiple: false,
             scalar: StorageCodec::Boolean,
+            choices: "[]",
+            searchable: false,
+            sortable: false,
+            public_filter: true,
+            public_sort: false,
+            public_search: false,
+        },
+        stackpress_framework_sql::stores::QueryField {
+            storage: StorageColumn {
+                wire: "note",
+                column: "note",
+                codec: StorageCodec::Text,
+                required: false,
+                nonempty: false,
+            },
+            multiple: false,
+            scalar: StorageCodec::Text,
+            choices: "[]",
+            searchable: false,
+            sortable: false,
+            public_filter: true,
+            public_sort: false,
+            public_search: false,
+        },
+        stackpress_framework_sql::stores::QueryField {
+            storage: StorageColumn {
+                wire: "priority",
+                column: "priority",
+                codec: StorageCodec::Integer,
+                required: true,
+                nonempty: false,
+            },
+            multiple: false,
+            scalar: StorageCodec::Integer,
             choices: "[]",
             searchable: false,
             sortable: false,
@@ -326,6 +381,12 @@ pub enum Filter {
     /// Typed "done" predicate.
     #[serde(rename = "done")]
     Done(stackpress_framework_schema::Predicate<bool>),
+    /// Typed "note" predicate.
+    #[serde(rename = "note")]
+    Note(stackpress_framework_schema::Predicate<String>),
+    /// Typed "priority" predicate.
+    #[serde(rename = "priority")]
+    Priority(stackpress_framework_schema::Predicate<i64>),
 }
 /// Native declared ordering fields; every page appends complete primary-key ties.
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
@@ -502,6 +563,20 @@ const MUTABLE_COLUMNS: &[StorageColumn] = &[
         wire: "done",
         column: "done",
         codec: StorageCodec::Boolean,
+        required: true,
+        nonempty: false,
+    },
+    StorageColumn {
+        wire: "note",
+        column: "note",
+        codec: StorageCodec::Text,
+        required: false,
+        nonempty: false,
+    },
+    StorageColumn {
+        wire: "priority",
+        column: "priority",
+        codec: StorageCodec::Integer,
         required: true,
         nonempty: false,
     },
@@ -860,7 +935,7 @@ impl View3 {
         let public = self.project()?;
         Ok(Selected(stackpress_framework_sql::projection::select(
             &public,
-            &["id", "title", "projectId", "done"],
+            &["id", "projectId", "title", "done", "note", "priority"],
             false,
         )?))
     }

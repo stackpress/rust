@@ -121,8 +121,20 @@ fn model_source(
 ) -> SchemaResult<String> {
     let json = serde_json::to_string(fields)
         .map_err(|cause| invalid("public UI descriptor encoding failed").with_cause(cause))?;
+    // Choose compiler-owned imports before embedding labels; never rewrite literal data.
+    let rendering = fields.iter().any(|field| {
+        field
+            .roles
+            .iter()
+            .any(|binding| crate::draft::admitted(field, binding.role))
+    });
+    let imports = if rendering {
+        "use leptos::prelude::*;\nuse stackpress_framework_admin::{Draft, RoleContext};\nuse stackpress_framework_schema::{Role, SchemaError, SchemaErrorKind, SchemaResult, UiField};\n"
+    } else {
+        "use stackpress_framework_schema::{SchemaError, SchemaErrorKind, SchemaResult, UiField};\n"
+    };
     let mut text = format!(
-        "//! Generated public role wrappers; handwritten adapters remain outside this partition.\nuse leptos::prelude::*;\nuse stackpress_framework_admin::{{Draft, RoleContext}};\nuse stackpress_framework_schema::{{Role, SchemaError, SchemaErrorKind, SchemaResult, UiField}};\n/// Decode only approved field descriptors; imports and source positions stay tool-only.\npub fn descriptors() -> SchemaResult<Vec<UiField>> {{ serde_json::from_str({json:?}).map_err(|cause| SchemaError::new(SchemaErrorKind::Codec, \"public role descriptor decoding failed\").with_cause(cause)) }}\n"
+        "//! Generated public role wrappers; handwritten adapters remain outside this partition.\n{imports}/// Decode only approved field descriptors; imports and source positions stay tool-only.\npub fn descriptors() -> SchemaResult<Vec<UiField>> {{ serde_json::from_str({json:?}).map_err(|cause| SchemaError::new(SchemaErrorKind::Codec, \"public role descriptor decoding failed\").with_cause(cause)) }}\n"
     );
     for role in [
         Role::Field,
@@ -162,21 +174,6 @@ fn model_source(
         text.push_str("Ok(controls.collect_view().into_any())\n}\n");
     }
     text.push_str(&super::table::source(model, fields, definitions)?);
-    // A role-free model still exports descriptors, without unused renderer imports.
-    if !fields.iter().any(|field| {
-        field
-            .roles
-            .iter()
-            .any(|binding| crate::draft::admitted(field, binding.role))
-    }) {
-        text = text
-            .replace("use leptos::prelude::*;\n", "")
-            .replace(
-                "use stackpress_framework_admin::{Draft, RoleContext};\n",
-                "",
-            )
-            .replace("{Role, SchemaError", "{SchemaError");
-    }
     Ok(text)
 }
 
