@@ -24,11 +24,11 @@ Acceptance criteria: none (test reliability).
 
 ## Implementation notes
 
-Pending.
+See the [receipt](00014-receipt-sqlite-contention.md). Root cause: test-design races, not adapter bugs. Tests started fresh acquisitions before asynchronous cleanup finished, raced fixed wall-clock budgets (8 s cooperative wrappers, 80 ms acquisition) against loaded schedulers, or started a 200 ms kill deadline before the child wrote its PID file. Fixed with explicit synchronization while keeping each property. Scope grew to the PostgreSQL adapter's shared contract harness (SQLite reference) and the Idea transformer formatter fixture.
 
 ## Verification notes
 
-Pending.
+Coordinator review on 2026-10-27 (merge `97b1866`): fmt and Clippy `-D warnings` for sql-sqlite, sql-postgres and idea-transformer; **12 consecutive full test runs of those three packages passed** while other agents' builds kept the machine heavily loaded (before the fix, 5 of 15 sql-sqlite runs failed under similar load). Implementer: 30/30 runs under ten CPU burners. The only manifest change is tokio `test-util` in sql-sqlite dev-dependencies; no lock change.
 
 ## Acceptance notes
 
