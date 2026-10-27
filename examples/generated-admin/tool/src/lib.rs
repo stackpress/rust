@@ -22,12 +22,14 @@ use stackpress_idea::{
 /// Propagates checked definition/policy failures without substituting another registry.
 pub fn definitions(plugin: bool) -> stackpress_framework_schema::SchemaResult<DefinitionRegistry> {
     let replacements = if plugin {
-        vec![accent_plugin()]
+        vec![accent_plugin(), tags_plugin()]
     } else {
         Vec::new()
     };
     let mut definitions = generated_workspace_tool::definitions()?;
-    for field in ["id", "text", "flag", "zero"] {
+    for field in [
+        "id", "text", "flag", "zero", "rows", "metadata", "score", "slug",
+    ] {
         definitions = definitions.with_field_policy(
             "RoleProof",
             field,
@@ -70,6 +72,24 @@ pub fn accent_plugin() -> Component {
     component.import.component = component.definition.key.clone();
     component.import.module = "crate::plugin".into();
     component.import.symbol = "AccentField".into();
+    component
+}
+
+/// Replace a newly available collection adapter through the same app-owned registry.
+pub fn tags_plugin() -> Component {
+    let mut component = components()
+        .into_iter()
+        .find(|component| component.definition.name == "field.tags")
+        .expect("the framework catalog includes its tag component");
+    component.definition.key = "app.accent.tags".into();
+    component.definition.revision = "app-accent-tags-1".into();
+    component
+        .definition
+        .fixed
+        .insert("label".into(), "Plugin tags label".into());
+    component.import.component = component.definition.key.clone();
+    component.import.module = "crate::plugin".into();
+    component.import.symbol = "AccentTags".into();
     component
 }
 

@@ -157,10 +157,11 @@ fn model_source(
         }
         text.push_str("let mut controls = Vec::new();\n");
         for (field, binding) in selected {
-            text.push_str(&control_source(field, binding, role, definitions)?);
+            text.push_str(&control_source(field, binding, role, definitions, true)?);
         }
         text.push_str("Ok(controls.collect_view().into_any())\n}\n");
     }
+    text.push_str(&super::table::source(model, fields, definitions)?);
     // A role-free model still exports descriptors, without unused renderer imports.
     if !fields.iter().any(|field| {
         field
@@ -180,11 +181,12 @@ fn model_source(
 }
 
 /// Build one literal field context and a statically resolved component invocation.
-fn control_source(
+pub(super) fn control_source(
     field: &UiField,
     binding: &RoleBinding,
     role: Role,
     definitions: &DefinitionRegistry,
+    labeled: bool,
 ) -> SchemaResult<String> {
     let import = import(binding, definitions)?;
     let member = &field.wire_name;
@@ -194,7 +196,7 @@ fn control_source(
     );
     // Model display roles label each value so multiple selected fields cannot run together.
     // Both the label and the component props remain escaped data in the generated view.
-    if matches!(role, Role::List | Role::View) {
+    if labeled && matches!(role, Role::List | Role::View) {
         text.push_str(&format!("let label = context.text_prop(\"label\", &context.field.label);\ncontrols.push(view! {{ <div class=\"sp-role-value\"><span class=\"sp-role-label\">{{label}} \": \"</span><{}::{} context/></div> }}.into_any());\n", import.module, import.symbol));
     } else {
         text.push_str(&format!(
@@ -207,7 +209,7 @@ fn control_source(
 }
 
 /// Match schema's conventional public type spelling without accepting emitted type fragments.
-fn public_type(source: &str) -> SchemaResult<String> {
+pub(super) fn public_type(source: &str) -> SchemaResult<String> {
     let module = portable_name(source)?;
     let mut name = String::new();
     for part in module.split('_').filter(|part| !part.is_empty()) {

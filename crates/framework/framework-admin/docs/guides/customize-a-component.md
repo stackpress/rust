@@ -11,6 +11,8 @@ cargo run -p generated-admin-web --locked > /private/tmp/generated-admin-plugin.
 
 The visible label becomes `Plugin field label` and its placeholder becomes `Plugin fixed hint`, including where Idea supplies another placeholder. Fixed props override valid supplied props. Unknown props and incompatible literal types remain errors.
 
+The same plugin selection also replaces `field.tags` with `crate::plugin::AccentTags`, fixes its label to `Plugin tags label`, and retains the typed collection controller through `TextListField`. The taglist alias on the span role resolves to that replacement too. Both hydrate and CSR rebuilds prove the new adapter; disabling removes its wrapper marker and fixed label.
+
 Regenerate without the plugin and rebuild to remove it:
 
 ```sh

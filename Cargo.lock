@@ -1541,6 +1541,7 @@ version = "0.1.0"
 dependencies = [
  "generated-admin-shared",
  "leptos",
+ "stackpress-framework-ui",
 ]
 
 [[package]]

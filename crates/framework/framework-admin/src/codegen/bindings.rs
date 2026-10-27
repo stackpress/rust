@@ -39,11 +39,52 @@ pub(super) fn validate_binding(
     let scalar = !field.value_type.multiple;
     let valid = match import.symbol.as_str() {
         "TextField" | "TextareaField" => scalar && field.value_type.value == ValueType::String,
+        "SlugField" => scalar && field.value_type.value == ValueType::String,
+        "TextListField" => !scalar && field.value_type.value == ValueType::String,
+        "MetadataField" => scalar && field.value_type.value == ValueType::Object,
+        "SliderField" => {
+            let number = |name: &str, default| {
+                binding
+                    .props
+                    .get(name)
+                    .and_then(serde_json::Value::as_f64)
+                    .unwrap_or(default)
+            };
+            let min = number("min", 0.0);
+            let max = number("max", 100.0);
+            let step = number("step", 1.0);
+            scalar
+                && matches!(
+                    field.value_type.value,
+                    ValueType::Integer | ValueType::Number
+                )
+                && crate::components::range_scale(
+                    min,
+                    max,
+                    step,
+                    field.value_type.value == ValueType::Integer,
+                )
+                .is_ok()
+        }
+        "RatingField" => {
+            let max = binding
+                .props
+                .get("max")
+                .and_then(serde_json::Value::as_f64)
+                .unwrap_or(5.0);
+            scalar
+                && field.value_type.value == ValueType::Integer
+                && crate::components::rating_limit(max).is_ok()
+        }
         "CheckboxField" | "SwitchField" | "BooleanView" => {
             scalar && field.value_type.value == ValueType::Boolean
         }
-        "SelectField" => {
+        "SelectField" | "ComboboxField" => {
             scalar
+                // Native select has a placeholder; the current combobox API does not.
+                // Refuse this combination instead of accepting a silently ignored prop.
+                && !(binding.props.get("searchable").and_then(serde_json::Value::as_bool)==Some(true)
+                    && binding.props.contains_key("placeholder"))
                 && matches!(field.value_type.value, ValueType::Enum(_))
                 && !field.value_type.choices.is_empty()
                 && field.value_type.choices.len() <= 100

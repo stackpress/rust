@@ -10,6 +10,8 @@ model Profile {
 
 model Project {
   title String @is.ne @searchable @sortable @field.input @filter.input @span.input @list.text @view.text
+  state ProjectState @default("open") @field.select({ searchable true }) @filter.select({ searchable true }) @list.text
+  tags String[] @default([]) @field.tags @span.taglist @list.text
 }
 
 model Task {
@@ -22,7 +24,11 @@ model RoleProof {
   id String @id
   text String? @default("fixture default") @field.input @filter.input @span.input @list.text @view.text
   flag Boolean @default(false) @field.switch @list.yesno @view.yesno
-  zero Integer @default(0) @list.text @view.text
+  zero Integer @default(0) @field.slider({ min 0 max 10 step 1 }) @list.text @view.text
+  rows String[]? @label("Rows </script> 🦀") @field.strings @span.textlist @list.text
+  metadata Object? @field.metadata @list.text
+  score Integer? @field.rating({ max 5 }) @list.text
+  slug String? @field.slug @list.text
   sensitive String? @default("ADMIN_PRIVATE_DEFAULT_SENTINEL") @field.input
   hostOnly String?
 }

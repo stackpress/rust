@@ -25,6 +25,13 @@ pub fn components() -> Vec<Component> {
         ("field.checkbox", "CheckboxField"),
         ("field.switch", "SwitchField"),
         ("field.select", "SelectField"),
+        ("field.stringlist", "TextListField"),
+        ("field.textlist", "TextListField"),
+        ("field.tags", "TextListField"),
+        ("field.metadata", "MetadataField"),
+        ("field.slider", "SliderField"),
+        ("field.rating", "RatingField"),
+        ("field.slug", "SlugField"),
         ("view.text", "TextView"),
         ("view.yesno", "BooleanView"),
         ("view.uppercase", "CaseView"),
@@ -44,6 +51,23 @@ pub fn components() -> Vec<Component> {
             }
             if matches!(symbol, "TextField" | "TextareaField") {
                 props.push(prop("read_only", PropType::Boolean));
+            }
+            if symbol == "SelectField" {
+                props.push(prop("searchable", PropType::Boolean));
+            }
+            if symbol == "TextListField" {
+                props.push(prop("tags", PropType::Boolean));
+                fixed.insert("tags".into(), (name == "field.tags").into());
+            }
+            if symbol == "SliderField" {
+                props.extend([
+                    prop("min", PropType::Number),
+                    prop("max", PropType::Number),
+                    prop("step", PropType::Number),
+                ]);
+            }
+            if symbol == "RatingField" {
+                props.push(prop("max", PropType::Number));
             }
         } else {
             props.push(prop("null_label", PropType::String));
