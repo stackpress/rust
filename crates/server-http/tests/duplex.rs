@@ -1,4 +1,6 @@
 //! Real Hyper/TLS in-memory proofs, isolated under a parent kill-and-reap watchdog.
+mod support;
+
 use futures_core::Stream;
 use stackpress_lib::{Error, Flow, Invocation, Request, Response, Result, queue::task};
 use stackpress_server::{
@@ -14,13 +16,12 @@ use stackpress_server_http::{
 use std::{
     future::pending,
     pin::Pin,
-    process::{Command, Stdio},
     sync::{
         Arc, Mutex,
         atomic::{AtomicBool, AtomicUsize, Ordering},
     },
     task::{Context, Poll, Waker},
-    time::{Duration, Instant},
+    time::Duration,
 };
 use tokio::{
     io::{AsyncReadExt, AsyncWriteExt},
@@ -559,24 +560,5 @@ async fn duplex_child() -> Result<()> {
 /// A deadline is a failure; kill and wait guarantee a hung child cannot outlive the test.
 #[test]
 fn duplex_watchdog() {
-    let mut child = Command::new(std::env::current_exe().unwrap())
-        .args(["--exact", "duplex_child", "--ignored", "--nocapture"])
-        .stdout(Stdio::inherit())
-        .stderr(Stdio::inherit())
-        .spawn()
-        .unwrap();
-    let deadline = Instant::now() + Duration::from_secs(20);
-    loop {
-        if let Some(status) = child.try_wait().unwrap() {
-            assert!(status.success(), "duplex child failed: {status}");
-            break;
-        }
-        if Instant::now() >= deadline {
-            // Reap even if the process exits between the timeout check and the kill attempt.
-            let _ = child.kill();
-            child.wait().expect("timed-out duplex child was reaped");
-            panic!("duplex child exceeded 20 seconds; killed and reaped");
-        }
-        std::thread::sleep(Duration::from_millis(10));
-    }
+    support::watchdog::run("duplex_child", Duration::from_secs(20), &[]);
 }

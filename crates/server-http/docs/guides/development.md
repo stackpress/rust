@@ -35,7 +35,9 @@ assigned instance and wait for exit; do not stop unrelated instances.
 Repository behavioral proofs use Tokio duplex IO and the generic acceptor,
 including TLS handshakes, limits, pipelines, cancellation, and draining.
 Hang-class cases run in child processes with parent watchdogs that kill/reap.
-Listener examples and documentation mains are compiled without execution.
+A separate watchdog-isolated ephemeral TCP test covers bind, native accept and
+listener closure after awaited stop. Listener examples and documentation mains
+are compiled without execution.
 Real TCP smoke is a separate managed closeout step; compile checks alone do
 not establish socket or process-signal behavior.
 

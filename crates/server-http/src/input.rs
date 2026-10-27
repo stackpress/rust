@@ -40,6 +40,8 @@ pub(crate) fn check_head(
         return Some((431, "HTTP head aggregate exceeded"));
     }
     let headers = request.headers();
+    // G31: Hyper merges equal CLs and may drop CL after TE; reject only conflicts still visible.
+    // The connection driver closes after every TE response, covering the otherwise invisible case.
     if headers.contains_key(TRANSFER_ENCODING) && headers.contains_key(CONTENT_LENGTH) {
         return Some((400, "HTTP visible conflicting framing"));
     }

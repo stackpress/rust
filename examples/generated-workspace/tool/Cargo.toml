@@ -12,7 +12,7 @@ database-tools = ["stackpress-framework-sql/sqlite-maintenance"]
 
 [dependencies]
 stackpress-framework-schema = { path = "../../../crates/framework/framework-schema", features = ["codegen"] }
-stackpress-framework-sql = { path = "../../../crates/framework/framework-sql", features = ["codegen"] }
+stackpress-framework-sql = { path = "../../../crates/framework/framework-sql", features = ["codegen", "migrations"] }
 stackpress-idea = { path = "../../../crates/idea/idea" }
 stackpress-cli = { path = "../../../tools/cli" }
 stackpress-lib = { path = "../../../crates/lib" }

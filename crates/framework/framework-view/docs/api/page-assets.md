@@ -39,12 +39,13 @@ These methods check metadata, not the bytes served at a URL.
 | --- | --- | --- |
 | `validate(&self, contract)` | `&PageContract` | Contract validity, exact build, no resource query, checked mounted paths. |
 | `script_json(&self)` | None | Valid assets under a revision-1 default contract; serialized metadata ≤16 KiB, then standard script escaping. |
-| `decode(json, build)` | `&str`, expected `&str` | Input ≤16 KiB, strict decoding and asset validation against expected build. |
+| `decode(json, build)` | `&str`, expected `&str` | Encoded input ≤96 KiB, decoded logical JSON ≤16 KiB, strict decoding and asset validation against expected build. |
 
 **Returns** Validation yields `Result<(), ViewError>`; encoding yields `Result<String, ViewError>`;
 decoding yields `Result<PageAssets, ViewError>`. Drift is `ContractMismatch`; malformed JSON,
 oversized metadata, or query-bearing resources are `InvalidPolicy`; unsafe combined location
-can yield `InvalidSnapshot`. The decode ceiling applies to encoded input too. The type is
+can yield `InvalidSnapshot`. The encoded allowance covers the worst-case sixfold expansion
+from script escaping; it preserves the same logical ceiling as serialization. The type is
 Clone, Debug, PartialEq/Eq, Serialize/Deserialize.
 
 Source fingerprints, file hashes/MIME, immutable serving, and missing-file recovery belong to

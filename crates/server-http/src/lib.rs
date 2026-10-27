@@ -52,6 +52,13 @@ use tokio::{
 };
 
 /// Idempotent, read-only cancellation view for cooperative handler-owned work.
+///
+/// ```
+/// use stackpress_server_http::Cancellation;
+/// let view = Cancellation::default();
+/// assert!(!view.is_cancelled());
+/// // Connected handlers receive the connection-owned view through HttpRequestContext.
+/// ```
 #[derive(Clone, Default, Debug)]
 pub struct Cancellation(Arc<AtomicBool>);
 impl Cancellation {
@@ -64,7 +71,7 @@ impl Cancellation {
         self.0.store(true, Ordering::Release);
     }
 }
-/// Trusted metadata inherited through HandleOptions, never derived from forwarded headers.
+/// Attested connection metadata and explicitly validated external origin, inherited via HandleOptions.
 #[derive(Clone, Debug)]
 pub struct HttpRequestContext {
     /// Caller-attested peer; supplying IO does not authenticate this address.
