@@ -1,0 +1,29 @@
+[package]
+name = "stackpress-framework-admin"
+description = "Public generated UI role adapters and optional deterministic code generation"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[features]
+default = []
+ssr = ["stackpress-framework-ui/ssr"]
+hydrate = ["stackpress-framework-ui/hydrate"]
+csr = ["stackpress-framework-ui/csr"]
+codegen = ["stackpress-framework-schema/codegen", "dep:stackpress-idea-transformer"]
+
+[dependencies]
+stackpress-framework-schema = { path = "../framework-schema" }
+stackpress-framework-ui = { path = "../framework-ui" }
+stackpress-idea-transformer = { path = "../../idea/idea-transformer", optional = true }
+leptos = { version = "=0.8.22", default-features = false }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[dev-dependencies]
+tempfile = "3"
+stackpress-idea-parser = { path = "../../idea/idea-parser" }
+
+[lints]
+workspace = true

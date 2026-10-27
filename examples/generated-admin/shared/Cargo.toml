@@ -1,0 +1,23 @@
+[package]
+name = "generated-admin-shared"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[features]
+default = []
+ssr = ["stackpress-framework-admin/ssr"]
+hydrate = ["stackpress-framework-admin/hydrate"]
+csr = ["stackpress-framework-admin/csr"]
+
+[dependencies]
+stackpress-framework-admin = { path = "../../../crates/framework/framework-admin" }
+stackpress-framework-schema = { path = "../../../crates/framework/framework-schema" }
+stackpress-framework-ui = { path = "../../../crates/framework/framework-ui" }
+leptos = { version = "=0.8.22", default-features = false }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[lints]
+workspace = true
