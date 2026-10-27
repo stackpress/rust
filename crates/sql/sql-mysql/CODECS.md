@@ -46,6 +46,10 @@ provenance. Without a driver fork, the adapter uses a token-aware allowlist:
 - Variables (`@`), SET commands, temporary/locking/handler/prepared commands,
   OUTFILE/DUMPFILE, SQL_CALC_FOUND_ROWS, and unknown constructs retire. UPDATE's
   ordinary SET clause is allowed.
+- Unquoted non-ASCII tokens and adjacent quoted/unquoted identifier fragments retire.
+  Digit-prefixed identifiers are scanned whole, so a builtin-looking suffix cannot
+  qualify an unknown routine. Unicode inside quoted data, quoted column/table names
+  or binds remains supported; ordinary numeric expressions remain reusable.
 - Only explicitly listed pure builtin/grouping calls qualify. Unknown, qualified
   or quoted calls retire, as do GET_LOCK/RELEASE_LOCK and other session functions.
   CTEs, EXPLAIN and DDL conservatively retire even when their effect is harmless.

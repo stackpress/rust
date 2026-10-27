@@ -116,3 +116,25 @@ remove/restore. MySQL checks every emitted mutation family, borrowed/atomic batc
 and core targeted conflict for a typed pre-effect refusal; no write is silently
 reimplemented. The existing lifecycle suite still covers cancellation/commit
 uncertainty and close. None of this enables automatic retries or migration support.
+
+## Whole-crate closeout controls
+
+M1/M2 runners share `process.rs` for their bounded kill/reap loop; fixture creation,
+admin deadlines and exact-name cleanup remain backend-owned. Library-only controls
+in `../process.rs` execute a successful child and a deliberately timed-out child.
+Both M2 runners share `diagnostics.rs`, which walks at most eight causes and prints
+only safe contexts and native structured categories. Production graphs share no
+sibling source files or driver dependency.
+
+The public-trait lifecycle suite checks first-poll input-budget refusals while
+acquisition is unavailable and after close. Network owners also promise dialect
+refusal before acquisition; SQLite checks dialect inside execute after acquisition.
+The reference's existing behavior is preserved. Generated-store zero-entry refusal
+checks remain in `stores/preflight.rs`.
+
+MySQL M1 additionally installs test-owned stored routines only in its parent's
+throwaway database. Unicode/digit-prefixed, longer, quoted and qualified function
+names must retire on ordinary completion and acknowledged commit/rollback. The
+next actual connection has a different identity and no routine-written session
+variable. The pre-fix native regression demonstrated a leaked variable; final
+replay confirms the conservative policy. No global routine setting is changed.

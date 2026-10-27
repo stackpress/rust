@@ -9,6 +9,19 @@ use std::path::PathBuf;
 use std::time::Duration;
 
 /// Server identity verification is the default; plaintext requires explicit selection.
+///
+/// Select policy explicitly; choosing a CA path does not read its file until open.
+/// ```
+/// use stackpress_sql_postgres::{PostgresOptions, PostgresTls};
+/// let mut options = PostgresOptions::new("db.internal", "application", "application", "");
+/// options.tls = PostgresTls::VerifyFull;
+/// options.validate()?;
+/// options.tls = PostgresTls::CertificateAuthority { path: "certificates/ca.pem".into() };
+/// options.validate()?;
+/// options.tls = PostgresTls::Plaintext;
+/// options.validate()?;
+/// # Ok::<(), stackpress_sql::SqlError>(())
+/// ```
 #[derive(Clone, Debug, Default, Serialize, Deserialize)]
 #[serde(tag = "mode", rename_all = "snake_case", deny_unknown_fields)]
 pub enum PostgresTls {
@@ -28,6 +41,19 @@ pub enum PostgresTls {
 ///
 /// Serialization contains the password and is an explicit secret-handling operation.
 /// Open never creates databases, reads a passfile, migrates, or retries operations.
+///
+/// Lower pool/deadline budgets on application-owned options before eager open.
+/// ```
+/// use stackpress_sql_postgres::PostgresOptions;
+/// let mut options = PostgresOptions::new("db.internal", "application", "application", "");
+/// options.max_connections = 2;
+/// options.max_in_flight = 16;
+/// options.acquire_timeout_ms = 2_000;
+/// options.statement_timeout_ms = 10_000;
+/// options.cleanup_timeout_ms = 1_000;
+/// options.validate()?;
+/// # Ok::<(), stackpress_sql::SqlError>(())
+/// ```
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 #[must_use = "use the configured database options"]
@@ -78,6 +104,14 @@ impl fmt::Debug for PostgresOptions {
 impl PostgresOptions {
     /// Select explicit connection fields with verified TLS and finite defaults.
     /// The default port is 5432; no ambient connection fields are adopted.
+    ///
+    /// ```
+    /// use stackpress_sql_postgres::PostgresOptions;
+    /// let options = PostgresOptions::new("db.internal", "application", "application", "");
+    /// assert_eq!(options.port, 5432);
+    /// options.validate()?;
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
     pub fn new(
         host: impl Into<String>,
         database: impl Into<String>,
@@ -104,6 +138,14 @@ impl PostgresOptions {
     ///
     /// # Errors
     /// Returns Configuration without echoing the secret, host, user, or database.
+    ///
+    /// ```
+    /// use stackpress_sql_postgres::PostgresOptions;
+    /// use stackpress_sql::ErrorKind;
+    /// let mut options = PostgresOptions::new("db.internal", "application", "application", "");
+    /// options.statement_timeout_ms = 0;
+    /// assert_eq!(options.validate().unwrap_err().kind(), ErrorKind::Configuration);
+    /// ```
     pub fn validate(&self) -> Result<()> {
         // Connection fields cannot trigger a URL parser or a Unix socket fallback.
         if self.host.is_empty()
