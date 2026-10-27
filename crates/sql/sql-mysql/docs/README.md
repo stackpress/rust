@@ -32,8 +32,8 @@ to the application. There are no exposed SQLx connections or pools.
 Native `aarch64-apple-darwin` with MySQL 8.0.27 is the characterized local
 environment. TLS modes are implemented, but the local fixture uses explicit plaintext:
 it is not evidence of certificate/authentication interoperability. Other server versions,
-external poolers, browser/WASM, other operating systems and generated-store integration need
-separate verification.
+external poolers, browser/WASM and other operating systems need separate verification.
+The [test guide](guides/testing.md) records the generated-store capabilities and refusals.
 
 Source: [public Rustdoc](../src/lib.rs), [options](../src/options.rs),
 [database ownership](../src/database.rs), [codec contract](../CODECS.md) and

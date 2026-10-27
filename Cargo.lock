@@ -5359,9 +5359,12 @@ dependencies = [
 name = "stackpress-sql-mysql"
 version = "0.1.0"
 dependencies = [
+ "generated-workspace-app",
  "serde",
  "serde_json",
  "sqlx",
+ "stackpress-framework-schema",
+ "stackpress-framework-sql",
  "stackpress-sql",
  "tokio",
 ]
@@ -5370,9 +5373,12 @@ dependencies = [
 name = "stackpress-sql-postgres"
 version = "0.1.0"
 dependencies = [
+ "generated-workspace-app",
  "serde",
  "serde_json",
  "sqlx",
+ "stackpress-framework-schema",
+ "stackpress-framework-sql",
  "stackpress-sql",
  "stackpress-sql-sqlite",
  "tokio",

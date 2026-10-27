@@ -1,11 +1,15 @@
 //! One public Database/TransactionSession behavioral suite, shared by three real adapters.
 //! SQL syntax and documented native value/outcome differences are explicit dialect inputs.
+use super::TestResult;
 use stackpress_sql::{
     Database, DialectId, ErrorKind, Query, QueryLimits, QueryResult, Render, Result, Sql, SqlValue,
     TransactionOptions,
 };
 use std::sync::Arc;
 use std::time::Instant;
+
+#[path = "stores/mod.rs"]
+mod stores;
 
 /// Construct a trusted test statement while keeping every value a separate bind.
 pub(crate) fn query(
@@ -66,9 +70,10 @@ mod transactions;
 mod values;
 
 /// Run the same ordered contract against a real one-slot owner, then consume its lifecycle.
-pub(crate) async fn run_suite(database: Arc<dyn Database>) -> Result<()> {
+pub(crate) async fn run_suite(database: Arc<dyn Database>) -> TestResult<()> {
     let start = Instant::now();
     let dialect = database.dialect();
+    stores::check(database.clone()).await?;
     values::check(database.as_ref()).await?;
     outcomes::check(database.as_ref()).await?;
     transactions::check(database.as_ref()).await?;

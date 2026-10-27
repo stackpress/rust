@@ -25,6 +25,11 @@ only for exact 0/1 values; 2 is not truthy. Unsigned i64 overflow is rejected ev
 native server accepts the value. NaN/infinities are invalid core inputs; strict MySQL can
 reject nonfinite arithmetic before any output is decoded.
 
+A binary text collation such as utf8mb4_bin remains Text. SQLx's display name can
+say VARBINARY/BLOB for its BINARY flag; the public string compatibility check uses
+the wire charset to distinguish such text from actual binary data. Unsupported
+ENUM/SET types remain rejected before this check.
+
 A bare Blob parameter result can advertise text metadata. Use `CAST(? AS BINARY)` or a
 binary column when a Blob result is required. UUID() may produce supported text; that is
 not a native UUID codec. Unsupported output requires an explicit supported cast.

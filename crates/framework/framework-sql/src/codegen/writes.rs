@@ -162,6 +162,8 @@ Ok(output)
 }}
 /// Own one transaction around the exact same validated batch function; never commit per item.
 pub async fn batch_atomic(engine:&stackpress_sql::Engine,inputs:Vec<BatchInput>,context:&stackpress_framework_schema::ValueContext<'_>)->DataResult<Vec<BatchOutcome>>{{
+// Check the existing write capability before acquiring any transaction or preparing providers.
+DataSession::pooled(engine).require_returning()?;
 let mut transaction=engine.begin().await?;
 let outcome=Self::batch(&mut DataSession::transaction(&mut transaction),inputs,context).await;
 stackpress_framework_sql::finish(transaction,outcome).await

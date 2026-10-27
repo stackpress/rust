@@ -178,16 +178,33 @@ fn chunks(
     }
     Ok(queries)
 }
-/// Read one complete bounded base page and requested relations through one exact executor.
-pub async fn search(
-    db: &mut DataSession<'_>,
+/// Pure execution context; planned atomic transactions validate without opening one.
+struct SearchContext {
+    /// Exactly the selected executor's dialect.
+    dialect: DialectId,
+    /// Trusted or public catalog visibility.
+    exposure: Exposure,
+    /// Active, inactive or maintenance row selection.
+    visibility: Visibility,
+    /// Lowerable complete-result budgets.
+    limits: RelationLimits,
+    /// True for an existing transaction or the atomic wrapper's planned transaction.
+    transactional: bool,
+}
+/// Compile the same bounded query/path checks before either an atomic BEGIN or a borrowed read.
+fn prepare_search(
     catalog: &[&StoreSpec],
     spec: &StoreSpec,
-    query: ReadQuery,
-    exposure: Exposure,
-    visibility: Visibility,
-    limits: RelationLimits,
-) -> DataResult<Page<Value>> {
+    query: &ReadQuery,
+    context: SearchContext,
+) -> DataResult<(Select, Paths)> {
+    let SearchContext {
+        dialect,
+        exposure,
+        visibility,
+        limits,
+        transactional,
+    } = context;
     // Caller limits may lower the contract, never silently expand a global ceiling.
     let defaults = RelationLimits::default();
     if limits.paths > defaults.paths
@@ -208,22 +225,75 @@ pub async fn search(
         return Err(limit());
     }
     // Compile all requested paths and the base page before the first database call.
-    let select = select(spec, &query, db.dialect(), exposure, visibility)?;
-    let paths = paths(catalog, spec, &query, exposure)?;
+    let select = select(spec, query, dialect, exposure, visibility)?;
+    let paths = paths(catalog, spec, query, exposure)?;
     // One transaction alone is not a repeatable snapshot on every backend.
     if query.total || !paths.0.is_empty() {
-        db.require_transaction()?;
-        if db.dialect() != DialectId::Sqlite {
+        if !transactional {
+            return Err(DataError::new("operation requires an explicit transaction")
+                .with_kind(DataErrorKind::Unsupported));
+        }
+        if dialect != DialectId::Sqlite {
             return Err(DataError::new(
                 "consistent multi-statement reads require the verified SQLite snapshot",
             )
             .with_kind(DataErrorKind::Unsupported));
         }
     }
-    let mut statements = 1 + usize::from(query.total);
-    if statements > limits.statements {
+    if 1 + usize::from(query.total) > limits.statements {
         return Err(limit());
     }
+    Ok((select, paths))
+}
+/// Codegen support: reject unsupported atomic reads before opening their transaction.
+///
+/// This runs the ordinary trusted/active query, path and budget checks with a planned
+/// transaction. It enables no new dialect capability and performs no database work.
+#[doc(hidden)]
+pub fn preflight_atomic_search(
+    catalog: &[&StoreSpec],
+    spec: &StoreSpec,
+    query: &ReadQuery,
+    dialect: DialectId,
+) -> DataResult<()> {
+    prepare_search(
+        catalog,
+        spec,
+        query,
+        SearchContext {
+            dialect,
+            exposure: Exposure::Trusted,
+            visibility: Visibility::Active,
+            limits: RelationLimits::default(),
+            transactional: true,
+        },
+    )
+    .map(|_| ())
+}
+/// Read one complete bounded base page and requested relations through one exact executor.
+pub async fn search(
+    db: &mut DataSession<'_>,
+    catalog: &[&StoreSpec],
+    spec: &StoreSpec,
+    query: ReadQuery,
+    exposure: Exposure,
+    visibility: Visibility,
+    limits: RelationLimits,
+) -> DataResult<Page<Value>> {
+    // Pure validation is shared with atomic wrappers, before their BEGIN or this read's IO.
+    let (select, paths) = prepare_search(
+        catalog,
+        spec,
+        &query,
+        SearchContext {
+            dialect: db.dialect(),
+            exposure,
+            visibility,
+            limits,
+            transactional: matches!(db, DataSession::Transaction(_)),
+        },
+    )?;
+    let mut statements = 1 + usize::from(query.total);
     // Count establishes the same caller-owned SQLite snapshot subsequently used by rows/includes.
     let total = if query.total {
         Some(count(db, spec, &query, exposure, visibility).await?)
