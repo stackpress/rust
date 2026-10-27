@@ -5,7 +5,7 @@ use crate::options::MysqlOptions;
 use crate::session::MysqlSession;
 use crate::{execute, reuse};
 use sqlx::mysql::MySqlPoolOptions;
-use sqlx::{Executor, MySqlPool};
+use sqlx::{Executor, MySqlConnection, MySqlPool};
 use stackpress_sql::{
     Database, DialectId, ErrorKind, Query, QueryLimits, QueryResult, Result, SqlError, SqlFuture,
     TransactionOptions, TransactionSession,
@@ -15,6 +15,8 @@ use std::time::Duration;
 use tokio::sync::{OwnedSemaphorePermit, Semaphore, TryAcquireError};
 
 /// Non-Clone, eagerly opened database owner; native pool handles never escape.
+///
+/// Use the compiled example on [`Self::open`] to place this owner behind an Engine.
 pub struct MysqlDatabase {
     /// Native capacity bounds checked-out, acquiring, and retiring connections.
     pool: MySqlPool,
@@ -33,19 +35,35 @@ impl MysqlDatabase {
     /// # Errors
     /// Invalid options, TLS/authentication/connection failures and finite open deadlines
     /// fail without publishing a partial owner. Public errors never echo native messages.
+    ///
+    /// ```no_run
+    /// use stackpress_sql_mysql::{MysqlDatabase, MysqlOptions};
+    /// use stackpress_sql::Engine;
+    /// async fn application(secret: String) -> stackpress_sql::Result<()> {
+    ///     let options = MysqlOptions::new("db.internal", "application", "application", secret);
+    ///     let engine = Engine::new(MysqlDatabase::open(options).await?);
+    ///     engine.close().await
+    /// }
+    /// ```
     pub async fn open(options: MysqlOptions) -> Result<Self> {
         options.validate()?;
         let connect = options.connect_options()?;
+        // Configure the pool synchronously; all handshake/session IO stays inside the deadline.
+        let pool = MySqlPoolOptions::new()
+            .max_connections(options.max_connections)
+            .min_connections(0)
+            .after_connect(|connection, _| Box::pin(initialize_session(connection)))
+            .acquire_timeout(options.acquire_timeout());
         // The outer deadline bounds the entire handshake, not just time waiting in a pool.
-        let pool = tokio::time::timeout(options.acquire_timeout(), MySqlPoolOptions::new()
-            .max_connections(options.max_connections).min_connections(0)
-            .after_connect(|connection, _| Box::pin(async move {
-                // Fix only this connection's quoting/strictness policy; never SET GLOBAL.
-                connection.execute("SET SESSION sql_mode = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION,NO_BACKSLASH_ESCAPES,PIPES_AS_CONCAT'").await?;
-                Ok(())
-            }))
-            .acquire_timeout(options.acquire_timeout()).connect_with(connect)).await
-            .map_err(|cause| SqlError::with_source(ErrorKind::PoolTimedOut, "MySQL open deadline exceeded", cause))?
+        let pool = tokio::time::timeout(options.acquire_timeout(), pool.connect_with(connect))
+            .await
+            .map_err(|cause| {
+                SqlError::with_source(
+                    ErrorKind::PoolTimedOut,
+                    "MySQL open deadline exceeded",
+                    cause,
+                )
+            })?
             .map_err(execute::driver_error)?;
         Ok(Self {
             pool,
@@ -136,4 +154,15 @@ impl Database for MysqlDatabase {
             self.cleanup.wait().await
         })
     }
+}
+
+/// Fix only this new connection's quoting/strictness policy before SQLx publishes it.
+async fn initialize_session(
+    connection: &mut MySqlConnection,
+) -> std::result::Result<(), sqlx::Error> {
+    // Keep this exact session command inside open's handshake deadline; never SET GLOBAL.
+    connection
+        .execute("SET SESSION sql_mode = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION,NO_BACKSLASH_ESCAPES,PIPES_AS_CONCAT'")
+        .await?;
+    Ok(())
 }

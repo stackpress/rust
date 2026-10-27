@@ -2,6 +2,9 @@
 
 mod environment;
 
+#[path = "tests/process.rs"]
+mod process;
+
 use super::*;
 use stackpress_sql::{ErrorKind, QueryLimits, Result, SqlError};
 

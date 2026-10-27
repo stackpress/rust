@@ -66,3 +66,11 @@ fails decoding after the write may have succeeded. No cached/sticky last-ID quer
 Do not assume a previous INSERT's outcome survives an UPDATE, SELECT or DDL statement.
 
 Source: the Rustdoc-included [codec and lease contract](../../CODECS.md).
+
+## Function names and reuse
+
+Unknown, qualified or quoted calls retire their connection after acknowledgement. The classifier
+reads complete digit-prefixed identifiers and retires unquoted non-ASCII tokens or adjacent
+quoted/unquoted identifier fragments. A builtin name embedded inside another routine name never
+qualifies that routine for reuse. Unicode literals, quoted column/table names and binds retain
+their normal support. This is connection disposition, not a new SQL result codec or query refusal.
