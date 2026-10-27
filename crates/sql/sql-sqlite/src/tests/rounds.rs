@@ -38,14 +38,13 @@ async fn cut<F: Future + Send>(future: F, cutoff: usize) -> Option<F::Output> {
 
 /// Wait for acknowledged lease retirement before inspecting persisted outcomes.
 async fn settled(admission: &Arc<Semaphore>) {
-    drop(admission.acquire().await.unwrap());
+    super::wait_for_cleanup(admission, 1).await;
 }
 
 /// One lease/permit makes leaked or prematurely reused work observable on the next operation.
 async fn fixture(root: &TempDir, permits: usize) -> (Engine, Arc<Semaphore>) {
     let mut opts = options(root, 1);
     opts.max_in_flight = permits;
-    opts.acquire_timeout_ms = 1000;
     let db = SqliteDatabase::open(opts).await.unwrap();
     let admission = Arc::clone(&db.admission);
     let engine = Engine::new(db);
@@ -350,18 +349,14 @@ fn safety_under_watchdog() {
 #[ignore = "launched only by safety watchdog parent"]
 async fn native_child() {
     let scenario = std::env::var("STACKPRESS_SQL_M0_SCENARIO").unwrap();
-    let work = async {
-        match scenario.as_str() {
-            "acquire" => acquisition().await,
-            "disclosure" => disclosure().await,
-            "borrowed_decode" => borrowed_decode().await,
-            "failed_plan_cleanup" => failed_plan_cleanup().await,
-            phase => suspensions(phase).await,
-        }
-    };
-    tokio::time::timeout(Duration::from_secs(8), work)
-        .await
-        .expect("safety deadline");
+    // Parent-process supervision also bounds non-yielding native work and runtime teardown.
+    match scenario.as_str() {
+        "acquire" => acquisition().await,
+        "disclosure" => disclosure().await,
+        "borrowed_decode" => borrowed_decode().await,
+        "failed_plan_cleanup" => failed_plan_cleanup().await,
+        phase => suspensions(phase).await,
+    }
 }
 
 /// Cancel an unpolled retirement task at runtime shutdown, then drop the pool outside any runtime.

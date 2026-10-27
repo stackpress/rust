@@ -2,39 +2,53 @@
 use super::{
     Database, DialectId, ErrorKind, QueryLimits, Result, TransactionOptions, integer, query, run,
 };
+use std::future::{Future, poll_fn};
+use std::pin::Pin;
 use std::sync::Arc;
-use std::time::Duration;
+use std::task::Poll;
 
-/// Deliberately long native work uses only the fixture's private database or SQLite VM.
-fn slow(dialect: DialectId) -> &'static str {
+/// Bound harmless retries when a probe completes before its first suspension.
+const CANCELLATION_PROBES: usize = 64;
+
+/// Harmless native probes make real suspension points observable without timing a completion.
+fn cancellation_sql(dialect: DialectId) -> &'static str {
     match dialect {
         DialectId::Postgres => "SELECT 1::BIGINT FROM pg_sleep(0.2)",
         DialectId::Mysql => "SELECT SLEEP(0.2)",
         DialectId::Sqlite => {
-            "WITH RECURSIVE n(x) AS (VALUES(0) UNION ALL SELECT x+1 FROM n WHERE x<2000000) SELECT SUM(x) FROM n"
+            "WITH RECURSIVE n(x) AS (VALUES(0) UNION ALL SELECT x+1 FROM n WHERE x<2000) SELECT SUM(x) FROM n"
         }
     }
 }
-/// Cancel native work and queued acquisitions; retain rollback-only and unknown-commit semantics.
+/// Observe one actual poll without turning Pending into an elapsed-time expectation.
+async fn poll_once<F: Future + ?Sized>(mut future: Pin<&mut F>) -> Poll<F::Output> {
+    poll_fn(|cx| Poll::Ready(future.as_mut().poll(cx))).await
+}
+
+/// Drop the owned/borrowed operation immediately after its observed poll, before returning.
+async fn cut<F: Future>(future: F) -> Poll<F::Output> {
+    let mut future = Box::pin(future);
+    let result = poll_once(future.as_mut()).await;
+    drop(future);
+    result
+}
+
+/// Cancel queued and active public futures; retain rollback-only and unknown-commit semantics.
 pub(super) async fn cancellation(database: &dyn Database) -> Result<()> {
     let dialect = database.dialect();
+    // This suite observes public future ownership; exact native phases remain covered
+    // by the adapters' transition-gated tests rather than inferred from a short sleep.
     // The runner configures exactly one native connection, making this queue deterministic.
     let held = database.begin(TransactionOptions::default()).await?;
     assert!(
-        tokio::time::timeout(
-            Duration::from_millis(15),
-            database.run(query(dialect, "SELECT 1", []), QueryLimits::default())
-        )
-        .await
-        .is_err()
+        cut(database.run(query(dialect, "SELECT 1", []), QueryLimits::default()))
+            .await
+            .is_pending()
     );
     assert!(
-        tokio::time::timeout(
-            Duration::from_millis(15),
-            database.begin(TransactionOptions::default())
-        )
-        .await
-        .is_err()
+        cut(database.begin(TransactionOptions::default()))
+            .await
+            .is_pending()
     );
     held.rollback().await?;
     for in_transaction in [false, true] {
@@ -46,14 +60,26 @@ pub(super) async fn cancellation(database: &dyn Database) -> Result<()> {
                     QueryLimits::default(),
                 )
                 .await?;
-            assert!(
-                tokio::time::timeout(
-                    Duration::from_millis(10),
-                    transaction.run(query(dialect, slow(dialect), []), QueryLimits::default())
-                )
+            let mut cancelled = false;
+            for _ in 0..CANCELLATION_PROBES {
+                // A probe may finish before its first suspension. Accept that harmless
+                // SELECT and retry; only an observed Pending counts as cancellation.
+                match cut(transaction.run(
+                    query(dialect, cancellation_sql(dialect), []),
+                    QueryLimits::default(),
+                ))
                 .await
-                .is_err()
-            );
+                {
+                    Poll::Ready(result) => {
+                        result?;
+                    }
+                    Poll::Pending => {
+                        cancelled = true;
+                        break;
+                    }
+                }
+            }
+            assert!(cancelled, "transaction probes never suspended");
             assert_eq!(
                 transaction
                     .run(query(dialect, "SELECT 1", []), QueryLimits::default())
@@ -64,14 +90,24 @@ pub(super) async fn cancellation(database: &dyn Database) -> Result<()> {
             );
             transaction.rollback().await?;
         } else {
-            assert!(
-                tokio::time::timeout(
-                    Duration::from_millis(10),
-                    database.run(query(dialect, slow(dialect), []), QueryLimits::default())
-                )
+            let mut cancelled = false;
+            for _ in 0..CANCELLATION_PROBES {
+                match cut(database.run(
+                    query(dialect, cancellation_sql(dialect), []),
+                    QueryLimits::default(),
+                ))
                 .await
-                .is_err()
-            );
+                {
+                    Poll::Ready(result) => {
+                        result?;
+                    }
+                    Poll::Pending => {
+                        cancelled = true;
+                        break;
+                    }
+                }
+            }
+            assert!(cancelled, "ordinary probes never suspended");
         }
         assert_eq!(
             integer(
@@ -92,8 +128,7 @@ pub(super) async fn cancellation(database: &dyn Database) -> Result<()> {
         )
         .await?;
     let mut pending = transaction.commit();
-    let polled = std::future::poll_fn(|cx| std::task::Poll::Ready(pending.as_mut().poll(cx))).await;
-    if let std::task::Poll::Ready(result) = polled {
+    if let Poll::Ready(result) = poll_once(pending.as_mut()).await {
         result?;
     }
     drop(pending);
@@ -108,20 +143,13 @@ pub(super) async fn cancellation(database: &dyn Database) -> Result<()> {
 pub(super) async fn close(database: Arc<dyn Database>) -> Result<()> {
     let dialect = database.dialect();
     let held = database.begin(TransactionOptions::default()).await?;
-    let shared = database.clone();
-    let waiter = tokio::spawn(async move {
-        shared
-            .run(query(dialect, "SELECT 1", []), QueryLimits::default())
-            .await
-    });
-    // Poll until the native acquisition is definitely pending while the transaction owns capacity.
-    tokio::task::yield_now().await;
-    assert!(
-        tokio::time::timeout(Duration::from_millis(5), database.close())
-            .await
-            .is_err()
-    );
-    assert_eq!(waiter.await.unwrap().unwrap_err().kind(), ErrorKind::Closed);
+    let mut waiter = database.run(query(dialect, "SELECT 1", []), QueryLimits::default());
+    // The held transaction forces the waiter to queue, and forces close to remain pending.
+    assert!(poll_once(waiter.as_mut()).await.is_pending());
+    let mut closing = database.close();
+    assert!(poll_once(closing.as_mut()).await.is_pending());
+    drop(closing);
+    assert_eq!(waiter.await.unwrap_err().kind(), ErrorKind::Closed);
     held.rollback().await?;
     database.close().await?;
     database.close().await?;
