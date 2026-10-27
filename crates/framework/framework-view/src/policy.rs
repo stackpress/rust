@@ -3,6 +3,9 @@
 use crate::{MAX_HTML_BYTES, MAX_SNAPSHOT_BYTES, ViewError};
 use serde::{Deserialize, Serialize};
 
+/// Logical bootstrap metadata ceiling, independent of the snapshot data policy.
+const MAX_ASSET_BYTES: usize = 16 * 1024;
+
 /// Finite byte ceilings; application policy may lower the framework defaults.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct PageLimits {
@@ -365,7 +368,7 @@ impl PageAssets {
     pub fn script_json(&self) -> Result<String, ViewError> {
         self.validate(&PageContract::new(1, self.build.clone())?)?;
         let json = serde_json::to_string(self).map_err(|_| ViewError::InvalidPolicy)?;
-        if json.len() > 16 * 1024 {
+        if json.len() > MAX_ASSET_BYTES {
             return Err(ViewError::InvalidPolicy);
         }
         Ok(crate::escape_script_json(&json))
@@ -374,12 +377,22 @@ impl PageAssets {
     /// Decode asset textContent and refuse version drift before routing/hydration starts.
     ///
     /// # Errors
-    /// Rejects malformed/oversized metadata, unsafe paths and mismatched asset builds.
+    /// Rejects malformed metadata, encoded text above 96 KiB, decoded logical JSON
+    /// above 16 KiB, unsafe paths and mismatched asset builds.
     pub fn decode(json: &str, build: &str) -> Result<Self, ViewError> {
-        if json.len() > 16 * 1024 {
+        // Script escaping expands a logical byte to at most six ASCII bytes.
+        if json.len() > MAX_ASSET_BYTES * 6 {
             return Err(ViewError::InvalidPolicy);
         }
         let assets: Self = serde_json::from_str(json).map_err(|_| ViewError::InvalidPolicy)?;
+        // The wire allowance admits escaped output, never a larger logical asset packet.
+        if serde_json::to_vec(&assets)
+            .map_err(|_| ViewError::InvalidPolicy)?
+            .len()
+            > MAX_ASSET_BYTES
+        {
+            return Err(ViewError::InvalidPolicy);
+        }
         assets.validate(&PageContract::new(1, build)?)?;
         Ok(assets)
     }

@@ -59,6 +59,106 @@ fn metadata_and_assets_are_checked() {
     assert!(contract.validate().is_err());
 }
 
+/// Every valid published asset packet decodes even when script escaping expands it.
+#[test]
+fn escaped_assets_roundtrip() {
+    let assets = PageAssets {
+        build: "test".into(),
+        base: BasePath::default(),
+        module: PublicLocation::new(format!("/{}.js", "&".repeat(4000))).unwrap(),
+        stylesheet: Some(PublicLocation::new(format!("/{}.css", "&".repeat(4000))).unwrap()),
+    };
+    // The logical packet fits; the inert script spelling exceeds the old decode ceiling.
+    assert!(serde_json::to_vec(&assets).unwrap().len() < 16 * 1024);
+    let json = assets.script_json().unwrap();
+    assert_eq!(json.len(), 48_063);
+    assert!(!json.contains('&'));
+    assert_eq!(PageAssets::decode(&json, "test").unwrap(), assets);
+}
+
+/// The encoded allowance is inclusive, finite, and does not relax checked field limits.
+#[test]
+fn asset_decode_boundaries() {
+    let assets = PageAssets {
+        build: "test".into(),
+        base: BasePath::default(),
+        module: PublicLocation::new("/start.js").unwrap(),
+        stylesheet: None,
+    };
+    // Whitespace exercises the exact wire-byte boundary without inventing invalid assets.
+    let json = assets.script_json().unwrap();
+    let encoded_limit = 16 * 1024 * 6;
+    let padded = format!("{json}{}", " ".repeat(encoded_limit - json.len()));
+    assert_eq!(padded.len(), encoded_limit);
+    assert_eq!(PageAssets::decode(&padded, "test").unwrap(), assets);
+    assert_eq!(
+        PageAssets::decode(&(padded + " "), "test").unwrap_err(),
+        ViewError::InvalidPolicy
+    );
+
+    // The present checked shape cannot reach 16 KiB logically: paths cap at 4096 bytes
+    // each and the build caps at 128. Exercise their exact and one-past limits instead.
+    let build = "x".repeat(128);
+    let path = format!("/{}", "&".repeat(4095));
+    let maximum = PageAssets {
+        build: build.clone(),
+        base: BasePath::default(),
+        module: PublicLocation::new(&path).unwrap(),
+        stylesheet: Some(PublicLocation::new(&path).unwrap()),
+    };
+    let json = maximum.script_json().unwrap();
+    assert_eq!(PageAssets::decode(&json, &build).unwrap(), maximum);
+    let oversized_build = build + "x";
+    for (oversized, expected_build) in [
+        (
+            serde_json::json!({"build":oversized_build, "base":"", "module":"/x", "stylesheet":null}),
+            oversized_build.as_str(),
+        ),
+        (
+            serde_json::json!({"build":"test", "base":"", "module":path + "&", "stylesheet":null}),
+            "test",
+        ),
+    ] {
+        // A small wire representation must still fail the unchanged logical field policy.
+        assert_eq!(
+            PageAssets::decode(&oversized.to_string(), expected_build).unwrap_err(),
+            ViewError::InvalidPolicy
+        );
+    }
+}
+
+/// Logical size rejection precedes build matching even within the larger wire allowance.
+#[test]
+fn asset_logical_byte_boundary_precedes_build_matching() {
+    let mut assets = PageAssets {
+        build: String::new(),
+        base: BasePath::default(),
+        module: PublicLocation::new("/start.js").unwrap(),
+        stylesheet: None,
+    };
+    // A valid build cannot fill 16 KiB. An unchecked wire build lets the error category
+    // distinguish an admitted exact-size packet from a logical-size rejection.
+    let overhead = serde_json::to_vec(&assets).unwrap().len();
+    assets.build = "x".repeat(16 * 1024 - overhead);
+    let json = serde_json::to_string(&assets).unwrap();
+    assert_eq!(json.len(), 16 * 1024);
+    assert_eq!(
+        PageAssets::decode(&json, "test").unwrap_err(),
+        ViewError::ContractMismatch
+    );
+
+    // One additional logical byte remains within 96 KiB but must fail before matching.
+    assets.build.push('x');
+    let json = serde_json::to_string(&assets).unwrap();
+    assert_eq!(json.len(), 16 * 1024 + 1);
+    assert_eq!(
+        PageAssets::decode(&json, "test").unwrap_err(),
+        ViewError::InvalidPolicy
+    );
+    // Such deliberately invalid build identities can never be published natively.
+    assert_eq!(assets.script_json().unwrap_err(), ViewError::InvalidPolicy);
+}
+
 /// Final statuses preserve zero/empty data without disclosing native error causes.
 #[test]
 fn status_and_lower_limits_roundtrip() {
