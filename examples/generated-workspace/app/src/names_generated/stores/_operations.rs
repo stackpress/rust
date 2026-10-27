@@ -411,6 +411,24 @@ impl Operationss {
         let outcome = Self::search(&mut DataSession::transaction(&mut transaction), query).await;
         stackpress_framework_sql::finish(transaction, outcome).await
     }
+    /// Codegen support: validate the public query, dialect and selected executor limits before BEGIN.
+    #[doc(hidden)]
+    pub fn preflight_search_public(
+        engine: &stackpress_sql::Engine,
+        query: &crate::generated::contracts::public::OperationsQuery,
+    ) -> DataResult<()> {
+        // Keep the public DTO checks as well as the runtime public-exposure catalog checks.
+        query
+            .validate()
+            .map_err(stackpress_framework_sql::stores::validation)?;
+        stackpress_framework_sql::stores::preflight_public_search(
+            &super::schema::catalog(),
+            &SPEC,
+            &ReadQuery::from_typed(query)?,
+            engine.dialect(),
+            engine.limits(),
+        )
+    }
     /// Public query allowlist plus recursive public projection; authorization stays app-owned.
     pub async fn search_public(
         db: &mut DataSession<'_>,
@@ -849,9 +867,8 @@ impl View3 {
     }
 }
 impl Operationss {
-    /// Load the fixed app-default includes/projection using a complete identity.
-    /// Explicit relation defaults require the caller's transaction, like ordinary eager search.
-    pub async fn detail(db: &mut DataSession<'_>, key: &Key) -> DataResult<Option<Selected>> {
+    /// Build the exact fixed detail query for both pure preflight and executing public search.
+    fn detail_query(key: &Key) -> Query {
         let mut query = Query {
             take: 1,
             includes: vec!["row".into()],
@@ -862,6 +879,24 @@ impl Operationss {
             .push(Filter::Id(stackpress_framework_schema::Predicate::Eq(
                 key.id.clone(),
             )));
+        query
+    }
+    /// Codegen support: check the exact public detail query and executor budgets before BEGIN.
+    #[doc(hidden)]
+    pub fn preflight_detail(engine: &stackpress_sql::Engine, key: &Key) -> DataResult<()> {
+        let query = Self::detail_query(key);
+        stackpress_framework_sql::stores::preflight_public_search(
+            &super::schema::catalog(),
+            &SPEC,
+            &ReadQuery::from_typed(&query)?,
+            engine.dialect(),
+            engine.limits(),
+        )
+    }
+    /// Load the fixed app-default includes/projection using a complete identity.
+    /// Explicit relation defaults require the caller's transaction, like ordinary eager search.
+    pub async fn detail(db: &mut DataSession<'_>, key: &Key) -> DataResult<Option<Selected>> {
+        let query = Self::detail_query(key);
         let page = stackpress_framework_sql::stores::search(
             db,
             &super::schema::catalog(),

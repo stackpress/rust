@@ -16,4 +16,12 @@ Views are View0–View3 and PublicView0–PublicView3, with a distinct opaque Se
 
 ## Generated operation boundary
 
+Generated public Search and Detail handlers authorize before decoding, then preflight
+their exact public query before BEGIN. Preflight checks public field/path eligibility,
+the selected dialect's search/include/snapshot capabilities, and rendered base/count
+plans against the selected Engine's input limits. COUNT's fixed one-row result also
+has a known minimum row/byte cost. Actual page/related row sizes and relation lookup
+keys depend on database contents and retain their execution-time guards. This does not
+enable network search, includes or snapshot support that was previously unavailable.
+
 `operations::{Operation,OperationPolicy,HostInputs,Policy,Registration}` supplies app policy/host inputs and registration ownership. Emitted `stores::operations::<model>` contains KeyRequest, CreateRequest, UpdateRequest, UpsertRequest, BatchItem, BatchRequest, named async handlers and register. DTOs are strict and use the schema-owned public fields. Importing these APIs registers nothing.

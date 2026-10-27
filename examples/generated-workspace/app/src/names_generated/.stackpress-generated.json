@@ -48,18 +48,18 @@
     },
     "stores/_operations.rs": {
       "owner": "framework-sql",
-      "sha256": "5e2a5f403a39f807cb7b4390b1cefc908e7b364bdb19793dd6719d87853e0e7d",
-      "bytes": 37219
+      "sha256": "092b605f3f618cba5140383b11a8da704ba0456417ca92493a3ddcae7325248c",
+      "bytes": 38658
     },
     "stores/_schema.rs": {
       "owner": "framework-sql",
-      "sha256": "ee2860ff1e5c245fe13a47818c45a57a255753d45caec4604ef371f2e3f42dac",
-      "bytes": 39551
+      "sha256": "65880d66da89d3653cde51d02d59a97b7530c6a4d72294d0e003ed95d0dc16db",
+      "bytes": 40986
     },
     "stores/identity.rs": {
       "owner": "framework-sql",
-      "sha256": "363900d982abec49a70b3a5dd114a8dbaab6a70c553081406ab59c624f2994e8",
-      "bytes": 32626
+      "sha256": "cf67bb5cf3fa180562007eeba99052b5366980f57b9124573b15fca29fb9ee0f",
+      "bytes": 34063
     },
     "stores/mod.rs": {
       "owner": "aggregate",
@@ -68,8 +68,8 @@
     },
     "stores/operations.rs": {
       "owner": "framework-sql",
-      "sha256": "7077ba99e7b4be687cac01ba076f9dd2788342cefb88b67eb997db4c56db5665",
-      "bytes": 77764
+      "sha256": "9ea168c29f37996fdfe2ff1898a2d74e032a527e17fc68cc65f7934852871319",
+      "bytes": 78601
     },
     "stores/schema.rs": {
       "owner": "framework-sql",

@@ -6,6 +6,24 @@ use stackpress_framework_sql::migrations::{
 };
 use stackpress_sql::{Create, Field, SqlType};
 
+/// The checked entry point preserves the private artifact spelling after narrowing its DTO.
+#[test]
+fn checked_rename_artifact_is_unchanged() {
+    let mapping = RenameMap::new()
+        .field("profile", "name", "heading")
+        .unwrap();
+    let encoded = serde_json::to_value(&mapping).unwrap();
+    assert_eq!(
+        encoded,
+        serde_json::json!({
+            "fields": [{"table":"profile","from":"name","to":"heading"}],
+            "tables": [], "drops": [], "backfills": []
+        })
+    );
+    let decoded: RenameMap = serde_json::from_value(encoded.clone()).unwrap();
+    assert_eq!(serde_json::to_value(decoded).unwrap(), encoded);
+}
+
 /// A missing backfill cannot hide a different column/table loss or storage conversion.
 #[test]
 fn aggregates_before_precondition_refusal() {
