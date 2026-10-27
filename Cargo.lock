@@ -5245,6 +5245,7 @@ dependencies = [
  "icu_datetime",
  "icu_decimal",
  "icu_locale",
+ "js-sys",
  "leptos",
  "leptos_meta",
  "leptos_router",

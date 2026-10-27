@@ -36,6 +36,10 @@ impl NumberFormat {
 }
 
 impl DecimalValue {
+    /// Borrow-free exact canonical ASCII storage text, including signed zero.
+    pub fn canonical(&self) -> String {
+        self.0.to_string()
+    }
     /// Admit `-?digits(.digits)?`; reject whitespace, plus, exponent and separators.
     ///
     /// # Errors

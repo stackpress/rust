@@ -11,7 +11,7 @@ import subprocess
 import time
 
 ROOT = Path(__file__).resolve().parents[2]
-OUT = Path('/private/tmp/s8-format')
+OUT = Path(os.environ.get('UI_FORMAT_OUTPUT_DIR', '/private/tmp/s8-format'))
 NATIVE = ROOT / 'target/s8-native'
 WASM = ROOT / 'target/s8-wasm'
 ENV = dict(os.environ, CARGO_INCREMENTAL='0', CARGO_PROFILE_DEV_DEBUG='0')
@@ -80,7 +80,7 @@ def builds():
     before = __import__('tomllib').loads((OUT / 'before.lock').read_text())
     previous = {(p['name'], p['version']) for p in before['package']}
     packages = [dict(name=p['name'], version=p['version'], license=p['license'], rust_version=p['rust_version'])
-                for p in metadata['packages'] if (p['name'], p['version']) not in previous]
+                for p in metadata['packages']]
     (OUT / 'dependencies.json').write_text(json.dumps(packages, indent=2))
     for package in metadata['packages']:
         if package['name'].startswith('icu_') and package['name'] != 'icu_pattern':

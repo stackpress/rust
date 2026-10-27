@@ -3,8 +3,9 @@
 //! These types admit canonical values, never partial input drafts. No formatter
 //! reads the clock, OS/browser locale or ambient timezone. Dates use the Gregorian
 //! calendar; instants carry an explicit numeric UTC offset. Named-zone conversion,
-//! monetary arithmetic, reachability checks and specialized editing are outside
-//! this module. Returned strings are text and must never be inserted as HTML.
+//! monetary arithmetic and reachability checks are outside this module. Specialized
+//! drafts use the separate [`crate::format::edit`] controllers; display parsers never admit them.
+//! Returned strings are text and must never be inserted as HTML.
 //!
 //! ```
 //! use stackpress_framework_ui::format::{DecimalValue, DisplayLocale, NumberFormat};
@@ -22,6 +23,10 @@ mod number;
 mod phone;
 #[path = "format_time.rs"]
 mod time;
+
+/// Pure specialized edit-state controllers and thin Leptos text inputs.
+#[path = "edit/mod.rs"]
+pub mod edit;
 
 pub use number::{DecimalValue, MAX_DECIMAL_BYTES, NumberFormat};
 pub use phone::E164Phone;
