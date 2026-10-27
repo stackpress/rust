@@ -21,6 +21,14 @@ pub struct DiagnosticLocation {
 }
 
 impl DiagnosticMap {
+    /// Locate the closest winning structural identity, never inventing JSON coordinates.
+    pub fn resolve(&self, path: &[String]) -> Option<&DiagnosticLocation> {
+        self.entries
+            .iter()
+            .filter(|entry| path.starts_with(&entry.path))
+            .max_by_key(|entry| entry.path.len())
+    }
+
     /// Map effective provenance through the existing checked AST, without another parser.
     ///
     /// Field attributes inherit whole-column provenance because composition replaces columns
@@ -35,11 +43,14 @@ impl DiagnosticMap {
             if source.kind == SourceKind::Json {
                 for (path, origin) in &composed.provenance {
                     if origin == &source.id {
-                        entries.push(DiagnosticLocation {
-                            path: path.clone(),
-                            source: source.name.clone(),
-                            bytes: None,
-                        });
+                        push(
+                            &mut entries,
+                            DiagnosticLocation {
+                                path: path.clone(),
+                                source: source.name.clone(),
+                                bytes: None,
+                            },
+                        )?;
                     }
                 }
                 continue;
@@ -52,17 +63,36 @@ impl DiagnosticMap {
                 let Statement::Declaration(declaration) = statement else {
                     continue;
                 };
-                if !matches!(declaration.kind, "model" | "type") {
+                if !matches!(declaration.kind, "model" | "type" | "enum") {
                     continue;
                 }
                 for item in &declaration.declarations {
                     let root = vec![declaration.kind.into(), item.id.name.clone()];
                     if composed.provenance.get(&root) == Some(&source.id) {
-                        entries.push(DiagnosticLocation {
-                            path: root.clone(),
-                            source: source.name.clone(),
-                            bytes: Some((item.start, item.end)),
-                        });
+                        push(
+                            &mut entries,
+                            DiagnosticLocation {
+                                path: root.clone(),
+                                source: source.name.clone(),
+                                bytes: Some((item.start, item.end)),
+                            },
+                        )?;
+                    }
+                    if declaration.kind == "enum"
+                        && composed.provenance.get(&root) == Some(&source.id)
+                    {
+                        for variant in &item.init.properties {
+                            let mut path = root.clone();
+                            path.push(variant.key.name.clone());
+                            push(
+                                &mut entries,
+                                DiagnosticLocation {
+                                    path,
+                                    source: source.name.clone(),
+                                    bytes: Some((variant.start, variant.end)),
+                                },
+                            )?;
+                        }
                     }
                     for property in &item.init.properties {
                         let DataToken::Object(object) = &property.value else {
@@ -73,11 +103,14 @@ impl DiagnosticMap {
                                 let mut path = root.clone();
                                 path.extend(["attributes".into(), attribute.key.name.clone()]);
                                 if composed.provenance.get(&path) == Some(&source.id) {
-                                    entries.push(DiagnosticLocation {
-                                        path,
-                                        source: source.name.clone(),
-                                        bytes: Some((attribute.start, attribute.end)),
-                                    });
+                                    push(
+                                        &mut entries,
+                                        DiagnosticLocation {
+                                            path,
+                                            source: source.name.clone(),
+                                            bytes: Some((attribute.start, attribute.end)),
+                                        },
+                                    )?;
                                 }
                             }
                         } else if property.key.name == "columns" {
@@ -87,11 +120,14 @@ impl DiagnosticMap {
                                 if composed.provenance.get(&path) != Some(&source.id) {
                                     continue;
                                 }
-                                entries.push(DiagnosticLocation {
-                                    path: path.clone(),
-                                    source: source.name.clone(),
-                                    bytes: Some((column.start, column.end)),
-                                });
+                                push(
+                                    &mut entries,
+                                    DiagnosticLocation {
+                                        path: path.clone(),
+                                        source: source.name.clone(),
+                                        bytes: Some((column.start, column.end)),
+                                    },
+                                )?;
                                 let DataToken::Object(value) = &column.value else {
                                     continue;
                                 };
@@ -108,11 +144,14 @@ impl DiagnosticMap {
                                             "attributes".into(),
                                             attribute.key.name.clone(),
                                         ]);
-                                        entries.push(DiagnosticLocation {
-                                            path,
-                                            source: source.name.clone(),
-                                            bytes: Some((attribute.start, attribute.end)),
-                                        });
+                                        push(
+                                            &mut entries,
+                                            DiagnosticLocation {
+                                                path,
+                                                source: source.name.clone(),
+                                                bytes: Some((attribute.start, attribute.end)),
+                                            },
+                                        )?;
                                     }
                                 }
                             }
@@ -128,4 +167,18 @@ impl DiagnosticMap {
         }
         Ok(Self { entries })
     }
+}
+
+/// Charge before retaining the next coordinate; wide imports cannot overshoot the map bound.
+fn push(
+    entries: &mut Vec<DiagnosticLocation>,
+    entry: DiagnosticLocation,
+) -> stackpress_idea_transformer::Result<()> {
+    if entries.len() >= 10_000 {
+        return Err(stackpress_idea_transformer::TransformError::new(
+            "diagnostic map entry budget exceeded",
+        ));
+    }
+    entries.push(entry);
+    Ok(())
 }

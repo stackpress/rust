@@ -20,31 +20,78 @@ use stackpress_lib::{Error, Flow, Invocation, Request, Response};
 use stackpress_server::{BuildResult, ConfigLayers, Server, ServerBuilder};
 
 /// Freeze the same compiled definitions for every selected transform.
-fn definitions() -> DefinitionRegistry {
-    DefinitionRegistry::standard()
+pub fn definitions() -> stackpress_framework_schema::SchemaResult<DefinitionRegistry> {
+    let mut registry = DefinitionRegistry::standard().with_provider(
+        stackpress_framework_schema::codegen::ProviderDefinition {
+            name: "nanoid".into(),
+            revision: "app-fixture-1".into(),
+            output: stackpress_framework_schema::ValueType::String,
+        },
+    )?;
+    registry =
+        registry.with_validator(stackpress_framework_schema::codegen::ValidatorDefinition {
+            name: "app.approved".into(),
+            revision: "app-rule-1".into(),
+            types: vec![stackpress_framework_schema::ValueType::String],
+        })?;
+    // This application explicitly approves its fixture's nonsecret fields and defaults.
+    for (model, fields) in [
+        ("Profile", "id name active address projects"),
+        ("Project", "id ownerId title state tags tasks owner"),
+        ("Task", "id projectId title done project"),
+        ("Address", "city country"),
+        (
+            "Matrix",
+            "id text count real float flag day time stamp object choice truth tags numbers dates times instants objects address siblings favorite created token",
+        ),
+        ("MatrixAddress", "city country"),
+    ] {
+        for field in fields.split_whitespace() {
+            registry = registry.with_field_policy(
+                model,
+                field,
+                stackpress_framework_schema::FieldAccess {
+                    readable: true,
+                    writable: true,
+                    sensitive: false,
+                    publish_default: true,
+                },
+            )?;
+        }
+    }
+    Ok(registry)
 }
 
 /// Interpret only finalized config using this app's frozen catalog.
-fn normalize(config: &SchemaConfig) -> Result<Schema> {
-    Schema::normalize(config, &definitions(), NormalizeOptions::default()).map_err(transform_error)
+fn normalize(config: &SchemaConfig, diagnostics: &DiagnosticMap) -> Result<Schema> {
+    Schema::normalize_with_diagnostics(
+        config,
+        &definitions().map_err(transform_error)?,
+        NormalizeOptions::default(),
+        diagnostics,
+    )
+    .map_err(transform_error)
 }
 
 /// Schema owns contracts and metadata; no SQL files are patched here.
 fn schema_transform(context: &TransformContext<'_>, output: &mut OutputPlan) -> Result<()> {
-    let _: DiagnosticMap =
-        serde_json::from_str(context.input("diagnostics.json")?).map_err(|cause| {
+    let diagnostics: DiagnosticMap = serde_json::from_str(context.input("diagnostics.json")?)
+        .map_err(|cause| {
             stackpress_idea::transformer::TransformError::from(std::io::Error::other(cause))
         })?;
-    emit_contracts(&normalize(context.schema())?, output)
+    emit_contracts(&normalize(context.schema(), &diagnostics)?, output)
 }
 
 /// SQL uses the identical normalization function and owns stores exclusively.
 fn sql_transform(context: &TransformContext<'_>, output: &mut OutputPlan) -> Result<()> {
-    let _: DiagnosticMap =
-        serde_json::from_str(context.input("diagnostics.json")?).map_err(|cause| {
+    let diagnostics: DiagnosticMap = serde_json::from_str(context.input("diagnostics.json")?)
+        .map_err(|cause| {
             stackpress_idea::transformer::TransformError::from(std::io::Error::other(cause))
         })?;
-    stackpress_framework_sql::codegen::emit_stores(&normalize(context.schema())?, output)
+    stackpress_framework_sql::codegen::emit_stores(
+        &normalize(context.schema(), &diagnostics)?,
+        output,
+    )
 }
 
 /// The aggregate contributes only module declarations; callbacks own their source partitions.
@@ -68,17 +115,6 @@ pub fn generate(input: &Path, output: &Path, check: bool) -> Result<CheckReport>
     let entry = input.to_str().ok_or_else(|| {
         stackpress_idea::transformer::TransformError::new("input path must be UTF-8")
     })?;
-    let mut registry = Registry::new();
-    registry.add(
-        TransformSpec::new("framework-schema").owns(&["contracts", "metadata"]),
-        schema_transform,
-    )?;
-    registry.add(
-        TransformSpec::new("framework-sql")
-            .owns(&["stores"])
-            .requires(&["framework-schema"]),
-        sql_transform,
-    )?;
     let mode = if check {
         GenerationMode::Check
     } else {
@@ -108,6 +144,28 @@ pub fn generate(input: &Path, output: &Path, check: bool) -> Result<CheckReport>
         model: finalized.model,
         ..Default::default()
     };
+    // Select only compiled functions explicitly listed by this finalized application input.
+    // Unknown plugins and invalid dependency/order selections fail before output publication.
+    let mut registry = Registry::new();
+    for plugin in config.plugin.keys() {
+        match plugin.as_str() {
+            "framework-schema" => registry.add(
+                TransformSpec::new("framework-schema").owns(&["contracts", "metadata"]),
+                schema_transform,
+            )?,
+            "framework-sql" => registry.add(
+                TransformSpec::new("framework-sql")
+                    .owns(&["stores"])
+                    .requires(&["framework-schema"]),
+                sql_transform,
+            )?,
+            _ => {
+                return Err(stackpress_idea::transformer::TransformError::new(
+                    "generator plugin is not compiled into this tool",
+                ));
+            }
+        }
+    }
     let plan = registry.plan_with(&config, &selection, aggregate(&config)?)?;
     let workspace = OutputWorkspace::new(output)?;
     match mode {
