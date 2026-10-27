@@ -8,4 +8,5 @@ mod cases;
 #[test]
 fn native_generated_contracts() {
     cases::prove_contracts();
+    cases::prove_public_contracts();
 }

@@ -1,0 +1,30 @@
+plugin "framework-schema" {}
+enum Count { ZERO 0 ONE 1 }
+enum Truth { NO false YES true }
+type MatrixAddress { city String @is.ne zip String? country String @default("PH") @is.app.approved nonce String @generated @default("nanoid(8)") }
+model Matrix {
+  id Integer @id
+  text String @is.ne @is.cge(2) @default("Café") @sortable @field.input @view.text
+  count Integer @default(0) @min(0) @max(10)
+  real Number @default(0.25)
+  float Float?
+  flag Boolean @default(false)
+  day Date @default("2024-02-29")
+  time Time @default("12:00:00.1200")
+  stamp Datetime @default("2024-03-01T01:00:00+01:00")
+  object Json @default({ nested [null true] })
+  choice Count @default(0)
+  truth Truth @default(false)
+  tags String[] @default([])
+  numbers Number[] @default([])
+  dates Date[] @default([])
+  times Time[] @default([])
+  instants Datetime[] @default([])
+  objects Object[] @default([])
+  address MatrixAddress?
+  siblings MatrixAddress[] @default([])
+  favorite MatrixAddress @default({ city "Default" })
+  created Datetime @generated @default("now()")
+  token String @generated @default("nanoid(8)")
+  secret String? @default("M1_PRIVATE_DEFAULT_SENTINEL")
+}

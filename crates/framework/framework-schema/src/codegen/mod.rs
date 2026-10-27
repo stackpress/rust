@@ -6,47 +6,23 @@
 use std::collections::BTreeSet;
 
 use sha2::{Digest, Sha256};
-use stackpress_idea_parser::{AttributeValue, SchemaConfig, TypeConfig};
+use stackpress_idea_parser::{AttributeValue, SchemaConfig};
 
 use crate::{
     Enumeration, Field, Model, Relation, Schema, SchemaError, SchemaErrorKind, SchemaResult,
     ValueType,
 };
 
-/// Frozen compiled definitions selected by the app before transforms run.
-#[derive(Clone, Debug)]
-pub struct DefinitionRegistry {
-    /// Names and versions are owned by this tool; duplicate registration is rejected.
-    definitions: Vec<(String, String)>,
-}
-
-impl DefinitionRegistry {
-    /// Select the implemented M0 assertion and descriptor-only role vocabulary.
-    pub fn standard() -> Self {
-        Self {
-            definitions: vec![("is.ne".into(), "1".into())],
-        }
-    }
-
-    /// Construct a frozen catalog; names/versions must be unique and bounded.
-    pub fn checked(definitions: Vec<(String, String)>) -> SchemaResult<Self> {
-        let mut names = BTreeSet::new();
-        // Refuse duplicates before any normalization, callback or filesystem effect.
-        if definitions.len() > 256
-            || definitions.iter().any(|(name, revision)| {
-                name.is_empty()
-                    || name.len() > 128
-                    || revision.is_empty()
-                    || revision.len() > 128
-                    || !names.insert(name)
-            })
-        {
-            return Err(invalid("invalid definition registry"));
-        }
-        Ok(Self { definitions })
-    }
-}
-
+mod budgets;
+use budgets::preflight;
+mod registry;
+pub use registry::*;
+mod assertions;
+mod create;
+mod inputs;
+mod metadata;
+mod projection;
+mod query;
 /// Lowerable direct-config budgets; hard ceilings apply even if callers raise them.
 #[derive(Clone, Copy, Debug)]
 pub struct NormalizeOptions {
@@ -57,7 +33,7 @@ pub struct NormalizeOptions {
 }
 
 impl Default for NormalizeOptions {
-    /// Supply finite M0 generation bounds.
+    /// Supply finite generation bounds.
     fn default() -> Self {
         Self {
             declarations: 128,
@@ -97,8 +73,13 @@ impl Schema {
         let mut modules = BTreeSet::new();
         for (name, choices) in &config.r#enum {
             let module = portable_name(name)?;
-            if !modules.insert(module.clone()) || choices.is_empty() || choices.len() > 128 {
-                return Err(invalid("enum name collision or choice budget"));
+            if module == "public"
+                || !modules.insert(module.clone())
+                || choices.is_empty()
+                || choices.len() > 128
+            {
+                return Err(invalid("enum name collision or choice budget")
+                    .at(vec!["enum".into(), name.clone()]));
             }
             let mut values = BTreeSet::new();
             let mut variants = BTreeSet::new();
@@ -109,33 +90,85 @@ impl Schema {
                 variants: Vec::new(),
             };
             for (variant, value) in choices {
-                let value = value
-                    .as_str()
-                    .ok_or_else(|| unsupported("M0 requires string-valued enums"))?;
-                let variant = type_name(variant)?;
-                if value.len() > 4096 || !values.insert(value) || !variants.insert(variant.clone())
+                let family = enum_family(value)?;
+                if choices
+                    .values()
+                    .any(|v| enum_family(v).ok() != Some(family))
                 {
-                    return Err(invalid("duplicate enum identity"));
+                    return Err(
+                        invalid("mixed enum scalar families").at(vec!["enum".into(), name.clone()])
+                    );
                 }
-                enumeration.variants.push((variant, value.into()));
+                let identity = value.to_string();
+                let variant = type_name(variant)?;
+                if identity.len() > 4096
+                    || !values.insert(identity)
+                    || !variants.insert(variant.clone())
+                {
+                    return Err(
+                        invalid("duplicate enum identity").at(vec!["enum".into(), name.clone()])
+                    );
+                }
+                enumeration.variants.push((variant, value.clone()));
             }
             schema.enums.push(enumeration);
         }
+        let mut resolved_roles = crate::values::JsonBudget::default();
         // Register identities before resolving relations; model graphs may be cyclic.
         for (embedded, declarations) in [(true, &config.r#type), (false, &config.model)] {
             for (name, declaration) in declarations {
                 if name != &declaration.name {
                     return Err(invalid("declaration identity mismatch"));
                 }
-                let module = portable_name(name)?;
-                if !modules.insert(module.clone()) {
-                    return Err(invalid("declaration name collision"));
+                let module = definitions
+                    .declaration_name(name)
+                    .map(str::to_owned)
+                    .unwrap_or(portable_name(name)?);
+                if module == "public" || !modules.insert(module.clone()) {
+                    return Err(invalid("declaration name collision").at(vec![
+                        if embedded { "type" } else { "model" }.into(),
+                        name.clone(),
+                    ]));
                 }
-                let model = normalize_model(declaration, config, definitions, options, embedded)?;
+                let model = metadata::normalize_model(
+                    declaration,
+                    config,
+                    definitions,
+                    options,
+                    embedded,
+                    &mut resolved_roles,
+                )?;
                 if embedded {
                     schema.fieldsets.push(model);
                 } else {
                     schema.models.push(model);
+                }
+            }
+        }
+        // All public DTOs share one module, so helper prefixes must not collide with another source name.
+        let mut public_names = BTreeSet::new();
+        for model in schema.fieldsets.iter().chain(&schema.models) {
+            let mut names = vec![
+                format!("Public{}", model.rust_name),
+                format!("PublicCreate{}", model.rust_name),
+            ];
+            let is_model = schema.models.iter().any(|item| item.name == model.name);
+            if is_model {
+                names.extend([
+                    format!("PublicPatch{}", model.rust_name),
+                    format!("Patch{}", model.rust_name),
+                ]);
+                names.extend(
+                    ["Key", "Filter", "Sort", "Query"]
+                        .map(|suffix| format!("{}{suffix}", model.rust_name)),
+                );
+            }
+            for name in names {
+                if !public_names.insert(name) {
+                    return Err(invalid("generated public type name collision").at(vec![
+                        if is_model { "model" } else { "type" }.into(),
+                        model.name.clone(),
+                    ]));
                 }
             }
         }
@@ -146,12 +179,92 @@ impl Schema {
         for model in &schema.models {
             schema.check_relations(model)?;
         }
+        let fieldsets = schema.fieldsets.clone();
+        for model in schema.fieldsets.iter_mut().chain(&mut schema.models) {
+            for field in &mut model.fields {
+                if let Some(value) = field.default.take() {
+                    field.default = Some(metadata::canonical_default(field, value, &fieldsets)?);
+                }
+                for rule in &mut field.rules {
+                    if matches!(
+                        field.value_type,
+                        ValueType::Date | ValueType::Time | ValueType::Datetime
+                    ) && matches!(
+                        rule.code.as_str(),
+                        "eq" | "neq" | "option" | "gt" | "ge" | "lt" | "le"
+                    ) {
+                        for value in &mut rule.args {
+                            *value = metadata::canonical_temporal(&field.value_type, value)?;
+                        }
+                    }
+                }
+            }
+        }
+        schema.check_defaults()?;
         Ok(schema)
     }
 
+    /// Normalize while preserving an exact winning source coordinate on semantic failure.
+    pub fn normalize_with_diagnostics(
+        config: &SchemaConfig,
+        definitions: &DefinitionRegistry,
+        options: NormalizeOptions,
+        map: &DiagnosticMap,
+    ) -> SchemaResult<Self> {
+        Self::normalize(config, definitions, options).map_err(|error| error.with_diagnostics(map))
+    }
+    /// Validate nested literal defaults against the complete resolved embedding graph.
+    fn check_defaults(&self) -> SchemaResult<()> {
+        for model in self.fieldsets.iter().chain(&self.models) {
+            let record = crate::RecordSchema {
+                model: model.clone(),
+                fieldsets: self.fieldsets.clone(),
+                enums: self.enums.clone(),
+            };
+            for field in &model.fields {
+                if let Some(value) = &field.default {
+                    let value = serde_json::json!({field.name.clone():value});
+                    record
+                        .validate_defaults(&value, &crate::ValueContext::default())?
+                        .into_result()
+                        .map_err(|error| {
+                            error.at(vec![
+                                if self.models.iter().any(|item| item.name == model.name) {
+                                    "model"
+                                } else {
+                                    "type"
+                                }
+                                .into(),
+                                model.name.clone(),
+                                "columns".into(),
+                                field.name.clone(),
+                                "attributes".into(),
+                                "default".into(),
+                            ])
+                        })?;
+                }
+            }
+        }
+        Ok(())
+    }
     /// Compute a stable semantic fingerprint from framework-owned ordered descriptors.
     pub fn fingerprint(&self) -> SchemaResult<String> {
-        let bytes = serde_json::to_vec(self).map_err(|cause| {
+        let mut semantic = self.clone();
+        for model in semantic.models.iter_mut().chain(&mut semantic.fieldsets) {
+            model.attributes.clear();
+            for field in &mut model.fields {
+                field.attributes.clear();
+            }
+        }
+        let value =
+            serde_json::to_value((crate::CONTRACT_REVISION, semantic)).map_err(|cause| {
+                SchemaError::new(
+                    SchemaErrorKind::Codec,
+                    "schema fingerprint conversion failed",
+                )
+                .with_cause(cause)
+            })?;
+        let bytes = serde_json::to_vec(&canonical(value)).map_err(|cause| {
             SchemaError::new(SchemaErrorKind::Codec, "schema fingerprint encoding failed")
                 .with_cause(cause)
         })?;
@@ -170,7 +283,13 @@ impl Schema {
         }
         *remaining -= 1;
         if path.len() >= 32 || path.contains(&model.name) {
-            return Err(invalid("embedded value cycle or depth limit"));
+            let mut cycle = path.clone();
+            cycle.push(model.name.clone());
+            return Err(invalid("embedded value cycle or depth limit").at([
+                vec!["type".into(), model.name.clone(), "cycle".into()],
+                cycle,
+            ]
+            .concat()));
         }
         path.push(model.name.clone());
         for field in &model.fields {
@@ -193,326 +312,91 @@ impl Schema {
             let ValueType::Model(target) = &field.value_type else {
                 continue;
             };
-            let target = self
-                .models
-                .iter()
-                .find(|item| &item.name == target)
-                .ok_or_else(|| invalid("unknown relation target"))?;
-            if let Some(mapping) = &field.relation {
-                if field.multiple {
-                    return Err(invalid("owning relation must be singular"));
-                }
-                let local = model
-                    .fields
+            let path = vec![
+                "model".into(),
+                model.name.clone(),
+                "columns".into(),
+                field.name.clone(),
+            ];
+            (|| -> SchemaResult<()> {
+                let target = self
+                    .models
                     .iter()
-                    .find(|item| item.name == mapping.local)
-                    .ok_or_else(|| invalid("unknown local relation field"))?;
-                let foreign = target
-                    .fields
-                    .iter()
-                    .find(|item| item.name == mapping.foreign)
-                    .ok_or_else(|| invalid("unknown foreign relation field"))?;
-                if local.multiple
-                    || foreign.multiple
-                    || !foreign.key
-                    || local.value_type != foreign.value_type
-                    || local.required != field.required
-                {
-                    return Err(invalid("incompatible relation mapping"));
-                }
-            } else {
-                let candidates = target
-                    .fields
-                    .iter()
-                    .filter(|other| {
-                        other.value_type == ValueType::Model(model.name.clone())
-                            && other.relation.as_ref().is_some_and(|mapping| {
-                                mapping.inverse.as_deref() == Some(&field.name)
-                            })
-                    })
-                    .count();
-                if !field.multiple || candidates != 1 {
-                    return Err(invalid("missing or ambiguous reverse relation"));
-                }
-            }
-        }
-        Ok(())
-    }
-}
-
-/// One total accounting owner for all direct-config names and metadata values.
-#[derive(Default)]
-struct NormalizationBudget {
-    /// Total metadata/declaration nodes visited, including individually small defaults.
-    nodes: usize,
-    /// Logical source-name and scalar/key bytes, independent of output encoding expansion.
-    bytes: usize,
-}
-
-impl NormalizationBudget {
-    /// Charge before any descriptor clone; no counter may wrap or reset between declarations.
-    fn charge(&mut self, nodes: usize, bytes: usize) -> SchemaResult<()> {
-        self.nodes = self.nodes.checked_add(nodes).ok_or_else(limit)?;
-        self.bytes = self.bytes.checked_add(bytes).ok_or_else(limit)?;
-        if self.nodes > 100_000 || self.bytes > 1024 * 1024 {
-            return Err(limit());
-        }
-        Ok(())
-    }
-}
-
-/// Bound every identity and aggregate value before resolving references to later declarations.
-fn preflight(config: &SchemaConfig, options: NormalizeOptions) -> SchemaResult<()> {
-    let mut budget = NormalizationBudget::default();
-    for (name, choices) in &config.r#enum {
-        portable_name(name)?;
-        budget.charge(1, name.len())?;
-        if choices.len() > 128 {
-            return Err(limit());
-        }
-        for (variant, value) in choices {
-            portable_name(variant)?;
-            // Unsupported enum objects are rejected here without cloning their nested data.
-            let value = value
-                .as_str()
-                .ok_or_else(|| unsupported("M0 requires string-valued enums"))?;
-            budget.charge(1, variant.len().checked_add(value.len()).ok_or_else(limit)?)?;
-        }
-    }
-    for declarations in [&config.r#type, &config.model] {
-        for (name, declaration) in declarations {
-            portable_name(name)?;
-            if name != &declaration.name {
-                return Err(invalid("declaration identity mismatch"));
-            }
-            budget.charge(1, name.len())?;
-            if declaration.columns.len() > options.fields.min(128)
-                || declaration.attributes.len() > 128
-            {
-                return Err(limit());
-            }
-            for (name, value) in &declaration.attributes {
-                charge_attribute(&mut budget, name, value)?;
-            }
-            for column in &declaration.columns {
-                portable_name(&column.name)?;
-                // A reference to an invalid later declaration must not cause an early huge clone.
-                if column.column_type.len() > 512 || column.attributes.len() > 128 {
-                    return Err(limit());
-                }
-                budget.charge(1, column.name.len() + column.column_type.len())?;
-                for (name, value) in &column.attributes {
-                    charge_attribute(&mut budget, name, value)?;
-                }
-            }
-        }
-    }
-    Ok(())
-}
-
-/// Charge one independently bounded metadata tree to the same schema-wide owner.
-fn charge_attribute(
-    budget: &mut NormalizationBudget,
-    name: &str,
-    value: &AttributeValue,
-) -> SchemaResult<()> {
-    if name.len() > 128 {
-        return Err(limit());
-    }
-    let (nodes, bytes) = validate_metadata_value(value)?;
-    budget.charge(nodes, name.len().checked_add(bytes).ok_or_else(limit)?)
-}
-
-/// Normalize fields only after validating names, flags and selected metadata.
-fn normalize_model(
-    declaration: &TypeConfig,
-    config: &SchemaConfig,
-    registry: &DefinitionRegistry,
-    options: NormalizeOptions,
-    embedded: bool,
-) -> SchemaResult<Model> {
-    if declaration.columns.is_empty() || declaration.columns.len() > options.fields.min(128) {
-        return Err(limit());
-    }
-    for (attribute, value) in &declaration.attributes {
-        validate_metadata_value(value)?;
-        if !matches!(
-            attribute.as_str(),
-            "labels" | "query" | "description" | "label" | "display" | "icon"
-        ) {
-            return Err(unsupported("M0 model metadata is unsupported"));
-        }
-    }
-    let mut model = Model {
-        name: declaration.name.clone(),
-        rust_name: type_name(&declaration.name)?,
-        module: portable_name(&declaration.name)?,
-        fields: Vec::new(),
-    };
-    let mut columns = BTreeSet::new();
-    for column in &declaration.columns {
-        let name = portable_name(&column.name)?;
-        if !columns.insert(name.clone()) {
-            return Err(invalid("field name collision"));
-        }
-        let value_type = match column.column_type.as_str() {
-            "String" | "Text" => ValueType::String,
-            "Integer" => ValueType::Integer,
-            "Boolean" => ValueType::Boolean,
-            "Number" | "Float" | "Json" | "Object" | "Hash" => {
-                return Err(unsupported(
-                    "M0 bounded numeric/object value wrappers are unavailable",
-                ));
-            }
-            name if config.r#enum.contains_key(name) => ValueType::Enum(name.into()),
-            name if config.r#type.contains_key(name) => ValueType::Fieldset(name.into()),
-            name if config.model.contains_key(name) => ValueType::Model(name.into()),
-            _ => return Err(unsupported("M0 field type is unsupported")),
-        };
-        let mut field = Field {
-            name: column.name.clone(),
-            rust_name: member_name(&name),
-            column: name,
-            value_type,
-            required: column.required,
-            multiple: column.multiple,
-            key: false,
-            default: None,
-            nonempty: false,
-            active: false,
-            relation: None,
-        };
-        for (attribute, value) in &column.attributes {
-            validate_metadata_value(value)?;
-            match attribute.as_str() {
-                "id" => {
-                    require_flag(value)?;
-                    field.key = true;
-                }
-                "active" => {
-                    require_flag(value)?;
-                    field.active = true;
-                }
-                "is.ne" => {
-                    require_flag(value)?;
-                    if !registry
-                        .definitions
-                        .iter()
-                        .any(|(name, revision)| name == attribute && revision == "1")
+                    .find(|item| &item.name == target)
+                    .ok_or_else(|| invalid("unknown relation target"))?;
+                if let Some(mapping) = &field.relation {
+                    if field.multiple {
+                        return Err(invalid("owning relation must be singular"));
+                    }
+                    if let Some(inverse) = &mapping.inverse
+                        && !target.fields.iter().any(|other| {
+                            other.name == *inverse
+                                && other.value_type == ValueType::Model(model.name.clone())
+                        })
                     {
-                        return Err(unsupported("missing assertion definition"));
+                        return Err(invalid("unknown inverse relation"));
                     }
-                    field.nonempty = true;
-                }
-                "default" => {
-                    let AttributeValue::Array(values) = value else {
-                        return Err(invalid("default requires one argument"));
-                    };
-                    if values.len() != 1 {
-                        return Err(invalid("default requires one argument"));
+                    let local = model
+                        .fields
+                        .iter()
+                        .find(|item| item.name == mapping.local)
+                        .ok_or_else(|| invalid("unknown local relation field"))?;
+                    let foreign = target
+                        .fields
+                        .iter()
+                        .find(|item| item.name == mapping.foreign)
+                        .ok_or_else(|| invalid("unknown foreign relation field"))?;
+                    if local.multiple
+                        || foreign.multiple
+                        || !(foreign.unique
+                            || foreign.key && target.fields.iter().filter(|f| f.key).count() == 1)
+                        || local.value_type != foreign.value_type
+                        || local.required != field.required
+                    {
+                        return Err(invalid("incompatible relation mapping"));
                     }
-                    field.default = Some(values[0].clone());
+                } else {
+                    let candidates = target
+                        .fields
+                        .iter()
+                        .filter(|other| {
+                            other.value_type == ValueType::Model(model.name.clone())
+                                && other.relation.as_ref().is_some_and(|mapping| {
+                                    mapping.inverse.as_deref() == Some(&field.name)
+                                })
+                        })
+                        .count();
+                    let reverse_unique = target
+                        .fields
+                        .iter()
+                        .find(|other| {
+                            other.value_type == ValueType::Model(model.name.clone())
+                                && other.relation.as_ref().is_some_and(|mapping| {
+                                    mapping.inverse.as_deref() == Some(&field.name)
+                                })
+                        })
+                        .and_then(|other| other.relation.as_ref())
+                        .and_then(|mapping| {
+                            target
+                                .fields
+                                .iter()
+                                .find(|other| other.name == mapping.local)
+                        })
+                        .is_some_and(|local| {
+                            local.unique
+                                || local.key
+                                    && target.fields.iter().filter(|field| field.key).count() == 1
+                        });
+                    if candidates != 1 || !field.multiple && !reverse_unique {
+                        return Err(invalid("missing or ambiguous reverse relation"));
+                    }
                 }
-                "relation" => field.relation = Some(relation(value)?),
-                // Roles are retained in source only at M0; selecting UI output requires M1 descriptors.
-                "searchable" | "sortable" | "field.input" | "view.text" | "list.text"
-                | "filter.select" | "filter.checkbox" | "list.yesno" => require_flag(value)?,
-                _ => return Err(unsupported("M0 field metadata is unsupported")),
-            }
+                Ok(())
+            })()
+            .map_err(|error| error.at(path))?;
         }
-        // Reject invalid state before code generation can emit a misleading stored shape.
-        if field.key
-            && (!field.required
-                || field.multiple
-                || !matches!(field.value_type, ValueType::String | ValueType::Integer))
-        {
-            return Err(invalid("identity must be a required scalar"));
-        }
-        if field.active
-            && (field.value_type != ValueType::Boolean || !field.required || field.multiple)
-        {
-            return Err(invalid("active must be a required Boolean"));
-        }
-        if field.nonempty && (field.value_type != ValueType::String || field.multiple) {
-            return Err(unsupported("M0 nonempty assertion requires text"));
-        }
-        // Relation metadata on a scalar would otherwise be discarded by store emission.
-        // Only actual virtual model references may declare an owning mapping.
-        if field.relation.is_some() && !matches!(field.value_type, ValueType::Model(_)) {
-            return Err(invalid("relation mapping requires a model reference"));
-        }
-        if embedded && matches!(field.value_type, ValueType::Model(_)) {
-            return Err(unsupported("embedded model relations are unsupported"));
-        }
-        // The active role supplies true only when no explicit literal was declared.
-        // An explicit false remains false rather than being overwritten by a truthy fallback.
-        if field.active && field.default.is_none() {
-            field.default = Some(serde_json::Value::Bool(true));
-        }
-        if let Some(value) = &field.default {
-            // Known provider calls are not literal fallback strings. M0 has no provider
-            // registry yet, so refuse these selected semantics before generating Rust.
-            if value.as_str().is_some_and(|text| {
-                matches!(text, "now()" | "cuid()" | "nano()" | "random()")
-                    || text.starts_with("nanoid(")
-            }) {
-                return Err(unsupported(
-                    "M0 default provider registration is unavailable",
-                ));
-            }
-            validate_default(&field, value, config)?;
-        }
-        model.fields.push(field);
+        Ok(())
     }
-    if !embedded
-        && (model.fields.iter().filter(|field| field.key).count() != 1
-            || model.fields.iter().filter(|field| field.active).count() > 1)
-    {
-        return Err(unsupported("M0 stores require exactly one scalar identity"));
-    }
-    Ok(model)
-}
-
-/// Validate every metadata node iteratively, before cloning any direct caller-owned value.
-fn validate_metadata_value(attribute: &AttributeValue) -> SchemaResult<(usize, usize)> {
-    let AttributeValue::Array(values) = attribute else {
-        return Ok((1, 1));
-    };
-    if values.len() > 10_000 {
-        return Err(limit());
-    }
-    let mut pending: Vec<_> = values.iter().map(|value| (value, 0)).collect();
-    let mut nodes = 0_usize;
-    let mut bytes = 0_usize;
-    while let Some((value, depth)) = pending.pop() {
-        nodes += 1;
-        if nodes > 10_000 || depth > 32 {
-            return Err(limit());
-        }
-        match value {
-            serde_json::Value::Array(values) => {
-                if values.len() > 10_000 - nodes.min(10_000) {
-                    return Err(limit());
-                }
-                pending.extend(values.iter().map(|value| (value, depth + 1)));
-            }
-            serde_json::Value::Object(values) => {
-                if values.len() > 10_000 - nodes.min(10_000) {
-                    return Err(limit());
-                }
-                for (key, value) in values {
-                    bytes += key.len();
-                    pending.push((value, depth + 1));
-                }
-            }
-            serde_json::Value::String(value) => bytes += value.len(),
-            _ => bytes += 8,
-        }
-        if pending.len() > 10_000 || bytes > 1024 * 1024 {
-            return Err(limit());
-        }
-    }
-    Ok((nodes, bytes))
 }
 
 /// Reject defaults that cannot be represented by the emitted input and storage codec.
@@ -546,10 +430,20 @@ fn validate_default(
         }
         ValueType::Integer => value.as_i64().is_some(),
         ValueType::Boolean => value.is_boolean(),
-        ValueType::Number => value.as_f64().is_some_and(f64::is_finite),
-        ValueType::Object => value.is_object(),
+        ValueType::Number => crate::FiniteNumber::from_json(value).is_ok(),
+        ValueType::Object => crate::JsonObject::new(value.clone()).is_ok(),
+        ValueType::Date => value
+            .as_str()
+            .is_some_and(|v| crate::DateValue::parse(v).is_ok()),
+        ValueType::Time => value
+            .as_str()
+            .is_some_and(|v| crate::TimeValue::parse(v).is_ok()),
+        ValueType::Datetime => value
+            .as_str()
+            .is_some_and(|v| crate::DatetimeValue::parse(v).is_ok()),
         ValueType::Enum(name) => config.r#enum[name].values().any(|choice| choice == value),
-        ValueType::Fieldset(_) | ValueType::Model(_) => false,
+        ValueType::Fieldset(_) => value.is_object(),
+        ValueType::Model(_) => false,
     };
     if valid {
         Ok(())
@@ -623,7 +517,7 @@ pub fn transform_error(cause: SchemaError) -> stackpress_idea_transformer::Trans
 fn invalid(context: &'static str) -> SchemaError {
     SchemaError::new(SchemaErrorKind::Invalid, context)
 }
-/// Mark unavailable M0 semantics explicitly, leaving full breadth to M1.
+/// Mark unsupported selected semantics explicitly before any output can be published.
 fn unsupported(context: &'static str) -> SchemaError {
     SchemaError::new(SchemaErrorKind::Unsupported, context)
 }
@@ -642,3 +536,35 @@ pub use diagnostics::{DiagnosticLocation, DiagnosticMap};
 pub use emit::{emit_contracts, rust_type};
 pub use names::portable_name;
 use names::{member_name, type_name};
+
+/// Accept exactly homogeneous string/integer/Boolean enum scalar families.
+fn enum_family(value: &serde_json::Value) -> SchemaResult<u8> {
+    if value.is_string() {
+        Ok(0)
+    } else if value.as_i64().is_some() {
+        Ok(1)
+    } else if value.is_boolean() {
+        Ok(2)
+    } else {
+        Err(unsupported("unsupported enum scalar family"))
+    }
+}
+
+/// Canonicalize nested maps independently of additive serde_json map-order features.
+fn canonical(value: serde_json::Value) -> serde_json::Value {
+    match value {
+        serde_json::Value::Object(values) => {
+            let ordered: std::collections::BTreeMap<_, _> = values.into_iter().collect();
+            serde_json::Value::Object(
+                ordered
+                    .into_iter()
+                    .map(|(key, value)| (key, canonical(value)))
+                    .collect(),
+            )
+        }
+        serde_json::Value::Array(values) => {
+            serde_json::Value::Array(values.into_iter().map(canonical).collect())
+        }
+        value => value,
+    }
+}

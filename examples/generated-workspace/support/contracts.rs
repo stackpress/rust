@@ -91,10 +91,27 @@ pub fn prove_contracts() {
     assert!(!prepare("profile", nested.clone()));
     nested["address"] = serde_json::json!({"city":"Manila","country":"x".repeat(1024 * 1024 + 1)});
     assert!(!prepare("profile", nested));
-    let address = Address {
-        city: "Manila".into(),
-        country: "PH".into(),
-    };
+    // A fieldset can be prepared independently with the same required/null policy as embedding.
+    let address_input: super::contracts::address::CreateAddress =
+        serde_json::from_value(serde_json::json!({"city":"Manila","country":"PH"})).unwrap();
+    let context = stackpress_framework_schema::ValueContext::default();
+    assert!(address_input.validate_create(&context).unwrap().is_empty());
+    let address = address_input.prepare_create(&context).unwrap();
+    let prepared = super::contracts::address::CreateAddress {
+        city: stackpress_framework_schema::Input::Value("Manila".into()),
+        country: stackpress_framework_schema::Input::Value("PH".into()),
+    }
+    .prepare()
+    .unwrap();
+    assert_eq!(address, prepared);
+    assert_eq!(address.country, "PH");
+    for field in ["city", "country"] {
+        let mut value = serde_json::json!({"city":"Manila","country":"PH"});
+        value[field] = serde_json::Value::Null;
+        let input: super::contracts::address::CreateAddress =
+            serde_json::from_value(value).unwrap();
+        assert!(input.prepare().is_err());
+    }
     assert_eq!(
         serde_json::from_value::<Address>(serde_json::to_value(&address).unwrap()).unwrap(),
         address
@@ -131,4 +148,121 @@ fn prepare(kind: &str, json: serde_json::Value) -> bool {
             .is_some_and(|input| input.prepare().is_ok()),
         _ => panic!("unknown contract test family"),
     }
+}
+
+/// Execute the published M1 DTO surface in both native and pure consumers.
+pub fn prove_public_contracts() {
+    use super::contracts::public::*;
+    use stackpress_framework_schema::{NullOrder, Predicate, Sort, SortDirection, ValueContext};
+    let context = ValueContext::default();
+    let input: CreateProfile =
+        serde_json::from_value(serde_json::json!({"id":"u1","name":"Ada"})).unwrap();
+    assert!(input.validate_create(&context).unwrap().is_empty());
+    let profile = input.prepare_create(&context).unwrap();
+    let projected = profile.project().unwrap();
+    assert_eq!(projected.name, "Ada");
+    assert!(projected.active);
+    let input: PublicCreateProfile =
+        serde_json::from_value(serde_json::json!({"id":"u1","name":"Ada"})).unwrap();
+    assert!(input.validate_create(&context).unwrap().is_empty());
+    assert!(input.validate_client(&context).unwrap().is_empty());
+    assert_eq!(input.prepare_create(&context).unwrap()["active"], true);
+    let input: PublicCreateAddress =
+        serde_json::from_value(serde_json::json!({"city":"Paris","country":"FR"})).unwrap();
+    assert!(input.validate_create(&context).unwrap().is_empty());
+    assert!(input.validate_client(&context).unwrap().is_empty());
+    assert_eq!(input.prepare_create(&context).unwrap()["city"], "Paris");
+    let patch: PatchProfile = serde_json::from_value(serde_json::json!({"active":false})).unwrap();
+    patch.validate(&context).unwrap();
+    assert!(patch.validate_patch(&context).unwrap().is_empty());
+    let patch: PublicPatchProfile =
+        serde_json::from_value(serde_json::json!({"name":"New"})).unwrap();
+    assert!(patch.validate_patch(&context).unwrap().is_empty());
+    assert!(patch.validate_client(&context).unwrap().is_empty());
+    let mut query = ProfileQuery {
+        q: Some("literal%_".into()),
+        ..Default::default()
+    };
+    query
+        .filters
+        .push(ProfileFilter::Id(Predicate::Eq("u1".into())));
+    query.sort.push(Sort {
+        field: ProfileSort::Name,
+        direction: SortDirection::Asc,
+        nulls: NullOrder::Last,
+    });
+    query.includes.push("projects.tasks".into());
+    query.validate().unwrap();
+    assert_eq!(
+        serde_json::to_value(ProfileKey { id: "u1".into() }).unwrap(),
+        serde_json::json!({"id":"u1"})
+    );
+    let input: CreateProject =
+        serde_json::from_value(serde_json::json!({"id":"p1","ownerId":"u1","title":"Launch"}))
+            .unwrap();
+    assert!(input.validate_create(&context).unwrap().is_empty());
+    let project = input.prepare_create(&context).unwrap();
+    assert_eq!(project.project().unwrap().title, "Launch");
+    let input: PublicCreateProject =
+        serde_json::from_value(serde_json::json!({"id":"p1","ownerId":"u1","title":"Launch"}))
+            .unwrap();
+    assert!(input.validate_create(&context).unwrap().is_empty());
+    assert!(input.validate_client(&context).unwrap().is_empty());
+    assert_eq!(
+        input.prepare_create(&context).unwrap()["tags"],
+        serde_json::json!([])
+    );
+    let patch: PatchProject = serde_json::from_value(serde_json::json!({"title":"Next"})).unwrap();
+    patch.validate(&context).unwrap();
+    assert!(patch.validate_patch(&context).unwrap().is_empty());
+    let patch: PublicPatchProject =
+        serde_json::from_value(serde_json::json!({"title":"Next"})).unwrap();
+    assert!(patch.validate_patch(&context).unwrap().is_empty());
+    assert!(patch.validate_client(&context).unwrap().is_empty());
+    let mut query = ProjectQuery {
+        q: Some("Launch".into()),
+        ..Default::default()
+    };
+    query
+        .filters
+        .push(ProjectFilter::State(Predicate::Eq(ProjectState::Open)));
+    query.sort.push(Sort {
+        field: ProjectSort::Title,
+        direction: SortDirection::Desc,
+        nulls: NullOrder::First,
+    });
+    query.includes.push("owner".into());
+    query.validate().unwrap();
+    assert_eq!(
+        serde_json::to_value(ProjectKey { id: "p1".into() }).unwrap(),
+        serde_json::json!({"id":"p1"})
+    );
+    let input: CreateTask =
+        serde_json::from_value(serde_json::json!({"id":"t1","projectId":"p1","title":"Draft"}))
+            .unwrap();
+    assert!(input.validate_create(&context).unwrap().is_empty());
+    let task = input.prepare_create(&context).unwrap();
+    assert_eq!(task.project().unwrap().title, "Draft");
+    let input: PublicCreateTask =
+        serde_json::from_value(serde_json::json!({"id":"t1","projectId":"p1","title":"Draft"}))
+            .unwrap();
+    assert!(input.validate_create(&context).unwrap().is_empty());
+    assert!(input.validate_client(&context).unwrap().is_empty());
+    assert_eq!(input.prepare_create(&context).unwrap()["done"], false);
+    let patch: PatchTask = serde_json::from_value(serde_json::json!({"done":true})).unwrap();
+    patch.validate(&context).unwrap();
+    assert!(patch.validate_patch(&context).unwrap().is_empty());
+    let patch: PublicPatchTask = serde_json::from_value(serde_json::json!({"done":true})).unwrap();
+    assert!(patch.validate_patch(&context).unwrap().is_empty());
+    assert!(patch.validate_client(&context).unwrap().is_empty());
+    let mut query = TaskQuery::default();
+    query.filters.push(TaskFilter::Done(Predicate::Eq(false)));
+    query.includes.push("project.owner".into());
+    query.validate().unwrap();
+    assert_eq!(
+        serde_json::to_value(TaskKey { id: "t1".into() }).unwrap(),
+        serde_json::json!({"id":"t1"})
+    );
+    query.q = Some("unavailable".into());
+    assert!(query.validate().is_err());
 }

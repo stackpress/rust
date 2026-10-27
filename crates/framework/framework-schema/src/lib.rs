@@ -1,8 +1,8 @@
 //! Owned, serializable schema contracts, independent of native hosts and database drivers.
 //!
 //! The optional `codegen` feature interprets finalized Idea config and emits Rust before
-//! application compilation. Default features expose data only. M0 normalizes a bounded
-//! scalar/enum/fieldset/relation subset; unsupported selected rules fail explicitly.
+//! application compilation. Default features expose portable values, validation and public
+//! descriptors only. Selected unsupported storage/security/validation semantics fail explicitly.
 
 use std::error::Error;
 use std::fmt;
@@ -12,8 +12,31 @@ use serde::{Deserialize, Serialize};
 #[cfg(feature = "codegen")]
 pub mod codegen;
 
-/// Version of the M0 descriptor and generated-code contract; not a stable release promise.
-pub const CONTRACT_REVISION: u32 = 1;
+/// Slice 6 M1 descriptor/generated contract revision for coordinator and Slice 8 review.
+pub const CONTRACT_REVISION: u32 = 2;
+
+mod query;
+pub use query::{NullOrder, Predicate, Sort, SortDirection, check_include, query_budget};
+mod input;
+pub use input::InputSchema;
+mod record;
+pub use record::{RecordSchema, value_matches};
+mod values;
+pub use values::{
+    DateValue, DatetimeValue, FiniteNumber, JsonObject, PreparationBudget, TimeValue,
+    browser_integer, check_browser_json, check_json, to_bounded_value,
+};
+mod validation;
+pub use validation::{
+    FieldIssue, ValidationErrors, ValidationRule, ValueContext, ValueProviders, ValueRule,
+    check_rule,
+};
+mod public;
+pub use public::{
+    Attribute, BoundedProps, ComponentId, Documentation, FieldAccess, FieldId, NameSet,
+    PublicDefault, PublicRule, PublicType, Role, RoleBinding, UiField, UiModel, UiRelation,
+    UiSchema,
+};
 
 /// Fallible framework schema operation with safe context and a typed private source.
 pub type SchemaResult<T> = Result<T, SchemaError>;
@@ -23,7 +46,7 @@ pub type SchemaResult<T> = Result<T, SchemaError>;
 pub enum SchemaErrorKind {
     /// A direct config violates shape, naming or type rules.
     Invalid,
-    /// The selected M0 consumer has not implemented the requested semantics.
+    /// The selected consumer has not implemented the requested semantics.
     Unsupported,
     /// A finite declaration/value/output budget was exceeded.
     Limit,
@@ -40,6 +63,11 @@ pub struct SchemaError {
     context: &'static str,
     /// Optional original typed codec/source cause.
     cause: Option<Box<dyn Error + Send + Sync>>,
+    /// Logical location independent of private rejected values.
+    path: Vec<String>,
+    /// Optional tool-only original source coordinate.
+    #[cfg(feature = "codegen")]
+    location: Option<Box<codegen::DiagnosticLocation>>,
 }
 
 impl SchemaError {
@@ -49,6 +77,9 @@ impl SchemaError {
             kind,
             context,
             cause: None,
+            path: Vec::new(),
+            #[cfg(feature = "codegen")]
+            location: None,
         }
     }
 
@@ -58,6 +89,28 @@ impl SchemaError {
         self
     }
 
+    /// Attach a logical schema path at the failing semantic boundary.
+    pub fn at(mut self, path: Vec<String>) -> Self {
+        if self.path.is_empty() {
+            self.path = path;
+        }
+        self
+    }
+    /// Borrow the logical field/attribute path.
+    pub fn path(&self) -> &[String] {
+        &self.path
+    }
+    /// Borrow an original source location, available only to the build host.
+    #[cfg(feature = "codegen")]
+    pub fn location(&self) -> Option<&codegen::DiagnosticLocation> {
+        self.location.as_deref()
+    }
+    /// Resolve the nearest winning source coordinate after semantic normalization fails.
+    #[cfg(feature = "codegen")]
+    pub fn with_diagnostics(mut self, map: &codegen::DiagnosticMap) -> Self {
+        self.location = map.resolve(&self.path).cloned().map(Box::new);
+        self
+    }
     /// Return the category without parsing private driver or codec text.
     pub fn kind(&self) -> SchemaErrorKind {
         self.kind
@@ -117,6 +170,12 @@ pub struct Model {
     pub module: String,
     /// Finite ordered fields, including virtual relations.
     pub fields: Vec<Field>,
+    /// Owned descriptive metadata, published only through explicit app policy.
+    pub documentation: Documentation,
+    /// Explicit query paths checked against fields/relations.
+    pub query: Vec<String>,
+    /// Privately retained exact source metadata.
+    pub attributes: Vec<Attribute>,
 }
 
 /// One field, with missing/default/null decisions retained separately.
@@ -139,12 +198,36 @@ pub struct Field {
     pub key: bool,
     /// Literal default, preserving false, zero, empty string/list and JSON null.
     pub default: Option<serde_json::Value>,
-    /// The M0 nonempty text assertion.
+    /// Canonical nonempty assertion, also retained as focused compatibility metadata.
     pub nonempty: bool,
-    /// Boolean soft-removal metadata; operations are not implemented by M0.
+    /// Boolean soft-removal metadata; mutation behavior belongs to explicit store operations.
     pub active: bool,
     /// Explicit owning relation mapping; reverse collections have no mapping.
     pub relation: Option<Relation>,
+    /// Storage uniqueness is authoritative, never a preflight-only promise.
+    pub unique: bool,
+    /// Explicit query search participation.
+    pub searchable: bool,
+    /// Explicit query ordering participation.
+    pub sortable: bool,
+    /// Refresh from the explicit clock on writes (execution belongs to M2).
+    pub timestamp: bool,
+    /// Reject caller writes and obtain a value from the registered default.
+    pub generated: bool,
+    /// Whether an omitted create input lacks any declared host/literal source.
+    pub input_required: bool,
+    /// Prepared host default, distinct from literal null/false/zero/empty.
+    pub value_rule: Option<ValueRule>,
+    /// Checked canonical assertions.
+    pub rules: Vec<ValidationRule>,
+    /// Owned descriptions and examples.
+    pub documentation: Documentation,
+    /// Ordered canonical component roles.
+    pub roles: Vec<RoleBinding>,
+    /// Explicit app-owned access/projection policy; defaults deny publication.
+    pub access: FieldAccess,
+    /// Private recognized and foreign attributes.
+    pub attributes: Vec<Attribute>,
 }
 
 /// Scalar/value/relation families, never guessed from placeholder-looking strings.
@@ -161,6 +244,12 @@ pub enum ValueType {
     Number,
     /// Bounded JSON object.
     Object,
+    /// Checked YYYY-MM-DD calendar date.
+    Date,
+    /// Checked local wall time, without timezone inference.
+    Time,
+    /// Checked UTC instant, normalized to RFC3339 Z.
+    Datetime,
     /// Named scalar enum.
     Enum(String),
     /// Named acyclic embedded value, stored as one JSON column.
@@ -181,7 +270,7 @@ pub struct Relation {
     pub inverse: Option<String>,
 }
 
-/// Scalar enum descriptor. M0 supports string-valued enums only and refuses other families.
+/// Homogeneous String, i64 or Boolean enumeration with checked unique scalar values.
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Enumeration {
@@ -192,7 +281,7 @@ pub struct Enumeration {
     /// Portable module name.
     pub module: String,
     /// Source-ordered variant/wire-value pairs.
-    pub variants: Vec<(String, String)>,
+    pub variants: Vec<(String, serde_json::Value)>,
 }
 
 /// Missing and null remain separate at the transport boundary.
@@ -207,7 +296,7 @@ pub enum Input<T> {
 }
 
 /// A patch never turns an omitted field into a null write.
-#[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, PartialEq)]
 pub enum Patch<T> {
     /// Preserve the stored value.
     #[default]
@@ -250,5 +339,52 @@ impl<T> Default for Input<T> {
     /// Omission is independent of whether the eventual value type has a default.
     fn default() -> Self {
         Self::Missing
+    }
+}
+
+impl<T> Patch<T> {
+    /// Omitted patch fields preserve the existing stored value.
+    pub fn is_unchanged(&self) -> bool {
+        matches!(self, Self::Unchanged)
+    }
+}
+impl<'de, T: Deserialize<'de>> Deserialize<'de> for Patch<T> {
+    /// Supplied null is explicit; absent fields use Unchanged through Default.
+    fn deserialize<D: serde::Deserializer<'de>>(decoder: D) -> Result<Self, D::Error> {
+        Ok(match Option::<T>::deserialize(decoder)? {
+            Some(value) => Self::Set(value),
+            None => Self::Null,
+        })
+    }
+}
+impl<T: Serialize> Serialize for Patch<T> {
+    /// Struct fields must omit Unchanged instead of serializing it as null.
+    fn serialize<S: serde::Serializer>(&self, encoder: S) -> Result<S::Ok, S::Error> {
+        match self {
+            Self::Set(value) => value.serialize(encoder),
+            Self::Null => encoder.serialize_none(),
+            Self::Unchanged => Err(serde::ser::Error::custom("unchanged patch must be omitted")),
+        }
+    }
+}
+
+impl Model {
+    /// Borrow the normalized source/Rust/SQL identity as one owned focused view.
+    pub fn names(&self) -> NameSet {
+        NameSet {
+            source: self.name.clone(),
+            rust: self.rust_name.clone(),
+            sql: self.module.clone(),
+        }
+    }
+}
+impl Field {
+    /// Borrow exact wire spelling alongside the checked Rust member and SQL column identities.
+    pub fn names(&self) -> NameSet {
+        NameSet {
+            source: self.name.clone(),
+            rust: self.rust_name.clone(),
+            sql: self.column.clone(),
+        }
     }
 }
