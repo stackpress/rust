@@ -10,6 +10,7 @@
 )]
 /// Exact generated value contracts, independent of stores.
 pub mod contracts;
+pub mod crud;
 pub mod plugin;
 #[path = "generated/ui/mod.rs"]
 #[allow(
@@ -43,7 +44,7 @@ fn contents() -> SchemaResult<AnyView> {
     )
     .map_err(codec)?;
     let task: contracts::public::PublicTask = serde_json::from_value(
-        json!({"id":"t1", "projectId":"j1", "title":"Review generated UI", "done":false}),
+        json!({"id":"t1", "projectId":"j1", "title":"Review generated UI", "done":false,"priority":0}),
     )
     .map_err(codec)?;
     let proof: contracts::public::PublicRoleProof =

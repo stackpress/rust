@@ -18,3 +18,5 @@ cargo run -p generated-admin-tool --locked -- emit generate --check
 ```
 
 A changed schema or plugin catalog makes check mode fail until regeneration. The tool has no dependency on its generated consumer, so an absent output root can be generated before the consumer compiles.
+
+For M5 CRUD, follow the example README's `m5_build.py` and `m5_browser.py` instructions. They build the real generated SQLite host and both browser modes, then exercise compiled buffered HTTP routes through .invalid interception without a listener. The legacy no-argument HTML render above remains a finite role catalog.

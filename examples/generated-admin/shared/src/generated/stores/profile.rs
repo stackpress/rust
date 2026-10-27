@@ -10,16 +10,9 @@ use stackpress_framework_sql::{
 use stackpress_sql::{Insert, Row, Select, TableDefinition};
 const _: () = assert!(stackpress_framework_sql::CONTRACT_REVISION == 1);
 /// Shared normalized schema identity.
-pub const FINGERPRINT: &str = "ed7339d88345035c2d45e410c7349278ec7e85bc9880a88c691f3f3ddfccfcf3";
+pub const FINGERPRINT: &str = "bf1ffb1dcad0a0fa5a1cc6a8df13652e29f1febbc94915fc48a4ee1235520b03";
 /// Exact ordered stored codecs.
 pub const COLUMNS: &[StorageColumn] = &[
-    StorageColumn {
-        wire: "id",
-        column: "id",
-        codec: StorageCodec::Text,
-        required: true,
-        nonempty: false,
-    },
     StorageColumn {
         wire: "active",
         column: "active",
@@ -32,6 +25,13 @@ pub const COLUMNS: &[StorageColumn] = &[
         column: "address",
         codec: StorageCodec::Json,
         required: false,
+        nonempty: false,
+    },
+    StorageColumn {
+        wire: "id",
+        column: "id",
+        codec: StorageCodec::Text,
+        required: true,
         nonempty: false,
     },
     StorageColumn {
@@ -49,14 +49,14 @@ impl ProfileStore {
     pub fn table() -> DataResult<TableDefinition> {
         let mut table = stackpress_sql::Create::new("profile");
         // Preserve declared nullability in storage.
-        let field = stackpress_sql::Field::new("id", stackpress_sql::SqlType::Text).not_null();
-        table = table.add_field(field);
-        // Preserve declared nullability in storage.
         let field =
             stackpress_sql::Field::new("active", stackpress_sql::SqlType::Boolean).not_null();
         table = table.add_field(field);
         // Preserve declared nullability in storage.
         let field = stackpress_sql::Field::new("address", stackpress_sql::SqlType::Text);
+        table = table.add_field(field);
+        // Preserve declared nullability in storage.
+        let field = stackpress_sql::Field::new("id", stackpress_sql::SqlType::Text).not_null();
         table = table.add_field(field);
         // Preserve declared nullability in storage.
         let field = stackpress_sql::Field::new("name", stackpress_sql::SqlType::Text).not_null();
@@ -76,23 +76,6 @@ pub static SPEC: StoreSpec = StoreSpec {
     fields: &[
         stackpress_framework_sql::stores::QueryField {
             storage: StorageColumn {
-                wire: "id",
-                column: "id",
-                codec: StorageCodec::Text,
-                required: true,
-                nonempty: false,
-            },
-            multiple: false,
-            scalar: StorageCodec::Text,
-            choices: "[]",
-            searchable: false,
-            sortable: true,
-            public_filter: true,
-            public_sort: false,
-            public_search: false,
-        },
-        stackpress_framework_sql::stores::QueryField {
-            storage: StorageColumn {
                 wire: "active",
                 column: "active",
                 codec: StorageCodec::Boolean,
@@ -105,6 +88,23 @@ pub static SPEC: StoreSpec = StoreSpec {
             searchable: false,
             sortable: false,
             public_filter: false,
+            public_sort: false,
+            public_search: false,
+        },
+        stackpress_framework_sql::stores::QueryField {
+            storage: StorageColumn {
+                wire: "id",
+                column: "id",
+                codec: StorageCodec::Text,
+                required: true,
+                nonempty: false,
+            },
+            multiple: false,
+            scalar: StorageCodec::Text,
+            choices: "[]",
+            searchable: false,
+            sortable: true,
+            public_filter: true,
             public_sort: false,
             public_search: false,
         },
@@ -305,12 +305,12 @@ impl View3 {
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[serde(tag = "field", content = "predicate", deny_unknown_fields)]
 pub enum Filter {
-    /// Typed "id" predicate.
-    #[serde(rename = "id")]
-    Id(stackpress_framework_schema::Predicate<String>),
     /// Typed "active" predicate.
     #[serde(rename = "active")]
     Active(stackpress_framework_schema::Predicate<bool>),
+    /// Typed "id" predicate.
+    #[serde(rename = "id")]
+    Id(stackpress_framework_schema::Predicate<String>),
     /// Typed "name" predicate.
     #[serde(rename = "name")]
     Name(stackpress_framework_schema::Predicate<String>),
@@ -853,7 +853,7 @@ impl ProfileStore {
         active: bool,
         context: &stackpress_framework_schema::ValueContext<'_>,
     ) -> DataResult<stackpress_sql::Update> {
-        let policy:stackpress_framework_schema::RecordSchema=serde_json::from_str("{\"model\":{\"name\":\"Profile\",\"rust_name\":\"Profile\",\"module\":\"profile\",\"fields\":[{\"name\":\"active\",\"rust_name\":\"active\",\"column\":\"active\",\"value_type\":{\"kind\":\"Boolean\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":true,\"nonempty\":false,\"active\":true,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":null,\"rules\":[],\"documentation\":{\"label\":null,\"description\":null,\"examples\":[],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":true,\"writable\":true,\"sensitive\":false,\"publish_default\":true},\"attributes\":[{\"name\":\"active\",\"value\":true},{\"name\":\"default\",\"value\":[true]}]}],\"documentation\":{\"label\":null,\"description\":null,\"examples\":[],\"display\":null,\"icon\":null,\"labels\":[\"Profile\",\"Profiles\"]},\"query\":[\"id\",\"name\"],\"attributes\":[{\"name\":\"labels\",\"value\":[\"Profile\",\"Profiles\"]},{\"name\":\"query\",\"value\":[\"id\",\"name\"]}]},\"fieldsets\":[],\"enums\":[]}").map_err(stackpress_framework_sql::codec_error)?;
+        let policy:stackpress_framework_schema::RecordSchema=serde_json::from_str("{\"model\":{\"name\":\"Profile\",\"rust_name\":\"Profile\",\"module\":\"profile\",\"fields\":[{\"name\":\"active\",\"rust_name\":\"active\",\"column\":\"active\",\"value_type\":{\"kind\":\"Boolean\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":true,\"nonempty\":false,\"active\":true,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":null,\"rules\":[],\"documentation\":{\"label\":null,\"description\":null,\"examples\":[],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":true,\"writable\":true,\"sensitive\":false,\"publish_default\":true},\"attributes\":[{\"name\":\"active\",\"value\":true},{\"name\":\"default\",\"value\":[true]}]}],\"documentation\":{\"label\":null,\"description\":null,\"examples\":[],\"display\":null,\"icon\":null,\"labels\":[\"Profile\",\"Profiles\"]},\"query\":[\"id\",\"name\",\"active\",\"address\"],\"attributes\":[{\"name\":\"labels\",\"value\":[\"Profile\",\"Profiles\"]},{\"name\":\"query\",\"value\":[\"id\",\"name\",\"active\",\"address\"]}]},\"fieldsets\":[],\"enums\":[]}").map_err(stackpress_framework_sql::codec_error)?;
         policy
             .validate(&serde_json::json!({"active":active}), context, true, false)
             .map_err(stackpress_framework_sql::stores::preparation_error)?
@@ -912,7 +912,7 @@ impl View3 {
         let public = self.project()?;
         Ok(Selected(stackpress_framework_sql::projection::select(
             &public,
-            &["id", "name"],
+            &["id", "name", "active", "address"],
             false,
         )?))
     }

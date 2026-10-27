@@ -126,6 +126,13 @@ impl RoleContext {
 
     /// Read an exact Boolean prop, preserving explicit false.
     pub fn bool_prop(&self, name: &str, fallback: bool) -> bool {
+        // A related root can only add a disabled constraint; it never grants field authority.
+        if name == "disabled"
+            && use_context::<crate::pages::LockedFields>()
+                .is_some_and(|locked| locked.0.contains(&self.field.wire_name))
+        {
+            return true;
+        }
         self.binding()
             .and_then(|binding| binding.props.get(name))
             .and_then(Value::as_bool)
