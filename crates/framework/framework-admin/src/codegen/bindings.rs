@@ -38,6 +38,10 @@ pub(super) fn validate_binding(
     }
     let scalar = !field.value_type.multiple;
     let valid = match import.symbol.as_str() {
+        #[cfg(feature = "format")]
+        "DecimalField" | "TemporalField" | "PhoneField" | "FormattedView" => {
+            scalar && crate::components::formatted_configuration(field, binding).is_ok()
+        }
         "TextField" | "TextareaField" => scalar && field.value_type.value == ValueType::String,
         "SlugField" => scalar && field.value_type.value == ValueType::String,
         "TextListField" => !scalar && field.value_type.value == ValueType::String,

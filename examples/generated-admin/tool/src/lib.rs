@@ -23,13 +23,19 @@ use stackpress_idea::{
 /// # Errors
 /// Propagates checked definition/policy failures without substituting another registry.
 pub fn definitions(plugin: bool) -> stackpress_framework_schema::SchemaResult<DefinitionRegistry> {
-    let replacements = if plugin {
-        vec![accent_plugin(), tags_plugin()]
-    } else {
-        Vec::new()
-    };
+    let mut replacements = Vec::new();
+    if plugin {
+        replacements.extend([accent_plugin(), tags_plugin()]);
+    }
+    // The optional formatter participates in the same compiled plugin registry.
+    #[cfg(feature = "format")]
+    if plugin {
+        replacements.push(number_plugin());
+    }
     let mut definitions = generated_workspace_tool::definitions()?;
-    for field in ["note", "priority"] {
+    for field in [
+        "note", "priority", "amount", "decimal", "date", "time", "instant", "phone",
+    ] {
         definitions = definitions.with_field_policy(
             "Task",
             field,
@@ -104,6 +110,23 @@ pub fn tags_plugin() -> Component {
     component.import.component = component.definition.key.clone();
     component.import.module = "crate::plugin".into();
     component.import.symbol = "AccentTags".into();
+    component
+}
+
+/// Replace a formatted definition through fixed public data, retaining its trusted adapter.
+#[cfg(feature = "format")]
+pub fn number_plugin() -> Component {
+    let mut component = components()
+        .into_iter()
+        .find(|component| component.definition.name == "field.number")
+        .expect("the format feature includes its decimal component");
+    component.definition.key = "app.accent.number".into();
+    component.definition.revision = "app-accent-number-1".into();
+    component
+        .definition
+        .fixed
+        .insert("label".into(), "Plugin number label".into());
+    component.import.component = component.definition.key.clone();
     component
 }
 

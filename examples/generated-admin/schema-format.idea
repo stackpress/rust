@@ -1,0 +1,14 @@
+use "./schema.idea"
+plugin "framework-schema" {}
+plugin "framework-sql" {}
+plugin "framework-admin" {}
+
+// Optional app fields exercise each formatted family over the same generated SQLite operations.
+model Task @query("id" "projectId" "title" "done" "note" "priority" "amount" "decimal" "date" "time" "instant" "phone") {
+  amount Number? @field.number({ scale 2 }) @filter.number({ scale 2 }) @span.number({ scale 2 }) @list.number @view.number
+  decimal String? @field.price({ scale 2 locale "fr" }) @filter.price({ scale 2 locale "fr" }) @span.price({ scale 2 locale "fr" }) @view.price({ scale 2 locale "fr" })
+  date Date? @field.date @filter.date @span.date @view.date
+  time Time? @field.time @filter.time @span.time @view.date
+  instant Datetime? @field.datetime @filter.datetime @span.datetime @view.date
+  phone String? @field.phone({ region "US" }) @filter.phone({ region "US" }) @span.phone({ region "US" }) @view.phone
+}

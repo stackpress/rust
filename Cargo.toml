@@ -16,6 +16,7 @@ members = [
     "crates/framework/framework-schema", "crates/framework/framework-sql",
     "examples/generated-workspace/tool", "examples/generated-workspace/app",
     "examples/generated-workspace/contracts",
+    "examples/data-quickstart",
     "examples/ui-format",
     "crates/framework/framework-admin",
     "examples/generated-admin/tool", "examples/generated-admin/shared",
@@ -66,6 +67,7 @@ default = []
 framework-schema = ["dep:stackpress-framework-schema"]
 framework-sql = ["dep:stackpress-framework-sql"]
 framework-admin = ["dep:stackpress-framework-admin"]
+framework-admin-format = ["framework-admin", "stackpress-framework-admin/format"]
 server = ["dep:stackpress-server"]
 server-http = ["server", "stackpress-server/http"]
 server-http-host = ["server-http", "dep:stackpress-server-http"]

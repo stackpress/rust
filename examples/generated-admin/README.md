@@ -26,7 +26,7 @@ The generated wrappers implement five independent placements. Missing roles stay
 
 Catalog breadth part 1 adds text/tag/metadata collections, a numeric slider, rating, explicit slug normalization, local enum combobox selection and a generated list-role table. Chromium checks edits/order/stable identities, duplicate metadata errors, omission/null/empty/zero, keyboard selection, both mounts and 375 px at 200% zoom. The [catalog reference](../../crates/framework/framework-admin/docs/api/catalog.md) describes exact value shapes and bounds.
 
-Formatted number/date/phone edits, rich text, file/media and relation services remain unavailable. The fixture principal and token below are explicit proof inputs; production authentication/session integration and installed targets are outside this example.
+Formatted number/date/phone edits are opt-in as described below. Rich text, file/media and relation services remain unavailable. The fixture principal and token below are explicit proof inputs; production authentication/session integration and installed targets are outside this example.
 
 
 ## Core admin CRUD (M5)
@@ -50,3 +50,20 @@ python3 examples/generated-admin/m5_compile_proof.py
 These scripts keep M5 logs, copied finite binaries, assets and screenshots in `/private/tmp/s8-admin/m5-admin-agent/`, separate from other proofs. Each Chromium case has a 120-second parent watchdog. Both `/` and `/admin/` mounts run hydrate and CSR at 1280 px and 375 px/200%. Every intercepted API call executes the real buffered HTTP adapter and generated operations against the case's owned SQLite file. No listener or database write simulator is used.
 
 For a single process request, build `generated-admin-web` and pass `--request` with one JSON stdin object containing `database`, `mount`, `actor`, `method`, `path`, optional `body` and headers. `initialize: true` installs generated tables only into a previously absent owned file and exits. Browser JSON cannot choose the file or fault mode. Each request exits after explicit pool close. The old no-argument finite catalog render remains available for the earlier role proofs.
+
+## Formatted catalog and polish
+
+Each example crate has an opt-in `format` feature. `schema-format.idea` imports the ordinary fixture and extends Task with numeric, exact decimal String, date, time, explicit-offset instant and phone fields. The same app-owned generator registry writes the alternative marked root `shared/src/generated-format`; feature selection includes this root on both the client and host. Default builds continue to select `shared/src/generated` and gain no formatting dependency packages.
+
+```sh
+cargo run -p generated-admin-tool --features format --locked -- --input examples/generated-admin/schema-format.idea --output examples/generated-admin/shared/src/generated-format --check
+python3 examples/generated-admin/c2_build.py
+python3 examples/generated-admin/c2_plugin_build.py
+ADMIN_PLAYWRIGHT="/absolute/path/to/installed/playwright" python3 examples/generated-admin/c2_browser.py
+python3 examples/generated-admin/c2_compile_proof.py
+python3 examples/generated-admin/c2_checks.py
+python3 examples/generated-admin/c2_graph.py
+python3 examples/generated-admin/c2_coverage.py
+```
+
+Catalog-2 scripts own `/private/tmp/s8-admin/catalog-2-admin-agent/` and one target directory, bounded to 8 GiB and deleted after evidence collection. They preserve other proof directories. Eight CRUD cases and eight compiled-plugin cases use the same finite intercepted HTTP/SQLite path as M5. They exercise formatted entry, rejected partial commits, preserved canonical values, actual writes, replacement and removal. They also check readable result links, pagination spacing, specific public error wording, presence-selector visibility, compact fractional time display, wide input sizing and focused-only accessible hints. See the [catalog reference](../../crates/framework/framework-admin/docs/api/catalog.md) for wire shapes and policies.

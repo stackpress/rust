@@ -6,6 +6,10 @@ rust-version.workspace = true
 publish.workspace = true
 
 
+[features]
+default = []
+format = ["stackpress-framework-admin/format"]
+
 [dependencies]
 stackpress-framework-admin = { path = "../../../crates/framework/framework-admin", features = ["codegen"] }
 stackpress-framework-schema = { path = "../../../crates/framework/framework-schema", features = ["codegen"] }

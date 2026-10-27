@@ -3,7 +3,8 @@
 //! Only public projections enter role wrappers. Stores and host tool dependencies are not
 //! included in this crate's module graph. This example performs no database writes.
 
-#[path = "generated/contracts/mod.rs"]
+#[cfg_attr(not(feature = "format"), path = "generated/contracts/mod.rs")]
+#[cfg_attr(feature = "format", path = "generated-format/contracts/mod.rs")]
 #[allow(
     missing_docs,
     reason = "the writer owns aggregate declarations; generated leaves carry Rustdoc"
@@ -12,7 +13,8 @@
 pub mod contracts;
 pub mod crud;
 pub mod plugin;
-#[path = "generated/ui/mod.rs"]
+#[cfg_attr(not(feature = "format"), path = "generated/ui/mod.rs")]
+#[cfg_attr(feature = "format", path = "generated-format/ui/mod.rs")]
 #[allow(
     missing_docs,
     reason = "the writer owns aggregate declarations; generated leaves carry Rustdoc"
