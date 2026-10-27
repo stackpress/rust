@@ -91,6 +91,9 @@ fn actual_three_model_writer_is_stable_and_plugin_is_removable() {
     assert!(plugin.contains("crate::plugin::AccentField"));
     assert!(plugin.contains("Plugin field label"));
     assert!(plugin.contains("Plugin fixed hint"));
+    let tags = std::fs::read_to_string(output.join("ui/project.rs")).unwrap();
+    assert!(tags.contains("crate::plugin::AccentTags"));
+    assert!(tags.contains("Plugin tags label"));
     assert!(!cli(&["--check"], &output));
     assert!(cli(&[], &output));
     assert_eq!(baseline, snapshot(&output));

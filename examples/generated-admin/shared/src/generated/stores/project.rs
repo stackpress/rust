@@ -7,7 +7,7 @@ use stackpress_sql::{Identifier, Insert, Row, Select, TableDefinition};
 
 const _: () = assert!(stackpress_framework_sql::CONTRACT_REVISION == 1);
 /// Same normalized input identity as the schema transform.
-pub const FINGERPRINT: &str = "0cbe400c604318e1ad0ac49f732d835138be1a72b0df9a63bd4c836d6c71189a";
+pub const FINGERPRINT: &str = "ed7339d88345035c2d45e410c7349278ec7e85bc9880a88c691f3f3ddfccfcf3";
 /// Immutable field codecs, chosen by schema semantics.
 pub const COLUMNS: &[StorageColumn] = &[
     StorageColumn {
@@ -25,6 +25,13 @@ pub const COLUMNS: &[StorageColumn] = &[
         nonempty: false,
     },
     StorageColumn {
+        wire: "title",
+        column: "title",
+        codec: StorageCodec::Text,
+        required: true,
+        nonempty: true,
+    },
+    StorageColumn {
         wire: "state",
         column: "state",
         codec: StorageCodec::Text,
@@ -37,13 +44,6 @@ pub const COLUMNS: &[StorageColumn] = &[
         codec: StorageCodec::Json,
         required: true,
         nonempty: false,
-    },
-    StorageColumn {
-        wire: "title",
-        column: "title",
-        codec: StorageCodec::Text,
-        required: true,
-        nonempty: true,
     },
 ];
 /// Pure inspectable table, query and codec functions.
@@ -60,13 +60,13 @@ impl ProjectStore {
             stackpress_sql::Field::new("owner_id", stackpress_sql::SqlType::Text).not_null();
         table = table.add_field(field);
         // Preserve declared nullability in storage.
+        let field = stackpress_sql::Field::new("title", stackpress_sql::SqlType::Text).not_null();
+        table = table.add_field(field);
+        // Preserve declared nullability in storage.
         let field = stackpress_sql::Field::new("state", stackpress_sql::SqlType::Text).not_null();
         table = table.add_field(field);
         // Preserve declared nullability in storage.
         let field = stackpress_sql::Field::new("tags", stackpress_sql::SqlType::Text).not_null();
-        table = table.add_field(field);
-        // Preserve declared nullability in storage.
-        let field = stackpress_sql::Field::new("title", stackpress_sql::SqlType::Text).not_null();
         table = table.add_field(field);
         table = table.primary_key(["id"]);
         // Storage constraints/indexes are authoritative; UI hints cannot replace them.

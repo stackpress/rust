@@ -7,7 +7,7 @@ use stackpress_sql::{Identifier, Insert, Row, Select, TableDefinition};
 
 const _: () = assert!(stackpress_framework_sql::CONTRACT_REVISION == 1);
 /// Same normalized input identity as the schema transform.
-pub const FINGERPRINT: &str = "0cbe400c604318e1ad0ac49f732d835138be1a72b0df9a63bd4c836d6c71189a";
+pub const FINGERPRINT: &str = "ed7339d88345035c2d45e410c7349278ec7e85bc9880a88c691f3f3ddfccfcf3";
 /// Immutable field codecs, chosen by schema semantics.
 pub const COLUMNS: &[StorageColumn] = &[
     StorageColumn {
@@ -36,6 +36,34 @@ pub const COLUMNS: &[StorageColumn] = &[
         column: "zero",
         codec: StorageCodec::Integer,
         required: true,
+        nonempty: false,
+    },
+    StorageColumn {
+        wire: "rows",
+        column: "rows",
+        codec: StorageCodec::Json,
+        required: false,
+        nonempty: false,
+    },
+    StorageColumn {
+        wire: "metadata",
+        column: "metadata",
+        codec: StorageCodec::Json,
+        required: false,
+        nonempty: false,
+    },
+    StorageColumn {
+        wire: "score",
+        column: "score",
+        codec: StorageCodec::Integer,
+        required: false,
+        nonempty: false,
+    },
+    StorageColumn {
+        wire: "slug",
+        column: "slug",
+        codec: StorageCodec::Text,
+        required: false,
         nonempty: false,
     },
     StorageColumn {
@@ -70,6 +98,18 @@ impl RoleProofStore {
         table = table.add_field(field);
         // Preserve declared nullability in storage.
         let field = stackpress_sql::Field::new("zero", stackpress_sql::SqlType::Integer).not_null();
+        table = table.add_field(field);
+        // Preserve declared nullability in storage.
+        let field = stackpress_sql::Field::new("rows", stackpress_sql::SqlType::Text);
+        table = table.add_field(field);
+        // Preserve declared nullability in storage.
+        let field = stackpress_sql::Field::new("metadata", stackpress_sql::SqlType::Text);
+        table = table.add_field(field);
+        // Preserve declared nullability in storage.
+        let field = stackpress_sql::Field::new("score", stackpress_sql::SqlType::Integer);
+        table = table.add_field(field);
+        // Preserve declared nullability in storage.
+        let field = stackpress_sql::Field::new("slug", stackpress_sql::SqlType::Text);
         table = table.add_field(field);
         // Preserve declared nullability in storage.
         let field = stackpress_sql::Field::new("sensitive", stackpress_sql::SqlType::Text);

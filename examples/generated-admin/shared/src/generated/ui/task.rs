@@ -292,3 +292,101 @@ pub fn view(
     }
     Ok(controls.collect_view().into_any())
 }
+/// Render at most 100 public rows through selected list adapters.
+/// Caller-supplied unique nonempty keys (at most 128 bytes) retain row identity.
+/// Invalid row identities fail before constructing any controls.
+pub fn table(
+    rows: &[(String, super::super::contracts::public::PublicTask)],
+    instance: &str,
+) -> SchemaResult<AnyView> {
+    use stackpress_framework_ui::components::{
+        Table, TableCell, TableGroup, TableHead, TableHeader, TableRow,
+    };
+    let mut keys = std::collections::BTreeSet::new();
+    if rows.len() > 100
+        || rows
+            .iter()
+            .any(|(key, _)| key.is_empty() || key.len() > 128 || !keys.insert(key))
+    {
+        return Err(SchemaError::new(
+            SchemaErrorKind::Invalid,
+            "invalid public table row identities",
+        ));
+    }
+    let fields = descriptors()?;
+    let mut rendered = Vec::new();
+    for (key, value) in rows {
+        let seed = stackpress_framework_schema::to_bounded_value(value)?;
+        let draft = Draft::new(&fields, &seed, Role::List)?;
+        // Hex encoding is injective and cannot collide with role/field delimiters.
+        let identity: String = key
+            .as_bytes()
+            .iter()
+            .map(|byte| format!("{byte:02x}"))
+            .collect();
+        let instance = format!("{instance}-row-{identity}");
+        let mut controls = Vec::new();
+        {
+            // This exact field was approved by the app before normalization.
+            let field = fields
+                .iter()
+                .find(|field| field.wire_name == "title")
+                .cloned()
+                .ok_or_else(|| {
+                    SchemaError::new(
+                        SchemaErrorKind::Invalid,
+                        "missing generated field descriptor",
+                    )
+                })?;
+            let value = draft.get("title").ok_or_else(|| {
+                SchemaError::new(SchemaErrorKind::Invalid, "missing generated draft field")
+            })?;
+            let context = RoleContext {
+                id: format!("{}-list-{}", instance, "title"),
+                field,
+                role: Role::List,
+                value,
+            };
+            controls.push(
+                view! { <stackpress_framework_admin::components::TextView context/> }.into_any(),
+            );
+        }
+        {
+            // This exact field was approved by the app before normalization.
+            let field = fields
+                .iter()
+                .find(|field| field.wire_name == "done")
+                .cloned()
+                .ok_or_else(|| {
+                    SchemaError::new(
+                        SchemaErrorKind::Invalid,
+                        "missing generated field descriptor",
+                    )
+                })?;
+            let value = draft.get("done").ok_or_else(|| {
+                SchemaError::new(SchemaErrorKind::Invalid, "missing generated draft field")
+            })?;
+            let context = RoleContext {
+                id: format!("{}-list-{}", instance, "done"),
+                field,
+                role: Role::List,
+                value,
+            };
+            controls.push(
+                view! { <stackpress_framework_admin::components::BooleanView context/> }.into_any(),
+            );
+        }
+        let cells = controls
+            .into_iter()
+            .map(|control| view! { <TableCell>{control}</TableCell> })
+            .collect_view();
+        rendered.push(view! { <TableRow row_key=key.clone()>{cells}</TableRow> });
+    }
+    let headers = vec![
+        view! { <TableHeader>{"title"}</TableHeader> },
+        view! { <TableHeader>{"done"}</TableHeader> },
+    ]
+    .collect_view();
+    let rows = rendered.collect_view();
+    Ok(view! { <Table caption="Task"><TableHead><TableRow row_key="header">{headers}</TableRow></TableHead><TableGroup>{rows}</TableGroup></Table> }.into_any())
+}

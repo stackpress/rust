@@ -66,3 +66,42 @@ fn generated_fieldsets_and_missing_drafts() {
     });
     owner.cleanup();
 }
+
+/// Tables preserve selected adapters, hostile data, explicit identities and empty datasets.
+#[test]
+fn generated_public_tables_validate_keys_before_rendering() {
+    use generated_admin_shared::ui;
+    let owner = Owner::new();
+    owner.with(|| {
+        let value:contracts::public::PublicTask=serde_json::from_value(serde_json::json!({"id":"t","projectId":"p","title":"</script> \"quoted\" 🦀", "done":false})).unwrap();
+        let rows=vec![("key </script>".into(),value.clone())];
+        let html=ui::task::table(&rows,"table").unwrap().to_html();
+        assert!(html.contains("scope=\"col\""));assert!(html.contains("<thead>"));assert!(html.contains("<tbody>"));assert!(html.contains("No"));
+        assert!(!html.contains("</script>"));assert!(html.contains("&lt;/script&gt;"));
+        assert!(ui::task::table(&[],"empty").unwrap().to_html().contains("<tbody>"));
+        for keys in [vec!["","other"],vec!["same","same"]] {
+            let rows=keys.into_iter().map(|key|(key.into(),value.clone())).collect::<Vec<_>>();
+            assert!(ui::task::table(&rows,"invalid").is_err());
+        }
+        assert!(ui::task::table(&vec![("x".into(),value.clone());101],"large").is_err());
+        assert!(ui::task::table(&[("x".repeat(129),value)],"long").is_err());
+        // Each model's real public DTO exercises its own selected adapter columns.
+        let profile: contracts::public::PublicProfile = serde_json::from_value(
+            serde_json::json!({"id":"p","name":"Ada", "active":false,"address":null}),
+        ).unwrap();
+        let project: contracts::public::PublicProject = serde_json::from_value(
+            serde_json::json!({"id":"j","ownerId":"p","title":"Project", "state":"open","tags":["", "0"]}),
+        ).unwrap();
+        let proof: contracts::public::PublicRoleProof = serde_json::from_value(
+            serde_json::json!({"id":"r","text":null,"flag":false,"zero":0,"rows":["", "0"],"metadata":{"key":"</script>"},"score":0,"slug":"slug"}),
+        ).unwrap();
+        assert!(ui::profile::table(&[("p".into(),profile)], "profile").unwrap().to_html().contains("Ada"));
+        assert!(ui::project::table(&[("j".into(),project)], "project").unwrap().to_html().contains("open"));
+        let proof = ui::role_proof::table(&[("r".into(),proof)], "proof").unwrap().to_html();
+        assert!(proof.contains("&lt;/script&gt;"));
+        assert!(proof.contains("No"));
+        assert!(proof.contains("slug"));
+        assert!(!proof.contains("ADMIN_PRIVATE_DEFAULT_SENTINEL"));
+    });
+    owner.cleanup();
+}

@@ -50,7 +50,7 @@ fn normalized_boundary_defaults_and_exact_supplied_values() {
     let public = serde_json::to_value(stored.project().unwrap()).unwrap();
     assert_eq!(
         public,
-        json!({"id":"proof","text":"fixture default","flag":false,"zero":0})
+        json!({"id":"proof","text":"fixture default","flag":false,"zero":0,"rows":null,"metadata":null,"score":null,"slug":null})
     );
     assert!(!public.to_string().contains("sensitive"));
     for text in [Value::Null, json!(""), json!("supplied")] {
@@ -168,6 +168,37 @@ fn app_component_accepts_the_public_role_interface() {
                 .to_html()
                 .contains("data-admin-plugin=\"accent\"")
         );
+    });
+    owner.cleanup();
+}
+
+/// Collection replacements compile against the same metadata/state interface as generated calls.
+#[cfg(feature = "ssr")]
+#[test]
+fn app_collection_component_keeps_the_exact_role_interface() {
+    use generated_admin_shared::{plugin::AccentTags, ui::project};
+    use leptos::prelude::*;
+    use stackpress_framework_admin::{Draft, RoleContext};
+    use stackpress_framework_schema::Role;
+    let owner = Owner::new();
+    owner.with(|| {
+        let fields = project::descriptors().unwrap();
+        let draft = Draft::new(&fields, &json!({"tags":["", "0"]}), Role::Field).unwrap();
+        let context = RoleContext {
+            id: "plugin-tags".into(),
+            field: fields
+                .into_iter()
+                .find(|field| field.wire_name == "tags")
+                .unwrap(),
+            role: Role::Field,
+            value: draft.get("tags").unwrap(),
+        };
+        assert!(
+            view! {<AccentTags context/>}
+                .to_html()
+                .contains("data-admin-plugin=\"tags\"")
+        );
+        assert_eq!(draft.snapshot().unwrap()["tags"], json!(["", "0"]));
     });
     owner.cleanup();
 }
