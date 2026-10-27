@@ -59,30 +59,26 @@ fn native_execution_under_watchdog() {
 #[ignore = "launched only by M2 watchdog parent"]
 async fn native_child() {
     let scenario = std::env::var("STACKPRESS_SQL_M0_SCENARIO").unwrap();
-    let work = async {
-        match scenario.as_str() {
-            "ddl" => ddl::supported().await,
-            "schema_cache" => ddl::cached_schema().await,
-            "atomic" => ddl::atomic().await,
-            "unsupported" => ddl::unsupported().await,
-            "json" => json::paths().await,
-            "json_types" => json::types().await,
-            "queries" => queries::builders().await,
-            "transactions" => queries::transactions().await,
-            "fetch_cancel" => cancellation::fetch().await,
-            "rollback_cancel" => cancellation::rollback().await,
-            "ddl_cancel" => cancellation::ddl().await,
-            "prepare_failure" => cancellation::prepare().await,
-            "open_cancel" => cancellation::open().await,
-            "native_failures" => cancellation::native_failures().await,
-            "contention" => cancellation::contention().await,
-            "plan_validation" => plans::validation().await,
-            "plan_cancel" => plans::cancellation().await,
-            "plan_transaction" => plans::caller_transaction().await,
-            _ => panic!("unknown M2 scenario"),
-        }
-    };
-    tokio::time::timeout(Duration::from_secs(8), work)
-        .await
-        .expect("M2 cooperative deadline");
+    // The independent parent bounds native and executor stalls without a second clock race.
+    match scenario.as_str() {
+        "ddl" => ddl::supported().await,
+        "schema_cache" => ddl::cached_schema().await,
+        "atomic" => ddl::atomic().await,
+        "unsupported" => ddl::unsupported().await,
+        "json" => json::paths().await,
+        "json_types" => json::types().await,
+        "queries" => queries::builders().await,
+        "transactions" => queries::transactions().await,
+        "fetch_cancel" => cancellation::fetch().await,
+        "rollback_cancel" => cancellation::rollback().await,
+        "ddl_cancel" => cancellation::ddl().await,
+        "prepare_failure" => cancellation::prepare().await,
+        "open_cancel" => cancellation::open().await,
+        "native_failures" => cancellation::native_failures().await,
+        "contention" => cancellation::contention().await,
+        "plan_validation" => plans::validation().await,
+        "plan_cancel" => plans::cancellation().await,
+        "plan_transaction" => plans::caller_transaction().await,
+        _ => panic!("unknown M2 scenario"),
+    }
 }

@@ -95,8 +95,8 @@ pub(super) async fn child(path: PathBuf) -> TestResult<()> {
     let mut options = SqliteOptions::file(path);
     options.max_connections = 1;
     options.max_in_flight = 8;
-    options.acquire_timeout_ms = 1000;
-    options.busy_timeout_ms = 1000;
+    // Values/transaction assertions are not acquisition-latency benchmarks. Use the
+    // adapter's bounded public defaults; the parent still enforces 30s independently.
     contract::run_suite(Arc::new(SqliteDatabase::open(options).await?)).await?;
     Ok(())
 }
