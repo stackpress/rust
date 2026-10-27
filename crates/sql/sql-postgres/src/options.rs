@@ -141,14 +141,28 @@ impl PostgresOptions {
         // SQLx 0.9's constructor reads these ambient fields with no public clearing API.
         // Reject them instead of silently adopting certificates or arbitrary startup policy.
         // All other PG fields are explicitly overwritten below, and pgpass is never read.
-        if ["PGPgROOTCERT", "PGPgCERT", "PGPgKEY", "PGOPTIONS"]
-            .iter()
-            .any(|name| std::env::var_os(name).is_some())
-        {
-            return Err(SqlError::new(
-                ErrorKind::Configuration,
-                "ambient PostgreSQL TLS/startup options are unsupported; use explicit options",
-            ));
+        for (name, context) in [
+            (
+                "PGSSLROOTCERT",
+                "ambient PostgreSQL variable PGSSLROOTCERT is unsupported; use explicit options",
+            ),
+            (
+                "PGSSLCERT",
+                "ambient PostgreSQL variable PGSSLCERT is unsupported; use explicit options",
+            ),
+            (
+                "PGSSLKEY",
+                "ambient PostgreSQL variable PGSSLKEY is unsupported; use explicit options",
+            ),
+            (
+                "PGOPTIONS",
+                "ambient PostgreSQL variable PGOPTIONS is unsupported; use explicit options",
+            ),
+        ] {
+            // Presence, including an empty/non-UTF-8 value, is enough; disclose only its name.
+            if std::env::var_os(name).is_some() {
+                return Err(SqlError::new(ErrorKind::Configuration, context));
+            }
         }
         let options = PgConnectOptions::new_without_pgpass()
             .host(&self.host)

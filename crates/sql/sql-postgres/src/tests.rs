@@ -1,5 +1,7 @@
 //! Offline configuration, strict budgets, and diagnostic ownership checks.
 
+mod environment;
+
 use super::*;
 use stackpress_sql::{ErrorKind, QueryLimits, Result, SqlError};
 
