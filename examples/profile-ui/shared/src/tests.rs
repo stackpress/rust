@@ -349,6 +349,23 @@ fn shared_views_and_explicit_bootstrap() {
     owner.cleanup();
 }
 
+/// Bootstrap success must not erase the independently reported storage recovery.
+#[cfg(feature = "ssr")]
+#[test]
+fn recovery_notice_survives_initial_search() {
+    let owner = Owner::new();
+    owner.with(|| {
+        stackpress_framework_ui::leptos_meta::provide_meta_context();
+        let transport = UnsyncCallback::new(move |(_, done): (SearchInput, SearchCompletion)| {
+            done(Ok(reply("Loaded locally")));
+        });
+        let html = view! { <ProfileSearch seed=seed() transport initial_search=true preference_recovered=true/> }.to_html();
+        assert!(html.contains("Loaded locally"));
+        assert!(html.contains("Saved preferences could not be loaded. Defaults are in use."));
+    });
+    owner.cleanup();
+}
+
 /// Detail is exact, with safe missing/hostile text and a query-preserving return URL.
 #[cfg(feature = "ssr")]
 #[test]

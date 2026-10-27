@@ -3,5 +3,5 @@
   "description": "Only the bundled main window may search and cancel the public read demo.",
   "local": true,
   "windows": ["main"],
-  "permissions": ["allow-profile-search", "allow-cancel-profile-search"]
+  "permissions": ["allow-profile-search", "allow-cancel-profile-search", "allow-load-preferences", "allow-update-preferences"]
 }
