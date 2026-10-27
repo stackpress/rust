@@ -9,6 +9,21 @@ use stackpress_framework_schema::{SchemaError, SchemaErrorKind, SchemaResult, Ui
 #[derive(Clone, Copy)]
 pub struct FormIssues(pub RwSignal<Vec<stackpress_framework_schema::FieldIssue>>);
 
+/// A root's creation/patch semantics, independent of a control's scalar type.
+#[derive(Clone, Copy)]
+pub struct EditorAction(pub Action);
+
+/// Root-owned invalid or uncommitted formatted edits. A form must not submit stale values.
+#[derive(Clone, Default)]
+pub struct PendingEdits(pub RwSignal<std::collections::BTreeMap<String, bool>>);
+impl PendingEdits {
+    /// True while any formatted field has a partial draft, error or unrepresentable value.
+    pub fn blocked(&self) -> bool {
+        self.0
+            .with(|fields| fields.values().any(|blocked| *blocked))
+    }
+}
+
 /// Host-selected parent fields may become read-only in every generated role at this root.
 #[derive(Clone)]
 pub struct LockedFields(pub Vec<String>);

@@ -6,6 +6,7 @@ rust-version.workspace = true
 publish.workspace = true
 
 [features]
+format = ["stackpress-framework-admin/format"]
 default = []
 ssr = ["stackpress-framework-admin/ssr"]
 hydrate = ["stackpress-framework-admin/hydrate"]

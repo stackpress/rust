@@ -141,6 +141,31 @@ fn new_catalog_roles_and_invalid_configuration_diagnostics() {
         let (start, end) = schema.location().unwrap().bytes.unwrap();
         assert!(original[start..end].starts_with("@field."));
     }
+    #[cfg(feature = "format")]
+    for declaration in [
+        "range Number @field.number({ scale -1 })",
+        "range Integer @field.integer({ scale 2 })",
+        "range Number @field.integer",
+        "range Number @field.number({ digits 0 })",
+        "range Number @field.number({ locale \"ambient\" })",
+        "slug String @field.date",
+        "slug Date @field.time",
+        "slug Date @field.date({ precision 1 })",
+        "slug Datetime @field.datetime({ precision 10 })",
+        "slug String @field.phone({ region \"invalid\" })",
+    ] {
+        let original = format!("// 🦀\nmodel Example {{ id String @id {declaration} }}");
+        let error = generate(&original).unwrap_err();
+        let mut cause: &dyn std::error::Error = &error;
+        let schema = loop {
+            if let Some(error) = cause.downcast_ref::<stackpress_framework_schema::SchemaError>() {
+                break error;
+            }
+            cause = cause.source().unwrap();
+        };
+        let (start, end) = schema.location().unwrap().bytes.unwrap();
+        assert!(original[start..end].starts_with("@field."));
+    }
     for role in [
         "field.number",
         "field.date",
@@ -150,6 +175,10 @@ fn new_catalog_roles_and_invalid_configuration_diagnostics() {
         "field.relation",
         "field.suggest",
     ] {
+        if cfg!(feature = "format") && matches!(role, "field.number" | "field.date" | "field.phone")
+        {
+            continue;
+        }
         let source = format!("model Example {{ id String @id slug String @{role} }}");
         // Unsupported vocabulary remains represented but cannot emit a compiled wrapper.
         let (ui, _) = fixture(&source);

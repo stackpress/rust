@@ -6,9 +6,9 @@ Available only with `stackpress-server-http/tls`; default off. See the
 
 ## Files and configuration
 
-TlsFiles is Clone/Debug with public `certificates: PathBuf`,
+TlsFiles is Clone with public `certificates: PathBuf`,
 `private_key: PathBuf`, and `format: TlsFileFormat` fields.
-TlsFileFormat is Clone/Copy/Debug with Pem and Der variants.
+TlsFileFormat is Clone/Copy with Pem and Der variants.
 
 | Operation | Parameters | Returns and effects |
 | --- | --- | --- |

@@ -11,3 +11,6 @@ mod table;
 pub use catalog::{Component, components, register_components};
 pub use emit::emit_roles;
 pub use pages::emit_pages;
+
+#[cfg(feature = "format")]
+mod formatted;

@@ -15,6 +15,17 @@ use tokio::{
 };
 
 /// Caller-selected, idempotent stop signal, also the linearization lock for host admission.
+///
+/// # Examples
+/// Stop before admission, or pass a clone to a running generic supervisor.
+/// ```
+/// use stackpress_server_http::Shutdown;
+/// let stop = Shutdown::new();
+/// let owner = stop.clone();
+/// stop.stop();
+/// stop.stop();
+/// assert!(owner.is_stopped());
+/// ```
 #[derive(Clone, Default)]
 pub struct Shutdown(Arc<StopState>);
 #[derive(Default)]
@@ -163,7 +174,15 @@ impl HttpServer {
         let work = self.serve_acceptor(acceptor, stopping.clone());
         tokio::pin!(work);
         tokio::pin!(stop);
-        tokio::select! {biased;()=&mut stop=>{stopping.stop();work.await} report=&mut work=>report}
+        tokio::select! {
+            biased;
+            () = &mut stop => {
+                // The same sticky gate closes admission before awaiting the existing supervisor.
+                stopping.stop();
+                work.await
+            }
+            report = &mut work => report,
+        }
     }
     /// Supervise a generic IO source with admission before spawn and bounded stop/drain/reap.
     ///

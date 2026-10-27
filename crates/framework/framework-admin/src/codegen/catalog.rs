@@ -98,6 +98,8 @@ pub fn components() -> Vec<Component> {
             },
         });
     }
+    #[cfg(feature = "format")]
+    result.extend(super::formatted::components());
     result
 }
 
@@ -132,7 +134,7 @@ pub fn register_components(
 }
 
 /// Build one optional, public literal argument in stable positional order.
-fn prop(name: &str, value_type: PropType) -> PropDefinition {
+pub(super) fn prop(name: &str, value_type: PropType) -> PropDefinition {
     PropDefinition {
         name: name.into(),
         value_type,

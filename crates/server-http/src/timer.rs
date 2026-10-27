@@ -15,7 +15,9 @@ use std::{
 /// Every HTTP/1 timer supplied by this connection builder is a request-head timer.
 #[derive(Clone)]
 pub(crate) struct HeadTimer {
+    /// Read progress comes from the sole Hyper-owned IO wrapper.
     monitor: Arc<Monitor>,
+    /// Validated gap ceiling, distinct from the parser's immutable absolute budget.
     idle: Duration,
 }
 impl HeadTimer {
@@ -43,9 +45,13 @@ impl Timer for HeadTimer {
 }
 /// The producer is Hyper itself: only it determines when a head timer exists.
 struct HeadSleep {
+    /// One runtime timer reset to the earliest total/progress deadline at each poll.
     inner: Pin<Box<tokio::time::Sleep>>,
+    /// Parser-selected deadline; progress never moves this timestamp.
     absolute: tokio::time::Instant,
+    /// Observes reads without interpreting buffered bytes or owning another reader.
     monitor: Arc<Monitor>,
+    /// Maximum read-progress gap during this parser-owned head.
     idle: Duration,
 }
 impl Future for HeadSleep {

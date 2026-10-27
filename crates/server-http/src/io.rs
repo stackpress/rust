@@ -11,7 +11,9 @@ use tokio::io::{AsyncRead, AsyncWrite, ReadBuf};
 
 /// No raw IO handle reaches a handler; only the connection and its timeout cleanup own this.
 pub(crate) struct SharedIo<I> {
+    /// Shared only with deadline cleanup after Hyper relinquishes the sole reader/writer.
     pub(crate) io: Arc<Mutex<I>>,
+    /// Records native IO progress separately from application producer polling.
     monitor: Arc<Monitor>,
 }
 impl<I> SharedIo<I> {

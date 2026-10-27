@@ -54,6 +54,7 @@ mod collection_state;
 mod collections;
 mod combobox;
 mod disclosure;
+#[cfg(any(target_arch = "wasm32", all(test, feature = "ssr")))]
 mod geometry;
 mod navigation;
 mod overlay;
@@ -72,7 +73,8 @@ pub use collections::{CollectionFieldset, MetadataInput, TagList, TextList};
 pub use combobox::SuggestionCompletion;
 pub use combobox::{Combobox, ComboboxState, SuggestInput, SuggestionStatus};
 pub use disclosure::{Accordion, AccordionItem, Details, TabActivation, TabPanel, Tabs};
-pub use geometry::{effective_zoom, place_popup};
+#[cfg(any(target_arch = "wasm32", all(test, feature = "ssr")))]
+pub(crate) use geometry::{effective_zoom, place_popup};
 pub use navigation::{BreadcrumbTrail, Breadcrumbs, Crumb, Menu, MenuEntry, Menubar};
 pub use overlay::{
     BREADTH_STYLES, DelayMs, Drawer, Popover, PopupRole, Toast, Tooltip, TooltipActivity,

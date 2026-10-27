@@ -34,6 +34,24 @@ pub struct ExchangeObservation {
 }
 /// Synchronous nonblocking sink, invoked outside host/registry/body locks and after active IO Drop.
 /// Panic follows ordinary unwind policy; callbacks are not retried. No observation queue is created.
+///
+/// # Examples
+/// A closure can update bounded application-owned counters without retaining payloads.
+/// ```
+/// use stackpress_server_http::{ExchangeObservation, HttpDelivery, NetworkOptions};
+/// use std::sync::{Arc, atomic::{AtomicU64, Ordering}};
+/// let completed = Arc::new(AtomicU64::new(0));
+/// let sink = Arc::clone(&completed);
+/// let options = NetworkOptions::http("127.0.0.1:8080".parse()?, "http://localhost:8080/")
+///     .with_observer(Arc::new(move |event: ExchangeObservation| {
+///         // Count local completion; it is not a remote acknowledgement.
+///         if event.delivery == HttpDelivery::Completed {
+///             sink.fetch_add(1, Ordering::Relaxed);
+///         }
+///     }));
+/// assert!(options.observer.is_some());
+/// # Ok::<(), Box<dyn std::error::Error>>(())
+/// ```
 pub trait ExchangeObserver: Send + Sync {
     /// Receive one final bounded observation; retaining/forwarding it is the caller's policy.
     fn observe(&self, observation: ExchangeObservation);

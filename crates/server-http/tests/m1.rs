@@ -1,4 +1,6 @@
 //! Native policy proofs over duplex IO, each scenario isolated by a kill-and-reap watchdog.
+mod support;
+
 use futures_core::Stream;
 use stackpress_lib::{Body, Error, Flow, Invocation, Request, Response, Result, queue::task};
 use stackpress_server::{
@@ -15,7 +17,6 @@ use stackpress_server_http::{
 use std::{
     future::pending,
     pin::Pin,
-    process::{Command, Stdio},
     sync::{
         Arc, Mutex,
         atomic::{AtomicBool, AtomicUsize, Ordering},
@@ -1160,25 +1161,10 @@ fn m1_watchdog() {
         "tls_admission",
     ];
     for scenario in scenarios {
-        let mut child = Command::new(std::env::current_exe().unwrap())
-            .args(["--exact", "scenario_child", "--ignored", "--nocapture"])
-            .env("S7_SCENARIO", scenario)
-            .stdout(Stdio::inherit())
-            .stderr(Stdio::inherit())
-            .spawn()
-            .unwrap();
-        let deadline = Instant::now() + Duration::from_secs(10);
-        loop {
-            if let Some(status) = child.try_wait().unwrap() {
-                assert!(status.success(), "M1 {scenario} failed: {status}");
-                break;
-            }
-            if Instant::now() >= deadline {
-                let _ = child.kill();
-                child.wait().unwrap();
-                panic!("M1 {scenario} timed out; killed and reaped");
-            }
-            std::thread::sleep(Duration::from_millis(10));
-        }
+        support::watchdog::run(
+            "scenario_child",
+            Duration::from_secs(10),
+            &[("S7_SCENARIO", scenario)],
+        );
     }
 }

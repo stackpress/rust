@@ -4,6 +4,20 @@ use stackpress_lib::{Error, Result};
 use std::time::{Duration, Instant};
 
 /// Native connection, parsing and deadline policy; zero never means unlimited.
+///
+/// # Examples
+/// Tighten native policy before preparing a host; zero never selects an unlimited budget.
+/// ```
+/// use stackpress_server_http::NetworkLimits;
+/// use std::time::Duration;
+/// let limits = NetworkLimits {
+///     max_connections: 16,
+///     max_handshakes: 4,
+///     head_timeout: Duration::from_secs(5),
+///     ..Default::default()
+/// };
+/// assert!(limits.max_handshakes <= limits.max_connections);
+/// ```
 #[derive(Clone, Debug)]
 pub struct NetworkLimits {
     /// Simultaneously owned connections, acquired before a host task is spawned.

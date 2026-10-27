@@ -142,6 +142,6 @@ pub fn Menubar(
                 if let Some(next)=next{event.prevent_default();open.set(false);#[cfg(target_arch="wasm32")]super::dialog_dom::focus_id(&format!("{prefix}-trigger-{next}"));#[cfg(not(target_arch="wasm32"))]let _=(&prefix,next);}
                 if event.key()=="ArrowDown"{event.prevent_default();open.set(true);}
             }>{option.label.clone()}</button>
-            <Popover id=popup anchor=trigger label=option.label.clone() open role=PopupRole::Menu initial_focus=focus><Menu id=menu state=choices open action horizontal/></Popover></div>}
+            <Popover id=popup anchor=trigger label=option.label.clone() open role=PopupRole::Menu initial_focus_id=focus><Menu id=menu state=choices open action horizontal/></Popover></div>}
     }).collect_view()}</div>}
 }

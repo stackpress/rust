@@ -3,7 +3,7 @@ use super::ControlError;
 /// Place below an anchor, flip above if needed, then clamp within an eight-pixel inset.
 /// # Errors
 /// Rejects non-finite geometry, negative sizes and unusably small viewports.
-pub fn place_popup(
+pub(crate) fn place_popup(
     anchor: [f64; 4],
     popup: [f64; 2],
     viewport: [f64; 2],
@@ -36,7 +36,7 @@ pub fn place_popup(
 /// Multiply at most 64 computed CSS zoom values without using rounded element sizes.
 /// # Errors
 /// Rejects non-finite/nonpositive values, unsupported units and excessive traversal.
-pub fn effective_zoom(values: &[String]) -> Result<f64, ControlError> {
+pub(crate) fn effective_zoom(values: &[String]) -> Result<f64, ControlError> {
     if values.len() > 64 {
         return Err(ControlError);
     }
