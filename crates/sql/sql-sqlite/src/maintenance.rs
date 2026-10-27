@@ -252,6 +252,117 @@ impl SqliteMaintenance {
 }
 
 impl MaintenanceSession {
+    /// Read this table's AUTOINCREMENT high-water mark inside the exclusive transaction.
+    ///
+    /// Only AUTOINCREMENT tables maintain `sqlite_sequence`. Plain INTEGER PRIMARY KEY
+    /// tables use max(rowid)+1 and may reuse deleted IDs by SQLite design. An empty
+    /// AUTOINCREMENT table, or a plain table, returns None. Callers must independently
+    /// verify managed ownership and the checked schema before using this capability.
+    ///
+    /// # Errors
+    /// Invalid/missing tables and malformed, duplicate or negative sequence state are
+    /// refused. Native failure/cancellation retires the connection as for `execute`.
+    pub async fn sequence_high_water(&mut self, table: &str) -> Result<Option<i64>> {
+        let automatic = self.sequence_table(table).await?;
+        if !automatic {
+            return Ok(None);
+        }
+        let rows = self
+            .execute(
+                &stackpress_sql::Select::new(["seq"])
+                    .from("sqlite_sequence")
+                    .where_eq("name", table)
+                    .limit(2),
+            )
+            .await?
+            .rows;
+        if rows.len() > 1 {
+            return Err(sequence_error());
+        }
+        let value = rows
+            .first()
+            .map(|row| row.try_get::<i64>("seq"))
+            .transpose()?;
+        if value.is_some_and(|value| value < 0) {
+            return Err(sequence_error());
+        }
+        Ok(value)
+    }
+
+    /// Preserve a historical minimum without lowering this table's current sequence.
+    ///
+    /// The target must be an existing AUTOINCREMENT table whose managed definition the
+    /// caller has verified. Plain INTEGER PRIMARY KEY tables have no historical sequence;
+    /// this operation refuses them rather than promising non-reuse. No other table is
+    /// changed. Native copy already accounts for surviving IDs; this operation retains
+    /// deleted-ID history, including when the rebuilt table is empty. It never commits.
+    ///
+    /// # Errors
+    /// Refuses negative minima, unsupported tables and malformed sequence state. The
+    /// exact result is read back before acknowledgement; cancellation retires the session.
+    pub async fn preserve_sequence_high_water(&mut self, table: &str, minimum: i64) -> Result<()> {
+        if minimum < 0 {
+            return Err(sequence_error());
+        }
+        if !self.sequence_table(table).await? {
+            return Err(SqlError::new(
+                ErrorKind::Unsupported,
+                "sequence preservation requires AUTOINCREMENT",
+            ));
+        }
+        let current = self.sequence_high_water(table).await?;
+        let expected = current.unwrap_or(0).max(minimum);
+        match current {
+            Some(_) => {
+                self.execute(
+                    &stackpress_sql::Update::new("sqlite_sequence")
+                        .set("seq", expected)
+                        .where_eq("name", table),
+                )
+                .await?;
+            }
+            None => {
+                self.execute(
+                    &stackpress_sql::Insert::new("sqlite_sequence")
+                        .columns(["name", "seq"])
+                        .values([
+                            stackpress_sql::SqlValue::Text(table.into()),
+                            stackpress_sql::SqlValue::Integer(expected),
+                        ]),
+                )
+                .await?;
+            }
+        }
+        // The writer lock excludes cooperative writers; readback also catches malformed state.
+        if self.sequence_high_water(table).await? != Some(expected) {
+            return Err(sequence_error());
+        }
+        Ok(())
+    }
+
+    /// Check one bounded native table declaration without exposing internal-table setters.
+    async fn sequence_table(&mut self, table: &str) -> Result<bool> {
+        copy_identifier(table)?;
+        let rows = self
+            .execute(
+                &stackpress_sql::Select::new(["sql"])
+                    .from("sqlite_schema")
+                    .where_eq("name", table)
+                    .where_eq("type", "table")
+                    .limit(2),
+            )
+            .await?
+            .rows;
+        if rows.len() != 1 || table.starts_with("sqlite_") {
+            return Err(sequence_error());
+        }
+        let declaration: String = rows[0].try_get("sql")?;
+        if declaration.len() > 1024 * 1024 {
+            return Err(sequence_error());
+        }
+        Ok(has_autoincrement(&declaration))
+    }
+
     /// Inspect the actual pre-BEGIN observations without acquiring another connection.
     pub fn policy(&self) -> RebuildPolicy {
         self.policy
@@ -392,6 +503,62 @@ impl MaintenanceSession {
         }
         self.slot.close().await
     }
+}
+
+/// Recognize only an unquoted keyword in SQLite's own declaration, skipping names/literals.
+/// This is capability classification, not a parser for caller-authored migration SQL.
+fn has_autoincrement(declaration: &str) -> bool {
+    let bytes = declaration.as_bytes();
+    let mut index = 0;
+    while index < bytes.len() {
+        let byte = bytes[index];
+        if matches!(byte, b'\'' | b'"' | b'`' | b'[') {
+            let end = if byte == b'[' { b']' } else { byte };
+            index += 1;
+            while index < bytes.len() {
+                if bytes[index] == end {
+                    index += 1;
+                    if index < bytes.len() && bytes[index] == end && end != b']' {
+                        index += 1;
+                        continue;
+                    }
+                    break;
+                }
+                index += 1;
+            }
+        } else if bytes[index..].starts_with(b"--") {
+            while index < bytes.len() && bytes[index] != b'\n' {
+                index += 1;
+            }
+        } else if bytes[index..].starts_with(b"/*") {
+            index += 2;
+            while index < bytes.len() && !bytes[index..].starts_with(b"*/") {
+                index += 1;
+            }
+            index = (index + 2).min(bytes.len());
+        } else if byte.is_ascii_alphanumeric() || byte == b'_' {
+            let start = index;
+            while index < bytes.len()
+                && (bytes[index].is_ascii_alphanumeric() || bytes[index] == b'_')
+            {
+                index += 1;
+            }
+            if bytes[start..index].eq_ignore_ascii_case(b"AUTOINCREMENT") {
+                return true;
+            }
+        } else {
+            index += 1;
+        }
+    }
+    false
+}
+
+/// Refuse invalid identity state without printing database data or native diagnostics.
+fn sequence_error() -> SqlError {
+    SqlError::new(
+        ErrorKind::InvalidQuery,
+        "invalid SQLite sequence state or target",
+    )
 }
 
 /// Explain that an uncertain/consumed maintenance connection cannot execute again.

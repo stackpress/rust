@@ -2,6 +2,9 @@
 
 use std::path::Path;
 
+pub mod maintenance;
+mod operator_schema;
+
 use stackpress_framework_schema::{
     Schema,
     codegen::{
@@ -232,10 +235,25 @@ async fn generate_event(
     Ok(Flow::Continue)
 }
 
-/// Build a generation-only CLI host; no database is opened by generation or startup.
+/// Build an explicit app tool; only selected operator events open databases, never startup.
 pub async fn build_tool(layers: ConfigLayers) -> BuildResult<Server> {
     let mut builder = ServerBuilder::new();
     builder.config_layers(layers)?;
     builder.on("generate", generate_event)?;
+    for event in ["revision", "history-check", "migration-plan"] {
+        builder.on(event, maintenance::event)?;
+    }
+    #[cfg(feature = "database-tools")]
+    for event in [
+        "db-status",
+        "db-install",
+        "db-upgrade",
+        "db-downgrade",
+        "db-purge",
+        "db-uninstall",
+        "db-populate",
+    ] {
+        builder.on(event, maintenance::event)?;
+    }
     builder.build().await
 }

@@ -468,3 +468,276 @@ async fn commit_rejects_invalid_foreign_keys() {
     );
     engine.close().await.unwrap();
 }
+
+/// Supervise the additive G35 cases without changing existing maintenance scenarios.
+#[test]
+fn supervised_sequences() {
+    if let Ok(scenario) = std::env::var("STACKPRESS_S6_SCENARIO") {
+        tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .unwrap()
+            .block_on(async {
+                match scenario.as_str() {
+                    "sequence-basic" => sequence_basic().await,
+                    "sequence-invalid" => sequence_invalid().await,
+                    "sequence-cancel" => sequence_cancel().await,
+                    _ => panic!("unknown sequence scenario"),
+                }
+            });
+        return;
+    }
+    for scenario in ["sequence-basic", "sequence-invalid", "sequence-cancel"] {
+        let (ok, expired, output) = watchdog::run(
+            "maintenance::tests::supervised_sequences",
+            scenario,
+            Duration::from_secs(10),
+        );
+        assert!(ok && !expired, "{scenario}: timeout={expired}\n{output}");
+    }
+}
+/// Install independent automatic/plain/empty tables with a deleted historical maximum.
+async fn sequence_setup(options: SqliteOptions) {
+    let engine = engine(options).await;
+    for (name, automatic) in [
+        ("automatic", true),
+        ("empty", true),
+        ("other", true),
+        ("plain", false),
+    ] {
+        let mut field = Field::new("id", SqlType::Integer).not_null();
+        field.auto_increment = automatic;
+        engine
+            .execute_plan(
+                &Create::new(name)
+                    .add_field(field)
+                    .primary_key(["id"])
+                    .render(DialectId::Sqlite)
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+    }
+    for id in 1..=100 {
+        engine
+            .execute(&Insert::new("automatic").columns(["id"]).values([id]))
+            .await
+            .unwrap();
+    }
+    engine
+        .execute(&Sql::literal(
+            DialectId::Sqlite,
+            "DELETE FROM automatic WHERE id > 1",
+        ))
+        .await
+        .unwrap();
+    engine
+        .execute(&Insert::new("other").columns(["id"]).values([500]))
+        .await
+        .unwrap();
+    engine.close().await.unwrap();
+}
+/// Monotonic restore handles absent rows, preserves other tables, and rolls back atomically.
+async fn sequence_basic() {
+    let root = tempfile::tempdir_in("/private/tmp").unwrap();
+    let options = self::options(&root);
+    sequence_setup(options.clone()).await;
+    let mut session = SqliteMaintenance::open(options.clone())
+        .await
+        .unwrap()
+        .begin_rebuild()
+        .await
+        .unwrap();
+    assert_eq!(
+        session.sequence_high_water("automatic").await.unwrap(),
+        Some(100)
+    );
+    assert_eq!(session.sequence_high_water("empty").await.unwrap(), None);
+    assert_eq!(session.sequence_high_water("plain").await.unwrap(), None);
+    session
+        .preserve_sequence_high_water("empty", 10)
+        .await
+        .unwrap();
+    session
+        .preserve_sequence_high_water("automatic", 99)
+        .await
+        .unwrap();
+    assert_eq!(
+        session.sequence_high_water("automatic").await.unwrap(),
+        Some(100)
+    );
+    session
+        .preserve_sequence_high_water("automatic", 150)
+        .await
+        .unwrap();
+    assert_eq!(
+        session.sequence_high_water("automatic").await.unwrap(),
+        Some(150)
+    );
+    assert_eq!(
+        session.sequence_high_water("other").await.unwrap(),
+        Some(500)
+    );
+    assert!(
+        session
+            .preserve_sequence_high_water("plain", 100)
+            .await
+            .is_err()
+    );
+    session.rollback().await.unwrap();
+    let mut session = SqliteMaintenance::open(options)
+        .await
+        .unwrap()
+        .begin_rebuild()
+        .await
+        .unwrap();
+    assert!(session.policy().foreign_keys_initially_enabled);
+    assert_eq!(
+        session.sequence_high_water("automatic").await.unwrap(),
+        Some(100)
+    );
+    assert_eq!(session.sequence_high_water("empty").await.unwrap(), None);
+    session
+        .preserve_sequence_high_water("empty", 0)
+        .await
+        .unwrap();
+    session
+        .preserve_sequence_high_water("automatic", 200)
+        .await
+        .unwrap();
+    session.commit().await.unwrap();
+}
+/// Corrupt fixtures cannot be mistaken for an absent/valid sequence, or gain setter authority.
+async fn sequence_invalid() {
+    let root = tempfile::tempdir_in("/private/tmp").unwrap();
+    let options = self::options(&root);
+    sequence_setup(options.clone()).await;
+    for invalid in ["negative", "text", "duplicate"] {
+        let mut session = SqliteMaintenance::open(options.clone())
+            .await
+            .unwrap()
+            .begin_rebuild()
+            .await
+            .unwrap();
+        for name in [
+            "missing",
+            "sqlite_sequence",
+            "automatic;DROP TABLE other",
+            "../automatic",
+        ] {
+            assert!(session.sequence_high_water(name).await.is_err());
+        }
+        assert!(
+            session
+                .preserve_sequence_high_water("automatic", -1)
+                .await
+                .is_err()
+        );
+        match invalid {
+            "negative" => {
+                session
+                    .execute(
+                        &stackpress_sql::Update::new("sqlite_sequence")
+                            .set("seq", -1)
+                            .where_eq("name", "automatic"),
+                    )
+                    .await
+                    .unwrap();
+            }
+            "text" => {
+                session
+                    .execute(
+                        &stackpress_sql::Update::new("sqlite_sequence")
+                            .set("seq", "bad")
+                            .where_eq("name", "automatic"),
+                    )
+                    .await
+                    .unwrap();
+            }
+            _ => {
+                session
+                    .execute(
+                        &Insert::new("sqlite_sequence")
+                            .columns(["name", "seq"])
+                            .values([SqlValue::Text("automatic".into()), SqlValue::Integer(2)]),
+                    )
+                    .await
+                    .unwrap();
+            }
+        }
+        assert!(session.sequence_high_water("automatic").await.is_err());
+        assert!(
+            session
+                .preserve_sequence_high_water("automatic", 250)
+                .await
+                .is_err()
+        );
+        session.rollback().await.unwrap();
+    }
+    // No automatic table means no sqlite_sequence system table at all.
+    let root = tempfile::tempdir_in("/private/tmp").unwrap();
+    let options = self::options(&root);
+    let mut session = SqliteMaintenance::open(options)
+        .await
+        .unwrap()
+        .begin_rebuild()
+        .await
+        .unwrap();
+    session
+        .execute(
+            &Create::new("plain")
+                .add_field(Field::new("AUTOINCREMENT", SqlType::Text).default("AUTOINCREMENT"))
+                .add_field(Field::new("id", SqlType::Integer).not_null())
+                .primary_key(["id"])
+                .render(DialectId::Sqlite)
+                .unwrap()
+                .queries()[0],
+        )
+        .await
+        .unwrap();
+    assert_eq!(session.sequence_high_water("plain").await.unwrap(), None);
+    assert!(
+        session
+            .preserve_sequence_high_water("plain", 1)
+            .await
+            .is_err()
+    );
+    session.rollback().await.unwrap();
+    assert!(!has_autoincrement(
+        "CREATE TABLE plain (id INTEGER PRIMARY KEY /* AUTOINCREMENT */, note TEXT DEFAULT 'AUTOINCREMENT') -- AUTOINCREMENT"
+    ));
+    assert!(has_autoincrement(
+        "CREATE TABLE x (id INTEGER PRIMARY KEY autoincrement)"
+    ));
+}
+/// Cancel after the real sequence mutation enters SQLite's native update hook.
+async fn sequence_cancel() {
+    let root = tempfile::tempdir_in("/private/tmp").unwrap();
+    let options = self::options(&root);
+    sequence_setup(options.clone()).await;
+    let mut session = SqliteMaintenance::open(options.clone())
+        .await
+        .unwrap()
+        .begin_rebuild()
+        .await
+        .unwrap();
+    let (mut entered, release) = gate(&mut session.slot, false).await;
+    let mut pending = Box::pin(session.preserve_sequence_high_water("automatic", 200));
+    tokio::select! {ready=&mut entered=>ready.unwrap(),result=pending.as_mut()=>panic!("sequence mutation missed native gate: {result:?}")}
+    drop(pending);
+    assert!(session.slot.connection.is_none());
+    release.send(()).unwrap();
+    session.rollback().await.unwrap();
+    let mut session = SqliteMaintenance::open(options)
+        .await
+        .unwrap()
+        .begin_rebuild()
+        .await
+        .unwrap();
+    assert!(session.policy().foreign_keys_initially_enabled);
+    assert_eq!(
+        session.sequence_high_water("automatic").await.unwrap(),
+        Some(100)
+    );
+    session.rollback().await.unwrap();
+}
