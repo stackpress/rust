@@ -136,3 +136,19 @@ pub async fn initialize(engine: &Engine) -> stackpress_lib::Result<()> {
 fn host_error(cause: impl std::error::Error + Send + Sync + 'static) -> stackpress_lib::Error {
     stackpress_lib::Error::new("admin fixture database initialization failed").with_cause(cause)
 }
+
+/// Open an already-created review fixture and return its one-shot acknowledgement control.
+/// # Errors
+/// Refuses a missing database and retains concrete SQLite failures.
+#[cfg(all(feature = "review-preview", debug_assertions))]
+pub async fn open_controlled(
+    path: &Path,
+) -> stackpress_sql::Result<(Arc<Engine>, Arc<AtomicBool>)> {
+    let inner = SqliteDatabase::open(SqliteOptions::file(path).create_if_missing(false)).await?;
+    let fault = Arc::new(AtomicBool::new(false));
+    let engine = Arc::new(Engine::new(Observed {
+        inner,
+        fault: fault.clone(),
+    }));
+    Ok((engine, fault))
+}

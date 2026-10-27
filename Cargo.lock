@@ -5026,6 +5026,35 @@ dependencies = [
 ]
 
 [[package]]
+name = "stackpress-example-review-preview"
+version = "0.1.0"
+dependencies = [
+ "base64 0.22.1",
+ "generated-admin-shared",
+ "generated-admin-web",
+ "http",
+ "http-body-util",
+ "hyper",
+ "hyper-util",
+ "leptos",
+ "serde",
+ "serde_json",
+ "stackpress-example-ui-format",
+ "stackpress-example-ui-gallery-web",
+ "stackpress-example-ui-preferences-web",
+ "stackpress-example-ui-stream-web",
+ "stackpress-framework-preferences",
+ "stackpress-framework-ui",
+ "stackpress-framework-view",
+ "stackpress-lib",
+ "stackpress-server",
+ "stackpress-server-http",
+ "stackpress-sql",
+ "tempfile",
+ "tokio",
+]
+
+[[package]]
 name = "stackpress-example-sql-profile"
 version = "0.1.0"
 dependencies = [
