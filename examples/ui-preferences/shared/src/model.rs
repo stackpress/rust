@@ -36,13 +36,19 @@ pub fn registry() -> LocaleRegistry {
 }
 /// Fixed host origin and checked mount; no caller-supplied destination exists.
 pub fn action(base: BasePath) -> SettingsAction {
-    SettingsAction::new(
-        registry(),
-        CookieScope::new("https://preferences.invalid".into(), base)
-            .expect("valid compiled origin"),
-        ThemePreference::System,
-    )
+    action_at_origin(base, "https://preferences.invalid").expect("valid compiled origin")
 }
+/// Construct presentation persistence for an explicit trusted canonical HTTP(S) origin.
+/// # Errors
+/// Rejects an invalid cookie origin before rendering or persistence.
+pub fn action_at_origin(base: BasePath, origin: &str) -> Result<SettingsAction, PreferenceError> {
+    Ok(SettingsAction::new(
+        registry(),
+        CookieScope::new(origin.into(), base)?,
+        ThemePreference::System,
+    ))
+}
+
 /// Decode and admit the host projection before mounting; no browser storage read.
 ///
 /// # Errors

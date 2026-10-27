@@ -6,7 +6,7 @@ use stackpress_framework_preferences::{
 use stackpress_framework_ui::language::LanguageContext;
 
 mod model;
-pub use model::{STYLES, Seed, action, decode, language, registry};
+pub use model::{STYLES, Seed, action, action_at_origin, decode, language, registry};
 #[cfg(target_arch = "wasm32")]
 mod browser;
 

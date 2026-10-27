@@ -103,7 +103,7 @@ pub async fn import(
     }
     let policy = invocation.service::<Policy>()?;
     authorize_action(policy, model(module)?, Action::Import, request)?;
-    if request.headers.get("origin") != Some("https://admin.invalid")
+    if request.headers.get("origin") != Some(invocation.service::<MutationOrigin>()?.0.as_str())
         || request.headers.get("x-admin-csrf") != Some(config.csrf.as_str())
     {
         return Err(Error::new("admin import CSRF refused")

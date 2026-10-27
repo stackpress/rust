@@ -63,25 +63,36 @@ fn view_error(error: ViewError) -> Error {
 
 /// One normal Send handler stages the local renderer before installing its body.
 async fn page(req: &mut Request, res: &mut Response, inv: Invocation<'_>) -> Result<Flow> {
-    let probe = inv.service::<Arc<Probe>>()?.clone();
     let mode = inv.service::<Scenario>()?.0.clone();
     let base = if req.url.path().starts_with("/demo/") {
         "/demo"
     } else {
         ""
     };
+    render_page(req, res, inv, base.to_owned(), mode).await
+}
+/// Render one scenario while retaining the existing owned stream/cancellation path.
+async fn render_page(
+    req: &mut Request,
+    res: &mut Response,
+    inv: Invocation<'_>,
+    base: String,
+    mode: String,
+) -> Result<Flow> {
+    let probe = inv.service::<Arc<Probe>>()?.clone();
     let assets = PageAssets {
         build: "ui-stream".into(),
-        base: BasePath::new(base).map_err(view_error)?,
+        base: BasePath::new(&base).map_err(view_error)?,
         module: PublicLocation::new("/assets/start.js").map_err(view_error)?,
         stylesheet: None,
     };
+    let factory_mode = mode.clone();
     let renderer = StreamLeptosRenderer::new(
         PageContract::new(1, "ui-stream").map_err(view_error)?,
         assets,
         RenderStreamLimits::default(),
         move |snapshot: &PageSnapshot<DemoData>| {
-            if mode == "precommit" {
+            if factory_mode == "precommit" {
                 return Err(ViewError::InvalidSnapshot);
             }
             let marker = Arc::new(());
@@ -95,7 +106,7 @@ async fn page(req: &mut Request, res: &mut Response, inv: Invocation<'_>) -> Res
         },
     )
     .map_err(view_error)?;
-    let mode = inv.service::<Scenario>()?.0.as_str();
+    let mode = mode.as_str();
     let seed = PageSnapshot {
         revision: 1,
         build: "ui-stream".into(),
@@ -307,4 +318,32 @@ pub async fn exchange(
         report,
         probe,
     })
+}
+
+/// Register the same streamed component at three explicit routes without opening IO.
+/// # Errors
+/// Returns route/service registration errors before the caller builds its host.
+pub fn configure(builder: &mut ServerBuilder, base: &str, probe: Arc<Probe>) -> Result<()> {
+    use stackpress_lib::handler;
+    builder.on_config(task(move |start: &mut StartupContext| {
+        let probe = probe.clone();
+        Box::pin(async move {
+            start.register(Arc::new(probe))?;
+            Ok(Flow::Continue)
+        })
+    }))?;
+    for (suffix, mode) in [
+        ("stream", "normal"),
+        ("late", "late"),
+        ("pending", "pending"),
+    ] {
+        let base = base.to_owned();
+        builder.get(
+            &format!("{base}/{suffix}"),
+            handler(move |req, res, inv| {
+                Box::pin(render_page(req, res, inv, base.clone(), mode.to_owned()))
+            }),
+        )?;
+    }
+    Ok(())
 }

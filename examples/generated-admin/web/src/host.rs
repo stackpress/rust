@@ -8,6 +8,7 @@ use stackpress_framework_admin::{
 use stackpress_framework_sql::operations::{Operation, OperationPolicy, Policy, Registration};
 use stackpress_lib::{Body, Error, Flow, Invocation, Nest, Request, Response, Result, queue::task};
 use stackpress_server::{Server, ServerBuilder, ServerInvocationExt, StartupContext};
+mod origin;
 pub mod transfer;
 
 use std::{collections::BTreeMap, sync::Arc};
@@ -53,6 +54,29 @@ pub async fn build(
     config: Config,
     policy: Arc<dyn OperationPolicy>,
 ) -> Result<Server> {
+    let mut builder = ServerBuilder::new();
+    configure(
+        &mut builder,
+        engine,
+        config,
+        policy,
+        "https://admin.invalid".into(),
+    )?;
+    builder.build().await.map_err(|error| error.error)
+}
+/// Exact trusted HTTP mutation origin, independent of browser DTO input.
+struct MutationOrigin(String);
+/// Add current generated routes and operation registration to a caller-owned host.
+/// # Errors
+/// Validates mount, origin, CSRF and transfer limits before startup.
+pub fn configure(
+    builder: &mut ServerBuilder,
+    engine: Arc<stackpress_sql::Engine>,
+    config: Config,
+    policy: Arc<dyn OperationPolicy>,
+    origin: String,
+) -> Result<()> {
+    origin::validate(&origin)?;
     stackpress_framework_admin::pages::mount(&config.mount).map_err(invalid_cause)?;
     if config.csrf.is_empty() || config.csrf.len() > 128 {
         return Err(Error::invalid("invalid admin CSRF configuration"));
@@ -61,15 +85,16 @@ pub async fn build(
     let mount = config.mount.clone();
     let config = Arc::new(config);
     let policy = Arc::new(Policy(policy));
-    let mut builder = ServerBuilder::new();
     builder.on_config(task(move |start: &mut StartupContext| {
         let engine = engine.clone();
         let config = config.clone();
         let policy = policy.clone();
+        let origin = origin.clone();
         Box::pin(async move {
             start.register(engine)?;
             start.register(config)?;
             start.register(policy)?;
+            start.register(Arc::new(MutationOrigin(origin)))?;
             Ok(Flow::Continue)
         })
     }))?;
@@ -79,8 +104,8 @@ pub async fn build(
             Ok(Flow::Continue)
         })
     }))?;
-    crate::generated::pages_host::routes(&mut builder, &mount)?;
-    builder.build().await.map_err(|error| error.error)
+    crate::generated::pages_host::routes(builder, &mount)?;
+    Ok(())
 }
 
 /// Resolve only explicitly generated page models; caller text never selects an event import.
@@ -297,7 +322,8 @@ pub async fn api(
     if !matches!(
         selected,
         Operation::Get | Operation::Detail | Operation::Search
-    ) && (request.headers.get("origin") != Some("https://admin.invalid")
+    ) && (request.headers.get("origin")
+        != Some(invocation.service::<MutationOrigin>()?.0.as_str())
         || request.headers.get("x-admin-csrf") != Some(config.csrf.as_str()))
     {
         return Err(Error::new("admin CSRF refused")
