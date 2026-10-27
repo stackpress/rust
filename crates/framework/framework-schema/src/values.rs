@@ -238,6 +238,7 @@ impl DatetimeValue {
 macro_rules! decode_string {
     ($name:ty) => {
         impl<'de> Deserialize<'de> for $name {
+            /// Validate decoded text before constructing the canonical wrapper.
             fn deserialize<D: serde::Deserializer<'de>>(decoder: D) -> Result<Self, D::Error> {
                 Self::parse(&String::deserialize(decoder)?).map_err(serde::de::Error::custom)
             }
@@ -265,11 +266,15 @@ pub fn browser_integer(value: i64) -> SchemaResult<i64> {
 /// otherwise retains the original typed codec cause beneath distinct context.
 pub fn to_bounded_value<T: Serialize>(value: &T) -> SchemaResult<Value> {
     use std::io::Write;
+    /// Owned serializer sink; a failed chunk leaves the retained prefix within one MiB.
     struct Buffer {
+        /// Encoded prefix, decoded only after serialization completes successfully.
         bytes: Vec<u8>,
+        /// Distinguish the size refusal from an unrelated serializer failure.
         exceeded: bool,
     }
     impl Write for Buffer {
+        /// Reject the entire next chunk before it can cross the fixed ceiling.
         fn write(&mut self, bytes: &[u8]) -> std::io::Result<usize> {
             if bytes.len() > 1024 * 1024 - self.bytes.len() {
                 self.exceeded = true;
@@ -278,6 +283,7 @@ pub fn to_bounded_value<T: Serialize>(value: &T) -> SchemaResult<Value> {
             self.bytes.extend_from_slice(bytes);
             Ok(bytes.len())
         }
+        /// This in-memory sink has no deferred IO to flush.
         fn flush(&mut self) -> std::io::Result<()> {
             Ok(())
         }

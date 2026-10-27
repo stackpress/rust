@@ -1,6 +1,7 @@
 //! Real Idea composition and app-owned storage normalization for explicit revision recording.
+use super::external;
 use stackpress_framework_sql::migrations::RevisionSnapshot;
-use stackpress_lib::{Error, ErrorKind};
+use stackpress_lib::Error;
 use std::path::Path;
 /// Compose/finalize the real Idea input and reuse the same app-owned normalization/DDL catalog.
 pub(super) fn snapshot(
@@ -59,12 +60,6 @@ pub(super) fn snapshot(
         .map_err(data_error)
 }
 
-/// Keep compiler/native causes distinct from safe operator context.
-fn external(context: &'static str, cause: impl std::error::Error + Send + Sync + 'static) -> Error {
-    Error::new(context)
-        .with_kind(ErrorKind::External)
-        .with_cause(cause)
-}
 /// Preserve the data-layer error beneath an operator context.
 fn data_error(cause: stackpress_framework_sql::DataError) -> Error {
     external("operator schema preparation failed", cause)
