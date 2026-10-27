@@ -43,6 +43,14 @@ pub struct TlsFiles {
 }
 impl TlsFiles {
     /// Select conventional PEM deployment files without opening them.
+    ///
+    /// # Examples
+    /// Select locations without reading files; host preparation validates them before bind.
+    /// ```
+    /// use stackpress_server_http::{TlsFiles, TlsFileFormat};
+    /// let files = TlsFiles::pem("deploy/fullchain.pem", "deploy/private-key.pem");
+    /// assert!(matches!(files.format, TlsFileFormat::Pem));
+    /// ```
     pub fn pem(certificates: impl Into<PathBuf>, private_key: impl Into<PathBuf>) -> Self {
         Self {
             certificates: certificates.into(),
@@ -57,6 +65,14 @@ impl TlsConfig {
     /// cannot exclude hostile concurrent replacement, as with immutable asset startup reads.
     /// # Errors
     /// Preserves original IO, PEM/DER or Rustls key/configuration failures without displaying them.
+    ///
+    /// # Examples
+    /// ```no_run
+    /// use stackpress_server_http::{TlsConfig, TlsFiles};
+    /// let config = TlsConfig::from_files(&TlsFiles::pem("deploy/fullchain.pem", "deploy/private-key.pem"))?;
+    /// // Reuse this prepared immutable configuration; requests do not reopen the files.
+    /// # let _ = config; Ok::<(), stackpress_lib::Error>(())
+    /// ```
     pub fn from_files(files: &TlsFiles) -> Result<Self> {
         let certificates = crate::startup::read_regular(&files.certificates, 64 * 1024)?;
         let key = crate::startup::read_regular(&files.private_key, 16 * 1024)?;
@@ -177,8 +193,13 @@ impl HttpServer {
             ()=&mut stop=>return ConnectionReport{exchanges:Vec::new(),failure:None,shutdown:true,forced:false},
             result=tokio::time::timeout_at(deadline,acceptor.accept(io))=>result,
         };
+        // Collapse timeout/native failures once; the serving match then has no impossible success arm.
+        let handshake = match handshake {
+            Ok(result) => result.map_err(|cause| external("TLS handshake failed", cause)),
+            Err(cause) => Err(external("TLS handshake deadline exceeded", cause).with_code(408)),
+        };
         match handshake {
-            Ok(Ok(io)) => {
+            Ok(io) => {
                 admission._handshake.take();
                 self.serve_connection(
                     io,
@@ -192,12 +213,8 @@ impl HttpServer {
                 )
                 .await
             }
-            result => {
-                let error = match result {
-                    Ok(Err(cause)) => external("TLS handshake failed", cause),
-                    Err(cause) => external("TLS handshake deadline exceeded", cause).with_code(408),
-                    Ok(Ok(_)) => unreachable!("successful handshake returned above"),
-                };
+            Err(error) => {
+                // Keep timeout classification separate from native handshake rejection without losing its cause.
                 let status = if error.code() == 408 { 408 } else { 400 };
                 let mut report = crate::report::rejected(error, status);
                 report.exchanges[0].elapsed = measured.elapsed();

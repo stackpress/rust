@@ -87,6 +87,20 @@ impl HttpServer {
     /// Startup certificate reads are synchronous and bounded; no worker task escapes preparation.
     /// # Errors
     /// Rejects invalid origin/authority/proxy/limit/TLS configuration with original typed causes.
+    ///
+    /// # Examples
+    /// Prepare deployment checks while keeping binding and runtime ownership with the caller.
+    /// ```
+    /// use stackpress_server::ServerBuilder;
+    /// use stackpress_server_http::{HttpServer, NetworkOptions};
+    /// use std::sync::Arc;
+    /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
+    /// let app = Arc::new(ServerBuilder::new().build().await?);
+    /// let options = NetworkOptions::http("127.0.0.1:8080".parse()?, "https://profiles.example/");
+    /// let host = HttpServer::from_options(app, options)?;
+    /// assert_eq!(host.active(), (0, 0));
+    /// # Ok(()) }
+    /// ```
     pub fn from_options(app: Arc<Server>, options: NetworkOptions) -> Result<Self> {
         let policy = RequestPolicy::new(
             &options.http.base_url,

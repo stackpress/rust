@@ -1,4 +1,6 @@
 //! Deployment proofs over supplied duplex IO only; no test calls bind or opens a socket.
+mod support;
+
 use sha2::{Digest, Sha256};
 use stackpress_lib::{Error, Flow, Invocation, Request, Response, Result, queue::task};
 use stackpress_server::{ServerBuilder, ServerInvocationExt, StartupContext};
@@ -10,7 +12,7 @@ use stackpress_server_http::{
 use std::{
     future::pending,
     path::PathBuf,
-    process::{Command, Stdio},
+    process::Command,
     sync::{
         Arc, Mutex,
         atomic::{AtomicUsize, Ordering},
@@ -766,26 +768,11 @@ fn m2_watchdog() {
         #[cfg(feature = "tls")]
         "tls_files",
     ] {
-        let mut child = Command::new(std::env::current_exe().unwrap())
-            .args(["--exact", "scenario_child", "--ignored", "--nocapture"])
-            .env("S7_M2_SCENARIO", scenario)
-            .stdout(Stdio::inherit())
-            .stderr(Stdio::inherit())
-            .spawn()
-            .unwrap();
-        let deadline = Instant::now() + Duration::from_secs(10);
-        loop {
-            if let Some(status) = child.try_wait().unwrap() {
-                assert!(status.success(), "M2 {scenario} failed: {status}");
-                break;
-            }
-            if Instant::now() >= deadline {
-                let _ = child.kill();
-                child.wait().unwrap();
-                panic!("M2 {scenario} timed out; killed/reaped");
-            }
-            std::thread::sleep(Duration::from_millis(10));
-        }
+        support::watchdog::run(
+            "scenario_child",
+            Duration::from_secs(10),
+            &[("S7_M2_SCENARIO", scenario)],
+        );
     }
 }
 

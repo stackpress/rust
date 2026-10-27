@@ -224,6 +224,20 @@ impl HttpAdapter {
     ///
     /// # Errors
     /// Has the same reporting and cancellation contract as [`Self::handle`].
+    ///
+    /// # Examples
+    /// Supply only caller-trusted metadata; input headers do not populate this context.
+    /// ```
+    /// use stackpress_server::{HandleOptions, ServerBuilder, http::{BufferedRequest, HttpAdapter}};
+    /// use std::sync::Arc;
+    /// # async fn example() -> stackpress_lib::Result<()> {
+    /// let app = ServerBuilder::new().build().await.map_err(|failure| failure.error)?;
+    /// let options = HandleOptions { adapter_context: Some(Arc::new(String::from("trusted caller"))) };
+    /// let reply = HttpAdapter::new(Default::default())?
+    ///     .handle_with_options(&app, BufferedRequest::new(Vec::new()), options).await?;
+    /// assert!(!reply.report.output_eligible);
+    /// # Ok(()) }
+    /// ```
     pub async fn handle_with_options(
         &self,
         app: &Server,
