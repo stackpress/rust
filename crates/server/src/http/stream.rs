@@ -13,7 +13,7 @@ use stackpress_lib::{Body, DeliveryState, Error, Response, Result, SharedNative,
 use std::{
     future::Future,
     pin::Pin,
-    sync::Mutex,
+    sync::{Arc, Mutex},
     task::{Context, Poll},
     time::Duration,
 };
@@ -66,11 +66,21 @@ impl StreamLimits {
 /// Exclusive pinned producer; no reference into a request or invocation can escape.
 type OwnedStream = Pin<Box<dyn Stream<Item = Result<Vec<u8>>> + Send + 'static>>;
 /// Private typed identity; a mutex transfers ownership and is never held during polling.
-struct HttpStreamBody {
+struct HttpBodySlot {
     /// Only the selected final response may take this producer, after successful preflight.
-    stream: Mutex<Option<OwnedStream>>,
+    stream: Mutex<Option<OwnedSource>>,
+    /// Exact size is available only for internally owned immutable bytes.
+    length: Option<usize>,
     /// Immutable limits travel with the exclusive producer when taken.
     limits: StreamLimits,
+}
+
+/// Owned alternatives share one take-once publication guard; neither runs under the slot lock.
+enum OwnedSource {
+    /// An application producer retains its explicit runtime/byte policy.
+    Stream(OwnedStream),
+    /// An immutable representation shares its storage and has an exact checked length.
+    Bytes(Arc<[u8]>),
 }
 
 /// Install a typed stream through the existing explicit native-value seam.
@@ -140,6 +150,32 @@ pub trait HttpResponseExt {
     fn stream<S>(&mut self, mime: &str, stream: S, limits: StreamLimits) -> Result<&mut Self>
     where
         S: Stream<Item = Result<Vec<u8>>> + Send + 'static;
+
+    /// Share immutable representation bytes without a whole-response copy.
+    ///
+    /// Publication remains one-shot. Native output copies at most 64KiB per demand poll;
+    /// HEAD reports the known length without polling or copying representation bytes.
+    /// Explicit limits bound bytes/chunks and IO lifetime, as for application streams.
+    /// Callers own the preexisting immutable allocation.
+    /// # Errors
+    /// Rejects a finalized response, invalid MIME, zero/nonfinite controls, oversized bytes
+    /// or foundation descriptor budgets.
+    ///
+    /// ```
+    /// use std::sync::Arc;
+    /// use stackpress_lib::Response;
+    /// use stackpress_server::http::stream::{HttpResponseExt, StreamLimits};
+    /// let mut response = Response::new();
+    /// let bytes: Arc<[u8]> = Arc::from(b"verified bytes".as_slice());
+    /// response.immutable_bytes("text/plain", bytes, StreamLimits::default())?;
+    /// # Ok::<(), stackpress_lib::Error>(())
+    /// ```
+    fn immutable_bytes(
+        &mut self,
+        mime: &str,
+        bytes: Arc<[u8]>,
+        limits: StreamLimits,
+    ) -> Result<&mut Self>;
 }
 impl HttpResponseExt for Response {
     /// Transfer the producer into a private take-once slot after checking its policy.
@@ -151,8 +187,30 @@ impl HttpResponseExt for Response {
         // Response::set atomically checks Open state, MIME and foundation node budgets.
         self.set(
             mime,
-            Body::Value(Value::Shared(SharedNative::new(HttpStreamBody {
-                stream: Mutex::new(Some(Box::pin(stream))),
+            Body::Value(Value::Shared(SharedNative::new(HttpBodySlot {
+                stream: Mutex::new(Some(OwnedSource::Stream(Box::pin(stream)))),
+                length: None,
+                limits,
+            }))),
+        )
+    }
+    /// Only owned immutable storage can supply a trusted native representation length.
+    fn immutable_bytes(
+        &mut self,
+        mime: &str,
+        bytes: Arc<[u8]>,
+        limits: StreamLimits,
+    ) -> Result<&mut Self> {
+        limits.validate()?;
+        let length = bytes.len();
+        if length > limits.max_bytes {
+            return Err(Error::limit("immutable HTTP byte limit exceeded"));
+        }
+        self.set(
+            mime,
+            Body::Value(Value::Shared(SharedNative::new(HttpBodySlot {
+                stream: Mutex::new(Some(OwnedSource::Bytes(bytes))),
+                length: Some(length),
                 limits,
             }))),
         )
@@ -169,6 +227,12 @@ pub struct HttpBody {
 enum BodySource {
     /// One already converted buffer, yielded at most once.
     Buffered(Option<Vec<u8>>),
+    /// Shared immutable storage is copied only into one bounded demand chunk at a time.
+    Immutable {
+        bytes: Arc<[u8]>,
+        offset: usize,
+        limits: StreamLimits,
+    },
     /// Exclusive producer with its inseparable validated policy and admitted-byte count.
     Streaming {
         stream: OwnedStream,
@@ -188,7 +252,9 @@ impl HttpBody {
     /// Borrow finite streaming deadlines before the producer completes.
     pub fn limits(&self) -> Option<StreamLimits> {
         match &self.source {
-            BodySource::Streaming { limits, .. } => Some(*limits),
+            BodySource::Streaming { limits, .. } | BodySource::Immutable { limits, .. } => {
+                Some(*limits)
+            }
             _ => None,
         }
     }
@@ -198,6 +264,7 @@ impl HttpBody {
         match &self.source {
             BodySource::Buffered(bytes) => bytes.as_ref().is_none_or(Vec::is_empty),
             BodySource::Streaming { .. } => false,
+            BodySource::Immutable { bytes, offset, .. } => *offset == bytes.len(),
             BodySource::Finished => true,
         }
     }
@@ -209,6 +276,23 @@ impl Stream for HttpBody {
         // Buffered output never enters the producer path or receives producer byte policy.
         if let BodySource::Buffered(bytes) = &mut self.source {
             return Poll::Ready(bytes.take().map(Ok));
+        }
+        if let BodySource::Immutable {
+            bytes,
+            offset,
+            limits,
+        } = &mut self.source
+        {
+            // An exact known length lets Hyper finish without requiring a separate EOF poll.
+            if *offset == bytes.len() {
+                return Poll::Ready(None);
+            }
+            let end = offset
+                .saturating_add(limits.max_chunk_bytes.min(64 * 1024))
+                .min(bytes.len());
+            let chunk = bytes[*offset..end].to_vec();
+            *offset = end;
+            return Poll::Ready(Some(Ok(chunk)));
         }
         let BodySource::Streaming {
             stream,
@@ -333,7 +417,7 @@ impl StreamingHttpAdapter {
     }
 }
 /// Extract only the private extension identity; arbitrary SharedNative values stay unsupported.
-fn descriptor(response: &Response) -> Option<&HttpStreamBody> {
+fn descriptor(response: &Response) -> Option<&HttpBodySlot> {
     match response.body() {
         Body::Value(Value::Shared(value)) => value.downcast_ref(),
         _ => None,
@@ -381,7 +465,13 @@ fn prepare(response: &Response, head: bool) -> Result<http::Response<HttpBody>> 
             })?,
         );
     }
-    // Reset Content requires an explicit zero length; HEAD/204/304 leave unknown length absent.
+    // Immutable bytes have a trustworthy length, including HEAD; forbidden statuses omit it.
+    if let Some(length) = slot.length
+        && !matches!(code, 204 | 205 | 304)
+    {
+        headers.insert(CONTENT_LENGTH, http::HeaderValue::from(length as u64));
+    }
+    // Reset Content always has zero length, independently of the selected representation.
     if code == 205 {
         headers.insert(CONTENT_LENGTH, http::HeaderValue::from_static("0"));
     }
@@ -398,10 +488,17 @@ fn prepare(response: &Response, head: bool) -> Result<http::Response<HttpBody>> 
         HttpBody::buffered(Vec::new())
     } else {
         HttpBody {
-            source: BodySource::Streaming {
-                stream,
-                limits: slot.limits,
-                bytes: 0,
+            source: match stream {
+                OwnedSource::Stream(stream) => BodySource::Streaming {
+                    stream,
+                    limits: slot.limits,
+                    bytes: 0,
+                },
+                OwnedSource::Bytes(bytes) => BodySource::Immutable {
+                    bytes,
+                    offset: 0,
+                    limits: slot.limits,
+                },
             },
         }
     };

@@ -18,3 +18,10 @@ openssl x509 -in ca.pem -outform DER -out ca.der
 openssl x509 -in server.pem -outform DER -out server.der
 openssl pkcs8 -topk8 -nocrypt -in server.key -outform DER -out server-key.der
 ```
+
+M2 also checks the equivalent PEM encodings of the same public test identity,
+produced with `openssl x509 -inform DER` and `openssl pkey -inform DER`. The
+`mismatched-key.der` fixture is a separate public P-256 test key generated with
+`openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:P-256 -outform DER`.
+It must fail certificate/key matching. No test invokes OpenSSL or needs a key
+generator; these fixtures are never deployment credentials.

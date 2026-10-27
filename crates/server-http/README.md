@@ -1,16 +1,19 @@
-# Stackpress HTTP host: M1
+# Stackpress HTTP host
 
 `stackpress-server-http` drives HTTP/1.1 over caller-supplied IO and a generic
 acceptor. Hyper is the sole HTTP parser. The host owns finite admission,
 deadlines, sequential reuse, cancellation, graceful drain and final reporting.
-No TCP listener, process signal handler or runtime is created. Binding, proxy
-policy, assets, observers and application deployment remain M2.
+`HttpServer::bind` explicitly creates one TCP listener after startup validation.
+The library creates no runtime or process signal handler. Behavioral tests use
+supplied duplex IO; the coordinator owns the separately managed listener smoke.
 
 Create `HttpServer::new(Arc<Server>, HttpOptions)` after application startup.
 `with_limits(NetworkLimits)` validates the native policy before sharing the
-host. Existing buffered `HttpOptions` remain separate and retain their G12/G17
-conversion behavior. `serve_io(io, peer, stop)` admits supplied plaintext IO
-immediately and owns its lifetime without spawning a task. `serve_tls_io` also
+host. This legacy constructor preserves the existing adapter compatibility
+policy. Production deployments use `NetworkOptions` with `from_options` or `bind`
+to enable strict native authority checks and optional proxy trust. Existing buffered `HttpOptions` remain separate and retain their G12/G17
+conversion behavior. `serve_io(io, peer, stop)` admits supplied IO using the
+prepared deployment transport (plaintext for the legacy constructor) immediately and owns its lifetime without spawning a task. `serve_tls_io` also
 acquires a handshake permit before any TLS work. Excess IO closes promptly;
 its report records 503 without fabricating HTTP bytes on an unparsed/TLS peer.
 
@@ -97,5 +100,114 @@ The facade preserves buffered-only `server-http`. Separate `server-http-host`
 and `server-http-host-tls` expose this crate as `stackpress::server_http_host`.
 Default and browser graphs gain no network edge. TLS uses explicit ring,
 TLS 1.2/1.3 and HTTP/1.1 ALPN, with finite handshake admission/time; certificate
-file loading and deployment policy remain M2. Public test-only fixtures must
-never be used for deployment. All tests use duplex IO, never listening sockets.
+file loading is explicit and bounded. Public test-only fixtures must never be
+used for deployment. All automated behavioral tests use duplex IO, never sockets.
+
+
+## Deployment API
+
+`NetworkOptions::http(address, public_origin)` deliberately selects plaintext;
+`https(address, public_origin, TlsFiles::pem(cert, key))` requires the `tls`
+feature. Edit the public startup fields or use `with_proxy`/`with_observer`, then
+call `HttpServer::from_options(app, options)` for supplied IO or
+`HttpServer::bind(app, options).await` for TCP. Validation precedes bind. Missing,
+invalid or mismatched TLS files fail startup; HTTPS never falls back to HTTP.
+PEM chains and one private key, or explicit DER, are supported. Certificate and
+key files must be regular with no symlink components, capped at 64KiB/16KiB.
+They must remain operator-owned and unchanged during preparation, as with asset
+startup reads; portable metadata/open is not atomic against hostile replacement.
+No certificate discovery, issuance, reload, mTLS or HTTP/2 is implied.
+
+`BoundHttpServer::serve_until(stop).await` delegates to the same
+`Arc<HttpServer>::serve_acceptor_until(acceptor, stop)` path used by duplex
+proofs. Stop is a caller-owned `Future<Output = ()>`. Source/listener/backlog drops
+before connection drain. The returned `DrainReport::failure` retains a fatal
+accept error **after** cleanup. Await it before closing database/process services.
+An acceptor is trusted and cancellation-safe; its `AcceptedIo` explicitly selects
+plain or TLS transport. No forwarded field can select a transport.
+
+Deployment authority checks require exactly one Host value. Host and any absolute
+target must match the configured authority allowlist and each other. DNS case,
+default ports and equivalent IPv6 spellings compare canonically; IPv4 and IPv6
+CIDRs never map implicitly. The public origin's authority is included by default;
+`allowed_authorities` adds literal authorities, never wildcard domains.
+
+## Explicit proxy trust
+
+Default and untrusted peers cannot influence trusted metadata through forwarding
+fields. With `ProxyPolicy`, the immediate peer and every declared intermediary
+must match `peers`; `hops` is exact (1–32). The original client IP is informational
+`HttpRequestContext::forwarded_client`, never authorization. `scheme` remains the
+actual listener transport; the checked public origin and request URL describe
+the external origin. The native path/query are preserved.
+
+Choose one `ProxyHeaders` family. Trusted peers must send one complete chain:
+
+- `Forwarded`: one header, each hop has `for`, `proto`, `host` once. Quoted
+  bracketed IPv6 with optional port works. Extensions, escapes, partial hops,
+  unknown/obfuscated identities and duplicate parameters are rejected.
+- `XForwarded`: one X-Forwarded-For, -Proto and -Host line, each with exactly
+  `hops` comma-separated values. Bare IPv6 addresses are supported in For.
+
+Mixed families, duplicate lines, wrong hop count, untrusted intermediaries,
+disagreeing origins, protocols other than HTTP(S), unlisted host/port and
+absolute-target mismatches return empty 400 and close before callbacks. This is
+an intentionally strict forwarding subset; configure the proxy to emit it.
+
+## Immutable assets
+
+Load `AssetBundle::load(root, manifest, AssetLimits)` and call
+`bundle.register(&mut builder)` **before** `builder.build()`. This keeps GET/HEAD
+as ordinary exact routes, including request/error/response hooks and cookies.
+The already-built server cannot accept new route registration during bind.
+Startup validates the entire bundle before any listener is published.
+
+The strict JSON root is `{ "entries": [...] }`; each entry requires `route`,
+`file`, `size`, `sha256`, `mime`, `cache`. Unknown/duplicate fields fail parsing.
+See the checked [example manifest](examples/assets/manifest.json). Route/file
+components are literal ASCII alphanumeric, `-`, `_`, `.`; no empty/dot/parent
+segments, percent escapes, Unicode, patterns, backslash, query or fragment.
+File names are relative to the operator-owned immutable build tree. No symlink
+component, FIFO, directory or device is opened as an asset. Portable
+metadata-then-open is not safe against concurrent hostile writers; exclusive
+operator ownership during loading is required.
+
+Defaults cap serialized manifest bytes at 64KiB, entries at 1024, one file at
+64MiB and retained bytes at 128MiB. Size and SHA-256 are verified before retaining
+each representation. MIME is explicitly allowlisted and sent with nosniff.
+Bytes are preloaded; filesystem mutation/removal after startup cannot change
+responses. Requests never choose a filesystem path. Unknown routes remain 404;
+there is no directory index, SPA fallback, range or compression feature.
+
+GET and HEAD expose the verified length and strong hash ETag; weak/strong
+If-None-Match or `*` can select bodyless 304. Revalidate cache is public with
+max-age=0/must-revalidate; immutable cache requires the full hash in the URL
+basename and permits one year. Application hooks retain normal response authority.
+`HttpResponseExt::immutable_bytes(mime, Arc<[u8]>, StreamLimits)` publishes this
+known immutable representation once, copying at most one bounded 64KiB chunk
+on demand. HEAD/bodyless output takes/drops without polling or byte copying.
+The buffered value adapter continues to reject native descriptors.
+
+## Observations and managed smoke
+
+`with_observer(Arc<dyn ExchangeObserver>)` receives final fixed-size
+`ExchangeObservation` values: checked local IDs, status, elapsed, byte count,
+delivery, error kind and host-report presence. No path, headers, cookies, body,
+client IP, SQL or native source message enters this type. No observation queue
+or detached sender is created. Snapshots are emitted when connection ownership
+ends, bounded by request/admission limits, outside locks and after IO/task-local
+resources drop. A synchronous callback must not block; panic unwinds and is not
+retried. A task poll panic emits redacted failure metadata after dropping IO,
+then resumes its original panic payload for normal supervisor reporting. Drop
+that is already unwinding skips callbacks to avoid a second panic.
+
+The [deployment example](examples/deployment.rs) takes `--port`, provides
+`/health`, `/assets/hello.txt`, `/stream`, and drops application services after
+drain. It is compile-checked here. Only the coordinator runs the smoke:
+
+```sh
+devmetrics start --wait 120 --summary "Stackpress Slice 7 HTTP M2 smoke" -- 'CARGO_INCREMENTAL=0 CARGO_PROFILE_DEV_DEBUG=0 cargo run --locked -p stackpress-server-http --example deployment -- --port {port}'
+```
+
+Run from this worktree. Devmetrics selects/registers the port and owns expiry;
+use its reported URL. No automated proof in this milestone binds any socket.

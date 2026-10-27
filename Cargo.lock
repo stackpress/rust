@@ -4532,8 +4532,12 @@ dependencies = [
  "hyper",
  "hyper-util",
  "rustls",
+ "serde",
+ "serde_json",
+ "sha2 0.10.9",
  "stackpress-lib",
  "stackpress-server",
+ "tempfile",
  "tokio",
  "tokio-rustls",
 ]
