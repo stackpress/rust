@@ -44,7 +44,12 @@ Design checkpoint delivered on 2026-10-26: start at [Slice 6 design decisions](.
 
 ## Verification notes
 
-Pending.
+**M0, coordinator review on 2026-10-27** ([receipt](00011-receipt-m0.md); merge after `60f3a2b`). Result: **verified**; merged into `trial/3`.
+
+- **Checks rerun by the coordinator:** fmt; Clippy `-D warnings` over framework-schema, framework-sql, the generated workspace tool/app/contracts, sql-sqlite, idea-transformer and sql core with `codegen,server,sqlite-maintenance`; their tests (653 passed, 0 failed); `emit generate --check true` (generated output fresh); contracts `cargo check --target wasm32-unknown-unknown`. Merged workspace: 567 passed, 0 failed, 75 ignored; workspace Clippy clean. Conflicts were only additive root members/facade entries; the lockfile gained only the five new workspace packages.
+- **Shared seams (G23/G30):** additive `TransformError::with_source`, read-only `Transaction::dialect()`, feature-gated SQLite maintenance (ordinary PRAGMA/BEGIN/COMMIT gate unchanged). 38 lines across the shared crates.
+- **Coverage (implementer):** framework-schema 92.20%, framework-sql 89.75%, generated app 79.41%, contracts 83.33%, tool 70.32%; touched shared crates 89–96%.
+- **Notes:** the current CLI requires `--check true` (or `-c`), not a bare `--check`; recorded, no CLI change. PostgreSQL/MySQL execution is not part of M0.
 
 ## Acceptance notes
 
