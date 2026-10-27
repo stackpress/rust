@@ -43,6 +43,10 @@ Protected routes are always denied unless the host environment explicitly select
 and is not authentication. No policy/role/token snapshot authorizes work; the host
 checks fresh metadata before invoking the protected closure. A deployed application
 must supply real identity, resource authorization and mutation CSRF policy.
+The protected fixture route follows `PREFERENCES_BASE`: `/private` at the root,
+or `/demo/private` with base `/demo`. An unprefixed route outside that configured
+mount cannot invoke protected work. The browser proof clicks the allowed link at
+both mounts after separately proving the default and forged-request denials.
 
 This finite example does not supply installed-app storage, generated CRUD,
 packaging, streaming, native screen-reader evidence or owner visual acceptance.

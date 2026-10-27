@@ -16,10 +16,12 @@ impl Drop for ChildGuard {
         let _ = self.0.wait();
     }
 }
-/// Run a finite real request with host-side fixture policy explicitly selected.
-fn request(input: Value, policy: bool) -> (Value, String) {
-    let directory = std::path::Path::new("/private/tmp/s8-lane-b");
-    std::fs::create_dir_all(directory).unwrap();
+/// Run one request under an explicit mount and optional host-only fixture policy.
+fn request(base: &str, input: Value, policy: bool) -> (Value, String) {
+    let directory = std::path::PathBuf::from(
+        std::env::var_os("PREFERENCES_LOGS").unwrap_or_else(|| "/private/tmp/s8-lane-b".into()),
+    );
+    std::fs::create_dir_all(&directory).unwrap();
     // Parallel tests may request the same path; a per-call sequence keeps their logs apart.
     static SEQUENCE: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);
     let call = SEQUENCE.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
@@ -32,7 +34,7 @@ fn request(input: Value, policy: bool) -> (Value, String) {
     let log = File::create(&file).unwrap();
     let mut command = Command::new(env!("CARGO_BIN_EXE_stackpress-example-ui-preferences-web"));
     command
-        .env("PREFERENCES_BASE", "/demo")
+        .env("PREFERENCES_BASE", base)
         .env_remove("PREFERENCES_TEST_POLICY");
     if policy {
         command.env("PREFERENCES_TEST_POLICY", "explicit-fixture");
@@ -101,7 +103,11 @@ fn host_selected_pages_and_route_denials() {
             "light",
         ),
     ] {
-        let (meta, html) = request(json!({"method":"GET","path":path,"cookie":cookie}), false);
+        let (meta, html) = request(
+            "/demo",
+            json!({"method":"GET","path":path,"cookie":cookie}),
+            false,
+        );
         assert_eq!(meta["status"], 200);
         assert!(html.contains(&format!("<html lang=\"{locale}\" data-theme=\"{theme}\"")));
         assert!(html.contains("id=\"draft\""));
@@ -109,10 +115,11 @@ fn host_selected_pages_and_route_denials() {
         assert!(!html.contains("fixture-csrf"));
     }
     for path in ["/demo/de/preferences", "/demo/en/fr/preferences"] {
-        let (meta, _) = request(json!({"method":"GET","path":path}), false);
+        let (meta, _) = request("/demo", json!({"method":"GET","path":path}), false);
         assert_eq!(meta["status"], 404);
     }
     let (_, html) = request(
+        "/demo",
         json!({"method":"GET","path":"/demo/preferences","csr":true}),
         false,
     );
@@ -123,6 +130,7 @@ fn host_selected_pages_and_route_denials() {
 fn persistence_and_cookie_scope() {
     let body = json!({"locale":"fr","theme":"dark","location":"/demo/en/preferences?q=a%2Fb&return=%252F"}).to_string();
     let (meta, text) = request(
+        "/demo",
         json!({"method":"POST","path":"/demo/ui-preferences","origin":"https://preferences.invalid","body":body}),
         false,
     );
@@ -141,6 +149,7 @@ fn persistence_and_cookie_scope() {
         ),
     ] {
         let (meta, _) = request(
+            "/demo",
             json!({"method":"POST","path":"/demo/ui-preferences","origin":origin,"body":body}),
             false,
         );
@@ -148,6 +157,7 @@ fn persistence_and_cookie_scope() {
         assert!(meta["headers"].get("set-cookie").is_none());
     }
     let (meta, html) = request(
+        "/demo",
         json!({"method":"GET","path":"/demo/preferences","cookie":"stackpress-flash=bad"}),
         false,
     );
@@ -162,52 +172,112 @@ fn persistence_and_cookie_scope() {
 /// Absent policy, denied callers and forged mutation metadata never call the handler.
 #[test]
 fn protected_exposure_fails_closed() {
-    for (policy, caller, method, origin, csrf, status, calls) in [
-        (false, "allowed", "GET", Value::Null, "", 403, "0"),
-        (true, "denied", "GET", Value::Null, "", 403, "0"),
-        (true, "allowed", "GET", Value::Null, "", 200, "1"),
-        (
-            true,
-            "allowed",
-            "POST",
-            Value::Null,
-            "fixture-csrf",
-            403,
-            "0",
-        ),
-        (
-            true,
-            "allowed",
-            "POST",
-            json!("https://evil.invalid"),
-            "fixture-csrf",
-            403,
-            "0",
-        ),
-        (
-            true,
-            "allowed",
-            "POST",
-            json!("https://preferences.invalid"),
-            "wrong",
-            403,
-            "0",
-        ),
-        (
-            true,
-            "allowed",
-            "POST",
-            json!("https://preferences.invalid"),
-            "fixture-csrf",
-            200,
-            "1",
-        ),
-    ] {
-        let (meta, _) = request(
-            json!({"method":method,"path":"/private","caller":caller,"origin":origin,"csrf":csrf}),
-            policy,
-        );
-        assert_eq!(meta["status"], status);
-        assert_eq!(meta["headers"]["x-protected-calls"][0], calls);
+    // Run the same admission table on the actual protected route at either mount.
+    for base in ["", "/demo"] {
+        let path = format!("{base}/private");
+        for (policy, caller, method, origin, csrf, status, calls) in [
+            (false, "allowed", "GET", Value::Null, "", 403, "0"),
+            (true, "denied", "GET", Value::Null, "", 403, "0"),
+            (true, "allowed", "GET", Value::Null, "", 200, "1"),
+            (
+                false,
+                "allowed",
+                "POST",
+                json!("https://preferences.invalid"),
+                "fixture-csrf",
+                403,
+                "0",
+            ),
+            (
+                true,
+                "denied",
+                "POST",
+                json!("https://preferences.invalid"),
+                "fixture-csrf",
+                403,
+                "0",
+            ),
+            (
+                true,
+                "allowed",
+                "POST",
+                Value::Null,
+                "fixture-csrf",
+                403,
+                "0",
+            ),
+            (
+                true,
+                "allowed",
+                "POST",
+                json!("https://evil.invalid"),
+                "fixture-csrf",
+                403,
+                "0",
+            ),
+            (
+                true,
+                "allowed",
+                "POST",
+                json!("https://preferences.invalid"),
+                "wrong",
+                403,
+                "0",
+            ),
+            (
+                true,
+                "allowed",
+                "POST",
+                json!("https://preferences.invalid"),
+                "fixture-csrf",
+                200,
+                "1",
+            ),
+        ] {
+            let (meta, _) = request(
+                base,
+                json!({"method":method,"path":path,"caller":caller,"origin":origin,"csrf":csrf}),
+                policy,
+            );
+            assert_eq!(meta["status"], status, "{base} {method} {caller}");
+            assert_eq!(meta["headers"]["x-protected-calls"][0], calls);
+        }
+    }
+}
+
+/// Layout projection uses the same mount as dispatch, without invoking protected work.
+#[test]
+fn protected_links_follow_the_configured_mount() {
+    for base in ["", "/demo"] {
+        for (policy, caller, allowed) in [
+            (false, "allowed", false),
+            (true, "denied", false),
+            (true, "allowed", true),
+        ] {
+            let (meta, html) = request(
+                base,
+                json!({"method":"GET","path":format!("{base}/preferences"),"caller":caller}),
+                policy,
+            );
+            assert_eq!(meta["status"], 200);
+            assert_eq!(meta["headers"]["x-protected-calls"][0], "0");
+            assert_eq!(html.contains(&format!("href=\"{base}/private\"")), allowed);
+        }
+    }
+}
+
+/// Even valid fixture admission cannot reach a handler outside its configured mount.
+#[test]
+fn protected_routes_reject_other_mounts() {
+    for (base, outside) in [("", "/demo/private"), ("/demo", "/private")] {
+        for method in ["GET", "POST"] {
+            let (meta, _) = request(
+                base,
+                json!({"method":method,"path":outside,"caller":"allowed","origin":"https://preferences.invalid","csrf":"fixture-csrf"}),
+                true,
+            );
+            assert_eq!(meta["status"], 404, "{base} {method} {outside}");
+            assert_eq!(meta["headers"]["x-protected-calls"][0], "0");
+        }
     }
 }
