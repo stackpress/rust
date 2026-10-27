@@ -12,6 +12,7 @@ ssr = ["leptos/ssr", "leptos_meta/ssr", "leptos_router/ssr", "async", "dep:hydra
 hydrate = ["leptos/hydrate"]
 csr = ["leptos/csr"]
 async = ["dep:futures", "dep:serde_json"]
+stream = ["ssr", "tokio/sync", "tokio/macros", "tokio/time"]
 rich = ["dep:ammonia", "dep:pulldown-cmark"]
 
 [dependencies]

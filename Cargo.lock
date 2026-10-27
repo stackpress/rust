@@ -4691,6 +4691,50 @@ dependencies = [
 ]
 
 [[package]]
+name = "stackpress-example-ui-stream-client"
+version = "0.1.0"
+dependencies = [
+ "js-sys",
+ "leptos",
+ "stackpress-example-ui-stream-shared",
+ "stackpress-framework-ui",
+ "stackpress-framework-view",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "stackpress-example-ui-stream-shared"
+version = "0.1.0"
+dependencies = [
+ "futures",
+ "js-sys",
+ "leptos",
+ "serde",
+ "stackpress-framework-ui",
+ "tokio",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "web-sys",
+]
+
+[[package]]
+name = "stackpress-example-ui-stream-web"
+version = "0.1.0"
+dependencies = [
+ "futures",
+ "leptos",
+ "serde_json",
+ "stackpress-example-ui-stream-shared",
+ "stackpress-framework-ui",
+ "stackpress-framework-view",
+ "stackpress-lib",
+ "stackpress-server",
+ "stackpress-server-http",
+ "tokio",
+]
+
+[[package]]
 name = "stackpress-framework-language"
 version = "0.1.0"
 dependencies = [

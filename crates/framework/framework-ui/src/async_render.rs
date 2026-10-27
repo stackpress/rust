@@ -91,7 +91,7 @@ struct OwnedRender {
 }
 
 /// Restore the actual poll/drop caller even if upstream with/cleanup unwinds.
-struct Restore(Option<Owner>);
+pub(super) struct Restore(pub(super) Option<Owner>);
 
 impl Drop for Restore {
     /// Never retain a thread-local entered context across an await boundary.
