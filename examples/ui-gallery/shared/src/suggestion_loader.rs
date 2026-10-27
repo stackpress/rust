@@ -35,6 +35,7 @@ async fn wait(milliseconds: i32) {
         _callback: Closure<dyn FnMut()>,
     }
     impl Drop for Timer {
+        /// Cancel native work before releasing the callback on loader cancellation.
         fn drop(&mut self) {
             if let Some(window) = web_sys::window() {
                 window.clear_timeout_with_handle(self.i);

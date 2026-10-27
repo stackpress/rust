@@ -1506,6 +1506,8 @@ dependencies = [
  "generated-admin-shared",
  "js-sys",
  "leptos",
+ "serde_json",
+ "stackpress-framework-admin",
  "wasm-bindgen",
  "web-sys",
 ]
@@ -1540,8 +1542,20 @@ name = "generated-admin-web"
 version = "0.1.0"
 dependencies = [
  "generated-admin-shared",
+ "http",
  "leptos",
+ "serde",
+ "serde_json",
+ "stackpress-framework-admin",
+ "stackpress-framework-schema",
+ "stackpress-framework-sql",
  "stackpress-framework-ui",
+ "stackpress-lib",
+ "stackpress-server",
+ "stackpress-sql",
+ "stackpress-sql-sqlite",
+ "tempfile",
+ "tokio",
 ]
 
 [[package]]
@@ -5245,6 +5259,7 @@ dependencies = [
  "icu_datetime",
  "icu_decimal",
  "icu_locale",
+ "js-sys",
  "leptos",
  "leptos_meta",
  "leptos_router",
@@ -5359,9 +5374,12 @@ dependencies = [
 name = "stackpress-sql-mysql"
 version = "0.1.0"
 dependencies = [
+ "generated-workspace-app",
  "serde",
  "serde_json",
  "sqlx",
+ "stackpress-framework-schema",
+ "stackpress-framework-sql",
  "stackpress-sql",
  "tokio",
 ]
@@ -5370,9 +5388,12 @@ dependencies = [
 name = "stackpress-sql-postgres"
 version = "0.1.0"
 dependencies = [
+ "generated-workspace-app",
  "serde",
  "serde_json",
  "sqlx",
+ "stackpress-framework-schema",
+ "stackpress-framework-sql",
  "stackpress-sql",
  "stackpress-sql-sqlite",
  "tokio",

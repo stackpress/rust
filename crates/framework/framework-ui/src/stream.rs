@@ -16,7 +16,7 @@
 //! On interruption the precommitted recovery notice remains available; no write
 //! is retried, status changed, or error lifecycle reentered.
 use crate::{
-    async_render::Restore,
+    owner::RestoreOwner,
     render::{escape_html, require_executor},
 };
 use futures::{FutureExt, Stream, StreamExt, future::poll_fn};
@@ -65,6 +65,22 @@ impl Default for StreamLimits {
 }
 
 /// Checked optional renderer; it does not alter either buffered renderer trait.
+///
+/// # Examples
+/// ```
+/// use leptos::prelude::*;
+/// use stackpress_framework_ui::stream::{StreamLeptosRenderer, StreamLimits};
+/// use stackpress_framework_view::{BasePath, PageAssets, PageContract, PageSnapshot, PublicLocation};
+/// let contract = PageContract::new(1, "app-build")?;
+/// let assets = PageAssets {
+///     build: "app-build".into(), base: BasePath::default(),
+///     module: PublicLocation::new("/start.js")?, stylesheet: None,
+/// };
+/// let _renderer = StreamLeptosRenderer::new(contract, assets, StreamLimits::default(), |page: &PageSnapshot<String>| {
+///     Ok(view! { <p>{page.data.clone()}</p> })
+/// })?;
+/// # Ok::<(), stackpress_framework_view::ViewError>(())
+/// ```
 pub struct StreamLeptosRenderer<F> {
     /// Shared checked seed/HTML policy.
     contract: PageContract,
@@ -274,7 +290,9 @@ impl Drop for Supervisor {
 
 /// Owner and serialization queues are always disposed before runtime teardown.
 struct Root {
+    /// Local reactive root, cleaned before runtime teardown.
     owner: Owner,
+    /// Serialization/deferred queues cleared after root cleanup to break cycles.
     shared: Arc<StreamContext>,
 }
 impl Root {
@@ -282,7 +300,7 @@ impl Root {
     async fn run<F: Future>(&self, future: F) -> F::Output {
         let mut future = std::pin::pin!(future);
         poll_fn(|cx| {
-            let _restore = Restore(Owner::current());
+            let _restore = RestoreOwner(Owner::current());
             self.owner.with(|| future.as_mut().poll(cx))
         })
         .await
@@ -291,7 +309,7 @@ impl Root {
 impl Drop for Root {
     /// Wake guarded loaders, then break serialization/Owner retention cycles.
     fn drop(&mut self) {
-        let _restore = Restore(Owner::current());
+        let _restore = RestoreOwner(Owner::current());
         self.owner.cleanup();
         self.shared.clear();
     }
@@ -515,8 +533,11 @@ where
 
 /// Aggregate and per-fragment ceilings, including a reserved late-failure marker.
 struct HtmlBudget {
+    /// Previously admitted bytes, including opening/replay/trailer fragments.
     used: usize,
+    /// Whole-document ceiling; each admission also reserves the failure marker.
     limit: usize,
+    /// Independent ceiling on one owned producer fragment.
     chunk: usize,
 }
 impl HtmlBudget {

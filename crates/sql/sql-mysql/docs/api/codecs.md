@@ -25,6 +25,11 @@ only for exact 0/1 values; 2 is not truthy. Unsigned i64 overflow is rejected ev
 native server accepts the value. NaN/infinities are invalid core inputs; strict MySQL can
 reject nonfinite arithmetic before any output is decoded.
 
+A binary text collation such as utf8mb4_bin remains Text. SQLx's display name can
+say VARBINARY/BLOB for its BINARY flag; the public string compatibility check uses
+the wire charset to distinguish such text from actual binary data. Unsupported
+ENUM/SET types remain rejected before this check.
+
 A bare Blob parameter result can advertise text metadata. Use `CAST(? AS BINARY)` or a
 binary column when a Blob result is required. UUID() may produce supported text; that is
 not a native UUID codec. Unsupported output requires an explicit supported cast.
@@ -61,3 +66,11 @@ fails decoding after the write may have succeeded. No cached/sticky last-ID quer
 Do not assume a previous INSERT's outcome survives an UPDATE, SELECT or DDL statement.
 
 Source: the Rustdoc-included [codec and lease contract](../../CODECS.md).
+
+## Function names and reuse
+
+Unknown, qualified or quoted calls retire their connection after acknowledgement. The classifier
+reads complete digit-prefixed identifiers and retires unquoted non-ASCII tokens or adjacent
+quoted/unquoted identifier fragments. A builtin name embedded inside another routine name never
+qualifies that routine for reuse. Unicode literals, quoted column/table names and binds retain
+their normal support. This is connection disposition, not a new SQL result codec or query refusal.

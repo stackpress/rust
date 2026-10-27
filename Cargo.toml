@@ -85,6 +85,7 @@ framework-ui-hydrate = ["framework-ui", "stackpress-framework-ui/hydrate"]
 framework-ui-csr = ["framework-ui", "stackpress-framework-ui/csr"]
 framework-ui-async = ["framework-ui", "stackpress-framework-ui/async"]
 framework-ui-rich = ["framework-ui", "stackpress-framework-ui/rich"]
+framework-ui-format = ["framework-ui", "stackpress-framework-ui/format"]
 framework-language = ["dep:stackpress-framework-language"]
 framework-preferences = ["dep:stackpress-framework-preferences"]
 

@@ -6,6 +6,15 @@ use std::{
     time::{Duration, Instant},
 };
 
+/// Keep watchdog child diagnostics under the same configurable proof artifact directory.
+fn proof_output(name: &str) -> std::path::PathBuf {
+    let directory = std::env::var_os("UI_STREAM_OUTPUT_DIR")
+        .map(std::path::PathBuf::from)
+        .unwrap_or_else(|| "/private/tmp/s8-stream".into());
+    std::fs::create_dir_all(&directory).unwrap();
+    directory.join(name)
+}
+
 /// All hang-capable rendering and IO run within the externally bounded child.
 #[test]
 #[ignore = "launched by parent watchdog"]
@@ -98,11 +107,7 @@ fn watchdog() {
             let _ = self.0.wait();
         }
     }
-    std::fs::create_dir_all("/private/tmp/s8-stream").unwrap();
-    let path = format!(
-        "/private/tmp/s8-stream/host-child-{}.log",
-        std::process::id()
-    );
+    let path = proof_output(&format!("host-child-{}.log", std::process::id()));
     let log = std::fs::File::create(&path).unwrap();
     let mut child = Reap(
         Command::new(std::env::current_exe().unwrap())
@@ -123,7 +128,7 @@ fn watchdog() {
             );
             break;
         }
-        assert!(Instant::now() < deadline, "host child timed out: {path}");
+        assert!(Instant::now() < deadline, "host child timed out: {path:?}");
         std::thread::sleep(Duration::from_millis(10));
     }
 }
@@ -140,11 +145,7 @@ fn cli_protocol() {
             let _ = self.0.wait();
         }
     }
-    let path = format!(
-        "/private/tmp/s8-stream/cli-protocol-{}.log",
-        std::process::id()
-    );
-    std::fs::create_dir_all("/private/tmp/s8-stream").unwrap();
+    let path = proof_output(&format!("cli-protocol-{}.log", std::process::id()));
     let log = std::fs::File::create(&path).unwrap();
     let mut child = Reap(
         Command::new(env!("CARGO_BIN_EXE_stackpress-example-ui-stream-web"))
@@ -174,7 +175,10 @@ fn cli_protocol() {
             assert!(status.success(), "{output}");
             break;
         }
-        assert!(Instant::now() < deadline, "CLI protocol timed out: {path}");
+        assert!(
+            Instant::now() < deadline,
+            "CLI protocol timed out: {path:?}"
+        );
         std::thread::sleep(Duration::from_millis(10));
     }
     let report = report.expect("CLI must emit a final completion record");

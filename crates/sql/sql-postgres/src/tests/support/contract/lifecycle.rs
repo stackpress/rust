@@ -139,10 +139,39 @@ pub(super) async fn cancellation(database: &dyn Database) -> Result<()> {
     );
     Ok(())
 }
+/// Validation stays pre-effect even when acquisition cannot succeed or the owner is closed.
+async fn pre_effect_validation(database: &dyn Database) {
+    let dialect = database.dialect();
+    let mut cases = vec![(
+        query(dialect, "SELECT 1", []),
+        QueryLimits {
+            sql_bytes: 0,
+            ..QueryLimits::default()
+        },
+        ErrorKind::Limit,
+    )];
+    // Network owners promise dialect rejection before acquisition. SQLite's existing
+    // dialect check belongs to execute after acquisition; do not invent a stronger contract.
+    if dialect != DialectId::Sqlite {
+        cases.push((
+            query(DialectId::Sqlite, "SELECT 1", []),
+            QueryLimits::default(),
+            ErrorKind::Unsupported,
+        ));
+    }
+    for (query, limits, kind) in cases {
+        // Ready on the first poll proves no exhausted-pool wait can mask a pure refusal.
+        let Poll::Ready(result) = cut(database.run(query, limits)).await else {
+            panic!("pre-effect validation waited for native acquisition");
+        };
+        assert_eq!(result.unwrap_err().kind(), kind);
+    }
+}
 /// Close wakes waiters, rejects new work and remains re-awaitable after interruption.
 pub(super) async fn close(database: Arc<dyn Database>) -> Result<()> {
     let dialect = database.dialect();
     let held = database.begin(TransactionOptions::default()).await?;
+    pre_effect_validation(database.as_ref()).await;
     let mut waiter = database.run(query(dialect, "SELECT 1", []), QueryLimits::default());
     // The held transaction forces the waiter to queue, and forces close to remain pending.
     assert!(poll_once(waiter.as_mut()).await.is_pending());
@@ -153,6 +182,7 @@ pub(super) async fn close(database: Arc<dyn Database>) -> Result<()> {
     held.rollback().await?;
     database.close().await?;
     database.close().await?;
+    pre_effect_validation(database.as_ref()).await;
     assert_eq!(
         database
             .run(query(dialect, "SELECT 1", []), QueryLimits::default())

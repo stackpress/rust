@@ -8,6 +8,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             "html": stackpress_example_ui_format::render_html()?,
             "rows": stackpress_example_ui_format::proof_rows()?,
             "snapshot": stackpress_example_ui_format::snapshot_json()?,
+            "edit_en": stackpress_example_ui_format::editing::render(stackpress_framework_ui::format::DisplayLocale::English),
+            "edit_fr": stackpress_example_ui_format::editing::render(stackpress_framework_ui::format::DisplayLocale::French),
         })
     );
     Ok(())

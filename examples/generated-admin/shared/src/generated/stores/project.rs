@@ -10,7 +10,7 @@ use stackpress_framework_sql::{
 use stackpress_sql::{Insert, Row, Select, TableDefinition};
 const _: () = assert!(stackpress_framework_sql::CONTRACT_REVISION == 1);
 /// Shared normalized schema identity.
-pub const FINGERPRINT: &str = "ed7339d88345035c2d45e410c7349278ec7e85bc9880a88c691f3f3ddfccfcf3";
+pub const FINGERPRINT: &str = "bf1ffb1dcad0a0fa5a1cc6a8df13652e29f1febbc94915fc48a4ee1235520b03";
 /// Exact ordered stored codecs.
 pub const COLUMNS: &[StorageColumn] = &[
     StorageColumn {
@@ -119,7 +119,7 @@ pub static SPEC: StoreSpec = StoreSpec {
             choices: "[]",
             searchable: false,
             sortable: false,
-            public_filter: false,
+            public_filter: true,
             public_sort: false,
             public_search: false,
         },
@@ -502,11 +502,18 @@ impl Projects {
             take: page.take,
         })
     }
-    /// Open one owned SQLite read transaction for counts/includes, committing exactly once.
+    /// Own one read transaction; snapshot-dependent shapes remain explicitly dialect-gated.
     pub async fn search_atomic(
         engine: &stackpress_sql::Engine,
         query: Query,
     ) -> DataResult<Page<View3>> {
+        // A known dialect refusal must precede BEGIN, even when native acquisition would fail.
+        stackpress_framework_sql::stores::preflight_atomic_search(
+            &super::schema::catalog(),
+            &SPEC,
+            &ReadQuery::from_typed(&query)?,
+            engine.dialect(),
+        )?;
         let mut transaction = engine.begin().await?;
         let outcome = Self::search(&mut DataSession::transaction(&mut transaction), query).await;
         stackpress_framework_sql::finish(transaction, outcome).await
@@ -900,6 +907,8 @@ impl Projects {
         inputs: Vec<BatchInput>,
         context: &stackpress_framework_schema::ValueContext<'_>,
     ) -> DataResult<Vec<BatchOutcome>> {
+        // Check the existing write capability before acquiring any transaction or preparing providers.
+        DataSession::pooled(engine).require_returning()?;
         let mut transaction = engine.begin().await?;
         let outcome = Self::batch(
             &mut DataSession::transaction(&mut transaction),
@@ -951,7 +960,7 @@ impl View3 {
         let public = self.project()?;
         Ok(Selected(stackpress_framework_sql::projection::select(
             &public,
-            &["id", "title", "ownerId"],
+            &["id", "ownerId", "title", "state", "tags"],
             false,
         )?))
     }

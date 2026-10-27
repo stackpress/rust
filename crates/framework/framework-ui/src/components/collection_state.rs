@@ -20,6 +20,18 @@ pub struct CollectionRow<T> {
     pub value: T,
 }
 /// A bounded ordered collection. Operations never partially mutate on failure.
+///
+/// # Examples
+/// ```
+/// use stackpress_framework_ui::components::BoundedList;
+/// let mut tags = BoundedList::new(Vec::<_>::new(), 3)?;
+/// let empty = tags.add(String::new())?;
+/// let zero = tags.add("0".to_owned())?;
+/// tags.reorder(zero, 0)?;
+/// assert_eq!(tags.rows()[0].value, "0");
+/// assert_eq!(tags.remove(empty)?, "");
+/// # Ok::<(), stackpress_framework_ui::components::ControlError>(())
+/// ```
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct BoundedList<T> {
     rows: Vec<CollectionRow<T>>,

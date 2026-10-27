@@ -7,6 +7,15 @@ use std::{
     time::{Duration, Instant},
 };
 
+/// Keep watchdog child diagnostics under the same configurable proof artifact directory.
+fn proof_output(name: &str) -> std::path::PathBuf {
+    let directory = std::env::var_os("UI_STREAM_OUTPUT_DIR")
+        .map(std::path::PathBuf::from)
+        .unwrap_or_else(|| "/private/tmp/s8-stream".into());
+    std::fs::create_dir_all(&directory).unwrap();
+    directory.join(name)
+}
+
 /// Owned public seed used by both successful and failed renders.
 fn seed() -> PageSnapshot<()> {
     PageSnapshot {
@@ -455,11 +464,7 @@ fn watchdog() {
             let _ = self.0.wait();
         }
     }
-    std::fs::create_dir_all("/private/tmp/s8-stream").unwrap();
-    let path = format!(
-        "/private/tmp/s8-stream/unit-child-{}.log",
-        std::process::id()
-    );
+    let path = proof_output(&format!("unit-child-{}.log", std::process::id()));
     let log = std::fs::File::create(&path).unwrap();
     let mut child = Reap(
         Command::new(std::env::current_exe().unwrap())
@@ -485,7 +490,10 @@ fn watchdog() {
             );
             break;
         }
-        assert!(Instant::now() < deadline, "stream child timed out: {path}");
+        assert!(
+            Instant::now() < deadline,
+            "stream child timed out: {path:?}"
+        );
         std::thread::sleep(Duration::from_millis(10));
     }
 }

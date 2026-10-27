@@ -12,6 +12,11 @@
 | Supported type with SQL NULL | Null | Native typed NULL bit; casts/columns supply the target |
 | DECIMAL, DATE/TIME/DATETIME/TIMESTAMP, ENUM/SET, geometry, other types | Decode error, also for typed NULL | Explicitly cast unsupported output to a supported wire type |
 
+A binary text collation such as utf8mb4_bin remains Text. SQLx's display name can
+say VARBINARY/BLOB for its BINARY flag; the public string compatibility check uses
+the wire charset to distinguish such text from actual binary data. Unsupported
+ENUM/SET types remain rejected before this check.
+
 A bare parameter result can advertise text metadata even for a Blob bind. Request
 an explicit `CAST(? AS BINARY)` or select a binary column when a Blob result is
 required; decoding follows the advertised native type/charset.
@@ -41,6 +46,10 @@ provenance. Without a driver fork, the adapter uses a token-aware allowlist:
 - Variables (`@`), SET commands, temporary/locking/handler/prepared commands,
   OUTFILE/DUMPFILE, SQL_CALC_FOUND_ROWS, and unknown constructs retire. UPDATE's
   ordinary SET clause is allowed.
+- Unquoted non-ASCII tokens and adjacent quoted/unquoted identifier fragments retire.
+  Digit-prefixed identifiers are scanned whole, so a builtin-looking suffix cannot
+  qualify an unknown routine. Unicode inside quoted data, quoted column/table names
+  or binds remains supported; ordinary numeric expressions remain reusable.
 - Only explicitly listed pure builtin/grouping calls qualify. Unknown, qualified
   or quoted calls retire, as do GET_LOCK/RELEASE_LOCK and other session functions.
   CTEs, EXPLAIN and DDL conservatively retire even when their effect is harmless.

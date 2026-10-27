@@ -2,7 +2,9 @@
 
 use std::path::Path;
 
-use stackpress_framework_admin::codegen::{Component, components, emit_roles, register_components};
+use stackpress_framework_admin::codegen::{
+    Component, components, emit_pages, emit_roles, register_components,
+};
 use stackpress_framework_schema::{
     Schema,
     codegen::{
@@ -27,6 +29,18 @@ pub fn definitions(plugin: bool) -> stackpress_framework_schema::SchemaResult<De
         Vec::new()
     };
     let mut definitions = generated_workspace_tool::definitions()?;
+    for field in ["note", "priority"] {
+        definitions = definitions.with_field_policy(
+            "Task",
+            field,
+            stackpress_framework_schema::FieldAccess {
+                readable: true,
+                writable: true,
+                sensitive: false,
+                publish_default: true,
+            },
+        )?;
+    }
     for field in [
         "id", "text", "flag", "zero", "rows", "metadata", "score", "slug",
     ] {
@@ -119,8 +133,13 @@ fn schema_transform(context: &TransformContext<'_>, output: &mut OutputPlan) -> 
 
 /// SQL retains its own stores partition; the frontend never includes those modules.
 fn sql_transform(context: &TransformContext<'_>, output: &mut OutputPlan) -> Result<()> {
-    let (schema, _, _) = normalized(context)?;
-    stackpress_framework_sql::codegen::emit_stores(&schema, output)
+    let (schema, _, diagnostics) = normalized(context)?;
+    stackpress_framework_sql::codegen::emit_stores_with_diagnostics(
+        &schema,
+        output,
+        &diagnostics,
+        true,
+    )
 }
 
 /// UI consumes only the approved revision-2 projection of the same normalized schema.
@@ -130,6 +149,12 @@ fn ui_transform(context: &TransformContext<'_>, output: &mut OutputPlan) -> Resu
         &schema.project_ui().map_err(transform_error)?,
         &definitions,
         &diagnostics,
+        output,
+    )?;
+    emit_pages(
+        &schema,
+        &definitions,
+        &["Profile", "Project", "Task"],
         output,
     )
 }

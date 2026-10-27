@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
-"""Finite no-listener native/WASM builds using exactly two owned target trees."""
+"""Finite no-listener native/WASM builds with configurable owned artifacts/targets."""
 import os
 from pathlib import Path
 import shutil
 import subprocess
 
 ROOT = Path(__file__).resolve().parents[2]
-OUT = Path('/private/tmp/s8-stream')
-NATIVE = ROOT / 'target/s8-native'
-WASM = ROOT / 'target/s8-wasm'
+OUT = Path(os.environ.get('UI_STREAM_OUTPUT_DIR', '/private/tmp/s8-stream'))
+# An explicit Cargo target root can share native/WASM output under a disk budget.
+NATIVE = ROOT / os.environ.get('CARGO_TARGET_DIR', 'target/s8-native')
+WASM = ROOT / os.environ.get('CARGO_TARGET_DIR', 'target/s8-wasm')
 
 
 def run(name, args, target):
@@ -22,7 +23,7 @@ def run(name, args, target):
 
 def main():
     """Require installed tooling; never install dependencies or launch a listener."""
-    OUT.mkdir(exist_ok=True)
+    OUT.mkdir(parents=True, exist_ok=True)
     if subprocess.check_output(['wasm-bindgen', '--version'], text=True).strip() != 'wasm-bindgen 0.2.129':
         raise RuntimeError('requires already installed wasm-bindgen 0.2.129')
     run('native-build', ['cargo', 'build', '--locked', '-p', 'stackpress-example-ui-stream-web'], NATIVE)

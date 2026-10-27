@@ -160,4 +160,4 @@ schema and requires its `password` field; its serialization includes the secret.
 
 A backend switch does not copy data, create schema, migrate SQL or make dialect capabilities
 identical. Keep operations within the selected dialect's supported builders and strict
-[wire values](../api/codecs.md). Generated-store integration remains separately gated.
+[wire values](../api/codecs.md). Generated stores retain the [backend boundaries verified by the shared suite](testing.md#generated-stores).

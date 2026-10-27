@@ -7,7 +7,7 @@ use sqlx::{ConnectOptions, Connection, Executor, SqlSafeStr};
 use stackpress_sql::{
     Database, DialectId, ErrorKind, Query, QueryLimits, Render, Sql, SqlValue, TransactionOptions,
 };
-use std::process::{Child, Command, ExitStatus};
+use std::process::Command;
 use std::str::FromStr;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
@@ -169,30 +169,10 @@ fn bounded_admin(
         .map_err(|_| "administration worker panicked")?;
     result
 }
-/// Wait without trusting an in-runtime timeout; timeout always kills and reaps the child.
-fn watchdog(mut child: Child, deadline: Duration) -> TestResult<ExitStatus> {
-    let start = Instant::now();
-    loop {
-        match child.try_wait() {
-            Ok(Some(status)) => return Ok(status),
-            Ok(None) => {}
-            Err(error) => {
-                // Even observation failures must not leave a native scenario running.
-                let _ = child.kill();
-                let _ = child.wait();
-                return Err(error.into());
-            }
-        }
-        if start.elapsed() >= deadline {
-            let _ = child.kill();
-            let _ = child.wait();
-            return Err(
-                "native scenario process watchdog timed out; child killed and reaped".into(),
-            );
-        }
-        std::thread::sleep(Duration::from_millis(10));
-    }
-}
+#[path = "support/process.rs"]
+mod process;
+use process::watchdog;
+
 /// Print only sanitized first-party context and structured native categories.
 fn report_error(error: &(dyn std::error::Error + 'static)) {
     if let Some(error) = error.downcast_ref::<stackpress_sql::SqlError>() {

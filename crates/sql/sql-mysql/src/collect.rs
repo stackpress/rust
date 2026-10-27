@@ -121,15 +121,19 @@ impl OutputBudget {
                 self.charge(value.len())?;
                 SqlValue::Text(value)
             }
-            "CHAR" | "VARCHAR" | "TINYTEXT" | "TEXT" | "MEDIUMTEXT" | "LONGTEXT" => {
-                let value: &str = native.try_get(index).map_err(driver_error)?;
-                self.charge(value.len())?;
-                SqlValue::Text(value.to_owned())
-            }
-            "BINARY" | "VARBINARY" | "TINYBLOB" | "BLOB" | "MEDIUMBLOB" | "LONGBLOB" => {
-                let value: &[u8] = native.try_get(index).map_err(driver_error)?;
-                self.charge(value.len())?;
-                SqlValue::Blob(value.to_owned())
+            "CHAR" | "VARCHAR" | "TINYTEXT" | "TEXT" | "MEDIUMTEXT" | "LONGTEXT" | "BINARY"
+            | "VARBINARY" | "TINYBLOB" | "BLOB" | "MEDIUMBLOB" | "LONGBLOB" => {
+                // Binary text collations also set BINARY. SQLx's public compatibility
+                // check uses the wire charset, preserving text versus actual binary data.
+                if <str as Type<sqlx::MySql>>::compatible(&info) {
+                    let value: &str = native.try_get(index).map_err(driver_error)?;
+                    self.charge(value.len())?;
+                    SqlValue::Text(value.to_owned())
+                } else {
+                    let value: &[u8] = native.try_get(index).map_err(driver_error)?;
+                    self.charge(value.len())?;
+                    SqlValue::Blob(value.to_owned())
+                }
             }
             _ => return Err(unsupported()),
         })

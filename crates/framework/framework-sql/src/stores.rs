@@ -16,6 +16,8 @@ use stackpress_sql::{Expr, Identifier, Row, Select};
 mod query;
 mod relations;
 pub use query::select;
+#[doc(hidden)]
+pub use relations::preflight_atomic_search;
 pub use relations::{RelationLimits, search};
 
 /// A matched base page. Total counts identities before offset/limit, independently of includes.
