@@ -29,11 +29,11 @@ Spec file of [00001 Stackpress Rust foundation](index.md). Load to see freeze re
 
 ## Next action
 
-Slices 6–8 are in implementation (tasks 00011–00013; decisions G27–G34; up to 12 agents per G33). As of 2026-10-27 the merged `trial/3` passes 622 workspace tests (0 failed), 890 doctests and workspace Clippy.
+Slices 6–8 are in implementation (tasks 00011–00013; decisions G27–G35; up to 12 agents per G33). As of 2026-10-27 the merged `trial/3` passes 698 workspace tests (0 failed), 918+ doctests and workspace Clippy.
 
-- **Slice 7 (production servers):** HTTP host M0–M2 plus docs complete, with a managed devmetrics smoke test; PostgreSQL/MySQL adapters M0–M2 plus docs complete; generated-store integration remains.
-- **Slice 6 (data layer):** M0–M1 merged; contract revision 2 frozen (G34); M2 CRUD and relations in progress.
-- **Slice 8 (more UI):** M0, lane M1s, streamed SSR, rich content/formatting M3 and iOS merged; Lane A M2, generated role wrappers M4 and Android in progress.
+- **Slice 7 (production servers), task 00012: complete.** HTTP host and PostgreSQL/MySQL adapters implemented, integrated with the generated stores, and closed out (four review rounds each; coverage 92–97%).
+- **Slice 6 (data layer), task 00011:** M0–M3 merged: generated CRUD stores, relations, batches and migrations with SQLite execution (G35 sequence preservation). M4 integrated DX (quickstart example) in progress; closeout remains. Open owner decision: MySQL string-key width policy (options in `tasks/00012-receipt-sql-closeout.md`).
+- **Slice 8 (more UI), task 00013:** components (M0–M2), formatted edit inputs, rich content, streamed SSR, preferences, iOS, Android build (runtime unverified by owner decision), generated role wrappers (M4), admin catalog part 1 and admin CRUD (M5), and the Lane A closeout are merged. In progress: admin catalog part 2 with visual polish, Lane B closeout. Remaining: M6 import/export, owner visual acceptance; two Leptos upstream issue drafts await an owner decision.
 - **Task 00014:** load-sensitive tests stabilized.
 
 The earlier [resume notes](resume-2026-10-27.md) are historical. The owner is reviewing GitHub issues #1–#13, which are fixed on `trial/3`.
