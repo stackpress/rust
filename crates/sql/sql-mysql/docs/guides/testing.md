@@ -47,5 +47,33 @@ Do not print the URL, credentials, native SQL or native diagnostic messages.
 M0 proves typed binds, exclusive transactions, cancelled-lease disposal and close. M1 adds
 the strict codec matrix, native arity/outcomes, cancellation seams and acknowledged reuse.
 M2 adds the common behavioral suite and bounded concurrent resource accounting with small
-pools. These proofs do not establish generated-store integration, production load capacity,
+pools. Generated-store evidence is bounded as described below. These proofs do not establish
+production load capacity,
 certificate interoperability, arbitrary external poolers or other platforms.
+
+## Generated stores
+
+The same M2 suite executes the actual generated-workspace Profile, Project and Task stores
+through Engine and Database on SQLite, PostgreSQL and MySQL. The observation wrapper counts
+BEGIN, run, commit and rollback entries without retaining SQL or binds. Unsupported atomic
+operations have zero entries, including when the underlying BEGIN would fail.
+
+| Operation | SQLite reference | PostgreSQL | MySQL |
+| --- | --- | --- | --- |
+| Generated table plans | Executed | Executed | TEXT keys return SQL Unsupported before IO |
+| Get, typed filters, paging, counts, base-only atomic reads and row codecs | Executed | Executed | Executed on harness-owned tables |
+| Generated RETURNING CRUD, conflicts/upserts, batches and soft delete/restore | Executed | Executed | Data Unsupported before IO, including before an atomic BEGIN |
+| Literal q containment | Executed | Data Unsupported before IO | Data Unsupported before IO |
+| Includes and exact page totals | Executed in one SQLite snapshot | Data Unsupported before IO | Data Unsupported before IO |
+| Core targeted InsertConflict | Executed | Executed | SQL Unsupported before IO |
+
+MySQL fixture tables use explicit harness-owned VARCHAR(191) key/index widths and InnoDB;
+this is not generated DDL support or a string-key width policy. Seeding uses generated
+input preparation and codecs with a harness-owned insert that omits RETURNING. No generated
+executing write is rewritten to bypass its capability gate. MySQL therefore proves generated
+reads and write refusals; PostgreSQL and SQLite prove the successful mutation sequences.
+
+The three-model fixture contains no datetime ordering field. That existing Unsupported
+boundary on network backends is retained; generated temporal cases remain SQLite-only.
+Includes, exact page totals and literal q are not enabled by adapter integration. See the
+[shared harness guide](../../../sql-postgres/src/tests/support/README.md) for its bounded fixture and test layout.

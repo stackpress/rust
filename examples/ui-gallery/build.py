@@ -7,8 +7,9 @@ import shutil
 
 ROOT = Path(__file__).resolve().parents[2]
 LOGS = Path(os.environ.get('GALLERY_OUTPUT_DIR', '/private/tmp/s8-m0'))
-NATIVE = ROOT / 'target/s8-native'
-WASM = ROOT / 'target/s8-wasm'
+# An explicit Cargo target root can share native/WASM output under a disk budget.
+NATIVE = ROOT / os.environ.get('CARGO_TARGET_DIR', 'target/s8-native')
+WASM = ROOT / os.environ.get('CARGO_TARGET_DIR', 'target/s8-wasm')
 
 def run(name, command, target):
     """Retain exact output and stop on any finite command failure."""

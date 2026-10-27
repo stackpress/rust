@@ -11,6 +11,25 @@ pub enum SortDirection {
     Descending,
 }
 /// Root-owned table state over a bounded validated snapshot.
+///
+/// # Examples
+/// ```
+/// use leptos::prelude::*;
+/// use stackpress_framework_ui::components::{DisplayRow, DisplayTable, TableState};
+/// let owner = Owner::new();
+/// owner.with(|| -> Result<(), Box<dyn std::error::Error>> {
+///     let data = DisplayTable::new(vec!["Name".into()], vec![DisplayRow {
+///         key: "ada".into(), cells: vec!["Ada Lovelace".into()],
+///     }])?;
+///     let table = TableState::new(data, 10)?;
+///     table.set_filter("ada".into())?;
+///     table.select_page(true);
+///     assert!(table.selected().contains("ada"));
+///     Ok(())
+/// })?;
+/// owner.cleanup();
+/// # Ok::<(), Box<dyn std::error::Error>>(())
+/// ```
 #[derive(Clone, Copy)]
 pub struct TableState {
     data: RwSignal<DisplayTable>,
@@ -114,17 +133,18 @@ impl TableState {
     /// Filter and sort at most 100 rows; ties retain original snapshot order.
     pub fn matching(self) -> Vec<DisplayRow> {
         let filter = self.filter.get().to_lowercase();
-        let mut rows: Vec<_> = self
-            .data
-            .get()
-            .rows
-            .into_iter()
-            .filter(|row| {
-                row.cells
-                    .iter()
-                    .any(|cell| cell.to_lowercase().contains(&filter))
-            })
-            .collect();
+        // Borrow the bounded snapshot; only matching rows need an owned projection.
+        let mut rows: Vec<_> = self.data.with(|data| {
+            data.rows
+                .iter()
+                .filter(|row| {
+                    row.cells
+                        .iter()
+                        .any(|cell| cell.to_lowercase().contains(&filter))
+                })
+                .cloned()
+                .collect()
+        });
         if let Some((column, direction)) = self.sort.get() {
             rows.sort_by(|a, b| {
                 let order = a.cells[column].cmp(&b.cells[column]);
@@ -151,7 +171,11 @@ impl TableState {
     }
     /// Select/deselect a known dataset row. Forged keys cannot grow the selection.
     pub fn select(self, key: &str, selected: bool) -> bool {
-        if !self.data.get().rows.iter().any(|row| row.key == key) {
+        // Membership needs no cloned cells, especially when selecting an entire page.
+        if !self
+            .data
+            .with(|data| data.rows.iter().any(|row| row.key == key))
+        {
             return false;
         }
         self.selected.update(|keys| {

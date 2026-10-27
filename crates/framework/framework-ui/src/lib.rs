@@ -2,7 +2,9 @@
 //!
 //! Native buffered rendering and compiled route descriptors share checked public
 //! contracts. Synchronous staging exposes only owned buffers. The explicit async
-//! renderer owns a request-local root in its complete buffered future.
+//! renderer owns a request-local root in its complete buffered future. The opt-in
+//! streaming renderer supervises a private native runtime and a bounded Send body;
+//! all modes share contracts/components but preserve their own lifetime rules.
 
 #[cfg(any(
     all(feature = "ssr", feature = "hydrate"),
@@ -44,6 +46,10 @@ pub mod format;
 #[cfg(all(feature = "ssr", target_arch = "wasm32"))]
 compile_error!("ssr is a native mode; use hydrate or csr for wasm32");
 
+#[cfg(all(feature = "ssr", not(target_arch = "wasm32")))]
+mod owner;
+
+/// Synchronous native SSR with eager owned Head metadata.
 #[cfg(all(feature = "ssr", not(target_arch = "wasm32")))]
 pub mod render;
 

@@ -110,6 +110,22 @@ pub fn Button(
 }
 
 /// Controlled text input; value changes belong to the supplied root-owned signal.
+///
+/// # Examples
+/// ```
+/// use leptos::prelude::*;
+/// use stackpress_framework_ui::components::{FieldControl, Input};
+/// let owner = Owner::new();
+/// owner.with(|| {
+///     let value = RwSignal::new("Ada".to_owned());
+///     let _view = view! {
+///         <FieldControl for_id="name" label="Name" help="Public display name">
+///             <Input id="name" name="name" value described_by="name-help name-error"/>
+///         </FieldControl>
+///     };
+/// });
+/// owner.cleanup();
+/// ```
 #[component]
 pub fn Input(
     /// Label target and unique native DOM identifier.

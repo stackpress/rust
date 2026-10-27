@@ -54,3 +54,5 @@ Related: [Getting started](../getting-started.md), [Concepts](../concepts.md),
 [canonical integration](../../../../../examples/profile-ui/README.md).
 
 Disclosure, navigation, overlay, table and collection contracts: [component breadth](components-breadth.md).
+
+Specialized decimal/date/time/phone editing: `format::edit::{EditState, DecimalPolicy, TemporalPolicy, PhonePolicy, FormattedInput}` under the opt-in `format` feature (facade `framework-ui-format`); see [the editor contract and finite proof](../../../../../examples/ui-format/README.md#specialized-editing-contract).

@@ -6,14 +6,14 @@ import signal
 import subprocess
 
 ROOT = Path(__file__).resolve().parents[2]
-OUT = Path('/private/tmp/s8-stream')
+OUT = Path(os.environ.get('UI_STREAM_OUTPUT_DIR', '/private/tmp/s8-stream'))
 
 
 def main():
     """Never let a hung browser, service worker or native host escape the proof."""
     if not os.environ.get('UI_STREAM_PLAYWRIGHT'):
         raise RuntimeError('UI_STREAM_PLAYWRIGHT must name the already installed Playwright package')
-    OUT.mkdir(exist_ok=True)
+    OUT.mkdir(parents=True, exist_ok=True)
     with (OUT / 'browser.log').open('w') as log:
         child = subprocess.Popen(['node', str(ROOT / 'examples/ui-stream/browser.cjs')], cwd=ROOT, env=os.environ, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
         try:

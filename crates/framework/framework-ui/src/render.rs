@@ -1,9 +1,11 @@
 //! Synchronous component evaluation followed by owned metadata assembly.
 //!
 //! SSR Head values must be eager owned strings, including Title text/formatters.
-//! Resolve signals while evaluating the component; reactive SSR Head is deferred
-//! with S5-F6. A Head evaluation panic becomes a safe [`ViewError::Failure`].
+//! Resolve signals while evaluating the component. Reactive SSR Head belongs to
+//! [`crate::async_render::AsyncLeptosRenderer`]. Head evaluation panic returns
+//! [`stackpress_framework_view::ViewError::Failure`].
 
+use crate::owner::RestoreOwner;
 use futures::{FutureExt, StreamExt, stream};
 use leptos::prelude::*;
 use leptos_meta::{ServerMetaContext, ServerMetaContextOutput};
@@ -21,8 +23,8 @@ static INITIALIZED: AtomicBool = AtomicBool::new(false);
 ///
 /// Call once during host startup inside an active Tokio runtime. Repeated calls
 /// and an already-initialized Leptos executor succeed. This enables buffered Head
-/// assembly only; it does not enable general asynchronous component SSR.
-/// SSR Head props must be eager owned values; reactive SSR Head is S5-F6.
+/// assembly only; component-owned async work uses the explicit async renderer.
+/// Synchronous SSR Head props must be eager owned values.
 ///
 /// # Errors
 /// Returns [`ViewError::ExecutorUnavailable`] outside an active Tokio runtime.
@@ -56,6 +58,22 @@ pub struct PreparedPage {
 }
 
 /// Synchronous render entry; each call receives a fresh, unshared Owner.
+///
+/// # Examples
+/// ```
+/// use leptos::prelude::*;
+/// use stackpress_framework_ui::render::{LeptosRenderer};
+/// use stackpress_framework_view::{BasePath, PageAssets, PageContract, PageSnapshot, PublicLocation};
+/// let contract = PageContract::new(1, "app-build")?;
+/// let assets = PageAssets {
+///     build: "app-build".into(), base: BasePath::default(),
+///     module: PublicLocation::new("/start.js")?, stylesheet: None,
+/// };
+/// let _renderer = LeptosRenderer::new(contract, assets, |page: &PageSnapshot<String>| {
+///     Ok(view! { <p>{page.data.clone()}</p> })
+/// })?;
+/// # Ok::<(), stackpress_framework_view::ViewError>(())
+/// ```
 pub struct LeptosRenderer<F = ()> {
     /// Immutable explicit version/settings/limit contract.
     contract: PageContract,
@@ -72,7 +90,7 @@ impl LeptosRenderer<()> {
     /// unwind before returning; no global render lock is required.
     /// Call [`initialize_ssr`] during startup and render inside a Tokio runtime.
     /// Head values must be eager owned text: read signals before constructing
-    /// Title props. Reactive SSR Head is deferred with S5-F6.
+    /// Title props. Use the explicit async renderer for reactive Head.
     ///
     /// # Errors
     /// Rejects missing SSR startup/runtime and oversized/malformed public seed
@@ -103,7 +121,7 @@ impl LeptosRenderer<()> {
     /// Factories are trusted synchronous code: byte ceilings bound staged output,
     /// not CPU time or allocations performed inside an arbitrary component.
     /// Head values/formatters must eagerly own their data, never read disposed
-    /// signals during assembly. Reactive SSR Head is deferred with S5-F6.
+    /// signals during assembly. The explicit async renderer supports reactive Head.
     ///
     /// # Panics
     /// A component panic propagates after request-local Owner cleanup. The host
@@ -131,7 +149,7 @@ impl LeptosRenderer<()> {
 
 impl PreparedPage {
     /// Finish leptos_meta's owned buffered Head injection, never component async SSR.
-    /// Head values must be eager owned text (reactive SSR Head is S5-F6).
+    /// Head values must be eager owned text; reactive Head needs the async renderer.
     ///
     /// # Errors
     /// Rejects missing SSR startup/runtime or the final complete HTML ceiling before
@@ -212,20 +230,6 @@ impl Drop for RenderOwner {
     }
 }
 
-/// Restore thread-local ownership without carrying a guard across metadata awaits.
-struct RestoreOwner(Option<Owner>);
-
-impl Drop for RestoreOwner {
-    /// Restore the original Owner, or clear a render left current during unwind.
-    fn drop(&mut self) {
-        if let Some(previous) = &self.0 {
-            previous.set();
-        } else if let Some(current) = Owner::current() {
-            current.unset();
-        }
-    }
-}
-
 impl<T: Serialize, F, V> PageRenderer<T> for LeptosRenderer<F>
 where
     F: Fn(&PageSnapshot<T>) -> Result<V, ViewError> + Send + Sync + 'static,
@@ -236,7 +240,7 @@ where
         &self.contract
     }
     /// Evaluate local reactive state before returning the Send owned-buffer future.
-    /// Head props must be eager owned data; reactive SSR Head is S5-F6.
+    /// Head props must be eager owned data; reactive Head uses the async renderer.
     fn render(&self, snapshot: PageSnapshot<T>) -> RenderFuture<'_> {
         let staged = prepare(&snapshot, &self.contract, &self.assets, || {
             (self.component)(&snapshot)

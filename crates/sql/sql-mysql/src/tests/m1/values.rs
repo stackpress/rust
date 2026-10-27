@@ -5,6 +5,19 @@ use super::*;
 pub(super) async fn run(name: &str) -> TestResult<()> {
     let database = open(name, 1).await?;
 
+    // Binary text collations set the BINARY flag but retain a text wire charset.
+    let collated = super::run(
+        &database,
+        "SELECT CAST(? AS CHAR CHARACTER SET utf8mb4) COLLATE utf8mb4_bin AS t, CAST(? AS BINARY) AS b",
+        [SqlValue::Text("Case ☃".into()), SqlValue::Blob(vec![0, 255])],
+    )
+    .await?;
+    assert_eq!(
+        collated.rows[0].cells()[0].1,
+        SqlValue::Text("Case ☃".into())
+    );
+    assert_eq!(collated.rows[0].cells()[1].1, SqlValue::Blob(vec![0, 255]));
+
     for value in [i64::MIN, i64::MAX] {
         assert_eq!(
             super::run(

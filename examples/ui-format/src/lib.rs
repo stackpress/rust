@@ -1,6 +1,9 @@
 //! One finite proof source compiled for native SSR, real hydrate and real CSR.
 //! Optional feature variants also measure exactly the same exported app shape.
 
+#[cfg(feature = "format")]
+pub mod editing;
+
 use serde::{Deserialize, Serialize};
 use stackpress_framework_ui::leptos::prelude::*;
 
@@ -236,6 +239,37 @@ mod browser {
     #[wasm_bindgen]
     pub fn snapshot() -> Result<String, JsValue> {
         snapshot_json().map_err(|error| JsValue::from_str(&error.to_string()))
+    }
+
+    /// Mount/hydrate explicit-locale specialized editors with pre-bootstrap draft adoption.
+    #[cfg(feature = "format")]
+    #[wasm_bindgen]
+    pub fn start_editor(locale: &str) -> Result<js_sys::Function, JsValue> {
+        let locale = match locale {
+            "en" => stackpress_framework_ui::format::DisplayLocale::English,
+            "fr" => stackpress_framework_ui::format::DisplayLocale::French,
+            _ => return Err(JsValue::from_str("Unsupported editing locale")),
+        };
+        let app: web_sys::HtmlElement = web_sys::window()
+            .and_then(|w| w.document())
+            .and_then(|d| d.get_element_by_id("app"))
+            .ok_or_else(|| JsValue::from_str("Missing editor root"))?
+            .dyn_into()?;
+        #[cfg(feature = "hydrate")]
+        let handle = stackpress_framework_ui::leptos::mount::hydrate_from(
+            app,
+            move || view! {<crate::editing::EditingProof locale/>},
+        );
+        #[cfg(feature = "csr")]
+        let handle = stackpress_framework_ui::leptos::mount::mount_to(
+            app,
+            move || view! {<crate::editing::EditingProof locale/>},
+        );
+        let mut handle = Some(handle);
+        let dispose = Closure::wrap(Box::new(move || {
+            handle.take();
+        }) as Box<dyn FnMut()>);
+        Ok(dispose.into_js_value().unchecked_into())
     }
 
     /// Mount/hydrate the same shared component and return a root disposal callback.

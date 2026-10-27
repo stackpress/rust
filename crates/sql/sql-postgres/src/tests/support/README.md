@@ -8,8 +8,8 @@ are shared; there is no copied reference implementation or test-support crate.
 
 `stress.rs` is likewise included by both network M2 executables. Backend fixture
 construction stays in each adapter's `src/tests/m2.rs`; native SQLx handles remain
-private. No SQL core or SQLite source change is required. PostgreSQL's SQLite
-reference dependency is dev-only; Cargo.lock adds only that existing package edge.
+private. No SQL core or SQLite source change is required. SQLite, generated-workspace-app and framework dependencies used by the harness are
+dev-only; Cargo.lock adds existing package edges without new versions.
 
 ## Run the checks
 
@@ -32,7 +32,7 @@ has a 120-second total budget. Native administration has separate 9-second IO an
 10-second wall deadlines. SQLite file cleanup has its own 10-second wall deadline.
 Failure/unwind never converts a failed scenario or cleanup into a passing run.
 Parent SIGKILL/power loss can leave an exact named fixture behind; never sweep
-by prefix. Generated-store integration remains deferred by the coordinator.
+by prefix.
 
 ## What is proved
 
@@ -82,3 +82,37 @@ plaintext development connections. TLS/auth variants, other versions/targets,
 external poolers, hidden session-mutating MySQL triggers and malicious transport
 stalls keep their earlier limits. Per-crate line coverage does not prove every
 branch, target or publication readiness.
+
+## Generated-workspace integration
+
+`stores/` runs the actual emitted Profile, Project and Task code before the common
+core contract. `fixture.rs` uses generated table plans on SQLite/PostgreSQL. MySQL
+first proves all three TEXT-key plans return SQL Unsupported without an executor
+entry, then installs explicitly harness-owned VARCHAR(191)/InnoDB tables. Its seed
+uses generated preparation/encoding plus core inserts without RETURNING. This
+proves generated reads and refusals, not generated DDL or successful generated
+MySQL writes.
+
+`observe.rs` forwards the exact Database and exclusive TransactionSession while
+counting every explicit begin/run/commit/rollback; it stores no SQL, binds or native
+handle. `preflight.rs` runs every model's atomic q/total/include refusals against
+both network dialects, both working and failing BEGIN sentinels, plus all MySQL
+atomic batches. Every refusal has all four counts zero. Invalid include paths
+retain Validation precedence. Real native owners repeat these refusal checks.
+
+`reads.rs` covers strict nested JSON/enum/list/bool codecs, visibility, deterministic
+paging, filtered counts, base atomic reads and selected rows. Only SQLite enables
+literal q and snapshot-dependent totals/includes. Its one/twenty-parent graphs
+have the same four statements; a two-bind limit chunks the graph into 32 statements
+and is preserved by Engine/Transaction/DataSession. Network includes/totals/q stay
+Data Unsupported before IO; datetime ordering retains its existing network gate
+and is not part of these three models.
+
+`writes.rs` covers native RETURNING CRUD on PostgreSQL/SQLite, missing rows, FK
+failure with conservative UnknownOutcome, conflict insert/no-change/update paths,
+explicit non-primary core targets, ordered atomic batches, whole-batch validation,
+rollback after a later failed write, shared transactions across stores and active
+remove/restore. MySQL checks every emitted mutation family, borrowed/atomic batch
+and core targeted conflict for a typed pre-effect refusal; no write is silently
+reimplemented. The existing lifecycle suite still covers cancellation/commit
+uncertainty and close. None of this enables automatic retries or migration support.
