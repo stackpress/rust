@@ -49,7 +49,11 @@ fn contents() -> SchemaResult<AnyView> {
     let proof: contracts::public::PublicRoleProof =
         serde_json::from_value(json!({"id":"proof", "text":null, "flag":false, "zero":0}))
             .map_err(codec)?;
-    let proof_draft = Draft::new(&ui::role_proof::descriptors()?, &json!({}), Role::Field)?;
+    let proof_draft = Draft::new(
+        &ui::role_proof::descriptors()?,
+        &json!({"rows":["", "0"],"metadata":{"initial":"0"},"score":0,"slug":"A New Slug"}),
+        Role::Field,
+    )?;
     let proof_filter = Draft::new(&ui::role_proof::descriptors()?, &json!({}), Role::Filter)?;
     let proof_span = Draft::new(&ui::role_proof::descriptors()?, &json!({}), Role::Span)?;
     let proof_roles = (
@@ -66,7 +70,7 @@ fn contents() -> SchemaResult<AnyView> {
     )?;
     let project_draft = Draft::new(
         &ui::project::descriptors()?,
-        &json!({"title":"Compile roles"}),
+        &json!({"title":"Compile roles", "state":"open", "tags":["rust","0"]}),
         Role::Field,
     )?;
     let task_draft = Draft::new(
@@ -86,6 +90,7 @@ fn contents() -> SchemaResult<AnyView> {
     let profiles = ui::profile::list(&profile, "profile-list")?;
     let projects = ui::project::list(&project, "project-list")?;
     let tasks = ui::task::list(&task, "task-list")?;
+    let table = ui::task::table(&[("task-one".into(), task.clone())], "task-table")?;
     let profile_view = ui::profile::view(&profile, "profile-view")?;
     let project_view = ui::project::view(&project, "project-view")?;
     let task_view = ui::task::view(&task, "task-view")?;
@@ -105,11 +110,12 @@ fn contents() -> SchemaResult<AnyView> {
         <p>"Fixture data · generated role wrappers · no database writes"</p>
         <section><h2>"Profile"</h2><h3>"List"</h3><ul aria-label="Profile list"><li>{profiles}</li></ul><h3>"View"</h3>{profile_view}<h3>"Fields"</h3><form aria-label="Profile field form" on:submit=move |event| event.prevent_default()>{profile_fields}</form></section>
         <section><h2>"Project"</h2><h3>"List"</h3><ul aria-label="Project list"><li>{projects}</li></ul><h3>"View"</h3>{project_view}<h3>"Fields"</h3><form aria-label="Project field form" on:submit=move |event| event.prevent_default()>{project_fields}</form></section>
-        <section><h2>"Task"</h2><h3>"List"</h3><ul aria-label="Task list"><li>{tasks}</li></ul><h3>"View"</h3>{task_view}<h3>"Fields"</h3><form aria-label="Task field form" on:submit=move |event| event.prevent_default()>{task_fields}</form></section>
+        <section><h2>"Task"</h2><h3>"List"</h3><ul aria-label="Task list"><li>{tasks}</li></ul><h3>"Table"</h3>{table}<h3>"View"</h3>{task_view}<h3>"Fields"</h3><form aria-label="Task field form" on:submit=move |event| event.prevent_default()>{task_fields}</form></section>
         <section><h2>"Filters"</h2>{filters}</section><section><h2>"Spans"</h2>{spans}</section>
         <section id="role-proof"><h2>"Nullable and defaults proof"</h2>{proof_roles}
-            <output id="proof-draft">{move || { let _ = proof_draft.get("text").map(|value| value.get()); proof_draft.snapshot().map(|value| value.to_string()).unwrap_or_default() }}</output>
+            <output id="proof-draft">{move || { for field in ["text","zero","rows","metadata","score","slug"] {let _ = proof_draft.get(field).map(|value| value.get());} proof_draft.snapshot().map(|value| value.to_string()).unwrap_or_default() }}</output>
         </section>
+        <output id="project-draft">{move || {for field in ["state","tags"] { let _ = project_draft.get(field).map(|value|value.get()); } project_draft.snapshot().map(|value|value.to_string()).unwrap_or_default() }}</output>
         <output id="task-draft">{move || { let _ = draft.get("title").map(|value| value.get()); let _ = draft.get("done").map(|value| value.get()); draft.snapshot().map(|value| value.to_string()).unwrap_or_default() }}</output>
     </main> }.into_any())
 }

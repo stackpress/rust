@@ -6,5 +6,6 @@
 mod bindings;
 mod catalog;
 mod emit;
+mod table;
 pub use catalog::{Component, components, register_components};
 pub use emit::emit_roles;

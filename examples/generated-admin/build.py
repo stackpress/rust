@@ -17,7 +17,7 @@ def main():
             run(f'{variant}-web-build', ['cargo', 'build', '-p', 'generated-admin-web', '--locked'])
             binary = LOGS / f'{variant}-web'
             shutil.copy2(TARGET / 'debug/generated-admin-web', binary)
-            for mode in (['hydrate', 'csr'] if variant == 'base' else ['hydrate']):
+            for mode in ['hydrate', 'csr']:
                 run(f'{variant}-{mode}-build', ['cargo', 'build', '-p', 'generated-admin-client', '--target', 'wasm32-unknown-unknown', '--features', mode, '--locked'])
                 assets = LOGS / 'assets' / variant / mode
                 assets.mkdir(parents=True, exist_ok=True)

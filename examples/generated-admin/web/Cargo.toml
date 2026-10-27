@@ -8,6 +8,7 @@ publish.workspace = true
 
 [dependencies]
 generated-admin-shared = { path = "../shared", features = ["ssr"] }
+stackpress-framework-ui = { path = "../../../crates/framework/framework-ui" }
 leptos = { version = "=0.8.22", default-features = false, features = ["ssr"] }
 
 [lints]

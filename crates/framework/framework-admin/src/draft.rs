@@ -132,6 +132,15 @@ impl RoleContext {
             .unwrap_or(fallback)
     }
 
+    /// Read a finite checked numeric prop without converting missing/false to zero.
+    pub fn number_prop(&self, name: &str, fallback: f64) -> f64 {
+        self.binding()
+            .and_then(|binding| binding.props.get(name))
+            .and_then(Value::as_f64)
+            .filter(|value| value.is_finite())
+            .unwrap_or(fallback)
+    }
+
     /// Locate only this independently selected placement's normalized props.
     fn binding(&self) -> Option<&stackpress_framework_schema::RoleBinding> {
         self.field
