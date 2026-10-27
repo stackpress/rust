@@ -13,6 +13,14 @@ use stackpress_framework_ui::components::{
 
 use crate::RoleContext;
 
+mod catalog_inputs;
+mod collection_inputs;
+mod sync;
+pub use catalog_inputs::{ComboboxField, RatingField, SliderField, SlugField};
+#[cfg(feature = "codegen")]
+pub(crate) use catalog_inputs::{range_scale, rating_limit};
+pub use collection_inputs::{MetadataField, TextListField};
+
 /// Read exact text, leaving absent/null values distinct in the source signal.
 fn text_seed(context: &RoleContext) -> String {
     match context.value.get_untracked() {
@@ -48,15 +56,21 @@ fn presence(context: &RoleContext) -> impl IntoView {
     let field = context.field.clone();
     let id = format!("{}-presence", context.id);
     let label = format!("{} value state", context.field.label);
+    let disabled = context.bool_prop("disabled", false);
+    let empty_number = context.number_prop("min", 0.0);
     view! { <label for=id.clone()>{label}</label>
-        <select id=id on:change=move |event| {
+        <select id=id disabled=disabled on:change=move |event| {
+            if disabled { return; }
             let next = match event_target_value(&event).as_str() {
                 "missing" => FieldInput::Missing,
                 "null" if field.nullable => FieldInput::Null,
-                _ => FieldInput::Value(match field.value_type.value {
+                _ => FieldInput::Value(if field.value_type.multiple { Value::Array(Vec::new()) } else { match field.value_type.value {
                     ValueType::Boolean => Value::Bool(false),
+                    ValueType::Integer => Value::from(empty_number as i64),
+                    ValueType::Number => Value::from(empty_number),
+                    ValueType::Object => Value::Object(Default::default()),
                     _ => Value::String(String::new()),
-                }),
+                }}),
             };
             state.set(next);
         }>
@@ -165,6 +179,9 @@ pub fn SelectField(
     /// Approved field metadata and root-owned state from the generated caller.
     context: RoleContext,
 ) -> impl IntoView {
+    if context.bool_prop("searchable", false) {
+        return view! { <ComboboxField context/> }.into_any();
+    }
     let selected = RwSignal::new(match context.value.get_untracked() {
         FieldInput::Value(Value::String(value)) => Some(value),
         _ => None,
@@ -210,7 +227,7 @@ pub fn SelectField(
         let next = event_target_value(&event);
         if choices.iter().any(|choice| choice.as_str() == Some(&next)) { value.set(FieldInput::Value(Value::String(next))); }
     }/> };
-    frame(context, control.into_any())
+    frame(context, control.into_any()).into_any()
 }
 
 /// Plain escaped display; no HTML, format strings, or executable template evaluation.

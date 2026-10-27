@@ -27,7 +27,7 @@
   const native = (command, args = {}) => window.__TAURI__.core.invoke(command, args);
   try {
     await until(() => window.profileUiReady && document.querySelectorAll('.sp-list li').length === 3);
-    assert(location.origin === 'tauri://localhost', 'unexpected packaged origin');
+    assert(location.origin === window.mobileProofOrigin, 'unexpected packaged origin');
     if (window.mobileProofMode === 'restart') {
       assert(document.documentElement.lang === 'fr', 'restart lost locale');
       assert(document.querySelector('.sp-root').dataset.theme === 'dark', 'restart lost theme');

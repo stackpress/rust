@@ -68,3 +68,11 @@ another lease while retaining one can time out or contend on native locks. See t
 
 Related: [Engine](engine.md), [TransactionSession](database.md#2-transactionsession),
 [errors](errors.md), [QueryPlan](query-plan.md).
+
+## Budget inspection
+
+`Transaction::limits(&self) -> QueryLimits` returns a copy of the frozen at begin per-statement
+SQL-byte, bind, row and retained-byte limits. Reading it performs no IO or acquisition and
+changing the returned value cannot change the executor. Relation planners can reserve
+fixed predicate binds and derive chunks from this exact policy. Renderer and native output
+validation still enforce the limits; inspection does not authorize increasing them.

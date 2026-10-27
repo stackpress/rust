@@ -20,7 +20,23 @@ pub(super) struct MobileProof {
 impl MobileProof {
     /// Select only declared fixture modes, using the real app-config path.
     pub(super) fn new(directory: PathBuf) -> Option<Arc<Self>> {
+        // iOS launch inherits the fixture environment. Android uses a fixed
+        // debug-only app-private selector written by run-as before launching;
+        // release applications never consult that selector.
+        #[cfg(target_os = "ios")]
         let mode = std::env::var("PROFILE_UI_MOBILE_PROOF").ok()?;
+        #[cfg(target_os = "android")]
+        let mode = {
+            if !cfg!(debug_assertions) {
+                return None;
+            }
+            let path = directory.join("mobile-proof-mode");
+            let metadata = std::fs::symlink_metadata(&path).ok()?;
+            if !metadata.is_file() || metadata.len() > 16 {
+                return None;
+            }
+            std::fs::read_to_string(path).ok()?
+        };
         if !matches!(mode.as_str(), "first" | "restart" | "recovery") {
             return None;
         }
@@ -35,8 +51,14 @@ impl MobileProof {
     /// Install observation before any bundled page module can mount a root.
     pub(super) fn script(&self) -> String {
         format!(
-            "window.mobileProofMode={};\n{}",
+            "window.mobileProofMode={};window.mobileProofOrigin={};\n{}",
             serde_json::to_string(&self.mode).unwrap_or_else(|_| "null".into()),
+            serde_json::to_string(if cfg!(target_os = "android") {
+                "http://tauri.localhost"
+            } else {
+                "tauri://localhost"
+            })
+            .unwrap_or_default(),
             include_str!("../mobile-proof.js")
         )
     }
@@ -59,7 +81,7 @@ impl MobileProof {
         }
         true
     }
-    /// Record actual UIApplication suspension/foreground events, not a timer guess.
+    /// Record actual platform suspension/foreground events, not a timer guess.
     pub(super) fn lifecycle(&self, resumed: bool) {
         if resumed {
             self.resumed.fetch_add(1, Ordering::SeqCst);

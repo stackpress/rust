@@ -33,6 +33,7 @@ edition = "2024"
 [dependencies]
 stackpress-framework-admin = {{ path = "{ROOT}/crates/framework/framework-admin" }}
 stackpress-framework-schema = {{ path = "{ROOT}/crates/framework/framework-schema" }}
+stackpress-framework-ui = {{ path = "{ROOT}/crates/framework/framework-ui" }}
 leptos = {{ version = "=0.8.22", default-features = false }}
 serde = {{ version = "1", features = ["derive"] }}
 serde_json = "1"

@@ -682,3 +682,212 @@ fn dml_resource_limits() {
     let large_sql = Select::new(vec![exact_identifier; 1000]).from("p");
     assert!(large_sql.render(DialectId::Sqlite).is_ok());
 }
+
+/// Conflict actions retain explicit scope, stable bind order and unchanged base inspection.
+#[test]
+fn targeted_conflict_rendering_and_inspection() {
+    let ordinary = Insert::new("project")
+        .columns(["id", "title"])
+        .values(["p1", "Initial"]);
+    assert!(ordinary.conflict().is_none());
+    let action = InsertConflict::DoUpdate {
+        target: vec!["id".into()],
+        assignments: vec![("title".into(), WriteValue::from("Updated"))],
+    };
+    let insert = ordinary
+        .clone()
+        .on_conflict(action.clone())
+        .returning(["id", "title"]);
+    assert_eq!(insert.conflict(), Some(&action));
+    assert_eq!(insert.clone(), insert);
+    assert_eq!(insert.build().rows, ordinary.build().rows);
+    for (dialect, expected) in [
+        (
+            DialectId::Sqlite,
+            "INSERT INTO \"project\" (\"id\", \"title\") VALUES (?, ?) ON CONFLICT (\"id\") DO UPDATE SET \"title\" = ? RETURNING \"id\", \"title\"",
+        ),
+        (
+            DialectId::Postgres,
+            "INSERT INTO \"project\" (\"id\", \"title\") VALUES ($1, $2) ON CONFLICT (\"id\") DO UPDATE SET \"title\" = $3 RETURNING \"id\", \"title\"",
+        ),
+    ] {
+        let query = insert.render(dialect).unwrap();
+        assert_eq!(query.sql(), expected);
+        assert_eq!(
+            query.binds(),
+            &["p1".into(), "Initial".into(), "Updated".into()]
+        );
+        query.validate(QueryLimits::default()).unwrap();
+    }
+    let mysql = insert.render(DialectId::Mysql).unwrap_err();
+    assert_eq!(mysql.kind(), ErrorKind::Unsupported);
+    assert!(mysql.to_string().contains("cannot be restricted"));
+    // Replacing the clause does not retain the old update binds.
+    let nothing = insert.on_conflict(InsertConflict::DoNothing {
+        target: vec!["id".into()],
+    });
+    for dialect in [DialectId::Sqlite, DialectId::Postgres] {
+        let query = nothing.render(dialect).unwrap();
+        assert!(
+            query
+                .sql()
+                .contains("ON CONFLICT (\"id\") DO NOTHING RETURNING")
+        );
+        assert_eq!(query.binds().len(), 2);
+    }
+    assert_eq!(
+        nothing.render(DialectId::Mysql).unwrap_err().kind(),
+        ErrorKind::Unsupported
+    );
+}
+
+/// Invalid scopes and assignments cannot widen into a catch-all action or a silent no-op.
+#[test]
+fn conflict_shape_and_dialect_guards() {
+    let base = Insert::new("pair").columns(["a", "b"]).values([1, 2]);
+    for action in [
+        InsertConflict::DoNothing { target: vec![] },
+        InsertConflict::DoNothing {
+            target: vec!["a".into(), "A".into()],
+        },
+        InsertConflict::DoNothing {
+            target: vec!["bad\0name".into()],
+        },
+        InsertConflict::DoUpdate {
+            target: vec!["a".into()],
+            assignments: vec![],
+        },
+        InsertConflict::DoUpdate {
+            target: vec!["a".into()],
+            assignments: vec![("b".into(), 1.into()), ("B".into(), 2.into())],
+        },
+        InsertConflict::DoUpdate {
+            target: vec!["a".into()],
+            assignments: vec![("bad\0column".into(), 1.into())],
+        },
+    ] {
+        assert_eq!(
+            base.clone()
+                .on_conflict(action)
+                .render(DialectId::Sqlite)
+                .unwrap_err()
+                .kind(),
+            ErrorKind::InvalidQuery
+        );
+    }
+    let clause = InsertConflict::DoNothing {
+        target: vec!["a".into()],
+    };
+    for query in [
+        base.clone().values([3, 4]).on_conflict(clause.clone()),
+        Insert::new("pair")
+            .default_values()
+            .on_conflict(clause.clone()),
+        Insert::new("pair")
+            .columns(["a"])
+            .values([WriteValue::Default])
+            .on_conflict(clause),
+    ] {
+        assert_eq!(
+            query.render(DialectId::Sqlite).unwrap_err().kind(),
+            ErrorKind::Unsupported
+        );
+    }
+    let wrong_arity = Insert::new("pair")
+        .columns(["a", "b"])
+        .values([1])
+        .on_conflict(InsertConflict::DoNothing {
+            target: vec!["a".into()],
+        });
+    assert_eq!(
+        wrong_arity.render(DialectId::Sqlite).unwrap_err().kind(),
+        ErrorKind::InvalidQuery
+    );
+    let default = base.on_conflict(InsertConflict::DoUpdate {
+        target: vec!["a".into()],
+        assignments: vec![("b".into(), WriteValue::Default)],
+    });
+    assert_eq!(
+        default.render(DialectId::Sqlite).unwrap_err().kind(),
+        ErrorKind::Unsupported
+    );
+    assert!(
+        default
+            .render(DialectId::Postgres)
+            .unwrap()
+            .sql()
+            .ends_with("\"b\" = DEFAULT")
+    );
+}
+
+/// Compound scope, hostile quoted names and heterogeneous write states stay structured.
+#[test]
+fn conflict_values_identifiers_and_budgets() {
+    let hostile = "value\"; DROP TABLE pair;--";
+    let query = Insert::new("pair")
+        .columns(["a", "b"])
+        .values([1, 2])
+        .on_conflict(InsertConflict::DoUpdate {
+            target: vec!["a".into(), "b".into()],
+            assignments: vec![
+                (hostile.into(), WriteValue::from("PRIVATE_BIND_SENTINEL")),
+                (
+                    "json".into(),
+                    WriteValue::Json(JsonValue::Scalar(JsonScalar::Null)),
+                ),
+                ("optional".into(), WriteValue::Value(SqlValue::Null)),
+                ("expr".into(), WriteValue::Expression(Expr::value(false))),
+            ],
+        });
+    let rendered = query.render(DialectId::Postgres).unwrap();
+    assert!(rendered.sql().contains("ON CONFLICT (\"a\", \"b\")"));
+    assert!(
+        rendered
+            .sql()
+            .contains("\"value\"\"; DROP TABLE pair;--\" = $3")
+    );
+    assert!(rendered.sql().contains("\"json\" = CAST($4 AS JSONB)"));
+    assert!(!rendered.sql().contains("PRIVATE_BIND_SENTINEL"));
+    assert_eq!(
+        rendered.binds(),
+        &[
+            1.into(),
+            2.into(),
+            "PRIVATE_BIND_SENTINEL".into(),
+            "null".into(),
+            SqlValue::Null,
+            false.into()
+        ]
+    );
+    let assignments = (0..1000)
+        .map(|i| (format!("v{i}"), WriteValue::from(i)))
+        .collect();
+    let too_many_binds =
+        Insert::new("p")
+            .columns(["id"])
+            .values([1])
+            .on_conflict(InsertConflict::DoUpdate {
+                target: vec!["id".into()],
+                assignments,
+            });
+    assert_eq!(
+        too_many_binds.render(DialectId::Sqlite).unwrap_err().kind(),
+        ErrorKind::Limit
+    );
+    let too_many_assignments = (0..1001)
+        .map(|i| (format!("v{i}"), WriteValue::Default))
+        .collect();
+    assert_eq!(
+        Insert::new("p")
+            .columns(["id"])
+            .values([1])
+            .on_conflict(InsertConflict::DoUpdate {
+                target: vec!["id".into()],
+                assignments: too_many_assignments
+            })
+            .render(DialectId::Postgres)
+            .unwrap_err()
+            .kind(),
+        ErrorKind::InvalidQuery
+    );
+}

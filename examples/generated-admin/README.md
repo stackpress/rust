@@ -20,8 +20,10 @@ ADMIN_PLAYWRIGHT="/absolute/path/to/installed/playwright" python3 examples/gener
 python3 examples/generated-admin/compile_proof.py
 ```
 
-The browser proof intercepts `https://admin.invalid`, uses file-backed assets and a finite stdout SSR process, and starts no listener. Its parent kills/reaps after 120 seconds. Logs, exact command results, assets, compile failures, and screenshots live in `/private/tmp/s8-admin/`. The build driver preserves baseline/plugin/disabled binaries and restores default generated source in its final step.
+The browser proof intercepts `https://admin.invalid` at `/` and `/admin/`, uses file-backed assets and a finite stdout SSR process, and starts no listener. Its parent kills/reaps after 120 seconds. Logs, exact command results, assets, compile failures, and screenshots live in `/private/tmp/s8-admin/`. The build driver preserves baseline/plugin/disabled binaries for hydrate and CSR and restores default generated source in its final step.
 
 The generated wrappers implement five independent placements. Missing roles stay absent; public descriptors omit sensitive/host-only fields. Native drafts distinguish omission/null/value and preserve defaults, false, zero, and empty strings. Browser assertions cover initial SSR/hydrated DOM identity, controlled edits, unique label/control IDs, plugin replacement/removal, and no captured browser errors.
 
-The framework's larger source catalog remains unavailable unless registered with a concrete compiled adapter. Current built-ins are input/textarea/checkbox/switch/select and text/yesno/uppercase/lowercase/capitalize. There are no CRUD routes, writes, authorization implementation, relation services, or installed-target claims here; those are outside M4.
+Catalog breadth part 1 adds text/tag/metadata collections, a numeric slider, rating, explicit slug normalization, local enum combobox selection and a generated list-role table. Chromium checks edits/order/stable identities, duplicate metadata errors, omission/null/empty/zero, keyboard selection, both mounts and 375 px at 200% zoom. The [catalog reference](../../crates/framework/framework-admin/docs/api/catalog.md) describes exact value shapes and bounds.
+
+Formatted number/date/phone edits, rich text, file/media and relation services remain unavailable. There are no CRUD routes, writes, authorization implementation or installed-target claims here.

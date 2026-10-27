@@ -42,9 +42,18 @@ pub fn definitions() -> stackpress_framework_schema::SchemaResult<DefinitionRegi
         ("Address", "city country"),
         (
             "Matrix",
-            "id text count real float flag day time stamp object choice truth tags numbers dates times instants objects address siblings favorite created token",
+            "id text count real float flag day time stamp object choice truth tags numbers dates times instants objects address siblings favorite created token links",
         ),
         ("MatrixAddress", "city country"),
+        ("Link", "id ownerId owner"),
+        (
+            "Compound",
+            "region code enabled day clock instant ratio choice truth value note",
+        ),
+        ("Query", "id self payload"),
+        ("Payload", "row state value"),
+        ("Schema", "id value type active owner"),
+        ("Operations", "id value schemaId row"),
     ] {
         for field in fields.split_whitespace() {
             registry = registry.with_field_policy(
@@ -88,9 +97,11 @@ fn sql_transform(context: &TransformContext<'_>, output: &mut OutputPlan) -> Res
         .map_err(|cause| {
             stackpress_idea::transformer::TransformError::from(std::io::Error::other(cause))
         })?;
-    stackpress_framework_sql::codegen::emit_stores(
+    stackpress_framework_sql::codegen::emit_stores_with_diagnostics(
         &normalize(context.schema(), &diagnostics)?,
         output,
+        &diagnostics,
+        true,
     )
 }
 
