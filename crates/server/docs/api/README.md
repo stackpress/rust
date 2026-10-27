@@ -15,6 +15,7 @@ trying the crate for the first time; these pages assume you know the task or typ
 | Outcomes, failures, stage history, correlation | [Reports](reports.md) |
 | Adapter-owned one-attempt output | [OutputGuard](output.md) |
 | Feature-gated buffered HTTP values and conversion | [HTTP](http.md) |
+| Owned one-shot HTTP producer, body and publication | [Streaming HTTP](streaming-http.md) |
 
 Imports use `stackpress_server`; the facade's `server` feature exposes `stackpress::server`. Lib
 data, handler, request, response, and matcher contracts live in the [Lib

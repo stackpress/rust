@@ -64,3 +64,9 @@ You have converted one in-process route to native HTTP values. See [HTTP referen
 for budgets, text/binary output, framing, cookie-list limitations, and sanitized conversion
 fallback. The [canonical HTTP test](../../../../examples/capability-host/tests/http.rs) compares
 this path with the same capability's direct call.
+
+For demand-driven response output, enable http-stream and follow
+[Streaming HTTP](streaming-http.md). For TCP, HTTPS, admission and deadlines,
+use the separate [HTTP host](../../../server-http/docs/getting-started.md).
+The facade's existing server-http feature continues to select only this
+buffered conversion path.
