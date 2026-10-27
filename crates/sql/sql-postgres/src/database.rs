@@ -15,6 +15,8 @@ use std::time::Duration;
 use tokio::sync::{OwnedSemaphorePermit, Semaphore, TryAcquireError};
 
 /// Non-Clone, eagerly opened database owner; native pool handles never escape.
+///
+/// Use the compiled example on [`Self::open`] to place this owner behind an Engine.
 pub struct PostgresDatabase {
     /// Native capacity bounds checked-out, acquiring, and retiring connections.
     pool: PgPool,
@@ -33,6 +35,16 @@ impl PostgresDatabase {
     /// # Errors
     /// Invalid options, TLS/authentication/connection failures and finite open deadlines
     /// fail without publishing a partial owner. Public errors never echo native messages.
+    ///
+    /// ```no_run
+    /// use stackpress_sql_postgres::{PostgresDatabase, PostgresOptions};
+    /// use stackpress_sql::Engine;
+    /// async fn application(secret: String) -> stackpress_sql::Result<()> {
+    ///     let options = PostgresOptions::new("db.internal", "application", "application", secret);
+    ///     let engine = Engine::new(PostgresDatabase::open(options).await?);
+    ///     engine.close().await
+    /// }
+    /// ```
     pub async fn open(options: PostgresOptions) -> Result<Self> {
         options.validate()?;
         let connect = options.connect_options()?;

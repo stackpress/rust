@@ -5,7 +5,7 @@ use crate::{MysqlDatabase, MysqlOptions, MysqlTls};
 use sqlx::mysql::{MySqlConnectOptions, MySqlConnection, MySqlSslMode};
 use sqlx::{ConnectOptions, Connection, Executor, SqlSafeStr};
 use stackpress_sql::{Database, DialectId, Query, QueryLimits, Render, Sql, SqlValue};
-use std::process::{Child, Command, ExitStatus};
+use std::process::Command;
 use std::str::FromStr;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
@@ -173,57 +173,13 @@ fn bounded_admin(
         .map_err(|_| "administration worker panicked")?;
     result
 }
-/// Wait without trusting an in-runtime timeout; timeout always kills and reaps the child.
-fn watchdog(mut child: Child, deadline: Duration) -> TestResult<ExitStatus> {
-    let start = Instant::now();
-    loop {
-        match child.try_wait() {
-            Ok(Some(status)) => return Ok(status),
-            Ok(None) => {}
-            Err(error) => {
-                // Even observation failures must not leave a native scenario running.
-                let _ = child.kill();
-                let _ = child.wait();
-                return Err(error.into());
-            }
-        }
-        if start.elapsed() >= deadline {
-            let _ = child.kill();
-            let _ = child.wait();
-            return Err(
-                "native scenario process watchdog timed out; child killed and reaped".into(),
-            );
-        }
-        std::thread::sleep(Duration::from_millis(10));
-    }
-}
-/// Print only sanitized first-party context and structured native categories.
-fn report_error(error: &(dyn std::error::Error + 'static)) {
-    // Walk a bounded cause chain, formatting only safe first-party contexts and typed codes.
-    let mut current = Some(error);
-    for _ in 0..8 {
-        let Some(error) = current else { break };
-        if let Some(error) = error.downcast_ref::<stackpress_framework_sql::DataError>() {
-            eprintln!("data failure category {:?}: {error}", error.kind());
-        }
-        if let Some(error) = error.downcast_ref::<stackpress_sql::SqlError>() {
-            eprintln!("SQL failure category {:?}: {error}", error.kind());
-        }
-        if let Some(native) = error.downcast_ref::<sqlx::Error>() {
-            match native {
-                sqlx::Error::Database(database) => {
-                    eprintln!("native structured code: {:?}", database.code())
-                }
-                sqlx::Error::Io(io) => eprintln!("native IO category: {:?}", io.kind()),
-                sqlx::Error::ColumnDecode { .. } | sqlx::Error::Decode(_) => {
-                    eprintln!("native decode failure")
-                }
-                _ => eprintln!("native failure (detail redacted)"),
-            }
-        }
-        current = error.source();
-    }
-}
+#[path = "../../../sql-postgres/src/tests/support/process.rs"]
+mod process;
+use process::watchdog;
+
+#[path = "../../../sql-postgres/src/tests/support/diagnostics.rs"]
+mod diagnostics;
+use diagnostics::report_error;
 
 #[path = "../../../sql-postgres/src/tests/support/contract.rs"]
 mod contract;

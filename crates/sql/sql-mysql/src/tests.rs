@@ -1,5 +1,8 @@
 //! Offline configuration, strict budgets, and diagnostic ownership checks.
 
+#[path = "../../sql-postgres/src/tests/process.rs"]
+mod process;
+
 use super::*;
 use stackpress_sql::{DialectId, ErrorKind, QueryLimits, Result, SqlError};
 
@@ -221,4 +224,63 @@ fn json_raw_token_and_depth_boundaries() {
     let allowed = format!("{}0{}", "[".repeat(127), "]".repeat(127));
     let raw = RawValue::from_string(allowed.clone()).unwrap();
     assert_eq!(crate::json::canonical(&raw, 1000).unwrap(), allowed);
+}
+
+#[test]
+/// Odd native identifiers cannot be reduced to an allowlisted function fragment.
+fn reuse_matches_whole_function_tokens() {
+    use stackpress_sql::{Render, Sql};
+    for sql in [
+        "SELECT éABS(1)",
+        "SELECT ABSé(1)",
+        "SELECT 1ABS(1)",
+        "SELECT ABS_tail(1)",
+        "SELECT prefixABS(1)",
+        "SELECT 123ABS(1)",
+        "SELECT `ABS`(1)",
+        "SELECT native.ABS(1)",
+        "SELECT `native`.ABS(1)",
+        "SELECT native.`ABS`(1)",
+        "SELECT `native` . ABS(1)",
+        "SELECT native. /* trivia */ ABS(1)",
+        "SELECT `prefix`ABS(1)",
+    ] {
+        let query = Sql::literal(DialectId::Mysql, sql)
+            .render(DialectId::Mysql)
+            .unwrap();
+        assert!(
+            !crate::reuse::allowed(&query),
+            "unknown or quoted/qualified call must retire"
+        );
+    }
+    // Unicode data stays inside its literal or bind; numeric expressions are still ordinary SQL.
+    for sql in [
+        "SELECT 'éABS(1)'",
+        "SELECT 1 + ABS(-2)",
+        "SELECT 1e-3 + ABS(1)",
+        "SELECT `écol` FROM items",
+    ] {
+        let query = Sql::literal(DialectId::Mysql, sql)
+            .render(DialectId::Mysql)
+            .unwrap();
+        assert!(
+            crate::reuse::allowed(&query),
+            "ordinary data/expression must remain reusable"
+        );
+    }
+}
+
+#[test]
+/// Dollar/colon identifier fragments never enter the adapter through the existing core gate.
+fn core_refuses_other_parameter_fragments() {
+    use stackpress_sql::{Render, Sql};
+    for sql in ["SELECT $ABS(1)", "SELECT :ABS(1)"] {
+        assert_eq!(
+            Sql::literal(DialectId::Mysql, sql)
+                .render(DialectId::Mysql)
+                .unwrap_err()
+                .kind(),
+            ErrorKind::Unsupported
+        );
+    }
 }

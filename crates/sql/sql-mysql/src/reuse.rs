@@ -28,8 +28,9 @@ pub(crate) fn allowed_sql(sql: &str) -> bool {
             break;
         }
         let byte = bytes[index];
-        // Variables/control syntax cannot be hidden among ordinary statement tokens.
-        if byte == b'@' || byte == 0 {
+        // Outside quoted data/comments, unfamiliar UTF-8 identifiers cannot be
+        // split into ASCII fragments that resemble an allowlisted builtin.
+        if byte == b'@' || byte == 0 || !byte.is_ascii() {
             return false;
         }
         if byte == b';' {
@@ -40,6 +41,14 @@ pub(crate) fn allowed_sql(sql: &str) -> bool {
                 return false;
             };
             index = end;
+            // Adjacent quoted/unquoted identifier fragments are unclassifiable.
+            // Do not recognize an embedded builtin after a closing backtick/quote.
+            if bytes
+                .get(index)
+                .is_some_and(|byte| byte.is_ascii_alphanumeric() || *byte == b'_')
+            {
+                return false;
+            }
             let Some(next) = skip_trivia(bytes, index) else {
                 return false;
             };
@@ -49,8 +58,10 @@ pub(crate) fn allowed_sql(sql: &str) -> bool {
             // A quoted INSERT table may be schema-qualified; it remains a table, not a call.
             insert_target = insert_target && bytes.get(next) == Some(&b'.');
             previous_dot = false;
-        } else if byte.is_ascii_alphabetic() || byte == b'_' {
+        } else if byte.is_ascii_alphanumeric() || byte == b'_' {
             let start = index;
+            // MySQL identifiers can start with digits. Classify the whole token,
+            // so 1ABS(...) never becomes an ordinary number followed by ABS(...).
             while index < bytes.len()
                 && (bytes[index].is_ascii_alphanumeric() || bytes[index] == b'_')
             {

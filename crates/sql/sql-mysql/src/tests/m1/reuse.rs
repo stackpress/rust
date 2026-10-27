@@ -159,6 +159,77 @@ pub(super) async fn run(name: &str) -> TestResult<()> {
         integer(&database, "SELECT CONNECTION_ID()").await?,
         before_error
     );
+    partial_function_names(&database, name).await?;
     database.close().await?;
+    Ok(())
+}
+
+/// Native stored functions expose session state if an identifier fragment is mistaken for ABS.
+async fn partial_function_names(database: &MysqlDatabase, name: &str) -> TestResult<()> {
+    // Every routine lives only in this parent's newly created database. No global policy changes.
+    let mut setup = database.lease().await?;
+    for sql in [
+        "CREATE FUNCTION `éABS`(x BIGINT) RETURNS BIGINT DETERMINISTIC NO SQL RETURN (@m1_closeout_marker := x)",
+        "CREATE FUNCTION `ABSé`(x BIGINT) RETURNS BIGINT DETERMINISTIC NO SQL RETURN (@m1_closeout_marker := x)",
+        "CREATE FUNCTION `1ABS`(x BIGINT) RETURNS BIGINT DETERMINISTIC NO SQL RETURN (@m1_closeout_marker := x)",
+        "CREATE FUNCTION `ABS_tail`(x BIGINT) RETURNS BIGINT DETERMINISTIC NO SQL RETURN (@m1_closeout_marker := x)",
+        "CREATE FUNCTION `ABS`(x BIGINT) RETURNS BIGINT DETERMINISTIC NO SQL RETURN (@m1_closeout_marker := x)",
+    ] {
+        setup.connection()?.execute(sql).await?;
+    }
+    setup.finish(Ok(()), false).await?;
+    // The fixture name is bounded ASCII and already validated by the parent's CREATE authority.
+    let qualified = Sql::trusted(
+        DIALECT,
+        stackpress_sql::TrustedSql::audited(format!("SELECT `{name}`.ABS(7)")),
+    )
+    .render(DIALECT)?;
+    let mut queries = [
+        "SELECT éABS(7)",
+        "SELECT ABSé(7)",
+        "SELECT 1ABS(7)",
+        "SELECT ABS_tail(7)",
+        "SELECT `éABS`(7)",
+    ]
+    .into_iter()
+    .map(|sql| query(sql, []))
+    .collect::<Vec<_>>();
+    queries.push(qualified);
+    for query in queries {
+        for completion in [None, Some(false), Some(true)] {
+            let before = integer(database, "SELECT CONNECTION_ID()").await?;
+            let result = if let Some(commit) = completion {
+                let mut transaction = database.begin(TransactionOptions::default()).await?;
+                let result = transaction
+                    .run(query.clone(), QueryLimits::default())
+                    .await?;
+                if commit {
+                    transaction.commit().await?;
+                } else {
+                    transaction.rollback().await?;
+                }
+                result
+            } else {
+                database.run(query.clone(), QueryLimits::default()).await?
+            };
+            assert_eq!(result.rows[0].try_get_at::<i64>(0)?, 7);
+            // Observe the next actual socket privately; the production API still exposes no handles.
+            let mut fresh = database.lease().await?;
+            let (id, clean): (u64, bool) =
+                sqlx::query_as("SELECT CONNECTION_ID(), @m1_closeout_marker IS NULL")
+                    .fetch_one(fresh.connection()?)
+                    .await?;
+            assert!(
+                clean,
+                "unclassifiable function leaked a session variable to the next lease"
+            );
+            assert_ne!(
+                i64::try_from(id)?,
+                before,
+                "unclassifiable function session was reused"
+            );
+            fresh.finish(Ok(()), true).await?;
+        }
+    }
     Ok(())
 }
