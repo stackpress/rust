@@ -5,6 +5,14 @@
 //! PostgreSQL/MySQL are render-only. SQLite AUTOINCREMENT sequences are preserved;
 //! plain INTEGER PRIMARY KEY allocation may reuse deleted IDs by SQLite design.
 //!
+//! New immutable revision/plan artifacts use format 3; format-2 bytes and hashes retain
+//! their frozen reader/codec. An explicit String/Text width renders VARCHAR(n) on every
+//! dialect. SQLite does not enforce that declaration: generated guards enforce Unicode
+//! scalar counts, and width migrations scan existing values under the maintenance lock.
+//! Narrowing requires exact plan/target loss approval; values that do not fit always refuse.
+//! Scans require a complete nonnull primary identity and are bounded to 10,000 values,
+//! 16 MiB aggregate text and five seconds. PostgreSQL/MySQL plans remain render-only.
+//!
 //! A plan is inspectable without opening a database. A rename needs an explicit mapping;
 //! adding a nullable column permits a reverse only while that column remains NULL:
 //!
@@ -46,6 +54,7 @@ mod history;
 mod planner;
 mod steps;
 mod storage;
+mod wire;
 pub use history::{RevisionOutcome, RevisionStore};
 pub use planner::MigrationPlanner;
 pub use storage::Literal;
@@ -86,8 +95,7 @@ pub struct RevisionSnapshot {
 }
 
 /// Versioned framework DTO envelope, with no credentials or raw plugin config.
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
+#[derive(Clone, Debug, PartialEq)]
 struct SnapshotBody {
     /// Persisted DTO codec; unknown versions refuse before execution.
     format: u32,
@@ -118,7 +126,7 @@ impl RevisionSnapshot {
         if tables.len() > 128 {
             return Err(DataError::new("snapshot table budget exceeded"));
         }
-        snapshot_budget(&tables)?;
+        crate::ddl_policy::catalog_budget(&tables)?;
         let mut tables = tables
             .into_iter()
             .map(|t| t.normalized().map_err(Into::into))
@@ -144,13 +152,14 @@ impl RevisionSnapshot {
                 }
             }
         }
+        crate::ddl_policy::check_widths(&tables)?;
         let dto = tables
             .iter()
             .map(TableDto::capture)
             .collect::<DataResult<Vec<_>>>()?;
         let source_fingerprint = digest(&dto)?;
         let body = SnapshotBody {
-            format: 2,
+            format: 3,
             app: app.into(),
             revision: revision.into(),
             parent: None,
@@ -190,7 +199,7 @@ impl RevisionSnapshot {
     }
     /// Rebuild a checked snapshot from bounded decoded framework DTOs.
     fn from_body(body: SnapshotBody) -> DataResult<Self> {
-        if body.format != 2 || body.generator_revision != 1 {
+        if !matches!(body.format, 2 | 3) || body.generator_revision != 1 {
             return Err(unsupported("unknown revision format or generator"));
         }
         identity(&body.app)?;
@@ -238,6 +247,10 @@ impl RevisionSnapshot {
                 }
             }
         }
+        if body.format == 3 {
+            crate::ddl_policy::check_widths(&tables)?;
+        }
+        crate::ddl_policy::catalog_budget(&tables)?;
         let hash = digest(&body)?;
         Ok(Self {
             app: body.app.clone(),
@@ -487,8 +500,7 @@ enum PlanKind {
     Populate { seed: String, rows: Vec<SeedRow> },
 }
 /// Versioned plan source, never arbitrary statement text.
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
+#[derive(Clone, Debug, PartialEq)]
 struct PlanRecipe {
     /// Versioned structured authority format.
     format: u32,
@@ -506,6 +518,19 @@ struct PlanRecipe {
     reverse: bool,
     /// Exact source physical slots, hashed independently of logical/UI order.
     source_order: BTreeMap<String, Vec<String>>,
+    /// Complete locked existing-value preconditions, included in the approval hash.
+    length_checks: Vec<LengthCheck>,
+}
+/// A complete source-column scan required before any resize DDL.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct LengthCheck {
+    /// Source identity before any rename/reconstruction.
+    table: String,
+    /// Source column, without casts or SQL length() shortcuts.
+    column: String,
+    /// Maximum Unicode scalar count after the change.
+    maximum: u32,
 }
 /// One pre-rendered maintenance phase; reconstruction boundaries retain row/sequence checks.
 #[derive(Clone, Debug)]
@@ -769,49 +794,6 @@ fn apply_order(
                     .ok_or_else(|| DataError::new("plan storage-order column missing"))
             })
             .collect::<DataResult<_>>()?;
-    }
-    Ok(())
-}
-
-/// Bound borrowed metadata before core normalization or DTO capture clones any large values.
-fn snapshot_budget(tables: &[TableDefinition]) -> DataResult<()> {
-    let mut bytes = 0_usize;
-    for table in tables {
-        if table.fields.len() > 128 {
-            return Err(DataError::new("snapshot column budget exceeded"));
-        }
-        bytes = bytes.saturating_add(table.name.len());
-        for field in &table.fields {
-            bytes = bytes
-                .saturating_add(field.name.len() + field.comment.as_ref().map_or(0, String::len));
-            if let Some(stackpress_sql::DefaultValue::Value(value)) = &field.default {
-                bytes = bytes.saturating_add(match value {
-                    stackpress_sql::SqlValue::Text(v) => v.len(),
-                    stackpress_sql::SqlValue::Blob(v) => v.len(),
-                    _ => 16,
-                });
-            }
-        }
-        for index in &table.indexes {
-            bytes = bytes.saturating_add(
-                index.name.len() + index.columns.iter().map(String::len).sum::<usize>(),
-            );
-        }
-        for key in &table.foreign_keys {
-            bytes = bytes.saturating_add(
-                key.name.len()
-                    + key.table.len()
-                    + key
-                        .columns
-                        .iter()
-                        .chain(&key.foreign_columns)
-                        .map(String::len)
-                        .sum::<usize>(),
-            );
-        }
-        if bytes > 1024 * 1024 {
-            return Err(DataError::new("snapshot aggregate byte budget exceeded"));
-        }
     }
     Ok(())
 }

@@ -11,6 +11,8 @@ thread_local! {
     static CANCEL:Cell<usize>=const{Cell::new(0)};
     static ENTERED:Cell<bool>=const{Cell::new(false)};
     static LOSE_COMMIT:Cell<bool>=const{Cell::new(false)};
+    /// Suspend the scan itself to prove the production deadline and rollback boundary.
+    static STALL_SCAN:Cell<bool>=const{Cell::new(false)};
 }
 /// Inject an actual native SQL failure after a selected acknowledged phase.
 pub(super) async fn checkpoint(session: &mut MaintenanceSession) -> DataResult<()> {
@@ -34,6 +36,14 @@ pub(super) async fn checkpoint(session: &mut MaintenanceSession) -> DataResult<(
     }
     Ok(())
 }
+/// Retain ordinary fault/cancel coverage while exposing one bounded scan deadline probe.
+pub(super) async fn scan_checkpoint(session: &mut MaintenanceSession) -> DataResult<()> {
+    checkpoint(session).await?;
+    if STALL_SCAN.with(Cell::get) {
+        std::future::pending::<()>().await;
+    }
+    Ok(())
+}
 /// Drop the application acknowledgement only after the real commit/close succeeded.
 pub(super) fn commit_ack() -> DataResult<()> {
     if LOSE_COMMIT.with(Cell::get) {
@@ -52,15 +62,24 @@ fn supervised_faults() {
             .unwrap()
             .block_on(async {
                 match scenario.as_str() {
-                    "faults" => fault_matrix(false).await,
-                    "cancel" => fault_matrix(true).await,
-                    "unknown-commit" => unknown_commit().await,
+                    "faults" | "length-faults" => fault_matrix(false).await,
+                    "cancel" | "length-cancel" => fault_matrix(true).await,
+                    "unknown-commit" | "length-unknown-commit" => unknown_commit().await,
+                    "length-deadline" => deadline().await,
                     _ => panic!("unknown fault scenario"),
                 }
             });
         return;
     }
-    for scenario in ["faults", "cancel", "unknown-commit"] {
+    for scenario in [
+        "faults",
+        "cancel",
+        "unknown-commit",
+        "length-faults",
+        "length-cancel",
+        "length-unknown-commit",
+        "length-deadline",
+    ] {
         let (ok, expired, output) = watchdog::run(
             "migrations::sqlite::faults::supervised_faults",
             scenario,
@@ -76,22 +95,36 @@ fn reset() {
     CANCEL.with(|c| c.set(0));
     ENTERED.with(|c| c.set(false));
     LOSE_COMMIT.with(|c| c.set(false));
+    STALL_SCAN.with(|c| c.set(false));
 }
 /// Actual default-change reconstruction plus a secondary index and namespaced ledger.
 fn revisions() -> (RevisionSnapshot, MigrationPlan) {
+    let length = std::env::var("STACKPRESS_S6_SCENARIO")
+        .unwrap_or_default()
+        .starts_with("length-");
+    let field = if length {
+        Field::new("name", SqlType::Varchar)
+            .length(stackpress_sql::Length::Size(4))
+            .not_null()
+    } else {
+        Field::new("name", SqlType::Text).not_null()
+    };
     let table = Create::new("profile")
         .add_field(
             Field::new("id", SqlType::Integer)
                 .not_null()
                 .auto_increment(),
         )
-        .add_field(Field::new("name", SqlType::Text).not_null())
+        .add_field(field)
         .primary_key(["id"])
         .definition()
         .unwrap();
     let source = RevisionSnapshot::new("workspace", "v1", vec![table.clone()]).unwrap();
     let mut target = table;
     target.fields[1].default = Some("fallback".into());
+    if length {
+        target.fields[1].length = Some(stackpress_sql::Length::Size(8));
+    }
     target
         .indexes
         .push(stackpress_sql::Index::new("profile_name", ["name"]));
@@ -246,4 +279,24 @@ async fn unknown_commit() {
 fn utf8_catalog_tokens() {
     let values = tokens("CREATE VIEW café AS SELECT * FROM profile /* 🐟 */");
     assert!(values.iter().any(|token| token == "profile"));
+}
+
+/// The five-second scan deadline fails closed and preserves the exact source head/data.
+async fn deadline() {
+    let root = tempfile::tempdir_in("/private/tmp").unwrap();
+    let options = SqliteOptions::file(root.path().join("deadline.sqlite")).create_if_missing(true);
+    let (source, plan) = revisions();
+    setup(&options, &source).await;
+    let before = state(&options).await;
+    STALL_SCAN.with(|flag| flag.set(true));
+    let error = MigrationRunner::apply(
+        SqliteMaintenance::open(options.clone()).await.unwrap(),
+        &plan,
+        plan.hash(),
+    )
+    .await
+    .unwrap_err();
+    assert_eq!(error.context(), "migration length scan deadline exceeded");
+    reset();
+    assert_eq!(state(&options).await, before);
 }

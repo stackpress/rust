@@ -18,7 +18,7 @@
     },
     "contracts/public.rs": {
       "owner": "framework-schema",
-      "sha256": "caec332ebf91081b25c1cc9f79a203539a1db2b4471fffcc7cc1176352993e85",
+      "sha256": "dc4faca87920050428ac8b78f96e1690c0f52027e17ecdff74b2cf9113fae8cb",
       "bytes": 94232
     },
     "contracts/task.rs": {
@@ -33,12 +33,12 @@
     },
     "metadata/schema.rs": {
       "owner": "framework-schema",
-      "sha256": "da776500d2c25375ca02b9329f1bdd035ce3e431b5b6c7a21e0bc232d7c19fcd",
+      "sha256": "c203f0aa4b705ec04ab46be3f9e40d9438fed20092e8b43e1a1f85bec37a6cd0",
       "bytes": 366
     },
     "metadata/ui.rs": {
       "owner": "framework-schema",
-      "sha256": "eeb6d2a78e47fb36538de7a91c54d024fffc603a07f596a2a964968976822b4c",
+      "sha256": "b46579e9f097e41ab1f056fc9301908c9611d2c0bf8fb82e4114eb5b92affa57",
       "bytes": 7484
     },
     "mod.rs": {
@@ -58,23 +58,23 @@
     },
     "stores/profile.rs": {
       "owner": "framework-sql",
-      "sha256": "8fc697a4d3745571dfe82b1097640c1cc82cf8cbc43316b53bda236b799987b8",
-      "bytes": 37288
+      "sha256": "0dc6caf80c758d52948fd012ddfac4c72b47f46a645a086131be483f7c7d477a",
+      "bytes": 37349
     },
     "stores/project.rs": {
       "owner": "framework-sql",
-      "sha256": "209a2bb55ece6ad473cc1aeb828cba934b3ae95695eb6ff2c2487f65b6b32a6d",
-      "bytes": 41316
+      "sha256": "055986e1bc3ecd6063710861b51e6bd6941cf0eb55eff58b68b35e54512e4e5e",
+      "bytes": 41437
     },
     "stores/schema.rs": {
       "owner": "framework-sql",
-      "sha256": "5e676eac56b53eae21f72fb8578dd26b4f5d1abfaf15a3d74e0ec026cfe05a4d",
-      "bytes": 678
+      "sha256": "fcd91a49ed7edd5afa065108ae19d3a3ded62a64f54bdece9853e6ca82eeca09",
+      "bytes": 1021
     },
     "stores/task.rs": {
       "owner": "framework-sql",
-      "sha256": "40168d14fc4a82cc60903c0869cff042a25f57ad1c0682683c3982bbe10f83db",
-      "bytes": 39418
+      "sha256": "2b1abac4fece39cd1b0ca1a7cd407b541ea88c1490cacc1b0e43da13964695ed",
+      "bytes": 39539
     }
   }
 }

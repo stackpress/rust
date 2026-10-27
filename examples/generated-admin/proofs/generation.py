@@ -51,6 +51,7 @@ stackpress-sql = {{ path = "{ROOT}/crates/sql/sql" }}
         (consumer / 'Cargo.toml').write_text(manifest)
         (consumer / 'src/lib.rs').write_text('''#[path="generated/contracts/mod.rs"] pub mod contracts;
 #[path="generated/ui/mod.rs"] pub mod ui;
+#[path="generated/metadata/mod.rs"] pub mod metadata;
 pub fn consumer() { let _ = ui::profile::descriptors(); let _ = ui::pages::profile::spec(); }
 ''')
         native = """
@@ -81,6 +82,21 @@ pub mod host {
         assert initial == hashes(output)
         check = ['cargo', 'check', '--offline', '--manifest-path', str(consumer / 'Cargo.toml')]
         run('compile-initial-consumer', check)
+        # A stale metadata partition must fail against the selected revision-3 library.
+        metadata = output/'metadata/schema.rs'
+        current = metadata.read_text()
+        assert 'CONTRACT_REVISION: u32 = 3;' in current
+        metadata.write_text(current.replace('CONTRACT_REVISION: u32 = 3;', 'CONTRACT_REVISION: u32 = 2;'))
+        try:
+            run('compile-mixed-revision', check)
+        except SystemExit as error:
+            assert error.code == 101
+            assert 'E0080' in (LOGS/'compile-mixed-revision.log').read_text()
+        else:
+            raise AssertionError('mixed generated revisions compiled')
+        finally:
+            metadata.write_text(current)
+        run('compile-restored-revision', check)
         # Change both source model identity and its selected field, using an existing app policy.
         idea.write_text(base.replace('Profile', 'Project').replace('name String', 'title String'))
         run('compile-renamed-generation', generate)
@@ -128,7 +144,7 @@ pub mod host {
         library('\n'.join(['#[path="generated/contracts/mod.rs"] pub mod contracts;', '#[path="generated/ui/mod.rs"] pub mod ui;', 'pub fn consumer(){let _=ui::pages::MODELS;let _=ui::pages::spec("profile");}']))
         run('compile-empty-consumer',check)
         run('compile-empty-clippy',['cargo','clippy','--offline','--manifest-path',str(consumer/'Cargo.toml'),'--','-D','warnings'])
-        # Compile the full opt-in revision-2 fixture, including every new formatted family.
+        # Compile the full opt-in revision-3 fixture, including every new formatted family.
         formatted = [tool, '--input', str(ROOT/'examples/generated-admin/schema-format.idea'), '--output', str(output)]
         run('compile-format-generation', formatted)
         format_hashes = hashes(output)
@@ -138,4 +154,4 @@ pub mod host {
         (consumer/'Cargo.toml').write_text(manifest.replace('framework-admin" }','framework-admin", features = ["format"] }'))
         library('\n'.join(['#[path="generated/contracts/mod.rs"] pub mod contracts;', '#[path="generated/ui/mod.rs"] pub mod ui;', 'pub fn consumer(){let _=ui::task::descriptors();let _=ui::pages::task::spec();}']))
         run('compile-format-consumer', check)
-        (LOGS / 'compile-proof.json').write_text(json.dumps({'initialHashes': initial, 'staleExit': 101, 'renamedConsumer': True, 'hostileJsonConsumer': True, 'hostileFormatConsumer': True, 'omittedRolesConsumer': True, 'removedAllConsumer': True, 'formattedConsumer': True, 'formatHashes': format_hashes}, indent=2))
+        (LOGS / 'compile-proof.json').write_text(json.dumps({'initialHashes': initial, 'staleExit': 101, 'mixedRevisionExit': 101, 'renamedConsumer': True, 'hostileJsonConsumer': True, 'hostileFormatConsumer': True, 'omittedRolesConsumer': True, 'removedAllConsumer': True, 'formattedConsumer': True, 'formatHashes': format_hashes}, indent=2))

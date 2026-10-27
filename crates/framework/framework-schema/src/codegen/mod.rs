@@ -346,6 +346,10 @@ impl Schema {
                         .iter()
                         .find(|item| item.name == mapping.foreign)
                         .ok_or_else(|| invalid("unknown foreign relation field"))?;
+                    // Storage declarations are explicit on both ends; never copy a missing bound.
+                    if local.storage_length != foreign.storage_length {
+                        return Err(invalid("relation string storage lengths must agree"));
+                    }
                     if local.multiple
                         || foreign.multiple
                         || !(foreign.unique

@@ -29,6 +29,7 @@ use stackpress_sql::{
 
 #[cfg(feature = "codegen")]
 pub mod codegen;
+pub mod ddl_policy;
 #[cfg(feature = "migrations")]
 pub mod migrations;
 #[cfg(feature = "server")]

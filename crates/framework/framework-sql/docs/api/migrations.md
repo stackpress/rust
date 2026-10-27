@@ -22,6 +22,8 @@ fn plan_rename(
 Create explicit field mappings through `RenameMap::field`; individual rename artifact
 DTOs are private. Visibility does not change the persisted recipe or approval hash format.
 
+New revision and plan artifacts use format **3**; an explicit frozen format-2 codec preserves existing bytes and hashes. The ledger remains format 2. See [storage lengths](storage-length.md) for target facts, complete narrowing checks and reverse refusal.
+
 `RevisionSnapshot::new(app, revision, tables)` validates portable storage DTOs. `with_provenance` pins a semantic source fingerprint and an application definition revision. Snapshots contain no database path, credentials or raw plugin configuration. Dynamic SQL defaults/types are refused. The tool uses the same checked DDL definitions as the generated stores.
 
 `RevisionStore::record(snapshot, parent)` writes a create-new immutable `revisions/<name>/schema.json` directory, or returns `RevisionOutcome::NoChanges` when the head's semantics match. The explicit parent must equal the current unbranched history head. `check()` verifies formats, hashes, companions and the parent chain without repairing anything. Missing parents, branches, modified ancestors, symlinks, special files and interrupted publication state refuse.
@@ -62,7 +64,7 @@ Use the independent application tool's existing `emit` grammar. Command options 
 
 | Event | Required options and behavior |
 | --- | --- |
-| `revision` | `--name ID`; optional `--input FILE`, `--app ID`, `--parent ID`. Without parent, selects the checked unbranched history head. No DB access. |
+| `revision` | `--name ID`; optional `--input FILE`, `--app ID`, `--parent ID`, and the paired explicit `--mysql-collation NAME --mysql-page-bytes N`. Without parent, selects the checked unbranched history head. No DB access. |
 | `history-check` | Validate all immutable history and companions. No repair. |
 | `migration-plan` | `--to ID`; optional `--from ID`, `--dialect sqlite/postgres/mysql`. Omitted from uses the declared history parent; a root revision creates a baseline. Returns forward and optional reverse hashes, findings and blocked reasons. |
 | `db-status` | `--database FILE`; optional `--to ID`, otherwise the latest proposed snapshot. Read-only; proposed and applied heads can differ. |

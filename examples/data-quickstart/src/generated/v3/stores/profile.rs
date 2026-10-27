@@ -10,7 +10,7 @@ use stackpress_framework_sql::{
 use stackpress_sql::{Insert, Row, Select, TableDefinition};
 const _: () = assert!(stackpress_framework_sql::CONTRACT_REVISION == 1);
 /// Shared normalized schema identity.
-pub const FINGERPRINT: &str = "01ce48470ea335704f921efa41c4eb215f504f13aa473e093bd2b95b3734522d";
+pub const FINGERPRINT: &str = "a9b730628220b040a4044661c31f1e7052a7ca671303c2c481c061ae66c6aaef";
 /// Exact ordered stored codecs.
 pub const COLUMNS: &[StorageColumn] = &[
     StorageColumn {
@@ -34,10 +34,10 @@ impl ProfileStore {
     /// Build the checked storage definition; installation is always explicit.
     pub fn table() -> DataResult<TableDefinition> {
         let mut table = stackpress_sql::Create::new("profile");
-        // Preserve declared nullability in storage.
+        // Preserve declared nullability and explicit character length in storage.
         let field = stackpress_sql::Field::new("id", stackpress_sql::SqlType::Text).not_null();
         table = table.add_field(field);
-        // Preserve declared nullability in storage.
+        // Preserve declared nullability and explicit character length in storage.
         let field = stackpress_sql::Field::new("name", stackpress_sql::SqlType::Text).not_null();
         table = table.add_field(field);
         table = table.primary_key(["id"]);
@@ -552,6 +552,7 @@ impl ProfileStore {
             .map_err(stackpress_framework_sql::stores::preparation_error)?;
         let mut assignments = stackpress_framework_sql::encode_patch(patch, MUTABLE_COLUMNS)?;
         assignments.extend(timestamp(context)?);
+
         let mut query = stackpress_sql::Update::new("profile").and_where(SPEC.key_predicate(key)?);
         for (column, value) in assignments {
             query = query.set(column, value);

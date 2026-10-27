@@ -175,7 +175,7 @@ fn model_source(
 /// Typed adapters for one explicitly selected public model.
 pub mod {module} {{
 use super::*;
-/// Decode only the approved revision-2 model specification.
+/// Decode only the approved revision-3 model specification.
 pub fn spec()->SchemaResult<PageSpec> {{serde_json::from_str({spec:?}).map_err(codec)}}
 /// Decode through the actual generated public create/patch DTOs.
 pub fn input(action:Action,value:serde_json::Value)->SchemaResult<serde_json::Value> {{

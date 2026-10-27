@@ -172,7 +172,7 @@ fn history() {
             .is_err()
     );
     assert_eq!(store.check().unwrap().len(), 2);
-    let corrupt = original.replace("\"format\": 2", "\"format\": 999");
+    let corrupt = original.replace("\"format\": 3", "\"format\": 999");
     std::fs::write(&schema, corrupt).unwrap();
     assert!(store.check().is_err());
 }

@@ -56,7 +56,7 @@ fn real_matrix_preparation_projection_and_patch() {
     assert!(!encoded.contains("PRIVATE"));
     assert_eq!(public["address"], json!({"city":"Paris","country":"PH"}));
     let ui = metadata::ui::schema().unwrap();
-    assert_eq!(ui.contract_revision, 2);
+    assert_eq!(ui.contract_revision, 3);
     assert_eq!(ui.schema_fingerprint, metadata::schema::FINGERPRINT);
     assert!(!serde_json::to_string(&ui).unwrap().contains("PRIVATE"));
     assert_eq!(

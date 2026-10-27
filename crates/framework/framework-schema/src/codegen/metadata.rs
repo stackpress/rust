@@ -87,6 +87,7 @@ pub(super) fn normalize_model(
             rust_name: member_name(&name),
             column: name,
             value_type,
+            storage_length: None,
             required: column.required,
             multiple: column.multiple,
             key: false,
@@ -113,6 +114,14 @@ pub(super) fn normalize_model(
                 |error| error.at([path.clone(), vec!["attributes".into(), name.clone()]].concat()),
             )?;
         }
+        // Resolve cross-attribute bounds before defaults; source attribute order has no effect.
+        storage_length(&mut field, embedded).map_err(|error| {
+            error.at([
+                path.clone(),
+                vec!["attributes".into(), "store.length".into()],
+            ]
+            .concat())
+        })?;
         // Recognized default calls become explicit providers before generated/input requirements settle.
         provider(&mut field, registry).map_err(|error| {
             error.at([path.clone(), vec!["attributes".into(), "default".into()]].concat())
@@ -168,6 +177,20 @@ fn normalize_attribute(
         return Ok(());
     }
     match name {
+        "store.length" => {
+            let args = args(value)?;
+            let length = args
+                .first()
+                .and_then(Value::as_u64)
+                .and_then(|length| i32::try_from(length).ok())
+                .filter(|length| *length > 0);
+            if args.len() != 1 || length.is_none() {
+                return Err(invalid(
+                    "store.length requires one positive integer literal",
+                ));
+            }
+            field.storage_length = length.and_then(|length| u32::try_from(length).ok());
+        }
         "id" | "unique" | "active" | "timestamp" | "generated" | "searchable" | "sortable" => {
             require_flag(value)?;
             match name {
@@ -239,6 +262,48 @@ fn normalize_attribute(
         }
         name if foreign(name) => {}
         _ => return Err(unsupported("unknown selected field attribute")),
+    }
+    Ok(())
+}
+
+/// Interpret a declaration independently of assertion spelling/order; never infer a width.
+fn storage_length(field: &mut Field, embedded: bool) -> SchemaResult<()> {
+    let Some(length) = field.storage_length else {
+        return Ok(());
+    };
+    if embedded || field.multiple || field.value_type != ValueType::String {
+        return Err(invalid(
+            "store.length requires a stored scalar String/Text model field",
+        ));
+    }
+    let bound = f64::from(length);
+    for assertion in &field.rules {
+        let Some(value) = assertion.args.first().and_then(Value::as_f64) else {
+            continue;
+        };
+        let incompatible = match assertion.code.as_str() {
+            "cle" => value > bound,
+            "clt" => value.ceil() - 1.0 > bound,
+            "cge" => value.ceil() > bound,
+            "cgt" => value.floor() + 1.0 > bound,
+            "ceq" => value < 0.0 || value.fract() != 0.0 || value > bound,
+            _ => false,
+        };
+        if incompatible {
+            return Err(invalid(
+                "character assertion conflicts with declared storage length",
+            ));
+        }
+    }
+    // An identical explicit rule keeps its message and definition identity.
+    if !field
+        .rules
+        .iter()
+        .any(|rule| rule.code == "cle" && rule.args.first().and_then(Value::as_f64) == Some(bound))
+    {
+        field
+            .rules
+            .push(rule("cle", vec![Value::from(length)], true));
     }
     Ok(())
 }

@@ -24,8 +24,9 @@ impl MigrationPlanner {
         dialect: DialectId,
     ) -> DataResult<MigrationPlan> {
         let to = to.physical_target(from, &renames)?;
+        let checks = length_checks(from, &to, &renames)?;
         from_recipe(PlanRecipe {
-            format: 2,
+            format: 3,
             dialect: dialect_name(dialect).into(),
             from: from.body.clone(),
             to: to.body,
@@ -33,6 +34,7 @@ impl MigrationPlanner {
             kind: PlanKind::Schema,
             reverse: false,
             source_order: storage_order(from),
+            length_checks: checks,
         })
     }
     /// List candidates without accepting any match, including a single same-shaped pair.
@@ -126,7 +128,21 @@ impl MigrationPlanner {
                 match target.fields.iter().find(|f| f.name == name) {
                     None => findings.push(risk("drop_column", &source.name, Some(&old.name), true)),
                     Some(new) => {
-                        if old.data_type != new.data_type
+                        if resize(old, new).is_some()
+                            && old.unsigned == new.unsigned
+                            && old.auto_increment == new.auto_increment
+                        {
+                            findings.push(risk(
+                                if narrowing(old, new) {
+                                    "storage_length_narrowing"
+                                } else {
+                                    "storage_length_widening"
+                                },
+                                &source.name,
+                                Some(&old.name),
+                                narrowing(old, new),
+                            ));
+                        } else if old.data_type != new.data_type
                             || old.length != new.length
                             || old.unsigned != new.unsigned
                             || old.auto_increment != new.auto_increment
@@ -232,7 +248,7 @@ fn operator(
     dialect: DialectId,
 ) -> DataResult<MigrationPlan> {
     from_recipe(PlanRecipe {
-        format: 2,
+        format: 3,
         dialect: dialect_name(dialect).into(),
         from: snapshot.body.clone(),
         to: snapshot.body.clone(),
@@ -240,12 +256,13 @@ fn operator(
         kind,
         reverse: false,
         source_order: storage_order(snapshot),
+        length_checks: Vec::new(),
     })
 }
 
 /// Re-render decoded authority; no statement from a SQL companion is consumed.
 pub(super) fn from_recipe(recipe: PlanRecipe) -> DataResult<MigrationPlan> {
-    if recipe.format != 2 {
+    if !matches!(recipe.format, 2 | 3) {
         return Err(unsupported("unknown migration plan format"));
     }
     let backend = dialect(&recipe.dialect)?;
@@ -257,6 +274,20 @@ pub(super) fn from_recipe(recipe: PlanRecipe) -> DataResult<MigrationPlan> {
         return Err(DataError::new("migration application namespaces differ"));
     }
     validate_mappings(&from, &to, &recipe.renames)?;
+    let expected = if matches!(recipe.kind, PlanKind::Schema) && recipe.format == 3 {
+        length_checks(&from, &to, &recipe.renames)?
+    } else {
+        Vec::new()
+    };
+    if expected != recipe.length_checks {
+        return Err(DataError::new(
+            "migration length preconditions disagree with storage change",
+        ));
+    }
+    if recipe.format == 3 && backend == DialectId::Mysql {
+        crate::ddl_policy::check_catalog(&to.tables)?;
+    }
+
     let mut build = Build {
         steps: Vec::new(),
         findings: Vec::new(),
@@ -315,8 +346,13 @@ pub(super) fn from_recipe(recipe: PlanRecipe) -> DataResult<MigrationPlan> {
                 .map_or(mapping.table.as_str(), |r| r.to.as_str());
             mappings = mappings.field(table, &mapping.to, &mapping.from)?;
         }
+        let checks = if recipe.format == 3 {
+            length_checks(&to, &from, &mappings)?
+        } else {
+            Vec::new()
+        };
         ReversePlan::Available(Box::new(from_recipe(PlanRecipe {
-            format: 2,
+            format: recipe.format,
             dialect: recipe.dialect.clone(),
             from: to.body.clone(),
             to: from.body.clone(),
@@ -324,6 +360,7 @@ pub(super) fn from_recipe(recipe: PlanRecipe) -> DataResult<MigrationPlan> {
             kind: PlanKind::Schema,
             reverse: true,
             source_order: storage_order(&to),
+            length_checks: checks,
         })?))
     };
     finish(from, to, recipe, build, reverse)
@@ -571,7 +608,22 @@ fn change_table(
                 }
             }
             Some(new) => {
-                if old.data_type != new.data_type
+                if recipe.format == 3
+                    && resize(old, new).is_some()
+                    && old.unsigned == new.unsigned
+                    && old.auto_increment == new.auto_increment
+                {
+                    build.findings.push(risk(
+                        if narrowing(old, new) {
+                            "storage_length_narrowing"
+                        } else {
+                            "storage_length_widening"
+                        },
+                        &source.name,
+                        Some(&old.name),
+                        narrowing(old, new),
+                    ));
+                } else if old.data_type != new.data_type
                     || old.length != new.length
                     || old.unsigned != new.unsigned
                     || old.auto_increment != new.auto_increment
@@ -792,7 +844,10 @@ fn irreversible(
     from.tables.is_empty()
         || !matches!(recipe.kind, PlanKind::Schema)
         || !recipe.renames.backfills.is_empty()
-        || build.findings.iter().any(|r| r.destructive)
+        || build
+            .findings
+            .iter()
+            .any(|r| r.destructive && r.kind != "storage_length_narrowing")
         || to.tables.iter().any(|t| {
             t.fields.iter().any(|f| {
                 let table = recipe
@@ -894,4 +949,81 @@ fn constraints_weakened(
             .foreign_keys
             .iter()
             .any(|f| !target.foreign_keys.contains(f))
+}
+
+/// Recognize exact text-family resizes, including an explicitly removed bound.
+fn resize(old: &stackpress_sql::Field, new: &stackpress_sql::Field) -> Option<Option<u32>> {
+    if !matches!(old.data_type, SqlType::Text | SqlType::Varchar)
+        || !matches!(new.data_type, SqlType::Text | SqlType::Varchar)
+        || old.length.is_none() && new.length.is_none()
+        || old.data_type == new.data_type && old.length == new.length
+    {
+        return None;
+    }
+    match new.length {
+        None => Some(None),
+        Some(stackpress_sql::Length::Size(n)) => u32::try_from(n).ok().filter(|n| *n > 0).map(Some),
+        _ => None,
+    }
+}
+/// Removing/widening a bound does not discard data; a newly smaller bound needs exact approval.
+fn narrowing(old: &stackpress_sql::Field, new: &stackpress_sql::Field) -> bool {
+    match (old.length, new.length) {
+        (_, None) => false,
+        (Some(stackpress_sql::Length::Size(old)), Some(stackpress_sql::Length::Size(new))) => {
+            new < old
+        }
+        _ => true,
+    }
+}
+/// Derive complete preconditions from checked old/new intent, including fresh reverse checks.
+fn length_checks(
+    from: &RevisionSnapshot,
+    to: &RevisionSnapshot,
+    mappings: &RenameMap,
+) -> DataResult<Vec<LengthCheck>> {
+    let mut checks = Vec::new();
+    for source in &from.tables {
+        let name = mappings
+            .tables
+            .iter()
+            .find(|mapping| mapping.from == source.name)
+            .map_or(source.name.as_str(), |mapping| mapping.to.as_str());
+        let Some(target) = to.tables.iter().find(|table| table.name == name) else {
+            continue;
+        };
+        for old in &source.fields {
+            let name = mappings
+                .fields
+                .iter()
+                .find(|mapping| mapping.table == source.name && mapping.from == old.name)
+                .map_or(old.name.as_str(), |mapping| mapping.to.as_str());
+            if let Some(new) = target.fields.iter().find(|field| field.name == name)
+                && let Some(Some(maximum)) = resize(old, new)
+            {
+                // Stable paging requires the generated model's complete nonnull identity.
+                if source.primary.is_empty()
+                    || source.primary.iter().any(|name| {
+                        source
+                            .fields
+                            .iter()
+                            .any(|field| field.name == *name && field.nullable)
+                    })
+                {
+                    return Err(unsupported(
+                        "length scans require a complete nonnull primary identity",
+                    ));
+                }
+                checks.push(LengthCheck {
+                    table: source.name.clone(),
+                    column: old.name.clone(),
+                    maximum,
+                });
+            }
+        }
+    }
+    if checks.len() > 128 {
+        return Err(DataError::new("migration length check budget exceeded"));
+    }
+    Ok(checks)
 }

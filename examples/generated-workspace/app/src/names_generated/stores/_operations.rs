@@ -10,7 +10,7 @@ use stackpress_framework_sql::{
 use stackpress_sql::{Insert, Row, Select, TableDefinition};
 const _: () = assert!(stackpress_framework_sql::CONTRACT_REVISION == 1);
 /// Shared normalized schema identity.
-pub const FINGERPRINT: &str = "dbc3f50dcd8942354ff56d52ef513a78f18d1d2e58287306362e6b7c83d46969";
+pub const FINGERPRINT: &str = "7d0ce9d40c9988eecd7e1869f740c6f9af360554e99ba7c206217f55be1abcd4";
 /// Exact ordered stored codecs.
 pub const COLUMNS: &[StorageColumn] = &[
     StorageColumn {
@@ -41,13 +41,13 @@ impl OperationsStore {
     /// Build the checked storage definition; installation is always explicit.
     pub fn table() -> DataResult<TableDefinition> {
         let mut table = stackpress_sql::Create::new("operations");
-        // Preserve declared nullability in storage.
+        // Preserve declared nullability and explicit character length in storage.
         let field = stackpress_sql::Field::new("id", stackpress_sql::SqlType::Text).not_null();
         table = table.add_field(field);
-        // Preserve declared nullability in storage.
+        // Preserve declared nullability and explicit character length in storage.
         let field = stackpress_sql::Field::new("value", stackpress_sql::SqlType::Text).not_null();
         table = table.add_field(field);
-        // Preserve declared nullability in storage.
+        // Preserve declared nullability and explicit character length in storage.
         let field = stackpress_sql::Field::new("schema_id", stackpress_sql::SqlType::Text);
         table = table.add_field(field);
         table = table.primary_key(["id"]);
@@ -539,6 +539,7 @@ impl OperationsStore {
             .map_err(stackpress_framework_sql::stores::preparation_error)?;
         let mut assignments = stackpress_framework_sql::encode_patch(patch, MUTABLE_COLUMNS)?;
         assignments.extend(timestamp(context)?);
+
         let mut query =
             stackpress_sql::Update::new("operations").and_where(SPEC.key_predicate(key)?);
         for (column, value) in assignments {

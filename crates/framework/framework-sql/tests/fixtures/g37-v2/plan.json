@@ -1,0 +1,94 @@
+{
+  "hash": "8316a5c3327c57e0043a0598dd6b3884a2638baa4de9ce6fd74fbb2057aef3f8",
+  "recipe": {
+    "format": 2,
+    "dialect": "sqlite",
+    "from": {
+      "format": 2,
+      "app": "legacy",
+      "revision": "one",
+      "parent": null,
+      "source_fingerprint": "e81fdbe09d6a9a66eb9cd4f054e63c29ba4382680e2e255a665ade025b02be73",
+      "generator_revision": 1,
+      "definition_revision": "storage-1",
+      "tables": [
+        {
+          "name": "note",
+          "fields": [
+            {
+              "name": "id",
+              "kind": "text",
+              "nullable": false,
+              "length": null,
+              "default": null,
+              "automatic": false,
+              "unsigned": false,
+              "comment": null
+            }
+          ],
+          "primary": [
+            "id"
+          ],
+          "indexes": [],
+          "foreign_keys": []
+        }
+      ]
+    },
+    "to": {
+      "format": 2,
+      "app": "legacy",
+      "revision": "two",
+      "parent": "one",
+      "source_fingerprint": "7a32b8da7f656da8b392f482490c98d754682c9e6eea8ab7c115282fc82d9240",
+      "generator_revision": 1,
+      "definition_revision": "storage-1",
+      "tables": [
+        {
+          "name": "note",
+          "fields": [
+            {
+              "name": "id",
+              "kind": "text",
+              "nullable": false,
+              "length": null,
+              "default": null,
+              "automatic": false,
+              "unsigned": false,
+              "comment": null
+            },
+            {
+              "name": "summary",
+              "kind": "text",
+              "nullable": true,
+              "length": null,
+              "default": null,
+              "automatic": false,
+              "unsigned": false,
+              "comment": null
+            }
+          ],
+          "primary": [
+            "id"
+          ],
+          "indexes": [],
+          "foreign_keys": []
+        }
+      ]
+    },
+    "renames": {
+      "fields": [],
+      "tables": [],
+      "drops": [],
+      "backfills": []
+    },
+    "kind": {
+      "operation": "schema"
+    },
+    "reverse": false,
+    "source_order": {
+      "note": [
+        "id"
+      ]
+    }
+  }
+}

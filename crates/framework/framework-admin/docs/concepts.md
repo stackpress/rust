@@ -2,7 +2,7 @@
 
 An application constructs one immutable `DefinitionRegistry`, including field access policy and concrete component definitions. Ordinary schema, SQL, and UI functions normalize the same finalized input with that registry. One Idea output writer owns their separate partitions and removes obsolete files.
 
-Schema owns aliases, argument typing, fixed-prop precedence, public projection, and descriptor revision 2. UI generation consumes `UiSchema` and resolves component keys against build-host `ComponentImport` mappings. Imports and diagnostic source coordinates stay outside browser descriptors. Rust strings use escaped literals; labels and props remain data.
+Schema owns aliases, argument typing, fixed-prop precedence, public projection, and descriptor revision 3. UI generation consumes `UiSchema` and resolves component keys against build-host `ComponentImport` mappings. Imports and diagnostic source coordinates stay outside browser descriptors. Rust strings use escaped literals; labels and props remain data.
 
 Field, filter, list, span, and view selections are independent. Missing roles create no function. Filters use field definitions, lists use view definitions, and span retains input semantics. Sensitive and host-only fields contribute no wrapper metadata. Display functions accept generated `Public<Model>` values. Field/filter/span functions accept a root-owned `Draft` and an instance identity; callers must keep instance identities unique within the page.
 

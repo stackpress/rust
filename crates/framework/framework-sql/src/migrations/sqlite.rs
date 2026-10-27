@@ -253,6 +253,9 @@ async fn apply_locked(
             }
         }
     }
+    // Every existing-value precondition completes under this same exclusive writer lock,
+    // before a reconstruction can create/copy/drop any managed object.
+    check_lengths(session, plan).await?;
     for (table, column) in &plan.discardable {
         let rows = execute(
             session,
@@ -729,4 +732,116 @@ async fn read_status(
         applied,
         schema_matches,
     })
+}
+
+/// Scan all affected source values in stable finite batches, never SQLite length() (NUL truncates it).
+/// Incomplete work refuses: 10,000 scanned values, 16 MiB aggregate text payload, five-second deadline.
+async fn check_lengths(session: &mut MaintenanceSession, plan: &MigrationPlan) -> DataResult<()> {
+    tokio::time::timeout(
+        std::time::Duration::from_secs(5),
+        scan_lengths(session, plan),
+    )
+    .await
+    .map_err(|cause| {
+        DataError::new("migration length scan deadline exceeded")
+            .with_kind(DataErrorKind::Validation)
+            .with_cause(cause)
+    })?
+}
+
+/// Own scan accounting inside the deadline; cancellation uses maintenance retirement/rollback.
+async fn scan_lengths(session: &mut MaintenanceSession, plan: &MigrationPlan) -> DataResult<()> {
+    let start = std::time::Instant::now();
+    let mut scanned = 0usize;
+    let mut bytes = 0usize;
+    for check in &plan.recipe.length_checks {
+        let table = plan
+            .from
+            .tables
+            .iter()
+            .find(|table| table.name == check.table)
+            .ok_or_else(|| DataError::new("length check source table is missing"))?;
+        let total = row_count(session, &check.table).await?;
+        let total = usize::try_from(total).map_err(|cause| {
+            DataError::new("invalid length scan row count")
+                .with_kind(DataErrorKind::Validation)
+                .with_cause(cause)
+        })?;
+        if total > 10_000usize.saturating_sub(scanned) {
+            return Err(DataError::new("migration length scan row budget exceeded"));
+        }
+        let mut offset = 0usize;
+        loop {
+            if start.elapsed() > std::time::Duration::from_secs(5) {
+                return Err(DataError::new("migration length scan deadline exceeded"));
+            }
+            let mut query = Select::new([check.column.as_str()])
+                .from(check.table.as_str())
+                .limit(8)
+                .offset(u64::try_from(offset).map_err(|cause| {
+                    DataError::new("invalid length scan offset")
+                        .with_kind(DataErrorKind::Validation)
+                        .with_cause(cause)
+                })?);
+            for key in &table.primary {
+                query = query.order_by(key.as_str(), Order::Asc);
+            }
+            let rows = execute(session, &query).await?.rows;
+            #[cfg(test)]
+            faults::scan_checkpoint(session).await?;
+            let count = rows.len();
+            for row in rows {
+                scanned = scanned
+                    .checked_add(1)
+                    .ok_or_else(|| DataError::new("migration length scan count overflow"))?;
+                if scanned > 10_000 {
+                    return Err(DataError::new("migration length scan row budget exceeded"));
+                }
+                let value = &row
+                    .cells()
+                    .first()
+                    .ok_or_else(|| DataError::new("length scan returned no column"))?
+                    .1;
+                match value {
+                    SqlValue::Null => {}
+                    SqlValue::Text(text) => {
+                        bytes = bytes.checked_add(text.len()).ok_or_else(|| {
+                            DataError::new("migration length scan byte count overflow")
+                        })?;
+                        if bytes > 16 * 1024 * 1024 {
+                            return Err(DataError::new(
+                                "migration length scan byte budget exceeded",
+                            ));
+                        }
+                        if text.chars().count() > check.maximum as usize {
+                            return Err(DataError::new(
+                                "existing value exceeds target storage length",
+                            ));
+                        }
+                    }
+                    _ => {
+                        return Err(DataError::new(
+                            "existing value has incompatible string storage type",
+                        ));
+                    }
+                }
+            }
+            offset = offset
+                .checked_add(count)
+                .ok_or_else(|| DataError::new("migration length scan offset overflow"))?;
+            if offset > total {
+                return Err(stale("migration length scan row count changed"));
+            }
+            if count < 8 {
+                if offset != total {
+                    return Err(stale("migration length scan was incomplete"));
+                }
+                break;
+            }
+        }
+    }
+    if start.elapsed() > std::time::Duration::from_secs(5) {
+        return Err(DataError::new("migration length scan deadline exceeded"));
+    }
+    Ok(())
 }

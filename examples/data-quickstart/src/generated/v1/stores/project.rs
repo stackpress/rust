@@ -10,7 +10,7 @@ use stackpress_framework_sql::{
 use stackpress_sql::{Insert, Row, Select, TableDefinition};
 const _: () = assert!(stackpress_framework_sql::CONTRACT_REVISION == 1);
 /// Shared normalized schema identity.
-pub const FINGERPRINT: &str = "86b43263cb802c294272acd970f1569cc91dcf871004c15ab0ca6df3266b9c3f";
+pub const FINGERPRINT: &str = "7e91ece8578336746d7852232ca181f9112aeec85dd918666858bb637cf4911d";
 /// Exact ordered stored codecs.
 pub const COLUMNS: &[StorageColumn] = &[
     StorageColumn {
@@ -41,13 +41,13 @@ impl ProjectStore {
     /// Build the checked storage definition; installation is always explicit.
     pub fn table() -> DataResult<TableDefinition> {
         let mut table = stackpress_sql::Create::new("project");
-        // Preserve declared nullability in storage.
+        // Preserve declared nullability and explicit character length in storage.
         let field = stackpress_sql::Field::new("id", stackpress_sql::SqlType::Text).not_null();
         table = table.add_field(field);
-        // Preserve declared nullability in storage.
+        // Preserve declared nullability and explicit character length in storage.
         let field = stackpress_sql::Field::new("title", stackpress_sql::SqlType::Text).not_null();
         table = table.add_field(field);
-        // Preserve declared nullability in storage.
+        // Preserve declared nullability and explicit character length in storage.
         let field =
             stackpress_sql::Field::new("owner_id", stackpress_sql::SqlType::Text).not_null();
         table = table.add_field(field);
@@ -582,6 +582,7 @@ impl ProjectStore {
             .map_err(stackpress_framework_sql::stores::preparation_error)?;
         let mut assignments = stackpress_framework_sql::encode_patch(patch, MUTABLE_COLUMNS)?;
         assignments.extend(timestamp(context)?);
+
         let mut query = stackpress_sql::Update::new("project").and_where(SPEC.key_predicate(key)?);
         for (column, value) in assignments {
             query = query.set(column, value);

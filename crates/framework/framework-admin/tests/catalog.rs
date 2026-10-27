@@ -1,4 +1,4 @@
-//! Real revision-2 catalog normalization, source diagnostics and SSR adapter admission.
+//! Real revision-3 catalog normalization, source diagnostics and SSR adapter admission.
 #![cfg(all(feature = "codegen", feature = "ssr"))]
 use leptos::prelude::*;
 use serde_json::json;
