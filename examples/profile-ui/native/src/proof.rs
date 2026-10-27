@@ -1,4 +1,5 @@
-//! Opt-in finite packaged evidence; no additional IPC command or normal-app service.
+//! Debug-only finite packaged evidence; the entire module is absent in release builds.
+#![cfg(debug_assertions)]
 
 use crate::NativeHost;
 use stackpress_lib::{Flow, Invocation, Request, Response, Result, queue::task};

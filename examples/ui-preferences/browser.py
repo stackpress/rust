@@ -6,7 +6,7 @@ import signal
 import subprocess
 
 ROOT = Path(__file__).resolve().parents[2]
-LOGS = Path('/private/tmp/s8-lane-b')
+LOGS = Path(os.environ.get('PREFERENCES_LOGS', '/private/tmp/s8-lane-b'))
 
 
 def main():
