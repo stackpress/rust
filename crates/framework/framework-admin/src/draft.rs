@@ -112,7 +112,10 @@ pub struct RoleContext {
 impl RoleContext {
     /// Creation/span requiredness never turns an optional query filter into a required input.
     pub fn input_required(&self) -> bool {
-        matches!(self.role, Role::Field | Role::Span) && self.field.input_required
+        matches!(self.role, Role::Field | Role::Span)
+            && self.field.input_required
+            && !use_context::<crate::pages::EditorAction>()
+                .is_some_and(|action| action.0 == crate::pages::Action::Update)
     }
 
     /// Read one checked public string prop; absent values retain the component default.

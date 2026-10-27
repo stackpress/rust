@@ -8,6 +8,7 @@ publish.workspace = true
 
 [features]
 default = []
+format = ["stackpress-framework-ui/format"]
 ssr = ["stackpress-framework-ui/ssr"]
 hydrate = ["stackpress-framework-ui/hydrate"]
 csr = ["stackpress-framework-ui/csr"]
