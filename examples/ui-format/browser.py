@@ -6,7 +6,7 @@ import signal
 import subprocess
 
 ROOT = Path(__file__).resolve().parents[2]
-OUT = Path('/private/tmp/s8-format')
+OUT = Path(os.environ.get('UI_FORMAT_OUTPUT_DIR', '/private/tmp/s8-format'))
 if not os.environ.get('UI_FORMAT_PLAYWRIGHT'):
     raise RuntimeError('UI_FORMAT_PLAYWRIGHT must name an already installed Playwright package')
 with (OUT / 'browser.log').open('w') as log:

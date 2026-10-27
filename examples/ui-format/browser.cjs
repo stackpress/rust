@@ -4,7 +4,7 @@ const path = require('node:path');
 const assert = require('node:assert/strict');
 const crypto = require('node:crypto');
 const { chromium } = require(process.env.UI_FORMAT_PLAYWRIGHT);
-const out = '/private/tmp/s8-format';
+const out = process.env.UI_FORMAT_OUTPUT_DIR || '/private/tmp/s8-format';
 const native = JSON.parse(fs.readFileSync(path.join(out, 'native.json'), 'utf8'));
 // A partial feature-matrix rebuild must never be mistaken for current browser proof.
 const sizes = JSON.parse(fs.readFileSync(path.join(out, 'sizes.json'), 'utf8'));
