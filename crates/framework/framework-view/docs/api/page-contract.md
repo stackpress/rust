@@ -24,7 +24,7 @@ fn main() -> Result<(), ViewError> {
 | `revision` | `u32` | Nonzero app wire revision. |
 | `build` | `String` | 1–128 ASCII letters/digits, hyphen, underscore, or dot. |
 | `locale` | `String` | 1–35 bytes; nonempty ASCII alphanumeric parts separated by hyphens. |
-| `theme` | `String` | Exactly `light` or `dark`. |
+| `theme` | `String` | Exactly `light`, `dark` or `system`; system is a host-seeded token resolved by trusted CSS media queries before paint. |
 | `limits` | `PageLimits` | No increase above framework ceilings. |
 
 **Returns** `new` yields `Result<PageContract, ViewError>`. `validate(&self)` takes no additional

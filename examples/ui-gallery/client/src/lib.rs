@@ -2,7 +2,8 @@
 #[cfg(target_arch = "wasm32")]
 mod browser {
     use leptos::prelude::*;
-    use stackpress_example_ui_gallery_shared::{CoreDraft, Gallery, decode_initial};
+    use stackpress_example_ui_gallery_shared::parse_presence;
+    use stackpress_example_ui_gallery_shared::{BreadthDraft, CoreDraft, Gallery, decode_initial};
     use wasm_bindgen::{JsCast, prelude::*};
 
     /// Execute the same sanitizer in actual WASM for exact corpus comparison.
@@ -93,9 +94,62 @@ mod browser {
             core.single = selected(&document, "core-select").into_iter().next();
             core.multiple = selected(&document, "core-multiple");
         }
+        let mut breadth = BreadthDraft::default();
+        if let Some(details) = document
+            .get_element_by_id("native-details")
+            .and_then(|node| node.dyn_into::<web_sys::HtmlDetailsElement>().ok())
+        {
+            breadth.details = details.open();
+        }
+        if document.get_element_by_id("text-rows-1-value").is_some() {
+            breadth.text[0] = input_value(&document, "text-rows-1-value", &breadth.text[0]);
+            breadth.text[1] = input_value(&document, "text-rows-2-value", &breadth.text[1]);
+            breadth.slug = input_value(&document, "slug", &breadth.slug);
+            breadth.query = input_value(&document, "combo", &breadth.query);
+            breadth.suggestion_query = input_value(&document, "suggest", &breadth.suggestion_query);
+            for (index, key) in [10, 20].into_iter().enumerate() {
+                breadth.tags[index] = input_value(
+                    &document,
+                    &format!("tag-rows-{key}-value"),
+                    &breadth.tags[index],
+                );
+            }
+            breadth.metadata.key =
+                input_value(&document, "metadata-rows-4-key", &breadth.metadata.key);
+            breadth.metadata.value =
+                input_value(&document, "metadata-rows-4-value", &breadth.metadata.value);
+            breadth.nested = parse_presence(
+                selected(&document, "nested-8-value")
+                    .first()
+                    .map(String::as_str)
+                    .unwrap_or(""),
+            )
+            .map_err(|_| JsValue::from_str("Invalid early nested presence"))?;
+            for (index, id) in ["single-range-0", "pair-range-0", "pair-range-1"]
+                .into_iter()
+                .enumerate()
+            {
+                breadth.ranges[index] =
+                    input_value(&document, id, &breadth.ranges[index].to_string())
+                        .parse()
+                        .map_err(|_| JsValue::from_str("Invalid early range value"))?;
+            }
+            breadth.rating = (0..=5).find(|rating| checked(&document, &format!("rating-{rating}")));
+            breadth.filter = input_value(&document, "data-table-filter", &breadth.filter);
+            breadth.selected_rows = (0..7)
+                .filter(|index| {
+                    checked(&document, &format!("data-table-row-r{index}"))
+                        || (*index < 2 && checked(&document, "data-table-select-page"))
+                })
+                .map(|index| format!("r{index}"))
+                .collect();
+        }
+        breadth
+            .validate()
+            .map_err(|_| JsValue::from_str("Invalid early component draft"))?;
         let root = move || {
             stackpress_example_ui_gallery_shared::provide_meta();
-            view! { <Gallery seed initial_draft=early initial_core=core/> }
+            view! { <Gallery seed initial_draft=early initial_core=core initial_breadth=breadth/> }
         };
         #[cfg(feature = "hydrate")]
         let handle = leptos::mount::hydrate_from(app, root);

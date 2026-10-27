@@ -24,6 +24,8 @@ function request(base, input) {
   return { ...meta, body: raw.slice(split + 1) };
 }
 
+module.exports = { request, deadline };
+if (require.main === module) {
 (async () => {
   const browser = await chromium.launch({ headless: true });
   fs.mkdirSync(path.join(output, 'screenshots'), { recursive: true });
@@ -197,3 +199,5 @@ function request(base, input) {
     fs.writeFileSync(path.join(output, 'gallery-browser.json'), JSON.stringify({ listenerStarted: false, chromium: browser.version(), playwright: playwrightVersion, platform: process.platform, receipts }, null, 2) + '\n');
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });
+
+}

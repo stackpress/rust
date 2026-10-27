@@ -248,9 +248,10 @@ pub fn ProfileSearch(
                         preference_controller.change(PreferenceChange::Locale(locale.into()));
                     }>{move || if language.get().locale() == "en" { "Français" } else { "English" }}</Button>
                     <Button on:click=move |_| {
-                        let next = match theme.get() { Theme::Light => Theme::Dark, Theme::Dark => Theme::Light };
+                        // System follows ThemeState::toggle: an explicit choice away from it selects Dark.
+                        let next = match theme.get() { Theme::Light | Theme::System => Theme::Dark, Theme::Dark => Theme::Light };
                         preference_controller.change(PreferenceChange::Theme(next));
-                    }>{move || language.text(if theme.get() == Theme::Light { "Dark theme" } else { "Light theme" }, &[])}</Button>
+                    }>{move || language.text(if theme.get() == Theme::Dark { "Light theme" } else { "Dark theme" }, &[])}</Button>
                 </LayoutMenu>
             </LayoutHead>
             <LayoutPanel>
