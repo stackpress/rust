@@ -6,7 +6,12 @@
 mod controller;
 mod locale;
 mod navigation;
+mod preferences;
 pub use navigation::Navigation;
+use preferences::PreferenceController;
+pub use preferences::{
+    DisplayPreferences, PreferenceChange, PreferenceCompletion, PreferenceTransport,
+};
 
 use controller::SearchController;
 use leptos::prelude::*;
@@ -56,6 +61,12 @@ pub fn ProfilePage(
     /// Thin host navigation adapter, absent during native rendering.
     #[prop(optional_no_strip, into)]
     navigation: Option<Navigation>,
+    /// Optional persist-before-publication adapter; omission preserves existing behavior.
+    #[prop(optional_no_strip, into)]
+    preferences: Option<PreferenceTransport>,
+    /// Native loading recovered to defaults; no warning is emitted by default.
+    #[prop(default = false)]
+    preference_recovered: bool,
     /// Packaged bootstrap requests its first local read explicitly.
     #[prop(default = false)]
     initial_search: bool,
@@ -64,7 +75,7 @@ pub fn ProfilePage(
         return view! { <p role="alert">"Page data invalid. Refresh to continue."</p> }.into_any();
     }
     view! { <ProfileSearch seed initial_language initial_theme initial_search
-    transport=transport cancel=cancel navigation=navigation/> }
+    transport=transport cancel=cancel navigation=navigation preferences=preferences preference_recovered/> }
     .into_any()
 }
 
@@ -88,6 +99,12 @@ pub fn ProfileSearch(
     /// Root-local browser navigation adapter.
     #[prop(optional_no_strip, into)]
     navigation: Option<Navigation>,
+    /// Optional persist-before-publication adapter; omission preserves existing behavior.
+    #[prop(optional_no_strip, into)]
+    preferences: Option<PreferenceTransport>,
+    /// Announce invalid-file recovery without changing default output.
+    #[prop(default = false)]
+    preference_recovered: bool,
     /// Packaged CSR may request its first local read; hydration always leaves this false.
     #[prop(default = false)]
     initial_search: bool,
@@ -120,6 +137,8 @@ pub fn ProfileSearch(
     let detail = navigation_state.detail;
     let link_base = StoredValue::new(base);
     let controller = SearchController::new(seed);
+    let preference_controller =
+        PreferenceController::new(language, theme, controller.notices, preferences);
     if let Some(adapter) = navigation {
         // Effects run only after hydration; initial native data never dispatches a read.
         Effect::new(move |_| {
@@ -170,6 +189,14 @@ pub fn ProfileSearch(
             controller.submit(transport, cancel);
         }
     }
+    // Initial search clears earlier operation notices synchronously. Publish file
+    // recovery afterward so successful bootstrap cannot erase its explanation.
+    if preference_recovered {
+        let _ = controller.notices.notify(
+            stackpress_framework_ui::state::NoticeKind::Warning,
+            "Saved preferences could not be loaded. Defaults are in use.".into(),
+        );
+    }
     let submit = move |event: leptos::ev::SubmitEvent| {
         // The native GET form remains usable before hydration and without an adapter.
         let Some(transport) = transport else {
@@ -218,9 +245,12 @@ pub fn ProfileSearch(
                     <Button on:click=move |_| {
                         // The checked fixture replaces the entire dictionary, without fetching.
                         let locale = if language.get().locale() == "en" { "fr" } else { "en" };
-                        if let Ok(next) = profile_language(locale) { language.change(next); }
+                        preference_controller.change(PreferenceChange::Locale(locale.into()));
                     }>{move || if language.get().locale() == "en" { "Français" } else { "English" }}</Button>
-                    <Button on:click=move |_| theme.toggle()>{move || language.text(if theme.get() == Theme::Light { "Dark theme" } else { "Light theme" }, &[])}</Button>
+                    <Button on:click=move |_| {
+                        let next = match theme.get() { Theme::Light => Theme::Dark, Theme::Dark => Theme::Light };
+                        preference_controller.change(PreferenceChange::Theme(next));
+                    }>{move || language.text(if theme.get() == Theme::Light { "Dark theme" } else { "Light theme" }, &[])}</Button>
                 </LayoutMenu>
             </LayoutHead>
             <LayoutPanel>

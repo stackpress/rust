@@ -8,13 +8,16 @@ mod transitions;
 mod watchdog;
 
 use std::error::Error;
+use std::future::{Future, poll_fn};
 use std::sync::Arc;
+use std::task::Poll;
 use std::time::Duration;
 
 use stackpress_sql::{
     Database, DialectId, Engine, ErrorKind, QueryLimits, Render, Select, Sql, SqlValue, Transaction,
 };
 use tempfile::TempDir;
+use tokio::sync::Semaphore;
 
 use super::{SqliteDatabase, SqliteOptions};
 
@@ -23,13 +26,52 @@ fn sql(text: &'static str) -> Sql {
     Sql::literal(DialectId::Sqlite, text)
 }
 
-/// Isolate every scenario's files and use short but finite acquire/busy budgets.
+/// Isolate scenario files with the public acquisition budget and a short native busy budget.
 fn options(root: &TempDir, connections: u32) -> SqliteOptions {
     let mut options = SqliteOptions::file(root.path().join("proof.sqlite")).create_if_missing(true);
     options.max_connections = connections;
-    options.acquire_timeout_ms = 80;
     options.busy_timeout_ms = 80;
     options
+}
+
+/// Restore real Tokio time on success or unwind after a controlled deadline observation.
+struct ResumeTime;
+
+impl Drop for ResumeTime {
+    /// Native IO and cleanup must run against real time after the pool-only assertion.
+    fn drop(&mut self) {
+        tokio::time::resume();
+    }
+}
+
+/// Expire an actual queued pool acquisition while its connection is explicitly held.
+/// Native initialization stays outside paused time, which could otherwise auto-advance
+/// past an external worker's IO. The caller retains the lease until this returns.
+async fn expire<F: Future>(future: F, budget: Duration) -> F::Output {
+    tokio::time::pause();
+    let _resume = ResumeTime;
+    let mut future = Box::pin(future);
+    // Register the real SQLx waiter and deadline before advancing the test clock.
+    poll_fn(|cx| {
+        assert!(future.as_mut().poll(cx).is_pending());
+        Poll::Ready(())
+    })
+    .await;
+    // The held lease makes both sides of the configured deadline observable without
+    // CPU scheduling deciding whether an early timeout or successful acquisition wins.
+    tokio::time::advance(budget - Duration::from_millis(1)).await;
+    poll_fn(|cx| {
+        assert!(future.as_mut().poll(cx).is_pending());
+        Poll::Ready(())
+    })
+    .await;
+    tokio::time::advance(Duration::from_millis(2)).await;
+    future.await
+}
+
+/// Await all owned retirement acknowledgements before beginning a recovery observation.
+async fn wait_for_cleanup(admission: &Arc<Semaphore>, permits: u32) {
+    drop(admission.acquire_many(permits).await.unwrap());
 }
 
 /// Open one independent file; installation is an explicit test action after eager open.
@@ -253,6 +295,7 @@ async fn pool() {
     let root = TempDir::new().unwrap();
     let mut opts = options(&root, 1);
     opts.max_in_flight = 2;
+    let timeout = opts.acquire_timeout();
     let database = SqliteDatabase::open(opts).await.unwrap();
     let engine = Arc::new(Engine::new(database));
     let tx = engine.begin().await.unwrap();
@@ -269,7 +312,10 @@ async fn pool() {
     );
     drop(waiter);
     assert_eq!(
-        engine.execute(&query).await.unwrap_err().kind(),
+        expire(engine.execute(&query), timeout)
+            .await
+            .unwrap_err()
+            .kind(),
         ErrorKind::PoolTimedOut
     );
     let mut close = Box::pin(engine.close());
@@ -397,30 +443,28 @@ fn m0_under_process_watchdog() {
 #[ignore = "launched only by external watchdog parent"]
 async fn m0_child() {
     let scenario = std::env::var("STACKPRESS_SQL_M0_SCENARIO").unwrap();
-    let work = async {
-        match scenario.as_str() {
-            "statements" => statements().await,
-            "transactions" => transactions().await,
-            "pool" => pool().await,
-            "limits" => limits().await,
-            "configuration" => configuration().await,
-            "host" => host::proof().await,
-            "transitions" => transitions::cancellation().await,
-            "responsive" => transitions::responsive().await,
-            "failures" => transitions::failures().await,
-            "admission" => transitions::admission_cleanup().await,
-            _ => panic!("unknown proof scenario"),
-        }
-    };
-    tokio::time::timeout(Duration::from_secs(8), work)
-        .await
-        .expect("cooperative scenario deadline");
+    // The real parent watchdog is independent of this scenario's controlled Tokio clock.
+    // A second cooperative deadline would also count virtual pool-timeout advances.
+    match scenario.as_str() {
+        "statements" => statements().await,
+        "transactions" => transactions().await,
+        "pool" => pool().await,
+        "limits" => limits().await,
+        "configuration" => configuration().await,
+        "host" => host::proof().await,
+        "transitions" => transitions::cancellation().await,
+        "responsive" => transitions::responsive().await,
+        "failures" => transitions::failures().await,
+        "admission" => transitions::admission_cleanup().await,
+        _ => panic!("unknown proof scenario"),
+    }
 }
 
 /// A non-yielding child demonstrates the parent can detect, kill and reap a deadlock.
 #[test]
 #[ignore = "deliberately stuck watchdog negative control"]
 fn stuck_child() {
+    watchdog::ready();
     loop {
         std::thread::park();
     }
@@ -430,7 +474,7 @@ fn stuck_child() {
 #[test]
 fn watchdog_kills_negative_control() {
     let (success, expired, _) =
-        watchdog::run("tests::stuck_child", "stuck", Duration::from_millis(150));
+        watchdog::run_ready("tests::stuck_child", "stuck", Duration::from_millis(150));
     assert!(!success && expired);
 }
 
@@ -438,9 +482,9 @@ fn watchdog_kills_negative_control() {
 #[test]
 fn watchdog_rejects_output_overrun() {
     let (success, expired, output) =
-        watchdog::run("tests::noisy_child", "noisy", Duration::from_millis(500));
+        watchdog::run_ready("tests::noisy_child", "noisy", Duration::from_millis(500));
     assert!(!success && !expired);
-    assert!(output.len() <= 64 * 1024);
+    assert_eq!(output.len(), 64 * 1024);
 }
 
 /// Exceed capture once, then park; the parent must kill/reap without waiting for timeout.
@@ -452,6 +496,9 @@ fn noisy_child() {
     std::io::stdout()
         .write_all(&vec![b'x'; 64 * 1024 + 1])
         .unwrap();
+    std::io::stdout().flush().unwrap();
+    // Acknowledge only after all oversized output is visible to the supervising parent.
+    watchdog::ready();
     loop {
         std::thread::park();
     }

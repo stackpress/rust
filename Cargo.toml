@@ -16,6 +16,7 @@ members = [
     "crates/framework/framework-schema", "crates/framework/framework-sql",
     "examples/generated-workspace/tool", "examples/generated-workspace/app",
     "examples/generated-workspace/contracts",
+    "examples/ui-format",
     "crates/framework/framework-admin",
     "examples/generated-admin/tool", "examples/generated-admin/shared",
     "examples/generated-admin/client", "examples/generated-admin/web",

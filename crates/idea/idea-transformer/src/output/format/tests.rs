@@ -22,26 +22,95 @@ fn oversized_formatter_stderr_is_rejected_during_acquisition() {
     assert!(result.is_err(), "oversized stderr was retained");
 }
 
+/// Wait for an atomically published PID; the independent parent bounds fixture startup.
+fn ready_pid(path: &std::path::Path) -> String {
+    loop {
+        match std::fs::read_to_string(path) {
+            Ok(pid) => return pid,
+            Err(error) if error.kind() == io::ErrorKind::NotFound => {
+                std::thread::sleep(Duration::from_millis(1));
+            }
+            Err(error) => panic!("formatter readiness failed: {error}"),
+        }
+    }
+}
+
+/// Start the production collector's deadline after the stalled child and pipe workers are ready.
+fn deadline_failure(
+    text: &str,
+    command: &mut Command,
+    pid_path: &std::path::Path,
+    go_path: &std::path::Path,
+) -> (crate::TransformError, Instant, String) {
+    let child = command
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .unwrap();
+    std::thread::scope(move |scope| {
+        // The production owner must kill/reap before the production pipe workers join.
+        let mut child = ChildOwner(child);
+        let receiver = start_pipes(scope, text, &mut child.0).unwrap();
+        let pid = ready_pid(pid_path);
+        let started = Instant::now();
+        std::fs::write(go_path, b"go").unwrap();
+        let error =
+            collect(&mut child.0, &receiver, started, Duration::from_millis(200)).unwrap_err();
+        drop(child);
+        (error, started, pid)
+    })
+}
+
+/// Exercise the complete supervisor wiring after an explicit release triggers a pipe failure.
+fn pipe_failure(
+    text: &str,
+    command: &mut Command,
+    pid_path: &std::path::Path,
+    go_path: &std::path::Path,
+) -> (crate::TransformError, Instant, String) {
+    std::thread::scope(|scope| {
+        // Ordinary production supervision still owns spawn, pipes, kill and reap. Its
+        // normal limit is not the property here: the released IO failure must end it.
+        let supervisor = scope.spawn(|| supervise(text, command, FORMATTER_TIME));
+        let pid = ready_pid(pid_path);
+        let started = Instant::now();
+        std::fs::write(go_path, b"go").unwrap();
+        let error = supervisor.join().unwrap().unwrap_err();
+        (error, started, pid)
+    })
+}
+
 /// Observe termination and reaping, rather than merely receiving an error result.
 fn assert_reaped_failure(script: &str, text: &str, kind: crate::TransformErrorKind) {
     let directory = tempfile::tempdir().unwrap();
     let pid_path = directory.path().join("pid");
-    let script =
-        format!("import os,sys,time\nopen(sys.argv[1], 'w').write(str(os.getpid()))\n{script}");
-    let started = Instant::now();
-    let error = supervise(
-        text,
-        Command::new("python3").args(["-c", &script]).arg(&pid_path),
-        Duration::from_millis(200),
-    )
-    .unwrap_err();
+    let go_path = directory.path().join("go");
+    let measures_deadline = script.is_empty();
+    // Publish readiness before any deliberate error and wait for the controlling test.
+    // A missing kill cannot pass by waiting out a short sleep. If the outer watchdog
+    // kills the Rust owner, reparenting also lets this fixture exit instead of leaking.
+    let script = format!(
+        "import os,sys,time\nowner=os.getppid()\n\
+         with open(sys.argv[1]+'.tmp', 'w') as ready: ready.write(str(os.getpid()))\n\
+         os.replace(sys.argv[1]+'.tmp', sys.argv[1])\n\
+         while not os.path.exists(sys.argv[2]) and os.getppid()==owner: time.sleep(0.001)\n\
+         {script}\n\
+         while os.getppid()==owner: time.sleep(0.01)"
+    );
+    let mut command = Command::new("python3");
+    command.args(["-c", &script]).args([&pid_path, &go_path]);
+    let (error, started, pid) = if measures_deadline {
+        deadline_failure(text, &mut command, &pid_path, &go_path)
+    } else {
+        pipe_failure(text, &mut command, &pid_path, &go_path)
+    };
     assert_eq!(error.kind(), kind);
-    // A missing kill would wait for the two-second fixture stall while joining pipe workers.
+    // This includes native child termination, wait/reaping and all scoped pipe joins.
     assert!(started.elapsed() < Duration::from_secs(1));
     #[cfg(unix)]
     {
-        let pid = std::fs::read_to_string(&pid_path).unwrap();
-        // Even a zombie still responds to kill -0, so this checks reaping as well as termination.
+        // Even a zombie responds to kill -0: failure checks both termination and reaping.
         assert!(
             !Command::new("kill")
                 .args(["-0", pid.trim()])
@@ -52,20 +121,22 @@ fn assert_reaped_failure(script: &str, text: &str, kind: crate::TransformErrorKi
                 .success()
         );
     }
+    #[cfg(not(unix))]
+    let _ = pid;
 }
 
 /// Runtime supervision must terminate/reap a child that never produces an artifact.
 fn stalled_formatter_is_killed_and_reaped() {
-    assert_reaped_failure("time.sleep(2)", "", crate::TransformErrorKind::Limit);
+    assert_reaped_failure("", "", crate::TransformErrorKind::Limit);
     for stream in ["stdout", "stderr"] {
         let script = format!(
-            "try:\n sys.{stream}.write('x' * (1024 * 1024 + 1)); sys.{stream}.flush()\nexcept BrokenPipeError: pass\ntime.sleep(2)"
+            "try:\n sys.{stream}.write('x' * (1024 * 1024 + 1)); sys.{stream}.flush()\nexcept BrokenPipeError: pass"
         );
         assert_reaped_failure(&script, "", crate::TransformErrorKind::Limit);
     }
     // Stdin failure is supervised even while a child intentionally remains alive afterward.
     assert_reaped_failure(
-        "os.close(0); time.sleep(2)",
+        "os.close(0)",
         &"x".repeat(STDOUT_BYTES),
         crate::TransformErrorKind::Io,
     );

@@ -3,13 +3,12 @@
 use std::error::Error;
 use std::sync::Arc;
 use std::task::Poll;
-use std::time::Duration;
 
 use sqlx::Connection;
 use stackpress_sql::{Engine, ErrorKind};
 use tempfile::TempDir;
 
-use crate::tests::{options, sql};
+use crate::tests::{expire, options, sql};
 use crate::{SqliteDatabase, SqliteOptions};
 
 /// Validate each supported bound independently and preserve serialized M0 configuration.
@@ -239,14 +238,8 @@ pub(super) async fn close() {
         Poll::Ready(())
     })
     .await;
-    assert_eq!(
-        tokio::time::timeout(Duration::from_secs(1), waiting)
-            .await
-            .unwrap()
-            .unwrap_err()
-            .kind(),
-        ErrorKind::Closed
-    );
+    // Closing was explicitly polled above, so closure—not a one-second race—wakes this waiter.
+    assert_eq!(waiting.await.unwrap_err().kind(), ErrorKind::Closed);
     drop(closing);
     // Existing guards may still complete. A cancelled close observation neither reopens
     // the pool nor prevents re-awaiting shutdown once the guard releases its connection.
@@ -266,7 +259,9 @@ pub(super) async fn close() {
 /// Policy is applied on every actual connection, and native pool capacity has a finite bound.
 pub(super) async fn policy() {
     let root = TempDir::new().unwrap();
-    let db = SqliteDatabase::open(options(&root, 2)).await.unwrap();
+    let opts = options(&root, 2);
+    let timeout = opts.acquire_timeout();
+    let db = SqliteDatabase::open(opts).await.unwrap();
     let mut first = db.pool.acquire().await.unwrap();
     let mut second = db.pool.acquire().await.unwrap();
     assert_eq!(db.pool.size(), 2);
@@ -300,7 +295,8 @@ pub(super) async fn policy() {
             80
         );
     }
-    let error = db.pool.acquire().await.err().unwrap();
+    // Both native connections remain owned until the actual acquisition deadline fires.
+    let error = expire(db.pool.acquire(), timeout).await.err().unwrap();
     assert!(matches!(error, sqlx::Error::PoolTimedOut));
     drop(first);
     drop(second);
