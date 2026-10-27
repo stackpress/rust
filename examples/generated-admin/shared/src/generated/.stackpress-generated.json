@@ -108,13 +108,13 @@
     },
     "ui/pages.rs": {
       "owner": "framework-admin",
-      "sha256": "165bc4b71cbc3f8f9d36f30d9718ff8b71ae6ccdae9dbcab3094fdad93c07d63",
-      "bytes": 42383
+      "sha256": "b772b210952e2f2995e648c7054b29b8277759ddd5a4feb53f1729f03caaecf8",
+      "bytes": 44337
     },
     "ui/pages_host.rs": {
       "owner": "framework-admin",
-      "sha256": "55be695fa8b6d19aff024e86bf9bfdf262872a85b4984699941a11157d942733",
-      "bytes": 3949
+      "sha256": "cb2df5a2178567f1005f5d8d688b71d239661560b59bff8485f62dae8fc815dc",
+      "bytes": 6924
     },
     "ui/profile.rs": {
       "owner": "framework-admin",

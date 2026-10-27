@@ -13,6 +13,7 @@
 pub mod contracts;
 pub mod crud;
 pub mod plugin;
+pub mod transfer;
 #[cfg_attr(not(feature = "format"), path = "generated/ui/mod.rs")]
 #[cfg_attr(feature = "format", path = "generated-format/ui/mod.rs")]
 #[allow(

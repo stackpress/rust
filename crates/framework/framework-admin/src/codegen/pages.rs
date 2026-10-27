@@ -96,9 +96,9 @@ pub fn emit_pages(
         } else {
             ""
         };
-        host.push_str(&format!("crate::generated::stores::operations::{native_module}::register(start,marker,{module:?},&[Operation::Get,Operation::Detail,Operation::Search,Operation::Create,Operation::Update{optional}])?;\n"));
+        host.push_str(&format!("crate::generated::stores::operations::{native_module}::register(start,marker,{module:?},&[Operation::Get,Operation::Detail,Operation::Search,Operation::Create,Operation::Update,Operation::Batch{optional}])?;\n"));
         for action in [
-            "search", "detail", "create", "update", "copy", "remove", "restore",
+            "search", "detail", "create", "update", "copy", "remove", "restore", "import",
         ] {
             if !soft && matches!(action, "remove" | "restore") {
                 continue;
@@ -106,6 +106,12 @@ pub fn emit_pages(
             routes.push_str(&format!(
                 "builder.get(&format!(\"{{mount}}{module}/{action}\"),crate::host::page)?;\n"
             ));
+        }
+        routes.push_str(&format!(
+            "builder.get(&format!(\"{{mount}}{module}/export\"),crate::host::transfer::export)?;\n"
+        ));
+        for action in ["preview", "confirm"] {
+            routes.push_str(&format!("builder.post(&format!(\"{{mount}}api/{module}/{action}\"),crate::host::transfer::import)?;\n"));
         }
         for action in [
             "search", "get", "detail", "create", "update", "remove", "restore",
@@ -122,6 +128,21 @@ pub fn emit_pages(
     host.push_str("Ok(())}\n");
     routes.push_str("Ok(())}\n");
     host.push_str(&routes);
+    // Native conflict checks use the actual generated store, including inactive identities.
+    host.push_str(if models.is_empty(){"/// No import model is selected.\npub async fn import_exists(_:&str,_:&mut stackpress_framework_sql::DataSession<'_>,_:serde_json::Value)->stackpress_framework_sql::DataResult<bool>{Err(stackpress_framework_sql::DataError::new(\"admin import unavailable\"))}\n"}else{"/// Authorized import preview only: existence, never a private row projection.\npub async fn import_exists(module:&str,db:&mut stackpress_framework_sql::DataSession<'_>,value:serde_json::Value)->stackpress_framework_sql::DataResult<bool>{match module{\n"});
+    for (module, _) in &models {
+        let native = if matches!(module.as_str(), "schema" | "operations") {
+            format!("_{module}")
+        } else {
+            module.clone()
+        };
+        host.push_str(&format!("{module:?}=>{{let key=serde_json::from_value(value).map_err(stackpress_framework_sql::codec_error)?;Ok(crate::generated::stores::{native}::{}::get_maintenance(db,&key,stackpress_framework_sql::stores::Visibility::All).await?.is_some())}},\n",schema.models().iter().find(|m|m.module==*module).expect("selected model").rust_name.clone()+"s"));
+    }
+    if !models.is_empty() {
+        host.push_str(
+            "_=>Err(stackpress_framework_sql::DataError::new(\"admin import unavailable\"))}}\n",
+        );
+    }
     // Contribute only after every selected model passed; the writer owns final publication.
     output.write("ui/pages.rs", pure)?;
     output.contribute_module("ui", "pages")?;
@@ -160,6 +181,11 @@ pub fn spec()->SchemaResult<PageSpec> {{serde_json::from_str({spec:?}).map_err(c
 pub fn input(action:Action,value:serde_json::Value)->SchemaResult<serde_json::Value> {{
 if action==Action::Update {{serde_json::to_value(serde_json::from_value::<super::super::super::contracts::public::PublicPatch{name}>(value).map_err(codec)?).map_err(codec)}}
 else {{serde_json::to_value(serde_json::from_value::<super::super::super::contracts::public::PublicCreate{name}>(value).map_err(codec)?).map_err(codec)}}
+}}
+/// Validate all supplied import members through the actual generated create contract.
+pub fn validate_import(value:serde_json::Value,context:&stackpress_framework_schema::ValueContext<'_>)->SchemaResult<Vec<stackpress_framework_schema::FieldIssue>> {{
+let input:super::super::super::contracts::public::PublicCreate{name}=serde_json::from_value(value).map_err(codec)?;
+Ok(input.validate_create(context)?.issues)
 }}
 /// Validate the actual generated query type before sending its envelope.
 pub fn query(value:serde_json::Value)->SchemaResult<serde_json::Value> {{
@@ -268,6 +294,12 @@ fn dispatch(models: &[(String, String)]) -> String {
             "module:&str,value:serde_json::Value",
             "serde_json::Value",
             "query(value)",
+        ),
+        (
+            "validate_import",
+            "module:&str,value:serde_json::Value,context:&stackpress_framework_schema::ValueContext<'_>",
+            "Vec<stackpress_framework_schema::FieldIssue>",
+            "validate_import(value,context)",
         ),
         ("form", "module:&str,form:Form", "AnyView", "form(form)"),
         (
