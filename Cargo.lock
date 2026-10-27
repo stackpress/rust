@@ -1411,6 +1411,47 @@ dependencies = [
 ]
 
 [[package]]
+name = "generated-workspace-app"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "stackpress-framework-schema",
+ "stackpress-framework-sql",
+ "stackpress-lib",
+ "stackpress-server",
+ "stackpress-sql",
+ "stackpress-sql-sqlite",
+ "tempfile",
+ "tokio",
+ "trybuild",
+]
+
+[[package]]
+name = "generated-workspace-contracts"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "stackpress-framework-schema",
+]
+
+[[package]]
+name = "generated-workspace-tool"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "stackpress-cli",
+ "stackpress-framework-schema",
+ "stackpress-framework-sql",
+ "stackpress-idea",
+ "stackpress-lib",
+ "stackpress-server",
+ "tempfile",
+ "tokio",
+]
+
+[[package]]
 name = "generic-array"
 version = "0.14.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4207,6 +4248,8 @@ version = "0.1.0"
 dependencies = [
  "serde",
  "serde_json",
+ "stackpress-framework-schema",
+ "stackpress-framework-sql",
  "stackpress-framework-ui",
  "stackpress-framework-view",
  "stackpress-idea",
@@ -4373,6 +4416,35 @@ dependencies = [
  "stackpress-sql-sqlite",
  "tempfile",
  "tokio",
+]
+
+[[package]]
+name = "stackpress-framework-schema"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "sha2 0.10.9",
+ "stackpress-idea-parser",
+ "stackpress-idea-transformer",
+]
+
+[[package]]
+name = "stackpress-framework-sql"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "sha2 0.10.9",
+ "stackpress-framework-schema",
+ "stackpress-idea-transformer",
+ "stackpress-lib",
+ "stackpress-server",
+ "stackpress-sql",
+ "stackpress-sql-sqlite",
+ "tempfile",
+ "tokio",
+ "trybuild",
 ]
 
 [[package]]

@@ -1,0 +1,15 @@
+[package]
+name = "generated-workspace-contracts"
+description = "Pure consumer of the exact generated native application's contracts"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[dependencies]
+stackpress-framework-schema = { path = "../../../crates/framework/framework-schema" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[lints]
+workspace = true

@@ -70,6 +70,30 @@ pub struct TransformError {
 }
 
 impl TransformError {
+    /// Add bounded, distinct callback context while retaining a concrete private cause.
+    ///
+    /// # Errors
+    /// Rejects empty, control-containing or over-1024-byte context. The cause's
+    /// Display is never copied into the context or exposed by this constructor.
+    pub fn with_source(
+        kind: TransformErrorKind,
+        context: impl Into<String>,
+        cause: impl std::error::Error + Send + Sync + 'static,
+    ) -> Result<Self> {
+        let context = context.into();
+        // Validate the independently authored explanation before retaining its cause.
+        if context.trim().is_empty()
+            || context.len() > 1024
+            || context.chars().any(char::is_control)
+        {
+            return Err(Self::classified(
+                TransformErrorKind::Other,
+                "invalid error context",
+            ));
+        }
+        Ok(Self::caused(kind, context, cause))
+    }
+
     /// Describe a caller-created failure with kind Other and no source.
     pub fn new(message: impl Into<String>) -> Self {
         Self::classified(TransformErrorKind::Other, message)

@@ -66,3 +66,8 @@ pub use stackpress_server as server;
 pub use stackpress_sql as sql;
 #[cfg(feature = "sql-sqlite")]
 pub use stackpress_sql_sqlite as sql_sqlite;
+
+#[cfg(feature = "framework-schema")]
+pub use stackpress_framework_schema as framework_schema;
+#[cfg(feature = "framework-sql")]
+pub use stackpress_framework_sql as framework_sql;

@@ -8,6 +8,9 @@ members = [
     "examples/profile-ui/contracts", "examples/profile-ui/shared",
     "examples/profile-ui/web", "examples/profile-ui/client", "examples/profile-ui/native",
     "examples/profile-ui/gateway",
+    "crates/framework/framework-schema", "crates/framework/framework-sql",
+    "examples/generated-workspace/tool", "examples/generated-workspace/app",
+    "examples/generated-workspace/contracts",
 ]
 resolver = "3"
 
@@ -40,8 +43,13 @@ stackpress-sql-sqlite = { path = "crates/sql/sql-sqlite", optional = true }
 stackpress-framework-view = { path = "crates/framework/framework-view", optional = true }
 stackpress-framework-ui = { path = "crates/framework/framework-ui", optional = true }
 
+stackpress-framework-schema = { path = "crates/framework/framework-schema", optional = true }
+stackpress-framework-sql = { path = "crates/framework/framework-sql", optional = true }
+
 [features]
 default = []
+framework-schema = ["dep:stackpress-framework-schema"]
+framework-sql = ["dep:stackpress-framework-sql"]
 server = ["dep:stackpress-server"]
 server-http = ["server", "stackpress-server/http"]
 idea-parser = ["dep:stackpress-idea-parser"]

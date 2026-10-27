@@ -1,0 +1,28 @@
+[package]
+name = "generated-workspace-tool"
+description = "Independent app-owned generator for the three-model data proof"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[features]
+default = []
+database-tools = ["stackpress-framework-sql/sqlite-maintenance"]
+
+[dependencies]
+stackpress-framework-schema = { path = "../../../crates/framework/framework-schema", features = ["codegen"] }
+stackpress-framework-sql = { path = "../../../crates/framework/framework-sql", features = ["codegen"] }
+stackpress-idea = { path = "../../../crates/idea/idea" }
+stackpress-cli = { path = "../../../tools/cli" }
+stackpress-lib = { path = "../../../crates/lib" }
+stackpress-server = { path = "../../../crates/server" }
+tokio = { version = "1", features = ["macros", "rt"] }
+
+serde_json = "1"
+
+[dev-dependencies]
+tempfile = "3"
+
+[lints]
+workspace = true

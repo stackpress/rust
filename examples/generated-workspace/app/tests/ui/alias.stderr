@@ -1,0 +1,9 @@
+error[E0499]: cannot borrow `session` as mutable more than once at a time
+ --> tests/ui/alias.rs:5:31
+  |
+4 |     let pending = Profiles::create(&mut session, CreateProfile::default());
+  |                                    ------------ first mutable borrow occurs here
+5 |     let other = Profiles::get(&mut session, "u");
+  |                               ^^^^^^^^^^^^ second mutable borrow occurs here
+6 |     pending.await.unwrap();
+  |     ------- first borrow later used here

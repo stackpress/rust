@@ -1,0 +1,8 @@
+error[E0515]: cannot return value referencing function parameter `engine`
+ --> tests/ui/escape.rs:3:53
+  |
+3 | fn escape(engine: Engine) -> DataSession<'static> { DataSession::pooled(&engine) }
+  |                                                     ^^^^^^^^^^^^^^^^^^^^-------^
+  |                                                     |                   |
+  |                                                     |                   `engine` is borrowed here
+  |                                                     returns a value referencing data owned by the current function

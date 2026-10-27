@@ -40,6 +40,9 @@ mod lease;
 mod options;
 mod session;
 
+#[cfg(feature = "maintenance")]
+pub mod maintenance;
+
 use std::sync::Arc;
 
 use sqlx::sqlite::SqlitePoolOptions;

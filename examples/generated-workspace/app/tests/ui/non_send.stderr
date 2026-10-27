@@ -1,0 +1,19 @@
+error: future cannot be sent between threads safely
+ --> tests/ui/non_send.rs:9:44
+  |
+9 | fn main() { ServerBuilder::new().on("bad", bad).unwrap(); }
+  |                                            ^^^ future returned by `bad` is not `Send`
+  |
+  = help: within `impl for<'a> Future<Output = Result<Flow, stackpress_lib::Error>>`, the trait `Send` is not implemented for `Rc<i32>`
+note: future is not `Send` as this value is used across an await
+ --> tests/ui/non_send.rs:5:30
+  |
+4 |     let local = std::rc::Rc::new(1);
+  |         ----- has type `Rc<i32>` which is not `Send`
+5 |     tokio::task::yield_now().await;
+  |                              ^^^^^ await occurs here, with `local` maybe used later
+note: required by a bound in `stackpress_server::registration::<impl ServerBuilder>::on`
+ --> $WORKSPACE/crates/server/src/registration.rs
+  |
+  |     pub fn on(&mut self, event: &str, action: impl Handler + 'static) -> Result<ListenerId> {
+  |                                                    ^^^^^^^ required by this bound in `stackpress_server::registration::<impl ServerBuilder>::on`

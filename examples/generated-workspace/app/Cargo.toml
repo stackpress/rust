@@ -1,0 +1,25 @@
+[package]
+name = "generated-workspace-app"
+description = "Real generated three-model native data consumer"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[dependencies]
+stackpress-framework-schema = { path = "../../../crates/framework/framework-schema" }
+stackpress-framework-sql = { path = "../../../crates/framework/framework-sql", features = ["server"] }
+stackpress-sql = { path = "../../../crates/sql/sql" }
+stackpress-sql-sqlite = { path = "../../../crates/sql/sql-sqlite" }
+stackpress-lib = { path = "../../../crates/lib" }
+stackpress-server = { path = "../../../crates/server" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["macros", "rt", "rt-multi-thread"] }
+tempfile = "3"
+trybuild = "1"
+
+[lints]
+workspace = true

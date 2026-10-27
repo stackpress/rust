@@ -1,0 +1,31 @@
+error[E0277]: `(dyn stackpress_sql::engine::TransactionSession + 'static)` cannot be shared between threads safely
+ --> tests/ui/service.rs:5:22
+  |
+5 |     startup.register(Arc::new(session)).unwrap();
+  |             -------- ^^^^^^^^^^^^^^^^^ `(dyn stackpress_sql::engine::TransactionSession + 'static)` cannot be shared between threads safely
+  |             |
+  |             required by a bound introduced by this call
+  |
+  = help: the trait `Sync` is not implemented for `(dyn stackpress_sql::engine::TransactionSession + 'static)`
+  = note: required for `std::ptr::Unique<(dyn stackpress_sql::engine::TransactionSession + 'static)>` to implement `Sync`
+note: required because it appears within the type `Box<(dyn stackpress_sql::engine::TransactionSession + 'static)>`
+ --> $RUST/alloc/src/boxed.rs
+  |
+  | pub struct Box<
+  |            ^^^
+note: required because it appears within the type `stackpress_sql::engine::Transaction`
+ --> $WORKSPACE/crates/sql/sql/src/engine.rs
+  |
+  | pub struct Transaction {
+  |            ^^^^^^^^^^^
+  = note: required because it appears within the type `&mut stackpress_sql::engine::Transaction`
+note: required because it appears within the type `DataSession<'_>`
+ --> $WORKSPACE/crates/framework/framework-sql/src/lib.rs
+  |
+  | pub enum DataSession<'a> {
+  |          ^^^^^^^^^^^
+note: required by a bound in `StartupContext::register`
+ --> $WORKSPACE/crates/server/src/startup.rs
+  |
+  |     pub fn register<T: Any + Send + Sync>(&mut self, value: Arc<T>) -> Result<()> {
+  |                                     ^^^^ required by this bound in `StartupContext::register`
