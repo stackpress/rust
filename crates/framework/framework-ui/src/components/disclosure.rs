@@ -1,5 +1,5 @@
 //! Controlled disclosures and explicit tab/panel slots; no child-tree reflection.
-use super::{ChoiceMove, ChoiceState, DisclosureState};
+use super::{ChoiceState, DisclosureState, choice::choice_movement};
 use leptos::prelude::*;
 
 /// A named group of caller-supplied AccordionItem slots.
@@ -99,7 +99,7 @@ pub fn Tabs(
                 on:focus=move |_|{state.focus(index);}
                 on:click=move |_|{state.choose(&key);}
                 on:keydown=move |event:leptos::ev::KeyboardEvent|{
-                    let direction=match event.key().as_str(){"Home"=>Some(ChoiceMove::First),"End"=>Some(ChoiceMove::Last),"ArrowRight" if !vertical=>Some(ChoiceMove::Next),"ArrowLeft" if !vertical=>Some(ChoiceMove::Previous),"ArrowDown" if vertical=>Some(ChoiceMove::Next),"ArrowUp" if vertical=>Some(ChoiceMove::Previous),_=>None};
+                    let direction=choice_movement(&event.key(), vertical);
                     if let Some(direction)=direction {event.prevent_default();if let Some(next)=state.navigate(direction,matches!(activation,TabActivation::Automatic)){
                         #[cfg(target_arch="wasm32")] super::dialog_dom::focus_id(&format!("{prefix}-tab-{next}"));
                         #[cfg(not(target_arch="wasm32"))] let _=(&prefix,next);

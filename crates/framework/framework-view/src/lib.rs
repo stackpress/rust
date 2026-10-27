@@ -63,6 +63,22 @@ pub enum PageLoad<T> {
 }
 
 /// The deliberately small public envelope; unknown wire fields are rejected.
+///
+/// # Examples
+/// ```
+/// use stackpress_framework_view::{PageId, PageSnapshot, PublicStatus};
+/// let page = PageSnapshot {
+///     revision: 1, build: "app-build".into(),
+///     page: PageId::try_from("profile".to_owned())?, location: "/profile".into(),
+///     locale: "en".into(), theme: "system".into(), status: PublicStatus::ok(),
+///     data: "</script><script>untrusted()</script>".to_owned(),
+/// };
+/// let inert = page.script_json()?;
+/// assert!(!inert.contains('<'));
+/// let decoded = PageSnapshot::<String>::decode(&inert, 1, "app-build")?;
+/// assert_eq!(decoded.data, page.data);
+/// # Ok::<(), stackpress_framework_view::ViewError>(())
+/// ```
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct PageSnapshot<T> {

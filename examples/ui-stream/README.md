@@ -39,7 +39,10 @@ unhydrated with a safe reload link.
 
 Run finite builds with `python3 examples/ui-stream/build.py`. It requires the
 already installed matching wasm-bindgen 0.2.129 and writes assets and a finite
-native host to `/private/tmp/s8-stream`. Run the browser proof with
+native host to `/private/tmp/s8-stream` by default. Set `UI_STREAM_OUTPUT_DIR`
+for both commands to select another artifact directory, including nested paths.
+Set `CARGO_TARGET_DIR` to use one owned native/WASM compilation root; the
+default remains `target/s8-native` and `target/s8-wasm`. Run the browser proof with
 `UI_STREAM_PLAYWRIGHT=<installed-playwright-package> python3 examples/ui-stream/browser.py`.
 The parent kills and reaps the owned process group at 120 s. There are no
 installs, listeners or remote requests.
@@ -57,6 +60,7 @@ shutdown and capture release. Browser interception does not prove real TCP/TLS
 flush, browser network-buffer backpressure or remote acknowledgement. All worker
 registrations and contexts are closed in `finally`.
 
-Review artifacts are `/private/tmp/s8-stream/browser.json`, native/browser logs
+Review artifacts are `<UI_STREAM_OUTPUT_DIR>/browser.json` (default
+`/private/tmp/s8-stream/browser.json`), native/browser logs
 and `*-shell.png`, `*-settled.png`, `*-375.png`, `*-recovery.png`. These are a
 bounded review packet for control 00013-012; owner acceptance remains separate.

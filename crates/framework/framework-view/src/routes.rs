@@ -122,18 +122,17 @@ impl PageRoute {
             match segment {
                 RouteSegment::Static(value) => path.push_str(value),
                 RouteSegment::Param(name) => {
-                    let values = params
-                        .iter()
-                        .filter(|(key, _)| key == name)
-                        .collect::<Vec<_>>();
-                    if values.len() != 1
-                        || values[0].1.is_empty()
-                        || matches!(values[0].1, "." | "..")
-                        || values[0].1.len() > 1024
+                    // Borrow the unique value directly; no per-parameter collection is needed.
+                    let mut values = params.iter().filter(|(key, _)| key == name);
+                    let (_, value) = values.next().ok_or(ViewError::InvalidSnapshot)?;
+                    if values.next().is_some()
+                        || value.is_empty()
+                        || matches!(*value, "." | "..")
+                        || value.len() > 1024
                     {
                         return Err(ViewError::InvalidSnapshot);
                     }
-                    path.push_str(&encode_uri_component(values[0].1));
+                    path.push_str(&encode_uri_component(value));
                 }
             }
         }

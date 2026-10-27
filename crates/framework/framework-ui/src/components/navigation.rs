@@ -1,5 +1,7 @@
 //! Explicit breadcrumb data, keyboard menus and menubars with checked link policy.
-use super::{ChoiceMove, ChoiceState, ControlError, Popover, PopupRole, safe_href};
+use super::{
+    ChoiceMove, ChoiceState, ControlError, Popover, PopupRole, choice::choice_movement, safe_href,
+};
 use leptos::prelude::*;
 
 /// One breadcrumb; the final entry is current and never rendered as a link.
@@ -75,7 +77,18 @@ pub fn Menu(
             tabindex=move ||if state.focused()==Some(index){0}else{-1} on:focus=move |_|{state.focus(index);}
             on:click=move |_|{if state.choose(&key){open.set(false);action.run(key.clone());}}
             on:keydown=move |event:leptos::ev::KeyboardEvent|{
-                let next=match event.key().as_str(){"ArrowDown"=>state.navigate(ChoiceMove::Next,false),"ArrowUp"=>state.navigate(ChoiceMove::Previous,false),"Home"=>state.navigate(ChoiceMove::First,false),"End"=>state.navigate(ChoiceMove::Last,false),key if key.chars().count()==1 && !event.ctrl_key() && !event.meta_key() && key!=" "=>{let mut prefix=None;search.update(|buffer|prefix=buffer.push(key,event.time_stamp()));prefix.and_then(|prefix|state.typeahead(&prefix))},_=>None};
+                let next=match choice_movement(&event.key(), true) {
+                    Some(direction) => state.navigate(direction, false),
+                    None => {
+                        // Printable unmodified keys extend the bounded menu search buffer.
+                        let key = event.key();
+                        if key.chars().count() == 1 && !event.ctrl_key() && !event.meta_key() && key != " " {
+                            let mut prefix = None;
+                            search.update(|buffer| prefix = buffer.push(&key, event.time_stamp()));
+                            prefix.and_then(|prefix| state.typeahead(&prefix))
+                        } else { None }
+                    }
+                };
                 if let Some(next)=next{event.prevent_default();#[cfg(target_arch="wasm32")]super::dialog_dom::focus_id(&format!("{prefix}-item-{next}"));#[cfg(not(target_arch="wasm32"))]let _=(&prefix,next);}
                 if event.key()=="Tab"{open.set(false);}
                 if matches!(event.key().as_str(),"ArrowLeft"|"ArrowRight") && let Some(horizontal)=horizontal{event.prevent_default();horizontal.run(event.key()=="ArrowRight");}
@@ -125,7 +138,7 @@ pub fn Menubar(
             disabled=option.disabled tabindex=move ||if state.focused()==Some(index){0}else{-1}
             on:focus=move |_|{state.focus(index);} on:click=move |_|open.update(|v|*v= !*v)
             on:keydown=move |event:leptos::ev::KeyboardEvent|{
-                let next=match event.key().as_str(){"ArrowRight"=>state.navigate(ChoiceMove::Next,false),"ArrowLeft"=>state.navigate(ChoiceMove::Previous,false),"Home"=>state.navigate(ChoiceMove::First,false),"End"=>state.navigate(ChoiceMove::Last,false),_=>None};
+                let next=choice_movement(&event.key(), false).and_then(|direction| state.navigate(direction, false));
                 if let Some(next)=next{event.prevent_default();open.set(false);#[cfg(target_arch="wasm32")]super::dialog_dom::focus_id(&format!("{prefix}-trigger-{next}"));#[cfg(not(target_arch="wasm32"))]let _=(&prefix,next);}
                 if event.key()=="ArrowDown"{event.prevent_default();open.set(true);}
             }>{option.label.clone()}</button>

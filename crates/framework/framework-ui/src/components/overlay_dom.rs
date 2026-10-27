@@ -7,8 +7,11 @@ use web_sys::{Event, EventTarget, HtmlElement};
 
 /// A registered callback owns both the matching removal identity and its JS closure.
 struct Listener {
+    /// The exact target/capture registration is retained for removal.
     target: EventTarget,
+    /// Fixed event name, paired with the retained callback identity.
     name: &'static str,
+    /// Owned until native removal completes.
     callback: Closure<dyn FnMut(Event)>,
 }
 impl Listener {
@@ -45,9 +48,13 @@ impl Drop for Listener {
 }
 #[derive(Clone)]
 struct Handles {
+    /// Native surface; clones do not own a second cleanup registration.
     element: HtmlElement,
+    /// App-supplied connected trigger identity used for positioning.
     anchor: String,
+    /// Close/focus restoration happens once across native and controlled dismissal.
     was_open: Rc<Cell<bool>>,
+    /// The pre-open control, cloned out before any reentrant focus call.
     opener: Rc<std::cell::RefCell<Option<HtmlElement>>>,
 }
 impl Handles {
@@ -152,7 +159,9 @@ impl Handles {
 }
 /// ResizeObserver covers asynchronous option/content changes without a polling loop.
 struct ResizeLease {
+    /// Disconnect before freeing the corresponding callback.
     observer: web_sys::ResizeObserver,
+    /// Keep JS callable while observation is active.
     _callback: Closure<dyn FnMut()>,
 }
 impl ResizeLease {

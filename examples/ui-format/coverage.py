@@ -10,7 +10,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = Path(os.environ.get('UI_FORMAT_OUTPUT_DIR', '/private/tmp/s8-format'))
-TARGET = ROOT / 'target/s8-native'
+TARGET = ROOT / os.environ.get('CARGO_TARGET_DIR', 'target/s8-native')
 ENV = dict(os.environ, CARGO_TARGET_DIR=str(TARGET), CARGO_LLVM_COV_TARGET_DIR=str(TARGET),
            CARGO_INCREMENTAL='0', CARGO_PROFILE_DEV_DEBUG='0', CARGO_BUILD_JOBS='2', RUST_TEST_THREADS='1')
 
