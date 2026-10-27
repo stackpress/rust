@@ -104,6 +104,8 @@ impl MigrationPlanner {
             return Err(DataError::new("migration application namespaces differ"));
         }
         validate_mappings(from, to, renames)?;
+        // This pass deliberately accumulates losses without rendering or requiring backfills.
+        // Construction below may stop at an unrepresentable step; review must still show later losses.
         let mut findings = Vec::new();
         for source in &from.tables {
             let name = renames
@@ -503,12 +505,14 @@ fn change_table(
     backend: DialectId,
     build: &mut Build,
 ) -> DataResult<()> {
+    // Retain source-local mapping identities even when the table itself receives a new name.
     let mappings = recipe
         .renames
         .fields
         .iter()
         .filter(|r| r.table == source.name)
         .collect::<Vec<_>>();
+    // Required additions must have a complete value source before any executable step is retained.
     for new in &target.fields {
         let old = mappings
             .iter()
@@ -528,6 +532,7 @@ fn change_table(
             ));
         }
     }
+    // A retained field is copied exactly; removals and conversions carry separate review authority.
     for old in &source.fields {
         let name = mappings
             .iter()

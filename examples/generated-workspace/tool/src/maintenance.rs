@@ -1,5 +1,6 @@
 //! App-owned operator events over existing CLI emit grammar; no stock migration binary.
 
+use super::external;
 use serde_json::{Value, json};
 use stackpress_framework_sql::migrations::{
     DialectId, Literal, MigrationPlanner, RenameMap, RevisionId, RevisionOutcome, RevisionStore,
@@ -7,7 +8,7 @@ use stackpress_framework_sql::migrations::{
 };
 #[cfg(feature = "database-tools")]
 use stackpress_framework_sql::migrations::{PlanHash, PlanOperation, RevisionSnapshot};
-use stackpress_lib::{Error, ErrorKind, Flow, Invocation, Request, Response};
+use stackpress_lib::{Error, Flow, Invocation, Request, Response};
 use std::{
     collections::BTreeMap,
     path::{Path, PathBuf},
@@ -26,6 +27,15 @@ pub(super) async fn event(
     Ok(Flow::Continue)
 }
 /// Execute one compiled app capability. Unknown options are rejected before filesystem/DB work.
+///
+/// # Examples
+///
+/// ```no_run
+/// use generated_workspace_tool::maintenance::run;
+/// async fn inspect_history(history: &str) -> stackpress_lib::Result<serde_json::Value> {
+///     run("history-check", serde_json::json!({"history": history})).await
+/// }
+/// ```
 pub async fn run(event: &str, data: Value) -> stackpress_lib::Result<Value> {
     let data = data
         .as_object()
@@ -166,49 +176,7 @@ fn prepare(event: &str, data: &serde_json::Map<String, Value>) -> stackpress_lib
                 json!({"outcome":state,"revision":id.as_str()}),
             ))
         }
-        "migration-plan" => {
-            let to = history
-                .revision(&RevisionId::parse(required(data, "to")?).map_err(data_error)?)
-                .map_err(data_error)?;
-            let dialect = match optional(data, "dialect")?.unwrap_or("sqlite") {
-                "sqlite" => DialectId::Sqlite,
-                "postgres" => DialectId::Postgres,
-                "mysql" => DialectId::Mysql,
-                _ => return Err(Error::invalid("unknown migration dialect")),
-            };
-            let operation = optional(data, "operation")?.unwrap_or("schema");
-            let plan=match operation {
-                "purge"=>MigrationPlanner::purge(&to,dialect),
-                "uninstall"=>MigrationPlanner::uninstall(&to,dialect),
-                "populate"=> {
-                    let source=read_regular(Path::new(required(data,"seed-file")?))?;
-                    let rows:Vec<SeedRow>=serde_json::from_str(&source).map_err(|cause|external("seed file decoding failed",cause))?;
-                    MigrationPlanner::populate(&to,required(data,"seed")?,rows,dialect)
-                }
-                "schema"=> {
-                    let from=optional(data,"from")?.or(to.parent());
-                    let renames=mappings(data)?;
-                    match from {
-                        None=>MigrationPlanner::baseline(&to,dialect),
-                        Some(id)=> {
-                            let from=history.revision(&RevisionId::parse(id).map_err(data_error)?).map_err(data_error)?;
-                            let suggestions=MigrationPlanner::unresolved_suggestions(&from,&to,&renames).map_err(data_error)?;
-                            let findings=MigrationPlanner::review(&from,&to,&renames,dialect).map_err(data_error)?;
-                            match MigrationPlanner::between(&from,&to,renames,dialect) {
-                                Ok(plan)=>Ok(plan),
-                                Err(error) if !suggestions.is_empty()=>return Ok(Prepared::Report(json!({"outcome":"NeedsExplicitMapping","suggestions":suggestions,"reason":error.context(),"findings":findings}))),
-                                Err(error)=>return Ok(Prepared::Report(json!({"outcome":"Blocked","findings":findings,"reason":error.context()}))),
-                            }
-                        }
-                    }
-                }
-                _=>return Err(Error::invalid("unknown migration operation")),
-            }.map_err(data_error)?;
-            let hash = history.write_plan(&plan).map_err(data_error)?;
-            Ok(Prepared::Report(
-                json!({"plan":hash.as_str(),"findings":plan.findings(),"blocked":plan.blocked_reasons(),"reverse_available":plan.reverse().is_some(),"reverse_plan":plan.reverse().map(|p|p.hash().as_str())}),
-            ))
-        }
+        "migration-plan" => Ok(Prepared::Report(plan_migration(&history, data)?)),
         #[cfg(feature = "database-tools")]
         "db-status" => {
             let checked = history.check().map_err(data_error)?;
@@ -234,6 +202,85 @@ fn prepare(event: &str, data: &serde_json::Map<String, Value>) -> stackpress_lib
         #[cfg(not(feature = "database-tools"))]
         _ => Err(Error::invalid("database-tools feature is required")),
     }
+}
+/// Select a pure planner capability, leaving schema review and publication in named phases.
+fn plan_migration(
+    history: &RevisionStore,
+    data: &serde_json::Map<String, Value>,
+) -> stackpress_lib::Result<Value> {
+    // Resolve the immutable target before interpreting the dialect and operator, as before.
+    let to = history
+        .revision(&RevisionId::parse(required(data, "to")?).map_err(data_error)?)
+        .map_err(data_error)?;
+    let dialect = match optional(data, "dialect")?.unwrap_or("sqlite") {
+        "sqlite" => DialectId::Sqlite,
+        "postgres" => DialectId::Postgres,
+        "mysql" => DialectId::Mysql,
+        _ => return Err(Error::invalid("unknown migration dialect")),
+    };
+    let operation = optional(data, "operation")?.unwrap_or("schema");
+    let plan = match operation {
+        "purge" => MigrationPlanner::purge(&to, dialect),
+        "uninstall" => MigrationPlanner::uninstall(&to, dialect),
+        "populate" => {
+            // Decode the bounded seed before asking the planner to validate all supplied rows.
+            let source = read_regular(Path::new(required(data, "seed-file")?))?;
+            let rows: Vec<SeedRow> = serde_json::from_str(&source)
+                .map_err(|cause| external("seed file decoding failed", cause))?;
+            MigrationPlanner::populate(&to, required(data, "seed")?, rows, dialect)
+        }
+        "schema" => return plan_schema(history, &to, data, dialect),
+        _ => return Err(Error::invalid("unknown migration operation")),
+    }
+    .map_err(data_error)?;
+    publish_plan(history, &plan)
+}
+/// Report unresolved schema authority without publishing a plan, or publish the checked result.
+fn plan_schema(
+    history: &RevisionStore,
+    to: &stackpress_framework_sql::migrations::RevisionSnapshot,
+    data: &serde_json::Map<String, Value>,
+    dialect: DialectId,
+) -> stackpress_lib::Result<Value> {
+    let from = optional(data, "from")?.or(to.parent());
+    let renames = mappings(data)?;
+    let plan = match from {
+        None => MigrationPlanner::baseline(to, dialect).map_err(data_error)?,
+        Some(id) => {
+            let from = history
+                .revision(&RevisionId::parse(id).map_err(data_error)?)
+                .map_err(data_error)?;
+            // Inspection retains every finding even when a candidate or capability blocks planning.
+            let suggestions = MigrationPlanner::unresolved_suggestions(&from, to, &renames)
+                .map_err(data_error)?;
+            let findings =
+                MigrationPlanner::review(&from, to, &renames, dialect).map_err(data_error)?;
+            match MigrationPlanner::between(&from, to, renames, dialect) {
+                Ok(plan) => plan,
+                Err(error) if !suggestions.is_empty() => {
+                    return Ok(
+                        json!({"outcome":"NeedsExplicitMapping","suggestions":suggestions,"reason":error.context(),"findings":findings}),
+                    );
+                }
+                Err(error) => {
+                    return Ok(
+                        json!({"outcome":"Blocked","findings":findings,"reason":error.context()}),
+                    );
+                }
+            }
+        }
+    };
+    publish_plan(history, &plan)
+}
+/// Publish only checked authority and report its exact hashes without changing the CLI envelope.
+fn publish_plan(
+    history: &RevisionStore,
+    plan: &stackpress_framework_sql::migrations::MigrationPlan,
+) -> stackpress_lib::Result<Value> {
+    let hash = history.write_plan(plan).map_err(data_error)?;
+    Ok(
+        json!({"plan":hash.as_str(),"findings":plan.findings(),"blocked":plan.blocked_reasons(),"reverse_available":plan.reverse().is_some(),"reverse_plan":plan.reverse().map(|p|p.hash().as_str())}),
+    )
 }
 /// Read/re-render authority, enforce command purpose and bind loss approval to an explicit target.
 #[cfg(feature = "database-tools")]
@@ -403,10 +450,4 @@ fn required<'a>(
 /// Preserve data-layer errors as concrete causes beneath distinct operator context.
 fn data_error(cause: stackpress_framework_sql::DataError) -> Error {
     external("operator plan or history validation failed", cause)
-}
-/// Keep causes separate from safe context; never interpolate their Display.
-fn external(context: &'static str, cause: impl std::error::Error + Send + Sync + 'static) -> Error {
-    Error::new(context)
-        .with_kind(ErrorKind::External)
-        .with_cause(cause)
 }

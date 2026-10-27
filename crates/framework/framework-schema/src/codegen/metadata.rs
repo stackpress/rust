@@ -37,6 +37,7 @@ pub(super) fn normalize_model(
         query: Vec::new(),
         attributes: Vec::new(),
     };
+    // Preserve private source attributes while interpreting only this owner's selected vocabulary.
     for (name, value) in &declaration.attributes {
         let result = (|| {
             model.attributes.push(attribute(name, value));
@@ -56,6 +57,7 @@ pub(super) fn normalize_model(
             error.at([root.clone(), vec!["attributes".into(), name.clone()]].concat())
         })?;
     }
+    // Resolve every column identity/type before its attributes and final cross-attribute invariants.
     let mut names = BTreeSet::new();
     for column in &declaration.columns {
         let path = [root.clone(), vec!["columns".into(), column.name.clone()]].concat();
@@ -111,6 +113,7 @@ pub(super) fn normalize_model(
                 |error| error.at([path.clone(), vec!["attributes".into(), name.clone()]].concat()),
             )?;
         }
+        // Recognized default calls become explicit providers before generated/input requirements settle.
         provider(&mut field, registry).map_err(|error| {
             error.at([path.clone(), vec!["attributes".into(), "default".into()]].concat())
         })?;
@@ -241,6 +244,7 @@ fn normalize_attribute(
 }
 /// Derive state/default invariants only after all attributes have been interpreted.
 fn finish(field: &mut Field, embedded: bool) -> SchemaResult<()> {
+    // Reject storage-only semantics on embeddings and input semantics on virtual relations first.
     if embedded
         && (field.key
             || field.unique
@@ -263,6 +267,7 @@ fn finish(field: &mut Field, embedded: bool) -> SchemaResult<()> {
             "virtual relation values cannot declare input defaults or assertions",
         ));
     }
+    // Keys, uniqueness and native indexing require an unambiguous scalar storage representation.
     let scalar = !field.multiple
         && !matches!(
             field.value_type,
@@ -292,6 +297,7 @@ fn finish(field: &mut Field, embedded: bool) -> SchemaResult<()> {
     if embedded && matches!(field.value_type, ValueType::Model(_)) {
         return Err(unsupported("embedded relations are unsupported"));
     }
+    // Derive defaults only after applicability checks, preserving an explicitly supplied false value.
     if field.active && field.default.is_none() {
         field.default = Some(Value::Bool(true));
     }
@@ -305,6 +311,7 @@ fn finish(field: &mut Field, embedded: bool) -> SchemaResult<()> {
             });
         }
     }
+    // Omission is valid only when a literal/provider or generated source can supply the stored value.
     field.input_required = (field.required
         || field
             .rules
