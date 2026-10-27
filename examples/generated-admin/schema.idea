@@ -1,0 +1,28 @@
+use "../generated-workspace/app/schema.idea"
+plugin "framework-schema" { }
+plugin "framework-sql" { }
+plugin "framework-admin" { }
+
+model Profile {
+  name String @is.ne @searchable @sortable @label("Name </script> 🦀")
+    @field.string({ placeholder "Idea hint" }) @filter.input @span.string @list.string @view.text
+}
+
+model Project {
+  title String @is.ne @searchable @sortable @field.input @filter.input @span.input @list.text @view.text
+}
+
+model Task {
+  title String @is.ne @field.input @filter.input @span.input @list.text @view.text
+  done Boolean @default(false) @field.checkbox @filter.checkbox @span.switch @list.yesno @view.yesno
+}
+
+// Actual normalized boundary fixture; only app-approved public fields reach role output.
+model RoleProof {
+  id String @id
+  text String? @default("fixture default") @field.input @filter.input @span.input @list.text @view.text
+  flag Boolean @default(false) @field.switch @list.yesno @view.yesno
+  zero Integer @default(0) @list.text @view.text
+  sensitive String? @default("ADMIN_PRIVATE_DEFAULT_SENTINEL") @field.input
+  hostOnly String?
+}

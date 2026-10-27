@@ -1434,6 +1434,50 @@ dependencies = [
 ]
 
 [[package]]
+name = "generated-admin-client"
+version = "0.1.0"
+dependencies = [
+ "generated-admin-shared",
+ "js-sys",
+ "leptos",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "generated-admin-shared"
+version = "0.1.0"
+dependencies = [
+ "leptos",
+ "serde",
+ "serde_json",
+ "stackpress-framework-admin",
+ "stackpress-framework-schema",
+ "stackpress-framework-ui",
+]
+
+[[package]]
+name = "generated-admin-tool"
+version = "0.1.0"
+dependencies = [
+ "generated-workspace-tool",
+ "serde_json",
+ "stackpress-framework-admin",
+ "stackpress-framework-schema",
+ "stackpress-framework-sql",
+ "stackpress-idea",
+ "tempfile",
+]
+
+[[package]]
+name = "generated-admin-web"
+version = "0.1.0"
+dependencies = [
+ "generated-admin-shared",
+ "leptos",
+]
+
+[[package]]
 name = "generated-workspace-app"
 version = "0.1.0"
 dependencies = [
@@ -4417,6 +4461,7 @@ version = "0.1.0"
 dependencies = [
  "serde",
  "serde_json",
+ "stackpress-framework-admin",
  "stackpress-framework-language",
  "stackpress-framework-preferences",
  "stackpress-framework-schema",
@@ -4732,6 +4777,20 @@ dependencies = [
  "stackpress-server",
  "stackpress-server-http",
  "tokio",
+]
+
+[[package]]
+name = "stackpress-framework-admin"
+version = "0.1.0"
+dependencies = [
+ "leptos",
+ "serde",
+ "serde_json",
+ "stackpress-framework-schema",
+ "stackpress-framework-ui",
+ "stackpress-idea-parser",
+ "stackpress-idea-transformer",
+ "tempfile",
 ]
 
 [[package]]
