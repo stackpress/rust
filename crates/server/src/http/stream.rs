@@ -19,6 +19,19 @@ use std::{
 };
 
 /// Finite producer and IO-host budgets; zero is invalid, never unlimited.
+///
+/// # Examples
+/// These time controls travel with the body; its driving IO host must enforce them.
+/// ```
+/// use stackpress_server::http::stream::StreamLimits;
+/// use std::time::Duration;
+/// let limits = StreamLimits {
+///     max_chunk_bytes: 4096,
+///     total_timeout: Duration::from_secs(15),
+///     ..Default::default()
+/// };
+/// assert!(limits.max_chunk_bytes <= limits.max_bytes);
+/// ```
 #[derive(Clone, Copy, Debug)]
 pub struct StreamLimits {
     /// Largest admitted producer chunk, before handing it to the transport.
@@ -147,6 +160,25 @@ pub trait HttpResponseExt {
     ///     res.stream("text/plain", Borrowed(inv), StreamLimits::default()).unwrap();
     /// }
     /// ```
+    ///
+    /// # Examples
+    /// Own the producer state; this call attaches it without polling or spawning work.
+    /// ```
+    /// use futures_core::Stream;
+    /// use stackpress_lib::{Response, Result};
+    /// use stackpress_server::http::stream::{HttpResponseExt, StreamLimits};
+    /// use std::{pin::Pin, task::{Context, Poll}};
+    /// struct Once(Option<Vec<u8>>);
+    /// impl Stream for Once {
+    ///     type Item = Result<Vec<u8>>;
+    ///     fn poll_next(mut self: Pin<&mut Self>, _: &mut Context<'_>) -> Poll<Option<Self::Item>> {
+    ///         Poll::Ready(self.0.take().map(Ok))
+    ///     }
+    /// }
+    /// let mut response = Response::new();
+    /// response.stream("text/plain", Once(Some(b"hello".to_vec())), StreamLimits::default())?;
+    /// # Ok::<(), stackpress_lib::Error>(())
+    /// ```
     fn stream<S>(&mut self, mime: &str, stream: S, limits: StreamLimits) -> Result<&mut Self>
     where
         S: Stream<Item = Result<Vec<u8>>> + Send + 'static;
@@ -219,6 +251,7 @@ impl HttpResponseExt for Response {
 
 /// Exclusive native body; implements demand-driven chunks and drops its producer on failure.
 /// It deliberately implements neither Clone nor Debug of producer contents.
+/// See [`StreamingHttpAdapter::handle_body`] for polling, limits and known-completion usage.
 pub struct HttpBody {
     /// Exhaustive ownership state prevents producer/limit/buffer combinations that cannot occur.
     source: BodySource,
@@ -336,6 +369,7 @@ impl Stream for HttpBody {
 }
 
 /// Native availability from the sole publication authority.
+/// See [`StreamingHttpAdapter::handle_body`] for explicit matching before polling output.
 pub enum StreamingHttpOutput {
     /// Fully preflighted headers and an unpolled one-shot body.
     Response(http::Response<HttpBody>),
@@ -348,6 +382,7 @@ pub enum StreamingHttpOutput {
     },
 }
 /// Publication diagnostics, before any IO host drives the body to completion.
+/// See [`StreamingHttpAdapter::handle_body`] for obtaining and inspecting the native reply.
 pub struct StreamingHttpReply {
     /// Native output availability.
     pub output: StreamingHttpOutput,
@@ -363,6 +398,16 @@ impl StreamingHttpAdapter {
     /// Validate trusted configuration without opening resources.
     /// # Errors
     /// Rejects the same invalid origins as [`HttpAdapter::new`].
+    ///
+    /// # Examples
+    /// ```
+    /// use stackpress_server::http::{HttpOptions, stream::StreamingHttpAdapter};
+    /// let adapter = StreamingHttpAdapter::new(HttpOptions {
+    ///     base_url: "https://profiles.example/".into(),
+    ///     ..Default::default()
+    /// })?;
+    /// # let _ = adapter; Ok::<(), stackpress_lib::Error>(())
+    /// ```
     pub fn new(options: HttpOptions) -> Result<Self> {
         Ok(Self {
             adapter: HttpAdapter::new(options)?,
@@ -375,6 +420,34 @@ impl StreamingHttpAdapter {
     /// Dropping this future drops active loading/handling; no background work is spawned.
     /// # Errors
     /// Outer errors mean the host could not allocate a report. Ordinary failures stay in it.
+    ///
+    /// # Examples
+    /// Drive a known representation in process; a network host additionally enforces timers.
+    /// ```
+    /// use futures_core::Stream;
+    /// use stackpress_lib::{Flow, Invocation, Request, Response, Result};
+    /// use stackpress_server::{HandleOptions, ServerBuilder, http::{BufferedRequest, stream::{
+    ///     HttpResponseExt, StreamLimits, StreamingHttpAdapter, StreamingHttpOutput,
+    /// }}};
+    /// use std::{pin::Pin, sync::Arc};
+    /// async fn asset(_: &mut Request, res: &mut Response, _: Invocation<'_>) -> Result<Flow> {
+    ///     res.immutable_bytes("text/plain", Arc::from(b"hello".as_slice()), StreamLimits::default())?;
+    ///     Ok(Flow::Continue)
+    /// }
+    /// # async fn example() -> Result<()> {
+    /// let mut builder = ServerBuilder::new();
+    /// builder.get("/", asset)?;
+    /// let app = builder.build().await.map_err(|failure| failure.error)?;
+    /// let (head, _) = BufferedRequest::new(Vec::new()).into_parts();
+    /// let reply = StreamingHttpAdapter::new(Default::default())?
+    ///     .handle_body(&app, head, HandleOptions::default(), || async { Ok(Vec::new()) }).await?;
+    /// let StreamingHttpOutput::Response(mut native) = reply.output else { panic!("expected output") };
+    /// assert!(native.body().limits().is_some());
+    /// let chunk = std::future::poll_fn(|cx| Pin::new(native.body_mut()).poll_next(cx)).await;
+    /// assert_eq!(chunk.transpose()?, Some(b"hello".to_vec()));
+    /// assert!(native.body().is_finished());
+    /// # Ok(()) }
+    /// ```
     pub async fn handle_body<F, Fut>(
         &self,
         app: &Server,

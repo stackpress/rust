@@ -11,6 +11,17 @@ use std::{
 };
 
 /// One concrete IP network; IPv4 and IPv6 never implicitly match each other.
+///
+/// # Examples
+/// Trust concrete address families explicitly, including the prefix boundary.
+/// ```
+/// use stackpress_server_http::IpCidr;
+/// let network: IpCidr = "192.0.2.0/24".parse()?;
+/// assert!(network.contains("192.0.2.255".parse()?));
+/// assert!(!network.contains("192.0.3.0".parse()?));
+/// assert!(!network.contains("::ffff:192.0.2.1".parse()?));
+/// # Ok::<(), Box<dyn std::error::Error>>(())
+/// ```
 #[derive(Clone, Debug)]
 pub struct IpCidr {
     /// Masked network in one concrete address family.
