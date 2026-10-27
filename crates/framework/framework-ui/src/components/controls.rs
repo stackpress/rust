@@ -129,6 +129,12 @@ pub fn Input(
     /// Disable native editing when the caller requires it.
     #[prop(optional, into)]
     disabled: Signal<bool>,
+    /// Native required semantics; defaults preserve existing optional inputs.
+    #[prop(optional, into)]
+    required: Signal<bool>,
+    /// Native readonly semantics; the value remains a successful form control.
+    #[prop(optional, into)]
+    read_only: Signal<bool>,
     /// Optional visible input hint, supplementary to the required label.
     #[prop(default = String::new())]
     placeholder: String,
@@ -137,7 +143,7 @@ pub fn Input(
     view! { <input class="sp-input" type="text" id=id name=name
     value=move || value.get() prop:value=move || value.get()
     aria-describedby=move || described_by.get() aria-invalid=move || invalid.get().to_string()
-    disabled=move || disabled.get() placeholder=placeholder
+    disabled=move || disabled.get() required=move || required.get() readonly=move || read_only.get() placeholder=placeholder
     on:input=move |event| value.set(event_target_value(&event))/> }
 }
 

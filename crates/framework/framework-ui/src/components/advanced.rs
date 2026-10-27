@@ -90,6 +90,8 @@ pub fn Form(
 ///
 /// Native showModal supplies focus containment and background inertness. Callers
 /// supply unique IDs; initially-open SSR routes are outside this M0 contract.
+/// Include ADVANCED_STYLES to lock background scrolling while any modal is open;
+/// native focus/background inertness does not depend on those optional styles.
 #[component]
 pub fn Dialog(
     /// Stable unique identity, also the prefix for its accessible title.

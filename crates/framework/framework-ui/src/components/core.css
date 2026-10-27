@@ -1,0 +1,39 @@
+/* Ordinary semantic groups opt in without changing the accepted base stylesheet. */
+.sp-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .75rem;
+  margin-block: .75rem;
+}
+.sp-root form.sp-core-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+}
+.sp-core-form fieldset { min-width: 0; border: 1px solid var(--sp-line); }
+.sp-core-state { display: block; overflow-wrap: anywhere; white-space: pre-wrap; }
+.sp-check { width: 1.2rem; height: 1.2rem; accent-color: var(--sp-fg); }
+.sp-password { display: flex; flex-wrap: wrap; gap: .75rem; }
+.sp-password .sp-input { flex: 1 1 14rem; width: auto; }
+.sp-badge { display: inline-block; padding: .15rem .55rem; border: 1px solid currentColor; border-radius: .3rem; }
+.sp-card { min-width: 0; margin-block: 1.5rem; border: 1px solid var(--sp-line); border-radius: .4rem; }
+.sp-card-head, .sp-card-body, .sp-card-foot { padding: 1rem; }
+.sp-card-foot { border-top: 1px solid var(--sp-line); }
+.sp-card-title { margin-top: 0; }
+.sp-card-description { color: var(--sp-muted); }
+.sp-card-body a { overflow-wrap: anywhere; }
+.sp-card-body > * { margin-block: .65rem; }
+.sp-progress label { display: block; }
+.sp-progress progress { width: min(100%, 24rem); accent-color: var(--sp-fg); }
+.sp-image { display: block; max-width: 100%; object-fit: contain; }
+.sp-color, .sp-rating { display: inline-flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+.sp-swatch { display: inline-block; width: 1rem; height: 1rem; border: 1px solid currentColor; }
+.sp-metadata > div { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 1rem; }
+.sp-metadata dt { font-weight: 600; }
+.sp-metadata dd { margin: 0; overflow-wrap: anywhere; }
+.sp-tags { display: flex; flex-wrap: wrap; gap: .5rem; list-style: none; padding: 0; }
+@media (min-width: 56rem) { .sp-root form.sp-core-form { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* Full text remains accessible when its visual presentation is shortened. */
+.sp-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }

@@ -1,3 +1,7 @@
 .sp-table-scroll{max-width:100%;overflow:auto;border:1px solid #aaa;margin:1rem 0}.sp-table-scroll table{border-collapse:collapse;min-width:30rem;width:100%}.sp-table-scroll caption{text-align:left;padding:.7rem;font-weight:600}.sp-table-scroll th,.sp-table-scroll td{padding:.7rem;border-top:1px solid #bbb;text-align:left}.sp-dialog{background:Canvas;color:CanvasText;border:1px solid #888;border-radius:.4rem;max-width:min(36rem,92vw);max-height:85vh;overflow:auto;padding:1.5rem}.sp-dialog::backdrop{background:#0008}.sp-form-errors:empty{display:none}.sp-form-errors p{font-weight:600}.sp-rich pre{white-space:pre-wrap;overflow-wrap:anywhere}.sp-root form{display:block}.sp-root form button{margin:.6rem .6rem .6rem 0}
 
 .sp-rich{overflow-wrap:anywhere;max-width:100%}
+/* The native top layer covers the viewport; fullPage captures can extend beyond it. */
+.sp-dialog::backdrop { position: fixed; inset: 0; }
+/* A modal blocks background user scrolling; nested dialogs keep the same lock. */
+:root:has(.sp-dialog:modal), body:has(.sp-dialog:modal) { overflow: hidden; overscroll-behavior: none; }
