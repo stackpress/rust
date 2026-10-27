@@ -33,7 +33,9 @@ The coordinator runs the implementer through Paseo tools.
 3. Before approving a `permission-required` request, inspect it. Check new dependency lists against the approved design, and check `git status` and diffs for file changes. Approve crates.io fetches for approved dependencies and file edits inside the brief's scope. Escalate anything else to the owner.
 4. When the owner suspects a stall, check `get_agent_status`, `get_agent_activity`, and recent file timestamps before cancelling. Long turns and context compaction are normal.
 5. Start a fresh implementer session for each slice, or when the current session's context is heavily used. Hand off through the spec rather than chat history.
-6. The owner allows **up to four implementer agents at a time**, at the coordinator's discretion (2026-10-24). Run them in parallel only for independent work, such as separate crates, separate docs sets, or a side quest that touches disjoint files.
+6. The owner allows **up to twelve implementer agents at a time**, at the coordinator's discretion (raised from four on 2026-10-27). Run them in parallel only for independent work, such as separate crates, separate docs sets, or a side quest that touches disjoint files. More agents never means less review: start only as many as the coordinator can brief, approve and re-verify promptly.
+   - Idle agents that are waiting for a dependency don't count against the limit; running ones do.
+   - Watch disk space. Each worktree build can use several GB; cap each agent's target directories and delete them when its stage ends.
    - Give each agent its own brief and spec task.
    - Make file ownership explicit in each brief so no two agents edit the same file.
    - Use Paseo worktree isolation (`create_workspace` with `isolation: "worktree"`) when write sets could overlap. The coordinator integrates the results.
