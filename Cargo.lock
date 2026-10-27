@@ -1506,6 +1506,8 @@ dependencies = [
  "generated-admin-shared",
  "js-sys",
  "leptos",
+ "serde_json",
+ "stackpress-framework-admin",
  "wasm-bindgen",
  "web-sys",
 ]
@@ -1540,8 +1542,20 @@ name = "generated-admin-web"
 version = "0.1.0"
 dependencies = [
  "generated-admin-shared",
+ "http",
  "leptos",
+ "serde",
+ "serde_json",
+ "stackpress-framework-admin",
+ "stackpress-framework-schema",
+ "stackpress-framework-sql",
  "stackpress-framework-ui",
+ "stackpress-lib",
+ "stackpress-server",
+ "stackpress-sql",
+ "stackpress-sql-sqlite",
+ "tempfile",
+ "tokio",
 ]
 
 [[package]]

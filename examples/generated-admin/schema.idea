@@ -3,20 +3,27 @@ plugin "framework-schema" { }
 plugin "framework-sql" { }
 plugin "framework-admin" { }
 
-model Profile {
+model Profile @query("id" "name" "active" "address") {
+  id String @id @field.input
   name String @is.ne @searchable @sortable @label("Name </script> 🦀")
     @field.string({ placeholder "Idea hint" }) @filter.input @span.string @list.string @view.text
 }
 
-model Project {
+model Project @query("id" "ownerId" "title" "state" "tags") {
+  id String @id @field.input
+  ownerId String @field.input @filter.input
   title String @is.ne @searchable @sortable @field.input @filter.input @span.input @list.text @view.text
   state ProjectState @default("open") @field.select({ searchable true }) @filter.select({ searchable true }) @list.text
   tags String[] @default([]) @field.tags @span.taglist @list.text
 }
 
-model Task {
+model Task @query("id" "projectId" "title" "done" "note" "priority") {
+  id String @id @field.input
+  projectId String @field.input @filter.input
   title String @is.ne @field.input @filter.input @span.input @list.text @view.text
   done Boolean @default(false) @field.checkbox @filter.checkbox @span.switch @list.yesno @view.yesno
+  note String? @field.textarea @filter.input @list.text @view.text
+  priority Integer @default(0) @field.slider @filter.slider @list.text @view.text
 }
 
 // Actual normalized boundary fixture; only app-approved public fields reach role output.

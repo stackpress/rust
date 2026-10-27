@@ -10,6 +10,20 @@ publish.workspace = true
 generated-admin-shared = { path = "../shared", features = ["ssr"] }
 stackpress-framework-ui = { path = "../../../crates/framework/framework-ui" }
 leptos = { version = "=0.8.22", default-features = false, features = ["ssr"] }
+stackpress-framework-admin = { path = "../../../crates/framework/framework-admin", features = ["ssr"] }
+stackpress-framework-schema = { path = "../../../crates/framework/framework-schema" }
+stackpress-framework-sql = { path = "../../../crates/framework/framework-sql", features = ["server"] }
+stackpress-lib = { path = "../../../crates/lib" }
+stackpress-server = { path = "../../../crates/server", features = ["http"] }
+stackpress-sql = { path = "../../../crates/sql/sql" }
+stackpress-sql-sqlite = { path = "../../../crates/sql/sql-sqlite" }
+http = "1"
+tokio = { version = "1", features = ["rt", "time"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[dev-dependencies]
+tempfile = "3"
 
 [lints]
 workspace = true

@@ -73,7 +73,7 @@ fn generated_public_tables_validate_keys_before_rendering() {
     use generated_admin_shared::ui;
     let owner = Owner::new();
     owner.with(|| {
-        let value:contracts::public::PublicTask=serde_json::from_value(serde_json::json!({"id":"t","projectId":"p","title":"</script> \"quoted\" 🦀", "done":false})).unwrap();
+        let value:contracts::public::PublicTask=serde_json::from_value(serde_json::json!({"id":"t","projectId":"p","title":"</script> \"quoted\" 🦀", "done":false,"priority":0})).unwrap();
         let rows=vec![("key </script>".into(),value.clone())];
         let html=ui::task::table(&rows,"table").unwrap().to_html();
         assert!(html.contains("scope=\"col\""));assert!(html.contains("<thead>"));assert!(html.contains("<tbody>"));assert!(html.contains("No"));
