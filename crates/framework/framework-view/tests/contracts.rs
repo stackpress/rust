@@ -71,3 +71,27 @@ fn bounds_and_checked_metadata() {
         assert_eq!(value.validate(1, "test"), Err(ViewError::InvalidSnapshot));
     }
 }
+
+/// Additive system projection keeps the exact seeded token through serialization.
+#[test]
+fn host_seeded_system_theme() {
+    for theme in ["light", "dark", "system"] {
+        let mut contract = PageContract::new(1, "test").unwrap();
+        contract.theme = theme.to_owned();
+        contract.validate().unwrap();
+        let mut snapshot = seed("public".into());
+        snapshot.theme = theme.to_owned();
+        let encoded = snapshot.script_json().unwrap();
+        assert_eq!(
+            PageSnapshot::<String>::decode(&encoded, 1, "test")
+                .unwrap()
+                .theme,
+            theme
+        );
+    }
+    for theme in ["System", "auto", "system ", "", "</style><script>"] {
+        let mut contract = PageContract::new(1, "test").unwrap();
+        contract.theme = theme.to_owned();
+        assert_eq!(contract.validate(), Err(ViewError::InvalidPolicy));
+    }
+}

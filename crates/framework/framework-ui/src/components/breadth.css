@@ -1,0 +1,18 @@
+/* Explicit semantic states override layout display only where those widgets opt in. */
+.sp-root [hidden]{display:none!important}
+.sp-disclosure{border:1px solid var(--sp-line);padding:1rem;margin-block:1rem}
+.sp-disclosure h3{margin-block:0 .6rem}.sp-disclosure summary{cursor:pointer;font-weight:600}
+.sp-tabs{display:flex;gap:.5rem;flex-wrap:wrap;margin-block:1rem}.sp-tabs[aria-orientation=vertical]{flex-direction:column;align-items:flex-start}
+.sp-tabs [aria-selected=true]{border-width:3px;font-weight:700}
+.sp-breadcrumbs{display:flex;gap:.6rem;flex-wrap:wrap;list-style:none;padding:0}.sp-breadcrumbs li{display:flex;gap:.6rem}
+.sp-popover{position:fixed;margin:0;padding:1rem;max-width:calc(100vw - 16px);max-height:calc(100dvh - 16px);overflow:auto;border:1px solid var(--sp-line);border-radius:.3rem;background:var(--sp-bg);color:var(--sp-fg);font:inherit;box-sizing:border-box;overflow-wrap:anywhere}
+.sp-popover:not(:popover-open){display:none}.sp-popover:popover-open{display:block}.sp-popover:focus-visible{outline:3px solid currentColor}
+.sp-menu-items,.sp-options{display:flex;flex-direction:column;gap:.4rem}.sp-options [data-active=true]{outline:2px solid currentColor;outline-offset:-3px}
+.sp-tooltip{display:inline-block}.sp-combobox{max-width:100%;margin-block:1rem}
+.sp-dialog{max-width:min(36rem,92%);max-height:85%}
+/* Percentages use the zoom-adjusted fixed containing block; viewport units overgrow it. */
+.sp-dialog.sp-drawer{width:min(28rem,calc(100% - 16px));max-width:calc(100% - 16px);height:100%;max-height:100%;margin:0;inset-block:0;border-radius:0;box-sizing:border-box}
+.sp-drawer-start{inset-inline-start:0;inset-inline-end:auto}.sp-drawer-end{inset-inline-start:auto;inset-inline-end:0}
+.sp-collection{min-width:0;max-width:100%;margin-block:1rem;padding:1rem;border:1px solid var(--sp-line)}.sp-collection ol{padding-inline-start:1.5rem}.sp-collection li{margin-block:1rem}.sp-collection .sp-actions{margin-block:.6rem}
+.sp-range,.sp-rating-input{min-width:0;max-width:100%;margin-block:1rem;padding:1rem;border:1px solid var(--sp-line)}.sp-range input{width:100%;margin:0}.sp-range output{display:block}.sp-rating-input label{display:inline-flex;gap:.4rem;margin:.5rem}
+.sp-striped tbody tr:nth-child(even){background:var(--sp-soft)}.sp-table-scroll{max-height:24rem}.sp-sticky{position:sticky;top:0;background:var(--sp-bg);z-index:1}.sp-table-scroll [data-selected=true],.sp-table-scroll tbody tr:has(td:first-child input[type=checkbox]:checked){box-shadow:inset 3px 0 currentColor}
