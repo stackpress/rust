@@ -181,3 +181,51 @@ fn record_byte_budget_precedes_later_codec_work() {
     assert_eq!(error.kind(), DataErrorKind::Validation);
     assert_eq!(error.to_string(), "record byte limit exceeded");
 }
+
+/// Patch omission, explicit null and identity allowlists survive encoding independently.
+#[test]
+fn patch_encoding_is_partial_and_ordered() {
+    use stackpress_framework_sql::encode_patch;
+    let nullable = StorageColumn {
+        wire: "optional",
+        column: "nullable_storage",
+        required: false,
+        ..column(StorageCodec::Text)
+    };
+    let text = StorageColumn {
+        wire: "name",
+        column: "stored_name",
+        nonempty: true,
+        ..column(StorageCodec::Text)
+    };
+    let columns = [text, nullable];
+    assert_eq!(
+        encode_patch(&serde_json::json!({"optional":null,"name":"Ada"}), &columns).unwrap(),
+        vec![
+            ("stored_name".into(), "Ada".into()),
+            ("nullable_storage".into(), SqlValue::Null)
+        ]
+    );
+    assert_eq!(
+        encode_patch(&serde_json::json!({"optional":null}), &columns).unwrap(),
+        vec![("nullable_storage".into(), SqlValue::Null)]
+    );
+    for value in [
+        serde_json::json!({}),
+        serde_json::json!([]),
+        serde_json::json!({"id":"forbidden"}),
+        serde_json::json!({"name":null}),
+        serde_json::json!({"name":""}),
+        serde_json::json!({"name":false}),
+    ] {
+        assert!(encode_patch(&value, &columns).is_err());
+    }
+    assert!(encode_patch(&serde_json::json!({"name":"Ada"}), &vec![text; 129]).is_err());
+    assert!(
+        encode_patch(
+            &serde_json::json!({"name":"x".repeat(1024 * 1024 + 1)}),
+            &columns
+        )
+        .is_err()
+    );
+}

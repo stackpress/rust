@@ -149,8 +149,8 @@ pub use ddl::{Alter, AlterData, AlterOperation, Create, CreateData, QueryPlan};
 pub use dialect::DialectCapabilities;
 pub use diff::{SchemaDiff, TableDefinition};
 pub use dml::{
-    Delete, Insert, InsertData, Join, JoinKind, MutationData, Order, Select, SelectData, Sort,
-    Update, WriteValue,
+    Delete, Insert, InsertConflict, InsertData, Join, JoinKind, MutationData, Order, Select,
+    SelectData, Sort, Update, WriteValue,
 };
 pub use engine::{
     Database, Engine, SqlFuture, Transaction, TransactionOptions, TransactionSession,

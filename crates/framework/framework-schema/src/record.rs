@@ -56,6 +56,7 @@ impl RecordSchema {
         self.validate_mode(value, context, partial, false, true)
     }
     /// Check supplied literal defaults using input omissions and without time-relative/host checks.
+    #[cfg(feature = "codegen")]
     pub(crate) fn validate_defaults(
         &self,
         value: &Value,

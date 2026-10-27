@@ -1055,6 +1055,94 @@ impl<T: Into<SqlValue>> From<T> for WriteValue {
     }
 }
 
+/// One explicit primary/unique-key conflict action for a single VALUES row.
+///
+/// Targets are nonempty checked column lists. SQLite and PostgreSQL render native
+/// targeted UPSERT; MySQL refuses because its action cannot be limited to this target.
+/// Schema uniqueness is checked by the database, not inferred by the renderer.
+#[derive(Clone, Debug, PartialEq)]
+pub enum InsertConflict {
+    /// Keep the existing row. With RETURNING, a conflict produces no returned row.
+    DoNothing {
+        /// Ordered primary/unique-key column names; never a catch-all predicate.
+        target: Vec<String>,
+    },
+    /// Update the conflicting row using independent, ordered write values.
+    DoUpdate {
+        /// Ordered primary/unique-key column names.
+        target: Vec<String>,
+        /// Nonempty column assignments; VALUES binds precede these binds.
+        assignments: Vec<(String, WriteValue)>,
+    },
+}
+
+impl InsertConflict {
+    /// Validate before constructing SQL, including shapes that native dialects cannot share.
+    fn validate(&self, data: &InsertData, dialect: DialectId) -> Result<()> {
+        let target = match self {
+            Self::DoNothing { target } | Self::DoUpdate { target, .. } => target,
+        };
+        checked_columns(target)?;
+        if let Self::DoUpdate { assignments, .. } = self {
+            if assignments.is_empty() || assignments.len() > 1000 {
+                return Err(invalid(
+                    "conflict update requires bounded nonempty assignments",
+                ));
+            }
+            // Validate each borrowed name before retaining its bounded folded identity.
+            let mut names = std::collections::HashSet::new();
+            for (column, _) in assignments {
+                quote(column)?;
+                if !names.insert(column.to_ascii_lowercase()) {
+                    return Err(invalid("duplicate conflict update column"));
+                }
+            }
+        }
+        // An any-unique-key update could mutate a row outside the declared target.
+        if dialect == DialectId::Mysql {
+            return Err(crate::identifier::unsupported(
+                "MySQL conflict action cannot be restricted to the explicit conflict target",
+            ));
+        }
+        if data.default_values || data.rows.len() != 1 {
+            return Err(crate::identifier::unsupported(
+                "conflict action requires one explicit VALUES row",
+            ));
+        }
+        Ok(())
+    }
+
+    /// Append one native clause through the same bounded rendering/binding context.
+    fn append(&self, sql: &mut String, context: &mut RenderContext) -> Result<()> {
+        let target = match self {
+            Self::DoNothing { target } | Self::DoUpdate { target, .. } => target,
+        };
+        let target = join_sql(
+            target.iter().map(|column| context.dialect.quote(column)),
+            ", ",
+        )?;
+        sql.push_str(&format!(" ON CONFLICT ({target}) DO "));
+        match self {
+            Self::DoNothing { .. } => sql.push_str("NOTHING"),
+            Self::DoUpdate { assignments, .. } => {
+                // The insert has already bound its row; patch values follow in source order.
+                let assignments = join_sql(
+                    assignments.iter().map(|(column, value)| {
+                        Ok(format!(
+                            "{} = {}",
+                            context.dialect.quote(column)?,
+                            render_write(value, context)?
+                        ))
+                    }),
+                    ", ",
+                )?;
+                sql.push_str(&format!("UPDATE SET {assignments}"));
+            }
+        }
+        Ok(())
+    }
+}
+
 /// Immutable inspection data for one or many explicit-column insert rows.
 ///
 /// # Examples
@@ -1176,6 +1264,8 @@ pub struct InsertData {
 #[must_use = "use the configured value or operation"]
 pub struct Insert {
     data: InsertData,
+    /// Kept outside InsertData to preserve its existing public inspection/struct-literal shape.
+    conflict: Option<InsertConflict>,
 }
 
 impl Insert {
@@ -1198,7 +1288,27 @@ impl Insert {
                 returning: Vec::new(),
                 default_values: false,
             },
+            conflict: None,
         }
+    }
+
+    /// Replace the optional targeted conflict action; construction performs no IO.
+    ///
+    /// ```
+    /// use stackpress_sql::{DialectId, Insert, InsertConflict, Render};
+    /// let query = Insert::new("profile").columns(["id"]).values(["p1"])
+    ///     .on_conflict(InsertConflict::DoNothing { target: vec!["id".into()] });
+    /// assert!(query.render(DialectId::Sqlite)?.sql().ends_with("DO NOTHING"));
+    /// # Ok::<(), stackpress_sql::SqlError>(())
+    /// ```
+    pub fn on_conflict(mut self, conflict: InsertConflict) -> Self {
+        self.conflict = Some(conflict);
+        self
+    }
+
+    /// Borrow the selected conflict clause separately from the unchanged InsertData.
+    pub fn conflict(&self) -> Option<&InsertConflict> {
+        self.conflict.as_ref()
     }
 
     /// Inspect the detached insert state.
@@ -1341,6 +1451,9 @@ impl Render for Insert {
     fn render(&self, dialect: DialectId) -> Result<Query> {
         let mut context = RenderContext::new(dialect)?;
         let data = &self.data;
+        if let Some(conflict) = &self.conflict {
+            conflict.validate(data, dialect)?;
+        }
         let mut sql = format!("INSERT INTO {}", data.table.quoted(dialect)?);
         if data.default_values {
             if !data.columns.is_empty() || !data.rows.is_empty() {
@@ -1372,6 +1485,12 @@ impl Render for Insert {
                 })
                 .collect::<Vec<_>>();
             if included.is_empty() {
+                // SQLite omission of every DEFAULT column is also effective DEFAULT VALUES.
+                if self.conflict.is_some() {
+                    return Err(crate::identifier::unsupported(
+                        "conflict action cannot follow DEFAULT VALUES",
+                    ));
+                }
                 if data.rows.len() != 1 {
                     return Err(crate::identifier::unsupported(
                         "SQLite cannot bulk insert DEFAULT VALUES",
@@ -1401,6 +1520,9 @@ impl Render for Insert {
                 )?;
                 sql.push_str(&format!(" ({columns}) VALUES {rows}"));
             }
+        }
+        if let Some(conflict) = &self.conflict {
+            conflict.append(&mut sql, &mut context)?;
         }
         append_returning(&mut sql, &data.returning, &mut context)?;
         context.finish(sql)

@@ -1,4 +1,5 @@
 //! Actual generated calls, current host services and borrow/Send contracts.
+#![cfg(not(any(feature = "matrix", feature = "names")))]
 
 use std::sync::Arc;
 use std::time::Duration;

@@ -229,11 +229,11 @@ fn remove_rename_and_failure_preserve_output() {
     let root = tempfile::tempdir_in("/private/tmp").unwrap();
     let input = root.path().join("schema.idea");
     let output = root.path().join("generated");
-    let first = "plugin \"framework-schema\" {} model Old { id String @id title String } model Keep { id String @id old String }";
+    let first = "plugin \"framework-schema\" {} plugin \"framework-sql\" {} model Old { id String @id title String } model Keep { id String @id old String }";
     std::fs::write(&input, first).unwrap();
     generated_workspace_tool::generate(&input, &output, false).unwrap();
     std::fs::write(root.path().join("sentinel.txt"), "owned by app").unwrap();
-    let second = "plugin \"framework-schema\" {} model Keep { id String @id renamed String }";
+    let second = "plugin \"framework-schema\" {} plugin \"framework-sql\" {} model Keep { id String @id renamed String }";
     std::fs::write(&input, second).unwrap();
     assert!(
         !generated_workspace_tool::generate(&input, &output, true)
@@ -242,6 +242,17 @@ fn remove_rename_and_failure_preserve_output() {
     );
     generated_workspace_tool::generate(&input, &output, false).unwrap();
     assert!(!output.join("contracts/old.rs").exists());
+    assert!(!output.join("stores/old.rs").exists());
+    assert!(
+        !std::fs::read_to_string(output.join("stores/operations.rs"))
+            .unwrap()
+            .contains("pub mod old")
+    );
+    assert!(
+        std::fs::read_to_string(output.join("stores/keep.rs"))
+            .unwrap()
+            .contains("wire: \"renamed\"")
+    );
     assert!(
         std::fs::read_to_string(output.join("contracts/keep.rs"))
             .unwrap()
@@ -266,4 +277,68 @@ fn remove_rename_and_failure_preserve_output() {
     let edited = snapshot(&output);
     assert!(generated_workspace_tool::generate(&input, &output, false).is_err());
     assert_eq!(snapshot(&output), edited);
+}
+
+/// Native generation failures retain winning Idea spans and structural-only normalized JSON paths.
+#[test]
+fn store_diagnostics_preserve_source() {
+    use stackpress_framework_schema::{SchemaError, SchemaErrorKind};
+    use stackpress_idea::parser::{CompileInputs, parse};
+    use std::error::Error;
+    let root = tempfile::tempdir_in("/private/tmp").unwrap();
+    let output = root.path().join("generated");
+    let input = root.path().join("schema.idea");
+    let selection = "@query(\"owner.projects.owner.projects.title\")";
+    let text = format!(
+        "plugin \"framework-schema\" {{}} plugin \"framework-sql\" {{}}\nmodel Profile {{ id String @id name String projects Project[] }}\nmodel Project {selection} {{ id String @id ownerId String title String owner Profile @relation({{ local \"ownerId\" foreign \"id\" name \"projects\" }}) }}"
+    );
+    // A valid prior install must survive either failed native plan unchanged.
+    std::fs::write(&input, text.replace(selection, "")).unwrap();
+    generated_workspace_tool::generate(&input, &output, false).unwrap();
+    let before = std::fs::read(output.join("stores/project.rs")).unwrap();
+    for normalized in [false, true] {
+        let source = if normalized {
+            let config = parse("source.idea", &text, &CompileInputs::default()).unwrap();
+            let path = root.path().join("schema.json");
+            std::fs::write(&path, serde_json::to_vec(&config).unwrap()).unwrap();
+            path
+        } else {
+            std::fs::write(&input, &text).unwrap();
+            input.clone()
+        };
+        let error = generated_workspace_tool::generate(&source, &output, false).unwrap_err();
+        let mut current: &(dyn Error + 'static) = &error;
+        let diagnostic = loop {
+            if let Some(diagnostic) = current.downcast_ref::<SchemaError>() {
+                break diagnostic;
+            }
+            current = current.source().expect("typed native diagnostic retained");
+        };
+        assert_eq!(
+            diagnostic.kind(),
+            SchemaErrorKind::Unsupported,
+            "normalized={normalized} {diagnostic:?}"
+        );
+        assert_eq!(
+            diagnostic.to_string(),
+            "default selected storage projection is unsupported"
+        );
+        assert_eq!(diagnostic.path(), ["model", "Project"]);
+        let location = diagnostic.location().expect("winning declaration origin");
+        assert!(location.source.ends_with(if normalized {
+            "schema.json"
+        } else {
+            "schema.idea"
+        }));
+        if normalized {
+            assert_eq!(location.bytes, None);
+        } else {
+            let (start, end) = location.bytes.unwrap();
+            assert!(text[start..end].contains("Project"));
+        }
+        assert_eq!(
+            std::fs::read(output.join("stores/project.rs")).unwrap(),
+            before
+        );
+    }
 }

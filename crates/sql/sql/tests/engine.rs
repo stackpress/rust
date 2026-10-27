@@ -488,3 +488,45 @@ fn caller_owned_plan_retains_guard_after_failure_or_cancellation() {
         );
     }
 }
+
+/// Budget inspection is a copy-only operation and transactions retain their original policy.
+#[test]
+fn limits_are_copied_frozen_and_require_no_driver_call() {
+    let calls = Arc::new(Mutex::new(Calls::default()));
+    let original = QueryLimits {
+        sql_bytes: 4000,
+        binds: 2,
+        rows: 30,
+        bytes: 8000,
+    };
+    let engine = Engine::new(Driver(calls.clone())).with_limits(original);
+    let mut copy = engine.limits();
+    assert_eq!(
+        (copy.sql_bytes, copy.binds, copy.rows, copy.bytes),
+        (4000, 2, 30, 8000)
+    );
+    copy.binds = 999;
+    assert_eq!(engine.limits().binds, 2);
+    assert_eq!(copy.binds, 999);
+    assert!(calls.lock().unwrap().events.is_empty());
+    let transaction = complete(engine.begin()).unwrap();
+    let before = calls.lock().unwrap().events.clone();
+    let engine = engine.with_limits(QueryLimits::default());
+    let frozen = transaction.limits();
+    assert_eq!(
+        (frozen.sql_bytes, frozen.binds, frozen.rows, frozen.bytes),
+        (4000, 2, 30, 8000)
+    );
+    let defaults = engine.limits();
+    assert_eq!(
+        (
+            defaults.sql_bytes,
+            defaults.binds,
+            defaults.rows,
+            defaults.bytes
+        ),
+        (1024 * 1024, 1000, 10000, 16 * 1024 * 1024)
+    );
+    assert_eq!(calls.lock().unwrap().events, before);
+    complete(transaction.rollback()).unwrap();
+}
