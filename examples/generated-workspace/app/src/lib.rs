@@ -1,4 +1,18 @@
 //! Real generated store consumer. Installation, policy and transaction completion are explicit.
+//!
+//! ```no_run
+//! # #[cfg(not(any(feature = "matrix", feature = "names")))]
+//! # {
+//! use generated_workspace_app::generated::stores::profile::Profiles;
+//! use stackpress_framework_sql::{DataResult, DataSession};
+//! use stackpress_sql::Engine;
+//! async fn visible_name(engine: &Engine, id: &str) -> DataResult<Option<String>> {
+//!     // The caller selects the executor; the store applies ordinary active visibility.
+//!     let mut db = DataSession::pooled(engine);
+//!     Ok(Profiles::get(&mut db, id).await?.map(|profile| profile.name))
+//! }
+//! # }
+//! ```
 
 /// Source emitted by the independent tool before compiling this application.
 #[allow(

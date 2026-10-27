@@ -49,6 +49,18 @@ impl<T> Default for Loaded<T> {
 }
 impl<T> Loaded<T> {
     /// Project a loaded relation without accidentally loading an unrequested one.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_framework_sql::stores::Loaded;
+    /// let absent: Loaded<String> = Loaded::Unloaded;
+    /// let projected = absent.try_map(|_| panic!("unloaded relations are never projected"))?;
+    /// assert_eq!(projected, Loaded::<String>::Unloaded);
+    /// let empty = Loaded::Loaded(Vec::<String>::new()).try_map(|rows| Ok(rows.len()))?;
+    /// assert_eq!(empty, Loaded::Loaded(0));
+    /// # Ok::<(), stackpress_framework_sql::DataError>(())
+    /// ```
     pub fn try_map<U>(self, project: impl FnOnce(T) -> DataResult<U>) -> DataResult<Loaded<U>> {
         match self {
             Self::Unloaded => Ok(Loaded::Unloaded),

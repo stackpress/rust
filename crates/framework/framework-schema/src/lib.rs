@@ -285,6 +285,22 @@ pub struct Enumeration {
 }
 
 /// Missing and null remain separate at the transport boundary.
+///
+/// # Examples
+///
+/// ```
+/// use stackpress_framework_schema::Input;
+/// #[derive(serde::Deserialize)]
+/// struct CreateNote {
+///     #[serde(default)]
+///     note: Input<String>,
+/// }
+/// let omitted: CreateNote = serde_json::from_str("{}")?;
+/// let cleared: CreateNote = serde_json::from_str(r#"{"note":null}"#)?;
+/// assert_eq!(omitted.note, Input::Missing);
+/// assert_eq!(cleared.note, Input::Null);
+/// # Ok::<(), serde_json::Error>(())
+/// ```
 #[derive(Clone, Debug, PartialEq)]
 pub enum Input<T> {
     /// No value was supplied, so preparation may consult a declared default.
@@ -296,6 +312,23 @@ pub enum Input<T> {
 }
 
 /// A patch never turns an omitted field into a null write.
+///
+/// # Examples
+///
+/// ```
+/// use stackpress_framework_schema::Patch;
+/// #[derive(serde::Serialize, serde::Deserialize)]
+/// struct UpdateNote {
+///     #[serde(default, skip_serializing_if = "Patch::is_unchanged")]
+///     note: Patch<String>,
+/// }
+/// let omitted: UpdateNote = serde_json::from_str("{}")?;
+/// assert_eq!(omitted.note, Patch::Unchanged);
+/// assert_eq!(serde_json::to_value(&omitted)?, serde_json::json!({}));
+/// let cleared = UpdateNote { note: Patch::Null };
+/// assert_eq!(serde_json::to_value(&cleared)?, serde_json::json!({"note": null}));
+/// # Ok::<(), serde_json::Error>(())
+/// ```
 #[derive(Clone, Debug, Default, PartialEq)]
 pub enum Patch<T> {
     /// Preserve the stored value.

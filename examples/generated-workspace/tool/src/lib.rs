@@ -89,6 +89,13 @@ fn normalize(config: &SchemaConfig, diagnostics: &DiagnosticMap) -> Result<Schem
     .map_err(transform_error)
 }
 
+/// Add safe tool-boundary context while retaining the original concrete cause privately.
+fn external(context: &'static str, cause: impl std::error::Error + Send + Sync + 'static) -> Error {
+    Error::new(context)
+        .with_kind(stackpress_lib::ErrorKind::External)
+        .with_cause(cause)
+}
+
 /// Schema owns contracts and metadata; no SQL files are patched here.
 fn schema_transform(context: &TransformContext<'_>, output: &mut OutputPlan) -> Result<()> {
     let diagnostics: DiagnosticMap = serde_json::from_str(context.input("diagnostics.json")?)
@@ -201,11 +208,7 @@ async fn generate_event(
     let app = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("../app")
         .canonicalize()
-        .map_err(|cause| {
-            Error::new("application root resolution failed")
-                .with_kind(stackpress_lib::ErrorKind::External)
-                .with_cause(cause)
-        })?;
+        .map_err(|cause| external("application root resolution failed", cause))?;
     let input = req
         .data
         .path_as::<String>("input")?
@@ -222,16 +225,8 @@ async fn generate_event(
     };
     let report = tokio::task::spawn_blocking(move || generate(&input, &output, check))
         .await
-        .map_err(|cause| {
-            Error::new("generation worker failed")
-                .with_kind(stackpress_lib::ErrorKind::External)
-                .with_cause(cause)
-        })?
-        .map_err(|cause| {
-            Error::new("workspace generation failed")
-                .with_kind(stackpress_lib::ErrorKind::External)
-                .with_cause(cause)
-        })?;
+        .map_err(|cause| external("generation worker failed", cause))?
+        .map_err(|cause| external("workspace generation failed", cause))?;
     if check && !report.is_current() {
         return Err(Error::invalid("generated output is stale"));
     }
