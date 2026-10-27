@@ -80,6 +80,13 @@ let mut transaction=engine.begin().await?;
 let outcome=Self::search(&mut DataSession::transaction(&mut transaction),query).await;
 stackpress_framework_sql::finish(transaction,outcome).await
 }}
+/// Codegen support: validate the public query, dialect and selected executor limits before BEGIN.
+#[doc(hidden)]
+pub fn preflight_search_public(engine:&stackpress_sql::Engine,query:&crate::generated::contracts::public::{name}Query)->DataResult<()>{{
+// Keep the public DTO checks as well as the runtime public-exposure catalog checks.
+query.validate().map_err(stackpress_framework_sql::stores::validation)?;
+stackpress_framework_sql::stores::preflight_public_search(&super::schema::catalog(),&SPEC,&ReadQuery::from_typed(query)?,engine.dialect(),engine.limits())
+}}
 /// Public query allowlist plus recursive public projection; authorization stays app-owned.
 pub async fn search_public(db:&mut DataSession<'_>,query:crate::generated::contracts::public::{name}Query)->DataResult<Page<PublicView3>>{{
 query.validate().map_err(stackpress_framework_sql::stores::validation)?;

@@ -290,13 +290,13 @@ impl RevisionSnapshot {
 /// An explicit one-to-one field rename, never an inferred match.
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub struct FieldRename {
+struct FieldRename {
     /// Managed source table.
-    pub table: String,
+    table: String,
     /// Existing stored column.
-    pub from: String,
+    from: String,
     /// Intended target column.
-    pub to: String,
+    to: String,
 }
 /// An explicit logical table identity mapping.
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
@@ -314,6 +314,12 @@ struct Backfill {
     value: Literal,
 }
 /// All explicit rename, deliberate removal and literal backfill authority.
+///
+/// Construct rename entries with [`Self::field`]; individual artifact DTOs are private.
+///
+/// ```compile_fail
+/// use stackpress_framework_sql::migrations::FieldRename;
+/// ```
 #[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct RenameMap {

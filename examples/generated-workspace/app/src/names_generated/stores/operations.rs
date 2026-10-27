@@ -154,6 +154,9 @@ pub mod _schema {
         let input: KeyRequest = operations::decode(req)?;
         // The executing domain functions receive the exact registered executor.
         let engine = invocation.service::<stackpress_sql::Engine>()?;
+        // Refuse the exact public detail plan before entering the selected executor.
+        Schemas::preflight_detail(engine, &input.key)
+            .map_err(|cause| operations::data_error(cause, &schema))?;
         let mut transaction = engine
             .begin()
             .await
@@ -186,9 +189,9 @@ pub mod _schema {
         let input: crate::generated::contracts::public::SchemaQuery = operations::decode(req)?;
         // The executing domain functions receive the exact registered executor.
         let engine = invocation.service::<stackpress_sql::Engine>()?;
-        input.validate().map_err(|cause| {
-            operations::data_error(stackpress_framework_sql::stores::validation(cause), &schema)
-        })?;
+        // Preserve public DTO/catalog checks and validate selected limits before BEGIN.
+        Schemas::preflight_search_public(engine, &input)
+            .map_err(|cause| operations::data_error(cause, &schema))?;
         let mut transaction = engine
             .begin()
             .await
@@ -710,6 +713,9 @@ pub mod _operations {
         let input: KeyRequest = operations::decode(req)?;
         // The executing domain functions receive the exact registered executor.
         let engine = invocation.service::<stackpress_sql::Engine>()?;
+        // Refuse the exact public detail plan before entering the selected executor.
+        Operationss::preflight_detail(engine, &input.key)
+            .map_err(|cause| operations::data_error(cause, &schema))?;
         let mut transaction = engine
             .begin()
             .await
@@ -742,9 +748,9 @@ pub mod _operations {
         let input: crate::generated::contracts::public::OperationsQuery = operations::decode(req)?;
         // The executing domain functions receive the exact registered executor.
         let engine = invocation.service::<stackpress_sql::Engine>()?;
-        input.validate().map_err(|cause| {
-            operations::data_error(stackpress_framework_sql::stores::validation(cause), &schema)
-        })?;
+        // Preserve public DTO/catalog checks and validate selected limits before BEGIN.
+        Operationss::preflight_search_public(engine, &input)
+            .map_err(|cause| operations::data_error(cause, &schema))?;
         let mut transaction = engine
             .begin()
             .await
@@ -1200,6 +1206,9 @@ pub mod identity {
         let input: KeyRequest = operations::decode(req)?;
         // The executing domain functions receive the exact registered executor.
         let engine = invocation.service::<stackpress_sql::Engine>()?;
+        // Refuse the exact public detail plan before entering the selected executor.
+        Identitys::preflight_detail(engine, &input.key)
+            .map_err(|cause| operations::data_error(cause, &schema))?;
         let mut transaction = engine
             .begin()
             .await
@@ -1232,9 +1241,9 @@ pub mod identity {
         let input: crate::generated::contracts::public::IdentityQuery = operations::decode(req)?;
         // The executing domain functions receive the exact registered executor.
         let engine = invocation.service::<stackpress_sql::Engine>()?;
-        input.validate().map_err(|cause| {
-            operations::data_error(stackpress_framework_sql::stores::validation(cause), &schema)
-        })?;
+        // Preserve public DTO/catalog checks and validate selected limits before BEGIN.
+        Identitys::preflight_search_public(engine, &input)
+            .map_err(|cause| operations::data_error(cause, &schema))?;
         let mut transaction = engine
             .begin()
             .await
