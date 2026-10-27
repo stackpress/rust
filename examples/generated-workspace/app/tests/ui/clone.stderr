@@ -1,0 +1,11 @@
+error[E0599]: no method named `clone` found for enum `DataSession<'a>` in the current scope
+ --> tests/ui/clone.rs:2:54
+  |
+2 | fn clone(session: DataSession<'_>) { let _ = session.clone(); }
+  |                                                      ^^^^^ method not found in `DataSession<'_>`
+  |
+note: the method `clone` exists on the type `&stackpress_sql::engine::Engine`
+ --> $RUST/core/src/clone.rs
+  |
+  |     fn clone(&self) -> Self;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^

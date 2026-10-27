@@ -1,0 +1,8 @@
+error[E0515]: cannot return value referencing function parameter `transaction`
+ --> tests/ui/transaction_escape.rs:4:5
+  |
+4 |     DataSession::transaction(&mut transaction)
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^----------------^
+  |     |                        |
+  |     |                        `transaction` is borrowed here
+  |     returns a value referencing data owned by the current function

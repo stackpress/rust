@@ -12,6 +12,9 @@ members = [
     "examples/ui-gallery/shared", "examples/ui-gallery/client", "examples/ui-gallery/web",
     "crates/framework/framework-preferences",
     "examples/ui-preferences/shared", "examples/ui-preferences/client", "examples/ui-preferences/web",
+    "crates/framework/framework-schema", "crates/framework/framework-sql",
+    "examples/generated-workspace/tool", "examples/generated-workspace/app",
+    "examples/generated-workspace/contracts",
 ]
 resolver = "3"
 
@@ -49,8 +52,13 @@ stackpress-framework-ui = { path = "crates/framework/framework-ui", optional = t
 stackpress-framework-language = { path = "crates/framework/framework-language", optional = true }
 stackpress-framework-preferences = { path = "crates/framework/framework-preferences", optional = true }
 
+stackpress-framework-schema = { path = "crates/framework/framework-schema", optional = true }
+stackpress-framework-sql = { path = "crates/framework/framework-sql", optional = true }
+
 [features]
 default = []
+framework-schema = ["dep:stackpress-framework-schema"]
+framework-sql = ["dep:stackpress-framework-sql"]
 server = ["dep:stackpress-server"]
 server-http = ["server", "stackpress-server/http"]
 server-http-host = ["server-http", "dep:stackpress-server-http"]

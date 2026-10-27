@@ -1164,6 +1164,13 @@ pub struct Transaction {
 }
 
 impl Transaction {
+    /// Return the renderer identity frozen from the originating Engine.
+    ///
+    /// Reading this value neither borrows a native connection nor changes transaction state.
+    pub fn dialect(&self) -> DialectId {
+        self.dialect
+    }
+
     /// Execute a validated plan inside this caller-owned transaction, in source order.
     ///
     /// Returns one owned outcome per statement. This method never commits or consumes
