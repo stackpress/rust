@@ -37,10 +37,14 @@ pub fn definitions() -> stackpress_framework_schema::SchemaResult<DefinitionRegi
             revision: "app-rule-1".into(),
             types: vec![stackpress_framework_schema::ValueType::String],
         })?;
-    // This application explicitly approves its fixture's nonsecret fields and defaults.
+    // This application explicitly approves its fixtures' nonsecret fields and defaults,
+    // including the quickstart's heading/summary and inverse links; no route is authorized here.
     for (model, fields) in [
-        ("Profile", "id name active address projects"),
-        ("Project", "id ownerId title state tags tasks owner"),
+        ("Profile", "id name active address projects links"),
+        (
+            "Project",
+            "id ownerId title heading summary state tags tasks owner",
+        ),
         ("Task", "id projectId title done project"),
         ("Address", "city country"),
         (
