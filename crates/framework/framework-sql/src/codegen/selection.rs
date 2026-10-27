@@ -89,9 +89,8 @@ Ok(Selected(stackpress_framework_sql::projection::select(&public,&{selected:?},{
 }}
 }}
 impl {name}s {{
-/// Load the fixed app-default includes/projection using a complete identity.
-/// Explicit relation defaults require the caller's transaction, like ordinary eager search.
-pub async fn detail(db:&mut DataSession<'_>,key:&Key)->DataResult<Option<Selected>>{{
+/// Build the exact fixed detail query for both pure preflight and executing public search.
+fn detail_query(key:&Key)->Query{{
 let mut query=Query{{take:1,includes:vec![{includes}],..Default::default()}};
 "#,
         fallback = model.query.is_empty(),
@@ -108,6 +107,6 @@ let mut query=Query{{take:1,includes:vec![{includes}],..Default::default()}};
             copy_key(field, &format!("key.{}", field.rust_name))
         ));
     }
-    text.push_str("let page=stackpress_framework_sql::stores::search(db,&super::schema::catalog(),&SPEC,ReadQuery::from_typed(&query)?,Exposure::Public,Visibility::Active,RelationLimits::default()).await?;\nlet row=page.rows.into_iter().next().map(|row|serde_json::from_value::<View3>(row).map_err(stackpress_framework_sql::codec_error)).transpose()?;\nrow.map(|row|row.select_default()).transpose()\n}\n}\n");
+    text.push_str("query\n}\n/// Codegen support: check the exact public detail query and executor budgets before BEGIN.\n#[doc(hidden)]\npub fn preflight_detail(engine:&stackpress_sql::Engine,key:&Key)->DataResult<()> {\nlet query=Self::detail_query(key);\nstackpress_framework_sql::stores::preflight_public_search(&super::schema::catalog(),&SPEC,&ReadQuery::from_typed(&query)?,engine.dialect(),engine.limits())\n}\n/// Load the fixed app-default includes/projection using a complete identity.\n/// Explicit relation defaults require the caller's transaction, like ordinary eager search.\npub async fn detail(db:&mut DataSession<'_>,key:&Key)->DataResult<Option<Selected>> {\nlet query=Self::detail_query(key);\nlet page=stackpress_framework_sql::stores::search(db,&super::schema::catalog(),&SPEC,ReadQuery::from_typed(&query)?,Exposure::Public,Visibility::Active,RelationLimits::default()).await?;\nlet row=page.rows.into_iter().next().map(|row|serde_json::from_value::<View3>(row).map_err(stackpress_framework_sql::codec_error)).transpose()?;\nrow.map(|row|row.select_default()).transpose()\n}\n}\n");
     Ok(())
 }

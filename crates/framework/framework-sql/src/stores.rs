@@ -16,9 +16,9 @@ use stackpress_sql::{Expr, Identifier, Row, Select};
 mod query;
 mod relations;
 pub use query::select;
-#[doc(hidden)]
-pub use relations::preflight_atomic_search;
 pub use relations::{RelationLimits, search};
+#[doc(hidden)]
+pub use relations::{preflight_atomic_search, preflight_public_search};
 
 /// A matched base page. Total counts identities before offset/limit, independently of includes.
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
@@ -323,6 +323,9 @@ impl StoreSpec {
         }
     }
 }
+/// Fixed count alias shared by compilation, decoding and pure result-budget preflight.
+const COUNT_COLUMN: &str = "total";
+
 /// Count matched base identities, without relation joins, sorting or paging.
 pub async fn count(
     db: &mut DataSession<'_>,
@@ -346,7 +349,7 @@ pub async fn count(
         return Err(DataError::new("base count returned an invalid row count")
             .with_kind(DataErrorKind::Decode));
     }
-    u64::try_from(rows[0].try_get::<i64>("total")?).map_err(|cause| {
+    u64::try_from(rows[0].try_get::<i64>(COUNT_COLUMN)?).map_err(|cause| {
         DataError::new("base count is outside its supported range")
             .with_kind(DataErrorKind::Decode)
             .with_cause(cause)

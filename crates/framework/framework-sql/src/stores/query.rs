@@ -170,7 +170,7 @@ pub(super) fn filtered(
             TrustedSql::audited("COUNT(*)"),
             Vec::new(),
         ))
-        .alias("total")])
+        .alias(super::COUNT_COLUMN)])
         .from(spec.table)
     } else {
         spec.base()

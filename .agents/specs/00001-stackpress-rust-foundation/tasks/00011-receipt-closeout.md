@@ -218,3 +218,173 @@ KB validation exits 1: the same 146 inherited errors and 24 inherited warnings, 
 one preferred-length warning for this coherent receipt (below the 500-line hard cap).
 No new hard/link error; keeping review findings and reproduction evidence together is intentional.
 Stop for coordinator review; the pre-IO follow-up and MySQL product decision remain open.
+
+## Follow-up: public pre-IO and FieldRename
+
+2026-10-27. The released follow-up fast-forwarded `9c2ae5f` to
+`4aad9c365e5f83836d84b20087f43ee3aed28fcc` with `git merge trial/3` (Git metadata
+needed sandbox escalation). The worktree started clean. This follow-up resolves the
+public-ordering gap and applies the FieldRename narrowing proposed above.
+
+Generated Search now preserves public DTO validation and calls a public-exposure
+catalog/path preflight before BEGIN. It checks dialect search/include/snapshot
+capabilities and renders the known page/count plans against the selected Engine's
+limits. COUNT's fixed one-integer-row output cost is checked too; actual page/relation
+row sizes and lookup keys retain their data-dependent execution guards. Detail uses
+one private `detail_query` factory for both preflight and execution. Authorization,
+prior-completion handling and policy-before-decoding stay in their original order.
+The trusted preflight is unchanged and is never used as public authority.
+
+API changes: `FieldRename` and its fields are private; `RenameMap::field` remains the
+checked entry. A compiled privacy doctest and exact JSON round-trip prove the intended
+boundary and unchanged artifact shape. Three hidden cross-crate support entry points
+are added: runtime `stores::preflight_public_search` and generated model methods
+`preflight_search_public`/`preflight_detail`. The shared private count alias serves SQL
+compilation, decoding and the fixed result budget. No SQL-core/adapter or schema source,
+contract revision, dependency, root manifest, lockfile or public serialized shape changed.
+
+The permanent `app/tests/public_preflight.rs` drives real generated handlers, Server
+and policy over a recording Database, without native connections. PostgreSQL and MySQL
+Unsupported cases record **0 BEGIN/run/commit/rollback**, with both successful and
+failing-BEGIN backends. The names fixture covers Detail's fixed includes and private-key
+public refusal. Tests also cover public duplicate-sort/path validation, all three
+dialects' selected bind/byte/SQL limits, COUNT row/byte boundaries, supported empty
+searches (including zero output budgets), acquisition failures and policy-before-decode.
+The corrected red probe failed on the original handler before the fix; original authoring
+compile corrections and actual regression output are retained separately, not counted as
+passing tests. Supported SQLite reads retain their native and browser proofs.
+
+All eight affected roots were regenerated through their app-owned tools: workspace
+original/matrix/names, quickstart v1/v2/v3, and admin default/format. Nine final freshness
+checks include pure contracts. All 90 frozen contract/metadata files remain byte-identical
+(`frozen-final.json`); store sources and ownership manifests carry the generated changes.
+
+### Follow-up verification
+
+Evidence is under `/private/tmp/s6-preio/`: exact argv, output, exit/duration, target-size
+samples and watchdog results accompany each command. `checks.py`, `extra.py`,
+`generation-commands.json`, `extra-commands.json`, `admin-sequence-commands.json`,
+`review-commands.json` and `coverage-commands.json` preserve complete command inventories.
+The admin adapter executes repository proof scripts with a fresh log destination,
+the same owned target and installed tools; exceptions are disclosed below.
+
+| Gate | Result |
+| --- | --- |
+| Eight-package scoped suite, SQL all features | 166 runtime + 440 doctests = **606 passes**; 25 gated/helper entries ignored. |
+| SQLite default, unchanged suite | 14 runtime + 3 doctests pass; 9 helper entries ignored. Maintenance passes in scoped suite. |
+| Matrix / names | 7 / 3 pass; names includes the new public-handler regression. |
+| Quickstart proof / Python controls | All six README blocks, SQL/Rust evidence, safe reverse and complete-file loss refusal pass; all four controls pass. |
+| Quality | fmt, all-target Clippy `-D warnings`, strict Rustdoc and explicit Rust 1.96.0 checks pass; quickstart native/evolved checks pass. |
+| Current admin checks | Default workspace plus format suite (37 runtime + 1 doctest), Clippy/MSRV/Rustdoc and four WASM mode/feature graphs pass. |
+| Admin compilation | Default and formatted bootstrap/stability/remove/rename/hostile/omitted-role consumers pass; stale consumers intentionally fail with 101. Plugin removal restores the full generated format root byte-for-byte. |
+| Chromium | Current C2 source unchanged: **16 cases, 272 intercepted requests, 48 screenshots** pass. Default M5 with the single expectation update below: **8 cases, 256 requests, 32 screenshots** pass. |
+| Workspace | **701 reported runtime passes**, 81 gated/helper ignores, with only `tcp_watchdog` filtered; separately **937 doctests** pass. |
+
+The first unfiltered workspace attempt reached the listener-only TCP test and failed its
+bind with OS PermissionDenied. No listener opened. It was not escalated: the brief forbids
+listeners. A repository audit found this one runtime listener proof; the final command is
+`cargo test --workspace --locked --all-targets -- --skip tcp_watchdog`. Its ignored child
+stays ignored. Thus the unfiltered workspace is **not** claimed green; the no-listener
+workspace scope above is green. TCP acceptance remains outside this run.
+
+The legacy `m5_browser.cjs:75` expects `field validation failed`; current presentation
+and `c2_browser.cjs:99` require `Name </script> 🦀 is required`. Its original failure is
+retained. The temporary M5 copy changes exactly that expected literal, retaining the exact
+assertion and every other check (`m5-browser-adaptation.json` records both hashes).
+No handwritten admin source was edited. Coordinator follow-up: update that obsolete M5
+assertion in its owning lane. Browser setup first found a missing browser revision and
+then macOS sandbox Mach-port refusal; the matching installed Playwright 1.64.0 / Chromium
+156.0.8078.4 pair ran with sandbox escalation. No installation occurred.
+
+Reproduction uses the exported environment shown earlier, additionally
+`CARGO_NET_OFFLINE=true`; URLs remain unset. Run these sequentially after generation:
+
+```sh
+python3 /private/tmp/s6-preio/checks.py
+python3 /private/tmp/s6-preio/extra.py
+python3 /private/tmp/s6-preio/admin.py c2_checks.py
+python3 /private/tmp/s6-preio/run.py workspace-doctests cargo test --workspace --doc --offline --locked
+python3 /private/tmp/s6-preio/admin.py m5_build.py
+python3 /private/tmp/s6-preio/admin.py m5_compile_proof.py
+python3 /private/tmp/s6-preio/admin.py m5_browser.py
+python3 /private/tmp/s6-preio/admin-format-proofs.py
+python3 /private/tmp/s6-preio/admin.py c2_browser.py
+python3 /private/tmp/s6-preio/final-fresh.py
+python3 /private/tmp/s6-preio/reviews.py
+python3 /private/tmp/s6-preio/preserve-proof.py
+python3 /private/tmp/s6-preio/coverage.py
+```
+
+Four distinct reviews followed the requested normal verification: **complexity/order**
+(public/trusted separation, known versus data-dependent budgets; `review1-public/names`:
+2 pass); **responsibility** (one detail-query and count-alias owner; `review2-ownership`:
+2 pass); **consistency/Rustdoc/errors** (private DTO, exact serialized spelling, concrete
+causes/static #11 contexts and explanatory comments; `review3-docs/artifact`: 6 pass);
+**safety** (zero-effect refusals, transaction admission/cleanup, unchanged supported paths
+and authorization ordering; `review4-safety/safety-names`: 4 pass). No further material
+finding or unsafe-code change; no ceremonial refactor was introduced.
+
+### Follow-up fresh coverage and cleanup
+
+Fresh Rust/Cargo 1.96.0 / cargo-llvm-cov 0.8.6 native instrumentation follows a complete
+clean of the sole target. The 190 Slice 6/shared runtime executions plus 70 admin runtime
+executions pass, with 25 gated/helper ignores, alongside actual instrumented README
+CLI/query execution. There are 609 fresh profiles; merged profile data, raw exports and
+per-file scopes are retained. The final LLVM export has no diagnostic output.
+Cargo's automatic example-path filter is removed; no production source is excluded.
+The same source-include attribution and test-only separation as the original measurement
+apply. All compiled first-party totals below include dedicated test sources.
+
+| Scope | Production covered / executable | Percent | All compiled first-party | Percent | More production lines for 90% |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| framework-schema, pure/codegen | 3230/3546 | 91.09% | 4099/4415 | 92.84% | 0 |
+| framework-sql, all features | 4836/5354 | 90.32% | 7162/7710 | 92.89% | 0 |
+| generated-workspace-app, all three variants | 10663/13869 | 76.88% | 14243/17498 | 81.40% | 1820 |
+| generated-workspace-contracts, pure matrix | 1463/2083 | 70.24% | 1999/2621 | 76.27% | 412 |
+| generated-workspace-tool, both feature scopes | 543/652 | 83.28% | 1166/1277 | 91.31% | 44 |
+| data-quickstart, all valid feature variants | 9191/12141 | 75.70% | 9592/12545 | 76.46% | 1736 |
+| SQL core, unchanged | 3016/3154 | 95.62% | 6056/6899 | 87.78% | 0 |
+| SQLite maintenance, unchanged | 736/808 | 91.09% | 4982/5098 | 97.72% | 0 |
+
+Admin follows its existing conservative method: no generated implementation is omitted;
+dedicated test files are outside production, and every physical inline-test-module line
+is subtracted from the covered numerator while retaining its full executable denominator.
+Both default and format native variants are included. Paths included into the native web
+crate are measured in that compiling scope.
+
+| Native admin crate | Conservative covered / full denominator | Production at least |
+| --- | ---: | ---: |
+| stackpress-framework-admin | 2034/2370 | 85.82% |
+| generated-admin-tool | 219/238 | 92.02% |
+| generated-admin-shared | 7019/9908 | 70.84% |
+| generated-admin-web | 9705/11706 | 82.91% |
+
+Every measured native crate independently clears 70%. The WASM-only admin client has no
+native executable implementation scope; real Chromium evidence does not supply a numeric
+WASM coverage claim. These measurements supersede the earlier percentages, not the release
+risk review. Framework-schema and framework-sql now clear 90 numerically, but remaining
+host/error mapping, codegen refusal and migration defensive paths still need publication
+review. The app, pure contracts, tool and quickstart still need meaningful validation,
+provider, failure, batch/completion and projection cases described above; their arithmetic
+90% shortfalls are in the table. `coverage-publication-gaps.json` lists current per-file
+counts (SQL's largest gaps: codegen 68, operations 67, planner 60 lines). Admin publication
+still needs its owned controller/role/error paths and target evidence. No publication
+readiness or all-branch/all-platform coverage is claimed. MySQL width remains undecided;
+PostgreSQL/MySQL capabilities here use recording backends, not network application.
+
+One owned compiled target, sampled peak **8,296,533,983 bytes (7.73 GiB)**,
+stayed below its 8 GiB cap. Completed test/Rustdoc output was removed for headroom;
+normal proof artifacts were copied before reuse. Each normal/coverage command has a
+600-second process-group parent; admin commands have at most 900 seconds, browser cases
+120, and finite native requests 10. Kill/reap is mandatory and timeout is failure.
+The final 4,561,806,137-byte target is deleted and absent (`cleanup.json`).
+All 5,167 inherited ignored paths, including 136 profiles and existing scratch logs, are
+preserved. Only this run's two render-unwind logs and Python bytecode file were copied to
+evidence and removed. Source/frozen-shape/whitespace/index audits pass. No installation,
+successful listener, network DB, SQL-core/adapter edit, staging, commit, push, GitHub write
+or coordinator message occurred. Stop for coordinator review; only the obsolete M5 proof
+literal and the declared TCP verification limitation remain for its owning lane.
+
+KB validation retains 146 inherited errors and 25 warnings, including this receipt's
+existing preferred-length warning. No new hard/link finding is introduced; the receipt
+keeps the historical evidence and released follow-up together below the 500-line cap.

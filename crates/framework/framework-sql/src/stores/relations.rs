@@ -1,7 +1,8 @@
 //! Snapshot reads and finite breadth-first include loading through one borrowed executor.
 use super::query::ordered;
 use super::{
-    Exposure, Page, ReadQuery, RelationSpec, StoreSpec, Visibility, count, invalid, limit, select,
+    COUNT_COLUMN, Exposure, Page, ReadQuery, RelationSpec, StoreSpec, Visibility, count, invalid,
+    limit, select,
 };
 use crate::{DataError, DataErrorKind, DataResult, DataSession, codec_error, encode_value};
 use serde_json::Value;
@@ -269,6 +270,72 @@ pub fn preflight_atomic_search(
         },
     )
     .map(|_| ())
+}
+/// Codegen support: check a public read and its known executor budgets before BEGIN.
+///
+/// Uses the same public catalog/path compiler as execution with a planned transaction.
+/// The base page and optional count are rendered and validated against the selected Engine's
+/// limits. Count's one fixed integer row is also known without IO. Actual page/relation row
+/// sizes and lookup keys remain data-dependent and are bounded during ordinary execution.
+/// No provider, decoder, database call or transaction is entered here.
+///
+/// # Errors
+/// Refuses public-ineligible queries, unsupported dialect/snapshot shapes and known limits.
+#[doc(hidden)]
+pub fn preflight_public_search(
+    catalog: &[&StoreSpec],
+    spec: &StoreSpec,
+    query: &ReadQuery,
+    dialect: DialectId,
+    limits: QueryLimits,
+) -> DataResult<()> {
+    let (page, _) = prepare_search(
+        catalog,
+        spec,
+        query,
+        SearchContext {
+            dialect,
+            exposure: Exposure::Public,
+            visibility: Visibility::Active,
+            limits: RelationLimits::default(),
+            transactional: true,
+        },
+    )?;
+    // Runtime counts before fetching the page; preserve that pure-plan validation order.
+    if query.total {
+        let count = super::query::filtered(
+            spec,
+            query,
+            dialect,
+            Exposure::Public,
+            Visibility::Active,
+            true,
+        )?;
+        validate_read(&count, dialect, limits)?;
+        let count_row = stackpress_sql::Row::new(vec![(COUNT_COLUMN.into(), 0.into())]);
+        if limits.rows == 0 || count_row.retained_bytes()? > limits.bytes {
+            return Err(DataError::new(
+                "count result exceeds the selected executor budget",
+            ));
+        }
+    }
+    validate_read(&page, dialect, limits)
+}
+/// Render/validate known inputs without acquiring a connection or losing the concrete cause.
+fn validate_read(query: &impl Render, dialect: DialectId, limits: QueryLimits) -> DataResult<()> {
+    query
+        .render(dialect)
+        .and_then(|query| query.validate(limits))
+        .map_err(|cause| {
+            let kind = if cause.kind() == stackpress_sql::ErrorKind::Unsupported {
+                DataErrorKind::Unsupported
+            } else {
+                DataErrorKind::Validation
+            };
+            DataError::new("read plan was refused before execution")
+                .with_kind(kind)
+                .with_cause(cause)
+        })
 }
 /// Read one complete bounded base page and requested relations through one exact executor.
 pub async fn search(

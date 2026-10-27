@@ -19,6 +19,9 @@ fn plan_rename(
 
 ## History and plans
 
+Create explicit field mappings through `RenameMap::field`; individual rename artifact
+DTOs are private. Visibility does not change the persisted recipe or approval hash format.
+
 `RevisionSnapshot::new(app, revision, tables)` validates portable storage DTOs. `with_provenance` pins a semantic source fingerprint and an application definition revision. Snapshots contain no database path, credentials or raw plugin configuration. Dynamic SQL defaults/types are refused. The tool uses the same checked DDL definitions as the generated stores.
 
 `RevisionStore::record(snapshot, parent)` writes a create-new immutable `revisions/<name>/schema.json` directory, or returns `RevisionOutcome::NoChanges` when the head's semantics match. The explicit parent must equal the current unbranched history head. `check()` verifies formats, hashes, companions and the parent chain without repairing anything. Missing parents, branches, modified ancestors, symlinks, special files and interrupted publication state refuse.
