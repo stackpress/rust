@@ -16,6 +16,8 @@ pub enum Theme {
     Light,
     /// Dark neutral surfaces.
     Dark,
+    /// Host-seeded system preference, resolved by SystemThemeStyles CSS before paint.
+    System,
 }
 
 impl Theme {
@@ -24,6 +26,7 @@ impl Theme {
         match self {
             Self::Light => "light",
             Self::Dark => "dark",
+            Self::System => "system",
         }
     }
 }
@@ -48,12 +51,12 @@ impl ThemeState {
         self.0.set(theme);
     }
 
-    /// Toggle using the current root value, without reading a cookie or media query.
+    /// Toggle explicit choices without reading a cookie/media query; System chooses Dark.
     pub fn toggle(self) {
         self.0.update(|theme| {
             // Exhaustive variants keep future theme additions deliberate.
             *theme = match *theme {
-                Theme::Light => Theme::Dark,
+                Theme::Light | Theme::System => Theme::Dark,
                 Theme::Dark => Theme::Light,
             };
         });

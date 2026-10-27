@@ -97,3 +97,14 @@ pub fn LayoutRight(
 ) -> impl IntoView {
     view! { <aside class="sp-right" aria-label=label>{children()}</aside> }
 }
+
+/// Trusted opt-in system-theme CSS; explicit light/dark selectors are unaffected.
+/// Include before paint whenever a host may project the system theme token.
+pub const SYSTEM_THEME_STYLES: &str = include_str!("system.css");
+
+/// Project system preferences through CSS only, with no browser storage/media read.
+/// Existing LayoutProvider users keep byte-identical light/dark style resources.
+#[component]
+pub fn SystemThemeStyles() -> impl IntoView {
+    view! { <Style id="stackpress-system-theme">{SYSTEM_THEME_STYLES}</Style> }
+}

@@ -23,7 +23,12 @@ pub const CORPUS: &[&str] = &[
     "<a href='data:text/html,evil'>data</a><a href='/local'>local</a><p>&lt;script&gt;literal&lt;/script&gt;</p>",
 ];
 
+mod breadth;
 mod core;
+mod suggestion_loader;
+pub use breadth::{BreadthDraft, parse_presence};
+/// Typed early nested-field presence shared with the thin client adapter.
+pub use stackpress_framework_ui::components::FieldValue;
 mod seed;
 pub use core::{CoreDraft, TEXTAREA_PAYLOAD};
 pub use seed::{GallerySeed, decode_initial, decode_preference};
@@ -69,6 +74,9 @@ pub fn Gallery(
     /// Native input edits captured before hydration; no acquisition occurs.
     #[prop(optional)]
     initial_core: Option<CoreDraft>,
+    /// Early M2 native drafts, read once without acquiring data.
+    #[prop(optional)]
+    initial_breadth: Option<BreadthDraft>,
     /// Adopt an early native input edit before hydrating, without a fetch.
     #[prop(optional)]
     initial_draft: Option<String>,
@@ -127,10 +135,12 @@ pub fn Gallery(
     };
     let french = choose.clone();
     let styles = format!(
-        "{}{}{}",
+        "{}{}{}{}{}",
         include_str!("../../../../crates/framework/framework-ui/src/components/styles.css"),
         ADVANCED_STYLES,
-        stackpress_framework_ui::components::CORE_STYLES
+        stackpress_framework_ui::components::CORE_STYLES,
+        stackpress_framework_ui::components::BREADTH_STYLES,
+        stackpress_framework_ui::components::SYSTEM_THEME_STYLES
     );
     view! {
         <stackpress_framework_ui::leptos_meta::Title text=move || format!("{} · {}", phrase(&locale.get(), "UI gallery", "Galerie UI"), resource_title.get())/>
@@ -185,6 +195,7 @@ pub fn Gallery(
                 <RichContent content=SafeHtml::markdown("**Markdown** with `safe code` and <img src='https://evil.invalid'>").expect("bounded fixed Markdown")/>
             </section>
             <core::CoreGallery initial=initial_core.unwrap_or_default() base=seed.base/>
+            <breadth::BreadthGallery initial=initial_breadth.unwrap_or_default()/>
         </div></main>
     }
 }
@@ -222,11 +233,11 @@ mod tests {
         runtime.block_on(async {
             initialize_ssr().unwrap();
             let render = |locale: &str| {
-                let mut contract = PageContract::new(1, "s8-m1").unwrap();
+                let mut contract = PageContract::new(1, "s8-m2").unwrap();
                 contract.locale = locale.into();
                 let snapshot = PageSnapshot {
                     revision: 1,
-                    build: "s8-m1".into(),
+                    build: "s8-m2".into(),
                     page: PageId::try_from("gallery".to_owned()).unwrap(),
                     location: format!("/{locale}/gallery"),
                     locale: locale.into(),
@@ -243,7 +254,7 @@ mod tests {
                 let renderer = AsyncLeptosRenderer::new(
                     contract,
                     PageAssets {
-                        build: "s8-m1".into(),
+                        build: "s8-m2".into(),
                         base: BasePath::default(),
                         module: PublicLocation::new("/assets/start.js").unwrap(),
                         stylesheet: None,

@@ -73,21 +73,17 @@ fn native_execution_under_watchdog() {
 #[ignore = "launched only by M1 watchdog parent"]
 async fn native_child() {
     let scenario = std::env::var("STACKPRESS_SQL_M0_SCENARIO").unwrap();
-    let work = async {
-        match scenario.as_str() {
-            "statement_ids" => statement_ids().await,
-            "decoding_errors" => decoding_errors().await,
-            "crud" => outcomes::crud().await,
-            "metadata" => outcomes::metadata().await,
-            "binding" => values::binding().await,
-            "limits" => values::limits().await,
-            "read_only" => pool::read_only().await,
-            "pool_close" => pool::close().await,
-            "policy" => pool::policy().await,
-            _ => panic!("unknown M1 scenario"),
-        }
-    };
-    tokio::time::timeout(Duration::from_secs(8), work)
-        .await
-        .expect("M1 cooperative deadline");
+    // The parent enforces a real deadline; controlled pool timers may advance Tokio time.
+    match scenario.as_str() {
+        "statement_ids" => statement_ids().await,
+        "decoding_errors" => decoding_errors().await,
+        "crud" => outcomes::crud().await,
+        "metadata" => outcomes::metadata().await,
+        "binding" => values::binding().await,
+        "limits" => values::limits().await,
+        "read_only" => pool::read_only().await,
+        "pool_close" => pool::close().await,
+        "policy" => pool::policy().await,
+        _ => panic!("unknown M1 scenario"),
+    }
 }

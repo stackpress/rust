@@ -18,16 +18,40 @@ impl Drop for ChildGuard {
 
 /// Run a test child with bounded file-backed diagnostics, independent of Tokio progress.
 pub(super) fn run(test: &str, scenario: &str, deadline: Duration) -> (bool, bool, String) {
+    run_child(test, scenario, deadline, false)
+}
+
+/// Start a negative control's measured deadline only after its prerequisite is acknowledged.
+pub(super) fn run_ready(test: &str, scenario: &str, deadline: Duration) -> (bool, bool, String) {
+    run_child(test, scenario, deadline, true)
+}
+
+/// Acknowledge the child's controlled state through its parent-owned temporary file.
+pub(super) fn ready() {
+    let path = std::env::var_os("STACKPRESS_SQL_WATCHDOG_READY").unwrap();
+    std::fs::write(path, b"ready").unwrap();
+}
+
+/// Own process supervision; a separate startup bound prevents a missing handshake from hanging.
+fn run_child(
+    test: &str,
+    scenario: &str,
+    deadline: Duration,
+    require_ready: bool,
+) -> (bool, bool, String) {
     let log = tempfile::NamedTempFile::new().unwrap();
+    let ready = tempfile::NamedTempFile::new().unwrap();
     let output = File::create(log.path()).unwrap();
     let mut command = Command::new(std::env::current_exe().unwrap());
     command
         .args(["--exact", test, "--ignored", "--nocapture"])
         .env("STACKPRESS_SQL_M0_SCENARIO", scenario)
+        .env("STACKPRESS_SQL_WATCHDOG_READY", ready.path())
         .stdout(Stdio::from(output.try_clone().unwrap()))
         .stderr(Stdio::from(output));
     let mut child = ChildGuard(command.spawn().unwrap());
-    let start = Instant::now();
+    let spawned = Instant::now();
+    let mut start = (!require_ready).then_some(spawned);
     let (status, expired, exceeded) = loop {
         // Reject a noisy child before its deadline, so diagnostics cannot fill the disk.
         if log.as_file().metadata().unwrap().len() > 64 * 1024 {
@@ -37,7 +61,17 @@ pub(super) fn run(test: &str, scenario: &str, deadline: Duration) -> (bool, bool
         if let Some(status) = child.0.try_wait().unwrap() {
             break (status, false, false);
         }
-        if start.elapsed() >= deadline {
+        // A slow process launch must not consume the negative control's measured window.
+        if start.is_none() && ready.as_file().metadata().unwrap().len() > 0 {
+            start = Some(Instant::now());
+        }
+        // Unwinding this failure still kills/reaps through ChildGuard; it cannot count as
+        // a successful timeout or output-limit proof without reaching the controlled state.
+        assert!(
+            start.is_some() || spawned.elapsed() < Duration::from_secs(10),
+            "watchdog child did not acknowledge its controlled state"
+        );
+        if start.is_some_and(|start| start.elapsed() >= deadline) {
             child.0.kill().unwrap();
             break (child.0.wait().unwrap(), true, false);
         }

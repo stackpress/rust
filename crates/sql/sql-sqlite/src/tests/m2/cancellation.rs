@@ -17,13 +17,7 @@ use super::{SqliteDatabase, TempDir, options, schema, sql};
 
 /// Await actual detached cleanup relinquishing every admission slot, not an arbitrary delay.
 async fn cleaned(db: &SqliteDatabase, permits: u32) {
-    let all = db
-        .admission
-        .clone()
-        .acquire_many_owned(permits)
-        .await
-        .unwrap();
-    drop(all);
+    super::super::wait_for_cleanup(&db.admission, permits).await;
 }
 
 /// Cancel native streaming with rows in flight, both ordinarily and inside a dirty transaction.
@@ -272,11 +266,11 @@ pub(super) async fn prepare() {
     reopened.close().await.unwrap();
 }
 
-/// A drop acknowledgement distinguishes callback cancellation from an arbitrary timer delay.
+/// Acknowledge callback cancellation or native collation destruction without timer guesses.
 struct Dropped(Arc<Notify>);
 
 impl Drop for Dropped {
-    /// Notify the controlling test when the open callback future has actually been dropped.
+    /// Notify when the owned callback resource is actually destroyed.
     fn drop(&mut self) {
         self.0.notify_one();
     }
@@ -289,17 +283,31 @@ pub(super) async fn open() {
     initial.close().await.unwrap();
     let ready = Arc::new(Notify::new());
     let dropped = Arc::new(Notify::new());
+    let closed = Arc::new(Notify::new());
     let barrier = Arc::new(Semaphore::new(0));
     for _ in 0..3 {
         let entered = Arc::clone(&ready);
         let released = Arc::clone(&dropped);
+        let native_completion = Arc::clone(&closed);
         let pause = Arc::clone(&barrier);
         let pool = SqlitePoolOptions::new().after_connect(move |connection, _| {
             let entered = Arc::clone(&entered);
             let released = Arc::clone(&released);
+            let closed = Arc::clone(&native_completion);
             let pause = Arc::clone(&pause);
             Box::pin(async move {
                 let _guard = Dropped(released);
+                // This uniquely named collation is never replaced or used by SQL. Its
+                // captured guard is destroyed by SQLite close, after rollback and b-tree
+                // closure release the writer lock (pinned libsqlite3-sys 0.37.0).
+                let native_closed = Dropped(closed);
+                connection.lock_handle().await?.create_collation(
+                    "open_close_ack",
+                    move |left, right| {
+                        let _keep_until_close = &native_closed;
+                        left.cmp(right)
+                    },
+                )?;
                 // A dirty native transaction makes leaked init ownership observable as a writer lock.
                 connection.execute("BEGIN").await?;
                 connection
@@ -310,17 +318,16 @@ pub(super) async fn open() {
                 Ok(())
             })
         });
-        let mut opts = options(&root, 1);
-        opts.acquire_timeout_ms = 1000;
-        let task = tokio::spawn(SqliteDatabase::open_pool(opts, pool));
+        let task = tokio::spawn(SqliteDatabase::open_pool(options(&root, 1), pool));
         ready.notified().await;
         task.abort();
         assert!(task.await.err().unwrap().is_cancelled());
         dropped.notified().await;
-        let mut opts = options(&root, 1);
-        opts.busy_timeout_ms = 500;
-        let engine = Engine::new(SqliteDatabase::open(opts).await.unwrap());
-        // Native writer acquisition waits for cleanup and proves no orphan writer survives.
+        // Callback Drop precedes native worker destruction. Await its separate close
+        // acknowledgement before recovery instead of spending a busy timeout on cleanup.
+        closed.notified().await;
+        let engine = Engine::new(SqliteDatabase::open(options(&root, 1)).await.unwrap());
+        // Native writer acquisition now proves no orphan writer survives acknowledged close.
         engine
             .execute(&sql("INSERT INTO profile(name) VALUES ('healthy')"))
             .await
@@ -401,10 +408,11 @@ pub(super) async fn native_failures() {
     reopened.close().await.unwrap();
 }
 
-/// A current-thread timer progresses while another worker is waiting on a real SQLite writer lock.
+/// A current-thread timer progresses during native work, and a real writer lock reports Busy.
 pub(super) async fn contention() {
     let root = TempDir::new().unwrap();
     let mut opts = options(&root, 2);
+    opts.max_in_flight = 2;
     opts.busy_timeout_ms = 300;
     let db = Arc::new(SqliteDatabase::open(opts).await.unwrap());
     db.run(
@@ -439,18 +447,23 @@ pub(super) async fn contention() {
             .await
     });
     entered.await.unwrap();
-    release.send(()).unwrap();
-    tokio::time::timeout(
-        Duration::from_millis(150),
-        tokio::time::sleep(Duration::from_millis(20)),
-    )
-    .await
-    .unwrap();
+    // Keep the native worker at its acknowledged gate until the timer advances. The
+    // contender cannot finish first merely because this executor was descheduled.
+    // The parent watchdog bounds a blocked executor independently.
+    tokio::time::sleep(Duration::from_millis(20)).await;
     assert!(!task.is_finished());
+    release.send(()).unwrap();
+    // The writer remains locked after the responsiveness observation, so native
+    // contention must still produce Busy with its original driver cause.
     let error = task.await.unwrap().unwrap_err();
     assert_eq!(error.kind(), ErrorKind::Busy);
     assert!(error.source().is_some());
     owner.rollback().await.unwrap();
+    // Busy retires the contender, and rollback retires the owner. SQL acknowledgement
+    // precedes detached worker shutdown: wait for both admission slots to return
+    // before starting a fresh acquisition's independent configured budget.
+    cleaned(&db, 2).await;
+    assert_eq!(db.pool.size(), 0);
     let tx = db.begin(TransactionOptions::default()).await.unwrap();
     tx.rollback().await.unwrap();
     db.close().await.unwrap();

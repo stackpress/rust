@@ -19,6 +19,25 @@ pub(super) fn focus_id(id: &str) {
     }
 }
 
+/// Nested dialogs/popovers own their Escape; a parent modeless fallback must wait.
+pub(super) fn from_current_dialog(event: &web_sys::KeyboardEvent) -> bool {
+    let current = event
+        .current_target()
+        .and_then(|target| target.dyn_into::<web_sys::Node>().ok());
+    let nearest = event
+        .target()
+        .and_then(|target| target.dyn_into::<web_sys::Element>().ok())
+        .and_then(|target| {
+            target
+                .closest("dialog, [popover]:popover-open")
+                .ok()
+                .flatten()
+        });
+    current
+        .zip(nearest)
+        .is_some_and(|(current, nearest)| nearest.is_same_node(Some(&current)))
+}
+
 /// Cloneable DOM handles, distinct from the one cleanup lease that owns them.
 #[derive(Clone)]
 struct Handles {
@@ -30,6 +49,8 @@ struct Handles {
     was_open: Rc<Cell<bool>>,
     /// An app-chosen deterministic fallback when the opener is disconnected.
     fallback: String,
+    /// Modal return-focus rules differ from modeless background interaction.
+    mode: super::DialogMode,
 }
 
 impl Handles {
@@ -52,6 +73,27 @@ impl Handles {
         }
     }
 
+    /// Inspect before closing, since native close can already restore focus itself.
+    fn wants_return_focus(&self) -> bool {
+        let active = self
+            .dialog
+            .owner_document()
+            .and_then(|document| document.active_element());
+        let inside = active
+            .as_ref()
+            .is_some_and(|node| self.dialog.contains(Some(node)));
+        let at_opener = active.as_ref().is_some_and(|node| {
+            self.opener
+                .borrow()
+                .as_ref()
+                .is_some_and(|opener| node.is_same_node(Some(opener)))
+        });
+        let detached_body = !self.dialog.is_connected()
+            && active
+                .as_ref()
+                .is_some_and(|node| node.tag_name() == "BODY");
+        self.mode.returns_focus(inside, at_opener, detached_body)
+    }
     /// Reconcile controlled state after hydration without touching initial focus.
     fn synchronize(&self, open: bool, initial: &str) {
         if open && !self.dialog.open() {
@@ -62,7 +104,14 @@ impl Handles {
                 .and_then(|document| document.active_element())
                 .and_then(|element| element.dyn_into::<HtmlElement>().ok());
             *self.opener.borrow_mut() = opener;
-            if self.dialog.show_modal().is_ok() {
+            if (if self.mode != super::DialogMode::Nonmodal {
+                self.dialog.show_modal()
+            } else {
+                self.dialog.show();
+                Ok(())
+            })
+            .is_ok()
+            {
                 self.was_open.set(true);
                 // Only an actual descendant may override the native initial target.
                 if let Some(target) = self
@@ -75,10 +124,13 @@ impl Handles {
                 }
             }
         } else if !open && self.was_open.replace(false) {
+            let restore = self.wants_return_focus();
             if self.dialog.open() {
                 self.dialog.close();
             }
-            self.restore_focus();
+            if restore {
+                self.restore_focus();
+            }
         }
     }
 }
@@ -90,10 +142,13 @@ impl Drop for Lease {
     /// Native handles are local storage, never Send-wrapped or retained globally.
     fn drop(&mut self) {
         if self.0.was_open.replace(false) {
+            let restore = self.0.wants_return_focus();
             if self.0.dialog.open() {
                 self.0.dialog.close();
             }
-            self.0.restore_focus();
+            if restore {
+                self.0.restore_focus();
+            }
         }
     }
 }
@@ -104,6 +159,7 @@ pub(super) fn install(
     open: RwSignal<bool>,
     initial: String,
     fallback: String,
+    mode: super::DialogMode,
 ) {
     let lease = StoredValue::new_local(None::<Lease>);
     Effect::new(move |_| {
@@ -119,6 +175,7 @@ pub(super) fn install(
                 opener: Rc::new(RefCell::new(None)),
                 was_open: Rc::new(Cell::new(false)),
                 fallback: fallback.clone(),
+                mode,
             };
             lease.set_value(Some(Lease(handles.clone())));
             handles

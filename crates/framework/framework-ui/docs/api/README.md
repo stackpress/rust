@@ -2,7 +2,8 @@
 
 Import from `stackpress_framework_ui` and its public `components`, `state`, `language`,
 `routing`, and native-SSR `render` modules. Related data types/functions share their owning
-surface's page. Private helpers, CSS constants, and adaptation modules are not caller APIs.
+surface's page. Private helpers and adaptation modules are not caller APIs. Opt-in style constants
+are documented with their component families.
 
 ## Surfaces
 
@@ -51,3 +52,5 @@ hydrate and CSR consumers. No mode combination or `--all-features` build is vali
 Related: [Getting started](../getting-started.md), [Concepts](../concepts.md),
 [View API](../../../framework-view/docs/api/README.md),
 [canonical integration](../../../../../examples/profile-ui/README.md).
+
+Disclosure, navigation, overlay, table and collection contracts: [component breadth](components-breadth.md).

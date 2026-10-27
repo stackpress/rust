@@ -59,10 +59,42 @@ pub(super) fn run(mode: &str, test_name: &str) {
         .unwrap();
     assert!(status.success(), "{output}");
     assert!(
-        output
-            .lines()
-            .any(|line| line == format!("S8_ASYNC_COMPLETE {mode}")),
+        completed(&output, mode, test_name),
         "child did not complete its scenario (check exact filter): {output}"
     );
     print!("{output}");
+}
+
+/// Accept only a complete marker, optionally prefixed by the exact serial libtest test name.
+fn completed(output: &str, mode: &str, test_name: &str) -> bool {
+    let marker = format!("S8_ASYNC_COMPLETE {mode}");
+    let serial_prefix = format!("test {test_name} ... ");
+    // --nocapture serial libtest writes the fixture's first line after its progress prefix.
+    output
+        .lines()
+        .any(|line| line == marker || line.strip_prefix(&serial_prefix) == Some(marker.as_str()))
+}
+
+/// Serial/parallel progress formatting cannot create a false success for a wrong child filter.
+#[test]
+fn exact_completion_marker() {
+    assert!(completed(
+        "S8_ASYNC_COMPLETE success\n",
+        "success",
+        "resource_success_control"
+    ));
+    assert!(completed(
+        "test resource_success_control ... S8_ASYNC_COMPLETE success\nok\n",
+        "success",
+        "resource_success_control"
+    ));
+    for output in [
+        "running 0 tests\n",
+        "prefix S8_ASYNC_COMPLETE success",
+        "test other ... S8_ASYNC_COMPLETE success",
+        "S8_ASYNC_COMPLETE success trailing",
+        "S8_ASYNC_COMPLETE cancel",
+    ] {
+        assert!(!completed(output, "success", "resource_success_control"));
+    }
 }

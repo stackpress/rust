@@ -35,7 +35,7 @@ phonenumber = { version = "=0.3.10", optional = true }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 wasm-bindgen = "=0.2.129"
-web-sys = { version = "0.3", features = ["Window", "Document", "Element", "Node", "HtmlElement", "HtmlDialogElement", "DomRect", "NodeList", "KeyboardEvent", "HtmlSelectElement", "HtmlOptionElement", "HtmlCollection", "CssStyleDeclaration"] }
+web-sys = { version = "0.3", features = ["Window", "Document", "Element", "Node", "HtmlElement", "HtmlDialogElement", "DomRect", "NodeList", "KeyboardEvent", "HtmlSelectElement", "HtmlOptionElement", "HtmlCollection", "CssStyleDeclaration", "HtmlDetailsElement", "ResizeObserver"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 any_spawner = { version = "=0.3.0", features = ["tokio"], optional = true }

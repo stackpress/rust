@@ -269,7 +269,7 @@ pub struct PageContract {
     pub build: String,
     /// Explicit initial language; never inferred from request/session/browser state.
     pub locale: String,
-    /// Explicit initial theme, kept compatible with the M0 seed's string representation.
+    /// Host-seeded light/dark/system token; system is resolved by trusted CSS before paint.
     pub theme: String,
     /// Lowerable serialization and complete-output ceilings.
     pub limits: PageLimits,
@@ -306,7 +306,7 @@ impl PageContract {
                 .bytes()
                 .all(|b| b.is_ascii_alphanumeric() || matches!(b, b'-' | b'_' | b'.'))
             || !valid_locale(&self.locale)
-            || !matches!(self.theme.as_str(), "light" | "dark")
+            || !matches!(self.theme.as_str(), "light" | "dark" | "system")
         {
             return Err(ViewError::InvalidPolicy);
         }
