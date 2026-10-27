@@ -14,7 +14,38 @@ pub enum ChoiceMove {
     /// Last enabled choice.
     Last,
 }
+/// Share arrow/edge key policy across tabs, vertical menus and horizontal menubars.
+/// Activation and DOM focus remain the caller's explicit widget policy.
+pub(super) fn choice_movement(key: &str, vertical: bool) -> Option<ChoiceMove> {
+    match key {
+        "Home" => Some(ChoiceMove::First),
+        "End" => Some(ChoiceMove::Last),
+        "ArrowDown" if vertical => Some(ChoiceMove::Next),
+        "ArrowUp" if vertical => Some(ChoiceMove::Previous),
+        "ArrowRight" if !vertical => Some(ChoiceMove::Next),
+        "ArrowLeft" if !vertical => Some(ChoiceMove::Previous),
+        _ => None,
+    }
+}
 /// Root-owned choice state; immutable unique options are admitted before rendering.
+///
+/// # Examples
+/// ```
+/// use leptos::prelude::*;
+/// use stackpress_framework_ui::components::{ChoiceMove, ChoiceState, SelectOption, SelectOptions};
+/// let owner = Owner::new();
+/// owner.with(|| -> Result<(), stackpress_framework_ui::components::ControlError> {
+///     let options = SelectOptions::new(vec![SelectOption {
+///         value: "details".into(), label: "Details".into(), disabled: false,
+///     }])?;
+///     let tabs = ChoiceState::new(options, None)?;
+///     assert_eq!(tabs.navigate(ChoiceMove::First, true), Some(0));
+///     assert_eq!(tabs.selected().as_deref(), Some("details"));
+///     Ok(())
+/// })?;
+/// owner.cleanup();
+/// # Ok::<(), stackpress_framework_ui::components::ControlError>(())
+/// ```
 #[derive(Clone, Copy)]
 pub struct ChoiceState {
     options: StoredValue<SelectOptions>,

@@ -317,16 +317,7 @@ pub fn Combobox(
     let active_prefix = id.clone();
     let option_prefix = id.clone();
     // Local admission errors do not replace app-owned domain validation.
-    let app_error = error;
-    let admission_error = RwSignal::new(String::new());
-    let error = Signal::derive(move || {
-        let local = admission_error.get();
-        if local.is_empty() {
-            app_error.get()
-        } else {
-            local
-        }
-    });
+    let (admission_error, error) = super::inputs::field_error(error);
 
     #[cfg(target_arch = "wasm32")]
     Effect::new(move |_| {

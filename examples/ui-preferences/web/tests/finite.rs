@@ -20,9 +20,13 @@ impl Drop for ChildGuard {
 fn request(input: Value, policy: bool) -> (Value, String) {
     let directory = std::path::Path::new("/private/tmp/s8-lane-b");
     std::fs::create_dir_all(directory).unwrap();
+    // Parallel tests may request the same path; a per-call sequence keeps their logs apart.
+    static SEQUENCE: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);
+    let call = SEQUENCE.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
     let file = directory.join(format!(
-        "finite-{}-{}.log",
+        "finite-{}-{}-{}.log",
         std::process::id(),
+        call,
         input["path"].as_str().unwrap().replace('/', "_")
     ));
     let log = File::create(&file).unwrap();

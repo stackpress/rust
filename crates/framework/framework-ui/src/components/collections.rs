@@ -75,16 +75,7 @@ pub fn TextList(
     error: Signal<String>,
 ) -> impl IntoView {
     // Keep domain errors owned by the app and report local byte-admission failures separately.
-    let app_error = error;
-    let mutation_error = RwSignal::new(String::new());
-    let error = Signal::derive(move || {
-        let local = mutation_error.get();
-        if local.is_empty() {
-            app_error.get()
-        } else {
-            local
-        }
-    });
+    let (mutation_error, error) = super::inputs::field_error(error);
     let prefix = id.clone();
     let render = Callback::new(move |key| {
         let input = format!("{prefix}-{key}-value");
@@ -144,16 +135,7 @@ pub fn MetadataInput(
     error: Signal<String>,
 ) -> impl IntoView {
     // Keep domain errors owned by the app and report local byte-admission failures separately.
-    let app_error = error;
-    let mutation_error = RwSignal::new(String::new());
-    let error = Signal::derive(move || {
-        let local = mutation_error.get();
-        if local.is_empty() {
-            app_error.get()
-        } else {
-            local
-        }
-    });
+    let (mutation_error, error) = super::inputs::field_error(error);
     let prefix = id.clone();
     let render = Callback::new(move |key| {
         [true,false].into_iter().map(|key_field|{

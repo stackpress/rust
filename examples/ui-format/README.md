@@ -3,7 +3,8 @@
 This finite example never listens on a port. It compiles one component source for
 native SSR and actual browser hydrate/CSR. Outputs and logs live under
 `/private/tmp/s8-format`; build trees are exclusively `target/s8-native` and
-`target/s8-wasm`. No tool installation is performed.
+`target/s8-wasm` by default. Set `CARGO_TARGET_DIR` to share one owned root
+for native/WASM compilation and coverage. No tool installation is performed.
 
 `python3 examples/ui-format/check.py build` builds the native fixture and eight
 optimized WASM variants (hydrate/CSR × base/rich/format/both), retaining dependency
