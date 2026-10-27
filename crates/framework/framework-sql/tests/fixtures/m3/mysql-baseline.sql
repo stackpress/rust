@@ -1,0 +1,1 @@
+CREATE TABLE `entry` (`id` BIGINT NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY (`id`));

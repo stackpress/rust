@@ -96,6 +96,10 @@ impl DataError {
         self.cleanup = Some(cleanup);
         self
     }
+    /// Borrow the static safe boundary context independently of private cause Display.
+    pub fn context(&self) -> &'static str {
+        self.context
+    }
     /// Inspect the semantic category without matching private text.
     pub fn kind(&self) -> DataErrorKind {
         self.kind
