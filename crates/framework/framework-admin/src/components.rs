@@ -115,6 +115,9 @@ fn frame(context: RoleContext, control: AnyView) -> AnyView {
 /// One public-rule error path shared by ordinary and formatted controls.
 fn field_error(context: &RoleContext) -> Signal<String> {
     let errors = use_context::<crate::pages::FormIssues>();
+    // Host errors describe the submitted values even when this editable control has moved on.
+    let submitted =
+        use_context::<crate::pages::EditorAction>().is_some_and(|action| action.0.writes());
     let name = context.field.wire_name.clone();
     let field = context.field.clone();
     Signal::derive(move || {
@@ -125,7 +128,14 @@ fn field_error(context: &RoleContext) -> Signal<String> {
                     .get()
                     .iter()
                     .filter(|issue| issue.path.first() == Some(&name))
-                    .map(|issue| crate::presentation::issue_message(&field, issue))
+                    .map(|issue| {
+                        let message = crate::presentation::issue_message(&field, issue);
+                        if submitted {
+                            format!("Submitted version: {message}")
+                        } else {
+                            message
+                        }
+                    })
                     .collect::<Vec<_>>()
                     .join("; ")
             })

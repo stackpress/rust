@@ -278,7 +278,7 @@ pub enum Phase {
     Unknown,
 }
 impl Phase {
-    /// Pending work or uncertainty blocks another request and file/encoding changes.
+    /// Pending work or uncertainty blocks another request. The view may retain newer file edits.
     pub fn locked(&self) -> bool {
         matches!(self, Self::Previewing | Self::Applying | Self::Unknown)
     }
@@ -289,7 +289,10 @@ impl Phase {
             Self::Previewing => "Validating every row; nothing is being written…".into(),
             Self::Previewed => "Preview complete; nothing has been written.".into(),
             Self::Applying => "Applying one atomic batch…".into(),
-            Self::Imported(count) => format!("Imported {count} rows from the submitted file."),
+            Self::Imported(count) => format!(
+                "Imported {count} {} from the submitted file.",
+                if *count == 1 { "row" } else { "rows" }
+            ),
             Self::Failed(message) => message.clone(),
             Self::Unknown => concat!(
                 "Write outcome is unknown. Rows may have been imported. ",
