@@ -6,6 +6,7 @@ Entry point for the Stackpress Rust build program: slices 0–5 coordinated betw
 
 - [Brief](brief.md): load first for the owner's goals as written, scope, non-goals, and inherited sources.
 - [Status](status.md): load to check freeze readiness, implementation status, and the next action.
+- [Resume notes](resume-2026-10-27.md): load after the 2026-10-27 restart to resume Slices 6–8 where they paused.
 - [Decisions and Gap ledger](decisions.md): load before planning or implementing any slice; holds process decisions, Slice 0+1 owner decisions, the applied design decisions (D1–D8, DX), and the carried open design questions with their status.
 - [Proofs](proofs.md): load for proved technical uncertainties, starting with the `Send` handler signature.
 - [Slice 3 parser assessment](slice-3-design-assessment.md): load for the pinned core's exact build/test/fixture evidence, dependencies, code-quality findings and extraction recommendation.

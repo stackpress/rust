@@ -29,4 +29,4 @@ Spec file of [00001 Stackpress Rust foundation](index.md). Load to see freeze re
 
 ## Next action
 
-The owner accepted all recommendations of the Slice 6, 7 and 8 designs (tasks 00011–00013; G27–G30) and approved the iOS and Android tooling, now installed. Their first proof steps (M0) run in parallel. The owner is reviewing GitHub issues #1–#13, which are fixed on `trial/3`.
+The owner accepted all recommendations of the Slice 6, 7 and 8 designs (tasks 00011–00013; G27–G32) and approved the mobile tooling, now installed. Work paused on 2026-10-27 for a computer restart; resume from the [resume notes](resume-2026-10-27.md). The owner is reviewing GitHub issues #1–#13, which are fixed on `trial/3`.
