@@ -63,6 +63,15 @@ extern "C" {
     /// Request cancellation for this window's active ID.
     #[wasm_bindgen(js_name = cancelProfileSearch)]
     fn cancel_profile_search(id: &str);
+    /// Load a fixed versioned native settings DTO, with a finite bridge deadline.
+    #[wasm_bindgen(catch, js_name = loadPreferences)]
+    async fn load_preferences() -> Result<JsValue, JsValue>;
+    /// Write only the fixed public settings DTO; no caller path or event selector.
+    #[wasm_bindgen(catch, js_name = updatePreferences)]
+    async fn update_preferences(json: &str) -> Result<JsValue, JsValue>;
+    /// Resolve system colors before the first native CSR mount.
+    #[wasm_bindgen(js_name = systemDark)]
+    fn system_dark() -> bool;
 }
 
 /// One root-owned cancellation handle; it never holds an Owner or host service.
@@ -214,6 +223,114 @@ pub fn start() -> Result<js_sys::Function, JsValue> {
             return Err(JsValue::from_str(&message));
         }
     };
+    mount(initial, None)
+}
+
+/// Mount only after native preferences have loaded and passed pure seed admission.
+#[cfg(feature = "csr")]
+#[wasm_bindgen]
+pub async fn start_native() -> Result<js_sys::Function, JsValue> {
+    let text = load_preferences()
+        .await?
+        .as_string()
+        .ok_or_else(|| JsValue::from_str("Preferences unavailable"))?;
+    let settings = crate::seed::native_preferences(&text)
+        .map_err(|_| JsValue::from_str("Preferences unavailable"))?;
+    let mut initial = crate::seed::packaged().map_err(|_| JsValue::from_str("Page unavailable"))?;
+    initial.language =
+        stackpress_example_profile_ui_shared::profile_language(&settings.preferences.locale)
+            .map_err(JsValue::from_str)?;
+    initial.theme = effective_theme(settings.preferences.theme);
+    mount(initial, Some(settings))
+}
+
+/// Map a saved system mode before rendering, without changing legacy seed behavior.
+#[cfg(feature = "csr")]
+fn effective_theme(
+    theme: stackpress_framework_preferences::ThemePreference,
+) -> stackpress_framework_ui::state::Theme {
+    use stackpress_framework_preferences::ThemePreference;
+    use stackpress_framework_ui::state::Theme;
+    match theme {
+        ThemePreference::Light => Theme::Light,
+        ThemePreference::Dark => Theme::Dark,
+        ThemePreference::System => {
+            if system_dark() {
+                Theme::Dark
+            } else {
+                Theme::Light
+            }
+        }
+    }
+}
+
+/// Adapt native persistence; stored system mode survives a locale-only change.
+#[cfg(feature = "csr")]
+fn preference_transport(
+    settings: stackpress_framework_preferences::Preferences,
+) -> stackpress_example_profile_ui_shared::PreferenceTransport {
+    use stackpress_example_profile_ui_shared::{
+        DisplayPreferences, PreferenceChange, PreferenceTransport,
+    };
+    use stackpress_framework_preferences::{NativePreferenceUpdate, ThemePreference};
+    let saved = StoredValue::new(settings);
+    PreferenceTransport::new(
+        move |(change, complete): (
+            PreferenceChange,
+            stackpress_example_profile_ui_shared::PreferenceCompletion,
+        )| {
+            let mut desired = saved.get_value();
+            match change {
+                PreferenceChange::Locale(locale) => desired.locale = locale,
+                PreferenceChange::Theme(theme) => {
+                    desired.theme = if theme == stackpress_framework_ui::state::Theme::Dark {
+                        ThemePreference::Dark
+                    } else {
+                        ThemePreference::Light
+                    }
+                }
+            }
+            leptos::task::spawn_local_scoped_with_cancellation(async move {
+                let result = async {
+                    let json = serde_json::to_string(&NativePreferenceUpdate {
+                        revision: 1,
+                        preferences: desired.clone(),
+                    })
+                    .map_err(|_| ())?;
+                    let response = update_preferences(&json)
+                        .await
+                        .map_err(|_| ())?
+                        .as_string()
+                        .ok_or(())?;
+                    let reply = crate::seed::native_preferences(&response).map_err(|_| ())?;
+                    if reply.preferences != desired || reply.recovered {
+                        return Err(());
+                    }
+                    saved.set_value(desired);
+                    Ok(DisplayPreferences {
+                        locale: reply.preferences.locale,
+                        theme: effective_theme(reply.preferences.theme),
+                    })
+                }
+                .await;
+                complete(result);
+            });
+        },
+    )
+}
+
+/// Share the unchanged root/transport/navigation path with optional native settings.
+fn mount(
+    initial: ClientSeed,
+    settings: Option<stackpress_framework_preferences::LoadedPreferences>,
+) -> Result<js_sys::Function, JsValue> {
+    let document = web_sys::window()
+        .and_then(|window| window.document())
+        .ok_or_else(|| JsValue::from_str("Document unavailable"))?;
+    let app: web_sys::HtmlElement = document
+        .get_element_by_id("app")
+        .ok_or_else(|| JsValue::from_str("Page root missing"))?
+        .dyn_into()?;
     let endpoint = stackpress_example_profile_ui_contracts::routes::search_api(&initial.base)
         .map_err(|_| JsValue::from_str("Page location invalid. Refresh to continue."))?
         .as_str()
@@ -223,9 +340,14 @@ pub fn start() -> Result<js_sys::Function, JsValue> {
         stackpress_framework_ui::routing::provide_route_context(initial.base.clone());
         let (transport, cancel) = transport(endpoint);
         let navigation = navigation();
+        let recovered = settings.as_ref().is_some_and(|settings| settings.recovered);
+        #[cfg(feature = "csr")]
+        let preferences = settings.map(|settings| preference_transport(settings.preferences));
+        #[cfg(not(feature = "csr"))]
+        let preferences: Option<stackpress_example_profile_ui_shared::PreferenceTransport> = None;
         view! { <ProfilePage seed=initial.page page=initial.page_id status=initial.status transport cancel navigation
         initial_language=initial.language initial_theme=initial.theme
-        initial_search=cfg!(feature = "csr")/> }
+        initial_search=cfg!(feature = "csr") preferences=preferences preference_recovered=recovered/> }
     };
     #[cfg(feature = "hydrate")]
     let handle = leptos::mount::hydrate_from(app, root);

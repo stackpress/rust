@@ -372,5 +372,14 @@ impl Drop for Ticket {
     }
 }
 
+#[cfg(all(unix, any(feature = "app", test)))]
+mod preferences;
+
+// Platform app APIs stay optional; native host/controller tests do not load Tauri.
+#[cfg(feature = "app")]
+mod app;
+#[cfg(feature = "app")]
+pub use app::run;
+
 #[cfg(test)]
 mod tests;

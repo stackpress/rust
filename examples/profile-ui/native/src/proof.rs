@@ -1,6 +1,6 @@
 //! Opt-in finite packaged evidence; no additional IPC command or normal-app service.
 
-use stackpress_example_profile_ui_native::NativeHost;
+use crate::NativeHost;
 use stackpress_lib::{Flow, Invocation, Request, Response, Result, queue::task};
 use stackpress_server::{ServerBuilder, ServerInvocationExt};
 use std::{

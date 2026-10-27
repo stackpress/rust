@@ -3,7 +3,7 @@
 //! This default graph is browser-safe. Hosts validate actual request authority, apply
 //! cookies and mark personalized HTML `Cache-Control: no-store`. No identity, token,
 //! role, filesystem access, listener or process-global mutable state is provided.
-//! Installed-app file persistence remains a separate native adapter milestone.
+//! The opt-in Unix native-file adapter persists nonsecret installed-app settings.
 //!
 //! # Examples
 //!
@@ -27,8 +27,14 @@
 mod action;
 mod cookie;
 mod flash;
+mod native_settings;
 mod policy;
 mod state;
+pub use native_settings::{LoadedPreferences, NativePreferenceUpdate};
+
+/// Fixed, bounded installed-app file storage; unavailable in browser graphs.
+#[cfg(all(feature = "native-file", unix))]
+pub mod native_file;
 
 pub use action::{Preferences, SettingsAction, SettingsReply, SettingsUpdate, ThemePreference};
 pub use cookie::CookieScope;
