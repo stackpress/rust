@@ -36,6 +36,9 @@ pub struct Input {
     /// Trusted proof-only lost acknowledgement after an actual committed SQLite write.
     #[serde(default)]
     pub fault: bool,
+    /// Optional lower transfer limits for a finite app instance.
+    #[serde(default)]
+    pub transfer_limits: stackpress_framework_admin::transfer::Limits,
 }
 /// Default finite request method.
 fn method() -> String {
@@ -82,6 +85,7 @@ pub async fn run(input: Input) -> Result<Output> {
                 mount: input.mount,
                 csrf: "finite-session-csrf".into(),
                 csr: input.csr,
+                transfer_limits: input.transfer_limits,
             },
             Arc::new(crate::host::FixturePolicy),
         )
@@ -96,17 +100,39 @@ pub async fn run(input: Input) -> Result<Output> {
                 request = request.header(name, value);
             }
         }
-        if input.body.is_some() {
-            request = request.header("content-type", "application/json");
-        }
-        let request = request
-            .body(
-                input
-                    .body
-                    .map(|value| value.to_string().into_bytes())
-                    .unwrap_or_default(),
-            )
-            .map_err(native)?;
+        let transfer = input
+            .path
+            .split('?')
+            .next()
+            .is_some_and(|p| p.ends_with("/preview") || p.ends_with("/confirm"));
+        let bytes = if transfer {
+            let body = input.body.unwrap_or_default();
+            request = request.header("content-type", "text/csv").header(
+                "x-admin-decode-export-guards",
+                if body.get("decode_export_guards") == Some(&Value::Bool(true)) {
+                    "1"
+                } else {
+                    "0"
+                },
+            );
+            if body.get("confirm") == Some(&Value::Bool(true)) {
+                request = request.header("x-admin-confirmed", "true");
+            }
+            body.get("csv")
+                .and_then(Value::as_str)
+                .unwrap_or_default()
+                .as_bytes()
+                .to_vec()
+        } else {
+            if input.body.is_some() {
+                request = request.header("content-type", "application/json");
+            }
+            input
+                .body
+                .map(|value| value.to_string().into_bytes())
+                .unwrap_or_default()
+        };
+        let request = request.body(bytes).map_err(native)?;
         let options = HttpOptions {
             base_url: "https://admin.invalid/".into(),
             ..Default::default()

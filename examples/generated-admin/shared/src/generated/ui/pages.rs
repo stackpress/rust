@@ -21,6 +21,15 @@ pub mod profile {
             serde_json::to_value(serde_json::from_value::<super::super::super::contracts::public::PublicCreateProfile>(value).map_err(codec)?).map_err(codec)
         }
     }
+    /// Validate all supplied import members through the actual generated create contract.
+    pub fn validate_import(
+        value: serde_json::Value,
+        context: &stackpress_framework_schema::ValueContext<'_>,
+    ) -> SchemaResult<Vec<stackpress_framework_schema::FieldIssue>> {
+        let input: super::super::super::contracts::public::PublicCreateProfile =
+            serde_json::from_value(value).map_err(codec)?;
+        Ok(input.validate_create(context)?.issues)
+    }
     /// Validate the actual generated query type before sending its envelope.
     pub fn query(value: serde_json::Value) -> SchemaResult<serde_json::Value> {
         let query: super::super::super::contracts::public::ProfileQuery =
@@ -150,6 +159,15 @@ pub mod project {
         } else {
             serde_json::to_value(serde_json::from_value::<super::super::super::contracts::public::PublicCreateProject>(value).map_err(codec)?).map_err(codec)
         }
+    }
+    /// Validate all supplied import members through the actual generated create contract.
+    pub fn validate_import(
+        value: serde_json::Value,
+        context: &stackpress_framework_schema::ValueContext<'_>,
+    ) -> SchemaResult<Vec<stackpress_framework_schema::FieldIssue>> {
+        let input: super::super::super::contracts::public::PublicCreateProject =
+            serde_json::from_value(value).map_err(codec)?;
+        Ok(input.validate_create(context)?.issues)
     }
     /// Validate the actual generated query type before sending its envelope.
     pub fn query(value: serde_json::Value) -> SchemaResult<serde_json::Value> {
@@ -368,6 +386,15 @@ pub mod task {
             )
             .map_err(codec)
         }
+    }
+    /// Validate all supplied import members through the actual generated create contract.
+    pub fn validate_import(
+        value: serde_json::Value,
+        context: &stackpress_framework_schema::ValueContext<'_>,
+    ) -> SchemaResult<Vec<stackpress_framework_schema::FieldIssue>> {
+        let input: super::super::super::contracts::public::PublicCreateTask =
+            serde_json::from_value(value).map_err(codec)?;
+        Ok(input.validate_create(context)?.issues)
     }
     /// Validate the actual generated query type before sending its envelope.
     pub fn query(value: serde_json::Value) -> SchemaResult<serde_json::Value> {
@@ -624,6 +651,19 @@ pub fn query(module: &str, value: serde_json::Value) -> SchemaResult<serde_json:
         "profile" => profile::query(value),
         "project" => project::query(value),
         "task" => task::query(value),
+        _ => Err(unavailable()),
+    }
+}
+/// Dispatch only to an explicitly generated typed adapter.
+pub fn validate_import(
+    module: &str,
+    value: serde_json::Value,
+    context: &stackpress_framework_schema::ValueContext<'_>,
+) -> SchemaResult<Vec<stackpress_framework_schema::FieldIssue>> {
+    match module {
+        "profile" => profile::validate_import(value, context),
+        "project" => project::validate_import(value, context),
+        "task" => task::validate_import(value, context),
         _ => Err(unavailable()),
     }
 }

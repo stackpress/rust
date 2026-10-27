@@ -347,6 +347,7 @@ async fn prove() {
     let host = generated_admin_web::host::build(
         engine.clone(),
         generated_admin_web::host::Config {
+            transfer_limits: Default::default(),
             mount: "/".into(),
             csrf: "fixture".into(),
             csr: false,

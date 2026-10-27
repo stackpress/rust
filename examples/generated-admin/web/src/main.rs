@@ -26,8 +26,8 @@ fn finite() {
     use std::io::Read;
     let mut bytes = Vec::new();
     let result = (|| -> Result<String, Box<dyn std::error::Error>> {
-        std::io::stdin().take(1_048_577).read_to_end(&mut bytes)?;
-        if bytes.len() > 1_048_576 {
+        std::io::stdin().take(8_388_609).read_to_end(&mut bytes)?;
+        if bytes.len() > 8_388_608 {
             return Err("finite input budget exceeded".into());
         }
         let input = serde_json::from_slice(&bytes)?;

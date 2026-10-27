@@ -107,6 +107,10 @@ pub enum Action {
     Remove,
     /// Explicit restoration, where supported.
     Restore,
+    /// Preview and explicitly confirm a bounded create-only CSV batch.
+    Import,
+    /// Download all bounded filtered public results, ignoring pagination.
+    Export,
 }
 impl Action {
     /// Fixed route suffix, never a caller-provided event name.
@@ -119,13 +123,15 @@ impl Action {
             Self::Copy => "copy",
             Self::Remove => "remove",
             Self::Restore => "restore",
+            Self::Import => "import",
+            Self::Export => "export",
         }
     }
     /// Whether this action can submit a write; copy submits through Create.
     pub fn writes(self) -> bool {
         matches!(
             self,
-            Self::Create | Self::Update | Self::Copy | Self::Remove | Self::Restore
+            Self::Create | Self::Update | Self::Copy | Self::Remove | Self::Restore | Self::Import
         )
     }
 }
@@ -160,6 +166,9 @@ pub struct ParentScope {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Snapshot {
+    /// Public downward-only transfer ceilings; server checks these independently again.
+    #[serde(default)]
+    pub transfer_limits: crate::transfer::Limits,
     /// Explicit selected page specification.
     pub spec: PageSpec,
     /// Selected fixed action.

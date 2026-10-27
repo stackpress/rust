@@ -8,6 +8,8 @@ use stackpress_framework_admin::{
 use stackpress_framework_sql::operations::{Operation, OperationPolicy, Policy, Registration};
 use stackpress_lib::{Body, Error, Flow, Invocation, Nest, Request, Response, Result, queue::task};
 use stackpress_server::{Server, ServerBuilder, ServerInvocationExt, StartupContext};
+pub mod transfer;
+
 use std::{collections::BTreeMap, sync::Arc};
 
 /// Explicit finite-example host configuration. Authentication/session integration is app-owned.
@@ -18,6 +20,8 @@ pub struct Config {
     pub csrf: String,
     /// CSR emits the same public seed with an empty initial root.
     pub csr: bool,
+    /// Downward-only G36 import/export bounds.
+    pub transfer_limits: stackpress_framework_admin::transfer::Limits,
 }
 
 /// Labeled fixture policy: the trusted finite harness supplies an actor header.
@@ -53,6 +57,7 @@ pub async fn build(
     if config.csrf.is_empty() || config.csrf.len() > 128 {
         return Err(Error::invalid("invalid admin CSRF configuration"));
     }
+    config.transfer_limits.validate().map_err(invalid_cause)?;
     let mount = config.mount.clone();
     let config = Arc::new(config);
     let policy = Arc::new(Policy(policy));
@@ -93,6 +98,8 @@ fn operation(name: &str) -> Result<Operation> {
         "update" => Ok(Operation::Update),
         "remove" => Ok(Operation::Remove),
         "restore" => Ok(Operation::Restore),
+        "import" => Ok(Operation::Batch),
+        "export" => Ok(Operation::Search),
         _ => Err(Error::invalid("admin action unavailable")),
     }
 }
@@ -107,6 +114,8 @@ fn action(name: &str) -> Result<Action> {
         "update" => Ok(Action::Update),
         "remove" => Ok(Action::Remove),
         "restore" => Ok(Action::Restore),
+        "import" => Ok(Action::Import),
+        "export" => Ok(Action::Export),
         _ => Err(Error::invalid("admin page unavailable")),
     }
 }
@@ -124,6 +133,10 @@ fn authorize_action(
         operation(action.name())?,
         request,
     )?;
+    if action == Action::Import {
+        stackpress_framework_sql::operations::authorize(policy, model, Operation::Create, request)?;
+        stackpress_framework_sql::operations::authorize(policy, model, Operation::Get, request)?;
+    }
     if matches!(action, Action::Copy | Action::Update) {
         stackpress_framework_sql::operations::authorize(policy, model, Operation::Get, request)?;
     }
@@ -161,6 +174,8 @@ fn route(request: &Request, config: &Config, api: bool) -> Result<(&'static str,
         .ok_or_else(|| Error::invalid("admin model unavailable"))?;
     let action = match action {
         "get" => "get",
+        "preview" => "preview",
+        "confirm" => "confirm",
         name => self::action(name)?.name(),
     };
     Ok((module, action))
@@ -384,7 +399,10 @@ pub async fn page(
         if matches!(selected, Action::Detail) && data.get(&parent.field) != Some(&parent.value) {
             return Err(stackpress_framework_sql::operations::not_found());
         }
-        if !matches!(selected, Action::Search | Action::Create | Action::Detail) {
+        if !matches!(
+            selected,
+            Action::Search | Action::Create | Action::Detail | Action::Import | Action::Export
+        ) {
             return Err(Error::invalid("related page action unavailable"));
         }
     }
@@ -396,11 +414,17 @@ pub async fn page(
         Action::Copy,
         Action::Remove,
         Action::Restore,
+        Action::Import,
+        Action::Export,
     ]
     .into_iter()
     .filter(|action| descriptor.soft_remove || !matches!(action, Action::Remove | Action::Restore))
     .filter(|action| {
-        scope.is_none() || matches!(action, Action::Search | Action::Create | Action::Detail)
+        scope.is_none()
+            || matches!(
+                action,
+                Action::Search | Action::Create | Action::Detail | Action::Import | Action::Export
+            )
     })
     .filter(|action| {
         authorize_action(
@@ -413,6 +437,7 @@ pub async fn page(
     })
     .collect();
     let snapshot = Snapshot {
+        transfer_limits: config.transfer_limits,
         spec: descriptor,
         action: selected,
         allowed,

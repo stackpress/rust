@@ -41,13 +41,55 @@ impl Database for Observed {
             Ok(result)
         })
     }
-    /// Read transactions retain the exact underlying SQLite executor.
+    /// Every transaction retains the exact SQLite executor and its real commit/rollback behavior.
     fn begin(&self, options: TransactionOptions) -> SqlFuture<'_, Box<dyn TransactionSession>> {
-        self.inner.begin(options)
+        let future = self.inner.begin(options);
+        let fault = self.fault.clone();
+        Box::pin(async move {
+            Ok(Box::new(ObservedSession {
+                inner: future.await?,
+                fault,
+                wrote: false,
+            }) as Box<dyn TransactionSession>)
+        })
     }
     /// Release every pool resource explicitly.
     fn close(&self) -> SqlFuture<'_, ()> {
         self.inner.close()
+    }
+}
+
+/// Preserve the actual SQLite session; inject uncertainty only after its durable commit.
+struct ObservedSession {
+    inner: Box<dyn TransactionSession>,
+    fault: Arc<AtomicBool>,
+    wrote: bool,
+}
+impl TransactionSession for ObservedSession {
+    /// Delegate plans unchanged, recording whether this transaction attempted a mutation.
+    fn run(&mut self, query: Query, limits: QueryLimits) -> SqlFuture<'_, QueryResult> {
+        self.wrote |= query.sql().starts_with("INSERT")
+            || query.sql().starts_with("UPDATE")
+            || query.sql().starts_with("DELETE");
+        self.inner.run(query, limits)
+    }
+    /// Await the real commit before injecting the trusted lost-acknowledgement fault.
+    fn commit(self: Box<Self>) -> SqlFuture<'static, ()> {
+        Box::pin(async move {
+            self.inner.commit().await?;
+            if self.wrote && self.fault.swap(false, Ordering::SeqCst) {
+                return Err(stackpress_sql::SqlError::with_source(
+                    stackpress_sql::ErrorKind::Driver,
+                    "commit acknowledgement lost",
+                    LostAck,
+                ));
+            }
+            Ok(())
+        })
+    }
+    /// Rollback delegates unchanged and never consumes the commit-only fault.
+    fn rollback(self: Box<Self>) -> SqlFuture<'static, ()> {
+        self.inner.rollback()
     }
 }
 /// Private typed fault; public operation errors must never disclose its source text.
