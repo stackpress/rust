@@ -90,3 +90,7 @@ pub use stackpress_framework_preferences as framework_preferences;
 pub use stackpress_framework_schema as framework_schema;
 #[cfg(feature = "framework-sql")]
 pub use stackpress_framework_sql as framework_sql;
+
+/// Generated role controls and optional build-host UI emission.
+#[cfg(feature = "framework-admin")]
+pub use stackpress_framework_admin as framework_admin;

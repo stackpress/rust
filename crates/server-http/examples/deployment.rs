@@ -1,6 +1,6 @@
 //! Compile-only fixture here; the coordinator runs it through devmetrics for the listener smoke.
 use futures_core::Stream;
-use stackpress_lib::{Flow, Invocation, Request, Response, Result};
+use stackpress_lib::{Body, Flow, Invocation, Request, Response, Result};
 use stackpress_server::{
     ServerBuilder,
     http::stream::{HttpResponseExt, StreamLimits},
@@ -16,7 +16,7 @@ use std::{
 
 /// Minimal health response reached through the ordinary method/path lifecycle.
 async fn health(_: &mut Request, res: &mut Response, _: Invocation<'_>) -> Result<Flow> {
-    res.html("healthy\n")?;
+    res.set("text/plain; charset=utf-8", Body::Text("healthy\n".into()))?;
     Ok(Flow::Continue)
 }
 /// One owned demand-driven stream, with no borrowed request/renderer or detached producer task.

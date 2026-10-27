@@ -24,6 +24,14 @@ pub fn emit_stores(
             .iter()
             .find(|field| field.key)
             .ok_or_else(|| TransformError::new("M0 generated store requires a key"))?;
+        // M1 freezes schema/key DTOs; broader executable CRUD is explicitly gated to M2.
+        if stored.iter().filter(|field| field.key).count() != 1
+            || !matches!(key.value_type, ValueType::String | ValueType::Integer)
+        {
+            return Err(TransformError::new(
+                "compound or non-text/integer executable store keys require M2",
+            ));
+        }
         let key_type = if key.value_type == ValueType::Integer {
             "i64"
         } else {
@@ -39,11 +47,11 @@ pub fn emit_stores(
             fingerprint
         );
         for field in &stored {
-            text.push_str(&format!("StorageColumn {{ wire: {:?}, column: {:?}, codec: StorageCodec::{}, required: {}, nonempty: {} }},\n", field.name, field.column, codec(field), field.required, field.nonempty));
+            text.push_str(&format!("StorageColumn {{ wire: {:?}, column: {:?}, codec: StorageCodec::{}, required: {}, nonempty: {} }},\n", field.name, field.column, codec(schema,field), field.required, field.nonempty));
         }
         text.push_str(&format!("] ;\n/// Pure inspectable table, query and codec functions.\npub struct {}Store;\nimpl {}Store {{\n/// Build the checked storage definition; installation is always explicit.\npub fn table() -> DataResult<TableDefinition> {{\nlet mut table = stackpress_sql::Create::new({:?});\n", model.rust_name, model.rust_name, model.module));
         for field in &stored {
-            let sql_type = match codec(field) {
+            let sql_type = match codec(schema, field) {
                 "Integer" => "Integer",
                 "Boolean" => "Boolean",
                 "Real" => "Real",
@@ -52,6 +60,16 @@ pub fn emit_stores(
             text.push_str(&format!("// Preserve declared nullability in storage.\nlet field = stackpress_sql::Field::new({:?}, stackpress_sql::SqlType::{}){};\ntable = table.add_field(field);\n", field.column, sql_type, if field.required { ".not_null()" } else { "" }));
         }
         text.push_str(&format!("table = table.primary_key([{:?}]);\n", key.column));
+        for field in &stored {
+            if field.unique || field.searchable || field.sortable {
+                let name = stackpress_framework_schema::codegen::portable_name(&format!(
+                    "{}_{}_index",
+                    model.module, field.column
+                ))
+                .map_err(stackpress_framework_schema::codegen::transform_error)?;
+                text.push_str(&format!("// Storage constraints/indexes are authoritative; UI hints cannot replace them.\ntable = table.add_index(stackpress_sql::Index::new({:?}, [{:?}]){});\n",name,field.column,if field.unique{".unique()"}else{""}));
+            }
+        }
         for field in &model.fields {
             if let (ValueType::Model(target), Some(relation)) = (&field.value_type, &field.relation)
             {
@@ -106,12 +124,23 @@ Ok(value)
 }
 
 /// Choose an explicit strict storage codec; lists/fieldsets are one JSON column.
-fn codec(field: &Field) -> &'static str {
+fn codec(schema: &Schema, field: &Field) -> &'static str {
     if field.multiple {
         return "Json";
     }
     match &field.value_type {
-        ValueType::String | ValueType::Enum(_) => "Text",
+        ValueType::String | ValueType::Date | ValueType::Time | ValueType::Datetime => "Text",
+        ValueType::Enum(name) => match schema
+            .enums()
+            .iter()
+            .find(|item| item.name == *name)
+            .and_then(|item| item.variants.first())
+            .map(|(_, value)| value)
+        {
+            Some(value) if value.is_boolean() => "Boolean",
+            Some(value) if value.is_i64() => "Integer",
+            _ => "Text",
+        },
         ValueType::Integer => "Integer",
         ValueType::Boolean => "Boolean",
         ValueType::Number => "Real",

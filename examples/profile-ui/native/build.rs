@@ -4,7 +4,12 @@
 fn main() {
     #[cfg(feature = "app")]
     tauri_build::try_build(tauri_build::Attributes::new().app_manifest(
-        tauri_build::AppManifest::new().commands(&["profile_search", "cancel_profile_search"]),
+        tauri_build::AppManifest::new().commands(&[
+            "profile_search",
+            "cancel_profile_search",
+            "load_preferences",
+            "update_preferences",
+        ]),
     ))
     .expect("valid explicit Tauri app ACL");
 }

@@ -45,7 +45,7 @@ are the canonical larger examples; the docs link to their implementation rather 
 For actual SQLite storage, continue in the [SQLite adapter docs](../../sql-sqlite/docs/README.md).
 The [sql-profile application](../../../../examples/sql-profile/README.md) owns its server service
 and domain operations. PostgreSQL/MySQL have renderers and opt-in native validation tests;
-production network adapters remain deferred.
+use [PostgreSQL](../../sql-postgres/docs/README.md) or [MySQL](../../sql-mysql/docs/README.md) for native execution.
 
 Source authority: [public exports and Rustdoc](../src/lib.rs), [contract tests](../tests/), and
 [runnable examples](../examples/). Markdown examples are checked separately from Rustdoc doctests.

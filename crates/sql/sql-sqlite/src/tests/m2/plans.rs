@@ -1,7 +1,6 @@
 //! Public core plan APIs execute real SQLite DDL with explicit transaction ownership.
 
 use std::sync::{Arc, Mutex, mpsc};
-use std::time::Duration;
 
 use stackpress_sql::{
     Alter, Create, DialectId, Engine, ErrorKind, Field, Index, Insert, Order, Select, SqlType,
@@ -82,8 +81,8 @@ pub(super) async fn cancellation() {
             if let Some((ready, proceed)) = pause {
                 ready.send(()).unwrap();
                 // Only the later text index compares these values; setup and ADD do not sort them.
-                // Keep the worker itself bounded even if the controlling test fails.
-                proceed.recv_timeout(Duration::from_secs(3)).unwrap();
+                // The external process watchdog bounds this native handshake independently.
+                proceed.recv().unwrap();
             }
             left.cmp(right)
         })

@@ -1,0 +1,21 @@
+[package]
+name = "generated-admin-tool"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+
+[dependencies]
+stackpress-framework-admin = { path = "../../../crates/framework/framework-admin", features = ["codegen"] }
+stackpress-framework-schema = { path = "../../../crates/framework/framework-schema", features = ["codegen"] }
+stackpress-framework-sql = { path = "../../../crates/framework/framework-sql", features = ["codegen"] }
+generated-workspace-tool = { path = "../../generated-workspace/tool" }
+stackpress-idea = { path = "../../../crates/idea/idea" }
+serde_json = "1"
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+tempfile = "3"

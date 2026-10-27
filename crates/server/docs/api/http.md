@@ -134,27 +134,16 @@ responses, backpressure, and transport authorization are outside this API.
 Related: [HTTP guide](../guides/using-http.md), [lifecycle](../concepts.md), [Lib
 parsers](../../../lib/docs/api/parsers.md).
 
-## Optional stream seam (Slice 7 M0)
+## Optional stream seam
 
-`http-stream` adds `http::stream::{HttpResponseExt, StreamLimits,
-StreamingHttpAdapter, StreamingHttpReply, StreamingHttpOutput, HttpBody}`.
-The existing `http` feature and buffered response bytes retain their contract.
-`HttpAdapter::handle_with_options` accepts the same trusted metadata as the host.
+Feature `http-stream` includes `http` and adds owned one-shot response output.
+See the [streaming guide](../guides/streaming-http.md) for a complete producer,
+and [streaming reference](streaming-http.md) for HttpResponseExt, StreamLimits,
+StreamingHttpAdapter::handle_body, HttpBody, publication and failure rules.
+The buffered methods above retain their existing bytes and limits.
 
-`StreamingHttpAdapter::handle_body` normalizes a native request head before
-calling a supplied `Send` one-attempt byte loader inside Input. Loader/aggregate
-body failures follow G12; malformed heads follow G17 without callbacks. It
-returns native output and a host report without performing IO. Its exclusive
-`HttpBody` yields byte chunks on demand, never by silent collection.
-
-`HttpResponseExt::stream` requires an owned `Send + 'static` producer. Cloned
-views share only the private slot identity; response/body replacement and fresh
-error responses cannot transfer a discarded producer into later output. HEAD
-and body-forbidden statuses take and drop the producer without polling.
-Byte/chunk bounds are enforced by `HttpBody`; finite time controls must be
-enforced by its driving host. The new `stackpress-server-http` M0 seam retains
-those time controls for M1 and does not yet enforce the full deadline policy.
-
-A host's output publication report does not establish network completion.
-The separate `stackpress-server-http` crate owns connection/body drop and final
-exchange delivery diagnostics; neither listener nor executor enters this crate.
+The separate [HTTP host](../../../server-http/docs/README.md) drives real IO,
+enforces finite stream/write deadlines, and returns final exchange reports.
+Its opt-in facade features are server-http-host and server-http-host-tls;
+server-http keeps its buffered-only meaning. No network host is pulled into
+this crate by http-stream alone.

@@ -24,7 +24,9 @@ impl Config {
         Self {
             max: 1,
             admission: 8,
-            acquire_ms: 1000,
+            // Ordinary contract statements use the adapters' public default budget;
+            // the deliberate timeout controls below retain their distinct 200ms limit.
+            acquire_ms: 5000,
         }
     }
 }
@@ -289,29 +291,27 @@ async fn controls(name: &str) -> TestResult<()> {
     let mut first = database.run(query("SELECT 1", []), QueryLimits::default());
     pending(&mut first).await;
     let mut second = database.begin(TransactionOptions::default());
+    let acquisition_started = Instant::now();
     pending(&mut second).await;
     assert_eq!(database.pool_state().3, 0);
     let start = Instant::now();
-    assert_eq!(
-        database
-            .run(query("SELECT 1", []), QueryLimits::default())
-            .await
-            .unwrap_err()
-            .kind(),
-        ErrorKind::Limit
-    );
-    assert!(
-        start.elapsed() < Duration::from_millis(100),
-        "admission overflow queued"
-    );
+    // Prompt overflow means Ready on the first poll, not a CPU-dependent wall-clock upper bound.
+    let mut overflow_request = database.run(query("SELECT 1", []), QueryLimits::default());
+    let Poll::Ready(result) =
+        std::future::poll_fn(|cx| Poll::Ready(overflow_request.as_mut().poll(cx))).await
+    else {
+        panic!("admission overflow queued");
+    };
+    assert_eq!(result.unwrap_err().kind(), ErrorKind::Limit);
+    drop(overflow_request);
     let overflow = start.elapsed();
     drop(first);
     assert_eq!(database.pool_state().3, 1);
-    let start = Instant::now();
     assert_eq!(second.await.err().unwrap().kind(), ErrorKind::PoolTimedOut);
-    let timeout = start.elapsed();
+    // Include the whole queued interval, even if overflow checks were descheduled.
+    let timeout = acquisition_started.elapsed();
     assert!(
-        timeout >= Duration::from_millis(100),
+        timeout >= Duration::from_millis(config.acquire_ms),
         "pool timeout was reported before its queued deadline"
     );
     assert_eq!(database.pool_state().3, 2);
@@ -333,11 +333,9 @@ async fn controls(name: &str) -> TestResult<()> {
     let held = database.begin(TransactionOptions::default()).await?;
     let mut waiter = database.run(query("SELECT 1", []), QueryLimits::default());
     pending(&mut waiter).await;
-    assert!(
-        tokio::time::timeout(Duration::from_millis(5), database.close())
-            .await
-            .is_err()
-    );
+    let mut closing = database.close();
+    pending(&mut closing).await;
+    drop(closing);
     assert_eq!(waiter.await.unwrap_err().kind(), ErrorKind::Closed);
     assert_eq!(
         database

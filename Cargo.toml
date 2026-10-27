@@ -9,12 +9,17 @@ members = [
     "examples/profile-ui/contracts", "examples/profile-ui/shared",
     "examples/profile-ui/web", "examples/profile-ui/client", "examples/profile-ui/native",
     "examples/profile-ui/gateway",
+    "examples/ui-stream/shared", "examples/ui-stream/client", "examples/ui-stream/web",
     "examples/ui-gallery/shared", "examples/ui-gallery/client", "examples/ui-gallery/web",
     "crates/framework/framework-preferences",
     "examples/ui-preferences/shared", "examples/ui-preferences/client", "examples/ui-preferences/web",
     "crates/framework/framework-schema", "crates/framework/framework-sql",
     "examples/generated-workspace/tool", "examples/generated-workspace/app",
     "examples/generated-workspace/contracts",
+    "examples/ui-format",
+    "crates/framework/framework-admin",
+    "examples/generated-admin/tool", "examples/generated-admin/shared",
+    "examples/generated-admin/client", "examples/generated-admin/web",
 ]
 resolver = "3"
 
@@ -54,11 +59,13 @@ stackpress-framework-preferences = { path = "crates/framework/framework-preferen
 
 stackpress-framework-schema = { path = "crates/framework/framework-schema", optional = true }
 stackpress-framework-sql = { path = "crates/framework/framework-sql", optional = true }
+stackpress-framework-admin = { path = "crates/framework/framework-admin", optional = true }
 
 [features]
 default = []
 framework-schema = ["dep:stackpress-framework-schema"]
 framework-sql = ["dep:stackpress-framework-sql"]
+framework-admin = ["dep:stackpress-framework-admin"]
 server = ["dep:stackpress-server"]
 server-http = ["server", "stackpress-server/http"]
 server-http-host = ["server-http", "dep:stackpress-server-http"]

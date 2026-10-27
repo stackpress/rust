@@ -7,7 +7,7 @@ use stackpress_sql::{Identifier, Insert, Row, Select, TableDefinition};
 
 const _: () = assert!(stackpress_framework_sql::CONTRACT_REVISION == 1);
 /// Same normalized input identity as the schema transform.
-pub const FINGERPRINT: &str = "d9ce06448438231d01dd291c1466547b999985876a95c9329a341dd170750ac4";
+pub const FINGERPRINT: &str = "44c300781986cbf55c24eaab7df16d3ab96ecf98b7978b9a5e4cfafd61972d45";
 /// Immutable field codecs, chosen by schema semantics.
 pub const COLUMNS: &[StorageColumn] = &[
     StorageColumn {
@@ -69,6 +69,8 @@ impl ProjectStore {
         let field = stackpress_sql::Field::new("tags", stackpress_sql::SqlType::Text).not_null();
         table = table.add_field(field);
         table = table.primary_key(["id"]);
+        // Storage constraints/indexes are authoritative; UI hints cannot replace them.
+        table = table.add_index(stackpress_sql::Index::new("project_title_index", ["title"]));
         // Explicit owning FK; reverse collections have no column.
         let mut foreign =
             stackpress_sql::ForeignKey::new("project_owner_id_fk", ["owner_id"], "profile", ["id"]);

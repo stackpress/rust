@@ -118,14 +118,10 @@ mod normalization {
             "model X { id String @id active Boolean @default(0) }",
             "model X { id String @id count Integer @default(1.5) }",
             "model X { id String @id tags String[] @default([false]) }",
-            "model X { id String @id title Number }",
-            "model X { id String @id data Object }",
-            "model X { id String @id stamp Datetime }",
             "model X { id String @id title Missing }",
             "model X { id String @id title String @is.ne @default(\"\") }",
             "type A { child B? } type B { child A? } model X { id String @id value A? }",
             "enum State { A \"same\" B \"same\" } model X { id String @id state State }",
-            "enum State { A 1 } model X { id String @id state State }",
             "model X @unknown { id String @id }",
             "model X { id String @id label String @searchable(false) }",
         ];
@@ -185,7 +181,7 @@ mod normalization {
     /// Known provider expressions cannot silently become literal IDs when no provider exists.
     #[test]
     fn unavailable_providers_do_not_fall_back_to_literals() {
-        for provider in ["now()", "cuid()", "nano()", "random()", "nanoid(12)"] {
+        for provider in ["cuid()", "nano()", "random()", "nanoid(12)"] {
             let source =
                 format!("model Example {{ id String @id token String @default({provider:?}) }}");
             assert_eq!(

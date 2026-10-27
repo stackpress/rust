@@ -14,7 +14,9 @@ Begin with [Getting started](getting-started.md): build a plugin, call a capabil
 and the difference between public output and retained diagnostics.
 
 The host opens no listener and chooses no executor. Feature `http` enables conversion of already
-buffered HTTP values; it adds no socket, stream, TLS, or serverless runtime.
+buffered HTTP values; it adds no socket, stream, TLS, or serverless runtime. The optional `http-stream` feature adds owned one-shot
+response output while remaining IO-agnostic; the separate
+[HTTP host](../../server-http/docs/README.md) owns the network boundary.
 
 ## Common tasks
 
@@ -29,6 +31,8 @@ Choose a guide by the result you need. Each links to the corresponding lookup pa
 | Recover public output and inspect failures | [Errors and recovery](guides/errors-and-recovery.md) |
 | Prove behavior without a transport | [Testing in process](guides/testing-in-process.md) |
 | Convert buffered HTTP input and output | [Using HTTP](guides/using-http.md) |
+| Publish owned one-shot HTTP output | [Streaming HTTP](guides/streaming-http.md) |
+| Serve real HTTP/HTTPS connections | [HTTP host](../../server-http/docs/getting-started.md) |
 
 ## Returning to the API
 

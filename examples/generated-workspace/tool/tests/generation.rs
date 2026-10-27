@@ -129,4 +129,141 @@ fn direct_config_budget_is_global() {
         .kind(),
         SchemaErrorKind::Limit
     );
+    // A fixed public prop reused across fields must consume one aggregate resolved-role budget.
+    let component = stackpress_framework_schema::codegen::ComponentDefinition {
+        name: "field.input".into(),
+        key: "app.input".into(),
+        revision: "1".into(),
+        props: vec![stackpress_framework_schema::codegen::PropDefinition {
+            name: "label".into(),
+            value_type: stackpress_framework_schema::codegen::PropType::String,
+            required: false,
+            public: true,
+        }],
+        fixed: [("label".into(), serde_json::json!("x".repeat(600_000)))].into(),
+        available: false,
+    };
+    let registry = DefinitionRegistry::standard()
+        .with_component(component, None)
+        .unwrap();
+    let roles = parse(
+        "roles.idea",
+        "model X { id String @id a String @field.input b String @field.input }",
+        &CompileInputs::default(),
+    )
+    .unwrap();
+    assert_eq!(
+        Schema::normalize(&roles, &registry, NormalizeOptions::default())
+            .unwrap_err()
+            .kind(),
+        SchemaErrorKind::Limit
+    );
+    // Reusing one declared fieldset does not reset preparation's aggregate default budget.
+    let mut config=parse("defaults.idea","type Payload { text String @default(\"x\") } model X { id String @id a Payload b Payload }",&CompileInputs::default()).unwrap();
+    config.r#type["Payload"].columns[0].attributes.insert(
+        "default".into(),
+        AttributeValue::Array(vec![serde_json::Value::String("x".repeat(600_000))]),
+    );
+    let schema = Schema::normalize(
+        &config,
+        &DefinitionRegistry::standard(),
+        NormalizeOptions::default(),
+    )
+    .unwrap();
+    let input = stackpress_framework_schema::InputSchema {
+        record: stackpress_framework_schema::RecordSchema {
+            model: schema.models()[0].clone(),
+            fieldsets: schema.fieldsets().to_vec(),
+            enums: Vec::new(),
+        },
+        patch: false,
+    };
+    assert_eq!(
+        input
+            .prepare(
+                serde_json::json!({"id":"x","a":{},"b":{}}),
+                &stackpress_framework_schema::ValueContext::default()
+            )
+            .unwrap_err()
+            .kind(),
+        SchemaErrorKind::Limit
+    );
+}
+
+/// Generate the entire accepted M1 type corpus independently of native application compilation.
+#[test]
+fn full_type_corpus_generates() {
+    let root = tempfile::tempdir_in("/private/tmp").unwrap();
+    let input = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../contracts/matrix.idea");
+    let result = generated_workspace_tool::generate(&input, &root.path().join("output"), false);
+    assert!(result.is_ok(), "{result:#?}");
+}
+
+/// Owned rename/removal prunes stale fields/modules, preserves sentinels, and refuses edited output.
+#[test]
+fn remove_rename_and_failure_preserve_output() {
+    use std::collections::BTreeMap;
+    fn snapshot(path: &std::path::Path) -> BTreeMap<String, Vec<u8>> {
+        fn walk(
+            root: &std::path::Path,
+            path: &std::path::Path,
+            out: &mut BTreeMap<String, Vec<u8>>,
+        ) {
+            for entry in std::fs::read_dir(path).unwrap() {
+                let entry = entry.unwrap();
+                let p = entry.path();
+                if p.is_dir() {
+                    walk(root, &p, out);
+                } else {
+                    out.insert(
+                        p.strip_prefix(root).unwrap().to_string_lossy().into(),
+                        std::fs::read(p).unwrap(),
+                    );
+                }
+            }
+        }
+        let mut out = BTreeMap::new();
+        walk(path, path, &mut out);
+        out
+    }
+    let root = tempfile::tempdir_in("/private/tmp").unwrap();
+    let input = root.path().join("schema.idea");
+    let output = root.path().join("generated");
+    let first = "plugin \"framework-schema\" {} model Old { id String @id title String } model Keep { id String @id old String }";
+    std::fs::write(&input, first).unwrap();
+    generated_workspace_tool::generate(&input, &output, false).unwrap();
+    std::fs::write(root.path().join("sentinel.txt"), "owned by app").unwrap();
+    let second = "plugin \"framework-schema\" {} model Keep { id String @id renamed String }";
+    std::fs::write(&input, second).unwrap();
+    assert!(
+        !generated_workspace_tool::generate(&input, &output, true)
+            .unwrap()
+            .is_current()
+    );
+    generated_workspace_tool::generate(&input, &output, false).unwrap();
+    assert!(!output.join("contracts/old.rs").exists());
+    assert!(
+        std::fs::read_to_string(output.join("contracts/keep.rs"))
+            .unwrap()
+            .contains("pub renamed:")
+    );
+    assert_eq!(
+        std::fs::read_to_string(root.path().join("sentinel.txt")).unwrap(),
+        "owned by app"
+    );
+    let expected = snapshot(&output);
+    generated_workspace_tool::generate(&input, &output, false).unwrap();
+    assert_eq!(snapshot(&output), expected);
+    std::fs::write(
+        &input,
+        second.replace("renamed String", "renamed String @is.typo"),
+    )
+    .unwrap();
+    assert!(generated_workspace_tool::generate(&input, &output, false).is_err());
+    assert_eq!(snapshot(&output), expected);
+    std::fs::write(&input, second).unwrap();
+    std::fs::write(output.join("contracts/keep.rs"), "// manual edit\n").unwrap();
+    let edited = snapshot(&output);
+    assert!(generated_workspace_tool::generate(&input, &output, false).is_err());
+    assert_eq!(snapshot(&output), edited);
 }

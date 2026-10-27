@@ -108,5 +108,47 @@ pub(crate) fn reply(text: &str, status: Option<u16>) -> Result<SearchReply, Sear
     }
 }
 
+/// Admit the separate fixed native preference command DTO before mounting/publishing.
+///
+/// # Errors
+/// Rejects size/revision/locale/theme/unknown-field drift without touching UI state.
+#[cfg(any(feature = "csr", test))]
+pub(crate) fn native_preferences(
+    text: &str,
+) -> Result<stackpress_framework_preferences::LoadedPreferences, &'static str> {
+    if text.len() > 1024 {
+        return Err("Preferences unavailable");
+    }
+    let settings: stackpress_framework_preferences::LoadedPreferences =
+        serde_json::from_str(text).map_err(|_| "Preferences unavailable")?;
+    if settings.revision != 1 || !matches!(settings.preferences.locale.as_str(), "en" | "fr") {
+        return Err("Preferences unavailable");
+    }
+    Ok(settings)
+}
+
 #[cfg(test)]
 mod tests;
+
+#[cfg(test)]
+mod native_settings_tests {
+    /// Native settings are a separate closed contract, not an extension to search wire data.
+    #[test]
+    fn admit_native_preferences_before_mount() {
+        let valid =
+            r#"{"revision":1,"preferences":{"locale":"fr","theme":"dark"},"recovered":false}"#;
+        assert_eq!(
+            super::native_preferences(valid).unwrap().preferences.locale,
+            "fr"
+        );
+        for invalid in [
+            "{}".into(),
+            valid.replace("\"fr\"", "\"de\""),
+            valid.replace("\"dark\"", "\"unknown\""),
+            valid.replace("\"revision\":1", "\"revision\":2"),
+            "x".repeat(1025),
+        ] {
+            assert!(super::native_preferences(&invalid).is_err());
+        }
+    }
+}
