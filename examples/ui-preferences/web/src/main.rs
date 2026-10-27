@@ -226,6 +226,8 @@ async fn application(
             }),
         )?;
     }
+    // Match the layout link's mount for both protected reads and mutations.
+    let protected_path = format!("{}/private", base.as_str());
     for (method, mutation) in [
         (stackpress_lib::MethodPattern::GET, false),
         (stackpress_lib::MethodPattern::POST, true),
@@ -233,7 +235,7 @@ async fn application(
         let count = protected_calls.clone();
         app.route(
             method,
-            "/private",
+            &protected_path,
             handler(move |req, res, _| {
                 Box::pin(protected(req, res, configured, mutation, count.clone()))
             }),

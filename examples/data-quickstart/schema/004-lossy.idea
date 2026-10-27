@@ -1,0 +1,31 @@
+plugin "framework-schema" { }
+plugin "framework-sql" { }
+
+model Profile {
+  id String @id
+  name String @is.ne @searchable @sortable
+  projects Project[]
+  links Link[]
+}
+
+model Project {
+  id String @id
+  heading String @is.ne @searchable @sortable
+  summary String?
+  ownerId String
+  owner Profile @relation({ local "ownerId" foreign "id" name "projects" })
+  tasks Task[]
+}
+
+model Task {
+  id String @id
+  projectId String
+  project Project @relation({ local "projectId" foreign "id" name "tasks" })
+  title String @is.ne @searchable @sortable
+}
+
+model Link {
+  id String @id
+  ownerId String
+  owner Profile @relation({ local "ownerId" foreign "id" name "links" })
+}

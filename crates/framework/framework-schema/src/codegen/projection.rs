@@ -185,6 +185,7 @@ impl Schema {
 }
 /// Remove tool/source/private metadata from the runtime record validator snapshot.
 pub(super) fn record_schema(schema: &Schema, model: &Model) -> RecordSchema {
+    /// Retain validation shape while removing source/UI data and private rule literals.
     fn clean(model: &Model) -> Model {
         let mut model = model.clone();
         model.attributes.clear();

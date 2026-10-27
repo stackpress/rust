@@ -4,6 +4,34 @@
 //! storage metadata and exact approvals; companion SQL is inspection material only.
 //! PostgreSQL/MySQL are render-only. SQLite AUTOINCREMENT sequences are preserved;
 //! plain INTEGER PRIMARY KEY allocation may reuse deleted IDs by SQLite design.
+//!
+//! A plan is inspectable without opening a database. A rename needs an explicit mapping;
+//! adding a nullable column permits a reverse only while that column remains NULL:
+//!
+//! ```
+//! use stackpress_framework_sql::migrations::{
+//!     DialectId, MigrationPlanner, RenameMap, RevisionSnapshot,
+//! };
+//! use stackpress_sql::{Create, Field, SqlType};
+//! let original = Create::new("note")
+//!     .add_field(Field::new("id", SqlType::Text).not_null())
+//!     .add_field(Field::new("title", SqlType::Text).not_null())
+//!     .primary_key(["id"])
+//!     .definition()?;
+//! let mut changed = original.clone();
+//! changed.fields[1].name = "heading".into();
+//! changed.fields.push(Field::new("summary", SqlType::Text));
+//! let before = RevisionSnapshot::new("notes", "001", vec![original])?;
+//! let after = RevisionSnapshot::new("notes", "002", vec![changed])?;
+//! let candidates = MigrationPlanner::suggestions(&before, &after)?;
+//! assert_eq!(candidates[0].to, "heading");
+//! let mapping = RenameMap::new().field("note", "title", "heading")?;
+//! let forward = MigrationPlanner::between(&before, &after, mapping, DialectId::Sqlite)?;
+//! let reverse = forward.reverse().expect("rename and nullable addition are reversible");
+//! assert_eq!(reverse.discardable_columns(), &[("note".into(), "summary".into())]);
+//! assert_ne!(forward.hash(), reverse.hash());
+//! # Ok::<(), Box<dyn std::error::Error>>(())
+//! ```
 
 use crate::{DataError, DataErrorKind, DataResult};
 use serde::{Deserialize, Serialize};

@@ -34,9 +34,13 @@ pub(crate) struct PreferenceController {
     pending: RwSignal<bool>,
     /// Completion identity prevents an older adapter callback from taking ownership.
     generation: RwSignal<u64>,
+    /// Root-local dictionary, published only after a checked acknowledgement.
     language: LanguageContext,
+    /// Root-local effective theme; the transport retains any saved system mode.
     theme: ThemeState,
+    /// Accessible failure notices share the existing root's bounded queue.
     notices: Notifications,
+    /// Optional persistence adapter; absence keeps the legacy synchronous path.
     transport: Option<PreferenceTransport>,
 }
 impl PreferenceController {

@@ -833,6 +833,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "data-quickstart"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "stackpress-framework-schema",
+ "stackpress-framework-sql",
+ "stackpress-lib",
+ "stackpress-server",
+ "stackpress-sql",
+ "stackpress-sql-sqlite",
+ "tempfile",
+ "tokio",
+]
+
+[[package]]
 name = "dbus"
 version = "0.9.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"

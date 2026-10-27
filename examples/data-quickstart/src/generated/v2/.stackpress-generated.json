@@ -1,0 +1,80 @@
+{
+  "version": 1,
+  "files": {
+    "contracts/mod.rs": {
+      "owner": "aggregate",
+      "sha256": "befcae637364aa399eaec055dd78b6758e6b8c6d9ca2f2438653ce34ff8cff19",
+      "bytes": 64
+    },
+    "contracts/profile.rs": {
+      "owner": "framework-schema",
+      "sha256": "bae9edfd31fb5b1b35e0931c2daadcdcb3c67c92d74b37cbb18cb6c2b94fd3bf",
+      "bytes": 7596
+    },
+    "contracts/project.rs": {
+      "owner": "framework-schema",
+      "sha256": "f986e0b90ebc411aa0a4206a0a3884810330a129a0a73b7c76086582b6272688",
+      "bytes": 11745
+    },
+    "contracts/public.rs": {
+      "owner": "framework-schema",
+      "sha256": "caec332ebf91081b25c1cc9f79a203539a1db2b4471fffcc7cc1176352993e85",
+      "bytes": 94232
+    },
+    "contracts/task.rs": {
+      "owner": "framework-schema",
+      "sha256": "16bd2478981bbafb7b1d66b9a4a562bded30713fd26a2ab6fa4847d5d4e096f5",
+      "bytes": 12719
+    },
+    "metadata/mod.rs": {
+      "owner": "aggregate",
+      "sha256": "67d195b8df4a18d49f3a5893c5e46e4fabd6d4cf4d77422599a989a4daee5d0d",
+      "bytes": 28
+    },
+    "metadata/schema.rs": {
+      "owner": "framework-schema",
+      "sha256": "da776500d2c25375ca02b9329f1bdd035ce3e431b5b6c7a21e0bc232d7c19fcd",
+      "bytes": 366
+    },
+    "metadata/ui.rs": {
+      "owner": "framework-schema",
+      "sha256": "eeb6d2a78e47fb36538de7a91c54d024fffc603a07f596a2a964968976822b4c",
+      "bytes": 7484
+    },
+    "mod.rs": {
+      "owner": "aggregate",
+      "sha256": "e28ad39736c02dc2a3f6066d46e974719478e36d67ddcd25fd45a90034381d79",
+      "bytes": 53
+    },
+    "stores/mod.rs": {
+      "owner": "aggregate",
+      "sha256": "c52159e6e654dd2425416fd29fe8aafabc49a32062c91261d67dca9004b8c637",
+      "bytes": 84
+    },
+    "stores/operations.rs": {
+      "owner": "framework-sql",
+      "sha256": "9ca52dbe64608e38c5f15fa7c25385b6fe78ad64d3beaf0e56c4c923c04a8327",
+      "bytes": 77350
+    },
+    "stores/profile.rs": {
+      "owner": "framework-sql",
+      "sha256": "e76c9dd76b352cefa3ef6f716e7c5a8551e06628cc64c66de35c070ca0fcc626",
+      "bytes": 35852
+    },
+    "stores/project.rs": {
+      "owner": "framework-sql",
+      "sha256": "e070728a97d07731e0b5df5e26ab4234807cebcf8b86945260f17229ad464c7b",
+      "bytes": 39880
+    },
+    "stores/schema.rs": {
+      "owner": "framework-sql",
+      "sha256": "5e676eac56b53eae21f72fb8578dd26b4f5d1abfaf15a3d74e0ec026cfe05a4d",
+      "bytes": 678
+    },
+    "stores/task.rs": {
+      "owner": "framework-sql",
+      "sha256": "c818ba74a7ccbb6021a0144356bc97272ffb4b5d250f6f26a0c05f988b92fc85",
+      "bytes": 37985
+    }
+  }
+}

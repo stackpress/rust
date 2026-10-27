@@ -1,4 +1,5 @@
-//! Opt-in finite simulator receipts and closed phase barriers; absent in normal apps.
+//! Debug-only finite simulator receipts and closed phase barriers; absent in release builds.
+#![cfg(debug_assertions)]
 use std::{
     path::PathBuf,
     sync::{
@@ -11,10 +12,15 @@ use tauri::Manager;
 
 /// Public proof state lives only in this disposable app container.
 pub(super) struct MobileProof {
+    /// Trusted app-config directory; every diagnostic child name is fixed below.
     directory: PathBuf,
+    /// One admitted fixture mode, selected only during debug startup.
     mode: String,
+    /// Last public diagnostic snapshot, cloned before file I/O can re-enter.
     report: Mutex<serde_json::Value>,
+    /// Actual platform lifecycle observations, independent of JavaScript timers.
     suspended: AtomicUsize,
+    /// Foreground observations use the same lifetime as the owning app state.
     resumed: AtomicUsize,
 }
 impl MobileProof {
@@ -27,9 +33,6 @@ impl MobileProof {
         let mode = std::env::var("PROFILE_UI_MOBILE_PROOF").ok()?;
         #[cfg(target_os = "android")]
         let mode = {
-            if !cfg!(debug_assertions) {
-                return None;
-            }
             let path = directory.join("mobile-proof-mode");
             let metadata = std::fs::symlink_metadata(&path).ok()?;
             if !metadata.is_file() || metadata.len() > 16 {

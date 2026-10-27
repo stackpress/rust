@@ -7,8 +7,10 @@ const modulePath = process.env.PREFERENCES_PLAYWRIGHT;
 if (!modulePath) throw Error('PREFERENCES_PLAYWRIGHT must identify the installed package');
 const { chromium } = require(modulePath);
 const root = path.resolve(__dirname, '../..');
-const output = '/private/tmp/s8-lane-b';
-const host = path.join(root, 'target/s8-native/debug/stackpress-example-ui-preferences-web');
+// Keep defaults while allowing the closeout parent to cap its shared target root.
+const output = process.env.PREFERENCES_LOGS || '/private/tmp/s8-lane-b';
+const nativeTarget = process.env.PROFILE_UI_NATIVE_TARGET || path.join(root, 'target/s8-native');
+const host = path.join(nativeTarget, 'debug/stackpress-example-ui-preferences-web');
 const hostile = '</script><script>globalThis.pwned=1</script> & public notice';
 const receipts = [];
 
@@ -37,6 +39,8 @@ function request(base, input, policy = false) {
       page.setDefaultNavigationTimeout(10000);
       const errors = [], unexpected = [];
       const calls = { writes: 0, confirms: 0 };
+      // Only the final link-navigation phase opts into explicit fixture admission.
+      let allowProtected = false;
       let failure = '', gateRelease;
       const gate = new Promise(resolve => { gateRelease = resolve; });
       page.on('pageerror', error => errors.push(error.message));
@@ -72,7 +76,7 @@ function request(base, input, policy = false) {
         if (confirm) calls.confirms++;
         const response = request(base, { method: req.method(), path: url.pathname + url.search,
           cookie: headers.cookie || '', origin: write && failure === 'origin' ? null : headers.origin || null,
-          body: req.postData() || '', csr: mode === 'csr' });
+          body: req.postData() || '', csr: mode === 'csr', caller: allowProtected ? 'allowed' : '' }, allowProtected);
         const outgoing = Object.fromEntries(Object.entries(response.headers).map(([key, values]) => [key, values.join('\n')]));
         if (write && failure === 'blocked-cookie') delete outgoing['set-cookie'];
         if (write && failure === 'ack') response.body = JSON.stringify({ preferences: { locale: 'fr', theme: 'dark' }, location: '/elsewhere/fr/preferences' });
@@ -180,14 +184,35 @@ function request(base, input, policy = false) {
           assert.equal(actionGap, 8, 'protected actions use the shared half-rem gap');
           await page.screenshot({ path: path.join(output, 'screenshots', `${name}-${width}-zoom${zoom}.png`), fullPage: true });
         }
-        const denied = request(base, { method: 'GET', path: '/private' });
+        const denied = request(base, { method: 'GET', path: `${base}/private` });
         assert.equal(denied.status, 403); assert.deepEqual(denied.headers['x-protected-calls'], ['0']);
-        const forged = request(base, { method: 'POST', path: '/private', caller: 'allowed', origin: 'https://evil.invalid', csrf: 'fixture-csrf' }, true);
+        const forged = request(base, { method: 'POST', path: `${base}/private`, caller: 'allowed', origin: 'https://evil.invalid', csrf: 'fixture-csrf' }, true);
         assert.equal(forged.status, 403); assert.deepEqual(forged.headers['x-protected-calls'], ['0']);
         await page.evaluate(() => window.disposePreferences());
         assert.equal(await page.locator('#app').innerHTML(), '');
+
+        // A fresh allowed projection must expose a usable link at the same mount.
+        allowProtected = true;
+        await page.goto(`https://preferences.invalid${base}/en/preferences`);
+        await page.waitForFunction(() => window.preferencesReady === true);
+        const link = page.locator('#private-link');
+        await link.waitFor({ state: 'visible' });
+        assert.equal(await link.getAttribute('aria-disabled'), 'false');
+        assert.equal(await link.getAttribute('href'), `${base}/private`);
+        await page.screenshot({ path: path.join(output, 'screenshots', `${name}-protected-link.png`), fullPage: true });
+
+        // Click the real anchor; the real adapter must report one protected call.
+        const destination = `https://preferences.invalid${base}/private`;
+        const [admitted] = await Promise.all([
+          page.waitForResponse(response => response.url() === destination && response.request().isNavigationRequest()),
+          link.click()
+        ]);
+        await page.waitForURL(destination);
+        assert.equal(admitted.status(), 200);
+        assert.equal(admitted.headers()['x-protected-calls'], '1');
+        assert.deepEqual(await admitted.json(), { public: 'Explicit fixture admission' });
         assert.deepEqual(errors, []); assert.deepEqual(unexpected, []);
-        receipts.push({ name, calls, errors, unexpected, beforePaintSystem: true, refreshNoFlash: true, blockedCookieDenied: true, flashConsumed: true, dirtyDraftPreserved: true });
+        receipts.push({ name, calls, errors, unexpected, beforePaintSystem: true, refreshNoFlash: true, blockedCookieDenied: true, flashConsumed: true, dirtyDraftPreserved: true, protectedLink: { destination, status: admitted.status(), calls: 1 } });
         console.log('PASS ' + name);
       } finally { gateRelease(); await context.close(); }
     }
