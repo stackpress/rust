@@ -7,8 +7,8 @@
 use leptos::prelude::*;
 use std::collections::{HashMap, HashSet};
 
-/// The initial fixed sanitizer revision; changes require corpus/browser review.
-pub const POLICY_REVISION: u32 = 1;
+/// Closed sanitizer revision; attribute hardening was re-reviewed in M3.
+pub const POLICY_REVISION: u32 = 2;
 /// Maximum untrusted input bytes, before Markdown parsing or HTML sanitization.
 pub const MAX_INPUT_BYTES: usize = 64 * 1024;
 /// Maximum sanitized output bytes, including parser expansion.
@@ -99,10 +99,16 @@ impl SafeHtml {
         let attributes = HashMap::from([("a", HashSet::from(["href", "title"]))]);
         let output = ammonia::Builder::new()
             .tags(tags)
+            // Replace defaults even for attributes attached to presently excluded tags.
+            // Future tag changes must not resurrect image dimensions, classes or IDs.
             .tag_attributes(attributes)
             .generic_attributes(HashSet::new())
+            .tag_attribute_values(HashMap::new())
+            .set_tag_attribute_values(HashMap::new())
+            .clean_content_tags(HashSet::from(["script", "style"]))
             .url_schemes(HashSet::from(["http", "https"]))
             .url_relative(ammonia::UrlRelative::Deny)
+            .attribute_filter(explicit_link)
             .link_rel(Some("noopener noreferrer"))
             .strip_comments(true)
             .clean(input)
@@ -117,6 +123,32 @@ impl SafeHtml {
     pub fn as_str(&self) -> &str {
         &self.0
     }
+}
+
+/// Retain only explicit HTTP(S) authorities after HTML entity decoding.
+/// Ammonia still owns URL parsing/scheme checks; this additionally excludes
+/// scheme-only paths such as `https:relative`, whitespace and URL control bytes.
+fn explicit_link<'a>(
+    element: &str,
+    attribute: &str,
+    value: &'a str,
+) -> Option<std::borrow::Cow<'a, str>> {
+    if element == "a" && attribute == "href" {
+        let absolute = value
+            .get(..7)
+            .is_some_and(|prefix| prefix.eq_ignore_ascii_case("http://"))
+            || value
+                .get(..8)
+                .is_some_and(|prefix| prefix.eq_ignore_ascii_case("https://"));
+        if !absolute
+            || value
+                .bytes()
+                .any(|byte| byte.is_ascii_control() || byte.is_ascii_whitespace())
+        {
+            return None;
+        }
+    }
+    Some(std::borrow::Cow::Borrowed(value))
 }
 
 /// The only rich insertion boundary accepts the private checked type.
@@ -173,5 +205,90 @@ mod tests {
             Err(RichError::OutputLimit)
         );
         assert!(SafeHtml::html("").unwrap().as_str().is_empty());
+    }
+
+    /// A checked value cannot be turned into markup by double decoding or reparsing.
+    #[test]
+    fn mutation_corpus_is_stable() {
+        // The example consumes this same corpus in real SSR, hydrate and CSR builds.
+        let corpus: Vec<serde_json::Value> =
+            serde_json::from_str(include_str!("../../../../examples/ui-format/corpus.json"))
+                .unwrap();
+        for entry in corpus {
+            let source = entry["input"].as_str().unwrap();
+            let safe = SafeHtml::html(source).unwrap();
+            // Compare repeated calls and repeated parsing independently.
+            assert_eq!(SafeHtml::html(source).unwrap(), safe);
+            assert_eq!(SafeHtml::html(safe.as_str()).unwrap(), safe);
+            assert_eq!(
+                SafeHtml::html(SafeHtml::markdown(source).unwrap().as_str()).unwrap(),
+                SafeHtml::markdown(source).unwrap()
+            );
+            for forbidden in [
+                "<script",
+                "<style",
+                "<svg",
+                "<math",
+                "<img",
+                "<iframe",
+                "<form",
+                "<input",
+                "<!--",
+                " onclick=",
+                " onerror=",
+                " style=",
+                " id=",
+                " class=",
+            ] {
+                assert!(
+                    !safe.as_str().contains(forbidden),
+                    "{}: {forbidden}",
+                    entry["id"]
+                );
+            }
+        }
+    }
+
+    /// Both parsing routes reject before dependency work and enforce output expansion.
+    #[test]
+    fn markdown_and_exact_budget_edges() {
+        assert_eq!(
+            SafeHtml::markdown(&"x".repeat(MAX_INPUT_BYTES + 1)),
+            Err(RichError::InputLimit)
+        );
+        assert!(SafeHtml::html(&"x".repeat(MAX_INPUT_BYTES)).is_ok());
+        assert_eq!(
+            SafeHtml::html(&"x".repeat(MAX_INPUT_BYTES + 1)),
+            Err(RichError::InputLimit)
+        );
+        assert_eq!(
+            SafeHtml::with_limits("", MAX_INPUT_BYTES + 1, 0),
+            Err(RichError::InputLimit)
+        );
+        assert_eq!(SafeHtml::with_limits("&", 1, 5).unwrap().as_str(), "&amp;");
+        assert_eq!(
+            SafeHtml::with_limits("&", 1, 4),
+            Err(RichError::OutputLimit)
+        );
+        // CommonMark escaping exceeds the bounded intermediate output ceiling.
+        assert_eq!(
+            SafeHtml::markdown(&"&".repeat(MAX_INPUT_BYTES)),
+            Err(RichError::OutputLimit)
+        );
+        assert_eq!(RichError::InputLimit.to_string(), "Rich input too large");
+        assert_eq!(RichError::OutputLimit.to_string(), "Rich output too large");
+    }
+
+    /// Explicit authorities survive; scheme-only paths and URL controls do not.
+    #[test]
+    fn explicit_http_authorities_only() {
+        let input = "<a href='https:relative'>no</a><a href='http:/relative'>no</a><a href=' https://example.invalid'>no</a><a href='https://example.invalid/a&#9;b'>no</a><a href='HTTPS://example.invalid/yes'>yes</a>";
+        let output = SafeHtml::html(input).unwrap();
+        assert_eq!(output.as_str().matches("href=").count(), 1);
+        assert!(
+            output
+                .as_str()
+                .contains("href=\"HTTPS://example.invalid/yes\"")
+        );
     }
 }
