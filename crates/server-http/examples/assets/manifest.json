@@ -1,0 +1,12 @@
+{
+  "entries": [
+    {
+      "route": "/assets/hello.txt",
+      "file": "hello.txt",
+      "size": 27,
+      "sha256": "ea2eca2a79a652bbb72eeff21730aae90ec0ea1f6d230b0bdae34330c6791d85",
+      "mime": "text/plain; charset=utf-8",
+      "cache": "revalidate"
+    }
+  ]
+}

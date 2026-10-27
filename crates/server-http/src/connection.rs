@@ -22,26 +22,26 @@ use std::{
         atomic::{AtomicBool, Ordering},
     },
 };
-use tokio::{
-    io::{AsyncRead, AsyncWrite},
-    time::Instant,
-};
+use tokio::io::{AsyncRead, AsyncWrite};
 
 impl HttpServer {
     /// Drive one admitted IO; scopes drop Hyper, body, active loader and IO before final reporting.
     pub(crate) async fn serve_connection<I, F>(
         &self,
         io: I,
-        peer: SocketAddr,
         scheme: &'static str,
         stop: F,
-        started: Instant,
+        context: crate::ConnectionContext,
     ) -> ConnectionReport
     where
         I: AsyncRead + AsyncWrite + Unpin + Send + 'static,
         F: Future<Output = ()> + Send,
     {
-        let slots = Arc::new(Mutex::new(Vec::<ExchangeSlot>::new()));
+        let crate::ConnectionContext {
+            peer,
+            started,
+            slots,
+        } = context;
         let monitor = Monitor::new(&self.limits);
         let io = SharedIo::new(io, Arc::clone(&monitor));
         let raw = Arc::clone(&io.io);
@@ -137,6 +137,17 @@ impl HttpServer {
         if let Some((status, message)) = rejection {
             return Ok(reject(status, message, slot, monitor));
         }
+        // Deployment authority/trust checks precede normalization, body loading and all callbacks.
+        let effective = match &self.policy {
+            Some(policy) => match policy.check(request.uri(), request.headers(), peer) {
+                Ok(effective) => effective,
+                Err(error) => return Ok(reject_error(400, error.with_code(400), slot, monitor)),
+            },
+            None => crate::proxy::EffectiveRequest {
+                origin: self.origin.clone(),
+                client: None,
+            },
+        };
         let close = Arc::new(AtomicBool::new(
             has_transfer || index == self.limits.max_requests,
         ));
@@ -145,8 +156,9 @@ impl HttpServer {
             adapter_context: Some(Arc::new(HttpRequestContext {
                 peer,
                 scheme,
-                public_origin: self.origin.clone(),
+                public_origin: effective.origin.clone(),
                 cancellation,
+                forwarded_client: effective.client,
             })),
         };
         let known_length = request
@@ -157,17 +169,25 @@ impl HttpServer {
         let (parts, mut body) = request.into_parts();
         let close_on_error = Arc::clone(&close);
         let progress = Arc::clone(&monitor);
-        let adapter = self
-            .adapter
-            .handle_body(&self.app, parts, options, || async move {
-                let result =
-                    crate::input::load(&mut body, &self.limits, head_bytes, known_length).await;
-                if result.is_err() {
-                    close_on_error.store(true, Ordering::Release);
-                }
-                progress.lifecycle();
-                result
-            });
+        // A validated forwarded origin affects URL metadata only; native path/operation stays exact.
+        let selected;
+        let adapter = if effective.origin == self.origin {
+            &self.adapter
+        } else {
+            let mut options = self.http_options.clone();
+            options.base_url = effective.origin;
+            selected = stackpress_server::http::stream::StreamingHttpAdapter::new(options)?;
+            &selected
+        };
+        let adapter = adapter.handle_body(&self.app, parts, options, || async move {
+            let result =
+                crate::input::load(&mut body, &self.limits, head_bytes, known_length).await;
+            if result.is_err() {
+                close_on_error.store(true, Ordering::Release);
+            }
+            progress.lifecycle();
+            result
+        });
         let reply = adapter.await?;
         lock(&slot).report.host = Some(reply.report);
         match reply.output {
@@ -225,11 +245,20 @@ fn reject(
     slot: ExchangeSlot,
     monitor: Arc<Monitor>,
 ) -> http::Response<TrackedBody> {
+    reject_error(status, boundary_error(status, message), slot, monitor)
+}
+/// Retain the first typed policy cause while the native wire response stays fixed and empty.
+fn reject_error(
+    status: u16,
+    error: Error,
+    slot: ExchangeSlot,
+    monitor: Arc<Monitor>,
+) -> http::Response<TrackedBody> {
     {
         let mut state = lock(&slot);
         state.report.delivery = HttpDelivery::RejectedBeforeHost;
         state.report.status = Some(status);
-        state.report.failure = Some(Arc::new(boundary_error(status, message)));
+        state.report.failure = Some(Arc::new(error));
     }
     monitor.output(None);
     let mut response = http::Response::new(TrackedBody::empty(slot, monitor));

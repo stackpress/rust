@@ -150,6 +150,21 @@ impl DrainReport {
     }
 }
 impl HttpServer {
+    /// Drive a generic acceptor until a caller-owned stop future resolves, then fully drain/reap.
+    ///
+    /// This is the same stop-future path as BoundHttpServer::serve_until, without a listener.
+    /// Source errors remain in DrainReport::failure after cleanup; no signal task is spawned.
+    pub async fn serve_acceptor_until<A: Acceptor, F: Future<Output = ()> + Send>(
+        self: Arc<Self>,
+        acceptor: A,
+        stop: F,
+    ) -> DrainReport {
+        let stopping = Shutdown::new();
+        let work = self.serve_acceptor(acceptor, stopping.clone());
+        tokio::pin!(work);
+        tokio::pin!(stop);
+        tokio::select! {biased;()=&mut stop=>{stopping.stop();work.await} report=&mut work=>report}
+    }
     /// Supervise a generic IO source with admission before spawn and bounded stop/drain/reap.
     ///
     /// Stop wins over a ready accept. An admission mutex linearizes stop with spawning;
@@ -209,6 +224,8 @@ impl HttpServer {
                 }
             }
         }
+        // Close the source/listener/backlog before draining connections, outside the admission gate.
+        drop(acceptor);
         // Admission is already closed for this run; the group shares one absolute drain budget.
         draining.stop();
         drain_tasks(
@@ -245,6 +262,7 @@ impl HttpServer {
         let Some(admission) = self.admit(tls) else {
             drop(gate);
             drop(accepted);
+            self.observe_rejection();
             return AdmissionOutcome::Rejected;
         };
         // Spawn is synchronous and remains inside the same gate as stop's sticky transition.
@@ -252,28 +270,41 @@ impl HttpServer {
         let stopping = draining.clone();
         let started = tokio::time::Instant::now();
         tasks.spawn(async move {
-            #[cfg(feature = "tls")]
-            if let Some(tls) = accepted.tls {
-                return host
-                    .serve_tls_admitted(
+            let registry = crate::report::registry();
+            let slots = Arc::clone(&registry);
+            let driver = Arc::clone(&host);
+            let work = async move {
+                #[cfg(feature = "tls")]
+                if let Some(tls) = accepted.tls {
+                    return driver
+                        .serve_tls_admitted(
+                            accepted.io,
+                            tls,
+                            stopping.cancelled(),
+                            admission,
+                            crate::ConnectionContext {
+                                peer: accepted.peer,
+                                started,
+                                slots,
+                            },
+                        )
+                        .await;
+                }
+                let _admission = admission;
+                driver
+                    .serve_connection(
                         accepted.io,
-                        accepted.peer,
-                        tls,
+                        "http",
                         stopping.cancelled(),
-                        admission,
-                        started,
+                        crate::ConnectionContext {
+                            peer: accepted.peer,
+                            started,
+                            slots,
+                        },
                     )
-                    .await;
-            }
-            let _admission = admission;
-            host.serve_connection(
-                accepted.io,
-                accepted.peer,
-                "http",
-                stopping.cancelled(),
-                started,
-            )
-            .await
+                    .await
+            };
+            host.observed(work, registry).await
         });
         drop(gate);
         AdmissionOutcome::Admitted

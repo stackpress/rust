@@ -65,6 +65,12 @@ pub(crate) struct Exchange {
 }
 /// Shared only with the one active body; all mutation is short synchronous work.
 pub(crate) type ExchangeSlot = Arc<Mutex<Exchange>>;
+/// One connection's finite ordered diagnostic history, shared with its exclusive body/observer.
+pub(crate) type Registry = Arc<Mutex<Vec<ExchangeSlot>>>;
+/// Reserve no exchange until a parsed request or native rejection actually exists.
+pub(crate) fn registry() -> Registry {
+    Arc::new(Mutex::new(Vec::new()))
+}
 
 /// Recover poisoned diagnostic storage during unwind cleanup; never execute user code here.
 pub(crate) fn lock<T>(slot: &Mutex<T>) -> std::sync::MutexGuard<'_, T> {
