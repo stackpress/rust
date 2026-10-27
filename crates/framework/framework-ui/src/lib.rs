@@ -47,5 +47,9 @@ pub mod render;
 #[cfg(all(feature = "ssr", not(target_arch = "wasm32")))]
 pub mod async_render;
 
+/// Opt-in in-order SSR with a bounded, supervised native bridge.
+#[cfg(all(feature = "stream", not(target_arch = "wasm32")))]
+pub mod stream;
+
 /// Checked route context and Leptos path matching over a compiled route catalog.
 pub mod routing;

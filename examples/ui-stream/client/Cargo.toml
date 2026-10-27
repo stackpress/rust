@@ -1,0 +1,28 @@
+[package]
+name = "stackpress-example-ui-stream-client"
+description = "Streamed replay and real hydration admission"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = []
+hydrate = ["stackpress-example-ui-stream-shared/hydrate"]
+
+[dependencies]
+stackpress-example-ui-stream-shared = { path = "../shared" }
+stackpress-framework-ui = { path = "../../../crates/framework/framework-ui", features = ["async"] }
+stackpress-framework-view = { path = "../../../crates/framework/framework-view" }
+leptos = { version = "=0.8.22", default-features = false }
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = "=0.2.129"
+js-sys = "0.3"
+web-sys = { version = "0.3", features = ["Window", "Document", "Element", "HtmlElement"] }
+
+[lints]
+workspace = true
