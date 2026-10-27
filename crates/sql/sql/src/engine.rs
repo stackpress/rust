@@ -580,6 +580,25 @@ impl Engine {
         self.database.dialect()
     }
 
+    /// Return the configured per-statement budgets without acquiring a connection.
+    ///
+    /// The returned value is a copy; changing it cannot alter this executor's policy.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Engine, QueryLimits};
+    /// # mod support { include!(concat!(env!("CARGO_MANIFEST_DIR"), "/examples/support/mod.rs")); }
+    /// let engine = Engine::new(support::RecordingDatabase::default())
+    ///     .with_limits(QueryLimits { binds: 2, ..QueryLimits::default() });
+    /// let mut copy = engine.limits();
+    /// copy.binds = 1000;
+    /// assert_eq!(engine.limits().binds, 2);
+    /// ```
+    pub fn limits(&self) -> QueryLimits {
+        self.limits
+    }
+
     /// Construct a detached select; no executor is captured by the returned value.
     ///
     /// # Examples
@@ -1169,6 +1188,30 @@ impl Transaction {
     /// Reading this value neither borrows a native connection nor changes transaction state.
     pub fn dialect(&self) -> DialectId {
         self.dialect
+    }
+
+    /// Return the originating Engine's budgets frozen when this transaction began.
+    ///
+    /// Reading the copied policy performs no native call and changes no transaction state.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use stackpress_sql::{Engine, QueryLimits, SqlError};
+    /// # mod support { include!(concat!(env!("CARGO_MANIFEST_DIR"), "/examples/support/mod.rs")); }
+    /// # tokio::runtime::Builder::new_current_thread().build()?.block_on(async {
+    /// let engine = Engine::new(support::RecordingDatabase::default())
+    ///     .with_limits(QueryLimits { binds: 2, ..QueryLimits::default() });
+    /// let transaction = engine.begin().await?;
+    /// let engine = engine.with_limits(QueryLimits::default());
+    /// assert_eq!(transaction.limits().binds, 2);
+    /// assert_eq!(engine.limits().binds, 1000);
+    /// transaction.rollback().await?;
+    /// # Ok::<(), SqlError>(()) })?;
+    /// # Ok::<(), Box<dyn std::error::Error>>(())
+    /// ```
+    pub fn limits(&self) -> QueryLimits {
+        self.limits
     }
 
     /// Execute a validated plan inside this caller-owned transaction, in source order.

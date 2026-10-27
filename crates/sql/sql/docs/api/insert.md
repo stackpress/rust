@@ -36,6 +36,8 @@ Insert and InsertData are Clone/Debug/PartialEq. The builder owns its data; no m
 | --- | --- | --- |
 | `new(table)` | `impl Into<Identifier>` | Set destination. |
 | `build(&self)` | none | Inspect detached state. |
+| `on_conflict(self, conflict)` | `InsertConflict` | Replace the optional explicit-target conflict action. |
+| `conflict(&self)` | none | Inspect `Option<&InsertConflict>` independently of InsertData. |
 | `columns(self, columns)` | `impl IntoIterator<Item = impl Into<String>>` | Set/replace stable column order. |
 | `values(self, values)` | `impl IntoIterator<Item = impl Into<WriteValue>>` | Append a row. |
 | `default_values(self)` | none | Request one wholly defaulted row. |
@@ -71,3 +73,47 @@ Unsupported. SQLite UPDATE DEFAULT is also Unsupported. PostgreSQL/MySQL render 
 
 Related: [write guide](../guides/write-rows.md), [values](values.md), [Update](update.md),
 [QueryResult](rows.md#3-queryresult).
+
+## 3. Explicit conflict actions
+
+`InsertConflict` is Clone/Debug/PartialEq and carries either
+`DoNothing { target: Vec<String> }` or
+`DoUpdate { target: Vec<String>, assignments: Vec<(String, WriteValue)> }`.
+Both require a nonempty primary/unique column target; DoUpdate also requires nonempty,
+distinct assignments. The database verifies that the target has a matching unique constraint.
+
+`on_conflict(self, InsertConflict) -> Self` replaces the optional action;
+`conflict(&self) -> Option<&InsertConflict>` inspects it. InsertData remains unchanged.
+The clause follows VALUES and precedes RETURNING. Insert values bind first, then update
+assignments in their declared order. No key lookup or automatic retry occurs.
+
+```rust
+use stackpress_sql::{DialectId, Insert, InsertConflict, Render, Result, WriteValue};
+
+fn main() -> Result<()> {
+    let query = Insert::new("project")
+        .columns(["id", "title"])
+        .values(["p1", "Initial"])
+        .on_conflict(InsertConflict::DoUpdate {
+            target: vec!["id".into()],
+            assignments: vec![("title".into(), WriteValue::from("Updated"))],
+        })
+        .returning(["id", "title"])
+        .render(DialectId::Postgres)?;
+    assert_eq!(query.binds().len(), 3);
+    assert!(query.sql().contains("ON CONFLICT (\"id\") DO UPDATE SET \"title\" = $3 RETURNING"));
+    Ok(())
+}
+```
+
+SQLite and PostgreSQL support one explicit VALUES row with either action. Default-only or
+multi-row conflicted inserts are Unsupported, including SQLite's effective DEFAULT VALUES
+after omitted defaulted columns. Existing WriteValue limits still apply. MySQL returns
+Unsupported because its conflict action cannot be restricted to the supplied target;
+it is not translated to an any-unique-key action.
+
+**DoNothing with RETURNING:** an actual insert returns its row; a conflicting no-op returns
+no row. An empty result is a valid already-exists/no-change outcome, not an execution error
+or permission to fabricate a record. Callers choose an explicit result type for that outcome.
+An acknowledged DoUpdate returns the inserted or updated row; no branch flag is inferred
+from affected rows or insert IDs. Transaction completion stays caller-owned.

@@ -31,6 +31,10 @@ use stackpress_sql::{
 pub mod codegen;
 #[cfg(feature = "migrations")]
 pub mod migrations;
+#[cfg(feature = "server")]
+pub mod operations;
+pub mod projection;
+pub mod stores;
 
 /// Runtime contract revision checked by emitted code.
 pub const CONTRACT_REVISION: u32 = 1;
@@ -46,11 +50,11 @@ pub enum DataErrorKind {
     Sql,
     /// Stored data or structured artifacts cannot be decoded faithfully.
     Decode,
-    /// The selected M0 capability has no implementation.
+    /// The selected capability or dialect has no proved implementation.
     Unsupported,
     /// Plan, ledger or catalog no longer agrees with approved state.
     Stale,
-    /// COMMIT was submitted but its final acknowledgement was lost.
+    /// A write or COMMIT was submitted without a reliable final acknowledgement.
     UnknownOutcome,
 }
 
@@ -146,12 +150,57 @@ impl<'a> DataSession<'a> {
             Self::Transaction(transaction) => transaction.dialect(),
         }
     }
+    /// Return the exact selected executor's copied per-statement budgets, without IO.
+    pub fn limits(&self) -> stackpress_sql::QueryLimits {
+        match self {
+            Self::Pooled(engine) => engine.limits(),
+            Self::Transaction(transaction) => transaction.limits(),
+        }
+    }
+    /// Reject multi-statement guarantees without an explicit caller-owned transaction.
+    pub fn require_transaction(&self) -> DataResult<()> {
+        if !matches!(self, Self::Transaction(_)) {
+            return Err(DataError::new("operation requires an explicit transaction")
+                .with_kind(DataErrorKind::Unsupported));
+        }
+        Ok(())
+    }
+    /// Check the statement-local RETURNING capability before preparing a generated write.
+    /// # Errors
+    /// Refuses a dialect whose native write cannot return the authoritative row.
+    pub fn require_returning(&self) -> DataResult<()> {
+        if !self.dialect().capabilities().returning {
+            return Err(
+                DataError::new("generated write requires statement-local RETURNING")
+                    .with_kind(DataErrorKind::Unsupported),
+            );
+        }
+        Ok(())
+    }
     /// Execute one typed query on the selected executor, with a future bounded by this borrow.
     pub async fn execute(&mut self, query: &(impl Render + Sync)) -> DataResult<QueryResult> {
         match self {
             Self::Pooled(engine) => Ok(engine.execute(query).await?),
             Self::Transaction(transaction) => Ok(transaction.execute(query).await?),
         }
+    }
+    /// Submit one prevalidated write once. A native failure has an uncertain write outcome.
+    ///
+    /// Rendering/limit failures precede native execution and retain Validation/Unsupported.
+    /// No statement is retried. Cancelling the future produces no acknowledgement and must
+    /// also be treated as uncertain by its caller; a display refetch cannot prove rollback.
+    pub async fn write(&mut self, query: &(impl Render + Sync)) -> DataResult<Vec<Row>> {
+        let query = query.render(self.dialect()).map_err(write_plan_error)?;
+        query.validate(self.limits()).map_err(write_plan_error)?;
+        let result = match self {
+            Self::Pooled(engine) => engine.execute(&query).await,
+            Self::Transaction(transaction) => transaction.execute(&query).await,
+        };
+        result.map(|result| result.rows).map_err(|cause| {
+            DataError::new("write acknowledgement failed; outcome may be unknown")
+                .with_kind(DataErrorKind::UnknownOutcome)
+                .with_cause(cause)
+        })
     }
     /// Fetch owned rows; no lazy fetch or connection reference escapes the borrow.
     pub async fn fetch(&mut self, query: &(impl Render + Sync)) -> DataResult<Vec<Row>> {
@@ -164,6 +213,12 @@ impl<'a> DataSession<'a> {
 pub enum StorageCodec {
     /// Unchanged UTF-8 or a checked string enum.
     Text,
+    /// Canonical calendar date, stored as checked ISO text.
+    Date,
+    /// Canonical local time, stored as checked ISO text.
+    Time,
+    /// Canonical UTC datetime text; the query compiler supplies exact chronological ordering.
+    Datetime,
     /// Exact signed 64-bit integer.
     Integer,
     /// Finite floating-point number.
@@ -225,18 +280,29 @@ pub fn encode<T: Serialize>(value: &T, columns: &[StorageColumn]) -> DataResult<
 }
 
 /// A finite in-memory serialization sink; it never writes a partial record to a database.
-#[derive(Default)]
 struct RecordBuffer {
     /// Logical encoded bytes retained only until input encoding finishes.
     bytes: Vec<u8>,
     /// Set before rejecting a write that would cross the aggregate ceiling.
     exceeded: bool,
+    /// Checked logical byte ceiling, one MiB for records and at most sixteen MiB for projections.
+    limit: usize,
+}
+impl Default for RecordBuffer {
+    /// Preserve the stored-record one-MiB ceiling unless an owned bounded projection sets its ceiling.
+    fn default() -> Self {
+        Self {
+            bytes: Vec::new(),
+            exceeded: false,
+            limit: 1024 * 1024,
+        }
+    }
 }
 
 impl std::io::Write for RecordBuffer {
     /// Refuse the entire next chunk before extending the buffer beyond its logical ceiling.
     fn write(&mut self, bytes: &[u8]) -> std::io::Result<usize> {
-        if bytes.len() > (1024 * 1024_usize).saturating_sub(self.bytes.len()) {
+        if bytes.len() > self.limit.saturating_sub(self.bytes.len()) {
             self.exceeded = true;
             return Err(std::io::Error::other("record byte limit exceeded"));
         }
@@ -272,6 +338,23 @@ pub fn decode<T: DeserializeOwned>(row: Row, columns: &[StorageColumn]) -> DataR
             match column.codec {
                 StorageCodec::Text => {
                     serde_json::Value::String(row.try_get::<String>(column.column)?)
+                }
+                StorageCodec::Date | StorageCodec::Time | StorageCodec::Datetime => {
+                    let text = row.try_get::<String>(column.column)?;
+                    let value = match column.codec {
+                        StorageCodec::Date => stackpress_framework_schema::DateValue::parse(&text)
+                            .map(|value| value.as_str().to_owned()),
+                        StorageCodec::Time => stackpress_framework_schema::TimeValue::parse(&text)
+                            .map(|value| value.as_str().to_owned()),
+                        _ => stackpress_framework_schema::DatetimeValue::parse(&text)
+                            .map(|value| value.as_str().to_owned()),
+                    }
+                    .map_err(|cause| {
+                        DataError::new("stored temporal value is invalid")
+                            .with_kind(DataErrorKind::Decode)
+                            .with_cause(cause)
+                    })?;
+                    serde_json::Value::String(value)
                 }
                 StorageCodec::Integer => {
                     serde_json::Value::from(row.try_get::<i64>(column.column)?)
@@ -323,6 +406,23 @@ fn encode_value(value: &serde_json::Value, column: &StorageColumn) -> DataResult
             }
             SqlValue::Text(value.into())
         }
+        StorageCodec::Date | StorageCodec::Time | StorageCodec::Datetime => {
+            let text = value
+                .as_str()
+                .ok_or_else(|| DataError::new("temporal field requires canonical text"))?;
+            let text = match column.codec {
+                StorageCodec::Date => stackpress_framework_schema::DateValue::parse(text)
+                    .map(|value| value.as_str().to_owned()),
+                StorageCodec::Time => stackpress_framework_schema::TimeValue::parse(text)
+                    .map(|value| value.as_str().to_owned()),
+                _ => stackpress_framework_schema::DatetimeValue::parse(text)
+                    .map(|value| value.as_str().to_owned()),
+            }
+            .map_err(stores::validation)?;
+            // Preserve the established canonical UTC wire/storage spelling. Query ordering
+            // normalizes fractional precision without requiring a rewrite of existing FK values.
+            SqlValue::Text(text)
+        }
         StorageCodec::Integer => SqlValue::Integer(
             value
                 .as_i64()
@@ -368,4 +468,91 @@ pub fn codec_error(cause: serde_json::Error) -> DataError {
     DataError::new("data codec operation failed")
         .with_kind(DataErrorKind::Decode)
         .with_cause(cause)
+}
+
+/// Authoritative outcome of an explicit insert-if-absent statement.
+///
+/// A targeted `DO NOTHING RETURNING` conflict has no returned row. It is successful
+/// no-change, and cannot supply an existing row without a separate explicit read.
+#[derive(Clone, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
+#[serde(tag = "outcome", content = "row", rename_all = "snake_case")]
+pub enum InsertOutcome<T> {
+    /// The single statement acknowledged an inserted row through RETURNING.
+    Inserted(T),
+    /// The explicit conflict target already exists; this statement changed nothing.
+    AlreadyExists,
+}
+
+/// Encode a validated typed patch in declared column order, without applying create defaults.
+///
+/// The caller passes only mutable columns. Missing members stay unchanged, explicit null
+/// passes the column's nullability check, and unknown/immutable members are rejected.
+/// # Errors
+/// Refuses an empty, oversized, non-object or incompatible patch before database work.
+pub fn encode_patch<T: Serialize>(
+    patch: &T,
+    columns: &[StorageColumn],
+) -> DataResult<Vec<(String, SqlValue)>> {
+    if columns.len() > 128 {
+        return Err(DataError::new("patch storage column limit exceeded"));
+    }
+    let value = stackpress_framework_schema::to_bounded_value(patch).map_err(|cause| {
+        DataError::new("patch serialization failed")
+            .with_kind(DataErrorKind::Validation)
+            .with_cause(cause)
+    })?;
+    let object = value
+        .as_object()
+        .ok_or_else(|| DataError::new("patch must be an object"))?;
+    if object.is_empty()
+        || object
+            .keys()
+            .any(|name| !columns.iter().any(|column| column.wire == name))
+    {
+        return Err(DataError::new(
+            "patch contains no mutable fields or an unknown field",
+        ));
+    }
+    // Declared schema order controls binding; JSON map order cannot change the write plan.
+    columns
+        .iter()
+        .filter_map(|column| object.get(column.wire).map(|value| (column, value)))
+        .map(|(column, value)| Ok((column.column.into(), encode_value(value, column)?)))
+        .collect()
+}
+
+/// Distinguish a pure preflight refusal from a submitted write without parsing private text.
+pub fn write_plan_error(cause: SqlError) -> DataError {
+    let kind = if cause.kind() == stackpress_sql::ErrorKind::Unsupported {
+        DataErrorKind::Unsupported
+    } else {
+        DataErrorKind::Validation
+    };
+    DataError::new("write plan was refused before execution")
+        .with_kind(kind)
+        .with_cause(cause)
+}
+
+/// Complete an explicitly owned atomic workflow once, preserving primary/cleanup failures.
+///
+/// Commit failure is an unknown outcome; no retry or reconciliation by ordinary reads occurs.
+/// Cancellation drops the owned transaction and retains the adapter's rollback-on-drop policy.
+pub async fn finish<T>(transaction: Transaction, outcome: DataResult<T>) -> DataResult<T> {
+    match outcome {
+        Ok(value) => {
+            transaction.commit().await.map_err(|cause| {
+                DataError::new("transaction commit acknowledgement failed")
+                    .with_kind(DataErrorKind::UnknownOutcome)
+                    .with_cause(cause)
+            })?;
+            Ok(value)
+        }
+        Err(primary) => {
+            // Await cleanup explicitly; it must never replace the original typed operation failure.
+            match transaction.rollback().await {
+                Ok(()) => Err(primary),
+                Err(cleanup) => Err(primary.with_cleanup(cleanup)),
+            }
+        }
+    }
 }

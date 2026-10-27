@@ -1,4 +1,5 @@
 //! Native compilation of the same generated value/validation source consumed by the pure package.
+#![cfg(not(any(feature = "matrix", feature = "names")))]
 
 use generated_workspace_app::generated::contracts;
 #[path = "../../support/contracts.rs"]

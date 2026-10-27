@@ -1548,8 +1548,10 @@ dependencies = [
 name = "generated-workspace-app"
 version = "0.1.0"
 dependencies = [
+ "http",
  "serde",
  "serde_json",
+ "stackpress-cli",
  "stackpress-framework-schema",
  "stackpress-framework-sql",
  "stackpress-lib",

@@ -94,3 +94,11 @@ shutdown certificate. See [transactions](transaction.md) and the
 **Returns** `Result<SchemaDiff>`, with the same definition/order errors as the
 [SchemaDiff API](schema-diff.md). This method does not check the snapshots against the adapter's
 current database or execute their difference.
+
+## Budget inspection
+
+`Engine::limits(&self) -> QueryLimits` returns a copy of the configured per-statement
+SQL-byte, bind, row and retained-byte limits. Reading it performs no IO or acquisition and
+changing the returned value cannot change the executor. Relation planners can reserve
+fixed predicate binds and derive chunks from this exact policy. Renderer and native output
+validation still enforce the limits; inspection does not authorize increasing them.
