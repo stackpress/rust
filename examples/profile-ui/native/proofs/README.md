@@ -1,5 +1,25 @@
 # Native preferences proofs
 
+Desktop and mobile proof modules, environment selectors and injected scripts are
+compiled only with `debug_assertions`. Release apps always create the ordinary
+host/window and cannot activate these fixtures. Desktop launch proofs use the
+existing unsigned debug bundle.
+
+`proof-isolation.py compile` checks exclusion of the actual proof source files on
+the installed host/iOS/Android targets without launching an app. Set
+`CARGO_TARGET_DIR` to the native subdirectory of the capped proof root. After
+building the native crate in debug and release profiles with feature `app`, run:
+
+```sh
+python3 examples/profile-ui/native/proofs/proof-isolation.py strings \
+  --debug <native-target>/debug/profile-ui \
+  --release <native-target>/release/profile-ui
+```
+
+The strings check requires desktop debug markers to be present and every proof
+selector/script marker to be absent from the actual release executable. Mobile
+markers are target-gated and are not expected in a desktop debug executable.
+
 Run from the repository root with already installed Rust/Tauri/Xcode tools. These
 proofs never install tools or run a development server. Build output uses the two
 task target trees and ignored `native/gen`; public logs/images use

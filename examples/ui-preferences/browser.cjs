@@ -7,8 +7,10 @@ const modulePath = process.env.PREFERENCES_PLAYWRIGHT;
 if (!modulePath) throw Error('PREFERENCES_PLAYWRIGHT must identify the installed package');
 const { chromium } = require(modulePath);
 const root = path.resolve(__dirname, '../..');
-const output = '/private/tmp/s8-lane-b';
-const host = path.join(root, 'target/s8-native/debug/stackpress-example-ui-preferences-web');
+// Keep defaults while allowing the closeout parent to cap its shared target root.
+const output = process.env.PREFERENCES_LOGS || '/private/tmp/s8-lane-b';
+const nativeTarget = process.env.PROFILE_UI_NATIVE_TARGET || path.join(root, 'target/s8-native');
+const host = path.join(nativeTarget, 'debug/stackpress-example-ui-preferences-web');
 const hostile = '</script><script>globalThis.pwned=1</script> & public notice';
 const receipts = [];
 

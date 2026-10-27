@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
-"""Finite builds with installed tools, exactly two task-owned target trees."""
+"""Finite builds with installed tools and explicit native/WASM target locations."""
 import os
 from pathlib import Path
 import subprocess
 import shutil
 
 ROOT = Path(__file__).resolve().parents[2]
-LOGS = Path('/private/tmp/s8-lane-b')
-NATIVE = ROOT / 'target/s8-native'
-WASM = ROOT / 'target/s8-wasm'
+LOGS = Path(os.environ.get('PREFERENCES_LOGS', '/private/tmp/s8-lane-b'))
+# Reuse the profile proof's target selectors so one parent can cap both trees.
+NATIVE = Path(os.environ.get('PROFILE_UI_NATIVE_TARGET', ROOT / 'target/s8-native'))
+WASM = Path(os.environ.get('PROFILE_UI_TARGET', ROOT / 'target/s8-wasm'))
 
 
 def run(name, command, target):

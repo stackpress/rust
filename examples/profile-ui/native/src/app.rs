@@ -1,15 +1,19 @@
 //! Minimal packaged host: fixed commands, authoritative admission and bounded shutdown.
 
+#[cfg(debug_assertions)]
 #[path = "proof.rs"]
 mod proof;
 #[cfg(unix)]
 use crate::preferences::PreferencesHost;
-#[cfg(any(target_os = "ios", target_os = "android"))]
+#[cfg(all(debug_assertions, any(target_os = "ios", target_os = "android")))]
 #[path = "mobile_proof.rs"]
 mod mobile_proof;
-use crate::{NativeError, NativeHost, register_application, validate_caller};
-#[cfg(any(target_os = "ios", target_os = "android"))]
+#[cfg(debug_assertions)]
+use crate::register_application;
+use crate::{NativeError, NativeHost, validate_caller};
+#[cfg(all(debug_assertions, any(target_os = "ios", target_os = "android")))]
 use mobile_proof::MobileProof;
+#[cfg(debug_assertions)]
 use proof::Proof;
 use std::sync::{
     Arc,
@@ -22,10 +26,13 @@ use tauri::{Manager, WebviewUrl, WebviewWindow, WebviewWindowBuilder};
 struct Shutdown {
     started: AtomicBool,
     finished: AtomicBool,
+    /// Debug receipt detail; release shutdown uses the result's exit code directly.
+    #[cfg(debug_assertions)]
     failed: AtomicBool,
 }
 
-/// Normal startup reuses the generated application. Proof fixtures are explicitly selected.
+/// Debug startup adds fixtures only when the finite launcher explicitly selects them.
+#[cfg(debug_assertions)]
 async fn application(proof: Option<&Arc<Proof>>) -> stackpress_server::BuildResult<NativeHost> {
     let Some(proof) = proof else {
         return NativeHost::new().await;
@@ -118,6 +125,7 @@ fn shutdown(handle: &tauri::AppHandle, code: i32) {
     let handle = handle.clone();
     tauri::async_runtime::spawn(async move {
         let result = host.shutdown().await;
+        #[cfg(debug_assertions)]
         state.failed.store(result.is_err(), Ordering::SeqCst);
         state.finished.store(true, Ordering::SeqCst);
         handle.exit(if result.is_ok() { code } else { 1 });
@@ -127,9 +135,16 @@ fn shutdown(handle: &tauri::AppHandle, code: i32) {
 /// Build real packaged windows; no network listener, remote frontend or plugin grant is used.
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    // Fixture selection and registration do not exist in release compilation.
+    #[cfg(debug_assertions)]
     let proof = Proof::from_env();
+    #[cfg(debug_assertions)]
     let host = tauri::async_runtime::block_on(application(proof.as_ref()))
         .expect("valid generated Profile host");
+    #[cfg(not(debug_assertions))]
+    let host =
+        tauri::async_runtime::block_on(NativeHost::new()).expect("valid generated Profile host");
+    #[cfg(debug_assertions)]
     let selected = proof.clone();
     let builder = tauri::Builder::default()
         .manage(host)
@@ -154,10 +169,11 @@ pub fn run() {
             let preferences_directory = app.path().app_config_dir()?;
             #[cfg(unix)]
             app.manage(Arc::new(PreferencesHost::new(preferences_directory.clone())));
-            #[cfg(any(target_os = "ios", target_os = "android"))]
+            #[cfg(all(debug_assertions, any(target_os = "ios", target_os = "android")))]
             let mobile = MobileProof::new(preferences_directory);
-            #[cfg(any(target_os = "ios", target_os = "android"))]
+            #[cfg(all(debug_assertions, any(target_os = "ios", target_os = "android")))]
             if let Some(proof) = &mobile { app.manage(proof.clone()); }
+            #[cfg(debug_assertions)]
             let labels: &[&str] = if selected
                 .as_ref()
                 .is_some_and(|proof| proof.mode == "navigation")
@@ -166,25 +182,35 @@ pub fn run() {
             } else {
                 &["main"]
             };
+            // Production hosts create only the normal, permitted window.
+            #[cfg(not(debug_assertions))]
+            let labels: &[&str] = &["main"];
             for label in labels {
+                #[cfg(debug_assertions)]
                 let proof = selected.clone();
-                #[cfg(any(target_os = "ios", target_os = "android"))]
+                #[cfg(all(debug_assertions, any(target_os = "ios", target_os = "android")))]
                 let mobile_proof = mobile.clone();
+                #[cfg(debug_assertions)]
                 let handle = app.handle().clone();
-                let mut window =
+                let window =
                     WebviewWindowBuilder::new(app, *label, WebviewUrl::App("index.html".into()))
                         .title("Stackpress Profiles")
                         .visible(*label == "main")
                         .on_navigation(move |url| {
                             // Only an explicitly selected fixture may consume its diagnostic URLs.
+                            #[cfg(debug_assertions)]
                             if proof.as_ref().is_some_and(|proof| proof.record_navigation(&handle, url)) {
                                 return false;
                             }
-                            #[cfg(any(target_os = "ios", target_os = "android"))]
+                            #[cfg(all(debug_assertions, any(target_os = "ios", target_os = "android")))]
                             if mobile_proof.as_ref().is_some_and(|proof| proof.navigation(url)) { return false; }
                             // History stays on packaged resources; native navigation cannot open a remote origin.
                             url.port().is_none() && validate_caller("main", url.scheme(), url.host_str()).is_ok()
                         });
+                // Only debug builds can add a fixture initialization script.
+                #[cfg(debug_assertions)]
+                let mut window = window;
+                #[cfg(debug_assertions)]
                 if let Some(proof) = &selected {
                     window = window.initialization_script(format!(
                         "window.profileProofWindow='{}';window.profileProofMode='{}';window.profileProofCustomization={};\n{}",
@@ -194,17 +220,18 @@ pub fn run() {
                         include_str!("../launch-proof.js")
                     ));
                 }
-                #[cfg(any(target_os = "ios", target_os = "android"))]
+                #[cfg(all(debug_assertions, any(target_os = "ios", target_os = "android")))]
                 if let Some(proof) = &mobile { window = window.initialization_script(proof.script()); }
                 window.build()?;
             }
+            #[cfg(debug_assertions)]
             if let Some(proof) = &selected { proof.monitor(app.handle().clone()); }
-            #[cfg(any(target_os = "ios", target_os = "android"))]
+            #[cfg(all(debug_assertions, any(target_os = "ios", target_os = "android")))]
             if let Some(proof) = &mobile { proof.monitor(app.handle().clone()); }
             Ok(())
         })
         .on_window_event(|window, event| {
-            #[cfg(any(target_os = "ios", target_os = "android"))]
+            #[cfg(all(debug_assertions, any(target_os = "ios", target_os = "android")))]
             if let Some(proof) = window.try_state::<Arc<MobileProof>>() {
                 match event {
                     tauri::WindowEvent::Suspended => proof.lifecycle(false),
@@ -238,6 +265,7 @@ pub fn run() {
                 shutdown(handle, code.unwrap_or(0));
             }
         }
+        #[cfg(debug_assertions)]
         tauri::RunEvent::Exit => {
             if let Some(proof) = &proof {
                 let state = handle.state::<Arc<Shutdown>>();

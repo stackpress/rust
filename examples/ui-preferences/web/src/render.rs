@@ -17,8 +17,8 @@ pub(super) fn render(seed: Seed, csr: bool) -> Result<String> {
         owner.cleanup();
         body
     };
-    // The finite example assembles its own shell because PageContract currently
-    // admits light/dark only. No framework-view contract or UI hook is changed.
+    // This finite example retains its own shell and CSS palette. PageContract now
+    // admits system; adopting the shared style projector is a coordinator decision.
     // All shell attributes/title are fixed registry/enum text, not arbitrary input.
     Ok(format!(
         "<!doctype html><html lang=\"{}\" data-theme=\"{}\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>{}</title><style>{STYLES}</style></head><body><div id=\"app\">{body}</div><script type=\"application/json\" id=\"preferences-seed\">{json}</script><script type=\"module\" src=\"{}/assets/start.js\"></script></body></html>",
