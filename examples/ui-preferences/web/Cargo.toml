@@ -16,7 +16,7 @@ stackpress-framework-view = { path = "../../../crates/framework/framework-view" 
 stackpress-framework-ui = { path = "../../../crates/framework/framework-ui", features = ["ssr"] }
 stackpress-example-ui-preferences-shared = { path = "../shared", features = ["ssr"] }
 stackpress-lib = { path = "../../../crates/lib" }
-stackpress-server = { path = "../../../crates/server", features = ["http"] }
+stackpress-server = { path = "../../../crates/server/server", features = ["http"] }
 http = "1"
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 

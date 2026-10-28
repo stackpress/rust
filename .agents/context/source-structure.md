@@ -2,11 +2,13 @@
 
 Authority: the project owner's 2026-10-23 proposal and explicit acceptance of the revised structure and boundaries: "okay all accepted. please update KB with this direction". The [preserved conversation extract](../resources/conversation/2026-10-23-source-structure-acceptance.txt) retains the proposal, response, and approval. This topic supersedes the earlier flat crate-tree and Ingest/Inquire naming proposals; historical upstream names still identify upstream sources.
 
+The owner's 2026-10-28 [issue #16](https://github.com/stackpress/rust/issues/16) groups the existing server packages under `crates/server/`. This changes filesystem paths only; package names, facade exports, features, and runtime contracts remain unchanged.
+
 ## Root and workspace
 
 Start directly at the repository root, currently `/Users/cblanquera/server/projects/stackpress/rust`. A displayed `rust/` label means that root; do not add another `rust/` directory. This decision does not request moving or renaming the checkout.
 
-The root `Cargo.toml` will contain both `[workspace]` and the `[package]` named `stackpress`. Root `src/lib.rs` is the public facade, and one root `Cargo.lock` is shared by the workspace. Each actual member crate has its own `Cargo.toml` and ordinarily `src/lib.rs`. The grouping directories `crates/framework`, `crates/idea`, and `crates/sql` need no manifest; list the nested member paths in the root workspace.
+The root `Cargo.toml` contains both `[workspace]` and the `[package]` named `stackpress`. Root `src/lib.rs` is the public facade, and one root `Cargo.lock` is shared by the workspace. Each actual member crate has its own `Cargo.toml` and ordinarily `src/lib.rs`. The grouping directories `crates/framework`, `crates/idea`, `crates/server`, and `crates/sql` have no package manifest; list the nested member paths in the root workspace.
 
 ```text
 <project-root>/
@@ -32,7 +34,9 @@ The root `Cargo.toml` will contain both `[workspace]` and the `[package]` named 
 │   │   ├── idea/                 # Standalone convenience wrapper
 │   │   ├── idea-parser/
 │   │   └── idea-transformer/
-│   ├── server/                   # Former Ingest capability host
+│   ├── server/                   # Server family; no package here
+│   │   ├── server/               # Former Ingest capability host
+│   │   └── http/                 # Optional owned HTTP/1 IO host
 │   └── sql/                      # Former Inquire family
 │       ├── sql/
 │       ├── sql-mysql/
@@ -66,7 +70,8 @@ Folder names, Cargo package names, and Rust paths are independent. Use a `stackp
 | `idea/idea` | `stackpress-idea` | `stackpress::idea` |
 | `idea/idea-parser` | `stackpress-idea-parser` | `stackpress::idea_parser` |
 | `idea/idea-transformer` | `stackpress-idea-transformer` | `stackpress::idea_transformer` |
-| `server` | `stackpress-server` | `stackpress::server` |
+| `server/server` | `stackpress-server` | `stackpress::server` |
+| `server/http` | `stackpress-server-http` | `stackpress::server_http_host` |
 | `sql/sql` | `stackpress-sql` | `stackpress::sql` |
 | `sql/sql-mysql` | `stackpress-sql-mysql` | `stackpress::sql_mysql` |
 | `sql/sql-postgres` | `stackpress-sql-postgres` | `stackpress::sql_postgres` |
@@ -90,7 +95,8 @@ Libraries remain directly usable without the facade. Public exports make code av
 ## Responsibility and dependency boundaries
 
 - `lib`: the `stackpress-lib` foundation for transport-neutral primitives and event/request/response/error contracts. It must remain independent of database drivers, UI renderers, account features, CLI, and native hosts.
-- `server`: renamed Ingest responsibility: transport-neutral capability hosting, configuration, registration, and lifecycle. HTTP, CLI, and permitted Tauri calls enter through adapters; the name does not narrow the host to HTTP. Preserve top-level handling versus nested dispatch as described in [runtime and portability](runtime-and-portability.md).
+- `server/server`: renamed Ingest responsibility: transport-neutral capability hosting, configuration, registration, and lifecycle. HTTP, CLI, and permitted Tauri calls enter through adapters; the name does not narrow the host to HTTP. Preserve top-level handling versus nested dispatch as described in [runtime and portability](runtime-and-portability.md). The facade's `server-http` feature selects this crate's buffered HTTP conversion only.
+- `server/http`: optional owned HTTP/1 IO host, selected through `server-http-host` or `server-http-host-tls` on the facade. TLS remains opt-in; the default facade and buffered HTTP do not acquire this network host.
 - `sql/sql`: independently usable query builders, database contracts, dialects, and execution.
 - `sql/sql-mysql`, `sql/sql-postgres`, `sql/sql-sqlite`: separate backend adapters isolate dependencies and backend tests. Backend-specific connection handling, parameter binding, SQL differences, schema inspection, and migration behavior must be owned somewhere. Separate crates are the accepted initial organization, although feature-gated modules inside `sql` are a viable alternative if later justified. Existing database libraries may supply protocol/driver implementations. The tree does not select a first backend or prove support for any backend.
 - `framework/framework-sql`: integrates the independent SQL facilities with Stackpress schema metadata, generated stores, events, configuration, and lifecycle. Keep it distinct from the lower-level `sql` family.

@@ -9,6 +9,6 @@ This is the read-first map for the Rust monorepo. Context records accepted proje
 5. [Upstream Stackpress knowledge](upstream-stackpress.md): load to find full existing architecture and package API contracts across Lib, Idea, Ingest, Inquire, Reactus, and framework packages.
 6. [Foundation and package source map](source-map.md): load to locate exact source files, manifests, package roles, tests, and existing Rust parser work.
 7. [Source catalog and authority](source-catalog.md): load for provenance, preserved notes, historical versus accepted claims, current versions, and ingestion verification.
-8. [Accepted source structure](source-structure.md): load for the root Cargo workspace/facade, grouped framework/Idea/SQL crates, package and namespace catalog, optional backend adapters, and dependency boundaries accepted on 2026-10-23.
+8. [Accepted source structure](source-structure.md): load for the root Cargo workspace/facade, grouped framework/Idea/server/SQL crates, package and namespace catalog, optional backend adapters, and dependency boundaries accepted on 2026-10-23 with the server grouping requested on 2026-10-28.
 
 For a new session, start with project direction and source authority, then load the coding/quality topics for the requested task. Those owners route to implementation workflows and the continuation handoff.

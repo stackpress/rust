@@ -103,7 +103,7 @@ transaction holds the only pool slot can time out; adding connections does not m
 separate calls atomic.
 
 You now have a startup-owned Engine and a named operation that borrows it. Use the
-[server services guide](../../../../server/docs/guides/services.md) for registry rules and
+[server services guide](../../../../server/server/docs/guides/services.md) for registry rules and
 the [SQL core transaction guide](../../../sql/docs/guides/transactions.md) for transaction methods. The
 [profile walkthrough](sql-profile.md) adds explicit installation, schema verification and
 public DTOs to this pattern.

@@ -18,7 +18,7 @@ doc = false
 
 [dependencies]
 stackpress-lib = { path = "../../crates/lib" }
-stackpress-server = { path = "../../crates/server", default-features = false, features = ["http"] }
+stackpress-server = { path = "../../crates/server/server", default-features = false, features = ["http"] }
 stackpress-cli = { path = "../../tools/cli", default-features = false }
 stackpress-sql = { path = "../../crates/sql/sql" }
 stackpress-sql-sqlite = { path = "../../crates/sql/sql-sqlite" }

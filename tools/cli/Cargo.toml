@@ -12,7 +12,7 @@ default = ["tty"]
 tty = ["dep:crossterm"]
 
 [dependencies]
-stackpress-server = { path = "../../crates/server", default-features = false }
+stackpress-server = { path = "../../crates/server/server", default-features = false }
 stackpress-lib = { path = "../../crates/lib" }
 serde = "1"
 serde_json = "1"

@@ -16,7 +16,7 @@ The package name makes its executable `stackpress`. Add these local dependencies
 
 ```toml
 stackpress-lib = { path = "/path/to/stackpress/rust/crates/lib" }
-stackpress-server = { path = "/path/to/stackpress/rust/crates/server" }
+stackpress-server = { path = "/path/to/stackpress/rust/crates/server/server" }
 stackpress-cli = { path = "/path/to/stackpress/rust/tools/cli" }
 tokio = { version = "1", features = ["macros", "rt"] }
 ```

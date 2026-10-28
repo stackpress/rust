@@ -7,9 +7,9 @@ and this receipt. All changes remain uncommitted for coordinator review.
 
 ## Delivered
 
-- [HTTP host entry](../../../../crates/server-http/docs/README.md), getting-started production main, concepts, six task guides, and seven API/index pages. The crate README now routes readers into this set.
+- [HTTP host entry](../../../../crates/server/http/docs/README.md), getting-started production main, concepts, six task guides, and seven API/index pages. The crate README now routes readers into this set.
 - Covers NetworkOptions/from_options/bind/serve_until, TLS files, explicit proxy trust, startup-verified immutable assets, bounded redacted observers, finite limits/deadlines/statuses, G31 authoritative-Hyper framing, sequential reuse, cancellation, and drain/service cleanup.
-- [Server streaming guide](../../../../crates/server/docs/guides/streaming-http.md) and [reference](../../../../crates/server/docs/api/streaming-http.md), with entry/API/buffered-guide links. Removed stale M0 text claiming stream time controls awaited M1.
+- [Server streaming guide](../../../../crates/server/server/docs/guides/streaming-http.md) and [reference](../../../../crates/server/server/docs/api/streaming-http.md), with entry/API/buffered-guide links. Removed stale M0 text claiming stream time controls awaited M1.
 - Documents owned Send/static producers, cloned-view identity, replacement/error isolation, preflight/publication/failure, HEAD/bodyless behavior, immutable bytes, and local completion versus remote acknowledgement.
 - Example `/health` now uses Response::set with `text/plain; charset=utf-8` and the unchanged `healthy\n` text. This is the only Rust source change.
 - Managed development recipe follows devmetrics; no listener was started for this follow-up. Coordinator's earlier M2 managed smoke remains separate evidence; the MIME correction was compile-checked here.

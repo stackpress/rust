@@ -16,5 +16,5 @@ started](../getting-started.md) first when creating a binary.
 
 Imports use `stackpress_cli`. Public modules args, control, and prompt are always available; tty is
 feature-gated. Root re-exports include Terminal/control/entry/execution types and Server's
-[ConfigLayers](../../../../crates/server/docs/api/config.md). The facade currently has no CLI
+[ConfigLayers](../../../../crates/server/server/docs/api/config.md). The facade currently has no CLI
 re-export. Private driver helpers and process-policy internals are not application APIs.

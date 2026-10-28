@@ -12,7 +12,7 @@ default; disable defaults to omit the native crossterm input driver.
 
 Follow [Getting started](getting-started.md) to create an app-owned binary and emit one greeting.
 Then read [Concepts](concepts.md) for the operator boundary, output channels, prompt ownership, and
-process exit policy. The [Server docs](../../../crates/server/docs/README.md) explain the host; [Lib
+process exit policy. The [Server docs](../../../crates/server/server/docs/README.md) explain the host; [Lib
 docs](../../../crates/lib/docs/README.md) own data and handler contracts.
 
 ## Common tasks

@@ -69,7 +69,7 @@ is covered by [native lifecycle tests](../tests/lifecycle.rs).
 
 Page identity duplicates fail startup even across plugins. Duplicate native route listeners
 remain allowed. After registration errors, discard the builder: queuing page claims and routes
-is not a transaction. See [server lifecycle and recovery](../../../server/docs/guides/errors-and-recovery.md).
+is not a transaction. See [server lifecycle and recovery](../../../server/server/docs/guides/errors-and-recovery.md).
 
 You now have the boundaries needed to choose a public projection, retain one lifecycle, and
 share a compiled route. The [API index](api/README.md) provides the exact types and limits.

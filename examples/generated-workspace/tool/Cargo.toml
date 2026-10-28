@@ -16,7 +16,7 @@ stackpress-framework-sql = { path = "../../../crates/framework/framework-sql", f
 stackpress-idea = { path = "../../../crates/idea/idea" }
 stackpress-cli = { path = "../../../tools/cli" }
 stackpress-lib = { path = "../../../crates/lib" }
-stackpress-server = { path = "../../../crates/server" }
+stackpress-server = { path = "../../../crates/server/server" }
 tokio = { version = "1", features = ["macros", "rt"] }
 
 serde_json = "1"

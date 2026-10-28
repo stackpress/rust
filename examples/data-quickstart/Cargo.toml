@@ -20,7 +20,7 @@ stackpress-framework-sql = { path = "../../crates/framework/framework-sql", feat
 stackpress-sql = { path = "../../crates/sql/sql", optional = true }
 stackpress-sql-sqlite = { path = "../../crates/sql/sql-sqlite", optional = true }
 stackpress-lib = { path = "../../crates/lib", optional = true }
-stackpress-server = { path = "../../crates/server", optional = true }
+stackpress-server = { path = "../../crates/server/server", optional = true }
 tokio = { version = "1", features = ["macros", "rt"], optional = true }
 
 [dev-dependencies]

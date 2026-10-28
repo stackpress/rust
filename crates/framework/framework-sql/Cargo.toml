@@ -19,7 +19,7 @@ stackpress-sql = { path = "../../sql/sql" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 stackpress-lib = { path = "../../lib", optional = true }
-stackpress-server = { path = "../../server", optional = true }
+stackpress-server = { path = "../../server/server", optional = true }
 stackpress-idea-transformer = { path = "../../idea/idea-transformer", optional = true }
 stackpress-sql-sqlite = { path = "../../sql/sql-sqlite", features = ["maintenance"], optional = true }
 sha2 = { version = "0.10.9", optional = true }

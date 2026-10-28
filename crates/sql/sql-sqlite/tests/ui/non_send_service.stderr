@@ -13,7 +13,7 @@ note: required because it appears within the type `LocalDatabase`
 6 | struct LocalDatabase { engine: Engine, local: Rc<u8> }
   |        ^^^^^^^^^^^^^
 note: required by a bound in `StartupContext::register`
- --> $WORKSPACE/crates/server/src/startup.rs
+ --> $WORKSPACE/crates/server/server/src/startup.rs
   |
   |     pub fn register<T: Any + Send + Sync>(&mut self, value: Arc<T>) -> Result<()> {
   |                              ^^^^ required by this bound in `StartupContext::register`
@@ -33,7 +33,7 @@ note: required because it appears within the type `LocalDatabase`
 6 | struct LocalDatabase { engine: Engine, local: Rc<u8> }
   |        ^^^^^^^^^^^^^
 note: required by a bound in `StartupContext::register`
- --> $WORKSPACE/crates/server/src/startup.rs
+ --> $WORKSPACE/crates/server/server/src/startup.rs
   |
   |     pub fn register<T: Any + Send + Sync>(&mut self, value: Arc<T>) -> Result<()> {
   |                                     ^^^^ required by this bound in `StartupContext::register`

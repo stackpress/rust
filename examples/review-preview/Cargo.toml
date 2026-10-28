@@ -41,8 +41,8 @@ required-features = ["review-preview"]
 
 [dependencies]
 stackpress-lib = { path = "../../crates/lib", optional = true }
-stackpress-server = { path = "../../crates/server", features = ["http-stream"], optional = true }
-stackpress-server-http = { path = "../../crates/server-http", optional = true }
+stackpress-server = { path = "../../crates/server/server", features = ["http-stream"], optional = true }
+stackpress-server-http = { path = "../../crates/server/http", optional = true }
 stackpress-framework-view = { path = "../../crates/framework/framework-view", optional = true }
 stackpress-framework-ui = { path = "../../crates/framework/framework-ui", features = ["ssr", "rich", "format", "stream"], optional = true }
 stackpress-framework-preferences = { path = "../../crates/framework/framework-preferences", optional = true }
