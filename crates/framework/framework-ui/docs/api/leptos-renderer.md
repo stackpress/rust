@@ -11,6 +11,7 @@ fn renderer() -> Result<impl PageRenderer<String>, ViewError> {
     LeptosRenderer::new(
         PageContract::new(1, "demo-1")?,
         PageAssets {
+        theme_bootstrap: None,
             build: "demo-1".into(),
             base: BasePath::default(),
             module: PublicLocation::new("/assets/start.js")?,

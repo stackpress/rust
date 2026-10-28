@@ -5,7 +5,7 @@
 //! nonblocking flags, then fstat-equivalent metadata before any bounded read.
 //! Updates sync a create-new temporary file, atomically rename, then sync the
 //! directory. A late sync error is unconfirmed persistence, never rollback.
-use crate::{LoadedPreferences, Preferences};
+use crate::preferences::{LoadedPreferences, Preferences};
 use serde::{Deserialize, Serialize};
 use stackpress_framework_language::LocaleRegistry;
 use std::{
@@ -49,7 +49,34 @@ impl From<io::Error> for FileError {
 #[serde(deny_unknown_fields)]
 struct Stored {
     revision: u32,
+    #[serde(deserialize_with = "saved_preferences")]
     preferences: Preferences,
+}
+
+/// Decode legacy System only while reading saved data, preserving other settings.
+fn saved_preferences<'de, D: serde::Deserializer<'de>>(
+    deserializer: D,
+) -> Result<Preferences, D::Error> {
+    #[derive(Deserialize)]
+    #[serde(deny_unknown_fields)]
+    struct Saved {
+        locale: String,
+        #[serde(default)]
+        theme: Option<String>,
+    }
+    let saved = Saved::deserialize(deserializer)?;
+    // Unknown values still trigger the adapter's existing corrupt-file recovery.
+    let theme = match saved.theme.as_deref() {
+        None | Some("system") => None,
+        Some(value) => Some(
+            crate::preferences::ThemePreference::parse(value)
+                .ok_or_else(|| serde::de::Error::custom("invalid saved theme"))?,
+        ),
+    };
+    Ok(Preferences {
+        locale: saved.locale,
+        theme,
+    })
 }
 
 /// Exclusive app-owned store, supplied a trusted app-config directory by its host.
@@ -195,5 +222,5 @@ impl Drop for Temporary {
 }
 
 #[cfg(test)]
-#[path = "native_file_tests.rs"]
+#[path = "native_tests.rs"]
 mod tests;

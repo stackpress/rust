@@ -22,6 +22,7 @@ Create these state handles inside the active root Owner.
 | Prop | Type | Meaning |
 | --- | --- | --- |
 | `theme` | `ThemeState` | Required explicit initial theme. |
+| `initial_theme_pending` | `Signal<bool>` | Optional false; admits the frozen document theme until the application adopts it. |
 | `notifications` | `Notifications` | Required root-local immediate store. |
 | `children` | `Children` | Required subtree, evaluated after contexts are provided. |
 

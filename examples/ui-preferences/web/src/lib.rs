@@ -3,11 +3,13 @@
 //! The opt-in fixture policy is deliberately not authentication or a deployable host.
 use serde::Deserialize;
 use stackpress_example_ui_preferences_shared::{Seed, action_at_origin, registry};
-use stackpress_framework_language::{MAX_PREFERENCE_BYTES, PreferenceError};
-use stackpress_framework_preferences::{
-    ActionId, CookieScope, FlashCookie, HostAccess, HostPolicy,
-};
 use stackpress_framework_view::BasePath;
+use stackpress_framework_view::access::{ActionId, HostAccess, HostPolicy};
+use stackpress_framework_view::flash::FlashCookie;
+use stackpress_framework_view::preferences::CookieScope;
+use stackpress_framework_view::preferences::{
+    LocaleRouting, MAX_PREFERENCE_BYTES, PreferenceError,
+};
 use stackpress_lib::{Body, Error, ErrorKind, Flow, Request, Response, Result, handler};
 use stackpress_server::{
     ServerBuilder,
@@ -251,7 +253,7 @@ fn register(
             Ok(Flow::Continue)
         })
     }))?;
-    for prefix in registry().prefixes() {
+    for prefix in LocaleRouting::new(&registry(), &base).prefixes() {
         let path = format!("{}{prefix}/preferences", base.as_str());
         let base = base.clone();
         let origin = origin.clone();

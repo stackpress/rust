@@ -27,6 +27,8 @@ pub(crate) struct ClientSeed {
     pub(crate) language: Language,
     /// Explicit checked snapshot theme.
     pub(crate) theme: Theme,
+    /// Unset SSR choice, adopted from the frozen head result after hydration.
+    pub(crate) theme_pending: bool,
 }
 
 /// Decode a bounded revision/build-checked public seed before trusting server markup.
@@ -63,9 +65,9 @@ pub(crate) fn decode(text: &str, assets: &str) -> Result<ClientSeed, String> {
         return Err("Page location invalid. Refresh to continue.".into());
     }
     let language = profile_language(&snapshot.locale).map_err(str::to_owned)?;
-    let theme = match snapshot.theme.as_str() {
-        "light" => Theme::Light,
-        "dark" => Theme::Dark,
+    let theme = match snapshot.theme.as_deref() {
+        Some("light") | None => Theme::Light,
+        Some("dark") => Theme::Dark,
         _ => return Err("Page theme invalid. Refresh to continue.".into()),
     };
     Ok(ClientSeed {
@@ -75,6 +77,7 @@ pub(crate) fn decode(text: &str, assets: &str) -> Result<ClientSeed, String> {
         page: snapshot.data,
         language,
         theme,
+        theme_pending: snapshot.theme.is_none(),
     })
 }
 
@@ -96,6 +99,7 @@ pub(crate) fn packaged() -> Result<ClientSeed, String> {
         },
         language: profile_language("en").map_err(str::to_owned)?,
         theme: Theme::Light,
+        theme_pending: false,
     })
 }
 
@@ -115,11 +119,11 @@ pub(crate) fn reply(text: &str, status: Option<u16>) -> Result<SearchReply, Sear
 #[cfg(any(feature = "csr", test))]
 pub(crate) fn native_preferences(
     text: &str,
-) -> Result<stackpress_framework_preferences::LoadedPreferences, &'static str> {
+) -> Result<stackpress_framework_view::preferences::LoadedPreferences, &'static str> {
     if text.len() > 1024 {
         return Err("Preferences unavailable");
     }
-    let settings: stackpress_framework_preferences::LoadedPreferences =
+    let settings: stackpress_framework_view::preferences::LoadedPreferences =
         serde_json::from_str(text).map_err(|_| "Preferences unavailable")?;
     if settings.revision != 1 || !matches!(settings.preferences.locale.as_str(), "en" | "fr") {
         return Err("Preferences unavailable");

@@ -82,7 +82,7 @@ fn request(base: &str, input: Value, policy: bool) -> (Value, String) {
 #[test]
 fn host_selected_pages_and_route_denials() {
     for (path, cookie, locale, theme) in [
-        ("/demo/preferences", "", "en", "system"),
+        ("/demo/preferences", "", "en", "light"),
         (
             "/demo/preferences",
             "stackpress-locale=fr; stackpress-theme=dark",
@@ -93,9 +93,9 @@ fn host_selected_pages_and_route_denials() {
             "/demo/en/preferences",
             "stackpress-locale=fr",
             "en",
-            "system",
+            "light",
         ),
-        ("/demo/fr-FR/preferences?q=%252F", "", "fr", "system"),
+        ("/demo/fr-FR/preferences?q=%252F", "", "fr", "light"),
         (
             "/demo/en_US/preferences",
             "stackpress-theme=light",

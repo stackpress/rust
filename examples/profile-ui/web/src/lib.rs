@@ -121,7 +121,8 @@ fn register_pages_with_module(app: &mut ServerBuilder, base: BasePath, module: &
     .location(move |page: &SearchPage| routes::search_location(&search_base, &page.input.id));
     app.page(
         search,
-        renderer_with_settings(base.clone(), "en", "light", module).map_err(Error::from_source)?,
+        renderer_with_settings(base.clone(), "en", Some("light"), module)
+            .map_err(Error::from_source)?,
     )?;
     let detail_base = base.clone();
     let detail = PageSpec::get(
@@ -138,7 +139,7 @@ fn register_pages_with_module(app: &mut ServerBuilder, base: BasePath, module: &
     });
     app.page(
         detail,
-        renderer_with_settings(base, "en", "light", module).map_err(Error::from_source)?,
+        renderer_with_settings(base, "en", Some("light"), module).map_err(Error::from_source)?,
     )?;
     Ok(())
 }
@@ -257,13 +258,14 @@ pub async fn load_detail(
 fn renderer_with_settings(
     base: BasePath,
     locale: &str,
-    theme: &str,
+    theme: Option<&str>,
     module: &str,
 ) -> std::result::Result<impl PageRenderer<SearchPage>, ViewError> {
     let mut contract = PageContract::new(REVISION, BUILD)?;
     contract.locale = locale.into();
-    contract.theme = theme.into();
+    contract.theme = theme.map(str::to_owned);
     let assets = PageAssets {
+        theme_bootstrap: Some(stackpress_framework_view::theme::bootstrap_location()?),
         build: BUILD.into(),
         base,
         module: PublicLocation::new(module)?,
@@ -279,7 +281,7 @@ fn renderer_with_settings(
         Ok(
             view! { <ProfilePage seed page=snapshot.page.as_str().to_owned() status=snapshot.status.clone()
             initial_language=stackpress_example_profile_ui_shared::profile_language(&snapshot.locale).map_err(|_| ViewError::InvalidSnapshot)?
-            initial_theme=if snapshot.theme == "dark" { stackpress_framework_ui::state::Theme::Dark } else { stackpress_framework_ui::state::Theme::Light }/> },
+            initial_theme=if snapshot.theme.as_deref() == Some("dark") { stackpress_framework_ui::state::Theme::Dark } else { stackpress_framework_ui::state::Theme::Light } initial_theme_pending=snapshot.theme.is_none()/> },
         )
     })
 }
@@ -315,9 +317,13 @@ pub async fn render_snapshot_with_base(
     snapshot: PageSnapshot<SearchPage>,
     base: BasePath,
 ) -> Result<String> {
-    let renderer =
-        renderer_with_settings(base, &snapshot.locale, &snapshot.theme, "/assets/start.js")
-            .map_err(Error::from_source)?;
+    let renderer = renderer_with_settings(
+        base,
+        &snapshot.locale,
+        snapshot.theme.as_deref(),
+        "/assets/start.js",
+    )
+    .map_err(Error::from_source)?;
     Ok(renderer
         .render(snapshot)
         .await

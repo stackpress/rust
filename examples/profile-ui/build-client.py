@@ -35,5 +35,10 @@ subprocess.run(["wasm-bindgen", "--target", "web", "--no-typescript", "--out-dir
 (output / "start.js").write_text((root / "examples/profile-ui/bootstrap.js").read_text())
 if mode == "csr":
     (output / "index.html").write_text('<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><!--HEAD--></head><body><div id="app"></div><script type="module" src="start.js"></script></body></html>')
+# Include the same immutable first-paint asset in the checked web/native inventory.
+import re
+source = root / 'crates/framework/framework-view/src'
+filename = re.search(r'BOOTSTRAP_FILE: &str = "([^"]+)"', (source / 'theme.rs').read_text())[1]
+shutil.copyfile(source / 'initial-theme.js', output / filename)
 asset_manifest.write(mode)
 print(output)

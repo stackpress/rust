@@ -14,7 +14,7 @@ async fn startup_is_explicit_idempotent_and_checked() {
         page: PageId::try_from("test".to_owned()).unwrap(),
         location: "/".into(),
         locale: "en".into(),
-        theme: "light".into(),
+        theme: Some("light".into()),
         status: stackpress_framework_view::PublicStatus::ok(),
         data: (),
     };

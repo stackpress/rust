@@ -52,6 +52,12 @@ pub fn ProfilePage(
     initial_language: Language,
     /// Explicit initial theme.
     initial_theme: Theme,
+    /// Hydrate the SSR Light tree, then adopt the frozen pre-paint document choice.
+    #[prop(optional)]
+    initial_theme_pending: bool,
+    /// Browser-owned text typed before hydration, separate from the last successful search.
+    #[prop(optional_no_strip)]
+    initial_draft: Option<String>,
     /// Selected fixed operation adapter.
     #[prop(optional_no_strip, into)]
     transport: Option<SearchTransport>,
@@ -74,7 +80,7 @@ pub fn ProfilePage(
     if validate_page(&page, &status, &seed).is_err() {
         return view! { <p role="alert">"Page data invalid. Refresh to continue."</p> }.into_any();
     }
-    view! { <ProfileSearch seed initial_language initial_theme initial_search
+    view! { <ProfileSearch seed initial_language initial_theme initial_theme_pending initial_draft=initial_draft initial_search
     transport=transport cancel=cancel navigation=navigation preferences=preferences preference_recovered/> }
     .into_any()
 }
@@ -96,6 +102,12 @@ pub fn ProfileSearch(
     /// Explicit seed theme; browser media queries and cookies are never consulted.
     #[prop(default = Theme::Light)]
     initial_theme: Theme,
+    /// Hydrate the SSR Light tree, then adopt the frozen pre-paint document choice.
+    #[prop(optional)]
+    initial_theme_pending: bool,
+    /// Browser-owned text typed before hydration, separate from the last successful search.
+    #[prop(optional_no_strip)]
+    initial_draft: Option<String>,
     /// Root-local browser navigation adapter.
     #[prop(optional_no_strip, into)]
     navigation: Option<Navigation>,
@@ -121,6 +133,21 @@ pub fn ProfileSearch(
         Err(message) => return view! { <p role="alert">{message}</p> }.into_any(),
     };
     let theme = ThemeState::new(initial_theme);
+    let theme_pending = RwSignal::new(initial_theme_pending);
+    // Hydration keeps the SSR tree identical. CSS covers it until this one-shot handoff.
+    #[cfg(target_arch = "wasm32")]
+    Effect::new(move |_| {
+        if theme_pending.get_untracked() {
+            let dark = web_sys::window()
+                .and_then(|w| w.document())
+                .and_then(|d| d.document_element())
+                .is_some_and(|html| html.get_attribute("data-theme").as_deref() == Some("dark"));
+            batch(|| {
+                theme.set(if dark { Theme::Dark } else { Theme::Light });
+                theme_pending.set(false);
+            });
+        }
+    });
     let base = use_route_context().base;
     let form_action = match routes::search().and_then(|route| route.location(&base, &[])) {
         Ok(location) => location.as_str().to_owned(),
@@ -137,6 +164,10 @@ pub fn ProfileSearch(
     let detail = navigation_state.detail;
     let link_base = StoredValue::new(base);
     let controller = SearchController::new(seed);
+    // Adopt editable text without replacing the acknowledged query/results or issuing a search.
+    if let Some(draft) = initial_draft {
+        controller.id.set(draft);
+    }
     let preference_controller =
         PreferenceController::new(language, theme, controller.notices, preferences);
     if let Some(adapter) = navigation {
@@ -238,7 +269,7 @@ pub fn ProfileSearch(
     // No Effect/Resource starts a search: hydration adopts exactly the server seed.
     view! {
         {head}
-        <LanguageProvider language><LayoutProvider theme notifications=notices><LayoutBlank>
+        <LanguageProvider language><LayoutProvider theme notifications=notices initial_theme_pending=Signal::derive(move || theme_pending.get())><LayoutBlank>
             <LayoutHead>
                 <div><h1>{move || title()}</h1><p>{move || language.text("Find a person by profile ID.", &[])}</p></div>
                 <LayoutMenu label="Display preferences">
@@ -248,8 +279,8 @@ pub fn ProfileSearch(
                         preference_controller.change(PreferenceChange::Locale(locale.into()));
                     }>{move || if language.get().locale() == "en" { "Français" } else { "English" }}</Button>
                     <Button on:click=move |_| {
-                        // System follows ThemeState::toggle: an explicit choice away from it selects Dark.
-                        let next = match theme.get() { Theme::Light | Theme::System => Theme::Dark, Theme::Dark => Theme::Light };
+                        // Toggle the current effective Light/Dark choice explicitly.
+                        let next = match theme.get() { Theme::Light => Theme::Dark, Theme::Dark => Theme::Light };
                         preference_controller.change(PreferenceChange::Theme(next));
                     }>{move || language.text(if theme.get() == Theme::Dark { "Light theme" } else { "Dark theme" }, &[])}</Button>
                 </LayoutMenu>

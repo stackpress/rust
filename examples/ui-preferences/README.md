@@ -14,15 +14,16 @@ The browser intercepts only `https://preferences.invalid`, blocks other origins,
 and closes its contexts and browser. The parent kills/reaps the group after 120
 seconds; actions and native requests have 10-second deadlines.
 
-The host selects locale and theme, consumes/clears flash, and emits no-store HTML
-with the theme attribute and CSS in the head before rendering. System mode uses a
-CSS media query. Hydration receives the same token and performs no initial storage
-read or preference fetch. The example retains its own finite shell and palette.
-framework-view PageContract now admits the system token, and framework-ui supplies
-the opt-in SystemThemeStyles component. This example has not adopted that component;
-its selectors and color variables differ from the shared LayoutProvider skin.
+The host selects locale and any saved Light/Dark choice, consumes flash, and emits
+no-store HTML. Unset uses readable Light SSR and a tiny immutable same-origin
+classic head asset that samples the OS once before themed content. No-JS, blocked
+or missing bootstrap stays Light; an explicit saved Dark stays Dark. Acquisition
+never writes a cookie and later OS changes do not track. Hydration keeps the same
+seed and DOM; only the Light/Dark controls save. Legacy saved `system` reads as unset.
+The maintained `proofs/first-paint.cjs` matrix runs against this real example and its
+WASM, including delayed hydration, no-JS, strict CSP, missing assets and early drafts.
 
-The fixed POST action writes both scoped HttpOnly cookies. A second fixed POST
+The fixed POST action writes scoped HttpOnly locale and explicit-theme cookies. A second fixed POST
 confirms the actual returned cookies before publishing locale/theme/history in one
 root action. A blocked cookie or unconfirmed outcome preserves content and drafts
 and announces failure. An unconfirmed write might nevertheless be saved: refresh

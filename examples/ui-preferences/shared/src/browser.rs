@@ -1,7 +1,7 @@
 //! Thin fixed-endpoint browser transport; pure native-tested state owns publication.
 use super::*;
-use stackpress_framework_preferences::SettingsUpdate;
 use stackpress_framework_view::BasePath;
+use stackpress_framework_view::preferences::SettingsUpdate;
 use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen_futures::JsFuture;
 
@@ -42,7 +42,7 @@ async fn post(path: &str, body: &str) -> Result<String, ()> {
         .map_err(|_| ())?
         .as_string()
         .ok_or(())?;
-    if text.len() > stackpress_framework_language::MAX_PREFERENCE_BYTES {
+    if text.len() > stackpress_framework_view::preferences::MAX_PREFERENCE_BYTES {
         return Err(());
     }
     Ok(text)

@@ -213,7 +213,7 @@ pub fn snapshot(
         page: PageId::try_from(page.to_owned())?,
         location: location.into(),
         locale: "en".into(),
-        theme: "light".into(),
+        theme: Some("light".into()),
         status,
         data,
     })

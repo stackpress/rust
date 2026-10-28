@@ -4864,7 +4864,6 @@ dependencies = [
  "serde_json",
  "stackpress-framework-admin",
  "stackpress-framework-language",
- "stackpress-framework-preferences",
  "stackpress-framework-schema",
  "stackpress-framework-sql",
  "stackpress-framework-ui",
@@ -4943,7 +4942,6 @@ dependencies = [
  "serde_json",
  "stackpress-example-profile-ui-contracts",
  "stackpress-example-profile-ui-shared",
- "stackpress-framework-preferences",
  "stackpress-framework-ui",
  "stackpress-framework-view",
  "wasm-bindgen",
@@ -4988,7 +4986,7 @@ dependencies = [
  "stackpress-example-generated-profile",
  "stackpress-example-profile-ui-contracts",
  "stackpress-framework-language",
- "stackpress-framework-preferences",
+ "stackpress-framework-view",
  "stackpress-lib",
  "stackpress-server",
  "tauri",
@@ -5003,6 +5001,7 @@ dependencies = [
  "leptos",
  "stackpress-example-profile-ui-contracts",
  "stackpress-framework-ui",
+ "web-sys",
 ]
 
 [[package]]
@@ -5043,7 +5042,6 @@ dependencies = [
  "stackpress-example-ui-gallery-web",
  "stackpress-example-ui-preferences-web",
  "stackpress-example-ui-stream-web",
- "stackpress-framework-preferences",
  "stackpress-framework-ui",
  "stackpress-framework-view",
  "stackpress-lib",
@@ -5139,7 +5137,6 @@ dependencies = [
  "serde_json",
  "stackpress-example-ui-preferences-shared",
  "stackpress-framework-language",
- "stackpress-framework-preferences",
  "stackpress-framework-ui",
  "stackpress-framework-view",
  "wasm-bindgen",
@@ -5155,7 +5152,6 @@ dependencies = [
  "serde",
  "serde_json",
  "stackpress-framework-language",
- "stackpress-framework-preferences",
  "stackpress-framework-ui",
  "stackpress-framework-view",
  "wasm-bindgen",
@@ -5173,7 +5169,6 @@ dependencies = [
  "serde_json",
  "stackpress-example-ui-preferences-shared",
  "stackpress-framework-language",
- "stackpress-framework-preferences",
  "stackpress-framework-ui",
  "stackpress-framework-view",
  "stackpress-lib",
@@ -5242,23 +5237,6 @@ dependencies = [
 [[package]]
 name = "stackpress-framework-language"
 version = "0.1.0"
-dependencies = [
- "serde",
- "stackpress-framework-view",
- "url",
-]
-
-[[package]]
-name = "stackpress-framework-preferences"
-version = "0.1.0"
-dependencies = [
- "libc",
- "serde",
- "serde_json",
- "stackpress-framework-language",
- "stackpress-framework-view",
- "url",
-]
 
 [[package]]
 name = "stackpress-framework-schema"
@@ -5322,11 +5300,14 @@ dependencies = [
 name = "stackpress-framework-view"
 version = "0.1.0"
 dependencies = [
+ "libc",
  "serde",
  "serde_json",
+ "stackpress-framework-language",
  "stackpress-lib",
  "stackpress-server",
  "tokio",
+ "url",
 ]
 
 [[package]]

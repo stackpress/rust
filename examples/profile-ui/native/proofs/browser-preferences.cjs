@@ -22,15 +22,19 @@ if (!logs) throw Error('supply PROFILE_UI_IOS_LOGS');
 (async () => {
   const browser = await chromium.launch({ headless: true });
   try {
-    for (const color of ['light', 'dark']) {
-      const page = await browser.newPage({ colorScheme: color, viewport: { width: 1000, height: 900 } });
+    for (const os of ['light', 'dark']) for (const choice of [null, 'light', 'dark']) {
+      const color = choice || os;
+      const page = await browser.newPage({ colorScheme: os, viewport: { width: 1000, height: 900 } });
       page.setDefaultTimeout(5000);
       const errors = [];
       page.on('pageerror', error => errors.push(String(error)));
-      await page.addInitScript(() => {
+      await page.addInitScript(({choice}) => {
         // The fixture accepts only the four named commands; it grants no generic API.
         const state = window.preferenceProof = { calls: [], hold: false, reject: false };
-        let preferences = { locale: 'fr', theme: 'system' };
+        let preferences = { locale: 'fr', theme: choice };
+        state.queries=0;
+        const match=window.matchMedia.bind(window);
+        window.matchMedia=value => {if(value==='(prefers-color-scheme: dark)')state.queries++;return match(value);};
         const observer = new MutationObserver(() => {
           const root = document.querySelector('.sp-root');
           if (root && !state.first) state.first = { heading: root.querySelector('h1').textContent, theme: root.dataset.theme };
@@ -39,7 +43,12 @@ if (!logs) throw Error('supply PROFILE_UI_IOS_LOGS');
         window.__TAURI__ = { core: { invoke: async (command, args) => {
           if (command === 'profile_search') return JSON.stringify({ revision: 1, rows: [{ id: 'abc123', name: 'Public fixture' }], total: 1 });
           if (command === 'cancel_profile_search') return;
-          if (command === 'load_preferences') return JSON.stringify({ revision: 1, preferences, recovered: false });
+          if (command === 'load_preferences') {
+            const assertNoRoot = document.querySelector('.sp-root');
+            state.rootBeforeLoad = Boolean(assertNoRoot);
+            await new Promise(resolve=>setTimeout(resolve,100));
+            return JSON.stringify({ revision: 1, preferences, recovered: false });
+          }
           if (command !== 'update_preferences') throw Error('denied');
           const request = JSON.parse(args.json);
           state.calls.push(request);
@@ -48,7 +57,7 @@ if (!logs) throw Error('supply PROFILE_UI_IOS_LOGS');
           preferences = request.preferences;
           return JSON.stringify({ revision: 1, preferences, recovered: false });
         } } };
-      });
+      }, {choice});
       await page.route('**/*', route => {
         const url = new URL(route.request().url());
         if (url.origin !== 'https://native-preferences.invalid') return route.abort();
@@ -61,6 +70,8 @@ if (!logs) throw Error('supply PROFILE_UI_IOS_LOGS');
       await page.goto('https://native-preferences.invalid/');
       await page.waitForFunction(() => window.profileUiReady);
       assert.deepEqual(await page.evaluate(() => window.preferenceProof.first), { heading: 'Profils', theme: color });
+      await page.emulateMedia({ colorScheme: os === 'dark' ? 'light' : 'dark' });
+      assert.equal(await page.locator('.sp-root').getAttribute('data-theme'), color, 'OS changes do not track after mount');
       const input = page.locator('input');
       await input.fill('UNSAVED-native-hook');
       await page.evaluate(() => { window.draftReference = document.querySelector('input'); window.preferenceProof.hold = true; });
@@ -70,7 +81,7 @@ if (!logs) throw Error('supply PROFILE_UI_IOS_LOGS');
       assert.equal(await input.inputValue(), 'UNSAVED-native-hook');
       await page.evaluate(() => window.preferenceProof.release());
       await page.waitForFunction(() => document.documentElement.lang === 'en');
-      assert.equal(await page.evaluate(() => window.preferenceProof.calls[0].preferences.theme), 'system');
+      assert.equal(await page.evaluate(() => window.preferenceProof.calls[0].preferences.theme), choice);
       assert.equal(await page.locator('.sp-root').getAttribute('data-theme'), color);
       await page.evaluate(() => { window.preferenceProof.hold = false; window.preferenceProof.reject = true; });
       await page.getByRole('button', { name: color === 'dark' ? 'Light theme' : 'Dark theme', exact: true }).click();
@@ -78,12 +89,13 @@ if (!logs) throw Error('supply PROFILE_UI_IOS_LOGS');
       assert.equal(await input.inputValue(), 'UNSAVED-native-hook');
       assert.equal(await page.locator('.sp-root').getAttribute('data-theme'), color);
       assert.equal(await page.evaluate(() => document.querySelector('input') === window.draftReference), true);
-      await page.screenshot({ path: path.join(logs, 'native-hook-system-' + color + '.png'), fullPage: true });
+      await page.screenshot({ path: path.join(logs, 'native-hook-' + (choice || 'unset') + '-os-' + os + '.png'), fullPage: true });
+      assert.equal(await page.evaluate(() => window.preferenceProof.queries), choice ? 0 : 1, "locale save does not query OS again");
       assert.deepEqual(errors, []);
       await page.evaluate(() => window.disposeProfileUi());
       await page.close();
     }
-    console.log(JSON.stringify({ systemModes: ['light', 'dark'], firstRoot: 'host preferences', persistenceBeforePublication: true, failureKeepsDraftAndRoot: true, listener: false }));
+    console.log(JSON.stringify({ initialModes: ['unset', 'light', 'dark'], cases: 6, firstRoot: 'host preferences', persistenceBeforePublication: true, failureKeepsDraftAndRoot: true, listener: false }));
   } finally {
     await browser.close();
   }

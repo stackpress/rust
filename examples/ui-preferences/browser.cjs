@@ -89,8 +89,8 @@ function request(base, input, policy = false) {
         await context.addCookies([{ name: 'stackpress-flash', value: flash, domain: 'preferences.invalid', path: base || '/', secure: true, httpOnly: true, sameSite: 'Lax' }]);
         await page.goto(`https://preferences.invalid${base}/en/preferences?q=a%2Fb&return=%252F`, { waitUntil: 'commit' });
         await page.locator('body').waitFor({ state: 'attached' });
-        assert.equal(await page.evaluate(() => document.documentElement.dataset.theme), 'system');
-        assert.equal(await page.evaluate(() => getComputedStyle(document.body).backgroundColor), 'rgb(23, 23, 23)', 'CSS resolves system dark before JS');
+        assert.equal(await page.evaluate(() => document.documentElement.dataset.theme), 'dark');
+        assert.equal(await page.evaluate(() => getComputedStyle(document.body).backgroundColor), 'rgb(23, 23, 23)', 'head asset freezes dark before application JS');
         if (mode === 'hydrate') {
           await page.locator('#draft').fill('Typed before JavaScript');
           await page.evaluate(() => { window.beforeDOM = document.querySelector('#app').innerHTML; window.beforeDraft = document.querySelector('#draft'); window.beforeDraft.focus(); });
@@ -156,12 +156,11 @@ function request(base, input, policy = false) {
           assert.equal(page.url(), `https://preferences.invalid${base}/en/preferences`);
           if (reason === 'blocked-cookie') await page.screenshot({ path: path.join(output, 'screenshots', `${name}-failed-save.png`), fullPage: true });
         }
-        await page.locator('#system').click();
-        await page.waitForFunction(() => document.documentElement.dataset.theme === 'system');
-        await page.emulateMedia({ colorScheme: 'light' });
-        assert.equal(await page.evaluate(() => getComputedStyle(document.body).backgroundColor), 'rgb(250, 250, 250)');
+        assert.equal(await page.locator('#system').count(), 0);
+        await page.locator('#light').click();
+        await page.waitForFunction(() => document.documentElement.dataset.theme === 'light');
         await page.emulateMedia({ colorScheme: 'dark' });
-        assert.equal(await page.evaluate(() => getComputedStyle(document.body).backgroundColor), 'rgb(23, 23, 23)');
+        assert.equal(await page.evaluate(() => getComputedStyle(document.body).backgroundColor), 'rgb(250, 250, 250)', 'OS changes cannot replace an explicit choice');
         for (const width of [375, 1280]) for (const zoom of [1, 2]) {
           await page.setViewportSize({ width, height: 900 });
           await page.evaluate(value => { document.documentElement.style.zoom = value; }, zoom);
@@ -212,7 +211,7 @@ function request(base, input, policy = false) {
         assert.equal(admitted.headers()['x-protected-calls'], '1');
         assert.deepEqual(await admitted.json(), { public: 'Explicit fixture admission' });
         assert.deepEqual(errors, []); assert.deepEqual(unexpected, []);
-        receipts.push({ name, calls, errors, unexpected, beforePaintSystem: true, refreshNoFlash: true, blockedCookieDenied: true, flashConsumed: true, dirtyDraftPreserved: true, protectedLink: { destination, status: admitted.status(), calls: 1 } });
+        receipts.push({ name, calls, errors, unexpected, beforePaintFrozen: true, refreshNoFlash: true, blockedCookieDenied: true, flashConsumed: true, dirtyDraftPreserved: true, protectedLink: { destination, status: admitted.status(), calls: 1 } });
         console.log('PASS ' + name);
       } finally { gateRelease(); await context.close(); }
     }

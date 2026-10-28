@@ -1,0 +1,1 @@
+(()=>{const r=document.documentElement;if(!r.hasAttribute('data-theme-unset')||r.hasAttribute('data-theme-frozen'))return;r.dataset.theme=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';r.setAttribute('data-theme-frozen','')})();

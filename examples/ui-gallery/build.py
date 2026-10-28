@@ -32,6 +32,10 @@ def main():
         output.mkdir(parents=True)
         run(f'gallery-{mode}-bindgen',['wasm-bindgen','--target','web','--no-typescript','--out-dir',output,'--out-name','gallery',WASM / 'wasm32-unknown-unknown/debug/stackpress_example_ui_gallery_client.wasm'],WASM)
         shutil.copyfile(ROOT / 'examples/ui-gallery/bootstrap.js', output / 'start.js')
+        import re
+        theme = ROOT / 'crates/framework/framework-view/src'
+        filename = re.search(r'BOOTSTRAP_FILE: &str = "([^"]+)"', (theme / 'theme.rs').read_text())[1]
+        shutil.copyfile(theme / 'initial-theme.js', output / filename)
         import base64
         (output / 'sample.png').write_bytes(base64.b64decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aMesAAAAASUVORK5CYII='))
 

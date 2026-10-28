@@ -1,5 +1,5 @@
 //! Explicit test-only host admission, independent of public layout projections.
-use stackpress_framework_preferences::{ActionId, HostPolicy};
+use stackpress_framework_view::access::{ActionId, HostPolicy};
 use stackpress_lib::Request;
 
 /// Explicitly test-only policy. Enabling this does not supply a real identity system.

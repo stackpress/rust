@@ -1,5 +1,5 @@
 //! Narrow installed-app command DTOs, independent of any filesystem or IPC runtime.
-use crate::Preferences;
+use super::Preferences;
 use serde::{Deserialize, Serialize};
 
 /// Public initial settings, including visible recovery information without a path.

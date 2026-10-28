@@ -1,5 +1,6 @@
 //! Public cookie notices with best-effort consumption and bounded per-root dedupe.
-use crate::cookie::{CookieScope, unique_cookie};
+pub use crate::adapters::web::CookieScope;
+use crate::adapters::web::unique_cookie;
 use serde::{Deserialize, Serialize};
 use stackpress_framework_language::PreferenceError;
 use std::collections::BTreeSet;
@@ -105,7 +106,7 @@ impl FlashCookie {
     /// Rejects an oversized total cookie header before parsing. A host must send
     /// no-store HTML and preserve this deletion header when returning the snapshot.
     pub fn consume(&self, cookie: &str) -> Result<FlashConsumption, PreferenceError> {
-        if cookie.len() > stackpress_framework_language::MAX_COOKIE_BYTES {
+        if cookie.len() > crate::adapters::web::MAX_COOKIE_BYTES {
             return Err(PreferenceError::Limit);
         }
         let value = unique_cookie(cookie, FLASH_COOKIE);

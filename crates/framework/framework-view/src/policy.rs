@@ -272,8 +272,8 @@ pub struct PageContract {
     pub build: String,
     /// Explicit initial language; never inferred from request/session/browser state.
     pub locale: String,
-    /// Host-seeded light/dark/system token; system is resolved by trusted CSS before paint.
-    pub theme: String,
+    /// Saved Light/Dark choice; unset uses the host Light fallback and optional bootstrap.
+    pub theme: Option<String>,
     /// Lowerable serialization and complete-output ceilings.
     pub limits: PageLimits,
 }
@@ -288,7 +288,7 @@ impl PageContract {
             revision,
             build: build.into(),
             locale: "en".into(),
-            theme: "light".into(),
+            theme: Some("light".into()),
             limits: PageLimits::default(),
         };
         contract.validate()?;
@@ -309,7 +309,10 @@ impl PageContract {
                 .bytes()
                 .all(|b| b.is_ascii_alphanumeric() || matches!(b, b'-' | b'_' | b'.'))
             || !valid_locale(&self.locale)
-            || !matches!(self.theme.as_str(), "light" | "dark" | "system")
+            || self
+                .theme
+                .as_deref()
+                .is_some_and(|theme| !matches!(theme, "light" | "dark"))
         {
             return Err(ViewError::InvalidPolicy);
         }
@@ -338,6 +341,9 @@ pub struct PageAssets {
     pub module: PublicLocation,
     /// Optional application-relative stylesheet path.
     pub stylesheet: Option<PublicLocation>,
+    /// Optional immutable one-shot theme asset, used only when theme is unset.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub theme_bootstrap: Option<PublicLocation>,
 }
 
 impl PageAssets {
@@ -350,7 +356,10 @@ impl PageAssets {
         if self.build != contract.build {
             return Err(ViewError::ContractMismatch);
         }
-        for path in std::iter::once(&self.module).chain(self.stylesheet.iter()) {
+        for path in std::iter::once(&self.module)
+            .chain(self.stylesheet.iter())
+            .chain(self.theme_bootstrap.iter())
+        {
             if path.as_str().contains('?') {
                 return Err(ViewError::InvalidPolicy);
             }

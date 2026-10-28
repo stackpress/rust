@@ -270,11 +270,11 @@ async function overlays(page,name) {
         return route.fulfill({status:response.status,headers:response.headers,body:response.body});
       });
       try {
-        await page.goto(`https://gallery.invalid${base}/en/gallery?theme=system`,{waitUntil:'commit'});
+        await page.goto(`https://gallery.invalid${base}/en/gallery`,{waitUntil:'commit'});
         let early=false;
         if(mode==='hydrate'){
           await page.locator('#breadth-core').waitFor();
-          const color=await page.locator('.sp-root').evaluate(node => getComputedStyle(node).backgroundColor);assert.equal(color,scheme==='dark'?'rgb(32, 33, 36)':'rgb(255, 255, 255)','CSS system resolves before bootstrap');
+          const color=await page.locator('.sp-root').evaluate(node => getComputedStyle(node).backgroundColor);assert.equal(color,scheme==='dark'?'rgb(32, 33, 36)':'rgb(255, 255, 255)','frozen theme resolves before application bootstrap');
           await page.locator('#native-details summary').click();await page.locator('#text-rows-1-value').fill('Before JavaScript 雪');await page.locator('#slug').fill('Before JavaScript');await page.locator('#combo').fill('Ga');
           await page.locator('#tag-rows-draft').fill('Early tag 雪'); await page.locator('#metadata-rows-4-key').fill('early'); await page.locator('#metadata-rows-4-value').fill('');
           await page.locator('label[for=rating-2]').click();
@@ -292,18 +292,18 @@ async function overlays(page,name) {
         assert.equal(await page.locator('#nested-rows').count(),0,'raw nullable-boolean fixture is absent from the owner gallery');
         release();await page.waitForFunction(() => window.galleryReady === true);
         if(early){
-          const initialDom=await page.evaluate(() => ({before:beforeBreadth,after:document.getElementById('app').innerHTML}));
+          const initialDom=await page.evaluate(() => (() => { const normalize=html => { const node=document.createElement('div'); node.innerHTML=html; const root=node.querySelector('.sp-root'); root.removeAttribute('data-initial-theme-pending'); root.setAttribute('data-theme','light'); return node.innerHTML; }; return {before:normalize(beforeBreadth),after:normalize(document.getElementById('app').innerHTML)}; })());
           if(initialDom.before!==initialDom.after){
             fs.writeFileSync(path.join(output,`${name}-before-hydrate.html`),initialDom.before); fs.writeFileSync(path.join(output,`${name}-after-hydrate.html`),initialDom.after);
             let first=0;while(first<Math.min(initialDom.before.length,initialDom.after.length) && initialDom.before[first]===initialDom.after[first])first++;
             console.error('initial DOM difference',JSON.stringify({offset:first,before:initialDom.before.slice(first-100,first+300),after:initialDom.after.slice(first-100,first+300)}));
           }
-          assert.equal(initialDom.before,initialDom.after,'identical adopted initial DOM with no exception');
+          assert.equal(initialDom.before,initialDom.after,'identical adopted component DOM except the checked root theme handoff');
           assert.equal(await page.evaluate(() => earlyBreadthNodes.every(([id,node]) => node.isConnected && document.getElementById('breadth-core').contains(node) && (!node.id || document.getElementById(id)===node))),true,'all initial native controls and rows retain identity');assert.equal(await page.locator('#text-rows-1-value').evaluate(node => earlyRow===node && document.activeElement===node),true);const state=await inspect(page);assert.equal(state.text[0],'Before JavaScript 雪');assert.equal(state.combo,'Ga');assert.equal(await page.locator('#native-details').evaluate(node => node.open),true);
           assert.deepEqual(state.tags,['rust','雪']); assert.equal(await page.locator('#tag-rows-draft').inputValue(),'Early tag 雪','the unsubmitted draft survives hydration separately'); assert.deepEqual(state.metadata,[['early','']]);
           assert.deepEqual(state.ranges,[4,3,7]); assert.equal(state.rating,2); assert.equal(state.suggestQuery,'Early query'); assert.equal(state.filter,'Person 02'); assert.deepEqual(new Set(state.selectedRows),new Set(Array.from({length:12},(_,i)=>'r'+i)));}
-        assert.equal(resourceCalls,mode==='hydrate'?0:1,'initial resource acquisition count');assert.equal(await page.locator('.sp-root').getAttribute('data-theme'),'system');
-        await page.emulateMedia({colorScheme:scheme==='dark'?'light':'dark'});assert.equal(await page.locator('.sp-root').evaluate(node => getComputedStyle(node).backgroundColor),scheme==='dark'?'rgb(255, 255, 255)':'rgb(32, 33, 36)','media-only changes do not mutate the seeded token');
+        assert.equal(resourceCalls,mode==='hydrate'?0:1,'initial resource acquisition count');assert.equal(await page.locator('.sp-root').getAttribute('data-theme'),scheme);
+        await page.emulateMedia({colorScheme:scheme==='dark'?'light':'dark'});assert.equal(await page.locator('.sp-root').evaluate(node => getComputedStyle(node).backgroundColor),scheme==='dark'?'rgb(32, 33, 36)':'rgb(255, 255, 255)','OS changes do not change the frozen theme');
         const widgets=await controls(page,mode),layers=await overlays(page,name),geometries=[];
         await page.locator('#update-table-row').click();
         await page.getByRole('table',{name:'Paged people',exact:true}).getByRole('button',{name:'Name',exact:true}).click();
@@ -338,7 +338,7 @@ async function overlays(page,name) {
         await page.evaluate(() => {document.documentElement.style.zoom=1;});
         await page.locator('#suggest').fill('slow');await page.locator('#show-timer-toast').click();await page.evaluate(() => window.disposeGallery());
         await page.waitForFunction(() => document.getElementById('app').innerHTML==='' && breadthLeases().listeners===0 && breadthLeases().timers===0 && breadthLeases().observers===0);
-        assert.deepEqual(errors,[]);assert.deepEqual(unexpected,[]);receipts.push({name,scheme,earlySelection,systemBeforeJs:early,resourceCalls,earlyDraftAndFocus:early,widgets,layers,geometries,leasesReleased:true,errors,unexpected});console.log('PASS breadth '+name);
+        assert.deepEqual(errors,[]);assert.deepEqual(unexpected,[]);receipts.push({name,scheme,earlySelection,frozenBeforeJs:early,resourceCalls,earlyDraftAndFocus:early,widgets,layers,geometries,leasesReleased:true,errors,unexpected});console.log('PASS breadth '+name);
       } finally {release();await context.close();}
     }
     fs.writeFileSync(path.join(output,'breadth-browser.json'),JSON.stringify({listenerStarted:false,chromium:browser.version(),receipts},null,2)+'\n');

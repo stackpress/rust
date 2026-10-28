@@ -65,7 +65,7 @@ fn seed() -> PageSnapshot<()> {
         page: PageId::try_from("test".to_owned()).unwrap(),
         location: "/".into(),
         locale: "en".into(),
-        theme: "light".into(),
+        theme: Some("light".into()),
         status: PublicStatus::ok(),
         data: (),
     }
@@ -123,6 +123,7 @@ async fn check_case(mode: &'static str, caller: &Owner) {
         };
     }
     let assets = PageAssets {
+        theme_bootstrap: None,
         build: "test".into(),
         base: BasePath::default(),
         module: PublicLocation::new("/start.js").unwrap(),
@@ -249,7 +250,7 @@ fn owned_render_migrates_between_threads() {
         initialize_ssr().unwrap();
         let first=Owner::new();first.set();provide_context("first caller");
         let marker=Arc::new(());let weak=Arc::downgrade(&marker);let capture=weak.clone();
-        let renderer=AsyncLeptosRenderer::new(PageContract::new(1,"test").unwrap(),PageAssets{build:"test".into(),base:BasePath::default(),module:PublicLocation::new("/start.js").unwrap(),stylesheet:None},move|_:&PageSnapshot<()>|{
+        let renderer=AsyncLeptosRenderer::new(PageContract::new(1,"test").unwrap(),PageAssets{theme_bootstrap:None,build:"test".into(),base:BasePath::default(),module:PublicLocation::new("/start.js").unwrap(),stylesheet:None},move|_:&PageSnapshot<()>|{
             let _state=RwSignal::new(capture.upgrade().unwrap());
             let resource=Resource::new(||(),|()|cancel_on_cleanup(async{tokio::task::yield_now().await;"migrated".to_owned()}));
             Ok(view!{<Suspense fallback=||"pending">{move||resource.get().map(|value|view!{<p>{value.unwrap()}</p>})}</Suspense>})

@@ -30,6 +30,7 @@ fn metadata_and_assets_are_checked() {
     assert_eq!(BasePath::new("/").unwrap(), BasePath::default());
     let contract = PageContract::new(1, "build-1").unwrap();
     let mut assets = PageAssets {
+        theme_bootstrap: None,
         build: "build-1".into(),
         base,
         module: PublicLocation::new("/assets/start.js").unwrap(),
@@ -50,12 +51,12 @@ fn metadata_and_assets_are_checked() {
     }
     let mut contract = contract;
     contract.locale = "fr-CA".into();
-    contract.theme = "dark".into();
+    contract.theme = Some("dark".into());
     assert!(contract.validate().is_ok());
     contract.locale = "fr--CA".into();
     assert!(contract.validate().is_err());
     contract.locale = "fr".into();
-    contract.theme = "auto".into();
+    contract.theme = Some("auto".into());
     assert!(contract.validate().is_err());
 }
 
@@ -63,6 +64,7 @@ fn metadata_and_assets_are_checked() {
 #[test]
 fn escaped_assets_roundtrip() {
     let assets = PageAssets {
+        theme_bootstrap: None,
         build: "test".into(),
         base: BasePath::default(),
         module: PublicLocation::new(format!("/{}.js", "&".repeat(4000))).unwrap(),
@@ -80,6 +82,7 @@ fn escaped_assets_roundtrip() {
 #[test]
 fn asset_decode_boundaries() {
     let assets = PageAssets {
+        theme_bootstrap: None,
         build: "test".into(),
         base: BasePath::default(),
         module: PublicLocation::new("/start.js").unwrap(),
@@ -101,6 +104,7 @@ fn asset_decode_boundaries() {
     let build = "x".repeat(128);
     let path = format!("/{}", "&".repeat(4095));
     let maximum = PageAssets {
+        theme_bootstrap: None,
         build: build.clone(),
         base: BasePath::default(),
         module: PublicLocation::new(&path).unwrap(),
@@ -131,6 +135,7 @@ fn asset_decode_boundaries() {
 #[test]
 fn asset_logical_byte_boundary_precedes_build_matching() {
     let mut assets = PageAssets {
+        theme_bootstrap: None,
         build: String::new(),
         base: BasePath::default(),
         module: PublicLocation::new("/start.js").unwrap(),
@@ -183,7 +188,7 @@ fn status_and_lower_limits_roundtrip() {
         page: PageId::try_from("profiles".to_owned()).unwrap(),
         location: "/ui/profiles?id=0".into(),
         locale: "en".into(),
-        theme: "light".into(),
+        theme: Some("light".into()),
         status,
         data: serde_json::json!({"total":0,"empty":"","no":false}),
     };
@@ -298,7 +303,7 @@ fn serialization_preserves_cause_without_disclosure() {
         page: PageId::try_from("test".to_owned()).unwrap(),
         location: "/".into(),
         locale: "en".into(),
-        theme: "light".into(),
+        theme: Some("light".into()),
         status: PublicStatus::ok(),
         data: Broken,
     };

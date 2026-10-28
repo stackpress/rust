@@ -12,7 +12,6 @@ members = [
     "examples/review-preview",
     "examples/ui-stream/shared", "examples/ui-stream/client", "examples/ui-stream/web",
     "examples/ui-gallery/shared", "examples/ui-gallery/client", "examples/ui-gallery/web",
-    "crates/framework/framework-preferences",
     "examples/ui-preferences/shared", "examples/ui-preferences/client", "examples/ui-preferences/web",
     "crates/framework/framework-schema", "crates/framework/framework-sql",
     "examples/generated-workspace/tool", "examples/generated-workspace/app",
@@ -57,7 +56,6 @@ stackpress-sql-mysql = { path = "crates/sql/sql-mysql", optional = true }
 stackpress-framework-view = { path = "crates/framework/framework-view", optional = true }
 stackpress-framework-ui = { path = "crates/framework/framework-ui", optional = true }
 stackpress-framework-language = { path = "crates/framework/framework-language", optional = true }
-stackpress-framework-preferences = { path = "crates/framework/framework-preferences", optional = true }
 
 stackpress-framework-schema = { path = "crates/framework/framework-schema", optional = true }
 stackpress-framework-sql = { path = "crates/framework/framework-sql", optional = true }
@@ -81,6 +79,9 @@ sql-sqlite = ["sql", "dep:stackpress-sql-sqlite"]
 sql-postgres = ["sql", "dep:stackpress-sql-postgres"]
 sql-mysql = ["sql", "dep:stackpress-sql-mysql"]
 framework-view = ["dep:stackpress-framework-view"]
+framework-view-preferences = ["framework-view", "stackpress-framework-view/preferences"]
+framework-view-flash = ["framework-view", "stackpress-framework-view/flash"]
+framework-view-native-file = ["framework-view-preferences", "stackpress-framework-view/native-file"]
 framework-view-server = ["framework-view", "stackpress-framework-view/server"]
 framework-ui = ["framework-view", "dep:stackpress-framework-ui"]
 framework-ui-ssr = ["framework-ui", "stackpress-framework-ui/ssr"]
@@ -90,7 +91,6 @@ framework-ui-async = ["framework-ui", "stackpress-framework-ui/async"]
 framework-ui-rich = ["framework-ui", "stackpress-framework-ui/rich"]
 framework-ui-format = ["framework-ui", "stackpress-framework-ui/format"]
 framework-language = ["dep:stackpress-framework-language"]
-framework-preferences = ["dep:stackpress-framework-preferences"]
 
 [dev-dependencies]
 serde = { version = "1", features = ["derive"] }

@@ -69,7 +69,8 @@ pub(super) fn preference(
 ) {
     leptos::task::spawn_local_scoped_with_cancellation(async move {
         let result = async {
-            let update = stackpress_framework_language::PreferenceUpdate { locale, location };
+            let update =
+                stackpress_framework_view::preferences::PreferenceUpdate { locale, location };
             let body = serde_json::to_string(&update).map_err(|_| ())?;
             let text = fetch(format!("{base}/ui-preferences"), Some(body)).await?;
             let reply = super::decode_preference(&text, &base).map_err(|_| ())?;

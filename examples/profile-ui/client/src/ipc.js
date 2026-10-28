@@ -22,7 +22,7 @@ export function loadPreferences() {
 export function updatePreferences(json) {
   return preferencesDeadline(window.__TAURI__.core.invoke('update_preferences', { json }));
 }
-/** System colors are resolved before mounting, never inferred for legacy startup. */
+/** Initial OS color is sampled once, after an unset native preference loads. */
 export function systemDark() {
   return window.matchMedia('(prefers-color-scheme: dark)').matches;
 }

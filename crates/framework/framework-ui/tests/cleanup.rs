@@ -17,7 +17,7 @@ fn seed() -> PageSnapshot<()> {
         page: PageId::try_from("test".to_owned()).unwrap(),
         location: "/".into(),
         locale: "en".into(),
-        theme: "light".into(),
+        theme: Some("light".into()),
         status: stackpress_framework_view::PublicStatus::ok(),
         data: (),
     }
@@ -104,6 +104,7 @@ async fn every_render_exit_releases_reactive_state() {
         let renderer = LeptosRenderer::new(
             contract,
             PageAssets {
+                theme_bootstrap: None,
                 build: "test".into(),
                 base: BasePath::default(),
                 module: PublicLocation::new("/start.js").unwrap(),

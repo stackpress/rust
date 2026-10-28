@@ -24,7 +24,7 @@ fn seed() -> PageSnapshot<()> {
         page: PageId::try_from("stream-test".to_owned()).unwrap(),
         location: "/demo?q=1&x=2".into(),
         locale: "en".into(),
-        theme: "light".into(),
+        theme: Some("light".into()),
         status: PublicStatus::ok(),
         data: (),
     }
@@ -32,6 +32,7 @@ fn seed() -> PageSnapshot<()> {
 /// Deterministic assets never create a listener or a live browser dependency.
 fn assets() -> PageAssets {
     PageAssets {
+        theme_bootstrap: None,
         build: "stream-test".into(),
         base: BasePath::default(),
         module: PublicLocation::new("/start.js").unwrap(),

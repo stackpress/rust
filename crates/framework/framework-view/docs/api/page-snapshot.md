@@ -44,7 +44,8 @@ The envelope rejects unknown fields. Data validation remains the application's r
 | `build` | `String` | Matching asset build identity. |
 | `page` | `PageId` | Checked compiled identity. |
 | `location` | `String` | Public encoded pathname/query, checked on validation. |
-| `locale`, `theme` | `String` each | Explicit initial settings under `PageContract` syntax. |
+| `locale` | `String` | Explicit initial language under `PageContract` syntax. |
+| `theme` | `Option<String>` | Explicit Light/Dark or unset; missing/null is unset. |
 | `status` | `PublicStatus` | Public status/error; defaults to OK if absent on decode. |
 | `data` | `T` | Explicit public projection only. |
 

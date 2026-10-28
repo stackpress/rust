@@ -81,6 +81,7 @@ async fn render_page(
 ) -> Result<Flow> {
     let probe = inv.service::<Arc<Probe>>()?.clone();
     let assets = PageAssets {
+        theme_bootstrap: None,
         build: "ui-stream".into(),
         base: BasePath::new(&base).map_err(view_error)?,
         module: PublicLocation::new("/assets/start.js").map_err(view_error)?,
@@ -115,7 +116,7 @@ async fn render_page(
         page: PageId::try_from("stream".to_owned()).map_err(view_error)?,
         location: req.url.path().to_owned(),
         locale: "en".into(),
-        theme: "light".into(),
+        theme: Some("light".into()),
         status: PublicStatus::ok(),
         data: DemoData {
             delay_ms: 800,

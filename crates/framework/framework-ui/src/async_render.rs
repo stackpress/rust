@@ -38,6 +38,7 @@ use std::{
 /// use stackpress_framework_view::{BasePath, PageAssets, PageContract, PageSnapshot, PublicLocation};
 /// let contract = PageContract::new(1, "app-build")?;
 /// let assets = PageAssets {
+///     theme_bootstrap: None,
 ///     build: "app-build".into(), base: BasePath::default(),
 ///     module: PublicLocation::new("/start.js")?, stylesheet: None,
 /// };
@@ -187,7 +188,21 @@ fn prepare<T: Serialize, V: IntoView>(
         Ok::<_, ViewError>(stream)
     })?;
     let locale = snapshot.locale.clone();
-    let theme = snapshot.theme.clone();
+    let theme = snapshot.theme.as_deref().unwrap_or("light").to_owned();
+    let theme_marker = if snapshot.theme.is_none() {
+        " data-theme-unset"
+    } else {
+        ""
+    };
+    let theme_head = if snapshot.theme.is_none() {
+        stackpress_framework_view::theme::bootstrap_tag(
+            &assets.base,
+            assets.theme_bootstrap.as_ref(),
+            None,
+        )?
+    } else {
+        String::new()
+    };
     let limits = contract.limits;
     let assembly = async move {
         // Bound accumulation while polling; arbitrary component CPU/allocation is trusted.
@@ -209,7 +224,7 @@ fn prepare<T: Serialize, V: IntoView>(
         let replay =
             crate::replay::ResourceReplay::new(values, limits.snapshot_bytes)?.script_json()?;
         let html = format!(
-            "<!DOCTYPE html><html lang=\"{locale}\" data-theme=\"{theme}\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><!--HEAD--></head><body><div id=\"app\">{content}</div><script type=\"application/json\" id=\"stackpress-page\">{seed}</script><script type=\"application/json\" id=\"stackpress-resources\">{replay}</script><script type=\"application/json\" id=\"stackpress-assets\">{bootstrap}</script><script type=\"module\" src=\"{}\"></script></body></html>",
+            "<!DOCTYPE html><html lang=\"{locale}\" data-theme=\"{theme}\"{theme_marker}><head>{theme_head}<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><!--HEAD--></head><body><div id=\"app\">{content}</div><script type=\"application/json\" id=\"stackpress-page\">{seed}</script><script type=\"application/json\" id=\"stackpress-resources\">{replay}</script><script type=\"application/json\" id=\"stackpress-assets\">{bootstrap}</script><script type=\"module\" src=\"{}\"></script></body></html>",
             escape_html(module.as_str())
         );
         let html = head

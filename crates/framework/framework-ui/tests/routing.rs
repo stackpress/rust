@@ -57,6 +57,7 @@ async fn head_router_and_limits() {
     .unwrap();
     let contract = PageContract::new(1, "test").unwrap();
     let assets = PageAssets {
+        theme_bootstrap: None,
         build: "test".into(),
         base: BasePath::new("/demo").unwrap(),
         module: PublicLocation::new("/assets/start.js").unwrap(),
@@ -77,7 +78,7 @@ async fn head_router_and_limits() {
         page: PageId::try_from("profiles".to_owned()).unwrap(),
         location: "/demo/ui/profiles?id=a%26b".into(),
         locale: "en".into(),
-        theme: "light".into(),
+        theme: Some("light".into()),
         status: PublicStatus::ok(),
         data: "</title><script>pwned</script>&\"'".to_owned(),
     };

@@ -6,6 +6,7 @@ Trusted bootstrap metadata; not an asset server or integrity manifest. Source: [
 use stackpress_framework_view::{BasePath, PageAssets, PageContract, PublicLocation, ViewError};
 fn main() -> Result<(), ViewError> {
     let assets = PageAssets {
+        theme_bootstrap: None,
         build: "demo-1".into(),
         base: BasePath::new("/demo")?,
         module: PublicLocation::new("/assets/start.js")?,
@@ -29,6 +30,7 @@ All fields are public; serde rejects unknown fields and uses checked location/mo
 | `build` | `String` | Exact agreement with the page contract build. |
 | `base` | `BasePath` | Trusted mount applied explicitly to resource paths. |
 | `module` | `PublicLocation` | App-relative module pathname; no query. |
+| `theme_bootstrap` | `Option<PublicLocation>` | Immutable same-origin classic head asset for unset only; default None on read. |
 | `stylesheet` | `Option<PublicLocation>` | Optional app-relative stylesheet pathname; no query. |
 
 ## Operations

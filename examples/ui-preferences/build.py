@@ -36,6 +36,11 @@ def main():
         output.mkdir(parents=True)
         run(f'preferences-{mode}-bindgen', ['wasm-bindgen', '--target', 'web', '--no-typescript', '--out-dir', output, '--out-name', 'preferences', WASM / 'wasm32-unknown-unknown/debug/stackpress_example_ui_preferences_client.wasm'], WASM)
         shutil.copyfile(ROOT / 'examples/ui-preferences/bootstrap.js', output / 'start.js')
+        # Immutable bootstrap filename comes from the same public Rust asset identity.
+        import re
+        theme = ROOT / 'crates/framework/framework-view/src'
+        filename = re.search(r'BOOTSTRAP_FILE: &str = "([^"]+)"', (theme / 'theme.rs').read_text())[1]
+        shutil.copyfile(theme / 'initial-theme.js', output / filename)
 
 
 if __name__ == '__main__':

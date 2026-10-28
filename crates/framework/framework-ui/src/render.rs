@@ -66,6 +66,7 @@ pub struct PreparedPage {
 /// use stackpress_framework_view::{BasePath, PageAssets, PageContract, PageSnapshot, PublicLocation};
 /// let contract = PageContract::new(1, "app-build")?;
 /// let assets = PageAssets {
+///     theme_bootstrap: None,
 ///     build: "app-build".into(), base: BasePath::default(),
 ///     module: PublicLocation::new("/start.js")?, stylesheet: None,
 /// };
@@ -103,6 +104,7 @@ impl LeptosRenderer<()> {
         contract.locale = snapshot.locale.clone();
         contract.theme = snapshot.theme.clone();
         let assets = PageAssets {
+            theme_bootstrap: None,
             build: contract.build.clone(),
             base: BasePath::default(),
             module: PublicLocation::new("/assets/start.js")?,
@@ -265,6 +267,20 @@ fn prepare<T: Serialize, V: IntoView>(
     let seed = snapshot.script_json_with(contract.limits)?;
     let bootstrap = assets.script_json()?;
     let module = assets.base.join(assets.module.as_str())?;
+    let theme_head = if snapshot.theme.is_none() {
+        stackpress_framework_view::theme::bootstrap_tag(
+            &assets.base,
+            assets.theme_bootstrap.as_ref(),
+            None,
+        )?
+    } else {
+        String::new()
+    };
+    let theme_marker = if snapshot.theme.is_none() {
+        " data-theme-unset"
+    } else {
+        ""
+    };
     let owner = RenderOwner::new();
     let (meta, head) = ServerMetaContext::new();
     let body = owner.owner.with(|| {
@@ -290,9 +306,9 @@ fn prepare<T: Serialize, V: IntoView>(
     drop(owner);
     // Every interpolated attribute is checked and escaped independently of JSON script text.
     let html = format!(
-        "<!DOCTYPE html><html lang=\"{}\" data-theme=\"{}\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><!--HEAD--></head><body><div id=\"app\">{body}</div><script type=\"application/json\" id=\"stackpress-page\">{seed}</script><script type=\"application/json\" id=\"stackpress-assets\">{bootstrap}</script><script type=\"module\" src=\"{}\"></script></body></html>",
+        "<!DOCTYPE html><html lang=\"{}\" data-theme=\"{}\"{theme_marker}><head>{theme_head}<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><!--HEAD--></head><body><div id=\"app\">{body}</div><script type=\"application/json\" id=\"stackpress-page\">{seed}</script><script type=\"application/json\" id=\"stackpress-assets\">{bootstrap}</script><script type=\"module\" src=\"{}\"></script></body></html>",
         snapshot.locale,
-        snapshot.theme,
+        snapshot.theme.as_deref().unwrap_or("light"),
         escape_html(module.as_str())
     );
     Ok(PreparedPage {

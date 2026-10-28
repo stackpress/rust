@@ -26,10 +26,11 @@ fn toggle_provided_theme() -> Result<(), &'static str> {
 
 ## Theme
 
-`Theme` is Copy/Clone, Debug, Default, PartialEq/Eq. `Light` is default; `Dark` and `System` are additive choices. `as_str(self)` takes no
-additional parameters and returns the stable `&'static str` token `light`, `dark` or `system`.
-System requires initial `SystemThemeStyles` (or `SYSTEM_THEME_STYLES` in the trusted
-stylesheet); CSS media queries resolve its surfaces before paint without changing the token.
+`Theme` is Copy/Clone, Debug, Default, PartialEq/Eq. Light is the default;
+Dark is the other choice. `as_str(self)` returns `light` or `dark`.
+Saved absence belongs to view's optional preference contracts. The external initial
+asset can acquire an effective color once without persisting or tracking the OS.
+See the [presentation migration](../../../framework-view/docs/migration-issue15.md).
 
 ## ThemeState and context
 
@@ -40,7 +41,7 @@ The Copy/Clone handle owns a signal in the current Leptos Owner.
 | `ThemeState::new` | `Theme` | Initializes explicit state in the active Owner. |
 | `get(self)` | None | Reactive read. |
 | `set(self, theme)` | `Theme` | Replaces current root value. |
-| `toggle(self)` | None | Switches Light ↔ Dark synchronously; System chooses Dark. |
+| `toggle(self)` | None | Switches Light ↔ Dark synchronously. |
 | `use_theme()` | None | Looks up the nearest provided ThemeState. |
 
 **Returns** `new` returns Self, `get` returns Theme, mutations return unit. `use_theme` returns

@@ -8,11 +8,22 @@ publish.workspace = true
 
 [features]
 default = []
+cookies = ["dep:stackpress-framework-language", "dep:url"]
+preferences = ["cookies"]
+flash = ["cookies"]
+web-preferences = ["preferences", "server"]
+web-flash = ["flash", "server"]
+native-file = ["preferences", "dep:libc"]
 server = ["dep:stackpress-lib", "dep:stackpress-server"]
 
 [dependencies]
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+stackpress-framework-language = { path = "../framework-language", optional = true }
+url = { version = "=2.5.8", optional = true }
+
+[target.'cfg(all(unix, not(target_arch = "wasm32")))'.dependencies]
+libc = { version = "=0.2.191", optional = true }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 stackpress-lib = { path = "../../lib", optional = true }
