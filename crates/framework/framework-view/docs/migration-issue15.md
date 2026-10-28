@@ -46,5 +46,7 @@ SYSTEM_THEME_STYLES and system.css are removed.
 Facade users replace the removed `framework-preferences` feature/import with
 `framework-view-preferences`, `framework-view-flash`, `framework-view-native-file`,
 and `stackpress::framework_view` paths as applicable. Host features remain explicit.
-The agreed function entry-point convention is `view::{preferences,flash}::register`;
-host registration implementation is the following milestone, coordinated with issue 14.
+The function entry points `view::{preferences,flash}::register` use the existing server
+phases and explicit selection. See [native presentation composition](presentation-host.md)
+for host features, typed configuration and mandatory host admission. The generic plugin
+entry point remains reserved for issue 14.

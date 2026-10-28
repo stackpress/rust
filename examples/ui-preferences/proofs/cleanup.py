@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Delete only this milestone's exact target and generated Profile asset outputs."""
+"""Delete only the selected milestone's exact target and generated Profile asset outputs."""
 import argparse
 import json
 from pathlib import Path
@@ -14,8 +14,9 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--target',type=Path,required=True)
     parser.add_argument('--evidence',type=Path,required=True)
+    parser.add_argument('--milestone',choices=['m1','m2'],default='m1')
     args=parser.parse_args()
-    expected=ROOT/'target/issue15-m1'
+    expected=ROOT/f'target/issue15-{args.milestone}'
     assert args.target.absolute()==expected and not args.target.is_symlink(), 'unexpected target'
     args.evidence.mkdir(parents=True,exist_ok=True)
     before=int(subprocess.check_output(['du','-sk',str(args.target)],text=True).split()[0]) if args.target.exists() else 0

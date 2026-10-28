@@ -2,17 +2,13 @@
 //! Callers own HTTP hosting; this library never binds a listener.
 //! The opt-in fixture policy is deliberately not authentication or a deployable host.
 use serde::Deserialize;
-use stackpress_example_ui_preferences_shared::{Seed, action_at_origin, registry};
-use stackpress_framework_view::BasePath;
+use stackpress_example_ui_preferences_shared::{Seed, registry};
 use stackpress_framework_view::access::{ActionId, HostAccess, HostPolicy};
-use stackpress_framework_view::flash::FlashCookie;
-use stackpress_framework_view::preferences::CookieScope;
-use stackpress_framework_view::preferences::{
-    LocaleRouting, MAX_PREFERENCE_BYTES, PreferenceError,
-};
-use stackpress_lib::{Body, Error, ErrorKind, Flow, Request, Response, Result, handler};
+use stackpress_framework_view::preferences::LocaleRouting;
+use stackpress_framework_view::{BasePath, PublicLocation, flash, preferences};
+use stackpress_lib::{Error, ErrorKind, Flow, Invocation, Request, Response, Result, handler};
 use stackpress_server::{
-    ServerBuilder,
+    ConfigLayers, ServerBuilder, ServerInvocationExt, StartupContext,
     http::{HttpAdapter, HttpOutput},
 };
 use std::{
@@ -66,22 +62,18 @@ async fn page(
     base: BasePath,
     csr: bool,
     configured: bool,
-    origin: String,
+    invocation: Invocation<'_>,
 ) -> Result<Flow> {
     let location = req.url.query().map_or_else(
         || req.url.path().to_owned(),
         |query| format!("{}?{query}", req.url.path()),
     );
-    let cookie = req.headers.get("cookie").unwrap_or_default();
-    let preferences = action_at_origin(base.clone(), &origin)
-        .map_err(|cause| failure("configure preferences", cause))?
-        .select(&location, cookie)
+    let preferences = invocation
+        .service::<preferences::Service>()?
+        .action()
+        .select(&location, req.headers.get("cookie").unwrap_or_default())
         .map_err(|cause| failure("select preferences", cause))?;
-    let scope =
-        CookieScope::new(origin, base.clone()).map_err(|cause| failure("scope flash", cause))?;
-    let consumed = FlashCookie::new(scope)
-        .consume(cookie)
-        .map_err(|cause| failure("consume public flash", cause))?;
+    let notice = invocation.service::<flash::Service>()?.notice(req)?;
     let facts = facts(req);
     let policy: Option<&dyn HostPolicy<Facts>> = configured.then_some(&FixturePolicy);
     let allowed = HostAccess::new(policy, &facts)
@@ -96,65 +88,14 @@ async fn page(
             preferences,
             base,
             location,
-            flash: consumed.notice,
+            flash: notice,
             allowed,
         },
         csr,
     )?;
-    // Clear with exactly the issuing scope before this complete response is committed.
-    if let Some(clear) = consumed.clear_cookie {
-        res.headers_mut()?.append("set-cookie", &clear)?;
-    }
+    // The independently selected flash response hook clears before adapter commitment.
     res.html(html)?;
     Ok(Flow::Continue)
-}
-/// Fixed validated action; failed actions never stage preference cookies.
-async fn preferences(
-    req: &mut Request,
-    res: &mut Response,
-    base: BasePath,
-    origin: String,
-) -> Result<Flow> {
-    let bytes = match req.body() {
-        Body::Bytes(value) => value.as_slice(),
-        Body::Text(value) => value.as_bytes(),
-        _ => &[],
-    };
-    if bytes.len() > MAX_PREFERENCE_BYTES {
-        return denied(res, 413);
-    }
-    let Ok(text) = std::str::from_utf8(bytes) else {
-        return denied(res, 400);
-    };
-    let action =
-        action_at_origin(base, &origin).map_err(|cause| failure("configure preferences", cause))?;
-    let outcome = if req.url.path().ends_with("/confirm") {
-        action.confirm(
-            "POST",
-            req.headers.get("origin"),
-            text,
-            req.headers.get("cookie").unwrap_or_default(),
-        )
-    } else {
-        action.apply("POST", req.headers.get("origin"), text)
-    };
-    match outcome {
-        Ok(reply) => {
-            for cookie in &reply.cookies {
-                res.headers_mut()?.append("set-cookie", cookie)?;
-            }
-            res.json(&reply)?;
-            Ok(Flow::Continue)
-        }
-        Err(cause) => denied(
-            res,
-            match cause {
-                PreferenceError::Origin => 403,
-                PreferenceError::Limit => 413,
-                _ => 400,
-            },
-        ),
-    }
 }
 /// Denied deep links and forged mutations never invoke the protected closure.
 async fn protected(
@@ -221,6 +162,46 @@ fn register(
     origin: String,
     scoped_lifecycle: bool,
 ) -> Result<()> {
+    // This example explicitly composes ordinary registration functions; no nested plugin API.
+    app.on_config(sessionless)?;
+    preferences::register(app)?;
+    flash::register(app)?;
+    let locales = registry();
+    let pages = LocaleRouting::new(&locales, &base)
+        .prefixes()
+        .into_iter()
+        .map(|prefix| PublicLocation::new(format!("{prefix}/preferences")))
+        .collect::<std::result::Result<Vec<_>, _>>()
+        .map_err(|cause| failure("flash pages", cause))?;
+    let preference_config = preferences::Config {
+        origin: origin.clone(),
+        base: base.clone(),
+        locales: locales.locales().map(str::to_owned).collect(),
+        default_locale: locales.default_locale().into(),
+        aliases: locales
+            .aliases()
+            .map(|(alias, locale)| (alias.into(), locale.into()))
+            .collect(),
+        settings_path: PublicLocation::new("/ui-preferences")
+            .map_err(|cause| failure("settings path", cause))?,
+        confirmation_path: PublicLocation::new("/ui-preferences/confirm")
+            .map_err(|cause| failure("confirmation path", cause))?,
+        // The composed review host already owns its checked generated AssetBundle.
+        serve_theme_bootstrap: !scoped_lifecycle,
+    };
+    let flash_config = flash::Config {
+        origin,
+        base: base.clone(),
+        pages,
+    };
+    let mut layers = ConfigLayers::new();
+    layers.value(
+        "preferences-example",
+        serde_json::json!({
+            "view_preferences": preference_config, "view_flash": flash_config,
+        }),
+    )?;
+    app.config_layers(layers)?;
     let requests = Arc::new(AtomicUsize::new(0));
     let responses = Arc::new(AtomicUsize::new(0));
     let protected_calls = Arc::new(AtomicUsize::new(0));
@@ -248,7 +229,10 @@ fn register(
             if !scoped {return Ok(Flow::Continue);}
             res.headers_mut()?.set("x-preferences-lifecycle", &format!("{request}/{response}"))?;
             res.headers_mut()?.set("x-protected-calls", &calls.to_string())?;
-            res.headers_mut()?.set("cache-control", "no-store")?;
+            // The immutable pre-paint resource retains its cache policy in the finite host.
+            if !req.url.path().ends_with(stackpress_framework_view::theme::BOOTSTRAP_FILE) {
+                res.headers_mut()?.set("cache-control", "no-store")?;
+            }
             res.headers_mut()?.set("content-security-policy", "default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; style-src 'unsafe-inline'; connect-src 'self'; base-uri 'none'; form-action 'self'")?;
             Ok(Flow::Continue)
         })
@@ -256,24 +240,11 @@ fn register(
     for prefix in LocaleRouting::new(&registry(), &base).prefixes() {
         let path = format!("{}{prefix}/preferences", base.as_str());
         let base = base.clone();
-        let origin = origin.clone();
         app.get(
             &path,
-            handler(move |req, res, _| {
+            handler(move |req, res, invocation| {
                 let base = base.clone();
-                Box::pin(page(req, res, base, csr, configured, origin.clone()))
-            }),
-        )?;
-    }
-    for suffix in ["/ui-preferences", "/ui-preferences/confirm"] {
-        let action_path = format!("{}{suffix}", base.as_str());
-        let base = base.clone();
-        let origin = origin.clone();
-        app.post(
-            &action_path,
-            handler(move |req, res, _| {
-                let base = base.clone();
-                Box::pin(preferences(req, res, base, origin.clone()))
+                Box::pin(page(req, res, base, csr, configured, invocation))
             }),
         )?;
     }
@@ -293,6 +264,11 @@ fn register(
         )?;
     }
     Ok(())
+}
+/// Explicit fixture admission is sessionless; protected-operation policy remains separate.
+async fn sessionless(start: &mut StartupContext) -> Result<Flow> {
+    start.register(Arc::new(preferences::Admission::sessionless()))?;
+    Ok(Flow::Continue)
 }
 /// Normalize and handle once; no listening socket, daemon or implicit retry exists.
 pub async fn run() -> std::result::Result<(), Box<dyn std::error::Error>> {

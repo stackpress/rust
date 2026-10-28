@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import signal
 import tempfile
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -15,8 +16,16 @@ def run(command, env, log):
     with log.open("w") as output:
         output.write("$ " + " ".join(map(str, command)) + "\n")
         output.flush()
-        subprocess.run(list(map(str, command)), cwd=ROOT, env=env, stdout=output,
-                       stderr=subprocess.STDOUT, timeout=600 if command[0] == "cargo" else 120, check=True)
+        with subprocess.Popen(list(map(str, command)), cwd=ROOT, env=env, stdout=output,
+                              stderr=subprocess.STDOUT, start_new_session=True) as child:
+            try:
+                code = child.wait(timeout=600 if command[0] == "cargo" else 120)
+                if code:
+                    raise subprocess.CalledProcessError(code, command)
+            finally:
+                if child.poll() is None:
+                    os.killpg(child.pid, signal.SIGKILL)
+                child.wait()
     print(f"PASS {log.stem}", flush=True)
 
 
@@ -64,6 +73,7 @@ def main():
     if args.sqlite:
         run(["cargo", "build", "--locked", "-p", "stackpress-example-sql-profile",
              "--bin", "sql-profile-setup"], env, logs / "setup-build.log")
+    proofs = 0
     with tempfile.TemporaryDirectory(prefix="profile-ui-browser-") as directory:
         if args.sqlite:
             database = Path(directory) / "profiles.sqlite"
@@ -78,8 +88,13 @@ def main():
                 run(["node", f"examples/profile-ui/proofs/{script}.cjs"],
                     dict(env, PROFILE_UI_BASE=base, PROFILE_UI_SCREENSHOT_PREFIX=str(logs / mount)),
                     logs / f"{script}-{mount}.log")
+                proofs += 1
+        # This script itself covers both mounts and both explicit/unset themes (four cases).
+        run(["node", "examples/profile-ui/proofs/browser-initial-theme.cjs"],
+            dict(env, PROFILE_UI_THEME_LOGS=str(logs)), logs / "initial-theme.log")
+        proofs += 1
     (logs / "summary.json").write_text(json.dumps({"backend": "sqlite" if args.sqlite else "memory",
-        "proofs": 8, "mounts": ["", "/demo/v1"], "listener_started": False, "result": "passed"}, indent=2) + "\n")
+        "proofs": proofs, "initial_theme_cases": 4, "mounts": ["", "/demo/v1"], "listener_started": False, "result": "passed"}, indent=2) + "\n")
 
 
 if __name__ == "__main__":

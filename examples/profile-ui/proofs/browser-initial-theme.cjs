@@ -1,12 +1,12 @@
 // Actual Profile SSR + hydration, including the pending LayoutProvider handoff.
 const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),assert=require('node:assert/strict');
 const {chromium}=require(process.env.PROFILE_UI_PLAYWRIGHT);
-const root=path.resolve(__dirname,'../../..'),output=process.env.PROFILE_UI_IOS_LOGS;
+const root=path.resolve(__dirname,'../../..'),output=process.env.PROFILE_UI_THEME_LOGS||process.env.PROFILE_UI_IOS_LOGS;
 (async()=>{
   const browser=await chromium.launch({headless:true});
   try{
     for(const base of ['','/demo/v1']) for(const display of ['fr-unset','fr-dark']){
-      const html=cp.execFileSync(path.join(process.env.CARGO_TARGET_DIR,'debug/stackpress-example-profile-ui-web'),{env:{...process.env,PROFILE_UI_BASE:base,PROFILE_UI_DISPLAY:display},encoding:'utf8',timeout:10000});
+      const html=cp.execFileSync(process.env.PROFILE_UI_HOST||path.join(process.env.CARGO_TARGET_DIR,'debug/stackpress-example-profile-ui-web'),{env:{...process.env,PROFILE_UI_BASE:base,PROFILE_UI_DISPLAY:display},encoding:'utf8',timeout:10000});
       fs.writeFileSync(path.join(output,'profile-source-'+(base?'mounted':'root')+'-'+display+'.html'),html);
       const page=await browser.newPage({colorScheme:'dark'});page.setDefaultTimeout(10000);
       await page.addInitScript(()=>{
