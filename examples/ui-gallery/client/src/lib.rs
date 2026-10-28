@@ -12,6 +12,27 @@ mod browser {
         stackpress_example_ui_gallery_shared::corpus_json()
     }
 
+    /// Mount only the explicit finite collection proof; ordinary startup never calls this.
+    #[wasm_bindgen]
+    pub fn start_collections() -> Result<js_sys::Function, JsValue> {
+        let app = web_sys::window()
+            .and_then(|window| window.document())
+            .and_then(|document| document.get_element_by_id("app"))
+            .ok_or_else(|| JsValue::from_str("No proof root"))?
+            .dyn_into::<web_sys::HtmlElement>()?;
+        let root = move || view! {<stackpress_example_ui_gallery_shared::collection_proof::CollectionProof/>};
+        #[cfg(feature = "hydrate")]
+        let handle = leptos::mount::hydrate_from(app, root);
+        #[cfg(feature = "csr")]
+        let handle = leptos::mount::mount_to(app, root);
+        let mut handle = Some(handle);
+        Ok(Closure::wrap(Box::new(move || {
+            handle.take();
+        }) as Box<dyn FnMut()>)
+        .into_js_value()
+        .unchecked_into())
+    }
+
     /// Copy a native input property, without rewriting its initial SSR attribute.
     fn input_value(document: &web_sys::Document, id: &str, fallback: &str) -> String {
         document
@@ -107,6 +128,8 @@ mod browser {
             breadth.slug = input_value(&document, "slug", &breadth.slug);
             breadth.query = input_value(&document, "combo", &breadth.query);
             breadth.suggestion_query = input_value(&document, "suggest", &breadth.suggestion_query);
+            // Chips submit exact hidden values; their separate add draft is adopted by
+            // TagList before hydration and never becomes a submitted tag implicitly.
             for (index, key) in [10, 20].into_iter().enumerate() {
                 breadth.tags[index] = input_value(
                     &document,

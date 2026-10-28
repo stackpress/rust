@@ -130,13 +130,18 @@ async function controls(page, mode) {
   await page.locator('#text-rows-add').click(); assert.equal(await page.locator('#text-rows-add').isDisabled(),true); await page.waitForFunction(() => document.activeElement?.id==='text-rows-3-remove');
   await page.locator('#text-rows-3-value').fill('Third'); await page.locator('#text-rows-1-remove').click(); await page.waitForFunction(() => document.activeElement?.id==='text-rows-add');
   await page.locator('#text-rows-add').click(); assert.equal(await page.locator('#text-rows-4-value').count(),1); assert.equal(await page.locator('#text-rows-1-value').count(),0);
-  await page.locator('#tag-rows-10-value').fill('0'); await page.locator('#tag-rows-10-down').click(); assert.equal(await page.locator('#tag-rows-10-value').inputValue(),'0');
+  // Tags are plain chips; changing one means remove then append an explicit draft.
+  await page.locator('#tag-rows-10-remove').click();
+  await page.locator('#tag-rows-draft').fill('0'); await page.locator('#tag-rows-draft').press('Enter');
+  assert.deepEqual((await inspect(page)).tags,['雪','0']);
+  assert.equal(await page.locator('#tag-rows-21-value').inputValue(),'0');
+  assert.equal(await page.locator('#tag-rows [id$="-up"],#tag-rows [id$="-down"]').count(),0);
   await page.locator('#metadata-rows-4-key').fill('empty'); await page.locator('#metadata-rows-4-value').fill('');
   await page.locator('#nested-rows-add').click(); assert.equal(await page.locator('#nested-9-value').inputValue(),'missing','reentrant default factory runs outside the collection guard');
   await page.locator('#nested-rows').getByRole('button',{name:'Set null',exact:true}).first().click(); assert.equal(await page.locator('#nested-8-value').inputValue(),'null');
 
   const fields = await page.locator('#collection-form').evaluate(form => Object.fromEntries(new FormData(form)));
-  assert.equal(fields['text-rows[2]'],'0'); assert.equal(fields['tag-rows[10]'],'0');
+  assert.equal(fields['text-rows[2]'],'0'); assert.equal(fields['tag-rows[21]'],'0');
   assert.equal(fields['metadata-rows[4][value]'],''); assert.equal(fields['nested[8]'],'null');
   assert.equal(fields['combo-value'],undefined); assert.equal(fields['suggest-value'],undefined,'editing after selection clears stale machine values');
 
@@ -267,7 +272,7 @@ async function overlays(page,name) {
           await page.locator('#breadth-core').waitFor();
           const color=await page.locator('.sp-root').evaluate(node => getComputedStyle(node).backgroundColor);assert.equal(color,scheme==='dark'?'rgb(32, 33, 36)':'rgb(255, 255, 255)','CSS system resolves before bootstrap');
           await page.locator('#native-details summary').click();await page.locator('#text-rows-1-value').fill('Before JavaScript 雪');await page.locator('#slug').fill('Before JavaScript');await page.locator('#combo').fill('Ga');
-          await page.locator('#tag-rows-10-value').fill('Early tag 雪'); await page.locator('#metadata-rows-4-key').fill('early'); await page.locator('#metadata-rows-4-value').fill('');
+          await page.locator('#tag-rows-draft').fill('Early tag 雪'); await page.locator('#metadata-rows-4-key').fill('early'); await page.locator('#metadata-rows-4-value').fill('');
           await page.locator('#nested-8-value').selectOption('true'); await page.locator('#rating-2').check();
           await page.locator('#single-range-0').fill('4'); await page.locator('#pair-range-0').fill('3'); await page.locator('#pair-range-1').fill('7');
           await page.locator('#suggest').fill('Early query'); await page.locator('#data-table-filter').fill('Person 2'); await page.locator('#data-table-row-r0').check();
@@ -284,7 +289,7 @@ async function overlays(page,name) {
           }
           assert.equal(initialDom.before,initialDom.after,'identical adopted initial DOM with no exception');
           assert.equal(await page.evaluate(() => earlyBreadthNodes.every(([id,node]) => node.isConnected && document.getElementById('breadth-core').contains(node) && (!node.id || document.getElementById(id)===node))),true,'all initial native controls and rows retain identity');assert.equal(await page.locator('#text-rows-1-value').evaluate(node => earlyRow===node && document.activeElement===node),true);const state=await inspect(page);assert.equal(state.text[0],'Before JavaScript 雪');assert.equal(state.combo,'Ga');assert.equal(await page.locator('#native-details').evaluate(node => node.open),true);
-          assert.deepEqual(state.tags,['Early tag 雪','雪']); assert.deepEqual(state.metadata,[['early','']]); assert.deepEqual(state.nested,['true']);
+          assert.deepEqual(state.tags,['rust','雪']); assert.equal(await page.locator('#tag-rows-draft').inputValue(),'Early tag 雪','the unsubmitted draft survives hydration separately'); assert.deepEqual(state.metadata,[['early','']]); assert.deepEqual(state.nested,['true']);
           assert.deepEqual(state.ranges,[4,3,7]); assert.equal(state.rating,2); assert.equal(state.suggestQuery,'Early query'); assert.equal(state.filter,'Person 2'); assert.deepEqual(state.selectedRows,['r0']);}
         assert.equal(resourceCalls,mode==='hydrate'?0:1,'initial resource acquisition count');assert.equal(await page.locator('.sp-root').getAttribute('data-theme'),'system');
         await page.emulateMedia({colorScheme:scheme==='dark'?'light':'dark'});assert.equal(await page.locator('.sp-root').evaluate(node => getComputedStyle(node).backgroundColor),scheme==='dark'?'rgb(255, 255, 255)':'rgb(32, 33, 36)','media-only changes do not mutate the seeded token');
@@ -300,6 +305,9 @@ async function overlays(page,name) {
             await overflow.evaluate(node => {node.scrollLeft=0;});
           }
           await page.screenshot({path:path.join(output,'screenshots',`${name}-m2-${width}-zoom${zoom}.png`),fullPage:true});
+          if(zoom===1) for(const id of ['text-rows','metadata-rows','tag-rows']) {
+            await page.locator('#'+id).screenshot({path:path.join(output,'screenshots',`${name}-${id}-${width}.png`)});
+          }
           await page.locator('#popup-trigger').click();await opened(page,'breadth-popup');
           const popup = await page.locator('#breadth-popup').evaluate(node => {const r=node.getBoundingClientRect();return {left:r.left,top:r.top,right:r.right,bottom:r.bottom,width:innerWidth,height:innerHeight};});
           assert.equal(popup.left>=-1 && popup.top>=-1 && popup.right<=popup.width+1 && popup.bottom<=popup.height+1,true,`bounded popup ${width}/${zoom}: ${JSON.stringify(popup)}`);

@@ -639,6 +639,86 @@ fn table_selection_is_native_before_javascript() {
     owner.cleanup();
 }
 
+/// Collection markup keeps native names/labels while chips preserve exact seeded values.
+#[test]
+fn collection_rows_and_plain_chips_are_accessible_before_javascript() {
+    let owner = Owner::new();
+    owner.with(|| {
+        let list = RwSignal::new(
+            BoundedList::new(
+                vec![
+                    CollectionRow {
+                        id: 7,
+                        value: String::new(),
+                    },
+                    CollectionRow {
+                        id: 9,
+                        value: "0".into(),
+                    },
+                    CollectionRow {
+                        id: 10,
+                        value: "</script> \"雪\"".into(),
+                    },
+                    CollectionRow {
+                        id: 11,
+                        value: "0".into(),
+                    },
+                ],
+                4,
+            )
+            .unwrap(),
+        );
+        let tags =
+            view! { <TagList id="tag-proof" label="Tags" list disabled=true error="Check tags".to_owned()/> }
+                .to_html();
+        for expected in [
+            "(empty)",
+            "Remove tag (empty)",
+            "Remove tag 0",
+            "type=\"hidden\"",
+            "name=\"tag-proof[7]\"",
+            "name=\"tag-proof[11]\"",
+            "aria-describedby=\"tag-proof-error\"",
+            "aria-invalid=\"true\"",
+            "for=\"tag-proof-draft\"",
+            "Check tags",
+        ] {
+            assert!(tags.contains(expected), "Missing {expected} in {tags}");
+        }
+        assert!(!tags.contains("<script"));
+        assert!(!tags.contains("tag-proof-7-up"));
+        assert!(!tags.contains("tag-proof-7-down"));
+        let text = view! { <TextList id="text-proof" label="Text" list/> }.to_html();
+        let label=text.split("<label").find(|part|part.split('>').next().is_some_and(|tag|tag.contains("for=\"text-proof-7-value\""))).unwrap();
+        assert!(label.split('>').next().unwrap().contains("class=\"sp-sr-only\""));
+        for action in ["Move row 7 up", "Move row 7 down", "Remove row 7"] {
+            assert!(text.contains(&format!("aria-label=\"{action}\"")));
+        }
+        assert_eq!(text.matches("aria-hidden=\"true\"").count(), 12);
+        assert_eq!(text.matches("focusable=\"false\"").count(), 12);
+        assert!(text.contains("stroke=\"currentColor\""));
+        let metadata = RwSignal::new(
+            BoundedList::new(
+                vec![CollectionRow {
+                    id: 4,
+                    value: MetadataEntry {
+                        key: String::new(),
+                        value: "0".into(),
+                    },
+                }],
+                2,
+            )
+            .unwrap(),
+        );
+        let html =
+            view! {<MetadataInput id="metadata-proof" label="Metadata" list=metadata/>}.to_html();
+        assert!(html.contains("name=\"metadata-proof[4][key]\""));
+        assert!(html.contains("name=\"metadata-proof[4][value]\""));
+        assert_eq!(html.matches("class=\"sp-sr-only\"").count(), 2);
+    });
+    owner.cleanup();
+}
+
 /// Modeless/native close requests preserve external focus without changing modal defaults.
 #[test]
 fn native_dialog_mode_policies() {

@@ -27,6 +27,7 @@ mod breadth;
 mod core;
 mod suggestion_loader;
 pub use breadth::{BreadthDraft, parse_presence};
+pub mod collection_proof;
 /// Typed early nested-field presence shared with the thin client adapter.
 pub use stackpress_framework_ui::components::FieldValue;
 mod seed;
