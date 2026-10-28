@@ -80,6 +80,74 @@ the completion-gated bootstrap. A parsing end/failure marker uses “didn't fini
 loading”; an unobservable end falls back after six seconds to “hasn't finished
 loading”. Both offer the checked Reload link and never hydrate a partial page.
 
+## Installed iOS review
+
+The coordinator runs mobile builds and launches. The build's temporary Tauri
+options service is part of the existing iOS path; the implementer does not run
+it. No frontend development server is used. First prepare both matching CSR
+catalogs with this listener-free command:
+
+```sh
+python3 .agents/scripts/build-benchmark.py run --label "00013 installed review assets" --kind build --scope selected --cache unknown -- python3 examples/review-preview/installed.py assets --directory /private/tmp/s8-review
+```
+
+This reuses the isolated **Full name** schema, builds plugin then disabled,
+and cleans the shared/client WASM cache at each boundary. It writes
+`ios-assets/{plugin,disabled}` with hash inventories and schema provenance.
+Ordinary Profile UI CSR output is unchanged. Only the explicit debug
+`review-preview` build selects these folders; normal iOS builds replace their
+separate `gen/csr-bundle` from ordinary assets. Release review builds refuse to
+compile. The role catalog mounts the actual generated-admin CSR component with
+local drafts. It has **no admin mutation or IPC service and is not installed
+admin CRUD**. Raw fixture snapshots remain available to proofs and appear only
+inside the collapsed **Debug state (review only)** disclosure. Hostile labels
+belong to **Safety samples**.
+
+Use two installed sessions: plugin first for 011 and the plugin half of 013,
+then disabled to check that **Full name** returns. Stop any existing simulator
+display and booted device yourself before starting; the launcher refuses to
+reuse or close them. From the repository root:
+
+```sh
+IOS_REVIEW_VARIANT=plugin
+python3 .agents/scripts/build-benchmark.py run --label "00013 iOS $IOS_REVIEW_VARIANT build" --kind build --scope selected --cache unknown -- env PROFILE_UI_IOS_LOGS="/private/tmp/s8-review/ios-logs/$IOS_REVIEW_VARIANT" CARGO_NET_OFFLINE=true CARGO_BUILD_JOBS=4 python3 examples/profile-ui/native/proofs/build-ios.py --directory /private/tmp/s8-review --review-variant "$IOS_REVIEW_VARIANT"
+python3 .agents/scripts/build-benchmark.py run --label "00013 iOS $IOS_REVIEW_VARIANT manual review" --kind test --scope other --cache unknown -- env PROFILE_UI_IOS_LOGS="/private/tmp/s8-review/ios-logs/$IOS_REVIEW_VARIANT" python3 examples/profile-ui/native/proofs/launch-ios.py --manual-review --variant "$IOS_REVIEW_VARIANT" --duration-seconds 1800
+```
+
+The build copies its actual unsigned simulator app into `ios-apps/<variant>`;
+the launcher checks that variant's build receipt and that its options service
+has closed. It creates one disposable simulator using the existing installed
+runtime/device type. On the Duo display, use **primary / LCD 1**. The two labelled
+fixed buttons above Profile UI exercise denial and a cancellable four-second
+read through the existing native commands. Follow checklist 011, then open
+**Generated admin review** to compare the plugin label. No automated proof
+driver manipulates this manual session.
+
+In a second terminal, restart the same app/container to check saved settings,
+or finish the session. Keep `IOS_REVIEW_VARIANT=plugin` in that terminal too:
+
+```sh
+python3 .agents/scripts/build-benchmark.py run --label "00013 iOS restart" --kind other --scope other --cache unknown -- env PROFILE_UI_IOS_LOGS="/private/tmp/s8-review/ios-logs/$IOS_REVIEW_VARIANT" python3 examples/profile-ui/native/proofs/launch-ios.py --manual-review --variant "$IOS_REVIEW_VARIANT" --control restart
+python3 .agents/scripts/build-benchmark.py run --label "00013 iOS finish" --kind other --scope other --cache unknown -- env PROFILE_UI_IOS_LOGS="/private/tmp/s8-review/ios-logs/$IOS_REVIEW_VARIANT" python3 examples/profile-ui/native/proofs/launch-ios.py --manual-review --variant "$IOS_REVIEW_VARIANT" --control stop
+```
+
+Wait for the first terminal's cleanup report, set `IOS_REVIEW_VARIANT=disabled`
+in both terminals, and repeat the build/launch commands above. Open the local
+catalog and check **Full name** returns; finish with the matching stop command.
+Each launch allows 30–7200 seconds, default 1800, including setup. Deadline,
+Ctrl-C, SIGTERM, app failure and normal stop all enter cleanup; the parent reaps
+its worker and retries recorded device/display cleanup. Only the launched
+display and observed descendants are claimed. Failed cleanup retains its
+ownership record for inspection rather than declaring success. Restart keeps
+settings inside the same session; finishing deletes that disposable device.
+
+Mobile build, real simulator lifecycle and owner acceptance remain coordinator
+checks. Listener-free verification is available through benchmark-wrapped
+`installed.py tests`, `quality`, `isolation`, `coverage` and `browser`, each with
+`--directory /private/tmp/s8-review`. These proofs never launch an app/simulator.
+They check actual CSR bytes in Chromium, native cancellation, asset exclusion
+and cleanup policy with platform effects mocked. Android remains unverified.
+
 Use the recorder for every Cargo/proof/clean invocation; wrap an outer proof
 once instead of its nested commands. For the composed gateway recovery proof:
 

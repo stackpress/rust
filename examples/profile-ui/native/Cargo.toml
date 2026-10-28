@@ -13,6 +13,8 @@ crate-type = ["lib", "staticlib", "cdylib"]
 default = []
 app = ["dep:tauri", "dep:tauri-build"]
 demo-customization = []
+# Manual installed review fixtures; never admitted by a release build.
+review-preview = []
 
 [[bin]]
 name = "profile-ui"

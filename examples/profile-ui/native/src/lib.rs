@@ -3,6 +3,13 @@
 //! The registry owns only cancellation senders. No detached task owns a request,
 //! response or server, and cancel means losing a result rather than rollback.
 
+#[cfg(all(feature = "review-preview", not(debug_assertions)))]
+compile_error!("review-preview requires debug assertions");
+
+/// Explicit debug-only installed review fixture; ordinary registration never calls it.
+#[cfg(all(feature = "review-preview", debug_assertions))]
+pub mod review;
+
 use stackpress_example_profile_ui_contracts::{
     HostError, MAX_REQUEST_BYTES, SearchInput, SearchReply,
 };
