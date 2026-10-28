@@ -1,6 +1,6 @@
 # Task 00013: owner findings receipt
 
-Status: **M0/M1/M2 accepted by coordinator; M3 implemented, proved and ready for coordinator verification. M4 has not started.** No owner visual acceptance or final polish closeout is claimed. Follow the [approved design and recorded owner decisions](00013-owner-findings-design.md); G39/theme implementation remains separately owned.
+Status: **M0–M3 accepted by coordinator; M4 implemented and verified, ready for coordinator review.** The approved owner-findings scope is complete; owner visual acceptance, managed previews, commits and G39 remain separate. Follow the [approved design and owner decisions](00013-owner-findings-design.md).
 
 ## M0 result and implementation
 
@@ -170,4 +170,20 @@ Re-review the gallery Text rows/Metadata rows/plain tags and generated project t
 
 The coordinator accepted/merged M2 into trial/3 (reported `f46ee0a`) and released M3. M3 re-pins all seven Lucide masters/licences, implements the 48×12 gallery table and inline sortable headings, and renders keyboard/native-radio star ratings with the minimum-zero rule. The optional UI minimum is additive; generated callers derive it from existing public @min/ge metadata, with no new admin role prop or wire member.
 
-Load the [M3 evidence receipt](00013-receipt-owner-findings-m3.md) for exact implementation/API boundaries, commands, three review rounds, final tests/coverage, inspected screenshots, retained artifacts and cleanup. This rolling receipt retains the prior milestones without changing their historical evidence. **M3 stops for coordinator verification; M4 remains gated.**
+Load the [M3 evidence receipt](00013-receipt-owner-findings-m3.md) for exact implementation/API boundaries, commands, three review rounds, final tests/coverage, inspected screenshots, retained artifacts and cleanup. This rolling receipt retains the prior milestones without changing their historical evidence. The coordinator accepted/merged M3 as reported `16b687c` and released M4. Earlier milestone stops in this receipt are historical handoff records.
+
+## M4 and whole-task verification
+
+Load the [final M4 receipt](00013-receipt-owner-findings-m4.md) for completed implementation, cache-isolation findings, three review rounds, fresh per-crate coverage, exact benchmark IDs/counter changes, retained evidence, cleanup and limitations. The [consolidated walkthrough](00013-review-preview-owner-checklist.md) supplies the owner's updated steps and expected results.
+
+| Findings | Final disposition |
+| --- | --- |
+| F01 | M1: document HTML denial/error pages and review-only default Editor; API/export representations unchanged. |
+| F02 | M0/M4: fixed external status asset, completion-gated bootstrap, visible observable-state recovery and real truncated-HTTP review proof. |
+| F03/F04 | M4: spaced labelled links, Safety samples, normal ordinary fixtures and isolated review Full-name label; normal proofs retain hostile labels. |
+| F05 | M4: raw Typed nested rows removed from owner gallery, fully retained in the dedicated proof fixture; nullable-boolean product control deferred. |
+| D01/D02 | M2: inline icon actions and owner-approved plain text/X chips; TagList editing/reordering dropped only from that UI, exact values/limits/forms retained. |
+| D03/D04 | M3: Lucide 1.62.0 pin, table headers/48×12 overflow fixture, native star rating and minimum-zero rule. |
+| D05 | M1/M4: styled scoped role catalogue and readable list display without wire/value changes. |
+
+Owner re-review: **001, 003, 004, 005, 009, 010, 012, 013**. Installed Part B and G39 remain separately gated. This implementation receipt does not claim owner acceptance or a commit.

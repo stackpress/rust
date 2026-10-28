@@ -19,8 +19,6 @@ pub struct BreadthDraft {
     pub tags: [String; 2],
     /// Existing typed metadata row.
     pub metadata: MetadataEntry,
-    /// Existing typed nested presence value.
-    pub nested: FieldValue<bool>,
     /// Native single and ordered-pair range edits.
     pub ranges: [f64; 3],
     /// Exact selected native radio; None remains unrated.
@@ -44,7 +42,6 @@ impl Default for BreadthDraft {
                 key: "count".into(),
                 value: "0".into(),
             },
-            nested: FieldValue::Value(false),
             ranges: [0.0, 2.0, 8.0],
             rating: None,
             filter: String::new(),
@@ -79,18 +76,6 @@ impl BreadthDraft {
         } else {
             Ok(())
         }
-    }
-}
-/// Decode the example's closed presence tokens in shared native-tested code.
-/// # Errors
-/// Rejects unknown/case/empty tokens; no missing/null/false coercion is performed.
-pub fn parse_presence(value: &str) -> Result<FieldValue<bool>, ControlError> {
-    match value {
-        "missing" => Ok(FieldValue::Missing),
-        "null" => Ok(FieldValue::Null),
-        "false" => Ok(FieldValue::Value(false)),
-        "true" => Ok(FieldValue::Value(true)),
-        _ => Err(ControlError),
     }
 }
 /// Small checked immutable option dataset with empty/zero/disabled cases.
@@ -273,44 +258,6 @@ pub fn BreadthGallery(
         )
         .unwrap(),
     );
-    let nested = RwSignal::new(
-        BoundedList::new(
-            vec![CollectionRow {
-                id: 8,
-                value: initial.nested,
-            }],
-            3,
-        )
-        .unwrap(),
-    );
-    let nested_render = Callback::new(move |key: u64| {
-        let id = format!("nested-{key}-value");
-        let read = move || {
-            nested
-                .get()
-                .rows()
-                .iter()
-                .find(|row| row.id == key)
-                .map(|row| match row.value {
-                    FieldValue::Missing => "missing",
-                    FieldValue::Null => "null",
-                    FieldValue::Value(false) => "false",
-                    FieldValue::Value(true) => "true",
-                })
-                .unwrap_or("missing")
-        };
-        view!{<label for=id.clone()>"Typed presence"</label><select id=id.clone() name=format!("nested[{key}]") on:change=move |event|{
-            let Ok(next)=parse_presence(&event_target_value(&event)) else{return;};
-            nested.update(|list|{let _=list.edit(key,next);});
-        }>
-            {["missing","null","false","true"].into_iter().map(|value|view!{<option value=value selected=move ||read()==value prop:selected=move ||read()==value>{value}</option>}).collect_view()}
-        </select><button type="button" on:click=move |_|nested.update(|list|{let _=list.edit(key,FieldValue::Null);})>"Set null"</button>}.into_any()
-    });
-    // This factory deliberately reads its own collection: callers never run under its write guard.
-    let nested_create = Callback::new(move |()| {
-        let _current = nested.get();
-        FieldValue::Missing
-    });
     let table = TableState::new(people(false, 48), 12).expect("fixed page size");
     table
         .adopt_filter(initial.filter)
@@ -372,30 +319,18 @@ pub fn BreadthGallery(
         <Toast id="manual-toast" visible=toast message="Saved public message"/><Toast id="timer-toast" visible=timer_toast message="Finite message" duration=DelayMs::new(250).unwrap()/>
         <h2>"Search and collections"</h2><form id="collection-form" on:submit=move |event|event.prevent_default()><Combobox id="combo" label="Search choices" name="combo-value" state=combo/><SuggestInput id="suggest" label="Find person" name="suggest-value" state=suggestions lookup/><output id="suggest-calls">{move ||calls.get()}</output>
         <TextList id="text-rows" label="Text rows" list/><TagList id="tag-rows" label="Editable tags" list=tags/><MetadataInput id="metadata-rows" label="Metadata rows" list=metadata/>
-        <CollectionFieldset id="nested-rows" label="Typed nested rows" list=nested create=nested_create render=nested_render/>
         </form><h2>"Controlled table"</h2><DataTable id="data-table" caption="Paged people" state=table striped=true sticky=true column_layout=people_layout()/>
         <ActionGroup label="Table snapshot actions"><button id="update-table-row" type="button" on:click=move |_|table.replace(people(true,48))>"Update table rows"</button>
         <button id="shrink-table" type="button" on:click=move |_|table.replace(people(false,1))>"Shrink table"</button></ActionGroup>
         <Table caption="Explicit native table slots"><TableHead><TableRow row_key="head"><TableHeader colspan=2 sticky=true>"Grouped columns"</TableHeader></TableRow><TableRow row_key="columns"><TableHeader>"Key"</TableHeader><TableHeader>"Value"</TableHeader></TableRow></TableHead><TableGroup><TableRow row_key="body"><TableHeader scope=HeaderScope::Row>"Zero"</TableHeader><TableCell>"0"<TableRule width=120/></TableCell></TableRow></TableGroup><TableFoot><TableRow row_key="foot"><TableCell colspan=2>"Summary"</TableCell></TableRow></TableFoot></Table>
         <h2>"Bounded editing"</h2><form id="bounded-form" on:submit=move |event|event.prevent_default()><Slider id="single-range" label="Single slider" name="single" state=single/><Slider id="pair-range" label="Ordered pair" name="pair" state=range/><RatingInput id="rating" label="Rating" name="rating" state=rating/><SlugInput id="slug" label="Slug draft" name="slug" value=slug style=SlugStyle::Dash alphabet=SlugAlphabet::Unicode/>
-        </form><button id="breadth-inspect" type="button" on:click=move |_|feedback.set(serde_json::json!({"text":list.get().rows().iter().map(|row|&row.value).collect::<Vec<_>>(),"combo":combo.query(),"selected":combo.selected(),"rating":rating.value(),"slug":slug.get(),"ranges":[single.handle(0),range.handle(0),range.handle(1)],"tags":tags.get().rows().iter().map(|row|&row.value).collect::<Vec<_>>(),"metadata":metadata.get().rows().iter().map(|row|(&row.value.key,&row.value.value)).collect::<Vec<_>>(),"nested":nested.get().rows().iter().map(|row|match row.value{FieldValue::Missing=>"missing",FieldValue::Null=>"null",FieldValue::Value(false)=>"false",FieldValue::Value(true)=>"true"}).collect::<Vec<_>>(),"filter":table.filter(),"selectedRows":table.selected(),"suggestQuery":suggestions.query(),"table":table.rows().iter().map(|row|&row.key).collect::<Vec<_>>()}).to_string())>"Inspect breadth state"</button><output id="breadth-state" class="sp-core-state" aria-label="Last inspected breadth state">{move ||feedback.get()}</output>
+        </form><button id="breadth-inspect" type="button" on:click=move |_|feedback.set(serde_json::json!({"text":list.get().rows().iter().map(|row|&row.value).collect::<Vec<_>>(),"combo":combo.query(),"selected":combo.selected(),"rating":rating.value(),"slug":slug.get(),"ranges":[single.handle(0),range.handle(0),range.handle(1)],"tags":tags.get().rows().iter().map(|row|&row.value).collect::<Vec<_>>(),"metadata":metadata.get().rows().iter().map(|row|(&row.value.key,&row.value.value)).collect::<Vec<_>>(),"filter":table.filter(),"selectedRows":table.selected(),"suggestQuery":suggestions.query(),"table":table.rows().iter().map(|row|&row.key).collect::<Vec<_>>()}).to_string())>"Inspect breadth state"</button><output id="breadth-state" class="sp-core-state" aria-label="Last inspected breadth state">{move ||feedback.get()}</output>
     </section>}
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    /// Presence tokens preserve omitted/null/false/true and reject malformed native values.
-    #[test]
-    fn presence_codec_boundaries() {
-        assert_eq!(parse_presence("missing").unwrap(), FieldValue::Missing);
-        assert_eq!(parse_presence("null").unwrap(), FieldValue::Null);
-        assert_eq!(parse_presence("false").unwrap(), FieldValue::Value(false));
-        assert_eq!(parse_presence("true").unwrap(), FieldValue::Value(true));
-        for invalid in ["", "False", "0", "undefined", " null "] {
-            assert!(parse_presence(invalid).is_err());
-        }
-    }
     /// Early native edits are admitted before creating a root, with exact byte budgets.
     #[test]
     fn early_draft_boundaries() {

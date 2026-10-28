@@ -426,3 +426,39 @@ fn concrete_adapters_render_escaped_semantic_controls() {
     });
     owner.cleanup();
 }
+
+/// List presentation is readable and escaped while exact arrays remain in the draft.
+#[test]
+fn text_view_formats_lists_without_mutating_values() {
+    use stackpress_framework_admin::components::TextView;
+    let ui =
+        generation::normalize("model Example { id String @id notes String[] @list.text }").unwrap();
+    let owner = Owner::new();
+    owner.with(|| {
+        for (value, expected) in [
+            (json!([]), "None"),
+            (
+                json!(["rust", "0", "雪", "<script>"]),
+                "rust, 0, 雪, &lt;script&gt;",
+            ),
+        ] {
+            let draft =
+                Draft::new(&ui.models[0].fields, &json!({"notes":value}), Role::List).unwrap();
+            let context = RoleContext {
+                id: "notes".into(),
+                field: ui.models[0]
+                    .fields
+                    .iter()
+                    .find(|field| field.wire_name == "notes")
+                    .unwrap()
+                    .clone(),
+                role: Role::List,
+                value: draft.get("notes").unwrap(),
+            };
+            let html = view! {<TextView context/>}.to_html();
+            assert!(html.contains(expected), "{html}");
+            assert_eq!(draft.snapshot().unwrap()["notes"], value);
+        }
+    });
+    owner.cleanup();
+}

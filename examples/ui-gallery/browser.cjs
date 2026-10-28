@@ -92,7 +92,9 @@ if (require.main === module) {
         assert.equal(calls.resource, mode === 'hydrate' ? 0 : 1, 'Resource replay avoids duplicate hydrate fetch');
         assert.equal(calls.preference, 0, 'no initial preference acquisition');
         assert.equal(await page.evaluate(() => globalThis.pwned), undefined);
-        assert.equal((await page.title()).endsWith(resourceText), true, 'reactive Head exact hostile text');
+        assert.equal((await page.title()).endsWith(' · Samples ready'), true, 'reactive Head uses a realistic title');
+        assert.equal(await page.locator('#safety-samples').getByRole('heading',{name:'Safety samples',exact:true}).count(),1);
+        assert.equal(await page.locator('#safety-samples [data-corpus="1"]').textContent(),'Rejected encoded JavaScript Rejected protocol-relative URL Allowed HTTPS link');
         assert.deepEqual(await page.evaluate(() => JSON.parse(window.galleryCorpus)), expected, 'exact native/WASM sanitizer output');
         const actual = await page.locator('[data-corpus] .sp-rich').evaluateAll(nodes => nodes.map(node => { const clone = node.cloneNode(true); for (const child of [...clone.childNodes]) if (child.nodeType === Node.COMMENT_NODE && !child.textContent) child.remove(); return clone.innerHTML; }));
         assert.deepEqual(actual, expected, 'native/WASM corpus equality');
@@ -100,6 +102,13 @@ if (require.main === module) {
         const ordinaryCore = await coreProof.controls(page, mode);
         await coreProof.spacing(page);
         await page.screenshot({ path: path.join(output, 'screenshots', `${name}-1280.png`), fullPage: true });
+        // Focused crops make the owner-facing separation and link spacing reviewable.
+        for(const width of [1280,375]) {
+          await page.setViewportSize({width,height:900});
+          await page.locator('#safety-samples').screenshot({path:path.join(output,'screenshots',`${name}-safety-${width}.png`)});
+        }
+        await page.setViewportSize({width:1280,height:900});
+
 
         await page.locator('#opener').click();
         await page.waitForFunction(() => document.activeElement?.id === 'profile-name');

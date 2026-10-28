@@ -122,7 +122,7 @@ fn contents() -> SchemaResult<AnyView> {
         <section><h2>"Project"</h2><h3>"List"</h3><ul aria-label="Project list"><li>{projects}</li></ul><h3>"View"</h3>{project_view}<h3>"Fields"</h3><form aria-label="Project field form" on:submit=move |event| event.prevent_default()>{project_fields}</form></section>
         <section><h2>"Task"</h2><h3>"List"</h3><ul aria-label="Task list"><li>{tasks}</li></ul><h3>"Table"</h3><p class="table-scroll-hint">"Scroll the table sideways to see more columns."</p><div class="admin-table-scroll" role="region" aria-label="Task table" tabindex="0">{table}</div><h3>"View"</h3>{task_view}<h3>"Fields"</h3><form aria-label="Task field form" on:submit=move |event| event.prevent_default()>{task_fields}</form></section>
         <section><h2>"Filters"</h2>{filters}</section><section><h2>"Spans"</h2>{spans}</section>
-        <section id="role-proof"><h2>"Nullable and defaults proof"</h2>{proof_roles}
+        <section id="role-proof"><h2>"Safety samples"</h2><p>"Deliberately hostile labels and edge values test generated escaping and presence. Other sections use ordinary fixture data."</p><h3>"Nullable and defaults proof"</h3>{proof_roles}
             <output id="proof-draft">{move || { for field in ["text","zero","rows","metadata","score","slug"] {let _ = proof_draft.get(field).map(|value| value.get());} proof_draft.snapshot().map(|value| value.to_string()).unwrap_or_default() }}</output>
         </section>
         <output id="project-draft">{move || {for field in ["state","tags"] { let _ = project_draft.get(field).map(|value|value.get()); } project_draft.snapshot().map(|value|value.to_string()).unwrap_or_default() }}</output>

@@ -2,6 +2,7 @@
 const assert = require('node:assert/strict');
 const path = require('node:path');
 const textareaPayload = '\n</textarea><script>globalThis.pwned=1</script>&"\'\u2028';
+const ordinaryNotes = 'Review the release notes.\nShare feedback with the team.';
 const ids = ['core-text','core-notes','core-password','core-check','core-switch','core-radio-zero','core-radio-fr','core-select','core-multiple'];
 const state = async page => {
   await page.locator('#core-inspect').evaluate(node => node.click());
@@ -10,8 +11,11 @@ const state = async page => {
 };
 
 exports.early = async page => {
-  assert.equal(await page.locator('#core-notes').inputValue(),textareaPayload,'hostile initial SSR textarea parses exactly before JavaScript');
+  assert.equal(await page.locator('#safety-notes').inputValue(),textareaPayload,'hostile safety textarea parses exactly before JavaScript');
   assert.equal(await page.evaluate(() => globalThis.pwned),undefined);
+  assert.equal(await page.locator('#core-notes').inputValue(),ordinaryNotes);
+  await page.locator('#safety-notes').fill(textareaPayload+' Early native edit');
+  await page.locator('#safety-notes').evaluate(node=>{window.earlySafety=node;});
   await page.locator('#core-text').fill('Before JS 雪😀');
   await page.locator('#core-notes').fill('Before JS\n日本');
   await page.locator('#core-password').fill('Transient before JS');
@@ -24,7 +28,7 @@ exports.early = async page => {
 };
 
 exports.roundtrip = async page => {
-  assert.equal(await page.locator('#core-notes').inputValue(),textareaPayload,'hostile initial textarea round-trips after hydrate/CSR');
+  assert.equal(await page.locator('#safety-notes').inputValue(),textareaPayload,'hostile safety textarea round-trips after hydrate/CSR');
   assert.equal(await page.evaluate(() => globalThis.pwned),undefined);
   assert.equal(await page.locator('#ordinary-core script').count(),0);
 };
@@ -44,10 +48,17 @@ exports.controls = async (page, mode) => {
   } else {
     const initial = await state(page);
     await exports.roundtrip(page);
-    assert.equal(initial.notes,textareaPayload);
+    assert.equal(initial.notes,ordinaryNotes);
     assert.equal(initial.text,'Seed 雪'); assert.equal(initial.single,''); assert.deepEqual(initial.multiple,['0','fr']);
     assert.equal(initial.checked,false); assert.equal(initial.enabled,true); assert.equal(initial.passwordLength,0);
   }
+  const safetyValue=mode==='hydrate'?textareaPayload+' Early native edit':textareaPayload;
+  assert.equal(await page.locator('#safety-notes').inputValue(),safetyValue);
+  await page.locator('#safety-inspect').click();
+  assert.equal(await page.locator('#safety-state').textContent(),safetyValue,'adopted safety draft reaches controlled state');
+  assert.deepEqual(await page.locator('#safety-form').evaluate(node=>[...new FormData(node)]),[['safety-notes',safetyValue]]);
+  if(mode==='hydrate')assert.equal(await page.locator('#safety-notes').evaluate(node=>node===window.earlySafety),true);
+  assert.equal(await page.locator('#safety-samples script,#safety-samples img,#safety-samples iframe').count(),0);
   assert.equal(await page.getByRole('switch',{name:'Enable reminders'}).count(),1);
   assert.equal(await page.getByRole('group',{name:'Delivery mode'}).count(),1);
   assert.equal(await page.getByRole('progressbar',{name:'Progress',exact:true}).count(),1);

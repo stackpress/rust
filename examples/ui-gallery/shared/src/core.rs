@@ -2,9 +2,6 @@
 use leptos::prelude::*;
 use stackpress_framework_ui::components::*;
 
-/// Security corpus: RCDATA breakout, entities, quotes, Unicode and leading newline.
-pub const TEXTAREA_PAYLOAD: &str = "\n</textarea><script>globalThis.pwned=1</script>&\"'\u{2028}";
-
 /// Native edits adopted before hydration; no read of browser preferences occurs.
 #[derive(Clone)]
 pub struct CoreDraft {
@@ -30,7 +27,7 @@ impl Default for CoreDraft {
     fn default() -> Self {
         Self {
             text: "Seed 雪".into(),
-            notes: TEXTAREA_PAYLOAD.into(),
+            notes: "Review the release notes.\nShare feedback with the team.".into(),
             password: String::new(),
             checked: false,
             enabled: true,
@@ -110,7 +107,7 @@ pub fn CoreGallery(
             },
             DisplayRow {
                 key: "two".into(),
-                cells: vec!["Markup".into(), "<script>inert</script>".into()],
+                cells: vec!["Team".into(), "Platform engineering".into()],
             },
         ],
     )
@@ -149,7 +146,7 @@ pub fn CoreGallery(
         <p>"Inspect current values; password text is omitted."</p><output id="core-state" class="sp-core-state" aria-label="Last inspected values">{move || reported.get()}</output>
         <h2>"Safe presentation"</h2>
         <Card label="Presentation example"><CardHead><CardTitle>"A useful card"</CardTitle><CardDescription>"Explicit semantic slots"</CardDescription></CardHead>
-            <CardBody><Badge>"0 · <safe>"</Badge><Progress id="core-progress" label="Progress" value=progress/>
+            <CardBody><Badge>"Release ready"</Badge><Progress id="core-progress" label="Progress" value=progress/>
                 <div id="core-color"><ColorView value=HexColor::new("#777").unwrap()/></div>
                 <div id="core-email"><EmailLink value=EmailAddress::new("demo+tag@example.invalid").unwrap()/></div>
                 <div id="core-phone"><PhoneLink value=PhoneNumber::new("+639171234567").unwrap()/></div>
@@ -159,9 +156,9 @@ pub fn CoreGallery(
                 <div id="core-overflow"><TextOverflow value="雪😀abc" limit=TextLimit::Characters(2)/></div>
                 <TextTransform value="Mixed Case" format=TextCase::Uppercase/>
                 <MetadataView value=MetadataValues::new(vec![("Empty".into(),String::new()),("Count".into(),"0".into())]).unwrap()/>
-                <Spread value=DisplayValues::new(vec!["0".into(),"<safe>".into()]).unwrap() separator=SpreadSeparator::Inline(" | ".into())/>
+                <Spread value=DisplayValues::new(vec!["0".into(),"Ready".into()]).unwrap() separator=SpreadSeparator::Inline(" | ".into())/>
                 <Spread value=DisplayValues::new(vec!["Line one".into(),"Line two".into()]).unwrap() separator=SpreadSeparator::Lines/>
-                <Tags value=DisplayValues::new(vec!["0".into(),"雪".into(),"<safe>".into()]).unwrap()/>
+                <Tags value=DisplayValues::new(vec!["0".into(),"雪".into(),"Ready".into()]).unwrap()/>
                 <Tabular value=table caption="Read-only values"/>
             </CardBody><CardFoot><ActionGroup label="Progress examples"><button type="button" id="core-progress-known" on:click=move |_| progress.set(ProgressValue::determinate(10.0,10.0).unwrap())>"Complete"</button><button type="button" id="core-progress-unknown" on:click=move |_| progress.set(ProgressValue::Indeterminate)>"Indeterminate"</button></ActionGroup></CardFoot>
         </Card>

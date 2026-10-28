@@ -53,6 +53,11 @@ if(document.querySelector('meta[name="review-pause"]')?.content==='true'){
 }
 await import('./application.js');
 """)
+    # This classic async asset must survive wrapping the deferred WASM entry point.
+    if name=='stream':
+        expected=(ROOT/'crates/framework/framework-ui/src/stream_status.js').read_bytes()
+        if (destination/'stream-status.js').read_bytes()!=expected:
+            raise RuntimeError('Review stream status asset differs from the approved fixed script')
     manifest(destination,name)
 
 
@@ -70,19 +75,46 @@ def build(ctx):
     bundles(ctx)
 
 
+def review_schema(ctx, snapshot, plugin, name):
+    """Use an explicit owner-review input; ordinary generation retains the hostile label."""
+    source=snapshot/'examples/generated-admin/schema.idea'
+    original=source.read_text()
+    hostile='@label("Name </script> 🦀")'
+    if original.count(hostile)!=1:
+        raise RuntimeError('Review name-label override no longer matches one source field')
+    prepared=original.replace(hostile,'@label("Full name")')
+    input_path=source.with_name('schema-review.idea')
+    input_path.write_text(prepared)
+    # Separate snapshots share one target. Rebuild the executable so its manifest-root
+    # default cannot refer to a previously deleted snapshot, even with warm fingerprints.
+    ctx.run(name+'-tool-clean',['cargo','clean','-p','generated-admin-tool'],cwd=snapshot)
+    command=['cargo','run','--offline','--locked','-p','generated-admin-tool','--',
+             '--input',str(input_path),'--output',str(snapshot/'examples/generated-admin/shared/src/generated')]
+    if plugin:command+=['--plugin']
+    ctx.run(name,command,cwd=snapshot)
+    return dict(source='examples/generated-admin/schema.idea',review_label='Full name',
+                source_sha256=hashlib.sha256(original.encode()).hexdigest(),
+                review_sha256=hashlib.sha256(prepared.encode()).hexdigest(),plugin=plugin)
+
+
 def bundles(ctx):
     """Regenerate/rebuild only the compiled variants, reusing already verified example assets."""
     from proofs.runtime import TARGET
-    from proofs.builds import isolated_workspace, generate
+    from proofs.builds import isolated_workspace
     directory=ctx.logs.parent
     sources=dict(gallery=directory/'gallery/gallery-assets',preferences=directory/'preferences/assets',stream=directory/'stream/assets',format=directory/'format/assets')
     with isolated_workspace(ctx) as snapshot:
         for variant,plugin in [('plugin',True),('disabled',False)]:
-            generate(ctx,snapshot,False,plugin,'review-'+variant+'-generate')
+            provenance=review_schema(ctx,snapshot,plugin,'review-'+variant+'-generate')
+            # Source isolation does not invalidate an older shared output by itself.
+            # Clear native output here and the actual WASM target before each mode.
+            ctx.run('review-'+variant+'-shared-clean',['cargo','clean','-p','generated-admin-shared'],cwd=snapshot)
             ctx.run('gateway-'+variant,['cargo','build','--offline','--locked','-p',PACKAGE,'--features','review-preview'],cwd=snapshot,timeout=1800,extra={'STACKPRESS_REVIEW_VARIANT':variant})
             bundle=directory/'bundle'/variant;bundle.mkdir(parents=True,exist_ok=True)
             shutil.copy2(TARGET/'debug/slice8-review',bundle/'slice8-review')
+            (bundle/'review-schema.json').write_text(json.dumps(provenance,indent=2)+'\n')
             for mode in ['hydrate','csr']:
+                ctx.run('admin-'+variant+'-'+mode+'-clean',['cargo','clean','--target','wasm32-unknown-unknown','-p','generated-admin-client','-p','generated-admin-shared'],cwd=snapshot)
                 ctx.run('admin-'+variant+'-'+mode,['cargo','build','--offline','--locked','-p','generated-admin-client','--target','wasm32-unknown-unknown','--features',mode],cwd=snapshot)
                 admin=ctx.logs/'admin-assets'/variant/mode;admin.mkdir(parents=True,exist_ok=True)
                 ctx.run('admin-bindgen-'+variant+'-'+mode,['wasm-bindgen','--target','web','--no-typescript','--out-dir',str(admin),'--out-name','admin',str(TARGET/'wasm32-unknown-unknown/debug/generated_admin_client.wasm')])

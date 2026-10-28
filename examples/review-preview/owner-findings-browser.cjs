@@ -131,10 +131,17 @@ async function run(browser, variant, mode, base) {
     if (mode === 'hydrate') assert.equal(await page.evaluate(() =>
       window.m1RoleRoot === document.querySelector('.sp-role-catalogue')), true);
     assert.equal(await page.locator('[data-admin-plugin]').count() > 0, variant === 'plugin');
+    assert.equal(await page.locator('label[for="profile-field-name"]').textContent(),variant==='plugin'?'Plugin field label':'Full name');
+    assert.match(await page.locator('ul[aria-label="Project list"]').textContent(),/tags\s*:\s*None/);
+    assert.equal(await page.locator('#role-proof').getByRole('heading',{name:'Safety samples',exact:true}).count(),1);
+    assert.equal(await page.evaluate(()=>globalThis.pwned),undefined);
+
     const wide = await inspectStyles(page);
+    await page.locator('.sp-role-catalogue main > section').filter({has:page.getByRole('heading',{name:'Project',exact:true})}).screenshot({path:path.join(directory,'review',`${tag}-project-lists-1280.png`)});
     await page.screenshot({path: path.join(directory, 'review', `${tag}-roles-1280.png`)});
     await page.setViewportSize({width: 375, height: 812});
     const narrow = await inspectStyles(page);
+    await page.locator('.sp-role-catalogue main > section').filter({has:page.getByRole('heading',{name:'Project',exact:true})}).screenshot({path:path.join(directory,'review',`${tag}-project-lists-375.png`)});
     await page.screenshot({path: path.join(directory, 'review', `${tag}-roles-375.png`)});
     assert.equal(narrow.localOverflow, true, JSON.stringify(narrow));
     await page.keyboard.press('Tab');

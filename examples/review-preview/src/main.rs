@@ -24,7 +24,9 @@ impl Acceptor for Loopback {
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = std::env::args().skip(1).collect::<Vec<_>>();
-    let action = args.first().ok_or("Expected setup, serve or pipe")?;
+    let action = args
+        .first()
+        .ok_or("Expected setup, serve, pipe or stream-pipe")?;
     if action == "setup" {
         if args.len() != 3 || args[1] != "--directory" {
             return Err("setup requires --directory DIR".into());
@@ -37,12 +39,36 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         );
         return Ok(());
     }
-    if !["serve", "pipe"].contains(&action.as_str()) {
+    if !["serve", "pipe", "stream-pipe"].contains(&action.as_str()) {
         return Err("Unknown action".into());
     }
     let options = Options::parse(&args[1..])?;
     let gateway = Arc::new(Gateway::new(&options).await?);
-    if action == "pipe" {
+    if action == "stream-pipe" {
+        // The parent owns an input/watchdog deadline, as in buffered pipe mode.
+        // One bounded request emits actual native frames for a browser ReadableStream.
+        // Normal/error completion is reported separately; missing HTTP framing stays failure.
+        let mut line = String::new();
+        std::io::stdin()
+            .lock()
+            .take(3 * 1024 * 1024)
+            .read_line(&mut line)?;
+        if !line.ends_with('\n') {
+            return Err("stream-pipe request exceeds bound".into());
+        }
+        let emit = |value| {
+            println!("{value}");
+            std::io::stdout().flush().expect("open proof output");
+        };
+        let output = pipe::exchange_stream(
+            &gateway,
+            &options.origin(),
+            serde_json::from_str(&line)?,
+            &emit,
+        )
+        .await?;
+        emit(serde_json::json!({"done":true,"terminal":!output.interrupted}));
+    } else if action == "pipe" {
         // Only one framed request is processed at a time; callers own a parent watchdog.
         let stdin = std::io::stdin();
         let mut reader = stdin.lock();

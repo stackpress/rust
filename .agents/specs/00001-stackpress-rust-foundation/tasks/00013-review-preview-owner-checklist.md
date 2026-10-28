@@ -1,18 +1,20 @@
 # Slice 8 owner review checklist
 
-Status: walkthrough for the [approved review preview](00013-review-preview-design.md). Owner acceptance is recorded separately. Installed steps (011 and the installed half of 013) wait for Part B.
+Status: consolidated M0–M4 owner-findings re-review for the [approved review preview](00013-review-preview-design.md). Owner acceptance is recorded separately. Installed steps (011 and the installed half of 013) wait for Part B.
 
-Use two sessions only: first the main root / hydrate / disabled session for 001–010, 012 and the disabled half of 013, then the compiled plugin session for the plugin half of 013. Open `http://127.0.0.1:<assigned-port>/review`, replacing the port with the one reported by devmetrics; this host uses that exact origin. Keep `/review` in a second tab for its labelled caller/failure fixtures; select Editor to begin. These fixtures are not a login system. Record pass/fail and observations per control.
+Use two sessions only: first the main root / hydrate / disabled session for 001–010, 012 and the disabled half of 013, then the compiled plugin session for the plugin half of 013. Open `http://127.0.0.1:<assigned-port>/review`, replacing the port with the one reported by devmetrics; this host uses that exact origin. Keep `/review` in a second tab for its labelled caller/failure fixtures; a fresh visitor defaults to Editor; choose Editor to reset an earlier caller selection. These fixtures are not a login system. Record pass/fail and observations per control.
 
 ## 00013-001 — useful content before JavaScript
 
 Paths: `/review`, `/ui-gallery/gallery`, `/generated-admin/profile/search`.
 
 1. Choose Editor and Pause hydration in the review panel; open each page in the hydrate session.
-2. Check that labels, gallery content and generated rows are readable before starting browser controls.
+2. Check that labels, gallery content and generated rows are readable before starting browser controls. Ordinary Notes, profile names and the page title use realistic text; deliberately hostile values are grouped under Safety samples.
 3. Type in an input, focus it, select some text and scroll the page.
 4. Start browser controls; check that the value, selection, focus and scroll remain and content does not flash or duplicate.
-5. Restore automatic hydration in the review panel.
+5. Before starting browser controls on a fresh gallery page, check Select page with no rows selected; start controls and check all 12 visible rows become selected. Repeat once with one row already selected. Restore automatic hydration in the review panel.
+6. Text rows and Metadata rows have inline inputs and Up/Down/Remove icons with descriptive accessible names. Tab to the actions; use Enter/Space to add, move and remove, checking focus remains usable.
+7. Tags are plain text chips with X remove buttons. Add a draft using Enter or Add; whitespace-only drafts stay untouched. Remove then add to change a tag; there is no chip editing or reordering. Backspace in an empty add input focuses the last X without deleting. Removing a chip focuses a neighbour or the add input; input composition must not append accidentally. Fill to the bound and inspect disabled Add behavior. Existing empty values remain visible as “(empty)” in the automated fixture.
 
 ## 00013-002 — keyboard dialogs
 
@@ -28,11 +30,12 @@ Path: `/ui-gallery/gallery`.
 
 Paths: `/ui-gallery/gallery`, `/generated-admin/task/search`, `/review`.
 
-1. Read the table caption/headings; filter, sort and move between pages.
+1. The gallery Paged people table has 48 rows, 12 columns and 12 rows per page. Read its caption/headings; filter, sort and move between pages. Headings use inline text and Lucide sort indicators; the page checkbox keeps its accessible Select page name.
+   Scroll sideways to Reference and down inside the table: headings remain sticky, compact values stay on one line and Notes wrap. Selection, sorting, filtering and paging must still work.
 2. Open the list's current-state link, refresh and use Back; check that the represented filter/sort/page agrees.
 3. Choose Slow next read in the second tab and load again; check useful rows remain while loading.
 4. Filter to no matches; check that the empty state explains what to do.
-5. Try Failed next read and Denied caller separately; check safe errors/actions, then restore Editor.
+5. Try Failed next read and Denied caller separately on a generated-admin document URL. Expect styled HTML “Unable to load this page” or “Access denied”, with safe guidance/Return to list and the Review fixtures link. No raw JSON envelope or private row appears. Restore Editor.
 
 ## 00013-004 — generated record changes
 
@@ -52,8 +55,8 @@ Paths: `/generated-admin/profile/search`, `/generated-admin/project/search`, `/g
 1. Open a seeded parent's related projects/tasks; check the parent context and related links remain visible.
 2. Create a related record as Editor and check it appears only under the correct parent.
 3. Switch to Reader; check read access remains and unavailable write actions disappear.
-4. Paste the earlier Create URL directly; check denial. In browser developer tools, repeat a captured write request with a forged `x-admin-actor: editor`; check Reader still cannot write.
-5. Switch to Denied and paste a saved detail/related URL; check no private record appears, then restore Editor.
+4. Paste the earlier Create URL directly; expect the styled Access denied page and access guidance. In browser developer tools, repeat a captured write request with a forged `x-admin-actor: editor`; check Reader still cannot write.
+5. Switch to Denied and paste a saved detail/related URL; expect the same HTML denial and no private record. Restore Editor. API/write/export denials remain machine-readable JSON.
 
 ## 00013-006 — CSV preview, confirm and export
 
@@ -90,7 +93,8 @@ Paths: `/ui-preferences/preferences`, `/review`.
 
 Paths: `/ui-gallery/gallery`, `/ui-format/`.
 
-1. Read the malicious-looking HTML/Markdown examples and their safe fallback/code text.
+1. In the gallery Safety samples section, read the deliberately hostile Resource, labelled Textarea escaping sample and sanitized HTML/Markdown. Markup must remain inert. The textarea retains its literal leading newline, quotes and Unicode after startup; ordinary Notes elsewhere contain normal text.
+   The rejected encoded JavaScript, protocol-relative, data and relative URL examples have clear separate labels with visible spaces. Only Allowed HTTPS link is navigable.
 2. Check no popup, hidden form, broken layout or unexpected resource load appears; inspect the Network tab as well as the page.
 3. Refresh before/after hydration; check the safe content remains equivalent.
 4. Do not activate external sample links when checking for unsolicited network requests.
@@ -103,6 +107,9 @@ Paths: gallery, generated-admin search/create/import, preferences and formatting
 2. Repeat at 375 px and 200% zoom; check no action/error is clipped off the page.
 3. Scroll a wide table inside its labelled region; check the whole page does not need horizontal scrolling.
 4. Keep keyboard focus visible and enable reduced motion; inspect dialogs, notices, validation and pending states again.
+5. Inspect collection input/action alignment, wrapped tag chips and labelled Add controls at both widths/zooms. Icons should be recognizably Lucide; focus is visible and actions remain reachable.
+6. The interactive rating uses stars and native radio keyboard behavior. Choose 2 then use arrow keys/Space, choose the small 0 control, and Clear rating: 0 and Unrated are distinct. The role catalogue score also admits 0. Fields whose minimum excludes 0 must omit that control (the automated minimum-two fixture covers this case). Disabled controls cannot change values.
+7. Typed nested rows is absent from the owner gallery; its four-state/raw-token demo is retained only in the automated collection proof fixture. A nullable-boolean product control is deferred.
 
 ## 00013-011 — installed iOS app
 
@@ -120,21 +127,23 @@ Paths: packaged `index.html` / Profile UI; no HTTP URL. Coordinator uses `exampl
 Paths: `/ui-stream/stream`, `/ui-stream/late`, `/ui-stream/pending`, `/review`.
 
 1. Open the ordinary streamed page; read the useful shell before the deliberately delayed details appear.
-2. Wait for details and use the counter; check loading/data is not duplicated and hostile-looking text stays inert.
+2. Wait for the normal project summary and use the counter; check loading/data is not duplicated. The separate Safety samples section contains deliberately hostile text, displayed inertly.
 3. Open Pending and immediately use browser Back, before its two-second idle deadline. Refresh the review panel and check that cleaned stream roots increased. Browser navigation alone is not resource-cleanup evidence.
-4. Open Late failure; wait for its bounded deadline and check safe recovery with no false success or hydrated partial page.
-5. Use browser Back or `/review` → Delayed stream to return to the ordinary case and check it works again. Reload on the deliberately failing URL repeats that failure.
+4. Open Late failure and leave it open for at least six seconds. Expect a visible alert and Reload this page link: “This page didn't finish loading” if a failure marker/parsing end is observable, otherwise the honest “This page hasn't finished loading”. The shell remains readable, counter inactive, with no success or hydrated partial page.
+5. Open Pending again and leave it open past its deadline and six-second guidance timer; expect the same safe recovery. Reload points at the same URL and does not retry automatically.
+6. Use browser Back or `/review` → Delayed stream to return to the ordinary case and check it works again. Reload on the deliberately failing URL repeats that failure.
 
 ## 00013-013 — compiled plugin replacement/removal
 
 Paths: `/generated-admin/roles`, `/generated-admin/profile/create`; packaged `admin-review.html` in the proposed debug review bundle.
 
-1. During the main session, choose Pause hydration and record the restored “Name </script> 🦀” label on the role catalog and Profile create form; start browser controls and compare it again. This disabled bundle was built after removing the plugin; the automated removal proof also checks the restored generated files.
-2. Stop the main session before rebuilding. Have the coordinator run `python3 examples/review-preview/review.py bundles --directory /private/tmp/s8-review`; it compiles with the plugin, removes it and rebuilds disabled artifacts through the existing disposable generation helpers.
+1. During the main session, choose Pause hydration and record the review-owned “Full name” label on the role catalog and Profile create form; start browser controls and compare it again. This disabled review bundle uses an isolated review-only schema label and is built after removing the plugin. Normal automated generation/removal proofs keep the hostile label and verify escaped output and restored files.
+2. Stop the main session before rebuilding. Have the coordinator run the benchmark-recorded `review.py bundles` command described in the [preview README](../../../../examples/review-preview/README.md); it compiles with the plugin, removes it and rebuilds disabled artifacts through the existing disposable generation helpers.
 3. Start the matching plugin gateway using the receipt's command. Use Pause hydration to read “Plugin field label” on the role catalog before JavaScript; hydrate and edit its field, then inspect the matching Profile create form.
-4. Rebuild/install the matching debug iOS review bundle; open its local Generated admin review link and compare the same compiled plugin label. This installed step waits for Part B.
+4. Rebuild/install the matching debug iOS review bundle; open its local Generated admin review link and compare the same compiled plugin label. This installed step waits for Part B and requires its matching owner-review schema variant; ordinary automated installed fixtures retain their hostile label.
 5. Rebuild/install the disabled iOS variant and check the original label returns, matching the main session's recorded web label. No third web session is required.
-6. Confirm this is a compiled selection, not the role selector. The packaged role catalog has local fixture drafts; it does not provide native admin CRUD.
+6. On roles, inspect the styled catalogue sections, fields and locally scrolling table. Empty list values read None and populated lists are comma-separated; draft values stay exact. The separate Safety samples section labels the nullable/default/hostile proofs.
+7. Confirm this is a compiled selection, not the role selector. The packaged role catalog has local fixture drafts; it does not provide native admin CRUD.
 
 ## Optional extra checks
 

@@ -46,11 +46,15 @@ def artifacts(ctx, formatted=False, destination=None, root=ROOT, prefix='build')
     features=['--features','format'] if formatted else []
     # Separate workspaces share top-level artifact names in this sole target. A fresh Cargo
     # fingerprint alone can leave another workspace's binary there (including its manifest path).
+    # Review-only labels can leave newer shared objects in this one warm target.
+    # Clear shared native output before consuming a new generated tree; old source
+    # timestamps in an isolated snapshot are not sufficient proof. WASM is cleared below.
+    ctx.run(prefix+'-shared-clean',['cargo','clean','-p','generated-admin-shared'],cwd=root)
     ctx.run(prefix+'-web-clean',['cargo','clean','-p','generated-admin-web'],cwd=root)
     ctx.run(prefix+'-web',['cargo','build','-p','generated-admin-web',*features,'--locked'],cwd=root)
     shutil.copy2(TARGET/'debug/generated-admin-web',destination/'admin-web')
     for mode in ['hydrate','csr']:
-        ctx.run(prefix+'-'+mode+'-clean',['cargo','clean','-p','generated-admin-client'],cwd=root)
+        ctx.run(prefix+'-'+mode+'-clean',['cargo','clean','--target','wasm32-unknown-unknown','-p','generated-admin-client','-p','generated-admin-shared'],cwd=root)
         ctx.run(prefix+'-'+mode,['cargo','build','-p','generated-admin-client','--target','wasm32-unknown-unknown','--features',mode+(',format' if formatted else ''),'--locked'],cwd=root)
         assets=destination/'assets'/mode
         assets.mkdir(parents=True,exist_ok=True)

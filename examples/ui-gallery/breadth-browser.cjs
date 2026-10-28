@@ -138,12 +138,10 @@ async function controls(page, mode) {
   assert.equal(await page.locator('#tag-rows-21-value').inputValue(),'0');
   assert.equal(await page.locator('#tag-rows [id$="-up"],#tag-rows [id$="-down"]').count(),0);
   await page.locator('#metadata-rows-4-key').fill('empty'); await page.locator('#metadata-rows-4-value').fill('');
-  await page.locator('#nested-rows-add').click(); assert.equal(await page.locator('#nested-9-value').inputValue(),'missing','reentrant default factory runs outside the collection guard');
-  await page.locator('#nested-rows').getByRole('button',{name:'Set null',exact:true}).first().click(); assert.equal(await page.locator('#nested-8-value').inputValue(),'null');
 
   const fields = await page.locator('#collection-form').evaluate(form => Object.fromEntries(new FormData(form)));
   assert.equal(fields['text-rows[2]'],'0'); assert.equal(fields['tag-rows[21]'],'0');
-  assert.equal(fields['metadata-rows[4][value]'],''); assert.equal(fields['nested[8]'],'null');
+  assert.equal(fields['metadata-rows[4][value]'],'');
   assert.equal(fields['combo-value'],undefined); assert.equal(fields['suggest-value'],undefined,'editing after selection clears stale machine values');
 
   // Table paging, filter/sort/selection and same-key replacement are actual controlled behavior.
@@ -254,8 +252,8 @@ async function overlays(page,name) {
 (async () => {
   const browser = await chromium.launch({headless:true});fs.mkdirSync(path.join(output,'screenshots'),{recursive:true});
   try {
-    for (const mode of ['hydrate','csr']) for (const base of ['', '/demo/v1']) {
-      const name=`${base?'mounted':'root'}-${mode}`,scheme=base?'dark':'light';
+    for (const mode of ['hydrate','csr']) for (const base of ['', '/demo/v1']) for (const earlySelection of mode==='hydrate'?['partial-page','page-only']:['none']) {
+      const name=`${base?'mounted':'root'}-${mode}${earlySelection==='page-only'?'-page-only':''}`,scheme=base?'dark':'light';
       const context=await browser.newContext({viewport:{width:1280,height:900},colorScheme:scheme,hasTouch:!!base});const page=await context.newPage();
       page.setDefaultTimeout(10000);page.setDefaultNavigationTimeout(10000);await monitor(page);
       const errors=[],unexpected=[];let resourceCalls=0;let release;const boot=new Promise(resolve => {release=resolve;});
@@ -279,14 +277,19 @@ async function overlays(page,name) {
           const color=await page.locator('.sp-root').evaluate(node => getComputedStyle(node).backgroundColor);assert.equal(color,scheme==='dark'?'rgb(32, 33, 36)':'rgb(255, 255, 255)','CSS system resolves before bootstrap');
           await page.locator('#native-details summary').click();await page.locator('#text-rows-1-value').fill('Before JavaScript 雪');await page.locator('#slug').fill('Before JavaScript');await page.locator('#combo').fill('Ga');
           await page.locator('#tag-rows-draft').fill('Early tag 雪'); await page.locator('#metadata-rows-4-key').fill('early'); await page.locator('#metadata-rows-4-value').fill('');
-          await page.locator('#nested-8-value').selectOption('true'); await page.locator('label[for=rating-2]').click();
+          await page.locator('label[for=rating-2]').click();
           await page.locator('#rating-2').focus(); await page.keyboard.press('ArrowRight'); await page.keyboard.press('ArrowLeft');
           assert.equal(await page.locator('.sp-rating-input .sp-icon').evaluateAll(nodes=>nodes.filter(node=>getComputedStyle(node).fill!=='none').length),2,'native checked state fills stars before JavaScript');
           await page.locator('#single-range-0').fill('4'); await page.locator('#pair-range-0').fill('3'); await page.locator('#pair-range-1').fill('7');
-          await page.locator('#suggest').fill('Early query'); await page.locator('#data-table-filter').fill('Person 02'); await page.locator('#data-table-row-r0').check(); await page.locator('#data-table-select-page').check();
-          assert.equal(await page.locator('#data-table-row-r0').evaluate(node => getComputedStyle(node.closest('tr')).boxShadow!=='none'),true,'selection is visible from native checked state before JavaScript');
+          await page.locator('#suggest').fill('Early query'); await page.locator('#data-table-filter').fill('Person 02'); if(earlySelection==='partial-page') {
+            await page.locator('#data-table-row-r0').check();
+            assert.equal(await page.locator('#data-table-row-r0').evaluate(node => getComputedStyle(node.closest('tr')).boxShadow!=='none'),true,'selection is visible from native checked state before JavaScript');
+          }
+          assert.equal(await page.locator('.sp-data-table tbody input:checked').count(),earlySelection==='partial-page'?1:0,'keep distinct partial and empty native row-selection scenarios');
+          await page.locator('#data-table-select-page').check();
           await page.evaluate(() => {window.beforeBreadth=document.getElementById('app').innerHTML;window.earlyRow=document.getElementById('text-rows-1-value');window.earlyBreadthNodes=[...document.querySelectorAll('#breadth-core input,#breadth-core select,#breadth-core details,#breadth-core [data-row-id]')].map(node => [node.id || node.getAttribute('data-row-id'),node]);window.earlyRow.focus();});early=true;
         }
+        assert.equal(await page.locator('#nested-rows').count(),0,'raw nullable-boolean fixture is absent from the owner gallery');
         release();await page.waitForFunction(() => window.galleryReady === true);
         if(early){
           const initialDom=await page.evaluate(() => ({before:beforeBreadth,after:document.getElementById('app').innerHTML}));
@@ -297,7 +300,7 @@ async function overlays(page,name) {
           }
           assert.equal(initialDom.before,initialDom.after,'identical adopted initial DOM with no exception');
           assert.equal(await page.evaluate(() => earlyBreadthNodes.every(([id,node]) => node.isConnected && document.getElementById('breadth-core').contains(node) && (!node.id || document.getElementById(id)===node))),true,'all initial native controls and rows retain identity');assert.equal(await page.locator('#text-rows-1-value').evaluate(node => earlyRow===node && document.activeElement===node),true);const state=await inspect(page);assert.equal(state.text[0],'Before JavaScript 雪');assert.equal(state.combo,'Ga');assert.equal(await page.locator('#native-details').evaluate(node => node.open),true);
-          assert.deepEqual(state.tags,['rust','雪']); assert.equal(await page.locator('#tag-rows-draft').inputValue(),'Early tag 雪','the unsubmitted draft survives hydration separately'); assert.deepEqual(state.metadata,[['early','']]); assert.deepEqual(state.nested,['true']);
+          assert.deepEqual(state.tags,['rust','雪']); assert.equal(await page.locator('#tag-rows-draft').inputValue(),'Early tag 雪','the unsubmitted draft survives hydration separately'); assert.deepEqual(state.metadata,[['early','']]);
           assert.deepEqual(state.ranges,[4,3,7]); assert.equal(state.rating,2); assert.equal(state.suggestQuery,'Early query'); assert.equal(state.filter,'Person 02'); assert.deepEqual(new Set(state.selectedRows),new Set(Array.from({length:12},(_,i)=>'r'+i)));}
         assert.equal(resourceCalls,mode==='hydrate'?0:1,'initial resource acquisition count');assert.equal(await page.locator('.sp-root').getAttribute('data-theme'),'system');
         await page.emulateMedia({colorScheme:scheme==='dark'?'light':'dark'});assert.equal(await page.locator('.sp-root').evaluate(node => getComputedStyle(node).backgroundColor),scheme==='dark'?'rgb(255, 255, 255)':'rgb(32, 33, 36)','media-only changes do not mutate the seeded token');
@@ -335,7 +338,7 @@ async function overlays(page,name) {
         await page.evaluate(() => {document.documentElement.style.zoom=1;});
         await page.locator('#suggest').fill('slow');await page.locator('#show-timer-toast').click();await page.evaluate(() => window.disposeGallery());
         await page.waitForFunction(() => document.getElementById('app').innerHTML==='' && breadthLeases().listeners===0 && breadthLeases().timers===0 && breadthLeases().observers===0);
-        assert.deepEqual(errors,[]);assert.deepEqual(unexpected,[]);receipts.push({name,scheme,systemBeforeJs:early,resourceCalls,earlyDraftAndFocus:early,widgets,layers,geometries,leasesReleased:true,errors,unexpected});console.log('PASS breadth '+name);
+        assert.deepEqual(errors,[]);assert.deepEqual(unexpected,[]);receipts.push({name,scheme,earlySelection,systemBeforeJs:early,resourceCalls,earlyDraftAndFocus:early,widgets,layers,geometries,leasesReleased:true,errors,unexpected});console.log('PASS breadth '+name);
       } finally {release();await context.close();}
     }
     fs.writeFileSync(path.join(output,'breadth-browser.json'),JSON.stringify({listenerStarted:false,chromium:browser.version(),receipts},null,2)+'\n');
