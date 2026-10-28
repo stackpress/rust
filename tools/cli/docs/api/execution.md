@@ -105,4 +105,4 @@ after stdout succeeded. Control formatting sanitizes diagnostics. Caller-owned s
 writers/callbacks may block; arbitrary handler writes remain outside adapter authority.
 
 Related: [testing guide](../guides/testing.md), [Server
-reports](../../../../crates/server/docs/api/reports.md).
+reports](../../../../crates/server/server/docs/api/reports.md).

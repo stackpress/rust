@@ -41,4 +41,4 @@ loader Abort, stages complete HTML, and restores the public status after HTML st
 It starts no listener and adds no second top-level lifecycle. The
 [full lifecycle table](../concepts.md#lifecycle-remains-the-servers) covers response/error hooks.
 
-Related: [page guide](../guides/add-a-page.md), [PageRenderer](page-renderer.md), [server docs](../../../../server/docs/README.md).
+Related: [page guide](../guides/add-a-page.md), [PageRenderer](page-renderer.md), [server docs](../../../../server/server/docs/README.md).

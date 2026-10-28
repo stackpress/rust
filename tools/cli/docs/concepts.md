@@ -74,7 +74,7 @@ the input's selected limits. It calls `handle_with_options` once. CliContext sup
 force, config path, and brand through a trusted adapter slot, separate from Request.data and
 inherited by nested dispatch. It contains no I/O handles.
 
-The [Server lifecycle](../../../crates/server/docs/concepts.md#one-lifecycle-per-top-level-call)
+The [Server lifecycle](../../../crates/server/server/docs/concepts.md#one-lifecycle-per-top-level-call)
 owns guards, Abort, fresh Error responses, successful recovery, and reports. Nested operations use
 Invocation emit/resolve/delegate, so they inherit the same lifecycle metadata. The CLI only performs
 Output afterward; an output error cannot re-enter Error/Response or repeat the capability.

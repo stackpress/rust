@@ -23,7 +23,7 @@ required-features = ["app"]
 
 [dependencies]
 stackpress-lib = { path = "../../../crates/lib" }
-stackpress-server = { path = "../../../crates/server" }
+stackpress-server = { path = "../../../crates/server/server" }
 stackpress-example-generated-profile = { path = "../../generated-profile/app" }
 stackpress-example-profile-ui-contracts = { path = "../contracts" }
 serde_json = "1"

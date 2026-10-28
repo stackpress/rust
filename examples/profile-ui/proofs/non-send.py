@@ -21,7 +21,7 @@ rust-version = "1.96"
 [workspace]
 [dependencies]
 stackpress-lib = {{ path = "{root / 'crates/lib'}" }}
-stackpress-server = {{ path = "{root / 'crates/server'}" }}
+stackpress-server = {{ path = "{root / 'crates/server/server'}" }}
 stackpress-framework-view = {{ path = "{root / 'crates/framework/framework-view'}", features = ["server"] }}
 tokio = {{ version = "1", features = ["rt"] }}
 ''')

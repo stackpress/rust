@@ -45,7 +45,7 @@ serde = {{ version = "1", features = ["derive"] }}
 serde_json = "1"
 stackpress-framework-sql = {{ path = "{ROOT}/crates/framework/framework-sql", features = ["server"] }}
 stackpress-lib = {{ path = "{ROOT}/crates/lib" }}
-stackpress-server = {{ path = "{ROOT}/crates/server" }}
+stackpress-server = {{ path = "{ROOT}/crates/server/server" }}
 stackpress-sql = {{ path = "{ROOT}/crates/sql/sql" }}
 '''
         (consumer / 'Cargo.toml').write_text(manifest)

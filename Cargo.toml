@@ -1,6 +1,6 @@
 [workspace]
 members = [
-    "crates/lib", "crates/server", "crates/server-http", "tools/cli", "examples/capability-host",
+    "crates/lib", "crates/server/server", "crates/server/http", "tools/cli", "examples/capability-host",
     "crates/idea/idea-parser", "crates/idea/idea-transformer", "crates/idea/idea",
     "examples/generated-profile/codegen", "examples/generated-profile/app",
     "crates/sql/sql", "crates/sql/sql-sqlite", "examples/sql-profile",
@@ -45,8 +45,8 @@ publish.workspace = true
 
 [dependencies]
 stackpress-lib = { path = "crates/lib" }
-stackpress-server = { path = "crates/server", optional = true, default-features = false }
-stackpress-server-http = { path = "crates/server-http", optional = true }
+stackpress-server = { path = "crates/server/server", optional = true, default-features = false }
+stackpress-server-http = { path = "crates/server/http", optional = true }
 stackpress-idea-parser = { path = "crates/idea/idea-parser", optional = true }
 stackpress-idea-transformer = { path = "crates/idea/idea-transformer", optional = true }
 stackpress-idea = { path = "crates/idea/idea", optional = true }

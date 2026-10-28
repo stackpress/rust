@@ -2,7 +2,9 @@
 
 Use when locating a semantic owner before implementation. Source roots below are canonical sibling checkouts; source code was not copied into resources. The [manifest and hash ledger](../resources/provenance/ingestion-manifest.json) records capture revisions and file hashes.
 
-For the Rust target, read [accepted source structure](source-structure.md) for the root facade, grouped crate tree, package/path catalog, and responsibility boundaries. Upstream names below remain source locators: Ingest maps to `server`, Inquire to `sql`, and Stackpress framework packages to the `framework` family. No Rust Cargo implementation has been scaffolded yet.
+For the Rust target, read [accepted source structure](source-structure.md) for the root facade, grouped crate tree, package/path catalog, and responsibility boundaries. Upstream names below remain source locators: Ingest maps to `server/server`, Inquire to `sql`, and Stackpress framework packages to the `framework` family.
+
+The existing Rust server family is grouped beneath `crates/server/`, which has no package manifest. Start with the [capability-host manifest](../../crates/server/server/Cargo.toml), [source](../../crates/server/server/src/lib.rs), and [docs](../../crates/server/server/docs/README.md) for transport-neutral hosting and buffered HTTP. The optional owned HTTP/1 IO adapter has its own [manifest](../../crates/server/http/Cargo.toml), [source](../../crates/server/http/src/lib.rs), and [docs](../../crates/server/http/docs/README.md). The facade retains separate buffered `server-http` and network-host `server-http-host` / `server-http-host-tls` features.
 
 ## Foundations
 

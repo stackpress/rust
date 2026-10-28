@@ -19,7 +19,7 @@ stackpress-framework-admin = { path = "../../../crates/framework/framework-admin
 stackpress-framework-schema = { path = "../../../crates/framework/framework-schema" }
 stackpress-framework-sql = { path = "../../../crates/framework/framework-sql", features = ["server"] }
 stackpress-lib = { path = "../../../crates/lib" }
-stackpress-server = { path = "../../../crates/server", features = ["http"] }
+stackpress-server = { path = "../../../crates/server/server", features = ["http"] }
 stackpress-sql = { path = "../../../crates/sql/sql" }
 stackpress-sql-sqlite = { path = "../../../crates/sql/sql-sqlite" }
 http = "1"

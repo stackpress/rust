@@ -14,7 +14,7 @@ note: future is not `Send` as this value is used across an await
  9 |     tokio::task::yield_now().await;
    |                              ^^^^^ await occurs here, with `local` maybe used later
 note: required by a bound in `stackpress_server::registration::<impl ServerBuilder>::on`
-  --> $WORKSPACE/crates/server/src/registration.rs
+  --> $WORKSPACE/crates/server/server/src/registration.rs
    |
    |     pub fn on(&mut self, event: &str, action: impl Handler + 'static) -> Result<ListenerId> {
    |                                                    ^^^^^^^ required by this bound in `stackpress_server::registration::<impl ServerBuilder>::on`

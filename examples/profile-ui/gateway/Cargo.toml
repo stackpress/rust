@@ -13,7 +13,7 @@ sqlite = ["stackpress-example-profile-ui-web/sqlite"]
 
 [dependencies]
 stackpress-lib = { path = "../../../crates/lib" }
-stackpress-server = { path = "../../../crates/server", features = ["http"] }
+stackpress-server = { path = "../../../crates/server/server", features = ["http"] }
 stackpress-framework-view = { path = "../../../crates/framework/framework-view" }
 stackpress-example-profile-ui-web = { path = "../web" }
 stackpress-example-profile-ui-contracts = { path = "../contracts" }

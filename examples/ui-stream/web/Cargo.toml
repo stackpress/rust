@@ -11,8 +11,8 @@ stackpress-example-ui-stream-shared = { path = "../shared", features = ["ssr"] }
 stackpress-framework-ui = { path = "../../../crates/framework/framework-ui", features = ["stream"] }
 stackpress-framework-view = { path = "../../../crates/framework/framework-view" }
 stackpress-lib = { path = "../../../crates/lib" }
-stackpress-server = { path = "../../../crates/server", features = ["http-stream"] }
-stackpress-server-http = { path = "../../../crates/server-http" }
+stackpress-server = { path = "../../../crates/server/server", features = ["http-stream"] }
+stackpress-server-http = { path = "../../../crates/server/http" }
 leptos = { version = "=0.8.22", default-features = false }
 futures = "0.3"
 serde_json = "1"

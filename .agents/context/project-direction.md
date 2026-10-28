@@ -35,7 +35,7 @@ The author disliked Dioxus syntax and expressed concerns about its direction. Th
 
 - Name the foundation `stackpress-lib`.
 - Start directly at the repository root with a Cargo workspace and root package `stackpress`; root `src/lib.rs` supplies the public facade. Do not add an extra `rust/` directory or move the checkout.
-- Use the accepted grouped `crates/framework/`, `crates/idea/`, and `crates/sql/` families, plus `crates/lib/` and `crates/server/`. Ingest becomes `server`; Inquire becomes `sql`; the framework family uses `framework-*` names.
+- Use the accepted grouped `crates/framework/`, `crates/idea/`, `crates/server/`, and `crates/sql/` families, plus `crates/lib/`. The server family contains `crates/server/server/` and `crates/server/http/`; its grouping directory has no package. Ingest becomes `server`; Inquire becomes `sql`; the framework family uses `framework-*` names.
 - Provide convenient `stackpress::` imports using valid Rust identifiers, e.g. `stackpress::sql_mysql` and `stackpress::framework_admin`. Cargo packages use the `stackpress-` prefix, e.g. `stackpress-sql-mysql`; explicit facade re-exports and optional feature selection supply the public paths.
 - Independent crate use remains possible; a shared public namespace does not require centralized implementation.
 - Read [accepted source structure](source-structure.md) for the complete tree, package/path catalog, standalone Idea wrapper, SQL/framework-SQL boundary, combined initial Leptos integration/components crate, and acyclic dependency rules.
