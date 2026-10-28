@@ -57,6 +57,18 @@ def stop_console(host, device, child):
         finally:child.wait()
 
 
+def wait_until_running(host, device, child, timeout=60):
+    """Attach the display only after the app runs; Duo SpringBoard crashes on an earlier attach."""
+    deadline=time.monotonic()+timeout
+    while time.monotonic()<deadline:
+        # A console that already exited means the launch failed; report it, don't attach.
+        if child.poll() is not None:raise RuntimeError('App console exited; see manual-app.log')
+        listing=host.run('xcrun','simctl','spawn',device,'launchctl','list',allow_failure=True)
+        if listing and 'UIKitApplication:'+host.APP_ID in listing:return
+        time.sleep(.5)
+    raise RuntimeError('App did not start before attaching the display')
+
+
 def recover(host):
     """Fallback cleanup retries all owned resources, preserving a failed record for inspection."""
     if not host.OWNED.exists():return
@@ -147,6 +159,7 @@ def session(host, args):
             return subprocess.Popen(['xcrun','simctl','launch','--console',device,host.APP_ID],
                                     env=env,stdout=console,stderr=subprocess.STDOUT)
         child=launch()
+        wait_until_running(host,device,child)
         if host.hub_pids():raise RuntimeError('An owner display appeared; leave it untouched')
         display=subprocess.Popen([str(hub/'Contents/MacOS'/info['CFBundleExecutable'])],
                                  stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)

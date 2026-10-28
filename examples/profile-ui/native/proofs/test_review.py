@@ -126,7 +126,27 @@ class Manual(unittest.TestCase):
         path.symlink_to(self.host.LOGS/'ios-build.json')
         with self.assertRaises(ValueError):manual_ios.control(self.host.LOGS)
 
+    def test_display_waits_for_running_app(self):
+        # The display attaches only after launchctl lists the app; a dead console stops first.
+        listings=iter(['', '123\t0\tUIKitApplication:test.app[ab12]'])
+        self.host.run=Mock(side_effect=lambda *arguments,**_:next(listings))
+        with patch.object(manual_ios.time,'sleep'):
+            manual_ios.wait_until_running(self.host,'device',self.child)
+        self.assertEqual(self.host.run.call_count,2)
+        self.child.poll.return_value=1
+        with self.assertRaisesRegex(RuntimeError,'console exited'):
+            manual_ios.wait_until_running(self.host,'device',self.child)
+        self.child.poll.return_value=None
+        self.host.run=Mock(return_value='')
+        with patch.object(manual_ios.time,'sleep'),patch.object(manual_ios.time,'monotonic',side_effect=[0,0,61]):
+            with self.assertRaisesRegex(RuntimeError,'did not start'):
+                manual_ios.wait_until_running(self.host,'device',self.child)
+
     def test_interactive_restart_stop_and_cleanup(self):
+        uuid='00000000-0000-0000-0000-000000000001'
+        # launchctl reports the running app; every other simctl call returns the fake device.
+        self.host.run=Mock(side_effect=lambda *arguments,**_:
+            'UIKitApplication:test.app' if 'launchctl' in arguments else uuid)
         with patch.dict(os.environ,PROFILE_UI_REVIEW_DEADLINE='999999999999'), \
              patch.object(manual_ios.subprocess,'Popen',return_value=self.child) as spawn, \
              patch.object(manual_ios,'track_display',return_value=[42]), \
