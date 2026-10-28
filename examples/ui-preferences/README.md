@@ -1,6 +1,7 @@
 # Preferences proof
 
-This finite example exercises Lane B M1. It starts no listener and installs nothing.
+This finite example exercises view presentation preferences, flash and access hints.
+It starts no listener and installs nothing.
 Run `python3 examples/ui-preferences/build.py`, then supply the installed Playwright
 package with `PREFERENCES_PLAYWRIGHT=<package-directory> python3 examples/ui-preferences/browser.py`.
 Logs, generated browser assets and screenshots go to `/private/tmp/s8-lane-b`.

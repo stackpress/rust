@@ -36,7 +36,7 @@ async fn main() -> Result<(), ViewError> {
         page: PageId::try_from("welcome".to_owned())?,
         location: "/ui/welcome".into(),
         locale: "en".into(),
-        theme: "light".into(),
+        theme: Some("light".into()),
         status: PublicStatus::ok(),
         data: "Welcome".to_owned(),
     };

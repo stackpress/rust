@@ -69,7 +69,7 @@ extern "C" {
     /// Write only the fixed public settings DTO; no caller path or event selector.
     #[wasm_bindgen(catch, js_name = updatePreferences)]
     async fn update_preferences(json: &str) -> Result<JsValue, JsValue>;
-    /// Resolve system colors before the first native CSR mount.
+    /// Sample OS colors once after an unset preference loads, before the first CSR mount.
     #[wasm_bindgen(js_name = systemDark)]
     fn system_dark() -> bool;
 }
@@ -230,6 +230,7 @@ pub fn start() -> Result<js_sys::Function, JsValue> {
 #[cfg(feature = "csr")]
 #[wasm_bindgen]
 pub async fn start_native() -> Result<js_sys::Function, JsValue> {
+    // Persisted settings must be acquired/admitted before any native CSR root can paint.
     let text = load_preferences()
         .await?
         .as_string()
@@ -240,6 +241,7 @@ pub async fn start_native() -> Result<js_sys::Function, JsValue> {
     initial.language =
         stackpress_example_profile_ui_shared::profile_language(&settings.preferences.locale)
             .map_err(JsValue::from_str)?;
+    // Explicit saved choices bypass OS acquisition; absence samples exactly once without a write.
     initial.theme = effective_theme(settings.preferences.theme);
     mount(initial, Some(settings))
 }
@@ -251,6 +253,7 @@ fn effective_theme(
 ) -> stackpress_framework_ui::state::Theme {
     use stackpress_framework_ui::state::Theme;
     use stackpress_framework_view::preferences::ThemePreference;
+    // Keep saved choice and effective color separate; only the unset branch consults the OS.
     match theme {
         Some(ThemePreference::Light) => Theme::Light,
         Some(ThemePreference::Dark) => Theme::Dark,
@@ -274,13 +277,16 @@ fn preference_transport(
         DisplayPreferences, PreferenceChange, PreferenceTransport,
     };
     use stackpress_framework_view::preferences::{NativePreferenceUpdate, ThemePreference};
+    // Root-owned acknowledged saved values retain None independently from the effective theme.
     let saved = StoredValue::new(settings);
+    // Locale acknowledgements reuse this initial color rather than sampling the OS again.
     let frozen = StoredValue::new(initial_theme);
     PreferenceTransport::new(
         move |(change, complete): (
             PreferenceChange,
             stackpress_example_profile_ui_shared::PreferenceCompletion,
         )| {
+            // Change one requested field while preserving the other acknowledged setting.
             let mut desired = saved.get_value();
             match change {
                 PreferenceChange::Locale(locale) => desired.locale = locale,
@@ -292,8 +298,10 @@ fn preference_transport(
                     })
                 }
             }
+            // Root disposal revokes this future; completion identity is checked by the controller.
             leptos::task::spawn_local_scoped_with_cancellation(async move {
                 let result = async {
+                    // Only the fixed revision-1 public DTO crosses the allowlisted native command.
                     let json = serde_json::to_string(&NativePreferenceUpdate {
                         revision: 1,
                         preferences: desired.clone(),
@@ -305,9 +313,11 @@ fn preference_transport(
                         .as_string()
                         .ok_or(())?;
                     let reply = crate::seed::native_preferences(&response).map_err(|_| ())?;
+                    // Recovery or mismatched acknowledgement cannot claim a successful save.
                     if reply.preferences != desired || reply.recovered {
                         return Err(());
                     }
+                    // Retain saved choice only after exact readback; None preserves the frozen color.
                     saved.set_value(desired);
                     Ok(DisplayPreferences {
                         locale: reply.preferences.locale,

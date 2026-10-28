@@ -6,9 +6,11 @@ use stackpress_lib::Result;
 
 /// Render one deterministic shared source under a request-local reactive Owner.
 pub(super) fn render(seed: Seed, csr: bool) -> Result<String> {
+    // The public seed is escaped for inert script text before any HTML assembly.
     let json = serde_json::to_string(&seed)
         .map_err(|cause| failure("serialize preferences seed", cause))?;
     let json = stackpress_framework_view::escape_script_json(&json);
+    // CSR deliberately has no SSR body; native rendering disposes all request-local signals.
     let body = if csr {
         String::new()
     } else {
@@ -32,6 +34,7 @@ pub(super) fn render(seed: Seed, csr: bool) -> Result<String> {
     } else {
         String::new()
     };
+    // Mark only unset choices; without the asset this same document stays readable Light.
     let marker = if unset { " data-theme-unset" } else { "" };
     Ok(format!(
         "<!doctype html><html lang=\"{}\" data-theme=\"{}\"{marker}><head>{bootstrap}<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>{}</title><style>{STYLES}</style></head><body><div id=\"app\">{body}</div><script type=\"application/json\" id=\"preferences-seed\">{json}</script><script type=\"module\" src=\"{}/assets/start.js\"></script></body></html>",

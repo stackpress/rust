@@ -27,6 +27,7 @@ pub struct PreferenceState {
 impl PreferenceState {
     /// Seed before first render from a host-validated public projection.
     pub fn new(current: Preferences, location: String) -> Self {
+        // Seed useful content independently from the empty write slot.
         Self {
             current,
             location,
@@ -36,14 +37,17 @@ impl PreferenceState {
     }
     /// Borrow acknowledged settings without copying an entire dictionary.
     pub fn current(&self) -> &Preferences {
+        // Borrow the last acknowledgement; pending desired settings are not visible here.
         &self.current
     }
     /// Borrow the acknowledged path/query.
     pub fn location(&self) -> &str {
+        // History follows only successful acknowledgement, not an in-flight intent.
         &self.location
     }
     /// Read save progress for disabled controls and accessible failure notices.
     pub fn status(&self) -> SaveState {
+        // Progress is root-local; it makes no assertion that a failed remote write rolled back.
         self.status
     }
     /// Admit one root write; there is no automatic retry or cancellation-as-rollback.
@@ -52,11 +56,13 @@ impl PreferenceState {
         if self.pending.is_some() {
             return None;
         }
+        // Snapshot the exact desired settings and current return path for later comparison.
         let update = SettingsUpdate {
             locale: desired.locale,
             theme: desired.theme,
             location: self.location.clone(),
         };
+        // Reserve before returning the transport input so duplicate clicks cannot race.
         self.pending = Some(update.clone());
         self.status = SaveState::Pending;
         Some(update)
@@ -70,6 +76,7 @@ impl PreferenceState {
         action: &SettingsAction,
         text: &str,
     ) -> Result<SettingsReply, PreferenceError> {
+        // Unsolicited or late replies lack a currently admitted submission.
         let submitted = self.pending.as_ref().ok_or(PreferenceError::Request)?;
         action.acknowledge(text, submitted)
     }
@@ -81,6 +88,7 @@ impl PreferenceState {
     pub fn complete(&mut self, action: &SettingsAction, text: &str) -> Result<(), PreferenceError> {
         // Validate everything before replacing either acknowledged setting or path.
         let reply = self.validate(action, text)?;
+        // Commit the checked settings/path together, then release the write slot.
         self.pending = None;
         self.current = reply.preferences;
         self.location = reply.location;

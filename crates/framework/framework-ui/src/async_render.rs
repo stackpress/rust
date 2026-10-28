@@ -189,11 +189,13 @@ fn prepare<T: Serialize, V: IntoView>(
     })?;
     let locale = snapshot.locale.clone();
     let theme = snapshot.theme.as_deref().unwrap_or("light").to_owned();
+    // The unset marker permits one initial sample while the no-JS document remains readable Light.
     let theme_marker = if snapshot.theme.is_none() {
         " data-theme-unset"
     } else {
         ""
     };
+    // Saved explicit choices are complete SSR output; only unset admits the external sampler.
     let theme_head = if snapshot.theme.is_none() {
         stackpress_framework_view::theme::bootstrap_tag(
             &assets.base,

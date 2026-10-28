@@ -48,7 +48,9 @@ impl From<io::Error> for FileError {
 #[derive(Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct Stored {
+    /// Fixed on-disk revision, validated again after bounded decoding.
     revision: u32,
+    /// Public settings, with legacy theme normalization confined to this saved-data boundary.
     #[serde(deserialize_with = "saved_preferences")]
     preferences: Preferences,
 }
@@ -57,13 +59,17 @@ struct Stored {
 fn saved_preferences<'de, D: serde::Deserializer<'de>>(
     deserializer: D,
 ) -> Result<Preferences, D::Error> {
+    // The compatibility intermediate accepts legacy text without changing live DTO admission.
     #[derive(Deserialize)]
     #[serde(deny_unknown_fields)]
     struct Saved {
+        /// Retain locale verbatim so legacy theme normalization cannot reset another setting.
         locale: String,
+        /// Missing/null is unset; only the saved-data decoder also recognizes legacy system.
         #[serde(default)]
         theme: Option<String>,
     }
+    // Decode only the closed stored fields before normalizing the theme independently.
     let saved = Saved::deserialize(deserializer)?;
     // Unknown values still trigger the adapter's existing corrupt-file recovery.
     let theme = match saved.theme.as_deref() {
@@ -99,12 +105,14 @@ impl PreferenceFile {
         registry: LocaleRegistry,
         defaults: Preferences,
     ) -> Result<Self, FileError> {
+        // Reject invalid fallback data before creating even the trusted app directory.
         if registry.canonical(&defaults.locale) != Some(defaults.locale.as_str()) {
             return Err(FileError(None));
         }
         // Create only the host-selected app-config path, never a path from invoke.
         fs::create_dir_all(&directory)?;
         let metadata = fs::symlink_metadata(&directory)?;
+        // Inspect the named root itself: symlinks and externally writable roots are refused.
         if !metadata.is_dir() || metadata.mode() & 0o022 != 0 {
             return Err(FileError(None));
         }
@@ -124,6 +132,7 @@ impl PreferenceFile {
     /// Load checked settings; missing is normal, invalid/unreadable input recovers.
     /// No corrupt data or symlink target is removed or rewritten during a read.
     pub fn load(&self) -> LoadedPreferences {
+        // Missing is normal first-install state; unreadable/corrupt input is visible recovery.
         let result = self.read();
         let (preferences, recovered) = match result {
             Ok(Some(preferences)) => (preferences, false),
@@ -138,14 +147,17 @@ impl PreferenceFile {
     }
     /// Validate a canonical locale without regional/case/alias guessing in a file.
     fn valid(&self, preferences: &Preferences) -> bool {
+        // Files persist canonical identities only; aliases cannot silently migrate stored data.
         self.registry.canonical(&preferences.locale) == Some(preferences.locale.as_str())
     }
     /// Open without following symlinks or waiting on a substituted FIFO/device.
     fn read(&self) -> Result<Option<Preferences>, FileError> {
+        // No-follow and nonblocking protect the final child before metadata/read operations.
         let opened = OpenOptions::new()
             .read(true)
             .custom_flags(libc::O_NOFOLLOW | libc::O_NONBLOCK)
             .open(self.directory.join(FILE_NAME));
+        // Only an absent file is a normal empty store; all other I/O errors remain failures.
         let file = match opened {
             Ok(file) => file,
             Err(error) if error.kind() == io::ErrorKind::NotFound => return Ok(None),
@@ -156,11 +168,13 @@ impl PreferenceFile {
         if !metadata.is_file() || metadata.len() > MAX_FILE_BYTES {
             return Err(FileError(None));
         }
+        // Recheck a bounded read in case content grows after the handle metadata check.
         let mut bytes = Vec::with_capacity(metadata.len() as usize);
         file.take(MAX_FILE_BYTES + 1).read_to_end(&mut bytes)?;
         if bytes.len() as u64 > MAX_FILE_BYTES {
             return Err(FileError(None));
         }
+        // Saved compatibility decoding does not authorize an unsupported revision or locale.
         let stored: Stored = serde_json::from_slice(&bytes).map_err(|_| FileError(None))?;
         if stored.revision != 1 || !self.valid(&stored.preferences) {
             return Err(FileError(None));
@@ -174,16 +188,19 @@ impl PreferenceFile {
     /// occupied staging name or I/O/sync failure. A failure after
     /// rename may still be saved; no automatic retry or rollback is promised.
     pub fn update(&mut self, preferences: Preferences) -> Result<Preferences, FileError> {
+        // Reject invalid settings before inspecting or changing any destination/staging name.
         if !self.valid(&preferences) {
             return Err(FileError(None));
         }
         let destination = self.directory.join(FILE_NAME);
+        // Do not replace a symlink/nonregular destination; an absent fixed child is allowed.
         match fs::symlink_metadata(&destination) {
             Ok(metadata) if !metadata.is_file() => return Err(FileError(None)),
             Ok(_) => {}
             Err(error) if error.kind() == io::ErrorKind::NotFound => {}
             Err(error) => return Err(error.into()),
         }
+        // Serialize the unchanged revision-1 envelope before creating a staging file.
         let bytes = serde_json::to_vec(&Stored {
             revision: 1,
             preferences: preferences.clone(),
@@ -196,12 +213,14 @@ impl PreferenceFile {
         // The cleanup lease removes only this create-new temporary name on any exit.
         file.write_all(&bytes)?;
         file.sync_all()?;
+        // Rename publishes the new bytes atomically; a later directory-sync error is unconfirmed.
         fs::rename(&temporary.0, destination)?;
         File::open(&self.directory)?.sync_all()?;
         Ok(preferences)
     }
     /// Create the fixed staging child exclusively, mode 0600, with no-follow flags.
     fn temporary(&self) -> Result<(File, Temporary), FileError> {
+        // A single create-new 0600 name bounds leftovers and cannot follow a substituted child.
         let path = self.directory.join(TEMP_NAME);
         let file = OpenOptions::new()
             .write(true)

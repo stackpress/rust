@@ -19,7 +19,7 @@ pub enum PreferenceChange {
 pub struct DisplayPreferences {
     /// Checked by the existing example phrase registry before publication.
     pub locale: String,
-    /// Effective explicit color mode, resolved before mounting for native system mode.
+    /// Effective Light/Dark color, resolved once before mounting when saved choice is absent.
     pub theme: Theme,
 }
 /// Completion must be marshalled back to the originating UI execution context.
@@ -36,7 +36,7 @@ pub(crate) struct PreferenceController {
     generation: RwSignal<u64>,
     /// Root-local dictionary, published only after a checked acknowledgement.
     language: LanguageContext,
-    /// Root-local effective theme; the transport retains any saved system mode.
+    /// Root-local effective theme; the transport separately retains saved-choice absence.
     theme: ThemeState,
     /// Accessible failure notices share the existing root's bounded queue.
     notices: Notifications,
@@ -51,6 +51,7 @@ impl PreferenceController {
         notices: Notifications,
         transport: Option<PreferenceTransport>,
     ) -> Self {
+        // Bind only originating root signals; transport completion never owns the UI Owner.
         Self {
             pending: RwSignal::new(false),
             generation: RwSignal::new(0),
@@ -62,6 +63,7 @@ impl PreferenceController {
     }
     /// Ignore repeated clicks while a single admitted save owns this root.
     pub(crate) fn change(self, change: PreferenceChange) {
+        // The first admitted write retains publication ownership until its completion.
         if self.pending.get_untracked() {
             return;
         }
@@ -91,12 +93,14 @@ impl PreferenceController {
             {
                 return;
             }
+            // Revalidate the locale before publishing either acknowledged presentation value.
             let admitted = result.and_then(|settings| {
                 crate::profile_language(&settings.locale)
                     .map(|language| (language, settings.theme))
                     .map_err(|_| ())
             });
             batch(move || {
+                // Release admission and publish/fail in one UI batch, preserving unrelated drafts.
                 self.pending.set(false);
                 match admitted {
                     Ok((language, theme)) => {
@@ -112,6 +116,7 @@ impl PreferenceController {
                 }
             });
         });
+        // The explicit adapter owns persistence; no automatic retry or hidden write occurs here.
         transport.run((change, complete));
     }
 }

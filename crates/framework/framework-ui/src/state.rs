@@ -21,6 +21,7 @@ pub enum Theme {
 impl Theme {
     /// Return the stable HTML/CSS theme token.
     pub fn as_str(self) -> &'static str {
+        // Effective UI state has exactly two DOM tokens; persistence/absence lives in view.
         match self {
             Self::Light => "light",
             Self::Dark => "dark",
@@ -35,16 +36,19 @@ pub struct ThemeState(RwSignal<Theme>);
 impl ThemeState {
     /// Initialize from the explicit public seed.
     pub fn new(theme: Theme) -> Self {
+        // Allocate inside the current Owner so independent roots never share theme state.
         Self(RwSignal::new(theme))
     }
 
     /// Read reactively in a component or attribute.
     pub fn get(self) -> Theme {
+        // Subscribe this view to its own root; no browser or storage acquisition occurs.
         self.0.get()
     }
 
     /// Replace only this root's theme.
     pub fn set(self, theme: Theme) {
+        // Publication is synchronous and root-local; only an application adapter persists it.
         self.0.set(theme);
     }
 

@@ -17,6 +17,7 @@ pub(crate) struct PreferencesHost {
 impl PreferencesHost {
     /// Bind only a host-selected app configuration directory, without reading/writing it.
     pub(crate) fn new(directory: PathBuf) -> Self {
+        // Defer all directory/file work until an explicitly admitted fixed command.
         Self {
             directory,
             file: Mutex::new(None),
@@ -24,9 +25,11 @@ impl PreferencesHost {
     }
     /// Prepare a bounded store only after authoritative command admission.
     fn with_file<T>(&self, operation: impl FnOnce(&mut PreferenceFile) -> Result<T>) -> Result<T> {
+        // One host mutex serializes synchronous file work; no guard crosses an await.
         let mut state = self.file.lock().map_err(|_| {
             Error::new("Native preference state poisoned").with_kind(ErrorKind::External)
         })?;
+        // First admitted access prepares trusted fixed storage; command JSON supplies no path.
         if state.is_none() {
             let registry = LocaleRegistry::new(
                 vec!["en".into(), "fr".into()],
@@ -49,6 +52,7 @@ impl PreferencesHost {
         let file = state
             .as_mut()
             .ok_or_else(|| Error::new("Native preference state unavailable"))?;
+        // Execute under the same exclusive lease, then release the guard on every return.
         operation(file)
     }
     /// Load before mounting; invalid files explicitly recover without being rewritten.
@@ -60,11 +64,13 @@ impl PreferencesHost {
     }
     /// Validate the fixed DTO before touching storage, then return only an acknowledgement.
     pub(crate) fn update(&self, json: &str) -> Result<String> {
+        // Bound and decode the closed command before any lazy directory creation.
         if json.len() > 1024 {
             return Err(Error::new("Native preference input exceeds limit"));
         }
         let update: NativePreferenceUpdate = serde_json::from_str(json)
             .map_err(|cause| failure("decode native preferences", cause))?;
+        // A future/unknown revision cannot mutate revision-1 storage.
         if update.revision != 1 {
             return Err(Error::new("Native preference revision unsupported"));
         }

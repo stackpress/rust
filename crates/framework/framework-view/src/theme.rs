@@ -6,9 +6,12 @@ pub const BOOTSTRAP_FILE: &str = "initial-theme-152fe9618311a2eb.js";
 pub const BOOTSTRAP_SOURCE: &str = include_str!("initial-theme.js");
 /// Return the fixed application-relative path for serving the matching asset.
 pub fn bootstrap_location() -> Result<PublicLocation, ViewError> {
+    // The content-fingerprinted basename is fixed at compilation, not caller-selected.
     PublicLocation::new(format!("/assets/{BOOTSTRAP_FILE}"))
 }
-/// Format an unset-only external classic head tag under checked mount/nonce policy.
+/// Format an optional external classic head tag under checked mount/nonce policy.
+///
+/// Callers select a path only for unset preferences; this formatter does not acquire a theme.
 ///
 /// # Errors
 /// Rejects an unsafe nonce or a resource outside the checked mount/path contract.
@@ -17,12 +20,15 @@ pub fn bootstrap_tag(
     path: Option<&PublicLocation>,
     nonce: Option<&str>,
 ) -> Result<String, ViewError> {
+    // No asset means no tag; an unused nonce is intentionally not consulted.
     let Some(path) = path else {
         return Ok(String::new());
     };
+    // Immutable resource identity cannot depend on a caller-controlled query.
     if path.as_str().contains('?') {
         return Err(ViewError::InvalidPolicy);
     }
+    // Admit bounded base64/base64url characters only; no raw attribute syntax survives.
     let nonce = match nonce {
         None => String::new(),
         Some(value)
@@ -36,6 +42,7 @@ pub fn bootstrap_tag(
         }
         Some(_) => return Err(ViewError::InvalidPolicy),
     };
+    // Join through the checked mount before escaping the final HTML attribute value.
     let href = base.join(path.as_str())?;
     // Paths are still escaped as attributes, independently from inert JSON escaping.
     let href = href
@@ -60,9 +67,12 @@ mod tests {
             bootstrap_tag(&base, Some(&path), Some("abc+/=_-")).unwrap(),
             format!("<script nonce=\"abc+/=_-\" src=\"/demo/assets/{BOOTSTRAP_FILE}\"></script>")
         );
-        for nonce in ["", "bad\"", "a b", "<script>"] {
+        // Attribute delimiters, whitespace/control bytes and non-ASCII cannot enter a nonce.
+        for nonce in ["", "bad\"", "a b", "<script>", "a\r\nb", "é"] {
             assert!(bootstrap_tag(&base, Some(&path), Some(nonce)).is_err());
         }
+        // Admit the exact byte ceiling while refusing the immediately larger value.
+        assert!(bootstrap_tag(&base, Some(&path), Some(&"x".repeat(256))).is_ok());
         assert!(bootstrap_tag(&base, Some(&path), Some(&"x".repeat(257))).is_err());
         let query = PublicLocation::new("/assets/theme.js?x=1").unwrap();
         assert!(bootstrap_tag(&base, Some(&query), None).is_err());

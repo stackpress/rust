@@ -29,6 +29,7 @@ pub struct Seed {
 }
 /// Fixed exact registry shared by route compilation, host selection and decoder.
 pub fn registry() -> LocaleRegistry {
+    // These compiled canonical/alias values are shared by route, seed and action admission.
     LocaleRegistry::new(
         vec!["en".into(), "fr".into()],
         "en".into(),
@@ -38,12 +39,14 @@ pub fn registry() -> LocaleRegistry {
 }
 /// Fixed host origin and checked mount; no caller-supplied destination exists.
 pub fn action(base: BasePath) -> SettingsAction {
+    // The finite browser fixture has one canonical destination, independent of request input.
     action_at_origin(base, "https://preferences.invalid").expect("valid compiled origin")
 }
 /// Construct presentation persistence for an explicit trusted canonical HTTP(S) origin.
 /// # Errors
 /// Rejects an invalid cookie origin before rendering or persistence.
 pub fn action_at_origin(base: BasePath, origin: &str) -> Result<SettingsAction, PreferenceError> {
+    // Origin validation precedes construction; this creates no route or persistence side effect.
     Ok(SettingsAction::new(
         registry(),
         CookieScope::new(origin.into(), base)?,
@@ -55,18 +58,22 @@ pub fn action_at_origin(base: BasePath, origin: &str) -> Result<SettingsAction, 
 /// # Errors
 /// Rejects build drift, malformed/excess data and locale/location disagreement.
 pub fn decode(text: &str) -> Result<Seed, PreferenceError> {
+    // Bound the complete public seed before serde allocates its closed fields.
     if text.len() > 16 * 1024 {
         return Err(PreferenceError::Limit);
     }
     let seed: Seed = serde_json::from_str(text).map_err(|_| PreferenceError::Request)?;
+    // A compiled asset mismatch must fail before any reactive root is mounted.
     if seed.build != "s8-b-m1" {
         return Err(PreferenceError::Request);
     }
     let locales = registry();
+    // Recompute route/locale agreement; a public projection is never host authorization.
     let selected = LocaleRouting::new(&locales, &seed.base).select(
         &seed.location,
         &format!("stackpress-locale={}", seed.preferences.locale),
     )?;
+    // Admit only this page and a canonical locale, retaining exact encoded query bytes.
     if selected.route.split('?').next() != Some("/preferences")
         || selected.locale != seed.preferences.locale
         || registry().canonical(&seed.preferences.locale) != Some(seed.preferences.locale.as_str())
@@ -77,6 +84,7 @@ pub fn decode(text: &str) -> Result<Seed, PreferenceError> {
 }
 /// Use the existing checked phrase facility, including exact falsy/whitespace rules.
 pub fn language(locale: &str) -> Language {
+    // Dictionaries are compiled public fixtures; unknown callers do not supply phrase content.
     let phrases = if locale == "fr" {
         BTreeMap::from([
             ("Preferences".into(), "Préférences".into()),

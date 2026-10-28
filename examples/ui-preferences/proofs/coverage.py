@@ -13,7 +13,7 @@ def main():
     """Keep per-crate floors visible; WASM/installed-platform evidence stays separate."""
     report = Path(os.environ['ISSUE15_COVERAGE_REPORT'])
     scopes = ['-p', 'stackpress-framework-language', '-p', 'stackpress-framework-view', '-p', 'stackpress-framework-ui']
-    features = 'stackpress-framework-view/native-file,stackpress-framework-view/flash,stackpress-framework-ui/stream,stackpress-framework-ui/rich'
+    features = 'stackpress-framework-view/native-file,stackpress-framework-view/web-preferences,stackpress-framework-view/web-flash,stackpress-framework-ui/stream,stackpress-framework-ui/rich'
     if '--report-only' not in sys.argv:
         subprocess.run(['cargo', 'llvm-cov', '--offline', '--locked', *scopes, '--features', features, '--all-targets', '--no-report'], check=True)
     subprocess.run(['cargo', 'llvm-cov', 'report', *scopes, '--json', '--output-path', str(report)], check=True)

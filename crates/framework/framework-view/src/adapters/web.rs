@@ -26,6 +26,7 @@ impl CookieScope {
     /// # Errors
     /// Rejects credentials, paths, noncanonical origins and non-HTTP schemes.
     pub fn new(origin: String, base: BasePath) -> Result<Self, PreferenceError> {
+        // Origin comes from trusted configuration, never incoming Host/forwarded headers.
         let parsed = url::Url::parse(&origin).map_err(|_| PreferenceError::Configuration)?;
         // Exact serialization excludes path/query/fragment and credentials tricks.
         if !matches!(parsed.scheme(), "https" | "http")
@@ -38,6 +39,7 @@ impl CookieScope {
         {
             return Err(PreferenceError::Configuration);
         }
+        // Retain only checked mount/origin data and the scheme-derived Secure flag.
         Ok(Self {
             secure: parsed.scheme() == "https",
             #[cfg(feature = "preferences")]
@@ -48,11 +50,13 @@ impl CookieScope {
 
     /// Issue a checked internal cookie or clear that same identity with max-age zero.
     pub(crate) fn header(&self, key: &str, value: &str, age: u32) -> String {
+        // Root cookies use slash; mounted cookies use the exact canonical mount.
         let path = if self.base.as_str().is_empty() {
             "/"
         } else {
             self.base.as_str()
         };
+        // HTTPS always includes Secure; the explicit HTTP development scope cannot.
         let secure = if self.secure { "; Secure" } else { "" };
         // Keys/values are internal constants, enum tokens or hex, never raw input.
         format!("{key}={value}; Path={path}; Max-Age={age}; HttpOnly; SameSite=Lax{secure}")
@@ -64,12 +68,15 @@ pub(crate) fn unique_cookie<'a>(
     header: &'a str,
     key: &str,
 ) -> Result<Option<&'a str>, PreferenceError> {
+    // Bound the total input before scanning any individual cookie identity.
     if header.len() > MAX_COOKIE_BYTES {
         return Err(PreferenceError::Limit);
     }
+    // Retain at most one borrowed value; even an empty/bare matching key counts.
     let mut value = None;
     for entry in header.split(';').map(str::trim) {
         let (name, candidate) = entry.split_once('=').unwrap_or((entry, ""));
+        // Unrelated cookies neither select nor invalidate this presentation setting.
         if name == key {
             // Refuse duplicates instead of trusting ordering chosen by a caller.
             if value.is_some() {

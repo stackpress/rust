@@ -17,6 +17,7 @@ pub enum PreferenceError {
 impl std::fmt::Display for PreferenceError {
     /// Public diagnostics never contain cookies or caller input.
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        // Stable categories disclose no raw token, cookie or configuration contents.
         f.write_str(match self {
             Self::Configuration => "Invalid preference configuration",
             Self::Locale => "Invalid locale",
@@ -41,6 +42,7 @@ pub struct LocaleRegistry {
 
 /// Accept a bounded token without path, header or control-character syntax.
 fn valid_token(token: &str) -> bool {
+    // Token bytes exclude delimiters/control syntax and keep registry work bounded.
     !token.is_empty()
         && token.len() <= 64
         && token
@@ -60,6 +62,7 @@ impl LocaleRegistry {
     ) -> Result<Self, PreferenceError> {
         // Detect duplicate registrations before set collection could hide them.
         let unique: BTreeSet<_> = locales.iter().cloned().collect();
+        // Every default/alias must terminate directly at one registered canonical token.
         if locales.is_empty()
             || locales.len() > 16
             || unique.len() != locales.len()
@@ -72,6 +75,7 @@ impl LocaleRegistry {
         {
             return Err(PreferenceError::Configuration);
         }
+        // Publish immutable bounded sets only after every relationship is valid.
         Ok(Self {
             locales: unique,
             aliases,
@@ -91,16 +95,19 @@ impl LocaleRegistry {
 
     /// Borrow canonical locale identities without permitting mutation.
     pub fn locales(&self) -> impl Iterator<Item = &str> {
+        // Borrow sorted canonical identities without exposing mutable registry state.
         self.locales.iter().map(String::as_str)
     }
     /// Borrow explicit alias-to-canonical mappings without regional guessing.
     pub fn aliases(&self) -> impl Iterator<Item = (&str, &str)> {
+        // Keep direct alias pairs borrowed; enumeration performs no negotiation.
         self.aliases
             .iter()
             .map(|(alias, target)| (alias.as_str(), target.as_str()))
     }
     /// Borrow the validated configured fallback.
     pub fn default_locale(&self) -> &str {
+        // Construction guarantees this fallback remains a registered canonical locale.
         &self.default
     }
 }

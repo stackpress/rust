@@ -12,6 +12,7 @@ impl ActionId {
     /// Rejects empty, excessive or syntactically unsafe keys.
     pub fn new(value: impl Into<String>) -> Result<Self, AccessDenied> {
         let value = value.into();
+        // Only bounded application action labels cross the public hint boundary.
         if value.is_empty()
             || value.len() > 64
             || !value
@@ -24,6 +25,7 @@ impl ActionId {
     }
     /// Stable public label used only to hide/show layout actions.
     pub fn as_str(&self) -> &str {
+        // Borrow the checked label without attaching host identity or authority.
         &self.0
     }
 }
@@ -31,12 +33,14 @@ impl TryFrom<String> for ActionId {
     type Error = AccessDenied;
     /// Wire projection keys receive the same syntax checks as native keys.
     fn try_from(value: String) -> Result<Self, Self::Error> {
+        // Deserialized hints use exactly the same label admission as native callers.
         Self::new(value)
     }
 }
 impl From<ActionId> for String {
     /// Transfer only the public action identity.
     fn from(value: ActionId) -> Self {
+        // Serialization transfers public labels only, never an authorization context.
         value.0
     }
 }
@@ -47,6 +51,7 @@ pub struct AccessDenied;
 impl std::fmt::Display for AccessDenied {
     /// Do not reflect host policy internals to clients.
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        // Keep denials uniform even when host policy or private failure details differ.
         f.write_str("Action unavailable")
     }
 }
@@ -59,6 +64,7 @@ pub struct AllowedActions(Vec<ActionId>);
 impl AllowedActions {
     /// Test layout visibility only; authoritative adapters must call HostAccess again.
     pub fn contains(&self, action: &ActionId) -> bool {
+        // Membership controls visibility only; protected handlers must use HostAccess.
         self.0.contains(action)
     }
 }
@@ -66,6 +72,7 @@ impl TryFrom<Vec<ActionId>> for AllowedActions {
     type Error = AccessDenied;
     /// Bound projection size and reject duplicate action identities.
     fn try_from(actions: Vec<ActionId>) -> Result<Self, Self::Error> {
+        // Reject excessive or repeated hints before publishing a checked projection.
         let unique: std::collections::BTreeSet<_> = actions.iter().collect();
         if actions.len() > 64 || unique.len() != actions.len() {
             return Err(AccessDenied);
@@ -76,6 +83,7 @@ impl TryFrom<Vec<ActionId>> for AllowedActions {
 impl From<AllowedActions> for Vec<ActionId> {
     /// Serialize only safe keys, never the host context.
     fn from(value: AllowedActions) -> Self {
+        // Serialization transfers public labels only, never an authorization context.
         value.0
     }
 }
@@ -100,6 +108,7 @@ pub struct HostAccess<'a, C> {
 impl<'a, C> HostAccess<'a, C> {
     /// Bind the explicit optional host policy for this request.
     pub fn new(policy: Option<&'a dyn HostPolicy<C>>, context: &'a C) -> Self {
+        // Borrow fresh host-owned facts for this operation; no global grant is retained.
         Self { policy, context }
     }
     /// Evaluate an action again immediately before protected handler admission.
@@ -111,12 +120,14 @@ impl<'a, C> HostAccess<'a, C> {
         action: &ActionId,
         handler: impl FnOnce() -> T,
     ) -> Result<T, AccessDenied> {
+        // An absent policy and an explicit denial both stop before the protected closure.
         if !self
             .policy
             .is_some_and(|policy| policy.permits(self.context, action))
         {
             return Err(AccessDenied);
         }
+        // Invoke only after the current authority check; presentation data cannot enter here.
         Ok(handler())
     }
     /// Project a bounded fixed candidate list into safe layout hints.
@@ -124,7 +135,9 @@ impl<'a, C> HostAccess<'a, C> {
     /// # Errors
     /// Rejects duplicate/excess candidates; absence of a policy yields an empty list.
     pub fn project(&self, candidates: Vec<ActionId>) -> Result<AllowedActions, AccessDenied> {
+        // Validate the fixed public candidate list before asking current host policy.
         let candidates = AllowedActions::try_from(candidates)?;
+        // Projection asks the same policy but creates no reusable operation grant.
         let actions = candidates
             .0
             .into_iter()

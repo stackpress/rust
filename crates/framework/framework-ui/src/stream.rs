@@ -496,6 +496,7 @@ where
             )
         })
         .unwrap_or_default();
+    // Saved explicit choices are complete SSR output; only unset admits the external sampler.
     let theme_head = if snapshot.theme.is_none() {
         stackpress_framework_view::theme::bootstrap_tag(
             &assets.base,
@@ -505,6 +506,7 @@ where
     } else {
         String::new()
     };
+    // The unset marker permits one initial sample while the no-JS document remains readable Light.
     let theme_marker = if snapshot.theme.is_none() {
         " data-theme-unset"
     } else {

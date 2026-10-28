@@ -23,6 +23,8 @@ pub fn LayoutProvider(
     // Providers are installed before evaluating children; siblings/roots stay independent.
     provide_context(theme);
     provide_context(notifications);
+    // Pending roots retain identical SSR/hydration attributes; ancestor CSS supplies the
+    // frozen pre-paint color until the caller publishes the effective theme in one batch.
     view! {
         <Style id="stackpress-ui">{STYLES}</Style>
         <div class="sp-root" data-initial-theme-pending=move || initial_theme_pending.get().then_some("") data-theme=move || theme.get().as_str()>{children()}</div>

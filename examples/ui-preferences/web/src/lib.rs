@@ -64,17 +64,21 @@ async fn page(
     configured: bool,
     invocation: Invocation<'_>,
 ) -> Result<Flow> {
+    // Preserve the exact request query for canonical same-app locale acknowledgements.
     let location = req.url.query().map_or_else(
         || req.url.path().to_owned(),
         |query| format!("{}?{query}", req.url.path()),
     );
+    // Public projection carries no identity or protected-operation grant.
     let preferences = invocation
         .service::<preferences::Service>()?
         .action()
         .select(&location, req.headers.get("cookie").unwrap_or_default())
         .map_err(|cause| failure("select preferences", cause))?;
     let notice = invocation.service::<flash::Service>()?.notice(req)?;
+    // Rebuild host facts here; public layout hints cannot substitute for policy evaluation.
     let facts = facts(req);
+    // The environment-selected fixture is optional; None remains fail-closed.
     let policy: Option<&dyn HostPolicy<Facts>> = configured.then_some(&FixturePolicy);
     let allowed = HostAccess::new(policy, &facts)
         .project(vec![
@@ -105,7 +109,9 @@ async fn protected(
     mutation: bool,
     count: Arc<AtomicUsize>,
 ) -> Result<Flow> {
+    // Rebuild host facts here; public layout hints cannot substitute for policy evaluation.
     let facts = facts(req);
+    // The environment-selected fixture is optional; None remains fail-closed.
     let policy: Option<&dyn HostPolicy<Facts>> = configured.then_some(&FixturePolicy);
     let action = ActionId::new(if mutation {
         "private.mutate"
@@ -113,6 +119,7 @@ async fn protected(
         "private.page"
     })
     .map_err(|cause| failure("identify protected action", cause))?;
+    // Recheck authoritative admission immediately before the protected closure and counter.
     if HostAccess::new(policy, &facts)
         .run(&action, || {
             count.fetch_add(1, Ordering::SeqCst);
@@ -130,6 +137,7 @@ async fn application(
     csr: bool,
     configured: bool,
 ) -> std::result::Result<stackpress_server::Server, Box<dyn std::error::Error>> {
+    // Construct a finite host only; the one-request adapter owns transport.
     let mut app = ServerBuilder::new();
     register(
         &mut app,
@@ -163,9 +171,11 @@ fn register(
     scoped_lifecycle: bool,
 ) -> Result<()> {
     // This example explicitly composes ordinary registration functions; no nested plugin API.
+    // Explicit admission precedes the selected preference Config callback.
     app.on_config(sessionless)?;
     preferences::register(app)?;
     flash::register(app)?;
+    // Compile the same canonical/alias page set used by shared seed selection.
     let locales = registry();
     let pages = LocaleRouting::new(&locales, &base)
         .prefixes()
@@ -173,6 +183,7 @@ fn register(
         .map(|prefix| PublicLocation::new(format!("{prefix}/preferences")))
         .collect::<std::result::Result<Vec<_>, _>>()
         .map_err(|cause| failure("flash pages", cause))?;
+    // Trusted inputs fix origin, mount and endpoints before runtime handling.
     let preference_config = preferences::Config {
         origin: origin.clone(),
         base: base.clone(),
@@ -194,6 +205,7 @@ fn register(
         base: base.clone(),
         pages,
     };
+    // Configuration supplies data only; registration calls select executable code.
     let mut layers = ConfigLayers::new();
     layers.value(
         "preferences-example",
@@ -202,6 +214,7 @@ fn register(
         }),
     )?;
     app.config_layers(layers)?;
+    // Counters prove one top-level lifecycle per finite exchange.
     let requests = Arc::new(AtomicUsize::new(0));
     let responses = Arc::new(AtomicUsize::new(0));
     let protected_calls = Arc::new(AtomicUsize::new(0));
@@ -222,21 +235,33 @@ fn register(
     } else {
         String::new()
     };
-    app.on("response", handler(move |req, res, _| {
-        let scoped = response_scope.is_empty() || req.url.path().starts_with(&format!("{response_scope}/"));
-        let request = requests.load(Ordering::SeqCst); let response = responses.fetch_add(1, Ordering::SeqCst) + 1; let calls = count.load(Ordering::SeqCst);
-        Box::pin(async move {
-            if !scoped {return Ok(Flow::Continue);}
-            res.headers_mut()?.set("x-preferences-lifecycle", &format!("{request}/{response}"))?;
-            res.headers_mut()?.set("x-protected-calls", &calls.to_string())?;
-            // The immutable pre-paint resource retains its cache policy in the finite host.
-            if !req.url.path().ends_with(stackpress_framework_view::theme::BOOTSTRAP_FILE) {
-                res.headers_mut()?.set("cache-control", "no-store")?;
-            }
-            res.headers_mut()?.set("content-security-policy", "default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; style-src 'unsafe-inline'; connect-src 'self'; base-uri 'none'; form-action 'self'")?;
-            Ok(Flow::Continue)
-        })
-    }))?;
+    app.on(
+        "response",
+        handler(move |req, res, _| {
+            // Composed examples contribute headers only inside their application mount.
+            let scoped = response_scope.is_empty()
+                || req.url.path().starts_with(&format!("{response_scope}/"));
+            let request = requests.load(Ordering::SeqCst);
+            let response = responses.fetch_add(1, Ordering::SeqCst) + 1;
+            let calls = count.load(Ordering::SeqCst);
+            Box::pin(async move {
+                // Unrelated requests still count, but their headers stay untouched.
+                if !scoped {
+                    return Ok(Flow::Continue);
+                }
+                res.headers_mut()?.set("x-preferences-lifecycle", &format!("{request}/{response}"))?;
+                res.headers_mut()?.set("x-protected-calls", &calls.to_string())?;
+                // The fixed pre-paint resource retains its immutable cache policy.
+                if !req.url.path().ends_with(stackpress_framework_view::theme::BOOTSTRAP_FILE) {
+                    res.headers_mut()?.set("cache-control", "no-store")?;
+                }
+                // No request-controlled value enters this fixed shell policy.
+                res.headers_mut()?.set("content-security-policy", "default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; style-src 'unsafe-inline'; connect-src 'self'; base-uri 'none'; form-action 'self'")?;
+                Ok(Flow::Continue)
+            })
+        }),
+    )?;
+    // Each compiled prefix gets one page handler, never top-level redispatch.
     for prefix in LocaleRouting::new(&registry(), &base).prefixes() {
         let path = format!("{}{prefix}/preferences", base.as_str());
         let base = base.clone();
@@ -267,11 +292,13 @@ fn register(
 }
 /// Explicit fixture admission is sessionless; protected-operation policy remains separate.
 async fn sessionless(start: &mut StartupContext) -> Result<Flow> {
+    // Exact Origin still applies; this grants no protected domain access.
     start.register(Arc::new(preferences::Admission::sessionless()))?;
     Ok(Flow::Continue)
 }
 /// Normalize and handle once; no listening socket, daemon or implicit retry exists.
 pub async fn run() -> std::result::Result<(), Box<dyn std::error::Error>> {
+    // Bound the bridge before decoding; this executable opens no listener.
     let mut text = String::new();
     std::io::stdin()
         .take(64 * 1024 + 1)
@@ -279,6 +306,7 @@ pub async fn run() -> std::result::Result<(), Box<dyn std::error::Error>> {
     if text.len() > 64 * 1024 {
         return Err("bridge input exceeds limit".into());
     }
+    // Closed fixture input cannot choose a plugin, host origin or arbitrary event.
     let input: Input = serde_json::from_str(&text)?;
     let base = BasePath::new(std::env::var("PREFERENCES_BASE").unwrap_or_default())?;
     let configured = std::env::var("PREFERENCES_TEST_POLICY").as_deref() == Ok("explicit-fixture");
@@ -296,6 +324,7 @@ pub async fn run() -> std::result::Result<(), Box<dyn std::error::Error>> {
     if let Some(origin) = input.origin {
         request = request.header("origin", origin);
     }
+    // Normalize/handle once through the real HTTP boundary, without retries.
     let outcome = HttpAdapter::new(Default::default())?
         .handle(&app, request.body(input.body.into_bytes())?)
         .await?;

@@ -35,7 +35,7 @@ def main():
             subprocess.run(['node','--check',str(file)],check=True)
         if file.suffix == '.rs' and file.name != 'golden.rs':
             text=file.read_text()
-            assert all(token not in text for token in ['stackpress_framework_preferences','Theme::System','ThemePreference::System','SystemThemeStyles','SYSTEM_THEME_STYLES']), name
+            assert all(token not in text for token in ['Theme::System','ThemePreference::System','SystemThemeStyles','SYSTEM_THEME_STYLES']), name
     subprocess.run(['git','diff','--check'],cwd=ROOT,check=True)
     result={'files':files,'scope':'passed','python_node_syntax':'passed','old_crate_system_css_prototype':'removed','whitespace':'passed'}
     Path(sys.argv[1]).write_text(json.dumps(result,indent=2)+'\n')

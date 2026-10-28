@@ -7,7 +7,7 @@ use stackpress_framework_view::{PageContract, ViewError};
 fn main() -> Result<(), ViewError> {
     let mut contract = PageContract::new(1, "demo-1")?;
     contract.locale = "fr-CA".into();
-    contract.theme = "dark".into();
+    contract.theme = Some("dark".into());
     contract.limits.snapshot_bytes = 4096;
     contract.validate()?;
     Ok(())

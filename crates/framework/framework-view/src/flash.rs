@@ -21,13 +21,16 @@ pub struct FlashNotice {
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 struct NoticeWire {
+    /// Public deduplication key, checked by FlashNotice construction.
     id: String,
+    /// Plain text subject to the same bound as native construction.
     message: String,
 }
 impl TryFrom<NoticeWire> for FlashNotice {
     type Error = PreferenceError;
     /// Enforce the same bounds for cookie and public seed decoding.
     fn try_from(wire: NoticeWire) -> Result<Self, Self::Error> {
+        // Wire decoding cannot bypass the public constructor's id/text budgets.
         Self::new(wire.id, wire.message)
     }
 }
@@ -37,6 +40,7 @@ impl FlashNotice {
     /// # Errors
     /// Rejects empty/excess text and ids containing header/path/control syntax.
     pub fn new(id: String, message: String) -> Result<Self, PreferenceError> {
+        // Reject header/path syntax in ids and bound message bytes before retaining either.
         if id.is_empty()
             || id.len() > 64
             || !id
@@ -51,10 +55,12 @@ impl FlashNotice {
     }
     /// Borrow the root dedupe key; it conveys no authority.
     pub fn id(&self) -> &str {
+        // The key is public display metadata, never a session or admission credential.
         &self.id
     }
     /// Borrow plain text; never insert it as raw HTML.
     pub fn message(&self) -> &str {
+        // Consumers receive text, not pretrusted HTML.
         &self.message
     }
 }
@@ -75,6 +81,7 @@ pub struct FlashCookie(CookieScope);
 impl FlashCookie {
     /// Use the same checked scope as other presentation cookies.
     pub fn new(scope: CookieScope) -> Self {
+        // Issuance and deletion share this one validated scope.
         Self(scope)
     }
     /// Encode bounded public data as header-safe lowercase hex with five-minute TTL.
@@ -82,6 +89,7 @@ impl FlashCookie {
     /// # Errors
     /// Returns a safe failure if JSON/hex/header expansion exceeds the wire ceiling.
     pub fn issue(&self, notice: &FlashNotice) -> Result<String, PreferenceError> {
+        // Encode only the checked public notice fields; no host facts enter the cookie.
         let json = serde_json::to_vec(notice).map_err(|_| PreferenceError::Request)?;
         // Escaped control characters can expand sixfold. Bound the encoded form
         // too, so every issued cookie can be admitted again by consume.
@@ -95,6 +103,7 @@ impl FlashCookie {
             write!(&mut hex, "{byte:02x}").map_err(|_| PreferenceError::Request)?;
         }
         let header = self.0.header(FLASH_COOKIE, &hex, 300);
+        // Include header framing/scope in the outgoing wire ceiling as well.
         if header.len() > 4096 {
             return Err(PreferenceError::Limit);
         }
@@ -106,10 +115,12 @@ impl FlashCookie {
     /// Rejects an oversized total cookie header before parsing. A host must send
     /// no-store HTML and preserve this deletion header when returning the snapshot.
     pub fn consume(&self, cookie: &str) -> Result<FlashConsumption, PreferenceError> {
+        // Total-header admission precedes duplicate detection and untrusted hex/JSON decode.
         if cookie.len() > crate::adapters::web::MAX_COOKIE_BYTES {
             return Err(PreferenceError::Limit);
         }
         let value = unique_cookie(cookie, FLASH_COOKIE);
+        // Even malformed or duplicate matching keys must be cleared at the issuing scope.
         let present = !matches!(value, Ok(None));
         let notice = value.ok().flatten().and_then(decode);
         Ok(FlashConsumption {
@@ -121,9 +132,11 @@ impl FlashCookie {
 
 /// Reject malformed or excessive hex before allocating/decoding untrusted JSON.
 fn decode(hex: &str) -> Option<FlashNotice> {
+    // Bound allocation and reject incomplete byte pairs before decoding any JSON.
     if hex.len() > 3600 || !hex.len().is_multiple_of(2) {
         return None;
     }
+    // Both nibbles must be hex; one bad pair rejects the whole public notice.
     let bytes = hex
         .as_bytes()
         .chunks_exact(2)
@@ -133,6 +146,7 @@ fn decode(hex: &str) -> Option<FlashNotice> {
             Some((high * 16 + low) as u8)
         })
         .collect::<Option<Vec<_>>>()?;
+    // The closed checked DTO rejects unknown fields, invalid ids and oversized text.
     serde_json::from_slice(&bytes).ok()
 }
 
@@ -145,6 +159,7 @@ pub struct FlashRoot {
 impl FlashRoot {
     /// Admit a notice at most once per root; dismissal does not forget its id.
     pub fn admit(&mut self, notice: FlashNotice) -> Option<FlashNotice> {
+        // Saturation or a prior id rejects delivery without growing root-owned memory.
         if self.seen.len() >= 64 || !self.seen.insert(notice.id.clone()) {
             return None;
         }
