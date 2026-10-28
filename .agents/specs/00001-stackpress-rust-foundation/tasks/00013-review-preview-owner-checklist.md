@@ -83,8 +83,8 @@ Paths: `/ui-preferences/preferences`, `/ui-preferences/fr/preferences`, `/ui-for
 
 Paths: `/ui-preferences/preferences`, `/review`.
 
-1. Select Dark, refresh and watch the initial paint; repeat with Light.
-   Ignore the System option: by owner decision G39 it will be removed in a later task, and the OS preference will only choose the initial theme.
+1. Select Dark, refresh and watch the initial paint; repeat with Light. Only Light and Dark exist (G39); there is no System option.
+   In a fresh private window (nothing saved), the first paint follows the OS light/dark setting; changing the OS setting while the page is open does not switch it. With JavaScript disabled and nothing saved, the page is Light (G40).
 2. Check text, inputs, focus and errors remain readable; reopen with the same browser profile and inspect the saved theme.
 3. Use the review panel to issue one public notice, then open the preferences page and dismiss it.
 4. Interact and refresh; check it does not reappear in the same root. Concurrent-tab cookie delivery remains best effort.
