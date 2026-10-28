@@ -13,9 +13,9 @@ const bytes = fs.readFileSync(path.join(source, 'initial-theme.js'));
 const receipts = [];
 
 /** Run one actual HTTP adapter exchange, with a finite process deadline. */
-function request(base, choice, mode) {
+function request(base, choice, mode, location = '/preferences') {
   const cookie = 'stackpress-locale=fr' + (choice ? `; stackpress-theme=${choice}` : '');
-  const raw = cp.execFileSync(host, { input: JSON.stringify({method:'GET',path:base+'/preferences',cookie,csr:mode==='csr'}),
+  const raw = cp.execFileSync(host, { input: JSON.stringify({method:'GET',path:base+location,cookie,csr:mode==='csr'}),
     encoding:'utf8', timeout:10000, env:{...process.env,PREFERENCES_BASE:base} });
   const split = raw.indexOf('\n');
   const meta = JSON.parse(raw.slice(0,split));
@@ -68,7 +68,11 @@ function request(base, choice, mode) {
           if(bootstrap==='missing')return route.fulfill({status:404,body:''});
           // Slow the classic asset: the parser cannot paint themed body content early.
           await new Promise(resolve=>setTimeout(resolve,80));
-          return route.fulfill({body:bytes,contentType:'text/javascript',headers:{'cache-control':'public, max-age=31536000, immutable'}});
+          const resource=request(base,choice,mode,'/assets/'+asset);
+          assert.equal(resource.body,bytes.toString());
+          assert.deepEqual(resource.meta.headers['cache-control'],['public, max-age=31536000, immutable']);
+          assert.deepEqual(resource.meta.headers['x-content-type-options'],['nosniff']);
+          return route.fulfill({body:resource.body,contentType:'text/javascript',headers:{'cache-control':resource.meta.headers['cache-control'][0]}});
         }
         const relative=url.pathname.slice((base+'/assets/').length);
         if(relative==='start.js')await gate;

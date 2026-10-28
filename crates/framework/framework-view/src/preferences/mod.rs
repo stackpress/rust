@@ -1,7 +1,7 @@
 //! Optional public settings, single-writer save state and location-aware locale policy.
 //!
-//! This module is browser-safe and performs no registration or storage access.
-//! Host integrations are separately selected; native persistence is opt-in.
+//! Core contracts are browser-safe and perform no registration or storage access.
+//! Host entry points require `web-preferences` and explicit selection; file persistence is opt-in.
 mod action;
 pub mod locale;
 mod native_settings;
@@ -15,3 +15,8 @@ pub use locale::{
 pub use native_settings::{LoadedPreferences, NativePreferenceUpdate};
 pub use stackpress_framework_language::{LocaleRegistry, PreferenceError};
 pub use state::{PreferenceState, SaveState};
+
+#[cfg(feature = "web-preferences")]
+mod host;
+#[cfg(feature = "web-preferences")]
+pub use host::{Admission, Config, Service, register};

@@ -122,3 +122,7 @@ retain that unset choice and frozen effective color. Only a theme toggle saves a
 Light/Dark choice. Website SSR renders saved explicit choices directly; an unset
 snapshot uses Light fallback and the optional immutable view head asset. No-JS or
 blocked bootstrap remains readable Light. See the [API migration](../../crates/framework/framework-view/docs/migration-issue15.md).
+
+The standard `proofs/browser.py` driver runs nine proof invocations: the four
+existing scripts at both mounts and `browser-initial-theme.cjs` once (four internal
+initial-theme/draft cases). Its summary counts those nine invocations explicitly.

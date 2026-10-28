@@ -12,7 +12,8 @@ pub const MAX_COOKIE_BYTES: usize = 4096;
 /// Validated origin and exact app cookie scope; no Domain attribute is emitted.
 #[derive(Clone, Debug)]
 pub struct CookieScope {
-    /// Exact origin is checked before accepting any persistence action.
+    /// Preference actions retain the exact origin; flash only needs validated scope/flags.
+    #[cfg(feature = "preferences")]
     pub(crate) origin: String,
     /// Same checked mount governs both return paths and cookie Path.
     pub(crate) base: BasePath,
@@ -39,6 +40,7 @@ impl CookieScope {
         }
         Ok(Self {
             secure: parsed.scheme() == "https",
+            #[cfg(feature = "preferences")]
             origin,
             base,
         })
@@ -78,3 +80,6 @@ pub(crate) fn unique_cookie<'a>(
     }
     Ok(value)
 }
+
+#[cfg(any(feature = "web-preferences", feature = "web-flash"))]
+pub(crate) mod host;

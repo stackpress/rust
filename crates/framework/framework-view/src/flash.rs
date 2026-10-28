@@ -151,3 +151,8 @@ impl FlashRoot {
         Some(notice)
     }
 }
+
+#[cfg(feature = "web-flash")]
+mod host;
+#[cfg(feature = "web-flash")]
+pub use host::{Config, Service, register};

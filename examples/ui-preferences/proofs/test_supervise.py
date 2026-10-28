@@ -8,6 +8,8 @@ import sys
 import tempfile
 import time
 import unittest
+from unittest.mock import patch
+from supervise import target_usage
 
 HERE = Path(__file__).resolve().parent
 
@@ -49,6 +51,26 @@ class SupervisorTests(unittest.TestCase):
                 if child.poll() is None:
                     child.kill()
                 child.wait()
+
+    def test_disappearing_cargo_temp_file_keeps_total(self):
+        """A transient unlink keeps the measured cap; malformed totals remain fatal."""
+        target = Path('/private/tmp/owned-target')
+        result = subprocess.CompletedProcess(['du'], 1, '123\t' + str(target) + '\n',
+                                             'du: ' + str(target) + '/debug/tmp: No such file or directory\n')
+        with patch('supervise.subprocess.run', return_value=result):
+            self.assertEqual(target_usage(target), 123)
+        result.stdout = ''
+        with patch('supervise.subprocess.run', return_value=result), self.assertRaises(ValueError):
+            target_usage(target)
+
+    def test_nontransient_usage_errors_fail_closed(self):
+        """Permission and outside-target errors cannot weaken the disk bound."""
+        target = Path('/private/tmp/owned-target')
+        for message in ['du: ' + str(target) + '/debug: Permission denied\n',
+                        'du: /private/tmp/other: No such file or directory\n']:
+            result = subprocess.CompletedProcess(['du'], 1, '123\t' + str(target) + '\n', message)
+            with patch('supervise.subprocess.run', return_value=result), self.assertRaises(subprocess.CalledProcessError):
+                target_usage(target)
 
     def test_success_reaps_child(self):
         """A normal exit leaves no live process behind."""

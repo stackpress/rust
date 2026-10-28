@@ -19,6 +19,22 @@ def stop(child):
     child.wait()
 
 
+def target_usage(target):
+    """Retain du's total when Cargo unlinks a temporary file during the walk."""
+    usage = subprocess.run(['du', '-sk', str(target)], text=True, capture_output=True, timeout=10)
+    # ENOENT for children that vanished only removes already-deleted bytes. Other errors
+    # cannot establish a complete bound and must still stop the supervised command.
+    vanished = usage.stderr.splitlines()
+    transient = vanished and all(line.startswith('du: ' + str(target) + '/') and
+                                 line.endswith(': No such file or directory') for line in vanished)
+    if usage.returncode and not (usage.returncode == 1 and transient):
+        raise subprocess.CalledProcessError(usage.returncode, usage.args, usage.stdout, usage.stderr)
+    total, path = usage.stdout.strip().split('\t', 1)
+    if path != str(target) or not total.isdecimal():
+        raise RuntimeError('target usage total unavailable')
+    return int(total)
+
+
 def main():
     """Supervise only an explicitly passed command; never start a listener implicitly."""
     parser = argparse.ArgumentParser(description=__doc__)
@@ -42,8 +58,7 @@ def main():
         while child.poll() is None:
             if args.target.exists():
                 # du counts allocated disk blocks; its own read has a finite deadline.
-                usage = subprocess.check_output(['du', '-sk', str(args.target)], text=True, timeout=10)
-                peak = max(peak, int(usage.split()[0]))
+                peak = max(peak, target_usage(args.target))
                 if peak > 8 * 1024 * 1024:
                     raise RuntimeError('8 GiB aggregate target ceiling exceeded')
             if time.monotonic() - started > args.seconds:
