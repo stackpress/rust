@@ -45,7 +45,8 @@ pub fn StreamDemo(
         <Suspense fallback=||view! { <p>"Waiting for details…"</p> }>
             {move || delayed.get().map(|value| {
                 if fail { panic!("private demo late-render sentinel"); }
-                view! { <section aria-label="Details"><h2>"Details ready"</h2><p id="details">{value.unwrap_or_else(|_| "Details unavailable".into())}</p></section> }
+                view! { <section aria-label="Details"><h2>"Details ready"</h2><p id="details">"The project summary is ready. Review the latest activity with your team."</p>
+                    <section aria-labelledby="stream-safety-title"><h2 id="stream-safety-title">"Safety samples"</h2><p>"Deliberately hostile text is displayed as data to test escaping and replay."</p><p id="stream-safety-value">{value.unwrap_or_else(|_| "Safety sample unavailable".into())}</p></section></section> }
             })}
         </Suspense>
     }

@@ -281,13 +281,30 @@ pub fn SelectField(
     frame(context, control.into_any()).into_any()
 }
 
-/// Plain escaped display; no HTML, format strings, or executable template evaluation.
+/// Escaped display text; lists use comma-separated items or `None` when empty.
+/// Scalar, Missing and Null presentation and the underlying field value stay unchanged.
 #[component]
 pub fn TextView(
     /// Approved field metadata and root-owned state from the generated caller.
     context: RoleContext,
 ) -> impl IntoView {
-    view! { <span>{move || context.text()}</span> }
+    view! { <span>{move || match context.value.get() {
+        // Format only the read-only presentation. Input adapters continue reading
+        // RoleContext::text, so this cannot rewrite a draft or its wire representation.
+        FieldInput::Value(Value::Array(values)) => {
+            // An explicit empty list remains distinct from an omitted or null field.
+            if values.is_empty() {
+                "None".to_owned()
+            } else {
+                // Preserve strings verbatim; other JSON literals retain false/zero/null.
+                values.into_iter().map(|value| match value {
+                    Value::String(value) => value,
+                    value => value.to_string(),
+                }).collect::<Vec<_>>().join(", ")
+            }
+        }
+        _ => context.text(),
+    }}</span> }
 }
 
 /// Exact Boolean display with explicit translated labels and separate missing/null states.

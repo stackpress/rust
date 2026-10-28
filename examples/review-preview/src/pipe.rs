@@ -39,6 +39,30 @@ pub struct Output {
 /// # Errors
 /// Returns native transport/body errors or the finite ten-second exchange deadline.
 pub async fn exchange(gateway: &Gateway, origin: &str, input: Input) -> Result<Output> {
+    exchange_inner(gateway, origin, input, None).await
+}
+
+/// Emit actual decoded HTTP frames without turning a truncated body into clean EOF.
+/// The callback receives one head object followed by base64 byte frames; the caller
+/// reports terminal framing separately from the returned `Output::interrupted`.
+/// # Errors
+/// Returns the same finite native exchange failures as the buffered pipe.
+pub async fn exchange_stream(
+    gateway: &Gateway,
+    origin: &str,
+    input: Input,
+    emit: &dyn Fn(serde_json::Value),
+) -> Result<Output> {
+    exchange_inner(gateway, origin, input, Some(emit)).await
+}
+
+/// Share host ownership, limits and HTTP parsing between buffered and progressive proofs.
+async fn exchange_inner(
+    gateway: &Gateway,
+    origin: &str,
+    input: Input,
+    emit: Option<&dyn Fn(serde_json::Value)>,
+) -> Result<Output> {
     let (server, client) = tokio::io::duplex(8192);
     let host = gateway.http.serve_io(
         server,
@@ -84,6 +108,11 @@ pub async fn exchange(gateway: &Gateway, origin: &str, input: Input) -> Result<O
                     .or_default()
                     .push(value.to_str().map_err(Error::from_source)?.into());
             }
+            // Publish native metadata before polling body frames. No application HTML,
+            // completion marker or successful terminal framing is synthesized here.
+            if let Some(emit) = emit {
+                emit(serde_json::json!({"head":{"status":status,"headers":headers}}));
+            }
             let mut body = response.into_body();
             let mut bytes = Vec::new();
             let mut interrupted = false;
@@ -91,10 +120,16 @@ pub async fn exchange(gateway: &Gateway, origin: &str, input: Input) -> Result<O
                 match frame {
                     Ok(frame) => {
                         if let Ok(data) = frame.into_data() {
+                            // Base64 preserves arbitrary UTF-8 splits and binary assets.
+                            if let Some(emit) = emit {
+                                emit(serde_json::json!({"chunk":STANDARD.encode(&data)}));
+                            }
                             bytes.extend_from_slice(&data);
                         }
                     }
                     Err(_) => {
+                        // A missing native HTTP terminator must remain a stream error
+                        // in Chromium, even after useful shell bytes were delivered.
                         interrupted = true;
                         break;
                     }

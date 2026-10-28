@@ -105,7 +105,9 @@ async function scenario(browser, mode, base) {
     await page.screenshot({path: path.join(out, `${token}-shell.png`), fullPage: true});
     if (mode === 'success') {
       await page.locator('html[data-hydrated=true]').waitFor();
-      assert.match(await page.locator('#details').textContent(), /<script>window.hostile=true<\/script>/);
+      assert.match(await page.locator('#stream-safety-value').textContent(), /<script>window.hostile=true<\/script>/);
+      assert.match(await page.locator('#details').textContent(), /project summary is ready/);
+      assert.equal(await page.getByRole('heading',{name:'Safety samples',exact:true}).count(),1);
       assert.equal(await page.evaluate(() => window.hostile), undefined);
       assert.equal(calls, 0, 'hydration fetched the initial Resource again');
       assert.equal(await page.evaluate(() => document.getElementById('app').innerHTML === window.streamBeforeHydrate), true, 'hydration repaired the streamed DOM');

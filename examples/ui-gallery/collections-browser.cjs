@@ -50,7 +50,7 @@ async function controls(page) {
   await page.getByRole('button',{name:'Remove tag (empty)',exact:true}).waitFor();
   assert.equal(await page.locator('#proof-tags [type=text],#proof-tags input:not([type])').count(),1);
   assert.equal(await page.locator('#proof-tags [id$="-up"],#proof-tags [id$="-down"]').count(),0);
-  const fields=await page.locator('form').evaluate(form=>[...new FormData(form)]);
+  const fields=await page.locator('#collection-proof-form').evaluate(form=>[...new FormData(form)]);
   assert.deepEqual(fields.filter(([name])=>name.startsWith('proof-tags')), [['proof-tags[10]',''],['proof-tags[20]','0'],['proof-tags[30]','雪']]);
   await draft.press('Enter'); await frame(page);
   assert.equal((await state(page)).tags.at(-1)[1],'Early tag </script> 雪');
@@ -103,7 +103,7 @@ async function controls(page) {
   await page.locator('#proof-rating-5').dispatchEvent('change');
   await draft.dispatchEvent('keydown',{key:'Enter'}); await frame(page);
   assert.deepEqual(await state(page),before);
-  assert.equal(await page.locator('form').evaluate(form=>[...new FormData(form)].length),0,'disabled controls do not submit');
+  assert.equal(await page.locator('#collection-proof-form').evaluate(form=>[...new FormData(form)].length),0,'disabled controls do not submit');
   await page.locator('#proof-disabled').click();
   // Synthetic clicks can toggle a native radio property while its state guard rejects
   // publication. Return through real enabled controls before visual/form proofs.
@@ -135,7 +135,7 @@ async function controls(page) {
   assert.deepEqual((await state(page)).metadata,[[4,'count','0']]);
   assert.match(await page.locator('#proof-metadata-error').textContent(),/byte budget/);
   await page.locator('#proof-metadata-4-key').fill('empty'); await page.locator('#proof-metadata-4-value').fill('');
-  const submitted=await page.locator('form').evaluate(form=>Object.fromEntries(new FormData(form)));
+  const submitted=await page.locator('#collection-proof-form').evaluate(form=>Object.fromEntries(new FormData(form)));
   assert.equal(submitted['rating-min'],'2','the visually hidden native radio submits the exact admitted value');
   assert.equal(submitted['proof-text[1]'],''); assert.equal(submitted['proof-text[2]'],'0');
   assert.equal(submitted['proof-metadata[4][value]'],''); assert.equal(submitted['proof-tags[33]'],exact);
@@ -168,6 +168,23 @@ async function contactSheet(browser) {
 }
 
 /** Each real render mode/mount owns its context; every failure closes the browser. */
+/** Preserve the extracted missing/null/false/true, form and reentrant-factory proofs. */
+async function nestedPresence(page,mode) {
+  const value=page.locator('#nested-8-value');
+  assert.equal(await value.inputValue(),mode==='hydrate'?'true':'false');
+  if(mode==='hydrate')assert.equal(await value.evaluate(node=>node===window.earlyNested),true);
+  for(const token of ['missing','null','false','true']) {
+    await value.selectOption(token);
+    await page.waitForFunction(token=>JSON.parse(document.getElementById('nested-proof-state').textContent)[0][1]===token,token);
+    assert.deepEqual(await page.locator('#nested-proof-form').evaluate(form=>[...new FormData(form)]),[['nested[8]',token]]);
+  }
+  await page.locator('#nested-rows-add').click();
+  assert.equal(await page.locator('#nested-9-value').inputValue(),'missing','reentrant factory runs outside its collection write guard');
+  await page.locator('#nested-rows').getByRole('button',{name:'Set null',exact:true}).first().click();
+  assert.equal(await value.inputValue(),'null');
+  assert.deepEqual(await page.locator('#nested-proof-form').evaluate(form=>[...new FormData(form)]),[['nested[8]','null'],['nested[9]','missing']]);
+}
+
 async function main() {
   fs.mkdirSync(path.join(output,'screenshots'),{recursive:true});
   const browser=await chromium.launch({headless:true}); const receipts=[];
@@ -194,6 +211,8 @@ async function main() {
         });
         await page.goto('https://collections.invalid'+base+'/proof',{waitUntil:'commit'});
         if(mode==='hydrate') {
+          await page.locator('#nested-8-value').selectOption('true');
+          await page.locator('#nested-8-value').evaluate(node=>{window.earlyNested=node;});
           await page.locator('#proof-tags-draft').fill('Early tag </script> 雪');
           await page.locator('#proof-tags-draft').evaluate(node=>{window.earlyTagDraft=node;window.beforeCollections=document.getElementById('app').innerHTML;});
         }
@@ -202,6 +221,7 @@ async function main() {
           assert.equal(await page.evaluate(()=>beforeCollections===document.getElementById('app').innerHTML),true,'native draft property is adopted without replacing SSR markup');
           assert.equal(await page.locator('#proof-tags-draft').evaluate(node=>node===window.earlyTagDraft),true);
         } else await page.locator('#proof-tags-draft').fill('Early tag </script> 雪');
+        await nestedPresence(page,mode);
         await iconGeometry(page);
         await controls(page);
         const layouts=[];

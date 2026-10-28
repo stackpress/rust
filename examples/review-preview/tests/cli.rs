@@ -53,4 +53,11 @@ fn cli_setup_and_prebind_refusals() {
     assert!(!run(&["serve", "--port", "0", "--directory", directory]));
     // Assets are deliberately absent, so pipe startup fails before reading input or opening IO.
     assert!(!run(&["pipe", "--port", "3001", "--directory", directory]));
+    assert!(!run(&[
+        "stream-pipe",
+        "--port",
+        "3001",
+        "--directory",
+        directory
+    ]));
 }

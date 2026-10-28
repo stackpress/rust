@@ -5,7 +5,9 @@ const recovery = document.getElementById('stackpress-stream-recovery');
 try {
   if (!document.getElementById('stackpress-stream-complete') || document.getElementById('stackpress-stream-failed')) {
     recovery.setAttribute('role', 'alert');
-    recovery.firstChild.textContent = 'The page was interrupted. You can ';
+    // Parsing ended without an admitted completion marker; keep the same
+    // definitive wording as the independent early status asset.
+    recovery.firstChild.textContent = "This page didn't finish loading. ";
   } else {
     const templates = [...document.querySelectorAll('template[data-stackpress-replay]')];
     // WASM validates the aggregate count, identities, duplicates and byte budget.

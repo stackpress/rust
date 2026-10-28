@@ -15,12 +15,22 @@ mod browser {
     /// Mount only the explicit finite collection proof; ordinary startup never calls this.
     #[wasm_bindgen]
     pub fn start_collections() -> Result<js_sys::Function, JsValue> {
-        let app = web_sys::window()
+        let document = web_sys::window()
             .and_then(|window| window.document())
-            .and_then(|document| document.get_element_by_id("app"))
+            .ok_or_else(|| JsValue::from_str("No proof document"))?;
+        let app = document
+            .get_element_by_id("app")
             .ok_or_else(|| JsValue::from_str("No proof root"))?
             .dyn_into::<web_sys::HtmlElement>()?;
-        let root = move || view! {<stackpress_example_ui_gallery_shared::collection_proof::CollectionProof/>};
+        let initial_nested = selected(&document, "nested-8-value")
+            .first()
+            .map(|value| parse_presence(value))
+            .transpose()
+            .map_err(|_| JsValue::from_str("Invalid early nested presence"))?
+            .unwrap_or(stackpress_example_ui_gallery_shared::FieldValue::Value(
+                false,
+            ));
+        let root = move || view! {<stackpress_example_ui_gallery_shared::collection_proof::CollectionProof initial_nested/>};
         #[cfg(feature = "hydrate")]
         let handle = leptos::mount::hydrate_from(app, root);
         #[cfg(feature = "csr")]
@@ -141,13 +151,6 @@ mod browser {
                 input_value(&document, "metadata-rows-4-key", &breadth.metadata.key);
             breadth.metadata.value =
                 input_value(&document, "metadata-rows-4-value", &breadth.metadata.value);
-            breadth.nested = parse_presence(
-                selected(&document, "nested-8-value")
-                    .first()
-                    .map(String::as_str)
-                    .unwrap_or(""),
-            )
-            .map_err(|_| JsValue::from_str("Invalid early nested presence"))?;
             for (index, id) in ["single-range-0", "pair-range-0", "pair-range-1"]
                 .into_iter()
                 .enumerate()
@@ -170,9 +173,14 @@ mod browser {
         breadth
             .validate()
             .map_err(|_| JsValue::from_str("Invalid early component draft"))?;
+        let safety = document
+            .get_element_by_id("safety-notes")
+            .and_then(|element| element.dyn_into::<web_sys::HtmlTextAreaElement>().ok())
+            .map(|element| element.value())
+            .unwrap_or_else(|| stackpress_example_ui_gallery_shared::TEXTAREA_PAYLOAD.into());
         let root = move || {
             stackpress_example_ui_gallery_shared::provide_meta();
-            view! { <Gallery seed initial_draft=early initial_core=core initial_breadth=breadth/> }
+            view! { <Gallery seed initial_draft=early initial_core=core initial_breadth=breadth initial_safety=safety/> }
         };
         #[cfg(feature = "hydrate")]
         let handle = leptos::mount::hydrate_from(app, root);

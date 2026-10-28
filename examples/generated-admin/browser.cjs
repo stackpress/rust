@@ -124,6 +124,7 @@ async function catalog(page) {
           let before;
           if (mode === 'hydrate') {
             await page.locator('#task-field-title').waitFor();
+            assert.equal(await page.locator('label[for="profile-field-name"]').textContent(),variant==='plugin'?'Plugin field label':'Name </script> 🦀',`native ${variant}/${mode}/${mount}`);
             before = await page.locator('#app').innerHTML();
             assert.equal(await page.locator('#task-field-done').isChecked(), false);
             assert.equal(await page.locator('[data-admin-plugin]').count() > 0, variant === 'plugin');

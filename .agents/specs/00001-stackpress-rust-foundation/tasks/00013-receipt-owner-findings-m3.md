@@ -1,6 +1,6 @@
 # Task 00013: M3 owner findings receipt
 
-Status: M3 implementation evidence for coordinator review; no owner visual acceptance or final polish closeout. M0/M1/M2 were accepted separately. **M4 remains gated.** Read with the [rolling receipt](00013-receipt-owner-findings.md) and [approved design](00013-owner-findings-design.md).
+Status: **M3 accepted by coordinator and merged as reported `16b687c` (2026-10-28).** This preserves historical M3 implementation evidence; M4 was subsequently released and is covered by the [rolling receipt](00013-receipt-owner-findings.md). Read with the [approved design](00013-owner-findings-design.md); owner visual acceptance remains separate.
 
 ## Scope and implementation
 

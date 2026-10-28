@@ -5,7 +5,7 @@ use stackpress_framework_ui::{
         ADVANCED_STYLES, Dialog, FieldControl, FieldError, Form, FormState, Input, Table,
     },
     resources::cancel_on_cleanup,
-    rich::{RichContent, SafeHtml},
+    rich::SafeHtml,
 };
 
 #[cfg(target_arch = "wasm32")]
@@ -13,25 +13,19 @@ mod browser;
 
 /// Fixed hostile public Resource value, used for exact native/WASM replay checks.
 pub const RESOURCE_TEXT: &str = "</script><script>globalThis.pwned=1</script>&\"\u{2028}\u{2029}";
-/// One corpus exercises the exact same sanitizer on native SSR and actual WASM.
-pub const CORPUS: &[&str] = &[
-    "<p onclick='globalThis.pwned=1'>Safe <strong>content</strong></p><script>globalThis.pwned=1</script>",
-    "<a href='jav&#x61;script:alert(1)'>encoded</a><a href='//evil.invalid'>relative</a><a href='https://example.invalid' title='safe'>explicit link</a>",
-    "<svg><g onload='alert(1)'><foreignObject><img src='https://evil.invalid' onerror='alert(1)'></foreignObject></g></svg>",
-    "<math><mtext><table><mglyph><style><!--</style><img title='--><img src=x onerror=alert(1)>'>",
-    "<style>body{display:none}</style><form><input autofocus><iframe src='https://evil.invalid'></iframe></form><p>Visible fallback</p>",
-    "<a href='data:text/html,evil'>data</a><a href='/local'>local</a><p>&lt;script&gt;literal&lt;/script&gt;</p>",
-];
+pub use safety::{CORPUS, TEXTAREA_PAYLOAD};
 
 mod breadth;
 mod core;
+mod safety;
 mod suggestion_loader;
-pub use breadth::{BreadthDraft, parse_presence};
+pub use breadth::BreadthDraft;
+pub use collection_proof::parse_presence;
 pub mod collection_proof;
 /// Typed early nested-field presence shared with the thin client adapter.
 pub use stackpress_framework_ui::components::FieldValue;
 mod seed;
-pub use core::{CoreDraft, TEXTAREA_PAYLOAD};
+pub use core::CoreDraft;
 pub use seed::{GallerySeed, decode_initial, decode_preference};
 
 /// Select explicit English/French phrase data without browser-language inference.
@@ -81,6 +75,9 @@ pub fn Gallery(
     /// Adopt an early native input edit before hydrating, without a fetch.
     #[prop(optional)]
     initial_draft: Option<String>,
+    /// Native safety-sample edit captured before hydration.
+    #[prop(optional)]
+    initial_safety: Option<String>,
 ) -> impl IntoView {
     let locale = RwSignal::new(seed.locale.clone());
     let location = RwSignal::new(seed.location.clone());
@@ -156,13 +153,13 @@ pub fn Gallery(
             <input class="sp-input" node_ref=draft_element id="draft" value=seed.name on:input=move |event| { draft.set(event_target_value(&event)); status.set(FormState::Editing); }/>
             <Table caption=move || phrase(&locale.get(), "Profiles", "Profils").to_owned()>
                 <thead><tr><th scope="col">"ID"</th><th scope="col">"Name"</th><th scope="col">"Notes"</th></tr></thead>
-                <tbody><For each=|| vec![("1", "Ada Lovelace"),("2", "Grace Hopper"),("3", "雪 <safe>")] key=|row| row.0 children=|(id,name)| view! {
+                <tbody><For each=|| vec![("1", "Ada Lovelace"),("2", "Grace Hopper"),("3", "Yuki Tanaka")] key=|row| row.0 children=|(id,name)| view! {
                     <tr data-row-id=id><th scope="row">{id}</th><td>{name}</td><td>"Owned public row"</td></tr>
                 }/></tbody>
             </Table>
             <div class="sp-actions" role="group" aria-label="Gallery actions"><Show when=move || trigger.get()><button id="opener" type="button" on:click=move |_| open.set(true)>"Edit profile"</button></Show>
             <button id="restore" type="button" on:click=move |_| { trigger.set(true); mounted.set(true); }>"Restore dialog"</button>
-            <button id="refetch" type="button" on:click=move |_| resource.refetch()>"Reload resource"</button></div>
+            </div>
             <Show when=move || mounted.get()>
                 <Dialog id="editor" open title=move || phrase(&locale.get(), "Edit profile", "Modifier le profil").to_owned() initial_focus_id="profile-name" fallback_focus_id="draft">
                     <Form id="profile-form" state=status submit>
@@ -184,17 +181,17 @@ pub fn Gallery(
                     </Dialog>
                 </Dialog>
             </Show>
-            <section aria-label="Async resource"><Suspense fallback=|| view! { <p>"Loading resource"</p> }>
-                {move || resource.get().map(move |result| {
-                    let value = result.unwrap_or_else(|error| error.to_string());
-                    resource_title.set(value.clone());
-                    view! { <p id="resource">{value}</p> }
-                })}
-            </Suspense></section>
-            <section aria-label="Sanitized rich content"><h2>"Safe rich content"</h2>
-                {CORPUS.iter().enumerate().map(|(index,input)| view! { <section data-corpus=index><RichContent content=SafeHtml::html(input).expect("bounded fixed corpus")/></section> }).collect_view()}
-                <RichContent content=SafeHtml::markdown("**Markdown** with `safe code` and <img src='https://evil.invalid'>").expect("bounded fixed Markdown")/>
-            </section>
+            <safety::SafetySamples initial=initial_safety.unwrap_or_else(|| TEXTAREA_PAYLOAD.into())>
+                <button id="refetch" type="button" on:click=move |_| resource.refetch()>"Reload safety resource"</button>
+                <section aria-label="Async safety resource"><Suspense fallback=|| view! { <p>"Loading safety resource"</p> }>
+                    {move || resource.get().map(move |result| {
+                        let value = result.unwrap_or_else(|error| error.to_string());
+                        // Keep reactive Head behavior while hostile data stays in this section.
+                        resource_title.set("Samples ready".into());
+                        view! { <p id="resource">{value}</p> }
+                    })}
+                </Suspense></section>
+            </safety::SafetySamples>
             <core::CoreGallery initial=initial_core.unwrap_or_default() base=seed.base/>
             <breadth::BreadthGallery initial=initial_breadth.unwrap_or_default()/>
         </div></main>
