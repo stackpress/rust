@@ -7,7 +7,7 @@ const playwrightModule = process.env.GALLERY_PLAYWRIGHT || 'playwright';
 const { chromium } = require(playwrightModule);
 const root = path.resolve(__dirname, '../..');
 const output = process.env.GALLERY_OUTPUT_DIR || '/private/tmp/s8-m0';
-const host = path.resolve(root, process.env.CARGO_TARGET_DIR || 'target/s8-native', 'debug/stackpress-example-ui-gallery-web');
+const host = process.env.GALLERY_HOST || path.resolve(root, process.env.CARGO_TARGET_DIR || 'target/s8-native', 'debug/stackpress-example-ui-gallery-web');
 const resourceText = '</script><script>globalThis.pwned=1</script>&"\u2028\u2029';
 const receipts = [];
 const coreProof = require('./core-proof.cjs');

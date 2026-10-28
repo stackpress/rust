@@ -53,3 +53,6 @@ Source authority: [exports](../src/lib.rs), [rendering](../src/render.rs),
 [components](../src/components/mod.rs), [state](../src/state.rs), [language](../src/language.rs),
 [routing](../src/routing.rs), and [integration tests](../tests/).
 Markdown examples are checked separately from Rustdoc doctests.
+
+Collection action icons use vendored Lucide geometry, with no icon crate dependency.
+See the pinned source inventory and complete licences in [Lucide NOTICE](../third-party/lucide/NOTICE).

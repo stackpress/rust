@@ -69,8 +69,12 @@ async function catalog(page) {
   await page.locator('#project-field-state').press('Enter'); await settle();
   assert.equal(await page.locator('#project-draft').evaluate(node => JSON.parse(node.textContent).state), 'closed');
   assert.equal(await page.locator('#project-field-state').getAttribute('aria-expanded'), 'false');
-  await page.locator('#project-field-tags-1-value').fill(''); await settle();
-  assert.deepEqual(await page.locator('#project-draft').evaluate(node => JSON.parse(node.textContent).tags),['','0']);
+  await page.locator('#project-field-tags-1-remove').click(); await settle();
+  await page.locator('#project-field-tags-draft').fill(' 0,雪 ');
+  await page.locator('#project-field-tags-draft').press('Enter'); await settle();
+  assert.deepEqual(await page.locator('#project-draft').evaluate(node => JSON.parse(node.textContent).tags),['0',' 0,雪 ']);
+  assert.equal(await page.locator('#project-field-tags-3-value').getAttribute('type'),'hidden');
+  assert.equal(await page.locator('#project-field-tags [id$="-up"],#project-field-tags [id$="-down"]').count(),0);
   assert.equal(await page.locator('table caption').textContent(),'Task');
   assert.deepEqual(await page.locator('thead th[scope=col]').allTextContents(),['title','done','note','priority']);
   assert.equal(await page.locator('tbody tr').count(),1);
@@ -167,6 +171,10 @@ async function catalog(page) {
           await page.locator('#task-field-title').fill('restored');
           await page.waitForFunction(() => JSON.parse(document.querySelector('#task-draft').textContent).title === 'restored');
           await catalog(page);
+          // Keep inspectable crops of the actual generated collection consumers.
+          if(variant!=='base'&&mount==='/') for(const id of ['project-field-tags','proof-field-rows','proof-field-metadata']) {
+            await page.locator('#'+id).screenshot({path:path.join(output,'screenshots',`${variant}-${mode}-${id}-${layout.width}-${layout.zoom}.png`)});
+          }
           const geometry=await page.evaluate(() => ({width:innerWidth,scroll:document.documentElement.scrollWidth,overflow:[...document.querySelectorAll('body *')].filter(node=>node.getBoundingClientRect().right>innerWidth+1).map(node=>({tag:node.tagName,id:node.id,class:node.className,right:node.getBoundingClientRect().right,width:node.getBoundingClientRect().width})).slice(-20)}));
           await page.screenshot({ path: path.join(output, 'screenshots', `${variant}-${mode}-${mount==='/'?'root':'admin'}-${layout.width}-${layout.zoom}.png`), fullPage: true });
           assert.ok(geometry.scroll <= geometry.width+1, JSON.stringify(geometry));

@@ -14,6 +14,7 @@ pub const BASE_STYLES: &str = include_str!("styles.css");
 
 mod controls;
 mod display_values;
+mod icons;
 mod inputs;
 mod presentation;
 pub use display_values::{
@@ -67,12 +68,13 @@ mod overlay_dom;
 mod paging;
 mod table_family;
 mod table_state;
+mod tag_list;
 
 pub use choice::{ChoiceMove, ChoiceState, DisclosureState, TypeaheadState};
 pub use collection_state::{
     BoundedList, CollectionRow, CollectionValue, FieldValue, MetadataEntry,
 };
-pub use collections::{CollectionFieldset, MetadataInput, TagList, TextList};
+pub use collections::{CollectionFieldset, MetadataInput, TextList};
 #[cfg(feature = "async")]
 pub use combobox::SuggestionCompletion;
 pub use combobox::{Combobox, ComboboxState, SuggestInput, SuggestionStatus};
@@ -89,6 +91,7 @@ pub use table_family::{
     TableRule,
 };
 pub use table_state::{SortDirection, TableState};
+pub use tag_list::TagList;
 
 mod bounded_inputs;
 pub use bounded_inputs::{
