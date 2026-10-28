@@ -95,6 +95,9 @@ Design checkpoint delivered on 2026-10-26: start at [Slice 8 design decisions](.
   - **Coordinator rerun:** fmt; workspace Clippy; the full workspace including `tcp_watchdog` (740 passed); doctests; the native proof unit tests; profile-ui `check.py`; the installed assets, tests, browser, isolation and quality proofs; and the review-preview tests. All were recorded through the build-benchmark workflow.
   - **Coverage (implementer):** 87.87% native.
   - **Still to come:** the mobile build and simulator launch run by the coordinator, and owner checks 011 and the installed half of 013.
+- **Owner visual acceptance** (2026-10-28): the owner accepted the web preview ("acceptable for now") after the first-walkthrough findings were fixed. The owner then accepted the installed iOS review ("all is well") across two coordinator-run simulator sessions: the plugin variant showed "Plugin field label", and the disabled variant showed "Full name". Search, cancellation, the fixed denial and restart persistence of language and theme were all confirmed.
+  - **Launcher fixes:** the coordinator fixed two launcher issues found while launching. The display now attaches only after the app runs, because SpringBoard on the iPhone Duo device crashes on an earlier attach. Process-listing checks are now throttled, and one slow listing no longer ends the session. Both fixes are covered by launcher unit tests (28 pass).
+  - **Still open:** Android stays unverified by owner decision. G39, the removal of the persistent System theme, lands with issue #15.
 - **License note:** `ammonia` brings `cssparser` 0.38.0 under MPL-2.0, the first file-level copyleft dependency; only in the opt-in `rich` feature. Reported to the owner.
 
 ## Acceptance notes
