@@ -159,10 +159,10 @@ mod browser {
             }
             breadth.rating = (0..=5).find(|rating| checked(&document, &format!("rating-{rating}")));
             breadth.filter = input_value(&document, "data-table-filter", &breadth.filter);
-            breadth.selected_rows = (0..7)
+            breadth.selected_rows = (0..48)
                 .filter(|index| {
                     checked(&document, &format!("data-table-row-r{index}"))
-                        || (*index < 2 && checked(&document, "data-table-select-page"))
+                        || (*index < 12 && checked(&document, "data-table-select-page"))
                 })
                 .map(|index| format!("r{index}"))
                 .collect();

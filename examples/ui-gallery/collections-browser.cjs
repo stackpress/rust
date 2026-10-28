@@ -4,6 +4,7 @@ const path = require('node:path');
 const cp = require('node:child_process');
 const assert = require('node:assert/strict');
 const {chromium} = require(process.env.GALLERY_PLAYWRIGHT);
+const m3 = require('./table-rating-proof.cjs');
 const output = process.env.GALLERY_OUTPUT_DIR;
 const host = process.env.GALLERY_COLLECTION_HOST;
 const frame = page => page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
@@ -13,7 +14,7 @@ const focus = (page,id) => page.waitForFunction(id => document.activeElement?.id
 /** Compare rendered primitives with the exact vendored masters, including decorative semantics. */
 async function iconGeometry(page) {
   const folder=path.resolve(__dirname,'../../crates/framework/framework-ui/third-party/lucide');
-  for(const [id,name] of [['proof-text-1-up','arrow-up'],['proof-text-1-down','arrow-down'],['proof-text-1-remove','trash-2'],['proof-tags-10-remove','x'],['proof-tags-add','plus']]) {
+  for(const [id,name] of [['proof-text-1-up','arrow-up'],['proof-text-1-down','arrow-down'],['proof-text-1-remove','trash'],['proof-tags-10-remove','x'],['proof-tags-add','plus']]) {
     const source=fs.readFileSync(path.join(folder,name+'.svg'),'utf8');
     const result=await page.locator('#'+id+' svg').evaluate((svg,source)=>{
       const shapes=root=>[...root.children].map(shape=>({tag:shape.localName,attributes:[...shape.attributes].map(attr=>[attr.name,attr.value]).sort()}));
@@ -92,16 +93,25 @@ async function controls(page) {
   assert.equal((await state(page)).tags.length,4,'Backspace only focuses the remove action');
   await page.keyboard.press('Space'); await focus(page,'proof-tags-33-remove');
   // Disabled state is controller-owned; even synthetic stale events cannot mutate it.
+  await m3.rating(page,'proof-rating',2);
+  assert.equal((await state(page)).rating,2);
   await draft.fill('disabled draft'); await page.locator('#proof-disabled').click();
   const before=await state(page);
-  for(const id of ['proof-tags-add','proof-tags-33-remove','proof-text-1-down','proof-text-1-remove','proof-metadata-4-remove']) {
+  for(const id of ['proof-tags-add','proof-tags-33-remove','proof-text-1-down','proof-text-1-remove','proof-metadata-4-remove','proof-rating-5']) {
     await page.locator('#'+id).dispatchEvent('click');
   }
+  await page.locator('#proof-rating-5').dispatchEvent('change');
   await draft.dispatchEvent('keydown',{key:'Enter'}); await frame(page);
   assert.deepEqual(await state(page),before);
   assert.equal(await page.locator('form').evaluate(form=>[...new FormData(form)].length),0,'disabled controls do not submit');
   await page.locator('#proof-disabled').click();
+  // Synthetic clicks can toggle a native radio property while its state guard rejects
+  // publication. Return through real enabled controls before visual/form proofs.
+  await page.locator('.sp-rating-input').getByRole('button',{name:'Clear rating',exact:true}).click();
+  await page.locator('label[for=proof-rating-2]').click();
   await page.locator('#proof-error').click();
+  assert.equal(await page.locator('#proof-rating-error').textContent(),'Choose a permitted tag');
+  assert.equal(await page.locator('#proof-rating-error').locator('..').getAttribute('aria-invalid'),'true');
   assert.equal(await draft.getAttribute('aria-invalid'),'true');
   assert.match(await page.locator('#proof-tags-error').textContent(),/permitted tag/);
   // Preserve existing field nodes, names, empty and zero values while reordering.
@@ -126,6 +136,7 @@ async function controls(page) {
   assert.match(await page.locator('#proof-metadata-error').textContent(),/byte budget/);
   await page.locator('#proof-metadata-4-key').fill('empty'); await page.locator('#proof-metadata-4-value').fill('');
   const submitted=await page.locator('form').evaluate(form=>Object.fromEntries(new FormData(form)));
+  assert.equal(submitted['rating-min'],'2','the visually hidden native radio submits the exact admitted value');
   assert.equal(submitted['proof-text[1]'],''); assert.equal(submitted['proof-text[2]'],'0');
   assert.equal(submitted['proof-metadata[4][value]'],''); assert.equal(submitted['proof-tags[33]'],exact);
   assert.equal((await state(page)).submissions,0,'tag Enter never submits its parent form');
@@ -144,7 +155,7 @@ async function controls(page) {
 /** Save icon masters at actual sizes/themes and representative active/disabled controls. */
 async function contactSheet(browser) {
   const folder=path.resolve(__dirname,'../../crates/framework/framework-ui/third-party/lucide');
-  const names=['arrow-up','arrow-down','arrow-up-down','trash-2','x','plus','star'];
+  const names=['arrow-up','arrow-down','arrow-up-down','trash','x','plus','star'];
   const icons=names.map(name=>({name,svg:fs.readFileSync(path.join(folder,name+'.svg'),'utf8')}));
   icons.push({name:'circle anchor',svg:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>'});
   icons.push({name:'square anchor',svg:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>'});
@@ -212,6 +223,7 @@ async function main() {
           }
           if(!(width===375&&zoom===2))await page.locator('#proof-metadata-4-value').scrollIntoViewIfNeeded();
           await page.screenshot({path:path.join(output,'screenshots',`${name}-${width}-zoom${zoom}.png`)});
+          await page.locator('.sp-rating-input').screenshot({path:path.join(output,'screenshots',`${name}-rating-min2-${width}-zoom${zoom}.png`)});
           layouts.push({width,zoom,...result});
         }
         await page.locator('.sp-tag-list').evaluate(node=>{node.style.maxWidth='8rem';});

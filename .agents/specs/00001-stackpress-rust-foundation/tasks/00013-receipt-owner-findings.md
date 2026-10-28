@@ -1,6 +1,6 @@
 # Task 00013: owner findings receipt
 
-Status: **M0/M1 accepted by coordinator; M2 implemented, proved and ready for coordinator verification. M3/M4 have not started.** No owner visual acceptance or final polish closeout is claimed. Follow the [approved design and recorded owner decisions](00013-owner-findings-design.md); G39/theme implementation remains separately owned.
+Status: **M0/M1/M2 accepted by coordinator; M3 implemented, proved and ready for coordinator verification. M4 has not started.** No owner visual acceptance or final polish closeout is claimed. Follow the [approved design and recorded owner decisions](00013-owner-findings-design.md); G39/theme implementation remains separately owned.
 
 ## M0 result and implementation
 
@@ -164,3 +164,10 @@ Deleted only `/private/tmp/s8-polish-m2/target` at **3,013,496 KiB**, below the 
 Provenance: current branch `trial/3-s8-polish`, verified HEAD `f14cb53b59a40a9a5288c5b3d13cba9abbdc8c33` plus this uncommitted M2 diff. M1 source is present. The coordinator-reported merge reference d5f7564 is not an ancestor of this HEAD; no merge or history action was performed by the implementer.
 
 Re-review the gallery Text rows/Metadata rows/plain tags and generated project tags/RoleProof collections: **00013-001** early draft/SSR behavior; **00013-004** field edits/removal and native keyboard/form behavior; **00013-010** narrow/200%/coarse-pointer layout; **00013-013** plugin/disabled collection consumers. Owner visual acceptance and coordinator managed-preview rebuilding/verification remain separate. **M2 stops here; do not start M3 until released.**
+
+
+## M3: table/rating and Lucide 1.62.0
+
+The coordinator accepted/merged M2 into trial/3 (reported `f46ee0a`) and released M3. M3 re-pins all seven Lucide masters/licences, implements the 48×12 gallery table and inline sortable headings, and renders keyboard/native-radio star ratings with the minimum-zero rule. The optional UI minimum is additive; generated callers derive it from existing public @min/ge metadata, with no new admin role prop or wire member.
+
+Load the [M3 evidence receipt](00013-receipt-owner-findings-m3.md) for exact implementation/API boundaries, commands, three review rounds, final tests/coverage, inspected screenshots, retained artifacts and cleanup. This rolling receipt retains the prior milestones without changing their historical evidence. **M3 stops for coordinator verification; M4 remains gated.**

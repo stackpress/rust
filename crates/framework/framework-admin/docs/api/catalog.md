@@ -12,7 +12,7 @@ Canonical definitions remain in the app-owned registry. Schema owns aliases and 
 | `field.tags` | `TextListField` using UI TagList | Fixed `tags: true`; other text lists fix `tags: false` |
 | `field.metadata` | `MetadataField`, string-valued Object | At most 100 entries, 1024-byte keys, 4096-byte values; duplicate editable keys report an error and preserve the accepted draft |
 | `field.slider` | `SliderField`, scalar Integer or Number | `min`, `max`, `step`: Number; defaults 0/100/1; finite ordered bounds, positive complete grid with at most 10,000 steps; Integer scale values must be integral; all scale values within browser-safe integer magnitude |
-| `field.rating` | `RatingField`, Integer | `max: Number`, integral 1..=100, default 5; zero is a rating; Clear selects omission |
+| `field.rating` | `RatingField`, Integer | `max: Number`, integral 1..=100, default 5; the minimum is derived from public schema `@min` rules (negative bounds admit zero; fractional bounds round up to the next whole rating). Stars cover admitted positive values; the small zero control appears only when the minimum admits 0. Clear selects omission |
 | `field.slug` | `SlugField`, String | Verbatim typing; Apply slug explicitly uses ASCII words, lowercase and dash separators; 4096-byte transform budget |
 | `view.text` | `TextView`, public data except virtual relations | `null_label: String` |
 | `view.yesno` | `BooleanView`, Boolean | `null_label`, `yes_label`, `no_label`: String |

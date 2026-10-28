@@ -1,4 +1,5 @@
 //! Native head/body/foot/group/cell slots plus a controlled local data-table adapter.
+use super::icons::{IconKind, icon};
 use super::{Pagination, SortDirection, Table, TableState};
 use leptos::prelude::*;
 /// Native table header slot; no source child inspection.
@@ -106,6 +107,25 @@ pub fn TableRule(
 ) -> impl IntoView {
     view! {<hr aria-hidden="true" style=format!("border:0;margin:0;width:{}px",width.clamp(1,4096))/>}
 }
+/// Presentation for a data column, independent of its value and controller.
+/// Missing entries use wrapping with no ruler; extra entries are ignored.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct TableColumnLayout {
+    /// Optional minimum pixel width, clamped to 1..=4096 by the cell ruler.
+    pub min_width: Option<u16>,
+    /// Permit prose wrapping. False keeps compact values on one line.
+    pub wrap: bool,
+}
+impl Default for TableColumnLayout {
+    /// Preserve the existing wrapping presentation when no layout is supplied.
+    fn default() -> Self {
+        Self {
+            min_width: None,
+            wrap: true,
+        }
+    }
+}
+
 /// Full controlled local table: literal filter, lexical sort, paging and keyed selection.
 /// The host owns datasets and authoritative operations; this component never fetches.
 #[component]
@@ -124,7 +144,14 @@ pub fn DataTable(
     /// Sticky column heads inside the labelled overflow.
     #[prop(optional)]
     sticky: bool,
+    /// Optional per-column presentation; never changes values, sorting or selection.
+    #[prop(optional)]
+    column_layout: Vec<TableColumnLayout>,
 ) -> impl IntoView {
+    // Store immutable presentation once; keyed header/cell closures only borrow it.
+    let layout = StoredValue::new(column_layout);
+    let column_layout =
+        move |index| layout.with_value(|items| items.get(index).copied().unwrap_or_default());
     let filter = format!("{id}-filter");
     let select_all = format!("{id}-select-page");
     // Native checkboxes carry selection; CSS follows :checked even before JavaScript.
@@ -134,13 +161,20 @@ pub fn DataTable(
     // Stable column positions retain focused sort controls while labels/data change.
     let columns = move || (0..state.column_count()).collect::<Vec<_>>();
     let header = move |index| {
-        view! {<th scope="col" class:sp-sticky=sticky
+        let presentation = column_layout(index);
+        view! {<th scope="col" class:sp-sticky=sticky class:sp-table-nowrap=!presentation.wrap
         aria-sort=move ||match state.sort(){Some((column,SortDirection::Ascending)) if column==index=>"ascending",Some((column,SortDirection::Descending)) if column==index=>"descending",_=>"none"}>
-        <button type="button" on:click=move |_|{state.toggle_sort(index);}>{move ||state.column(index)}</button></th>}
+        <button class="sp-table-sort" type="button" on:click=move |_|{state.toggle_sort(index);}>{move ||state.column(index)}
+            {move ||icon(match state.sort() {
+                Some((column,SortDirection::Ascending)) if column==index => IconKind::ArrowUp,
+                Some((column,SortDirection::Descending)) if column==index => IconKind::ArrowDown,
+                _ => IconKind::ArrowUpDown,
+            })}</button>
+            {presentation.min_width.map(|width|view!{<TableRule width/>})}</th>}
     };
-    view! {<section class:sp-striped=striped>
+    view! {<section class="sp-data-table" class:sp-striped=striped>
         <label for=filter.clone()>"Filter rows"</label><input class="sp-input" id=filter type="search" maxlength="1024" value=move ||state.filter() prop:value=move ||state.filter() on:input=move |event|{let _=state.set_filter(event_target_value(&event));}/>
-        <Table caption=caption><thead><tr><th scope="col" class:sp-sticky=sticky><label for=select_all.clone()>"Select page"</label><input id=select_all type="checkbox"
+        <Table caption=caption><thead><tr><th scope="col" class:sp-sticky=sticky><label class="sp-sr-only" for=select_all.clone()>"Select page"</label><input id=select_all type="checkbox"
             checked=move ||{let rows=state.rows();!rows.is_empty() && rows.iter().all(|row|state.selected().contains(&row.key))}
             prop:checked=move ||{let rows=state.rows();!rows.is_empty() && rows.iter().all(|row|state.selected().contains(&row.key))}
             prop:indeterminate=move ||{let rows=state.rows();let selected=state.selected();rows.iter().any(|row|selected.contains(&row.key)) && !rows.iter().all(|row|selected.contains(&row.key))}
@@ -149,7 +183,13 @@ pub fn DataTable(
         </tr></thead><tbody><For each=move ||state.rows() key=|row|row.key.clone() children=move |row|{
             let key=row.key.clone();let checked=key.clone();let cells_key=key.clone();
             let cells=move ||(0..state.column_count()).collect::<Vec<_>>();
-            let cell_view=move |index:usize|{let key=cells_key.clone();view!{<td>{move ||state.cell(&key,index)}</td>}};let label=format!("Select row {}",row.key);let checkbox=format!("{rows_id}-row-{}",row.key);
+            let cell_view=move |index:usize|{
+                let key=cells_key.clone(); let presentation=column_layout(index);
+                // Preserve old whitespace defaults for omitted layouts. Explicit wrapping
+                // entries opt prose into hard line breaks as well as soft wrapping.
+                let prose=presentation.wrap && layout.with_value(|items|index<items.len());
+                view!{<td class:sp-table-nowrap=!presentation.wrap class:sp-table-prose=prose>{move ||state.cell(&key,index)}</td>}
+            };let label=format!("Select row {}",row.key);let checkbox=format!("{rows_id}-row-{}",row.key);
             view!{<tr data-row-id=row.key.clone()><td><input type="checkbox" id=checkbox aria-label=label
                 checked={let key=checked.clone();move ||state.selected().contains(&key)} prop:checked=move ||state.selected().contains(&checked) on:change=move |event|{state.select(&key,event_target_checked(&event));}/></td>
                 <For each=cells key=|index|*index children=cell_view/></tr>}

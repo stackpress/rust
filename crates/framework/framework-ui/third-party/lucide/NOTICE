@@ -1,26 +1,29 @@
-Vendored Lucide geometry, tag 0.468.0, commit f12b0de177fbc2a6795e99be065887e72b237123
-Source: https://github.com/lucide-icons/lucide/tree/f12b0de177fbc2a6795e99be065887e72b237123
+Vendored Lucide geometry, tag 1.62.0, commit 03f11e2d6adc319ea21e9a1d5820a99cd3767257
+Source: https://github.com/lucide-icons/lucide/tree/03f11e2d6adc319ea21e9a1d5820a99cd3767257
 
-Arrow up/down: row movement; trash-2: row removal; x: tag removal; plus: add tag.
-Arrow-up-down and star masters are reserved for the approved later table/rating milestone.
-M2 renders arrow-up, arrow-down, trash-2, x and plus at 16 px; the later rating uses 24 px.
-Decorative SVGs inherit currentColor; accessible names belong to their buttons.
-The arrow-up/down, trash-2, x and plus masters inherit Feather MIT below.
+Arrow up/down: row movement and sort direction; arrow-up-down: unsorted column.
+Trash: row removal (upstream renamed trash-2 to trash); x: tag removal; plus: add tag.
+Star: rating. Row/tag/sort icons render at 16 px; rating stars at 24 px.
+Decorative SVGs inherit currentColor; accessible names belong to their controls.
+The 1.62.0 LICENSE explicitly lists arrow-up, arrow-down, trash, x and plus
+as inherited Feather geometry, under its included MIT licence. Arrow-up-down
+and star are not in that list. LICENSE below is reproduced exactly as shipped;
+FEATHER-LICENSE repeats its MIT section, rather than an unrelated Feather tag.
 Geometry is reproduced without alteration in src/components/icons.rs.
 
 Pinned source SHA-256:
-LICENSE 1e7290b35280a048667bbf0ebabac1c7fd52a75300e8b2946ac165715997f2bc
+LICENSE b495047bd93a9b06913511076f504daba17d5bbeb3e0650f3bb53a4220329c57
 icons/arrow-up.svg 8c22c25874c80bb062bef985d207d8f1d4a4d7847237d0a8cf720a3235968518
 icons/arrow-down.svg 2b641c7a59d39450edfed72067fcc9940a1a316a737346af23b4b9103c0689f2
 icons/arrow-up-down.svg d15411438095bac7cab0cf91f18cadfbde2ca752284c06b4b3642c4695b1774e
-icons/trash-2.svg e63698acf757d3043fcb4a9ea6ffceff9dd84708707eafc879c86b34a6ff2786
+icons/trash.svg 27299f69ad7c6272be64b1b8e2d48cbd6dcf0ef0d4f92827a1affa945c91700e
 icons/x.svg 4a9cdab38fbb96162e7dace28e33f4ca0e49d8963a6162abc3d4691b7d675117
 icons/plus.svg 7f6af73bf1ff6c4bca3f18351c8d1bdec6749c0c2530c4de5da85d520c21df17
 icons/star.svg c59da86b889569387db28e69ad00a89f96af22863ad9eea9aa12c4876a14338c
 
 ISC License
 
-Copyright (c) for portions of Lucide are held by Cole Bemis 2013-2022 as part of Feather (MIT). All other copyright (c) for Lucide are held by Lucide Contributors 2022.
+Copyright (c) 2026 Lucide Icons and Contributors
 
 Permission to use, copy, modify, and/or distribute this software for any
 purpose with or without fee is hereby granted, provided that the above
@@ -34,11 +37,15 @@ WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-Inherited Feather geometry, source: https://github.com/feathericons/feather/blob/v4.29.2/LICENSE
+---
 
-The MIT License (MIT)
+The following Lucide icons are derived from the Feather project:
 
-Copyright (c) 2013-2023 Cole Bemis
+airplay, alert-circle, alert-octagon, alert-triangle, aperture, arrow-down-circle, arrow-down-left, arrow-down-right, arrow-down, arrow-left-circle, arrow-left, arrow-right-circle, arrow-right, arrow-up-circle, arrow-up-left, arrow-up-right, arrow-up, at-sign, calendar, cast, check, chevron-down, chevron-left, chevron-right, chevron-up, chevrons-down, chevrons-left, chevrons-right, chevrons-up, circle, clipboard, clock, code, columns, command, compass, corner-down-left, corner-down-right, corner-left-down, corner-left-up, corner-right-down, corner-right-up, corner-up-left, corner-up-right, crosshair, database, divide-circle, divide-square, dollar-sign, download, external-link, feather, frown, hash, headphones, help-circle, info, italic, key, layout, life-buoy, link-2, link, loader, lock, log-in, log-out, maximize, meh, minimize, minimize-2, minus-circle, minus-square, minus, monitor, moon, more-horizontal, more-vertical, move, music, navigation-2, navigation, octagon, pause-circle, percent, plus-circle, plus-square, plus, power, radio, rss, search, server, share, shopping-bag, sidebar, smartphone, smile, square, table-2, tablet, target, terminal, trash-2, trash, triangle, tv, type, upload, x-circle, x-octagon, x-square, x, zoom-in, zoom-out
+
+The MIT License (MIT) (for the icons listed above)
+
+Copyright (c) 2013-present Cole Bemis
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

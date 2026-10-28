@@ -6,7 +6,7 @@ use super::{
 use crate::RoleContext;
 use leptos::prelude::*;
 use serde_json::Value;
-use stackpress_framework_schema::{Input, ValueType};
+use stackpress_framework_schema::{Input, UiField, ValueType};
 use stackpress_framework_ui::components::{
     Combobox, ComboboxState, RangeScale, RangeState, RangeValue, RatingInput, RatingState,
     SelectOption, SelectOptions, Slider, SlugAlphabet, SlugInput, SlugStyle,
@@ -83,10 +83,29 @@ pub fn SliderField(
         name=context.field.wire_name.clone() state disabled=context.bool_prop("disabled",false) error/>{presence}</div>}.into_any()
 }
 
-/// Rating bounds are integral, finite and small enough for native radio options.
-pub(crate) fn rating_max(context: &RoleContext) -> Admission<u8> {
-    let max = context.number_prop("max", 5.0);
-    rating_limit(max)
+/// Derive admitted whole ratings from the schema's canonical numeric minimum rules.
+/// The existing public validation metadata is authoritative; no extra role prop is needed.
+pub(crate) fn rating_minimum(field: &UiField, max: u8) -> Admission<u8> {
+    let mut minimum = 0;
+    // Multiple minimum assertions intersect. Negative bounds still admit zero;
+    // fractional bounds on an Integer field admit the next whole rating.
+    for rule in field.validation.iter().filter(|rule| rule.code == "ge") {
+        let bound = rule
+            .args
+            .first()
+            .and_then(Value::as_f64)
+            .ok_or("Invalid rating minimum")?;
+        minimum = minimum.max(rating_lower_bound(bound, max)?);
+    }
+    Ok(minimum)
+}
+
+/// Check a public minimum before converting its first admitted whole rating to u8.
+fn rating_lower_bound(min: f64, max: u8) -> Admission<u8> {
+    if !min.is_finite() || min > f64::from(max) {
+        return Err("Invalid rating minimum");
+    }
+    Ok(min.ceil().max(0.0) as u8)
 }
 
 /// Match codegen and runtime rating limits without truncating fractional maxima.
@@ -120,15 +139,22 @@ mod tests {
         ] {
             assert!(range_scale(min, max, step, integer).is_err());
         }
-        assert_eq!(rating(Input::Missing, 5).unwrap(), None);
-        assert_eq!(rating(Input::Value(json!(0)), 5).unwrap(), Some(0));
+        assert_eq!(rating(Input::Missing, 0, 5).unwrap(), None);
+        assert_eq!(rating(Input::Value(json!(0)), 0, 5).unwrap(), Some(0));
         for value in [json!(-1), json!(6), json!(0.5), json!("0")] {
-            assert!(rating(Input::Value(value), 5).is_err());
+            assert!(rating(Input::Value(value), 0, 5).is_err());
         }
         for max in [0., 101., 2.5, f64::NAN] {
             assert!(rating_limit(max).is_err());
         }
         assert_eq!(rating_limit(100.).unwrap(), 100);
+        assert_eq!(rating_lower_bound(-2., 5).unwrap(), 0);
+        assert_eq!(rating_lower_bound(1.5, 5).unwrap(), 2);
+        for min in [6., f64::NAN, f64::INFINITY] {
+            assert!(rating_lower_bound(min, 5).is_err());
+        }
+        assert!(rating(Input::Value(json!(0)), 1, 5).is_err());
+        assert_eq!(rating(Input::Value(json!(1)), 1, 5).unwrap(), Some(1));
         assert_eq!(slug(Input::Null).unwrap(), "");
         assert_eq!(slug(Input::Value(json!("Hello!"))).unwrap(), "Hello!");
         assert!(slug(Input::Value(json!(false))).is_err());
@@ -144,27 +170,30 @@ mod tests {
 }
 
 /// Exact integer rating, with absence distinct from the concrete zero option.
-fn rating(value: Input<Value>, max: u8) -> Admission<Option<u8>> {
+fn rating(value: Input<Value>, min: u8, max: u8) -> Admission<Option<u8>> {
     match value {
         Input::Missing | Input::Null => Ok(None),
         Input::Value(value) => value
             .as_u64()
-            .filter(|n| *n <= u64::from(max))
+            .filter(|n| (u64::from(min)..=u64::from(max)).contains(n))
             .map(|n| Some(n as u8))
             .ok_or("Expected an in-range integer rating"),
     }
 }
 
-/// Native zero-inclusive rating. Clear means omitted; nullable Null remains explicit.
+/// Native rating respecting the field minimum. Clear means omitted; nullable Null remains explicit.
 #[component]
 pub fn RatingField(
     /// Public integer metadata and caller-owned draft.
     context: RoleContext,
 ) -> impl IntoView {
-    let Ok(max) = rating_max(&context) else {
+    let Ok(max) = rating_limit(context.number_prop("max", 5.0)) else {
         return rejected();
     };
-    let Ok(initial) = rating(context.value.get_untracked(), max) else {
+    let Ok(min) = rating_minimum(&context.field, max) else {
+        return rejected();
+    };
+    let Ok(initial) = rating(context.value.get_untracked(), min, max) else {
         return rejected();
     };
     let state = RatingState::new(max, initial).expect("admitted rating");
@@ -174,12 +203,12 @@ pub fn RatingField(
         move |next| {
             state.set(next);
         },
-        move |value| rating(value, max),
+        move |value| rating(value, min, max),
         |value| Ok(value.map_or(Input::Missing, |value| Input::Value(Value::from(value)))),
     );
     let presence = presence(&context);
     view! {<div class="sp-role"><RatingInput id=context.id.clone() label=context.text_prop("label",&context.field.label)
-        name=context.field.wire_name.clone() state disabled=context.bool_prop("disabled",false) error/>{presence}</div>}.into_any()
+        name=context.field.wire_name.clone() state min disabled=context.bool_prop("disabled",false) error/>{presence}</div>}.into_any()
 }
 
 /// Verbatim text edits and an explicit deterministic ASCII dash slug action.

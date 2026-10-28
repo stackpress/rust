@@ -87,8 +87,8 @@ pub use overlay::{
 };
 pub use paging::{PageTotal, PageWindow, Pagination};
 pub use table_family::{
-    DataTable, HeaderScope, TableCell, TableFoot, TableGroup, TableHead, TableHeader, TableRow,
-    TableRule,
+    DataTable, HeaderScope, TableCell, TableColumnLayout, TableFoot, TableGroup, TableHead,
+    TableHeader, TableRow, TableRule,
 };
 pub use table_state::{SortDirection, TableState};
 pub use tag_list::TagList;

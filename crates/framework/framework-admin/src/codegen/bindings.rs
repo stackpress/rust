@@ -78,7 +78,8 @@ pub(super) fn validate_binding(
                 .unwrap_or(5.0);
             scalar
                 && field.value_type.value == ValueType::Integer
-                && crate::components::rating_limit(max).is_ok()
+                && crate::components::rating_limit(max)
+                    .is_ok_and(|max| crate::components::rating_minimum(field, max).is_ok())
         }
         "CheckboxField" | "SwitchField" | "BooleanView" => {
             scalar && field.value_type.value == ValueType::Boolean

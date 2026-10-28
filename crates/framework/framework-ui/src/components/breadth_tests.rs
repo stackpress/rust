@@ -739,3 +739,30 @@ fn native_dialog_mode_policies() {
     });
     owner.cleanup();
 }
+
+/// Layout metadata remains optional/bounded and does not replace native table semantics.
+#[test]
+fn table_layout_and_rating_minimum_markup() {
+    let owner = Owner::new();
+    owner.with(|| {
+        let state=TableState::new(DisplayTable::new(vec!["Compact".into(),"Notes".into(),"Default".into()],vec![DisplayRow{key:"zero".into(),cells:vec!["0".into(),"雪\nMore".into(),"".into()]}]).unwrap(),12).unwrap();
+        let layout=vec![TableColumnLayout{min_width:Some(0),wrap:false},TableColumnLayout{min_width:Some(u16::MAX),wrap:true}];
+        let html=view!{<DataTable id="layout" caption="People" state column_layout=layout sticky=true/>}.to_html();
+        for expected in ["sp-table-sort","sp-table-nowrap","sp-table-prose","width:1px","width:4096px","aria-sort=\"none\"","for=\"layout-select-page\""] {assert!(html.contains(expected),"missing {expected}");}
+        assert_eq!(html.matches("sp-table-sort").count(),3);
+        assert!(html.contains("Select page"));
+        let rating=RatingState::new(5,Some(3)).unwrap();
+        let html=view!{<RatingInput id="min" name="rating" label="Quality" state=rating min=2 disabled=true error="Review this rating"/>}.to_html();
+        assert!(!html.contains("id=\"min-0\""));
+        assert!(!html.contains("id=\"min-1\""));
+        assert_eq!(html.matches("type=\"radio\"").count(),4);
+        assert_eq!(html.matches("width=\"24\"").count(),4);
+        for expected in ["2 of 5","5 of 5","Clear rating","disabled","Review this rating","aria-invalid=\"true\""] {assert!(html.contains(expected),"missing {expected}");}
+        assert_eq!(rating.value(),Some(3));
+        let html=view!{<RatingInput id="invalid-min" name="none" label="No options" state=rating min=6/>}.to_html();
+        assert!(!html.contains("type=\"radio\""));
+        let html=view!{<DataTable id="extra" caption="Ignored layout" state column_layout=vec![TableColumnLayout::default();4]/>}.to_html();
+        assert_eq!(html.matches("sp-table-sort").count(),3);
+    });
+    owner.cleanup();
+}

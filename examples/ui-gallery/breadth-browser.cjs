@@ -3,6 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const assert = require('node:assert/strict');
 const { request } = require('./browser.cjs');
+const m3 = require('./table-rating-proof.cjs');
 const moduleName = process.env.GALLERY_PLAYWRIGHT || 'playwright';
 const { chromium } = require(moduleName);
 const output = process.env.GALLERY_OUTPUT_DIR || '/private/tmp/s8-m0';
@@ -151,18 +152,22 @@ async function controls(page, mode) {
   await region.evaluate(node => {node.style.height='100px';node.scrollTop=1000;}); await frame(page);
   assert.equal(await region.evaluate(node => {const top=node.getBoundingClientRect().top;return [...node.querySelectorAll('thead th')].every(head => getComputedStyle(head).position==='sticky' && Math.abs(head.getBoundingClientRect().top-top)<=2);}),true,'all table headers stick inside the labelled overflow');
   await region.evaluate(node => {node.style.height='';node.scrollTop=0;});
-  assert.equal(await table.locator('tbody tr').count(),2); await table.getByRole('checkbox',{name:'Select row r0',exact:true}).check();
-  await pages.getByRole('button',{name:'Next',exact:true}).click(); assert.equal(await table.locator('tbody tr').first().getAttribute('data-row-id'),'r2');
-  await table.getByRole('checkbox',{name:'Select row r2',exact:true}).check(); await pages.getByRole('button',{name:'Previous',exact:true}).click();
+  assert.equal(await table.locator('tbody tr').count(),12);
+  const selectPage=page.getByLabel('Select page',{exact:true});
+  await selectPage.check(); assert.equal(await table.locator('tbody input:checked').count(),12);
+  await selectPage.uncheck();
+  await table.getByRole('checkbox',{name:'Select row r0',exact:true}).check();
+  await pages.getByRole('button',{name:'Next',exact:true}).click(); assert.equal(await table.locator('tbody tr').first().getAttribute('data-row-id'),'r12');
+  await table.getByRole('checkbox',{name:'Select row r12',exact:true}).check(); await pages.getByRole('button',{name:'Previous',exact:true}).click();
   assert.equal(await table.getByRole('checkbox',{name:'Select row r0',exact:true}).isChecked(),true);
   await table.locator('tbody tr').first().evaluate(node => { window.retainedTableRow=node; });
   await table.getByRole('button',{name:'Name',exact:true}).focus(); await table.getByRole('button',{name:'Name',exact:true}).evaluate(node => {window.retainedTableHeader=node;});
   await page.locator('#update-table-row').evaluate(node => node.click()); await frame(page);
   assert.equal(await table.getByRole('button',{name:'Name',exact:true}).evaluate(node => node===window.retainedTableHeader && document.activeElement===node),true,'same-column replacement retains the focused header');
-  assert.equal(await table.locator('tbody tr').first().evaluate(node => window.retainedTableRow === node),true);assert.equal(await table.locator('tbody tr').first().textContent(),'Updated 00');
+  assert.equal(await table.locator('tbody tr').first().evaluate(node => window.retainedTableRow === node),true);assert.equal(await table.locator('tbody tr').first().locator('td').nth(2).textContent(),'Updated 00');
   await table.getByRole('button',{name:'Name',exact:true}).click(); assert.equal(await table.locator('th[aria-sort=ascending]').count(),1);
-  await table.getByRole('button',{name:'Name',exact:true}).click(); assert.equal(await table.locator('tbody tr').first().getAttribute('data-row-id'),'r6');
-  await page.locator('#data-table-filter').fill('Updated 3'); assert.equal(await table.locator('tbody tr').count(),1); assert.equal(await pages.getByRole('button',{name:'Next',exact:true}).isDisabled(),true);
+  await table.getByRole('button',{name:'Name',exact:true}).click(); assert.equal(await table.locator('tbody tr').first().getAttribute('data-row-id'),'r47');
+  await page.locator('#data-table-filter').fill('Updated 03'); assert.equal(await table.locator('tbody tr').count(),1); assert.equal(await pages.getByRole('button',{name:'Next',exact:true}).isDisabled(),true);
   await page.locator('#data-table-filter').fill('none'); assert.equal(await table.locator('tbody tr').count(),0); assert.equal(await page.getByText('No matching rows',{exact:true}).isVisible(),true);
   await page.locator('#data-table-filter').fill(''); await pages.getByRole('button',{name:'Next',exact:true}).click(); await page.locator('#shrink-table').click();
   assert.equal(await table.locator('tbody tr').count(),1); assert.equal(await pages.getByRole('button',{name:'Previous',exact:true}).isDisabled(),true);
@@ -180,7 +185,8 @@ async function controls(page, mode) {
   const cap=await page.locator('#pair-range-1').inputValue();
   await page.locator('#pair-range-0').focus(); await page.keyboard.press('End'); assert.equal(await page.locator('#pair-range-0').inputValue(),cap);
   await page.locator('#pair-range-1').focus(); await page.keyboard.press('Home'); assert.equal(await page.locator('#pair-range-1').inputValue(),cap);
-  await page.locator('#rating-0').check(); assert.equal((await inspect(page)).rating,0); await page.locator('#rating-0').focus(); await page.keyboard.press('ArrowRight'); assert.equal((await inspect(page)).rating,1);
+  await m3.rating(page,'rating');
+  await page.locator('label[for=rating-0]').click(); assert.equal((await inspect(page)).rating,0); await page.locator('#rating-0').focus(); await page.keyboard.press('ArrowRight'); assert.equal((await inspect(page)).rating,1);
   await page.getByRole('button',{name:'Clear rating',exact:true}).click(); assert.equal((await inspect(page)).rating,null);
   await page.locator('#slug').fill(' Crème 雪 0 '); await page.getByRole('button',{name:'Apply slug',exact:true}).click(); assert.equal(await page.locator('#slug').inputValue(),'crème-雪-0');
   assert.equal(await page.evaluate(() => globalThis.pwned),undefined);
@@ -250,7 +256,7 @@ async function overlays(page,name) {
   try {
     for (const mode of ['hydrate','csr']) for (const base of ['', '/demo/v1']) {
       const name=`${base?'mounted':'root'}-${mode}`,scheme=base?'dark':'light';
-      const context=await browser.newContext({viewport:{width:1280,height:900},colorScheme:scheme});const page=await context.newPage();
+      const context=await browser.newContext({viewport:{width:1280,height:900},colorScheme:scheme,hasTouch:!!base});const page=await context.newPage();
       page.setDefaultTimeout(10000);page.setDefaultNavigationTimeout(10000);await monitor(page);
       const errors=[],unexpected=[];let resourceCalls=0;let release;const boot=new Promise(resolve => {release=resolve;});
       page.on('pageerror',error => errors.push(error.message));page.on('console',message => {if(message.type()==='error'||/hydration.*(mismatch|error)/i.test(message.text()))errors.push(message.text());});
@@ -273,9 +279,11 @@ async function overlays(page,name) {
           const color=await page.locator('.sp-root').evaluate(node => getComputedStyle(node).backgroundColor);assert.equal(color,scheme==='dark'?'rgb(32, 33, 36)':'rgb(255, 255, 255)','CSS system resolves before bootstrap');
           await page.locator('#native-details summary').click();await page.locator('#text-rows-1-value').fill('Before JavaScript 雪');await page.locator('#slug').fill('Before JavaScript');await page.locator('#combo').fill('Ga');
           await page.locator('#tag-rows-draft').fill('Early tag 雪'); await page.locator('#metadata-rows-4-key').fill('early'); await page.locator('#metadata-rows-4-value').fill('');
-          await page.locator('#nested-8-value').selectOption('true'); await page.locator('#rating-2').check();
+          await page.locator('#nested-8-value').selectOption('true'); await page.locator('label[for=rating-2]').click();
+          await page.locator('#rating-2').focus(); await page.keyboard.press('ArrowRight'); await page.keyboard.press('ArrowLeft');
+          assert.equal(await page.locator('.sp-rating-input .sp-icon').evaluateAll(nodes=>nodes.filter(node=>getComputedStyle(node).fill!=='none').length),2,'native checked state fills stars before JavaScript');
           await page.locator('#single-range-0').fill('4'); await page.locator('#pair-range-0').fill('3'); await page.locator('#pair-range-1').fill('7');
-          await page.locator('#suggest').fill('Early query'); await page.locator('#data-table-filter').fill('Person 2'); await page.locator('#data-table-row-r0').check();
+          await page.locator('#suggest').fill('Early query'); await page.locator('#data-table-filter').fill('Person 02'); await page.locator('#data-table-row-r0').check(); await page.locator('#data-table-select-page').check();
           assert.equal(await page.locator('#data-table-row-r0').evaluate(node => getComputedStyle(node.closest('tr')).boxShadow!=='none'),true,'selection is visible from native checked state before JavaScript');
           await page.evaluate(() => {window.beforeBreadth=document.getElementById('app').innerHTML;window.earlyRow=document.getElementById('text-rows-1-value');window.earlyBreadthNodes=[...document.querySelectorAll('#breadth-core input,#breadth-core select,#breadth-core details,#breadth-core [data-row-id]')].map(node => [node.id || node.getAttribute('data-row-id'),node]);window.earlyRow.focus();});early=true;
         }
@@ -290,10 +298,12 @@ async function overlays(page,name) {
           assert.equal(initialDom.before,initialDom.after,'identical adopted initial DOM with no exception');
           assert.equal(await page.evaluate(() => earlyBreadthNodes.every(([id,node]) => node.isConnected && document.getElementById('breadth-core').contains(node) && (!node.id || document.getElementById(id)===node))),true,'all initial native controls and rows retain identity');assert.equal(await page.locator('#text-rows-1-value').evaluate(node => earlyRow===node && document.activeElement===node),true);const state=await inspect(page);assert.equal(state.text[0],'Before JavaScript 雪');assert.equal(state.combo,'Ga');assert.equal(await page.locator('#native-details').evaluate(node => node.open),true);
           assert.deepEqual(state.tags,['rust','雪']); assert.equal(await page.locator('#tag-rows-draft').inputValue(),'Early tag 雪','the unsubmitted draft survives hydration separately'); assert.deepEqual(state.metadata,[['early','']]); assert.deepEqual(state.nested,['true']);
-          assert.deepEqual(state.ranges,[4,3,7]); assert.equal(state.rating,2); assert.equal(state.suggestQuery,'Early query'); assert.equal(state.filter,'Person 2'); assert.deepEqual(state.selectedRows,['r0']);}
+          assert.deepEqual(state.ranges,[4,3,7]); assert.equal(state.rating,2); assert.equal(state.suggestQuery,'Early query'); assert.equal(state.filter,'Person 02'); assert.deepEqual(new Set(state.selectedRows),new Set(Array.from({length:12},(_,i)=>'r'+i)));}
         assert.equal(resourceCalls,mode==='hydrate'?0:1,'initial resource acquisition count');assert.equal(await page.locator('.sp-root').getAttribute('data-theme'),'system');
         await page.emulateMedia({colorScheme:scheme==='dark'?'light':'dark'});assert.equal(await page.locator('.sp-root').evaluate(node => getComputedStyle(node).backgroundColor),scheme==='dark'?'rgb(255, 255, 255)':'rgb(32, 33, 36)','media-only changes do not mutate the seeded token');
         const widgets=await controls(page,mode),layers=await overlays(page,name),geometries=[];
+        await page.locator('#update-table-row').click();
+        await page.getByRole('table',{name:'Paged people',exact:true}).getByRole('button',{name:'Name',exact:true}).click();
         for(const width of [375,1280]) for(const zoom of [1,2]){
           await page.setViewportSize({width,height:900});await page.evaluate(zoom => {document.documentElement.style.zoom=zoom;},zoom);
           const geometry = await page.evaluate(() => ({width:innerWidth,scroll:document.documentElement.scrollWidth,nodes:[...document.querySelectorAll('body *')].map(node => {const r=node.getBoundingClientRect();return {tag:node.tagName,id:node.id,cls:node.className,left:r.left,right:r.right,width:r.width};}).filter(node => node.right>innerWidth+1 || node.left< -1)}));
@@ -304,7 +314,11 @@ async function overlays(page,name) {
             await overflow.focus(); await page.keyboard.press('ArrowRight'); await page.waitForFunction(() => [...document.querySelectorAll('[role=region]')].some(node => node.getAttribute('aria-label')==='Explicit native table slots' && node.scrollLeft>0));
             await overflow.evaluate(node => {node.scrollLeft=0;});
           }
-          await page.screenshot({path:path.join(output,'screenshots',`${name}-m2-${width}-zoom${zoom}.png`),fullPage:true});
+          const tableGeometry=await m3.tableLayout(page,output,name,width,zoom);
+          await page.locator('#rating-3').focus(); await page.keyboard.press('Space'); await page.keyboard.press('ArrowRight');
+          await page.locator('.sp-rating-input').screenshot({path:path.join(output,'screenshots',`${name}-rating-${width}-zoom${zoom}.png`)});
+          geometries.push({table:tableGeometry});
+          await page.screenshot({path:path.join(output,'screenshots',`${name}-m3-${width}-zoom${zoom}.png`),fullPage:true});
           if(zoom===1) for(const id of ['text-rows','metadata-rows','tag-rows']) {
             await page.locator('#'+id).screenshot({path:path.join(output,'screenshots',`${name}-${id}-${width}.png`)});
           }

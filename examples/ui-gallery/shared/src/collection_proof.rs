@@ -1,7 +1,8 @@
 //! Explicit proof-only collection fixture; never rendered by the owner-facing Gallery.
 use leptos::prelude::*;
 use stackpress_framework_ui::components::{
-    BoundedList, CollectionRow, MetadataEntry, MetadataInput, TagList, TextList,
+    BoundedList, CollectionRow, MetadataEntry, MetadataInput, RatingInput, RatingState, TagList,
+    TextList,
 };
 
 /// Render adversarial collection states behind the dedicated finite proof entry point.
@@ -57,6 +58,7 @@ pub fn CollectionProof() -> impl IntoView {
         .unwrap(),
     );
     let disabled = RwSignal::new(false);
+    let rating = RatingState::new(5, None).expect("fixed rating bounds");
     let error = RwSignal::new(String::new());
     let submissions = RwSignal::new(0u32);
     // Count publications, including equal values: blank/rejected drafts must not
@@ -76,13 +78,14 @@ pub fn CollectionProof() -> impl IntoView {
                 <TextList id="proof-text" label="Text rows" list=text disabled/>
                 <MetadataInput id="proof-metadata" label="Metadata rows" list=metadata disabled/>
                 <TagList id="proof-tags" label="Tags" list=tags disabled error/>
+                <RatingInput id="proof-rating" name="rating-min" label="Rating minimum two" state=rating min=2 disabled error/>
                 <button type="submit">"Submit proof"</button>
             </form>
             <output id="collection-proof-state">{move ||serde_json::json!({
                 "tags":tags.get().rows().iter().map(|row|(&row.id,&row.value)).collect::<Vec<_>>(),
                 "text":text.get().rows().iter().map(|row|(&row.id,&row.value)).collect::<Vec<_>>(),
                 "metadata":metadata.get().rows().iter().map(|row|(&row.id,&row.value.key,&row.value.value)).collect::<Vec<_>>(),
-                "submissions":submissions.get(),"disabled":disabled.get(),"changes":changes.get()
+                "rating":rating.value(),"submissions":submissions.get(),"disabled":disabled.get(),"changes":changes.get()
             }).to_string()}</output>
         </main>
     }

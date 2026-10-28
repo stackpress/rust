@@ -124,6 +124,7 @@ fn new_catalog_roles_and_invalid_configuration_diagnostics() {
         "range Number @field.slider({ step 0 })",
         "rating Number @field.rating",
         "rating Integer @field.rating({ max 101 })",
+        "rating Integer @min(6) @field.rating({ max 5 })",
         "slug Boolean @field.slug",
         "choice Choice @field.select({ searchable true placeholder \"ignored\" })",
     ] {
@@ -216,6 +217,47 @@ fn new_native_controls_have_escaped_labels_and_exact_seeds() {
             let context=context(name);let html=match name {"rows"=>view!{<TextListField context/>}.to_html(),"metadata"=>view!{<MetadataField context/>}.to_html(),"range"=>view!{<SliderField context/>}.to_html(),"rating"=>view!{<RatingField context/>}.to_html(),_=>view!{<ComboboxField context/>}.to_html()};
             assert!(html.contains("incompatible"));
         }
+    });
+    owner.cleanup();
+}
+
+/// Schema minima reach the shared radio group without turning omitted values into zero.
+#[test]
+fn rating_minimum_reaches_native_controls() {
+    let (ui, _) =
+        fixture("model Example { id String @id rating Integer? @min(2) @field.rating({ max 5 }) }");
+    let owner = Owner::new();
+    owner.with(|| {
+        let fields = &ui.models[0].fields;
+        let draft = Draft::new(fields, &json!({}), Role::Field).unwrap();
+        let context = RoleContext {
+            id: "minimum".into(),
+            field: fields
+                .iter()
+                .find(|field| field.wire_name == "rating")
+                .unwrap()
+                .clone(),
+            role: Role::Field,
+            value: draft.get("rating").unwrap(),
+        };
+        let html = view! {<RatingField context=context.clone()/>}.to_html();
+        assert!(!html.contains("id=\"minimum-0\""));
+        assert!(!html.contains("id=\"minimum-1\""));
+        assert!(html.contains("id=\"minimum-2\""));
+        assert!(html.contains("Unrated"));
+        assert!(
+            !draft
+                .snapshot()
+                .unwrap()
+                .as_object()
+                .unwrap()
+                .contains_key("rating")
+        );
+        context
+            .value
+            .set(stackpress_framework_schema::Input::Value(json!(0)));
+        let html = view! {<RatingField context/>}.to_html();
+        assert!(html.contains("incompatible"));
     });
     owner.cleanup();
 }
