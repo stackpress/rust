@@ -20,6 +20,8 @@ The user's standing instruction authorizes those routine behavior-preserving rou
 
 Follow [.agents/context/rust-code-style.md](.agents/context/rust-code-style.md): conventional Rust formatting/names, Rustdoc, explanatory comments for every logical block, and line-level explanation for branching/stateful/non-obvious work. Use the installed chrisai-coding principles with the explicit Rust adaptation; do not apply JS-specific syntax rules to Rust.
 
+For UI icons (choosing, creating, packaging or auditing), follow the installed [chrisai-iconography](.agents/skills/chrisai-iconography/SKILL.md) skill. The owner's icon family is Lucide.
+
 Development coverage is at least 70%; publication preparation requires at least 90%. Follow [.agents/context/testing-and-quality.md](.agents/context/testing-and-quality.md) for scope, evidence, branch-risk review, and feature/platform limitations. Old TypeScript KB rules demanding >90% on every change do not override this policy.
 
 ## Boundaries
