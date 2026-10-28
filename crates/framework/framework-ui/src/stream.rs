@@ -24,7 +24,9 @@ use hydration_context::SharedContext;
 use leptos::prelude::*;
 use leptos_meta::ServerMetaContext;
 use serde::Serialize;
-use stackpress_framework_view::{PageAssets, PageContract, PageSnapshot, ViewError};
+use stackpress_framework_view::{
+    PageAssets, PageContract, PageSnapshot, PublicLocation, ViewError,
+};
 use std::{
     future::Future,
     pin::Pin,
@@ -39,6 +41,15 @@ use replay::{ReplayBudget, StreamContext};
 
 /// Fixed inert failure signal; diagnostic details never enter HTML.
 const FAILURE: &str = "<template id=\"stackpress-stream-failed\"></template>";
+
+/// Optional external classic script for pre-completion recovery status.
+///
+/// Hosts serve these fixed bytes as a same-origin JavaScript asset, permit that
+/// source in their CSP, and select it with [`StreamLeptosRenderer::with_status_script`].
+/// It never hydrates, decodes replay data, retries a request, or executes page data.
+/// Its six-second notice describes unfinished delivery, not a transport diagnosis.
+/// With scripting disabled or the asset blocked, the static reload link remains.
+pub const STREAM_STATUS_SCRIPT: &str = include_str!("stream_status.js");
 
 /// Finite native rendering policy; aggregate HTML/replay limits come from PageContract.
 ///
@@ -86,6 +97,8 @@ pub struct StreamLeptosRenderer<F> {
     contract: PageContract,
     /// Same checked external bootstrap/mount as buffered SSR.
     assets: PageAssets,
+    /// Optional mounted external status asset; never executable inline content.
+    status_script: Option<PublicLocation>,
     /// Explicit owned-chunk policy.
     policy: StreamLimits,
     /// Factory crosses the thread boundary; its local result never does.
@@ -119,9 +132,25 @@ impl<F> StreamLeptosRenderer<F> {
         Ok(Self {
             contract,
             assets,
+            status_script: None,
             policy,
             component: Arc::new(component),
         })
+    }
+
+    /// Opt into an early external status script without changing bootstrap ordering.
+    ///
+    /// The supplied application-relative asset is joined to the checked base.
+    /// The host must serve [`STREAM_STATUS_SCRIPT`] there and explicitly allow its
+    /// source in CSP. This does not add nonce support or relax an existing policy.
+    /// Default renderers emit no status script and retain their existing assets.
+    ///
+    /// # Errors
+    /// Rejects a joined location exceeding the public-location policy.
+    pub fn with_status_script(mut self, script: PublicLocation) -> Result<Self, ViewError> {
+        // Freeze the mounted location before starting any render or worker thread.
+        self.status_script = Some(self.assets.base.join(script.as_str())?);
+        Ok(self)
     }
 
     /// Stage owned Head/status before handing an exclusive Send body to the host.
@@ -150,6 +179,7 @@ impl<F> StreamLeptosRenderer<F> {
         let seed = snapshot.script_json_with(self.contract.limits)?;
         let contract = self.contract.clone();
         let assets = self.assets.clone();
+        let status_script = self.status_script.clone();
         let component = self.component.clone();
         let policy = self.policy;
         let status = snapshot.status.code();
@@ -163,6 +193,7 @@ impl<F> StreamLeptosRenderer<F> {
             seed,
             contract,
             assets,
+            status_script,
             component,
             policy,
         };
@@ -325,6 +356,8 @@ struct RenderInput<T, F> {
     contract: PageContract,
     /// Checked mounted external bootstrap assets.
     assets: PageAssets,
+    /// Optional mounted status asset, independent of the completion-gated module.
+    status_script: Option<PublicLocation>,
     /// Send/Sync factory whose produced view may remain local.
     component: Arc<F>,
     /// Lowerable chunk and finite render deadline policy.
@@ -431,6 +464,7 @@ where
         seed,
         contract,
         assets,
+        status_script,
         component,
         policy,
     } = input;
@@ -451,8 +485,18 @@ where
     }
     let module = assets.base.join(assets.module.as_str())?;
     let bootstrap = assets.script_json()?;
+    // Async classic execution can update the notice while parsing is still pending.
+    // Only checked external bytes execute; the ordinary module remains deferred.
+    let status_script = status_script
+        .map(|script| {
+            format!(
+                "<script async src=\"{}\"></script>",
+                escape_html(script.as_str())
+            )
+        })
+        .unwrap_or_default();
     let opening = format!(
-        "<!DOCTYPE html><html lang=\"{}\" data-theme=\"{}\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><!--HEAD--></head><body><aside id=\"stackpress-stream-recovery\" role=\"status\">Loading page. If interrupted, <a href=\"{}\">reload this page</a>.</aside><script type=\"application/json\" id=\"stackpress-page\">{seed}</script><script type=\"application/json\" id=\"stackpress-assets\">{bootstrap}</script><script type=\"module\" src=\"{}\"></script><div id=\"app\">",
+        "<!DOCTYPE html><html lang=\"{}\" data-theme=\"{}\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><!--HEAD--></head><body><aside id=\"stackpress-stream-recovery\" role=\"status\">Loading or interrupted; reload if this page does not finish. <a href=\"{}\">Reload this page</a>.</aside>{status_script}<script type=\"application/json\" id=\"stackpress-page\">{seed}</script><script type=\"application/json\" id=\"stackpress-assets\">{bootstrap}</script><script type=\"module\" src=\"{}\"></script><div id=\"app\">",
         snapshot.locale,
         snapshot.theme,
         escape_html(&snapshot.location),

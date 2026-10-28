@@ -20,12 +20,16 @@ self.addEventListener('fetch', event => {
       try {
         const response = await fetch('/__next?token=' + token);
         const value = await response.json();
-        if (value.done) controller.close();
+        if (value.done && value.terminal) controller.close();
+        else if (value.done) controller.error(new Error('Native HTTP body was truncated'));
         else controller.enqueue(encoder.encode(value.chunk));
       } catch (error) { controller.error(error); }
     },
     cancel() { return fetch('/__cancel?token=' + token, {method: 'POST'}).catch(() => {}); }
-  }), {headers: {'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store'}}));
+  }), {headers: {
+    'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store',
+    'Content-Security-Policy': "script-src 'self' 'wasm-unsafe-eval'; object-src 'none'; base-uri 'none'"
+  }}));
 });`;
 
 // The finite native child owns the real host. Stdin is its explicit cancel
@@ -86,7 +90,7 @@ async function scenario(browser, mode, base) {
       if (url.pathname === '/__cancel') { cancelCalls++; session?.cancel(); return route.fulfill({status: 204, body: ''}); }
       if (url.pathname === '/resource') { calls++; return route.fulfill({body: 'DUPLICATE RESOURCE FETCH'}); }
       const file = path.basename(url.pathname);
-      if (['start.js', 'stream.js', 'stream_bg.wasm'].includes(file)) {
+      if (['start.js', 'stream.js', 'stream_bg.wasm', 'stream-status.js'].includes(file)) {
         return route.fulfill({path: path.join(out, 'assets', file), contentType: file.endsWith('.wasm') ? 'application/wasm' : 'application/javascript'});
       }
       if (url.pathname === '/favicon.ico') return route.fulfill({status: 204, body: ''});
@@ -116,7 +120,7 @@ async function scenario(browser, mode, base) {
       await page.locator('#stackpress-stream-recovery[role=alert]').waitFor();
       assert.equal(await page.locator('#details').count(), 0);
       assert.equal(await page.locator('html').getAttribute('data-hydrated'), null);
-      assert.match(await page.locator('#stackpress-stream-recovery').textContent(), /interrupted/);
+      assert.match(await page.locator('#stackpress-stream-recovery').textContent(), /interrupted|didn't finish|hasn't finished/);
       await page.screenshot({path: path.join(out, `${token}-recovery.png`), fullPage: true});
     } else {
       // This is an actual browser navigation cancelling the worker ReadableStream.
@@ -146,7 +150,8 @@ async function scenario(browser, mode, base) {
   }
 }
 
-(async () => {
+/** Run the existing progressive-render matrix when invoked as the entry point. */
+async function main() {
   const browser = await chromium.launch({headless: true});
   const results = [];
   try {
@@ -156,4 +161,10 @@ async function scenario(browser, mode, base) {
     fs.writeFileSync(path.join(out, 'browser.json'), JSON.stringify({version: browser.version(), results}, null, 2));
     console.log('PASS', results.length, 'Chromium streamed SSR cases');
   } finally { await browser.close(); }
-})().catch(error => { console.error(error); process.exitCode = 1; });
+}
+
+// The M0 status proof reuses only the native transport and worker framing.
+module.exports = {native, worker};
+if (require.main === module) {
+  main().catch(error => { console.error(error); process.exitCode = 1; });
+}

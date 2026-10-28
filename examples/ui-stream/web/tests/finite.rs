@@ -70,6 +70,7 @@ fn child() {
                     assert_eq!(result.probe.cleanups.load(Ordering::SeqCst), 1);
                     assert!(shell.is_some());
                     if mode == "success" {
+                        assert!(result.terminal_chunk);
                         assert!(settled.unwrap() > shell.unwrap() + Duration::from_millis(500));
                         assert!(text.contains("stackpress-stream-complete"));
                         assert!(text.contains("data-stackpress-replay"));
@@ -79,6 +80,10 @@ fn child() {
                             HttpDelivery::Completed
                         );
                     } else {
+                        assert!(
+                            !result.terminal_chunk,
+                            "{mode}: unexpected terminal HTTP chunk"
+                        );
                         assert!(!text.contains("stackpress-stream-complete"));
                         assert!(text.contains("stackpress-stream-recovery"));
                         assert_ne!(

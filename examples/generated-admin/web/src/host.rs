@@ -8,6 +8,7 @@ use stackpress_framework_admin::{
 use stackpress_framework_sql::operations::{Operation, OperationPolicy, Policy, Registration};
 use stackpress_lib::{Body, Error, Flow, Invocation, Nest, Request, Response, Result, queue::task};
 use stackpress_server::{Server, ServerBuilder, ServerInvocationExt, StartupContext};
+mod document_errors;
 mod origin;
 pub mod transfer;
 
@@ -105,6 +106,7 @@ pub fn configure(
         })
     }))?;
     crate::generated::pages_host::routes(builder, &mount)?;
+    document_errors::register(builder, mount)?;
     Ok(())
 }
 
@@ -176,11 +178,11 @@ fn model(module: &str) -> Result<&'static str> {
 }
 
 /// Native URL selection is checked against the fixed route shape after compiled routing matched.
-fn route(request: &Request, config: &Config, api: bool) -> Result<(&'static str, &'static str)> {
+fn route(request: &Request, mount: &str, api: bool) -> Result<(&'static str, &'static str)> {
     let path = request
         .url
         .path()
-        .strip_prefix(&config.mount)
+        .strip_prefix(mount)
         .ok_or_else(|| Error::invalid("admin mount mismatch"))?;
     let path = if api {
         path.strip_prefix("api/")
@@ -313,7 +315,7 @@ pub async fn api(
     invocation: Invocation<'_>,
 ) -> Result<Flow> {
     let config = invocation.service::<Config>()?;
-    let (module, name) = route(request, config, true)?;
+    let (module, name) = route(request, &config.mount, true)?;
     let selected = operation(name)?;
     let descriptor = spec(module)?;
     let policy = invocation.service::<Policy>()?;
@@ -375,7 +377,7 @@ pub async fn page(
     invocation: Invocation<'_>,
 ) -> Result<Flow> {
     let config = invocation.service::<Config>()?;
-    let (module, name) = route(request, config, false)?;
+    let (module, name) = route(request, &config.mount, false)?;
     let descriptor = spec(module)?;
     let selected = action(name)?;
     let policy = invocation.service::<Policy>()?;

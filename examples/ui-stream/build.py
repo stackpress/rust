@@ -31,6 +31,7 @@ def main():
     assets = OUT / 'assets'; assets.mkdir(exist_ok=True)
     run('bindgen', ['wasm-bindgen', '--target', 'web', '--no-typescript', '--out-dir', assets, '--out-name', 'stream', WASM / 'wasm32-unknown-unknown/debug/stackpress_example_ui_stream_client.wasm'], WASM)
     shutil.copyfile(ROOT / 'examples/ui-stream/bootstrap.js', assets / 'start.js')
+    shutil.copyfile(ROOT / 'crates/framework/framework-ui/src/stream_status.js', assets / 'stream-status.js')
     shutil.copy2(NATIVE / 'debug/stackpress-example-ui-stream-web', OUT / 'stream-host')
 
 

@@ -449,8 +449,45 @@ fn child() {
         ordered_resources().await;
         precommit_cancellation().await;
         precommit_validation().await;
+        status_asset().await;
     });
     println!("S8_STREAM_COMPLETE");
+}
+
+/// Optional status assets stay mounted, escaped, external and opt-in.
+async fn status_asset() {
+    for enabled in [false, true] {
+        let mut mounted = assets();
+        mounted.base = BasePath::new("/demo").unwrap();
+        let renderer = StreamLeptosRenderer::new(
+            PageContract::new(1, "stream-test").unwrap(),
+            mounted,
+            StreamLimits::default(),
+            |_: &PageSnapshot<()>| Ok(view! {<p>"Settled"</p>}),
+        )
+        .unwrap();
+        let renderer = if enabled {
+            renderer
+                .with_status_script(PublicLocation::new("/status.js?x=1&y=2").unwrap())
+                .unwrap()
+        } else {
+            renderer
+        };
+        let mut page = renderer.render(seed()).await.unwrap();
+        let mut html = String::new();
+        while let Some(chunk) = page.body.next().await {
+            html.push_str(&String::from_utf8(chunk.unwrap()).unwrap());
+        }
+        assert_eq!(
+            html.contains("<script async src=\"/demo/status.js?x=1&amp;y=2\"></script>"),
+            enabled
+        );
+        assert!(
+            !html.contains("MutationObserver"),
+            "status code must remain external"
+        );
+        assert!(html.contains("stackpress-stream-complete"));
+    }
 }
 
 /// Parent termination is independent of the renderer/executor being tested.

@@ -1,0 +1,17 @@
+/* Only the read-only role catalogue opts into these presentation rules. */
+.sp-role-catalogue { min-width: 0; padding: 1rem; }
+.sp-role-catalogue main { max-width: 68rem; margin-inline: auto; }
+.sp-role-catalogue section { min-width: 0; margin-block: 1.5rem; padding: clamp(.75rem, 3vw, 1.5rem); border: 1px solid var(--sp-line); border-radius: .4rem; }
+.sp-role-catalogue h2 { margin-block-start: 0; }
+.sp-role-catalogue h3 { margin-block-end: .5rem; }
+.sp-role-catalogue form { display: block; }
+.sp-role-catalogue .sp-role, .sp-role-catalogue .sp-field { min-width: 0; margin-block: 1rem; }
+.sp-role-catalogue .sp-role-value { display: flex; flex-wrap: wrap; gap: .5rem; }
+.sp-role-catalogue input, .sp-role-catalogue select, .sp-role-catalogue textarea { max-width: 100%; }
+.sp-role-catalogue .admin-table-scroll { max-width: 100%; overflow: auto; border: 1px solid var(--sp-line); }
+.sp-role-catalogue table { border-collapse: collapse; width: 100%; min-width: 38rem; }
+.sp-role-catalogue th, .sp-role-catalogue td { text-align: start; vertical-align: top; padding: .75rem; border-block-end: 1px solid var(--sp-line); }
+.sp-role-catalogue th { background: var(--sp-soft); }
+.sp-role-catalogue output { display: block; max-width: 100%; overflow-wrap: anywhere; white-space: pre-wrap; }
+.sp-role-catalogue .table-scroll-hint { display: none; }
+@media (max-width: 40rem) { .sp-role-catalogue .table-scroll-hint { display: block; } }

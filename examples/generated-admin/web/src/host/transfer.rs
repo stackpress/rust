@@ -12,7 +12,7 @@ pub async fn export(
     invocation: Invocation<'_>,
 ) -> Result<Flow> {
     let config = invocation.service::<Config>()?;
-    let (module, name) = route(request, config, false)?;
+    let (module, name) = route(request, &config.mount, false)?;
     if name != "export" {
         return Err(Error::invalid("export route unavailable"));
     }
@@ -97,7 +97,7 @@ pub async fn import(
     invocation: Invocation<'_>,
 ) -> Result<Flow> {
     let config = invocation.service::<Config>()?;
-    let (module, name) = route(request, config, true)?;
+    let (module, name) = route(request, &config.mount, true)?;
     if !matches!(name, "preview" | "confirm") {
         return Err(Error::invalid("import route unavailable"));
     }

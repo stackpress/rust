@@ -78,7 +78,7 @@ impl Panel {
         Ok(())
     }
 }
-/// Read exactly one fixture cookie; duplicates/invalid tokens deny rather than guess.
+/// Default an absent fixture role to Editor; duplicates/invalid tokens still deny.
 pub fn actor(cookie: &str) -> &'static str {
     let mut values = cookie.split(';').filter_map(|part| {
         let part = part.trim();
@@ -90,6 +90,7 @@ pub fn actor(cookie: &str) -> &'static str {
         return "denied";
     }
     match first {
+        None => "editor",
         Some("editor") => "editor",
         Some("reader") => "reader",
         _ => "denied",
