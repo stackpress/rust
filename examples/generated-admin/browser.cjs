@@ -3,6 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const cp = require('node:child_process');
 const assert = require('node:assert/strict');
+const m3 = require('../ui-gallery/table-rating-proof.cjs');
 if (!process.env.ADMIN_PLAYWRIGHT) throw Error('ADMIN_PLAYWRIGHT must name the installed module');
 const { chromium } = require(process.env.ADMIN_PLAYWRIGHT);
 const output = process.env.ADMIN_BROWSER_OUTPUT || path.join(process.env.ADMIN_PROOF_ROOT || '/private/tmp/s8-admin','roles');
@@ -12,6 +13,7 @@ async function catalog(page) {
   const draft = () => page.locator('#proof-draft').evaluate(node => JSON.parse(node.textContent));
   const settle = () => page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
   assert.equal((await draft()).score, 0);
+  await m3.rating(page,'proof-field-score');
   await page.locator('#proof-field-zero-0').press('End'); await settle();
   assert.equal((await draft()).zero, 10);
   await page.locator('#proof-field-zero-0').press('Home'); await settle();
@@ -24,7 +26,7 @@ async function catalog(page) {
   assert.equal((await draft()).zero, 0);
   await page.locator('#proof-field-zero-0').press('ArrowRight'); await settle();
   assert.equal((await draft()).zero, 1);
-  await page.locator('#proof-field-score-5').check(); await settle();
+  await page.locator('label[for=proof-field-score-5]').click(); await settle();
   assert.equal((await draft()).score, 5);
   await page.locator('.sp-rating-input').getByRole('button', {name:'Clear rating'}).click(); await settle();
   assert.equal('score' in await draft(), false);
@@ -32,7 +34,7 @@ async function catalog(page) {
   assert.equal((await draft()).score, null);
   await page.locator('.sp-rating-input').getByRole('button', {name:'Clear rating'}).click(); await settle();
   assert.equal('score' in await draft(), false, 'Clear while visually unrated selects omission');
-  await page.locator('#proof-field-score-0').check(); await settle();
+  await page.locator('label[for=proof-field-score-0]').click(); await settle();
   assert.equal((await draft()).score, 0);
   await page.locator('#proof-field-slug').fill('Hello World!'); await settle();
   assert.equal((await draft()).slug, 'Hello World!', 'typing is verbatim');
@@ -175,6 +177,9 @@ async function catalog(page) {
           if(variant!=='base'&&mount==='/') for(const id of ['project-field-tags','proof-field-rows','proof-field-metadata']) {
             await page.locator('#'+id).screenshot({path:path.join(output,'screenshots',`${variant}-${mode}-${id}-${layout.width}-${layout.zoom}.png`)});
           }
+          await page.locator('label[for=proof-field-score-3]').click();
+          await page.locator('#proof-field-score-3').focus(); await page.keyboard.press('ArrowRight');
+          await page.locator('.sp-rating-input').screenshot({path:path.join(output,'screenshots',`${variant}-${mode}-${mount==='/'?'root':'admin'}-rating-${layout.width}-${layout.zoom}.png`)});
           const geometry=await page.evaluate(() => ({width:innerWidth,scroll:document.documentElement.scrollWidth,overflow:[...document.querySelectorAll('body *')].filter(node=>node.getBoundingClientRect().right>innerWidth+1).map(node=>({tag:node.tagName,id:node.id,class:node.className,right:node.getBoundingClientRect().right,width:node.getBoundingClientRect().width})).slice(-20)}));
           await page.screenshot({ path: path.join(output, 'screenshots', `${variant}-${mode}-${mount==='/'?'root':'admin'}-${layout.width}-${layout.zoom}.png`), fullPage: true });
           assert.ok(geometry.scroll <= geometry.width+1, JSON.stringify(geometry));

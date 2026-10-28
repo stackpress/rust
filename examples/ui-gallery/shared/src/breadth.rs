@@ -69,9 +69,9 @@ impl BreadthDraft {
                 !value.is_finite() || !(0.0..=10.0).contains(value) || value.fract() != 0.0
             })
             || self.ranges[1] > self.ranges[2]
-            || self.selected_rows.len() > 7
+            || self.selected_rows.len() > 48
             || self.selected_rows.iter().enumerate().any(|(index, key)| {
-                !(0..7).any(|row| key == &format!("r{row}"))
+                !(0..48).any(|row| key == &format!("r{row}"))
                     || self.selected_rows[..index].contains(key)
             })
         {
@@ -119,6 +119,50 @@ fn options() -> SelectOptions {
     ])
     .expect("fixed bounded options")
 }
+/// Deterministic 48-by-12 people fixture with compact fields and wrapping prose.
+/// Stable keys survive replacement; empty strings and zero stay literal values.
+fn people(updated: bool, count: usize) -> DisplayTable {
+    let columns = [
+        "ID",
+        "Name",
+        "Email",
+        "Role",
+        "Team",
+        "Location",
+        "Status",
+        "Joined",
+        "Last active",
+        "Projects",
+        "Notes",
+        "Reference",
+    ];
+    let rows = (0..count).map(|i| DisplayRow {
+        key: format!("r{i}"),
+        cells: vec![
+            format!("P{i:03}"), format!("{} {i:02}",if updated { "Updated" } else { "Person" }),
+            if i==0 { "alexandra.long-name@research.example.com".into() } else {format!("person{i}@example.com")},
+            ["Editor","Reader","Admin"][i%3].into(), ["Product","Research","Platform"][i%3].into(),
+            ["San Francisco","東京","Zürich","Manila"][i%4].into(),
+            ["Active","Invited","Away"][i%3].into(), format!("2026-09-{:02}",i%28+1),
+            format!("2026-10-{:02} 09:30 UTC",i%28+1), (i%7).to_string(),
+            if i==1 { String::new() } else { "Coordinates launch reviews with the regional team.\nNotes include Unicode: 雪, café, 🦀.".into() },
+            if i==0 { "REF2026".repeat(12) } else { format!("REF-{i:04}") },
+        ],
+    }).collect();
+    DisplayTable::new(columns.into_iter().map(String::from).collect(), rows)
+        .expect("fixed bounded people fixture")
+}
+
+/// Compact columns stay unbroken; notes use a 300-pixel ruler and wrap as prose.
+fn people_layout() -> Vec<TableColumnLayout> {
+    (0..12)
+        .map(|index| TableColumnLayout {
+            min_width: if index == 10 { Some(300) } else { None },
+            wrap: index == 10,
+        })
+        .collect()
+}
+
 /// Compose every M2 family with explicit controller ownership and public data only.
 #[component]
 pub fn BreadthGallery(
@@ -267,20 +311,7 @@ pub fn BreadthGallery(
         let _current = nested.get();
         FieldValue::Missing
     });
-    let table = TableState::new(
-        DisplayTable::new(
-            vec!["Name".into(), "Value".into()],
-            (0..7)
-                .map(|i| DisplayRow {
-                    key: format!("r{i}"),
-                    cells: vec![format!("Person {i}"), i.to_string()],
-                })
-                .collect(),
-        )
-        .unwrap(),
-        2,
-    )
-    .unwrap();
+    let table = TableState::new(people(false, 48), 12).expect("fixed page size");
     table
         .adopt_filter(initial.filter)
         .expect("bounded early filter draft");
@@ -342,9 +373,9 @@ pub fn BreadthGallery(
         <h2>"Search and collections"</h2><form id="collection-form" on:submit=move |event|event.prevent_default()><Combobox id="combo" label="Search choices" name="combo-value" state=combo/><SuggestInput id="suggest" label="Find person" name="suggest-value" state=suggestions lookup/><output id="suggest-calls">{move ||calls.get()}</output>
         <TextList id="text-rows" label="Text rows" list/><TagList id="tag-rows" label="Editable tags" list=tags/><MetadataInput id="metadata-rows" label="Metadata rows" list=metadata/>
         <CollectionFieldset id="nested-rows" label="Typed nested rows" list=nested create=nested_create render=nested_render/>
-        </form><h2>"Controlled table"</h2><DataTable id="data-table" caption="Paged people" state=table striped=true sticky=true/>
-        <ActionGroup label="Table snapshot actions"><button id="update-table-row" type="button" on:click=move |_|table.replace(DisplayTable::new(vec!["Name".into(),"Value".into()],(0..7).map(|i|DisplayRow{key:format!("r{i}"),cells:vec![format!("Updated {i}"),i.to_string()]}).collect()).unwrap())>"Update table rows"</button>
-        <button id="shrink-table" type="button" on:click=move |_|table.replace(DisplayTable::new(vec!["Name".into(),"Value".into()],vec![DisplayRow{key:"r0".into(),cells:vec!["Person 0".into(),"0".into()]}]).unwrap())>"Shrink table"</button></ActionGroup>
+        </form><h2>"Controlled table"</h2><DataTable id="data-table" caption="Paged people" state=table striped=true sticky=true column_layout=people_layout()/>
+        <ActionGroup label="Table snapshot actions"><button id="update-table-row" type="button" on:click=move |_|table.replace(people(true,48))>"Update table rows"</button>
+        <button id="shrink-table" type="button" on:click=move |_|table.replace(people(false,1))>"Shrink table"</button></ActionGroup>
         <Table caption="Explicit native table slots"><TableHead><TableRow row_key="head"><TableHeader colspan=2 sticky=true>"Grouped columns"</TableHeader></TableRow><TableRow row_key="columns"><TableHeader>"Key"</TableHeader><TableHeader>"Value"</TableHeader></TableRow></TableHead><TableGroup><TableRow row_key="body"><TableHeader scope=HeaderScope::Row>"Zero"</TableHeader><TableCell>"0"<TableRule width=120/></TableCell></TableRow></TableGroup><TableFoot><TableRow row_key="foot"><TableCell colspan=2>"Summary"</TableCell></TableRow></TableFoot></Table>
         <h2>"Bounded editing"</h2><form id="bounded-form" on:submit=move |event|event.prevent_default()><Slider id="single-range" label="Single slider" name="single" state=single/><Slider id="pair-range" label="Ordered pair" name="pair" state=range/><RatingInput id="rating" label="Rating" name="rating" state=rating/><SlugInput id="slug" label="Slug draft" name="slug" value=slug style=SlugStyle::Dash alphabet=SlugAlphabet::Unicode/>
         </form><button id="breadth-inspect" type="button" on:click=move |_|feedback.set(serde_json::json!({"text":list.get().rows().iter().map(|row|&row.value).collect::<Vec<_>>(),"combo":combo.query(),"selected":combo.selected(),"rating":rating.value(),"slug":slug.get(),"ranges":[single.handle(0),range.handle(0),range.handle(1)],"tags":tags.get().rows().iter().map(|row|&row.value).collect::<Vec<_>>(),"metadata":metadata.get().rows().iter().map(|row|(&row.value.key,&row.value.value)).collect::<Vec<_>>(),"nested":nested.get().rows().iter().map(|row|match row.value{FieldValue::Missing=>"missing",FieldValue::Null=>"null",FieldValue::Value(false)=>"false",FieldValue::Value(true)=>"true"}).collect::<Vec<_>>(),"filter":table.filter(),"selectedRows":table.selected(),"suggestQuery":suggestions.query(),"table":table.rows().iter().map(|row|&row.key).collect::<Vec<_>>()}).to_string())>"Inspect breadth state"</button><output id="breadth-state" class="sp-core-state" aria-label="Last inspected breadth state">{move ||feedback.get()}</output>
@@ -395,5 +426,46 @@ mod tests {
             ..BreadthDraft::default()
         };
         assert!(valid.validate().is_ok());
+        let selected = BreadthDraft {
+            selected_rows: (0..48).map(|i| format!("r{i}")).collect(),
+            ..BreadthDraft::default()
+        };
+        assert!(selected.validate().is_ok());
+        let invalid = BreadthDraft {
+            selected_rows: vec!["r48".into()],
+            ..BreadthDraft::default()
+        };
+        assert!(invalid.validate().is_err());
+    }
+
+    /// Rich fixtures retain stable shape/keys on replacement, with exact empty/zero/prose data.
+    #[test]
+    fn rich_people_fixture_and_layout() {
+        let owner = Owner::new();
+        owner.with(|| {
+            let data = TableState::new(people(false, 48), 100).unwrap();
+            let updated = TableState::new(people(true, 48), 100).unwrap();
+            assert_eq!(data.column_count(), 12);
+            assert_eq!(data.rows().len(), 48);
+            for (a, b) in data.rows().iter().zip(updated.rows().iter()) {
+                assert_eq!(a.key, b.key);
+                assert_eq!(a.cells.len(), 12);
+                assert!(a.cells[1].starts_with("Person"));
+                assert!(b.cells[1].starts_with("Updated"));
+            }
+            assert_eq!(data.cell("r0", 9), "0");
+            assert_eq!(data.cell("r1", 10), "");
+            assert!(data.cell("r0", 10).contains('\n'));
+            assert!(data.cell("r0", 11).len() > 80);
+        });
+        owner.cleanup();
+        assert_eq!(
+            people_layout()[10],
+            TableColumnLayout {
+                min_width: Some(300),
+                wrap: true
+            }
+        );
+        assert!(!people_layout()[0].wrap);
     }
 }

@@ -20,7 +20,7 @@ mod formatted;
 mod sync;
 pub use catalog_inputs::{ComboboxField, RatingField, SliderField, SlugField};
 #[cfg(feature = "codegen")]
-pub(crate) use catalog_inputs::{range_scale, rating_limit};
+pub(crate) use catalog_inputs::{range_scale, rating_limit, rating_minimum};
 pub use collection_inputs::{MetadataField, TextListField};
 #[cfg(all(feature = "format", feature = "codegen"))]
 pub(crate) use formatted::configuration as formatted_configuration;

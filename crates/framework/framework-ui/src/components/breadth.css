@@ -29,5 +29,19 @@
 .sp-tag-text{min-width:0;overflow-wrap:anywhere;white-space:pre-wrap}.sp-root .sp-tag-remove{border:0;background:transparent}
 .sp-tag-add{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;min-width:0}.sp-tag-add .sp-input{flex:1 1 8rem;min-width:0;max-width:100%;width:0}.sp-tag-add button{display:inline-flex;align-items:center;gap:.375rem;flex:none}
 @media(pointer:coarse){.sp-root .sp-icon-action{width:2.75rem;min-width:2.75rem;min-height:2.75rem}}
-.sp-range,.sp-rating-input{min-width:0;max-width:100%;margin-block:1rem;padding:1rem;border:1px solid var(--sp-line)}.sp-range input{width:100%;margin:0}.sp-range output{display:block}.sp-rating-input label{display:inline-flex;gap:.4rem;margin:.5rem}
+.sp-range,.sp-rating-input{min-width:0;max-width:100%;margin-block:1rem;padding:1rem;border:1px solid var(--sp-line)}.sp-range input{width:100%;margin:0}.sp-range output{display:block}
 .sp-striped tbody tr:nth-child(even){background:var(--sp-soft)}.sp-table-scroll{max-height:24rem}.sp-sticky{position:sticky;top:0;background:var(--sp-bg);z-index:1}.sp-table-scroll [data-selected=true],.sp-table-scroll tbody tr:has(td:first-child input[type=checkbox]:checked){box-shadow:inset 3px 0 currentColor}
+
+/* Shrink the containing item, then scroll the native table in its own labelled region. */
+.sp-data-table,.sp-table-scroll{min-width:0;max-width:100%}
+.sp-table-nowrap{white-space:nowrap}.sp-table-prose{white-space:pre-line;overflow-wrap:anywhere}
+.sp-root .sp-table-sort{display:inline-flex;min-height:2rem;align-items:center;gap:.375rem;border:0;border-radius:0;background:transparent;color:inherit;font:inherit;font-weight:inherit;padding:0;margin:0;text-align:inherit;cursor:pointer;white-space:nowrap;overflow-wrap:normal;max-width:none}
+/* Keep native radios in the accessibility tree; expose focus on their visible labels. */
+.sp-rating-options{display:flex;flex-wrap:wrap;gap:.125rem;align-items:center}
+.sp-rating-option{display:inline-flex;position:relative}
+.sp-rating-input .sp-rating-choice{display:inline-flex;align-items:center;justify-content:center;min-width:2rem;min-height:2rem;margin:0;cursor:pointer;border-radius:.25rem}
+.sp-rating-input .sp-rating-zero{font-size:.8rem;min-width:1.5rem}
+.sp-rating-option:has(input:focus-visible) .sp-rating-choice{outline:3px solid currentColor;outline-offset:-3px}
+.sp-rating-option:has(input:checked) .sp-icon,.sp-rating-option:has(~ .sp-rating-option input:checked) .sp-icon{fill:currentColor}
+.sp-rating-input:disabled .sp-rating-choice{cursor:default;opacity:.5}
+@media(pointer:coarse){.sp-root .sp-table-sort{min-height:2.75rem}.sp-rating-input .sp-rating-choice{min-width:2.75rem;min-height:2.75rem}}

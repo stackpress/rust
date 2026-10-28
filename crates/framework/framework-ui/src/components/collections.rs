@@ -90,7 +90,7 @@ where
                                     if disabled.get() { return; }
                                     list.update(|list|{let _=list.remove(key);});
                                     pending_focus.set(Some(removed_focus.clone()));
-                                }>{icon(IconKind::Trash2)}</button>
+                                }>{icon(IconKind::Trash)}</button>
                         </div>
                     </li>
                 }

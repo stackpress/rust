@@ -1,4 +1,5 @@
 //! Bounded native range/rating controls and explicit slug editing policies.
+use super::icons::{IconKind, icon};
 use super::{ControlError, Input};
 use leptos::prelude::*;
 
@@ -205,7 +206,9 @@ impl RatingState {
         true
     }
 }
-/// Native labelled rating radio group; stars never replace its numeric text label.
+/// Native labelled radio group with decorative stars and an explicit clear action.
+/// `min` restricts rendered/admitted options without changing the shared state contract.
+/// Invalid `min > max` renders no options; Clear still represents None.
 #[component]
 pub fn RatingInput(
     /// Native field prefix.
@@ -219,6 +222,9 @@ pub fn RatingInput(
     name: String,
     /// Controlled bounded state.
     state: RatingState,
+    /// Lowest admitted option; zero remains the compatible default.
+    #[prop(optional)]
+    min: u8,
     /// Native disabled policy.
     #[prop(optional, into)]
     disabled: Signal<bool>,
@@ -227,13 +233,29 @@ pub fn RatingInput(
     error: Signal<String>,
 ) -> impl IntoView {
     let error_id = format!("{id}-error");
-    view! {<fieldset class="sp-rating-input" aria-describedby=error_id.clone() aria-invalid=move ||(!error.get().is_empty()).to_string() disabled=move ||disabled.get()><legend>{label}</legend>
-        {(0..=state.max).map(|rating|{let input=format!("{id}-{rating}");view!{<label for=input.clone()>
-            <input id=input.clone() type="radio" name=name.clone() value=rating checked=move ||state.value()==Some(rating) prop:checked=move ||state.value()==Some(rating)
-                on:change=move |event|{if !disabled.get() && event_target_checked(&event){state.set(Some(rating));}}/>{format!("{rating} of {}",state.max)}</label>}}).collect_view()}
+    // Native checked state drives cumulative fill even before hydration. Each radio
+    // keeps its full text label; only its associated label becomes a visual target.
+    let options = (min..=state.max).map(|rating| {
+        let input = format!("{id}-{rating}");
+        view! {<span class="sp-rating-option">
+            <input class="sp-sr-only" id=input.clone() type="radio" name=name.clone() value=rating
+                checked=move ||state.value()==Some(rating) prop:checked=move ||state.value()==Some(rating)
+                on:change=move |event|{
+                    if !disabled.get() && event_target_checked(&event) { state.set(Some(rating)); }
+                }/>
+            <label class="sp-rating-choice" class:sp-rating-zero=rating==0 for=input>
+                <span class="sp-sr-only">{format!("{rating} of {}",state.max)}</span>
+                {if rating==0 { view!{<span aria-hidden="true">"0"</span>}.into_any() } else { icon(IconKind::Star) }}
+            </label>
+        </span>}
+    }).collect_view();
+    view! {<fieldset class="sp-rating-input" aria-describedby=error_id.clone()
+        aria-invalid=move ||(!error.get().is_empty()).to_string() disabled=move ||disabled.get()>
+        <legend>{label}</legend><div class="sp-rating-options">{options}</div>
         <button type="button" on:click=move |_|{if !disabled.get(){state.set(None);}}>"Clear rating"</button>
-        <output>{move ||state.value().map(|value|value.to_string()).unwrap_or_else(||"Unrated".into())}</output><p id=error_id.clone() role="alert">{move ||error.get()}</p>
-    </fieldset>}
+        <output>{move ||state.value().map(|value|value.to_string()).unwrap_or_else(||"Unrated".into())}</output>
+        <p id=error_id.clone() role="alert">{move ||error.get()}</p>
+    </fieldset>}.into_any()
 }
 /// Explicit separator/case policy; source camelfy preserves the first word's case.
 #[derive(Clone, Copy, Debug)]
