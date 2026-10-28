@@ -142,6 +142,21 @@ class Manual(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError,'did not start'):
                 manual_ios.wait_until_running(self.host,'device',self.child)
 
+    def test_slow_process_listing_does_not_end_session(self):
+        # One timed-out listing on a loaded host is retried later, never fatal.
+        uuid='00000000-0000-0000-0000-000000000001'
+        self.host.run=Mock(side_effect=lambda *arguments,**_:
+            'UIKitApplication:test.app' if 'launchctl' in arguments else uuid)
+        slow=manual_ios.subprocess.TimeoutExpired(['ps'],5)
+        with patch.dict(os.environ,PROFILE_UI_REVIEW_DEADLINE='999999999999'), \
+             patch.object(manual_ios.subprocess,'Popen',return_value=self.child), \
+             patch.object(manual_ios,'track_display',side_effect=[slow,[42],[42]]) as track, \
+             patch.object(manual_ios,'control',side_effect=['stop']), \
+             patch.object(manual_ios.time,'sleep'):
+            manual_ios.session(self.host,self.args)
+        self.assertGreaterEqual(track.call_count,1)  # the slow listing was absorbed, not raised
+        self.host.cleanup.assert_called_once()
+
     def test_interactive_restart_stop_and_cleanup(self):
         uuid='00000000-0000-0000-0000-000000000001'
         # launchctl reports the running app; every other simctl call returns the fake device.

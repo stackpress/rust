@@ -170,8 +170,14 @@ def session(host, args):
         deadline=float(os.environ['PROFILE_UI_REVIEW_DEADLINE'])
         (host.LOGS/'manual-session.json').write_text(json.dumps(dict(variant=args.variant,device=device,
             bundle=str(bundle),deadline_monotonic=deadline,status='interactive; owner acceptance unverified'),indent=2)+'\n')
+        tracked=0.0
         while time.monotonic()<deadline:
-            track_display(host)
+            # Process listing is slow on a loaded host: sample every two seconds, and
+            # treat one slow listing as "try again", not as a failed review session.
+            if time.monotonic()-tracked>=2:
+                try:track_display(host)
+                except subprocess.TimeoutExpired:pass
+                tracked=time.monotonic()
             if child.poll() is not None:raise RuntimeError('App console exited; see manual-app.log')
             command=control(host.LOGS)
             if command=='stop':break
