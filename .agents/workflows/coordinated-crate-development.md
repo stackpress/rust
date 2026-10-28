@@ -22,6 +22,7 @@ These apply to every role and every stage.
 - Start with `AGENTS.md`, [the context index](../context/index.md), [Rust code style](../context/rust-code-style.md), [testing and quality](../context/testing-and-quality.md), and the relevant upstream references. When the owner asks, review all of `.agents/` first.
 - Allowed sources are the current branch, the KB, and upstream sibling checkouts. On a trial branch, never read, diff, or build on other `trial/*` branches.
 - Treat existing `target/` output as stale. Run `cargo clean` and `cargo llvm-cov clean --workspace` before the first build of a fresh effort.
+- Record both cleanup commands and subsequent Cargo/proof commands through the [build benchmark workflow](build-benchmarks.md). Implementer and coordinator runs use the shared persistent resource store; include record IDs and counter changes in receipts, and never delete that store with target cleanup.
 - Commit, push, or publish only on the owner's explicit request. Start listeners only through devmetrics.
 
 ## 3. Paseo mechanics

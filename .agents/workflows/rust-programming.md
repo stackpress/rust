@@ -8,6 +8,7 @@ Use for implementing or fixing Rust code in this monorepo. This is the project-o
 2. [Rust code style](../context/rust-code-style.md) and [testing/quality](../context/testing-and-quality.md).
 3. Installed [coding skill](../skills/chrisai-coding/SKILL.md), [logic signals](../skills/chrisai-coding/references/logic-review-signals.md), [maintainability signals](../skills/chrisai-coding/references/maintainability-audit-signals.md), [commenting principles](../skills/chrisai-coding/references/typescript-commenting-style.md), and [declaration documentation](../skills/chrisai-coding/references/typescript-jsdoc-and-declaration-comments.md) as needed for the owned round.
 4. [Detailed round checklists](../references/00037-refactoring-round-checklists.md) when making a refactoring pass.
+5. [Build benchmarks](build-benchmarks.md) for the required command recorder, persistent counters, and separate build/command timings throughout implementation and review.
 
 When a crate or slice is built by a coordinator and an implementer agent, also follow [coordinated crate development](coordinated-crate-development.md). It assigns these steps to roles and adds stage gates, review, crate documentation, and scoped fixes.
 
@@ -40,6 +41,7 @@ Do not require the user to freeze an unrelated spec before a small authorized ch
 - Add contract/integration tests when a unit test cannot prove adapter, generation, persistence, SSR/hydration, or authorization behavior.
 - Run the narrow relevant suite. Fix real failures before presenting the implementation as working.
 - Record a baseline. A mock-only green suite is not proof of a live external boundary.
+- Record all build/test/check/lint/doc/coverage and clean commands through the [build benchmark workflow](build-benchmarks.md), including later rounds and final verification. Preserve its records under `.agents/resources/build-benchmarks/`; label scope and cache state accurately and avoid wrapping both an outer proof and its nested Cargo commands.
 
 ## 4. Round one: logic and complexity
 
@@ -89,6 +91,7 @@ Report:
 - Baseline verification.
 - Each of the three rounds and any follow-up rounds: findings, changes/no-change outcome, tests rerun.
 - Final tests, formatting, lints, docs, coverage, and feature/platform scope.
+- Benchmark store path, relevant record IDs, attempt/rebuild counter changes, and separate command/build durations (or unavailable timings).
 - Material remaining uncertainty and any unresolved decision.
 
 Code verification does not imply acceptance, commit/push, publication, deployment, or all-platform support. Perform those only when separately authorized. Update accepted KB contracts when the change actually establishes new reusable truth.
