@@ -28,3 +28,8 @@ Use Lucide icons per the [chrisai-iconography](../../../skills/chrisai-iconograp
 | D03 | Data table | Sortable headers must not look like buttons: header text with a sort indicator icon, still keyboard-operable and announcing sort state. Remove the visible "Select page" label (keep it accessible). The example must have many more columns and rows so overflow behaviour can be judged; compare with frui's table overflow measures. |
 | D04 | Rating | Interactive star icons (Lucide), keyboard-operable, with a clear way to clear. |
 | D05 | Generated admin `/generated-admin/roles` | "not styled at all": apply the framework styling. |
+
+## Owner decisions
+
+- **F05** (2026-10-28): remove "Typed nested rows" from the owner-facing gallery and keep it only as a proof fixture. A proper nullable-boolean control is a separate future item.
+- **D02** (2026-10-28): plain shadcn-style chips. Each tag is a chip with an X to remove, plus an input and an Add button to append. No in-place chip editing and no reorder arrows on the tag list. The value contract is unchanged.
