@@ -8,6 +8,9 @@ These docs describe this checkout: Rust 1.96, edition 2024, local path dependenc
 and `publish = false`. Import `stackpress_framework_view` directly, or use
 `stackpress::framework_view` with facade feature `framework-view`.
 
+For the removed preferences crate and theme API changes, read the
+[presentation migration note](migration-issue15.md).
+
 ## Start here
 
 The [quick start](getting-started.md) creates and decodes a script-safe snapshot without

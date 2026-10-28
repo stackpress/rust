@@ -63,8 +63,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     match adapter.handle(&app, request).await?.output {
         HttpOutput::Response(response) => {
             use std::io::Write;
-            if std::env::var("PROFILE_UI_DISPLAY").as_deref() == Ok("fr-dark")
-                && arguments.first().map(String::as_str) != Some("search")
+            if matches!(
+                std::env::var("PROFILE_UI_DISPLAY").as_deref(),
+                Ok("fr-dark" | "fr-unset")
+            ) && arguments.first().map(String::as_str) != Some("search")
             {
                 // Trusted finite proof configuration: re-render the actual loaded public seed.
                 let html = std::str::from_utf8(response.body())?;
@@ -83,7 +85,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     stackpress_example_profile_ui_contracts::BUILD,
                 )?;
                 seed.locale = "fr".into();
-                seed.theme = "dark".into();
+                seed.theme = (std::env::var("PROFILE_UI_DISPLAY").as_deref() == Ok("fr-dark"))
+                    .then(|| "dark".into());
                 let html = stackpress_example_profile_ui_web::render_snapshot_with_base(seed, base)
                     .await?;
                 std::io::stdout().write_all(html.as_bytes())?;

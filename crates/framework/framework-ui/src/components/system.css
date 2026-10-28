@@ -1,3 +1,0 @@
-/* Opt in before paint; only the host-seeded system token follows the media query. */
-.sp-root[data-theme=system]{color-scheme:light dark}
-@media(prefers-color-scheme:dark){.sp-root[data-theme=system]{--sp-bg:#202124;--sp-fg:#f4f4f4;--sp-muted:#c9cdd1;--sp-line:#73777c;--sp-soft:#303236}}

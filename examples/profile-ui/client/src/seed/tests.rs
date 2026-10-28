@@ -11,6 +11,7 @@ fn assets() -> String {
 /// Decoder admits exact public text/settings and rejects drift before mounting.
 #[test]
 fn public_seed_admission() {
+    assert!(!packaged().unwrap().theme_pending);
     let initial = packaged().unwrap();
     assert!(initial.page.reply.rows.is_empty());
     assert_eq!(initial.language.locale(), "en");
@@ -23,13 +24,19 @@ fn public_seed_admission() {
     assert_eq!(decoded.language.text("Profiles", &[]), "Profiles");
     assert_eq!(decoded.theme, Theme::Light);
     snapshot.locale = "fr".into();
-    snapshot.theme = "dark".into();
+    snapshot.theme = Some("dark".into());
     let translated = decode(&snapshot.script_json().unwrap(), &assets()).unwrap();
     assert_eq!(translated.language.text("Profiles", &[]), "Profils");
     assert_eq!(translated.theme, Theme::Dark);
-    snapshot.theme = "unknown".into();
+    snapshot.theme = None;
+    assert!(
+        decode(&snapshot.script_json().unwrap(), &assets())
+            .unwrap()
+            .theme_pending
+    );
+    snapshot.theme = Some("unknown".into());
     assert!(decode(&serde_json::to_string(&snapshot).unwrap(), &assets()).is_err());
-    snapshot.theme = "light".into();
+    snapshot.theme = Some("light".into());
     snapshot.locale = "../fr".into();
     assert!(decode(&serde_json::to_string(&snapshot).unwrap(), &assets()).is_err());
     snapshot.locale = "en".into();

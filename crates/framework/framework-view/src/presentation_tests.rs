@@ -1,7 +1,7 @@
 //! Critical policy/state/cookie boundaries run natively without a browser.
-use super::*;
+use crate::BasePath;
+use crate::{access::*, flash::*, preferences::*};
 use stackpress_framework_language::{LocaleRegistry, PreferenceError};
-use stackpress_framework_view::BasePath;
 use std::{cell::Cell, collections::BTreeMap};
 
 /// Use a mounted app so cookie and return-path boundaries cannot pass accidentally.
@@ -22,14 +22,13 @@ fn action() -> SettingsAction {
         )
         .unwrap(),
         scope(),
-        ThemePreference::System,
     )
 }
 /// Serialize an intended dirty-page update with encoded query context.
 fn update() -> SettingsUpdate {
     SettingsUpdate {
         locale: "fr_FR".into(),
-        theme: ThemePreference::Dark,
+        theme: Some(ThemePreference::Dark),
         location: "/demo/en/preferences?q=a%2Fb&return=%252Fhome".into(),
     }
 }
@@ -38,25 +37,17 @@ fn update() -> SettingsUpdate {
 fn select_and_admit_settings() {
     let action = action();
     for (cookie, locale, theme) in [
-        ("", "en", ThemePreference::System),
+        ("", "en", None),
         (
             "stackpress-locale=fr; stackpress-theme=dark",
             "fr",
-            ThemePreference::Dark,
+            Some(ThemePreference::Dark),
         ),
-        ("stackpress-theme=light", "en", ThemePreference::Light),
-        ("stackpress-theme=system", "en", ThemePreference::System),
-        ("stackpress-theme=unknown", "en", ThemePreference::System),
-        (
-            "stackpress-theme=dark; stackpress-theme=light",
-            "en",
-            ThemePreference::System,
-        ),
-        (
-            "stackpress-theme=dark; stackpress-theme",
-            "en",
-            ThemePreference::System,
-        ),
+        ("stackpress-theme=light", "en", Some(ThemePreference::Light)),
+        ("stackpress-theme=system", "en", None),
+        ("stackpress-theme=unknown", "en", None),
+        ("stackpress-theme=dark; stackpress-theme=light", "en", None),
+        ("stackpress-theme=dark; stackpress-theme", "en", None),
     ] {
         assert_eq!(
             action.select("/demo/preferences", cookie).unwrap(),
@@ -86,7 +77,7 @@ fn select_and_admit_settings() {
         reply.location,
         "/demo/fr/preferences?q=a%2Fb&return=%252Fhome"
     );
-    assert_eq!(reply.preferences.theme, ThemePreference::Dark);
+    assert_eq!(reply.preferences.theme, Some(ThemePreference::Dark));
     assert_eq!(reply.cookies.len(), 2);
     assert!(reply.cookies.iter().all(|value| {
         value.contains("Path=/demo; Max-Age=31536000; HttpOnly; SameSite=Lax; Secure")
@@ -154,14 +145,14 @@ fn select_and_admit_settings() {
 fn single_writer_and_failure_preserve_content() {
     let initial = Preferences {
         locale: "en".into(),
-        theme: ThemePreference::System,
+        theme: None,
     };
     let mut state = PreferenceState::new(initial.clone(), "/demo/en/preferences".into());
     assert_eq!(state.status(), SaveState::Ready);
     assert!(state.validate(&action(), "{}").is_err());
     let desired = Preferences {
         locale: "fr".into(),
-        theme: ThemePreference::Dark,
+        theme: Some(ThemePreference::Dark),
     };
     let submitted = state.begin(desired.clone()).unwrap();
     assert_eq!(state.status(), SaveState::Pending);
@@ -259,11 +250,7 @@ fn scope_and_theme_tokens() {
         .unwrap();
     assert!(flash.contains("Path=/;"));
     assert!(!flash.contains("Secure"));
-    for theme in [
-        ThemePreference::Light,
-        ThemePreference::Dark,
-        ThemePreference::System,
-    ] {
+    for theme in [ThemePreference::Light, ThemePreference::Dark] {
         assert_eq!(ThemePreference::parse(theme.as_str()), Some(theme));
     }
     assert_eq!(ThemePreference::parse("DARK"), None);
@@ -357,5 +344,57 @@ fn flash_wire_expansion_is_bounded() {
             .unwrap()
             .notice,
         Some(safe)
+    );
+}
+
+/// Locale-only persistence never turns a frozen effective color into a saved choice.
+#[test]
+fn unset_is_absence_and_legacy_readback_only() {
+    let action = action();
+    let body = r#"{"locale":"fr","theme":null,"location":"/demo/en/preferences"}"#;
+    let reply = action
+        .apply("POST", Some("https://preferences.invalid"), body)
+        .unwrap();
+    assert_eq!(reply.preferences.theme, None);
+    assert_eq!(reply.cookies.len(), 1);
+    assert!(reply.cookies[0].starts_with("stackpress-locale=fr;"));
+    for cookie in [
+        "stackpress-locale=fr",
+        "stackpress-locale=fr; stackpress-theme=system",
+    ] {
+        let confirm = action
+            .confirm("POST", Some("https://preferences.invalid"), body, cookie)
+            .unwrap();
+        assert!(confirm.cookies.is_empty());
+        assert_eq!(confirm.preferences.theme, None);
+    }
+    for cookie in [
+        "stackpress-locale=fr; stackpress-theme=dark",
+        "stackpress-locale=fr; stackpress-theme=system; stackpress-theme=system",
+        "stackpress-locale=fr; stackpress-theme",
+    ] {
+        assert!(
+            action
+                .confirm("POST", Some("https://preferences.invalid"), body, cookie)
+                .is_err()
+        );
+    }
+    assert!(
+        action
+            .apply(
+                "POST",
+                Some("https://preferences.invalid"),
+                &body.replace("null", "\"system\"")
+            )
+            .is_err()
+    );
+    let missing = body.replace("\"theme\":null,", "");
+    assert_eq!(
+        action
+            .apply("POST", Some("https://preferences.invalid"), &missing)
+            .unwrap()
+            .preferences
+            .theme,
+        None
     );
 }

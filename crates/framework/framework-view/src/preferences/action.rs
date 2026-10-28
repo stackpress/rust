@@ -1,25 +1,23 @@
 //! Pure settings selection and fixed same-origin acknowledgement.
-use crate::cookie::{CookieScope, unique_cookie};
-use serde::{Deserialize, Serialize};
-use stackpress_framework_language::{
-    LocaleRegistry, MAX_COOKIE_BYTES, MAX_PREFERENCE_BYTES, PreferenceAction, PreferenceError,
-    PreferenceUpdate,
+use super::locale::{
+    LocaleRouting, MAX_COOKIE_BYTES, MAX_PREFERENCE_BYTES, PreferenceAction, PreferenceUpdate,
 };
+use super::{LocaleRegistry, PreferenceError};
+use crate::adapters::web::{CookieScope, unique_cookie};
+use serde::{Deserialize, Serialize};
 
 /// Nonsecret preference cookie; locale retains its existing M0 cookie identity.
 const THEME_COOKIE: &str = "stackpress-theme";
 
-/// Stable host-seeded theme mode; system colors are resolved by CSS before paint.
+/// An explicit saved choice; absence is represented separately by Option.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum ThemePreference {
     /// Explicit neutral light surfaces.
+    #[default]
     Light,
     /// Explicit neutral dark surfaces.
     Dark,
-    /// Deterministic `system` token; CSS media queries choose the effective colors.
-    #[default]
-    System,
 }
 impl ThemePreference {
     /// Stable attribute and cookie token, without browser preference acquisition.
@@ -27,15 +25,13 @@ impl ThemePreference {
         match self {
             Self::Light => "light",
             Self::Dark => "dark",
-            Self::System => "system",
         }
     }
-    /// Parse only the three accepted exact tokens.
+    /// Parse only the two explicit exact tokens; legacy cookies become unset.
     pub fn parse(value: &str) -> Option<Self> {
         match value {
             "light" => Some(Self::Light),
             "dark" => Some(Self::Dark),
-            "system" => Some(Self::System),
             _ => None,
         }
     }
@@ -48,7 +44,8 @@ pub struct Preferences {
     /// Canonical registered language.
     pub locale: String,
     /// Exact theme token applied by the host before first render.
-    pub theme: ThemePreference,
+    #[serde(default)]
+    pub theme: Option<ThemePreference>,
 }
 
 /// Closed action fields, deliberately excluding arbitrary cookie names or URLs.
@@ -58,7 +55,8 @@ pub struct SettingsUpdate {
     /// Canonical or explicitly registered alias.
     pub locale: String,
     /// Typed theme rejects unknown wire values.
-    pub theme: ThemePreference,
+    #[serde(default)]
+    pub theme: Option<ThemePreference>,
     /// Current checked path/query under the app mount.
     pub location: String,
 }
@@ -83,8 +81,6 @@ pub struct SettingsAction {
     registry: LocaleRegistry,
     /// Same Origin and cookie scope for both settings.
     scope: CookieScope,
-    /// Explicit fallback when theme cookie is missing, corrupt or ambiguous.
-    default_theme: ThemePreference,
 }
 impl SettingsAction {
     /// Confirm the browser sent back both exact cookies after a successful POST.
@@ -100,11 +96,15 @@ impl SettingsAction {
         cookie: &str,
     ) -> Result<SettingsReply, PreferenceError> {
         let mut reply = self.apply(method, origin, body)?;
-        let locale = unique_cookie(cookie, stackpress_framework_language::LOCALE_COOKIE)?;
+        let locale = unique_cookie(cookie, super::LOCALE_COOKIE)?;
         let theme = unique_cookie(cookie, THEME_COOKIE)?;
-        if locale != Some(reply.preferences.locale.as_str())
-            || theme != Some(reply.preferences.theme.as_str())
-        {
+        // Only saved-data boundaries recognize the removed legacy mode as unset.
+        let matches_theme = match (reply.preferences.theme, theme) {
+            (Some(expected), Some(actual)) => actual == expected.as_str(),
+            (None, None | Some("system")) => true,
+            _ => false,
+        };
+        if locale != Some(reply.preferences.locale.as_str()) || !matches_theme {
             return Err(PreferenceError::Request);
         }
         // Only the original write endpoint emits Set-Cookie. Confirmation is read-only.
@@ -112,16 +112,8 @@ impl SettingsAction {
         Ok(reply)
     }
     /// Configure one action; hosts additionally enforce session CSRF when applicable.
-    pub fn new(
-        registry: LocaleRegistry,
-        scope: CookieScope,
-        default_theme: ThemePreference,
-    ) -> Self {
-        Self {
-            registry,
-            scope,
-            default_theme,
-        }
+    pub fn new(registry: LocaleRegistry, scope: CookieScope) -> Self {
+        Self { registry, scope }
     }
 
     /// Select prefix > canonical locale cookie > default, and checked theme cookie.
@@ -133,15 +125,13 @@ impl SettingsAction {
         if cookie.len() > MAX_COOKIE_BYTES {
             return Err(PreferenceError::Limit);
         }
-        let locale = self
-            .registry
-            .select(&self.scope.base, location, cookie)?
+        let locale = LocaleRouting::new(&self.registry, &self.scope.base)
+            .select(location, cookie)?
             .locale;
         let theme = unique_cookie(cookie, THEME_COOKIE)
             .ok()
             .flatten()
-            .and_then(ThemePreference::parse)
-            .unwrap_or(self.default_theme);
+            .and_then(ThemePreference::parse);
         Ok(Preferences { locale, theme })
     }
 
@@ -181,17 +171,18 @@ impl SettingsAction {
                 location: update.location,
             },
         )?;
+        // An unset value never persists the browser's initial OS-derived color.
+        let mut cookies = vec![reply.cookie];
+        if let Some(theme) = update.theme {
+            cookies.push(self.scope.header(THEME_COOKIE, theme.as_str(), 31536000));
+        }
         Ok(SettingsReply {
             preferences: Preferences {
                 locale: reply.locale,
                 theme: update.theme,
             },
             location: reply.location,
-            cookies: vec![
-                reply.cookie,
-                self.scope
-                    .header(THEME_COOKIE, update.theme.as_str(), 31536000),
-            ],
+            cookies,
         })
     }
 
@@ -210,9 +201,8 @@ impl SettingsAction {
         }
         let reply: SettingsReply =
             serde_json::from_str(text).map_err(|_| PreferenceError::Request)?;
-        let expected =
-            self.registry
-                .location(&self.scope.base, &submitted.location, &submitted.locale)?;
+        let expected = LocaleRouting::new(&self.registry, &self.scope.base)
+            .location(&submitted.location, &submitted.locale)?;
         if Some(reply.preferences.locale.as_str()) != self.registry.canonical(&submitted.locale)
             || reply.preferences.theme != submitted.theme
             || reply.location != expected

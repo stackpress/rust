@@ -24,6 +24,6 @@ All public text is escaped. App validation stays app-owned; native form values a
 
 Overlay measurements/listeners/ResizeObserver/timers belong to the component Owner, with cleanup on close/unmount. Async loaders must yield and stay bounded: cooperative cancellation cannot interrupt CPU-bound or non-yielding code. A root-owned abort handle does not imply arbitrary worker threads may mutate reactive state; publish completions in the originating UI context.
 
-`Theme::System` and the framework-view `system` page token are additive. Include `SystemThemeStyles` before paint (or include its trusted `SYSTEM_THEME_STYLES` in the initial stylesheet) to resolve light/dark through CSS media queries. No browser storage or initial JS media lookup is needed. Existing light/dark stylesheet bytes and defaults remain unchanged.
+Theme choices are Light/Dark only. Unset first-paint acquisition belongs to the opt-in view theme asset; see the [migration note](../../../framework-view/docs/migration-issue15.md).
 
 The shared `examples/ui-gallery` composition and its finite intercepted browser proofs demonstrate these contracts in Chromium. Packaged WKWebView, assistive-technology review and owner visual acceptance remain separate evidence.

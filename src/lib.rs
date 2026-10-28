@@ -82,10 +82,6 @@ pub use stackpress_sql_sqlite as sql_sqlite;
 #[cfg(feature = "framework-language")]
 pub use stackpress_framework_language as framework_language;
 
-/// Host-managed presentation settings, public flash and fail-closed layout policy.
-#[cfg(feature = "framework-preferences")]
-pub use stackpress_framework_preferences as framework_preferences;
-
 #[cfg(feature = "framework-schema")]
 pub use stackpress_framework_schema as framework_schema;
 #[cfg(feature = "framework-sql")]

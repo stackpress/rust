@@ -1,9 +1,11 @@
 //! One deterministic shared preferences component; transport and policy stay in adapters.
 use leptos::prelude::*;
-use stackpress_framework_preferences::{
-    ActionId, FlashRoot, PreferenceState, SaveState, ThemePreference,
-};
 use stackpress_framework_ui::language::LanguageContext;
+use stackpress_framework_view::access::ActionId;
+use stackpress_framework_view::flash::FlashRoot;
+use stackpress_framework_view::preferences::{PreferenceState, SaveState, ThemePreference};
+#[cfg(test)]
+use stackpress_framework_view::{access::AllowedActions, flash::FlashNotice};
 
 mod model;
 pub use model::{STYLES, Seed, action, action_at_origin, decode, language, registry};
@@ -35,7 +37,10 @@ pub fn PreferencesPage(
         if let Some(document) = web_sys::window().and_then(|window| window.document()) {
             if let Some(html) = document.document_element() {
                 let _ = html.set_attribute("lang", &current.current().locale);
-                let _ = html.set_attribute("data-theme", current.current().theme.as_str());
+                // Unset preserves the pre-paint choice; locale saves never sample the OS again.
+                if let Some(theme) = current.current().theme {
+                    let _ = html.set_attribute("data-theme", theme.as_str());
+                }
             }
             document.set_title(&phrases.text("Preferences", &[]));
         }
@@ -53,7 +58,7 @@ pub fn PreferencesPage(
             desired.locale = locale.into();
         }
         if let Some(theme) = theme {
-            desired.theme = theme;
+            desired.theme = Some(theme);
         }
         let mut update = None;
         state.update(|state| update = state.begin(desired));
@@ -83,7 +88,6 @@ pub fn PreferencesPage(
             <nav aria-label="Theme">
                 <button id="light" disabled=move || state.get().status() == SaveState::Pending on:click=move |_| light(None, Some(ThemePreference::Light))>"Light"</button>
                 <button id="dark" disabled=move || state.get().status() == SaveState::Pending on:click=move |_| dark(None, Some(ThemePreference::Dark))>"Dark"</button>
-                <button id="system" disabled=move || state.get().status() == SaveState::Pending on:click=move |_| choose(None, Some(ThemePreference::System))>"System"</button>
             </nav>
             <label for="draft">{move || phrases.text("Draft", &[])}</label>
             <input id="draft" node_ref=input value="Ada" on:input=move |event| draft.set(event_target_value(&event))/>
@@ -102,8 +106,8 @@ pub fn PreferencesPage(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use stackpress_framework_preferences::{AllowedActions, FlashNotice, Preferences};
     use stackpress_framework_view::BasePath;
+    use stackpress_framework_view::preferences::Preferences;
     /// Pure admission, translation and SSR share the same host-selected settings.
     #[test]
     fn seed_phrases_and_ssr() {
@@ -111,7 +115,7 @@ mod tests {
             build: "s8-b-m1".into(),
             preferences: Preferences {
                 locale: "fr".into(),
-                theme: ThemePreference::System,
+                theme: None,
             },
             base: BasePath::new("/demo").unwrap(),
             location: "/demo/fr/preferences?q=%252F".into(),

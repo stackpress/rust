@@ -1,5 +1,5 @@
 //! Single-writer root save state; transport and draft ownership stay outside it.
-use crate::{Preferences, SettingsAction, SettingsReply, SettingsUpdate};
+use super::{Preferences, SettingsAction, SettingsReply, SettingsUpdate};
 use stackpress_framework_language::PreferenceError;
 
 /// Public save outcome; a failed write never changes acknowledged useful content.

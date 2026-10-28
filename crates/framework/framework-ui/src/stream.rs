@@ -84,6 +84,7 @@ impl Default for StreamLimits {
 /// use stackpress_framework_view::{BasePath, PageAssets, PageContract, PageSnapshot, PublicLocation};
 /// let contract = PageContract::new(1, "app-build")?;
 /// let assets = PageAssets {
+///     theme_bootstrap: None,
 ///     build: "app-build".into(), base: BasePath::default(),
 ///     module: PublicLocation::new("/start.js")?, stylesheet: None,
 /// };
@@ -495,10 +496,24 @@ where
             )
         })
         .unwrap_or_default();
+    let theme_head = if snapshot.theme.is_none() {
+        stackpress_framework_view::theme::bootstrap_tag(
+            &assets.base,
+            assets.theme_bootstrap.as_ref(),
+            None,
+        )?
+    } else {
+        String::new()
+    };
+    let theme_marker = if snapshot.theme.is_none() {
+        " data-theme-unset"
+    } else {
+        ""
+    };
     let opening = format!(
-        "<!DOCTYPE html><html lang=\"{}\" data-theme=\"{}\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><!--HEAD--></head><body><aside id=\"stackpress-stream-recovery\" role=\"status\">Loading or interrupted; reload if this page does not finish. <a href=\"{}\">Reload this page</a>.</aside>{status_script}<script type=\"application/json\" id=\"stackpress-page\">{seed}</script><script type=\"application/json\" id=\"stackpress-assets\">{bootstrap}</script><script type=\"module\" src=\"{}\"></script><div id=\"app\">",
+        "<!DOCTYPE html><html lang=\"{}\" data-theme=\"{}\"{theme_marker}><head>{theme_head}<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><!--HEAD--></head><body><aside id=\"stackpress-stream-recovery\" role=\"status\">Loading or interrupted; reload if this page does not finish. <a href=\"{}\">Reload this page</a>.</aside>{status_script}<script type=\"application/json\" id=\"stackpress-page\">{seed}</script><script type=\"application/json\" id=\"stackpress-assets\">{bootstrap}</script><script type=\"module\" src=\"{}\"></script><div id=\"app\">",
         snapshot.locale,
-        snapshot.theme,
+        snapshot.theme.as_deref().unwrap_or("light"),
         escape_html(&snapshot.location),
         escape_html(module.as_str())
     );

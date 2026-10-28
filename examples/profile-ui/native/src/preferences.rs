@@ -1,8 +1,8 @@
 //! Host-owned fixed preference commands; no caller filesystem path or credential.
 use stackpress_framework_language::LocaleRegistry;
-use stackpress_framework_preferences::{
-    LoadedPreferences, NativePreferenceUpdate, Preferences, ThemePreference,
-    native_file::PreferenceFile,
+use stackpress_framework_view::adapters::native::PreferenceFile;
+use stackpress_framework_view::preferences::{
+    LoadedPreferences, NativePreferenceUpdate, Preferences,
 };
 use stackpress_lib::{Error, ErrorKind, Result};
 use std::{path::PathBuf, sync::Mutex};
@@ -40,7 +40,7 @@ impl PreferencesHost {
                     registry,
                     Preferences {
                         locale: "en".into(),
-                        theme: ThemePreference::Light,
+                        theme: None,
                     },
                 )
                 .map_err(|cause| failure("open native preference storage", cause))?,
@@ -117,7 +117,7 @@ mod tests {
             serde_json::from_str(&PreferencesHost::new(root.clone()).load().unwrap()).unwrap();
         assert_eq!(reopened.preferences.locale, "fr");
         // Native failure is observable without corrupting the external target.
-        let destination = root.join(stackpress_framework_preferences::native_file::FILE_NAME);
+        let destination = root.join(stackpress_framework_view::adapters::native::FILE_NAME);
         std::fs::remove_file(&destination).unwrap();
         let sentinel = root.join("sentinel");
         std::fs::write(&sentinel, "UNCHANGED").unwrap();

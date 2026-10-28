@@ -244,17 +244,17 @@ pub async fn start_native() -> Result<js_sys::Function, JsValue> {
     mount(initial, Some(settings))
 }
 
-/// Map a saved system mode before rendering, without changing legacy seed behavior.
+/// Sample the OS once for an unset native preference, before CSR mounting.
 #[cfg(feature = "csr")]
 fn effective_theme(
-    theme: stackpress_framework_preferences::ThemePreference,
+    theme: Option<stackpress_framework_view::preferences::ThemePreference>,
 ) -> stackpress_framework_ui::state::Theme {
-    use stackpress_framework_preferences::ThemePreference;
     use stackpress_framework_ui::state::Theme;
+    use stackpress_framework_view::preferences::ThemePreference;
     match theme {
-        ThemePreference::Light => Theme::Light,
-        ThemePreference::Dark => Theme::Dark,
-        ThemePreference::System => {
+        Some(ThemePreference::Light) => Theme::Light,
+        Some(ThemePreference::Dark) => Theme::Dark,
+        None => {
             if system_dark() {
                 Theme::Dark
             } else {
@@ -264,16 +264,18 @@ fn effective_theme(
     }
 }
 
-/// Adapt native persistence; stored system mode survives a locale-only change.
+/// Adapt native persistence; locale-only saves keep the frozen effective theme.
 #[cfg(feature = "csr")]
 fn preference_transport(
-    settings: stackpress_framework_preferences::Preferences,
+    settings: stackpress_framework_view::preferences::Preferences,
+    initial_theme: stackpress_framework_ui::state::Theme,
 ) -> stackpress_example_profile_ui_shared::PreferenceTransport {
     use stackpress_example_profile_ui_shared::{
         DisplayPreferences, PreferenceChange, PreferenceTransport,
     };
-    use stackpress_framework_preferences::{NativePreferenceUpdate, ThemePreference};
+    use stackpress_framework_view::preferences::{NativePreferenceUpdate, ThemePreference};
     let saved = StoredValue::new(settings);
+    let frozen = StoredValue::new(initial_theme);
     PreferenceTransport::new(
         move |(change, complete): (
             PreferenceChange,
@@ -283,11 +285,11 @@ fn preference_transport(
             match change {
                 PreferenceChange::Locale(locale) => desired.locale = locale,
                 PreferenceChange::Theme(theme) => {
-                    desired.theme = if theme == stackpress_framework_ui::state::Theme::Dark {
+                    desired.theme = Some(if theme == stackpress_framework_ui::state::Theme::Dark {
                         ThemePreference::Dark
                     } else {
                         ThemePreference::Light
-                    }
+                    })
                 }
             }
             leptos::task::spawn_local_scoped_with_cancellation(async move {
@@ -309,7 +311,16 @@ fn preference_transport(
                     saved.set_value(desired);
                     Ok(DisplayPreferences {
                         locale: reply.preferences.locale,
-                        theme: effective_theme(reply.preferences.theme),
+                        theme: reply.preferences.theme.map_or(frozen.get_value(), |value| {
+                            match value {
+                                ThemePreference::Light => {
+                                    stackpress_framework_ui::state::Theme::Light
+                                }
+                                ThemePreference::Dark => {
+                                    stackpress_framework_ui::state::Theme::Dark
+                                }
+                            }
+                        }),
                     })
                 }
                 .await;
@@ -322,7 +333,7 @@ fn preference_transport(
 /// Share the unchanged root/transport/navigation path with optional native settings.
 fn mount(
     initial: ClientSeed,
-    settings: Option<stackpress_framework_preferences::LoadedPreferences>,
+    settings: Option<stackpress_framework_view::preferences::LoadedPreferences>,
 ) -> Result<js_sys::Function, JsValue> {
     let document = web_sys::window()
         .and_then(|window| window.document())
@@ -335,6 +346,14 @@ fn mount(
         .map_err(|_| JsValue::from_str("Page location invalid. Refresh to continue."))?
         .as_str()
         .to_owned();
+    // Copy an early native edit before controlled input hydration can reconcile its value.
+    #[cfg(feature = "hydrate")]
+    let early_draft = document
+        .get_element_by_id("profile-id")
+        .and_then(|input| input.dyn_into::<web_sys::HtmlInputElement>().ok())
+        .map(|input| input.value());
+    #[cfg(not(feature = "hydrate"))]
+    let early_draft = None;
     let root = move || {
         stackpress_framework_ui::leptos_meta::provide_meta_context();
         stackpress_framework_ui::routing::provide_route_context(initial.base.clone());
@@ -342,11 +361,12 @@ fn mount(
         let navigation = navigation();
         let recovered = settings.as_ref().is_some_and(|settings| settings.recovered);
         #[cfg(feature = "csr")]
-        let preferences = settings.map(|settings| preference_transport(settings.preferences));
+        let preferences =
+            settings.map(|settings| preference_transport(settings.preferences, initial.theme));
         #[cfg(not(feature = "csr"))]
         let preferences: Option<stackpress_example_profile_ui_shared::PreferenceTransport> = None;
         view! { <ProfilePage seed=initial.page page=initial.page_id status=initial.status transport cancel navigation
-        initial_language=initial.language initial_theme=initial.theme
+        initial_language=initial.language initial_theme=initial.theme initial_theme_pending=initial.theme_pending initial_draft=early_draft
         initial_search=cfg!(feature = "csr") preferences=preferences preference_recovered=recovered/> }
     };
     #[cfg(feature = "hydrate")]

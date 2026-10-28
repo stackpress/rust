@@ -360,7 +360,7 @@ async fn initial_settings_and_detail_projection() {
         let mut seed = PageSnapshot::<SearchPage>::decode(text, REVISION, BUILD).unwrap();
         assert_eq!(seed.location, path);
         seed.locale = "fr".into();
-        seed.theme = "dark".into();
+        seed.theme = Some("dark".into());
         let html = stackpress_example_profile_ui_web::render_snapshot(seed)
             .await
             .unwrap();
@@ -395,6 +395,7 @@ async fn reactive_head_failure_does_not_escape_the_request() {
     let renderer = LeptosRenderer::new(
         PageContract::new(1, "test").unwrap(),
         PageAssets {
+            theme_bootstrap: None,
             build: "test".into(),
             base: BasePath::default(),
             module: PublicLocation::new("/start.js").unwrap(),

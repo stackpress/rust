@@ -10,7 +10,7 @@ fn seed(data: String) -> PageSnapshot<String> {
         page: PageId::try_from("profiles".to_owned()).unwrap(),
         location: "/ui/profiles?id=abc".into(),
         locale: "en".into(),
-        theme: "light".into(),
+        theme: Some("light".into()),
         status: PublicStatus::ok(),
         data,
     }
@@ -72,26 +72,34 @@ fn bounds_and_checked_metadata() {
     }
 }
 
-/// Additive system projection keeps the exact seeded token through serialization.
+/// Explicit choices and unset retain their distinct public wire shapes.
 #[test]
-fn host_seeded_system_theme() {
-    for theme in ["light", "dark", "system"] {
+fn saved_theme_or_unset() {
+    for theme in [Some("light"), Some("dark"), None] {
         let mut contract = PageContract::new(1, "test").unwrap();
-        contract.theme = theme.to_owned();
+        contract.theme = theme.map(str::to_owned);
         contract.validate().unwrap();
         let mut snapshot = seed("public".into());
-        snapshot.theme = theme.to_owned();
+        snapshot.theme = theme.map(str::to_owned);
         let encoded = snapshot.script_json().unwrap();
         assert_eq!(
             PageSnapshot::<String>::decode(&encoded, 1, "test")
                 .unwrap()
-                .theme,
+                .theme
+                .as_deref(),
             theme
         );
     }
-    for theme in ["System", "auto", "system ", "", "</style><script>"] {
+    for theme in [
+        "system",
+        "System",
+        "auto",
+        "system ",
+        "",
+        "</style><script>",
+    ] {
         let mut contract = PageContract::new(1, "test").unwrap();
-        contract.theme = theme.to_owned();
+        contract.theme = Some(theme.to_owned());
         assert_eq!(contract.validate(), Err(ViewError::InvalidPolicy));
     }
 }

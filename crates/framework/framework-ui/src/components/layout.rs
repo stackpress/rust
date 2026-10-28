@@ -12,6 +12,9 @@ const STYLES: &str = include_str!("styles.css");
 pub fn LayoutProvider(
     /// Explicit public initial theme, identical on the server and client.
     theme: ThemeState,
+    /// Allow the checked document pre-paint choice until the UI root adopts it.
+    #[prop(optional, into)]
+    initial_theme_pending: Signal<bool>,
     /// Root-local immediate notification state.
     notifications: Notifications,
     /// Layout subtree that owns these providers.
@@ -22,7 +25,7 @@ pub fn LayoutProvider(
     provide_context(notifications);
     view! {
         <Style id="stackpress-ui">{STYLES}</Style>
-        <div class="sp-root" data-theme=move || theme.get().as_str()>{children()}</div>
+        <div class="sp-root" data-initial-theme-pending=move || initial_theme_pending.get().then_some("") data-theme=move || theme.get().as_str()>{children()}</div>
     }
 }
 
@@ -96,15 +99,4 @@ pub fn LayoutRight(
     children: Children,
 ) -> impl IntoView {
     view! { <aside class="sp-right" aria-label=label>{children()}</aside> }
-}
-
-/// Trusted opt-in system-theme CSS; explicit light/dark selectors are unaffected.
-/// Include before paint whenever a host may project the system theme token.
-pub const SYSTEM_THEME_STYLES: &str = include_str!("system.css");
-
-/// Project system preferences through CSS only, with no browser storage/media read.
-/// Existing LayoutProvider users keep byte-identical light/dark style resources.
-#[component]
-pub fn SystemThemeStyles() -> impl IntoView {
-    view! { <Style id="stackpress-system-theme">{SYSTEM_THEME_STYLES}</Style> }
 }

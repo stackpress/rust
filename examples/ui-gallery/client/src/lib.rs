@@ -32,9 +32,9 @@ mod browser {
             ));
         let root = move || view! {<stackpress_example_ui_gallery_shared::collection_proof::CollectionProof initial_nested/>};
         #[cfg(feature = "hydrate")]
-        let handle = leptos::mount::hydrate_from(app, root);
+        let handle = leptos::mount::hydrate_from(app.clone(), root);
         #[cfg(feature = "csr")]
-        let handle = leptos::mount::mount_to(app, root);
+        let handle = leptos::mount::mount_to(app.clone(), root);
         let mut handle = Some(handle);
         Ok(Closure::wrap(Box::new(move || {
             handle.take();
@@ -178,14 +178,28 @@ mod browser {
             .and_then(|element| element.dyn_into::<web_sys::HtmlTextAreaElement>().ok())
             .map(|element| element.value())
             .unwrap_or_else(|| stackpress_example_ui_gallery_shared::TEXTAREA_PAYLOAD.into());
+        let pending_theme = seed.theme.is_none();
         let root = move || {
             stackpress_example_ui_gallery_shared::provide_meta();
             view! { <Gallery seed initial_draft=early initial_core=core initial_breadth=breadth initial_safety=safety/> }
         };
         #[cfg(feature = "hydrate")]
-        let handle = leptos::mount::hydrate_from(app, root);
+        let handle = leptos::mount::hydrate_from(app.clone(), root);
         #[cfg(feature = "csr")]
-        let handle = leptos::mount::mount_to(app, root);
+        let handle = leptos::mount::mount_to(app.clone(), root);
+        // The native tree was hydrated unchanged; now copy the already-frozen document choice.
+        if pending_theme
+            && let (Some(html), Ok(Some(root))) = (
+                document.document_element(),
+                app.query_selector("[data-initial-theme-pending]"),
+            )
+        {
+            let theme = html
+                .get_attribute("data-theme")
+                .unwrap_or_else(|| "light".into());
+            root.set_attribute("data-theme", &theme)?;
+            root.remove_attribute("data-initial-theme-pending")?;
+        }
         let mut handle = Some(handle);
         let dispose = Closure::wrap(Box::new(move || {
             handle.take();

@@ -1,9 +1,10 @@
 //! Compact labelled caller/fault controls. All fault state is memory-only and dies with the host.
 use crate::options::Options;
+use stackpress_framework_view::flash::{FlashCookie, FlashNotice};
 mod hooks;
 use stackpress_example_ui_stream_web::Probe;
-use stackpress_framework_preferences::{CookieScope, FlashCookie, FlashNotice};
 use stackpress_framework_view::BasePath;
+use stackpress_framework_view::preferences::CookieScope;
 use stackpress_lib::{Body, Error, Flow, Request, Response, Result, handler};
 use stackpress_server::ServerBuilder;
 use std::sync::{

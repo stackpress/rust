@@ -1,0 +1,60 @@
+{
+  "cookies": [
+    {
+      "origin": "http://preferences.invalid",
+      "mount": "",
+      "settings": [
+        "stackpress-locale=fr; Path=/; Max-Age=31536000; HttpOnly; SameSite=Lax",
+        "stackpress-theme=dark; Path=/; Max-Age=31536000; HttpOnly; SameSite=Lax"
+      ],
+      "reply": "{\"preferences\":{\"locale\":\"fr\",\"theme\":\"dark\"},\"location\":\"/fr/preferences?q=a%2Fb&return=%252F\"}",
+      "flash": "stackpress-flash=7b226964223a22676f6c64656e222c226d657373616765223a225361766564203c7075626c69633e227d; Path=/; Max-Age=300; HttpOnly; SameSite=Lax",
+      "clear": "stackpress-flash=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax"
+    },
+    {
+      "origin": "http://preferences.invalid",
+      "mount": "/demo/v1",
+      "settings": [
+        "stackpress-locale=fr; Path=/demo/v1; Max-Age=31536000; HttpOnly; SameSite=Lax",
+        "stackpress-theme=dark; Path=/demo/v1; Max-Age=31536000; HttpOnly; SameSite=Lax"
+      ],
+      "reply": "{\"preferences\":{\"locale\":\"fr\",\"theme\":\"dark\"},\"location\":\"/demo/v1/fr/preferences?q=a%2Fb&return=%252F\"}",
+      "flash": "stackpress-flash=7b226964223a22676f6c64656e222c226d657373616765223a225361766564203c7075626c69633e227d; Path=/demo/v1; Max-Age=300; HttpOnly; SameSite=Lax",
+      "clear": "stackpress-flash=; Path=/demo/v1; Max-Age=0; HttpOnly; SameSite=Lax"
+    },
+    {
+      "origin": "https://preferences.invalid",
+      "mount": "",
+      "settings": [
+        "stackpress-locale=fr; Path=/; Max-Age=31536000; HttpOnly; SameSite=Lax; Secure",
+        "stackpress-theme=dark; Path=/; Max-Age=31536000; HttpOnly; SameSite=Lax; Secure"
+      ],
+      "reply": "{\"preferences\":{\"locale\":\"fr\",\"theme\":\"dark\"},\"location\":\"/fr/preferences?q=a%2Fb&return=%252F\"}",
+      "flash": "stackpress-flash=7b226964223a22676f6c64656e222c226d657373616765223a225361766564203c7075626c69633e227d; Path=/; Max-Age=300; HttpOnly; SameSite=Lax; Secure",
+      "clear": "stackpress-flash=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax; Secure"
+    },
+    {
+      "origin": "https://preferences.invalid",
+      "mount": "/demo/v1",
+      "settings": [
+        "stackpress-locale=fr; Path=/demo/v1; Max-Age=31536000; HttpOnly; SameSite=Lax; Secure",
+        "stackpress-theme=dark; Path=/demo/v1; Max-Age=31536000; HttpOnly; SameSite=Lax; Secure"
+      ],
+      "reply": "{\"preferences\":{\"locale\":\"fr\",\"theme\":\"dark\"},\"location\":\"/demo/v1/fr/preferences?q=a%2Fb&return=%252F\"}",
+      "flash": "stackpress-flash=7b226964223a22676f6c64656e222c226d657373616765223a225361766564203c7075626c69633e227d; Path=/demo/v1; Max-Age=300; HttpOnly; SameSite=Lax; Secure",
+      "clear": "stackpress-flash=; Path=/demo/v1; Max-Age=0; HttpOnly; SameSite=Lax; Secure"
+    }
+  ],
+  "http": {
+    "status": 200,
+    "body": "{\n  \"preferences\": {\n    \"locale\": \"fr\",\n    \"theme\": \"dark\"\n  },\n  \"location\": \"/demo/v1/fr/preferences?q=a%2Fb&return=%252F\"\n}",
+    "cookies": [
+      "stackpress-locale=fr; Path=/demo/v1; Max-Age=31536000; HttpOnly; SameSite=Lax; Secure",
+      "stackpress-theme=dark; Path=/demo/v1; Max-Age=31536000; HttpOnly; SameSite=Lax; Secure"
+    ]
+  },
+  "file_name": "ui-preferences-v1.json",
+  "file": "{\"revision\":1,\"preferences\":{\"locale\":\"fr\",\"theme\":\"dark\"}}",
+  "tauri_update": "{\"revision\":1,\"preferences\":{\"locale\":\"fr\",\"theme\":\"dark\"},\"recovered\":false}",
+  "tauri_load": "{\"revision\":1,\"preferences\":{\"locale\":\"fr\",\"theme\":\"dark\"},\"recovered\":false}"
+}

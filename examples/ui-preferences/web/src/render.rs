@@ -17,13 +17,28 @@ pub(super) fn render(seed: Seed, csr: bool) -> Result<String> {
         owner.cleanup();
         body
     };
-    // This finite example retains its own shell and CSS palette. PageContract now
-    // admits system; adopting the shared style projector is a coordinator decision.
-    // All shell attributes/title are fixed registry/enum text, not arbitrary input.
+    // Explicit choices are complete SSR output. Only unset uses the classic head asset.
+    let unset = seed.preferences.theme.is_none();
+    let bootstrap = if unset {
+        stackpress_framework_view::theme::bootstrap_tag(
+            &seed.base,
+            Some(
+                &stackpress_framework_view::theme::bootstrap_location()
+                    .map_err(|e| failure("theme asset", e))?,
+            ),
+            None,
+        )
+        .map_err(|e| failure("theme head", e))?
+    } else {
+        String::new()
+    };
+    let marker = if unset { " data-theme-unset" } else { "" };
     Ok(format!(
-        "<!doctype html><html lang=\"{}\" data-theme=\"{}\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>{}</title><style>{STYLES}</style></head><body><div id=\"app\">{body}</div><script type=\"application/json\" id=\"preferences-seed\">{json}</script><script type=\"module\" src=\"{}/assets/start.js\"></script></body></html>",
+        "<!doctype html><html lang=\"{}\" data-theme=\"{}\"{marker}><head>{bootstrap}<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>{}</title><style>{STYLES}</style></head><body><div id=\"app\">{body}</div><script type=\"application/json\" id=\"preferences-seed\">{json}</script><script type=\"module\" src=\"{}/assets/start.js\"></script></body></html>",
         seed.preferences.locale,
-        seed.preferences.theme.as_str(),
+        seed.preferences
+            .theme
+            .map_or("light", |theme| theme.as_str()),
         language(&seed.preferences.locale).phrase("Preferences"),
         seed.base.as_str()
     ))

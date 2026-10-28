@@ -9,3 +9,5 @@
 @media(min-width:56rem){.sp-panel{grid-template-columns:minmax(9rem,1fr) minmax(0,3fr) minmax(9rem,1fr)}}
 @media(max-width:35rem){.sp-root form>.sp-button{width:100%;margin-top:0}.sp-head{align-items:flex-start}.sp-head .sp-menu{width:100%}}
 @media(prefers-reduced-motion:reduce){.sp-root *{scroll-behavior:auto;animation:none;transition:none}}
+
+html[data-theme=dark] .sp-root[data-initial-theme-pending]{--sp-bg:#202124;--sp-fg:#f4f4f4;--sp-muted:#c9cdd1;--sp-line:#73777c;--sp-soft:#303236;color-scheme:dark}

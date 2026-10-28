@@ -3,10 +3,11 @@
 use leptos::prelude::*;
 use serde::Deserialize;
 use stackpress_example_ui_gallery_shared::{Gallery, GallerySeed, RESOURCE_TEXT};
-use stackpress_framework_language::{
+use stackpress_framework_ui::{async_render::AsyncLeptosRenderer, render::initialize_ssr};
+use stackpress_framework_view::preferences::LocaleRouting;
+use stackpress_framework_view::preferences::{
     LocaleRegistry, MAX_PREFERENCE_BYTES, PreferenceAction, PreferenceUpdate,
 };
-use stackpress_framework_ui::{async_render::AsyncLeptosRenderer, render::initialize_ssr};
 use stackpress_framework_view::{
     AsyncPageRenderer, BasePath, PageAssets, PageContract, PageId, PageSnapshot, PublicLocation,
     PublicStatus,
@@ -69,30 +70,26 @@ async fn load_gallery(req: &mut Request, base: &BasePath) -> Result<GallerySeed>
         Some(query) => format!("{}?{query}", req.url.path()),
         None => req.url.path().to_owned(),
     };
-    let selected = registry()
-        .select(
-            base,
-            &location,
-            req.headers.get("cookie").unwrap_or_default(),
-        )
+    let locales = registry();
+    let selected = LocaleRouting::new(&locales, base)
+        .select(&location, req.headers.get("cookie").unwrap_or_default())
         .map_err(|cause| failure("select gallery locale", cause))?;
-    // This finite host projects one checked token; CSS resolves system before paint.
+    // This finite host projects an explicit query choice, or leaves acquisition to the head asset.
     let theme = req
         .url
         .query_pairs()
         .find(|(key, _)| key == "theme")
-        .map(|(_, value)| match value.as_ref() {
-            "dark" => "dark",
-            "system" => "system",
-            _ => "light",
-        })
-        .unwrap_or("light");
+        .and_then(|(_, value)| match value.as_ref() {
+            "dark" => Some("dark".to_owned()),
+            "light" => Some("light".to_owned()),
+            _ => None,
+        });
     let seed = GallerySeed {
         locale: selected.locale,
         base: base.as_str().to_owned(),
         location,
         name: "Ada".into(),
-        theme: theme.into(),
+        theme,
     };
     // The owned projection survives a real top-level async boundary without Request borrows.
     tokio::task::yield_now().await;
@@ -122,14 +119,36 @@ async fn page(req: &mut Request, res: &mut Response, base: BasePath, csr: bool) 
         let json = snapshot
             .script_json()
             .map_err(|cause| failure("serialize CSR seed", cause))?;
+        let marker = if snapshot.theme.is_none() {
+            " data-theme-unset"
+        } else {
+            ""
+        };
+        let head = if snapshot.theme.is_none() {
+            stackpress_framework_view::theme::bootstrap_tag(
+                &base,
+                Some(
+                    &stackpress_framework_view::theme::bootstrap_location()
+                        .map_err(|e| failure("theme asset", e))?,
+                ),
+                None,
+            )
+            .map_err(|e| failure("theme head", e))?
+        } else {
+            String::new()
+        };
         format!(
-            "<!DOCTYPE html><html lang=\"{}\" data-theme=\"{}\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"></head><body><div id=\"app\"></div><script type=\"application/json\" id=\"stackpress-page\">{json}</script><script type=\"application/json\" id=\"stackpress-resources\">[]</script><script type=\"module\" src=\"{}/assets/start.js\"></script></body></html>",
+            "<!DOCTYPE html><html lang=\"{}\" data-theme=\"{}\"{marker}><head>{head}<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"></head><body><div id=\"app\"></div><script type=\"application/json\" id=\"stackpress-page\">{json}</script><script type=\"application/json\" id=\"stackpress-resources\">[]</script><script type=\"module\" src=\"{}/assets/start.js\"></script></body></html>",
             snapshot.locale,
-            snapshot.theme,
+            snapshot.theme.as_deref().unwrap_or("light"),
             base.as_str()
         )
     } else {
         let assets = PageAssets {
+            theme_bootstrap: Some(
+                stackpress_framework_view::theme::bootstrap_location()
+                    .map_err(|cause| failure("theme asset", cause))?,
+            ),
             build: "s8-m2".into(),
             base,
             module: PublicLocation::new("/assets/start.js")

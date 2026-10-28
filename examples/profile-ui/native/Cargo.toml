@@ -22,13 +22,13 @@ path = "src/main.rs"
 required-features = ["app"]
 
 [dependencies]
+stackpress-framework-view = { path = "../../../crates/framework/framework-view", features = ["preferences", "native-file"] }
 stackpress-lib = { path = "../../../crates/lib" }
 stackpress-server = { path = "../../../crates/server/server" }
 stackpress-example-generated-profile = { path = "../../generated-profile/app" }
 stackpress-example-profile-ui-contracts = { path = "../contracts" }
 serde_json = "1"
 stackpress-framework-language = { path = "../../../crates/framework/framework-language" }
-stackpress-framework-preferences = { path = "../../../crates/framework/framework-preferences", features = ["native-file"] }
 tokio = { version = "1", features = ["macros", "rt-multi-thread", "sync", "time"] }
 tauri = { version = "=2.12.5", optional = true , features = [] }
 

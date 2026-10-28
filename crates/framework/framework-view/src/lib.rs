@@ -2,6 +2,7 @@
 //!
 //! Applications explicitly project their public data into [`PageSnapshot`]. No
 //! request, session, service or diagnostic report is implicitly serialized.
+//! Presentation capabilities are opt-in modules; see the migration guide in `docs/migration-issue15.md`.
 
 use serde::{Deserialize, Serialize, de::DeserializeOwned};
 use std::fmt;
@@ -70,7 +71,7 @@ pub enum PageLoad<T> {
 /// let page = PageSnapshot {
 ///     revision: 1, build: "app-build".into(),
 ///     page: PageId::try_from("profile".to_owned())?, location: "/profile".into(),
-///     locale: "en".into(), theme: "system".into(), status: PublicStatus::ok(),
+///     locale: "en".into(), theme: None, status: PublicStatus::ok(),
 ///     data: "</script><script>untrusted()</script>".to_owned(),
 /// };
 /// let inert = page.script_json()?;
@@ -92,8 +93,9 @@ pub struct PageSnapshot<T> {
     pub location: String,
     /// Initial locale, supplied explicitly on both targets.
     pub locale: String,
-    /// Explicit initial theme; no initial browser/environment guess.
-    pub theme: String,
+    /// Saved Light/Dark choice; missing/null is unset, separate from its effective color.
+    #[serde(default)]
+    pub theme: Option<String>,
     /// Deliberately disclosed application status, separate from lifecycle outcome.
     #[serde(default)]
     pub status: PublicStatus,
@@ -332,3 +334,21 @@ pub fn escape_script_json(json: &str) -> String {
     }
     safe
 }
+
+/// Fail-closed host admission and safe action display hints.
+pub mod access;
+/// Explicit web codecs and opt-in native persistence.
+pub mod adapters;
+/// Optional bounded public notices.
+#[cfg(feature = "flash")]
+pub mod flash;
+/// Optional public settings and save-state contracts.
+#[cfg(feature = "preferences")]
+pub mod preferences;
+#[cfg(all(feature = "native-file", target_arch = "wasm32"))]
+compile_error!("framework-view/native-file is a Unix native adapter");
+#[cfg(all(test, feature = "preferences", feature = "flash"))]
+mod presentation_tests;
+
+/// Initial-theme asset and checked head metadata.
+pub mod theme;

@@ -1,5 +1,6 @@
 //! Pure native-tested admission before any browser root or fetch exists.
 use serde::{Deserialize, Serialize};
+use stackpress_framework_view::preferences::LocaleRouting;
 
 /// Allowlisted app seed; dictionaries/settings arrive before the first render.
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -12,7 +13,7 @@ pub struct GallerySeed {
     /// Public current path/query for the preference action.
     pub location: String,
     /// Explicit initial presentation theme.
-    pub theme: String,
+    pub theme: Option<String>,
     /// Initial owned text draft.
     pub name: String,
 }
@@ -25,10 +26,10 @@ pub fn decode_preference(
     text: &str,
     base: &str,
 ) -> Result<
-    stackpress_framework_language::PreferenceReply,
+    stackpress_framework_view::preferences::PreferenceReply,
     stackpress_framework_language::PreferenceError,
 > {
-    use stackpress_framework_language::{
+    use stackpress_framework_view::preferences::{
         LocaleRegistry, LocaleSource, PreferenceError, PreferenceReply,
     };
     if text.len() > 1024 {
@@ -43,7 +44,7 @@ pub fn decode_preference(
     )?;
     let base =
         stackpress_framework_view::BasePath::new(base).map_err(|_| PreferenceError::Request)?;
-    let selected = registry.select(&base, &reply.location, "")?;
+    let selected = LocaleRouting::new(&registry, &base).select(&reply.location, "")?;
     if selected.source != LocaleSource::Prefix || selected.locale != reply.locale {
         return Err(PreferenceError::Request);
     }
@@ -72,9 +73,8 @@ pub fn decode_initial(
         std::collections::BTreeMap::from([("fr-FR".into(), "fr".into())]),
     )
     .map_err(|_| ViewError::InvalidSnapshot)?;
-    let selected = registry
+    let selected = LocaleRouting::new(&registry, &base)
         .select(
-            &base,
             &seed.location,
             &format!("stackpress-locale={}", seed.locale),
         )
@@ -107,13 +107,13 @@ mod tests {
             page: PageId::try_from("gallery".to_owned()).unwrap(),
             location: "/demo/fr/gallery".into(),
             locale: "fr".into(),
-            theme: "dark".into(),
+            theme: Some("dark".into()),
             status: PublicStatus::ok(),
             data: GallerySeed {
                 locale: "fr".into(),
                 base: "/demo".into(),
                 location: "/demo/fr/gallery".into(),
-                theme: "dark".into(),
+                theme: Some("dark".into()),
                 name: "Ada".into(),
             },
         }
@@ -149,7 +149,7 @@ mod tests {
             ViewError::ContractMismatch
         );
         let mut bad = page();
-        bad.data.theme = "light".into();
+        bad.data.theme = Some("light".into());
         assert!(decode_initial(&bad.script_json().unwrap(), "[]").is_err());
         let mut bad = page();
         bad.data.base = "/elsewhere".into();

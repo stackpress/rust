@@ -1,6 +1,6 @@
 //! Real private files and child-watchdog evidence for hostile special-file input.
 use super::*;
-use crate::ThemePreference;
+use crate::preferences::ThemePreference;
 use std::{
     collections::BTreeMap,
     process::{Command, Stdio},
@@ -63,7 +63,7 @@ impl Drop for Fixture {
 fn desired(locale: &str, theme: ThemePreference) -> Preferences {
     Preferences {
         locale: locale.into(),
-        theme,
+        theme: Some(theme),
     }
 }
 
@@ -86,10 +86,18 @@ fn real_restart_and_invalid_updates() {
             .is_err()
     );
     assert_eq!(fixture.store().load().preferences, expected);
-    // System remains a saved mode, rather than being collapsed to today's colors.
-    let system = desired("en", ThemePreference::System);
-    assert_eq!(store.update(system.clone()).unwrap(), system);
-    assert_eq!(fixture.store().load().preferences, system);
+    // Legacy System is unset, without resetting French or rewriting the file.
+    let legacy = br#"{"revision":1,"preferences":{"locale":"fr","theme":"system"}}"#;
+    fs::write(fixture.0.join(FILE_NAME), legacy).unwrap();
+    assert_eq!(
+        fixture.store().load().preferences,
+        Preferences {
+            locale: "fr".into(),
+            theme: None
+        }
+    );
+    assert!(!fixture.store().load().recovered);
+    assert_eq!(fs::read(fixture.0.join(FILE_NAME)).unwrap(), legacy);
     assert_eq!(fs::read_dir(&fixture.0).unwrap().count(), 1);
 }
 /// Corrupt, truncated, oversized, wrong-version and unknown-field data recover explicitly.
@@ -153,7 +161,7 @@ fn fifo_open_cannot_hang() {
     let executable = std::env::current_exe().unwrap();
     let mut child = Command::new(executable)
         .args([
-            "native_file::tests::fifo_open_cannot_hang",
+            "adapters::native::tests::fifo_open_cannot_hang",
             "--exact",
             "--nocapture",
         ])

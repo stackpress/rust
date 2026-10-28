@@ -133,17 +133,16 @@ pub fn Gallery(
     };
     let french = choose.clone();
     let styles = format!(
-        "{}{}{}{}{}",
+        "{}{}{}{}",
         include_str!("../../../../crates/framework/framework-ui/src/components/styles.css"),
         ADVANCED_STYLES,
         stackpress_framework_ui::components::CORE_STYLES,
-        stackpress_framework_ui::components::BREADTH_STYLES,
-        stackpress_framework_ui::components::SYSTEM_THEME_STYLES
+        stackpress_framework_ui::components::BREADTH_STYLES
     );
     view! {
         <stackpress_framework_ui::leptos_meta::Title text=move || format!("{} · {}", phrase(&locale.get(), "UI gallery", "Galerie UI"), resource_title.get())/>
         <style>{styles}</style>
-        <main class="sp-root" data-theme=seed.theme><div class="sp-blank">
+        <main class="sp-root" data-initial-theme-pending=seed.theme.is_none().then_some("") data-theme=seed.theme.clone().unwrap_or("light".into())><div class="sp-blank">
             <header class="sp-head"><h1>{move || phrase(&locale.get(), "UI gallery", "Galerie UI")}</h1>
                 <nav class="sp-actions" aria-label="Language"><button id="english" type="button" on:click=move |_| choose("en")>"English"</button>
                 <button id="french" type="button" on:click=move |_| french("fr")>"Français"</button></nav>
@@ -239,11 +238,11 @@ mod tests {
                     page: PageId::try_from("gallery".to_owned()).unwrap(),
                     location: format!("/{locale}/gallery"),
                     locale: locale.into(),
-                    theme: "light".into(),
+                    theme: Some("light".into()),
                     status: PublicStatus::ok(),
                     data: GallerySeed {
                         locale: locale.into(),
-                        theme: "light".into(),
+                        theme: Some("light".into()),
                         base: String::new(),
                         location: format!("/{locale}/gallery"),
                         name: "Ada".into(),
@@ -252,6 +251,7 @@ mod tests {
                 let renderer = AsyncLeptosRenderer::new(
                     contract,
                     PageAssets {
+                        theme_bootstrap: None,
                         build: "s8-m2".into(),
                         base: BasePath::default(),
                         module: PublicLocation::new("/assets/start.js").unwrap(),

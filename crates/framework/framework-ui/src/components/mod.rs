@@ -5,7 +5,7 @@
 //! Include CORE_STYLES for ordinary controls/action groups and ADVANCED_STYLES
 //! for table/dialog presentation and document scroll locking. Add BREADTH_STYLES
 //! for disclosure/navigation/collection surfaces. All are opt-in. System themes
-//! additionally require SystemThemeStyles in the initial head before paint.
+//! use explicit Light/Dark values; initial environment selection belongs to adapters.
 
 mod advanced;
 /// Opt-in base layout tokens and control styles, also usable in static document shells.
@@ -45,7 +45,7 @@ pub use controls::{
 };
 pub use layout::{
     LayoutBlank, LayoutHead, LayoutLeft, LayoutMain, LayoutMenu, LayoutPanel, LayoutProvider,
-    LayoutRight, SYSTEM_THEME_STYLES, SystemThemeStyles,
+    LayoutRight,
 };
 
 #[cfg(all(test, feature = "ssr"))]

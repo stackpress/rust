@@ -1,11 +1,13 @@
 //! Pure public seed admission and the compiled locale/phrase catalog.
 use serde::{Deserialize, Serialize};
 use stackpress_framework_language::{LocaleRegistry, PreferenceError};
-use stackpress_framework_preferences::{
-    AllowedActions, CookieScope, FlashNotice, Preferences, SettingsAction, ThemePreference,
-};
 use stackpress_framework_ui::language::Language;
 use stackpress_framework_view::BasePath;
+use stackpress_framework_view::access::AllowedActions;
+use stackpress_framework_view::flash::FlashNotice;
+use stackpress_framework_view::preferences::{
+    CookieScope, LocaleRouting, Preferences, SettingsAction,
+};
 use std::collections::BTreeMap;
 
 /// Closed app seed, with no headers, identity, roles or token snapshots.
@@ -45,7 +47,6 @@ pub fn action_at_origin(base: BasePath, origin: &str) -> Result<SettingsAction, 
     Ok(SettingsAction::new(
         registry(),
         CookieScope::new(origin.into(), base)?,
-        ThemePreference::System,
     ))
 }
 
@@ -61,8 +62,8 @@ pub fn decode(text: &str) -> Result<Seed, PreferenceError> {
     if seed.build != "s8-b-m1" {
         return Err(PreferenceError::Request);
     }
-    let selected = registry().select(
-        &seed.base,
+    let locales = registry();
+    let selected = LocaleRouting::new(&locales, &seed.base).select(
         &seed.location,
         &format!("stackpress-locale={}", seed.preferences.locale),
     )?;
@@ -91,5 +92,5 @@ pub fn language(locale: &str) -> Language {
     };
     Language::new(locale.to_owned(), phrases, "%s".into()).expect("bounded compiled phrases")
 }
-/// CSS is in the document head before first paint, including system-mode selection.
+/// CSS is in the document head before first paint, with an explicit frozen theme.
 pub const STYLES: &str = include_str!("../style.css");

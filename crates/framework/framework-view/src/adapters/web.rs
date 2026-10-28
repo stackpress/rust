@@ -1,6 +1,13 @@
 //! Shared cookie identity and flags for issuing and deleting presentation cookies.
-use stackpress_framework_language::{MAX_COOKIE_BYTES, PreferenceError};
-use stackpress_framework_view::BasePath;
+use crate::BasePath;
+use stackpress_framework_language::PreferenceError;
+
+/// Fixed cookie key; its value is only a registered canonical locale token.
+pub const LOCALE_COOKIE: &str = "stackpress-locale";
+/// Bounded action input before parsing or policy evaluation.
+pub const MAX_PREFERENCE_BYTES: usize = 1024;
+/// Total cookie header budget, including unrelated scoped presentation cookies.
+pub const MAX_COOKIE_BYTES: usize = 4096;
 
 /// Validated origin and exact app cookie scope; no Domain attribute is emitted.
 #[derive(Clone, Debug)]

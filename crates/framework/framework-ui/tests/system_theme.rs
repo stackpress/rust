@@ -1,53 +1,65 @@
-//! System is a host-seeded public token; old light/dark render paths keep their styles.
+//! Saved Light/Dark are SSR-complete; unset alone admits the one-shot external asset.
 #![cfg(feature = "ssr")]
 use leptos::prelude::*;
 use stackpress_framework_ui::{
-    components::{LayoutProvider, SystemThemeStyles},
+    components::LayoutProvider,
     render::{LeptosRenderer, initialize_ssr},
     state::{Notifications, Theme, ThemeState},
 };
 use stackpress_framework_view::{
     BasePath, PageAssets, PageContract, PageId, PageRenderer, PageSnapshot, PublicLocation,
-    PublicStatus,
+    PublicStatus, theme,
 };
 
-/// Real native rendering preserves the selected token and includes only opted-in system CSS.
+/// Assert real native output, including readable unset fallback and asset ordering.
 #[tokio::test]
-async fn explicit_system_styles_and_legacy_themes() {
+async fn saved_choices_and_unset_head() {
     initialize_ssr().unwrap();
-    for theme in [Theme::Light, Theme::Dark, Theme::System] {
+    for choice in [Some("light"), Some("dark"), None] {
         let mut contract = PageContract::new(1, "theme-test").unwrap();
-        contract.theme = theme.as_str().into();
-        let renderer=LeptosRenderer::new(contract,PageAssets{build:"theme-test".into(),base:BasePath::default(),module:PublicLocation::new("/assets/start.js").unwrap(),stylesheet:None},move |_:&PageSnapshot<()>|{
-            let state=ThemeState::new(theme);let notices=Notifications::new();
-            Ok(view!{<LayoutProvider theme=state notifications=notices>{(theme==Theme::System).then(||view!{<SystemThemeStyles/>})}<p>"Same component"</p></LayoutProvider>})
+        contract.theme = choice.map(str::to_owned);
+        let renderer = LeptosRenderer::new(contract, PageAssets {
+            build: "theme-test".into(), base: BasePath::new("/demo").unwrap(),
+            module: PublicLocation::new("/assets/start.js").unwrap(), stylesheet: None,
+            theme_bootstrap: Some(theme::bootstrap_location().unwrap()),
+        }, move |_: &PageSnapshot<()>| {
+            let theme = ThemeState::new(if choice == Some("dark") { Theme::Dark } else { Theme::Light });
+            Ok(view! { <LayoutProvider theme notifications=Notifications::new()><p>"Readable without JavaScript"</p></LayoutProvider> })
         }).unwrap();
         let html = renderer
             .render(PageSnapshot {
                 revision: 1,
                 build: "theme-test".into(),
                 page: PageId::try_from("theme".to_owned()).unwrap(),
-                location: "/theme".into(),
+                location: "/demo/theme".into(),
                 locale: "en".into(),
-                theme: theme.as_str().into(),
+                theme: choice.map(str::to_owned),
                 status: PublicStatus::ok(),
                 data: (),
             })
             .await
             .unwrap()
             .into_html();
-        assert!(html.contains(&format!("data-theme=\"{}\"", theme.as_str())));
-        assert_eq!(html.matches("id=\"stackpress-ui\"").count(), 1);
+        assert!(html.contains("Readable without JavaScript"));
+        assert!(html.contains(&format!("data-theme=\"{}\"", choice.unwrap_or("light"))));
+        assert_eq!(html.contains("data-theme-unset"), choice.is_none());
         assert_eq!(
-            html.matches("id=\"stackpress-system-theme\"").count(),
-            usize::from(theme == Theme::System)
+            html.contains(&format!(
+                "<script src=\"/demo/assets/{}\"></script>",
+                theme::BOOTSTRAP_FILE
+            )),
+            choice.is_none()
         );
-        assert!(html.contains(include_str!("../src/components/styles.css")));
+        if choice.is_none() {
+            assert!(
+                html.find(theme::BOOTSTRAP_FILE).unwrap()
+                    < html.find("id=\"stackpress-ui\"").unwrap()
+            );
+        }
     }
     let owner = Owner::new();
     owner.with(|| {
-        let theme = ThemeState::new(Theme::System);
-        assert_eq!(theme.get(), Theme::System);
+        let theme = ThemeState::new(Theme::Light);
         theme.toggle();
         assert_eq!(theme.get(), Theme::Dark);
         theme.toggle();

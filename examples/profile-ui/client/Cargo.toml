@@ -17,17 +17,16 @@ csr = ["stackpress-framework-ui/csr", "stackpress-example-profile-ui-shared/csr"
 [dependencies]
 leptos = { version = "=0.8.22", default-features = false }
 stackpress-framework-ui = { path = "../../../crates/framework/framework-ui" }
-stackpress-framework-view = { path = "../../../crates/framework/framework-view" }
+stackpress-framework-view = { path = "../../../crates/framework/framework-view", features = ["preferences", "flash"] }
 stackpress-example-profile-ui-shared = { path = "../shared" }
 stackpress-example-profile-ui-contracts = { path = "../contracts" }
 serde_json = "1"
-stackpress-framework-preferences = { path = "../../../crates/framework/framework-preferences" }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 wasm-bindgen = "=0.2.129"
 wasm-bindgen-futures = "0.4"
 js-sys = "0.3"
-web-sys = { version = "0.3", features = ["Window", "Document", "Element", "HtmlElement", "Response", "Request", "RequestInit", "RequestMode", "AbortController", "AbortSignal", "Headers"] }
+web-sys = { version = "0.3", features = ["Window", "Document", "Element", "HtmlElement", "HtmlInputElement", "Response", "Request", "RequestInit", "RequestMode", "AbortController", "AbortSignal", "Headers"] }
 
 [lints]
 workspace = true
