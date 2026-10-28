@@ -113,14 +113,14 @@ Paths: gallery, generated-admin search/create/import, preferences and formatting
 
 ## 00013-011 — installed iOS app
 
-Paths: packaged `index.html` / Profile UI; no HTTP URL. Coordinator uses `examples/profile-ui/native/proofs/build-ios.py` and the proposed manual mode of `launch-ios.py`.
+Paths: packaged `index.html` / Profile UI; no HTTP URL. The coordinator follows the exact build, launch, restart and stop commands in [Installed iOS review](../../../../examples/review-preview/README.md#installed-ios-review). Start the plugin installed session; the disabled session follows for 013.
 
-1. Ask the coordinator to launch its bounded manual review session on the owned simulator with bundled assets; the development preview may be stopped.
-2. Navigate, search and cancel using permitted actions; check displayed results and cancellation behavior.
-3. Use the labelled debug denial check; inspect the refusal without gaining an extra permission.
-4. Save language/theme, restart the app and check the settings persist.
-5. Background/resume during pending work and check usable recovery; finish the session so its owned app/device/display are cleaned up.
-6. Record iOS evidence separately. Android remains unverified by owner decision.
+1. Have the coordinator build and launch the plugin debug review app for 1800 seconds. Use the owned simulator's primary / LCD 1 display. The web preview can be stopped; this app uses bundled assets.
+2. In Profile UI, search for `abc456`, open Grace Hopper, then return to the list. Check navigation/results remain usable.
+3. Above Profile UI, choose Check fixed denial; expect “Denied: the fixed extra-field search request was refused.” Choose Start cancellation check, then Cancel review read during the four-second delay. Expect “Cancelled: native read returned cancelled.” If it completes first or shows uncertainty, repeat and record the actual outcome; neither is a cancellation success.
+4. Select Français and Thème sombre. Have the coordinator issue `--control restart` for the same plugin session; check French/dark apply on the first render. Restart keeps the same disposable app container.
+5. Start another delayed review read, background the app using the simulator's Home gesture, then reopen it. Check usable recovery and repeat the cancel check. Finish with `--control stop` after checking the plugin catalog in 013; the launcher must report owned device/display cleanup. Deadline and Ctrl-C also clean up.
+6. Record iOS evidence separately, including restart/background behavior and cleanup. Android remains unverified by owner decision. These steps still require a real coordinator-run mobile build/launch; the implementer's Chromium proof is not installed acceptance.
 
 ## 00013-012 — progressive streaming and recovery
 
@@ -135,13 +135,13 @@ Paths: `/ui-stream/stream`, `/ui-stream/late`, `/ui-stream/pending`, `/review`.
 
 ## 00013-013 — compiled plugin replacement/removal
 
-Paths: `/generated-admin/roles`, `/generated-admin/profile/create`; packaged `admin-review.html` in the proposed debug review bundle.
+Paths: `/generated-admin/roles`, `/generated-admin/profile/create`; packaged `admin-review.html` in the explicit debug `review-preview` bundle.
 
 1. During the main session, choose Pause hydration and record the review-owned “Full name” label on the role catalog and Profile create form; start browser controls and compare it again. This disabled review bundle uses an isolated review-only schema label and is built after removing the plugin. Normal automated generation/removal proofs keep the hostile label and verify escaped output and restored files.
 2. Stop the main session before rebuilding. Have the coordinator run the benchmark-recorded `review.py bundles` command described in the [preview README](../../../../examples/review-preview/README.md); it compiles with the plugin, removes it and rebuilds disabled artifacts through the existing disposable generation helpers.
 3. Start the matching plugin gateway using the receipt's command. Use Pause hydration to read “Plugin field label” on the role catalog before JavaScript; hydrate and edit its field, then inspect the matching Profile create form.
-4. Rebuild/install the matching debug iOS review bundle; open its local Generated admin review link and compare the same compiled plugin label. This installed step waits for Part B and requires its matching owner-review schema variant; ordinary automated installed fixtures retain their hostile label.
-5. Rebuild/install the disabled iOS variant and check the original label returns, matching the main session's recorded web label. No third web session is required.
+4. In 011's plugin installed session, open Generated admin review above Profile UI. Expect Plugin field label, matching the plugin web session. Edit its local field, inspect Safety samples and leave Debug state (review only) collapsed. The ordinary catalogue must contain no raw JSON state dump; hostile Rows-style labels belong only to Safety samples. Return to Profile UI using the local link.
+5. Stop that installed session and wait for cleanup. Have the coordinator set `IOS_REVIEW_VARIANT=disabled` and repeat the README's mobile build/launch commands. Open Generated admin review and check Full name returns, matching the main web session. Stop the disabled session and check cleanup. No third web session is required.
 6. On roles, inspect the styled catalogue sections, fields and locally scrolling table. Empty list values read None and populated lists are comma-separated; draft values stay exact. The separate Safety samples section labels the nullable/default/hostile proofs.
 7. Confirm this is a compiled selection, not the role selector. The packaged role catalog has local fixture drafts; it does not provide native admin CRUD.
 

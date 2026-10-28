@@ -326,4 +326,8 @@ def main():
 
 
 if __name__ == '__main__':
-    worker() if '--worker' in sys.argv else main()
+    if '--manual-review' in sys.argv:
+        import manual_ios
+        manual_ios.main(sys.modules[__name__])
+    else:
+        worker() if '--worker' in sys.argv else main()

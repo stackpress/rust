@@ -34,12 +34,16 @@ struct Shutdown {
 /// Debug startup adds fixtures only when the finite launcher explicitly selects them.
 #[cfg(debug_assertions)]
 async fn application(proof: Option<&Arc<Proof>>) -> stackpress_server::BuildResult<NativeHost> {
-    let Some(proof) = proof else {
-        return NativeHost::new().await;
-    };
+    // Review fixtures and the old automatic proof remain independent opt-ins.
     let mut builder = stackpress_server::ServerBuilder::new();
     register_application(&mut builder)?;
-    proof.register(&mut builder)?;
+    if let Some(proof) = proof {
+        proof.register(&mut builder)?;
+    }
+    #[cfg(feature = "review-preview")]
+    if crate::review::selected() {
+        crate::review::register(&mut builder)?;
+    }
     Ok(NativeHost::from_server(builder.build().await?))
 }
 
