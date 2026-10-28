@@ -65,6 +65,7 @@ pub(crate) fn decode(text: &str, assets: &str) -> Result<ClientSeed, String> {
         return Err("Page location invalid. Refresh to continue.".into());
     }
     let language = profile_language(&snapshot.locale).map_err(str::to_owned)?;
+    // Unset uses the same readable Light tree as SSR; a later effect adopts only the frozen head.
     let theme = match snapshot.theme.as_deref() {
         Some("light") | None => Theme::Light,
         Some("dark") => Theme::Dark,
@@ -120,11 +121,13 @@ pub(crate) fn reply(text: &str, status: Option<u16>) -> Result<SearchReply, Sear
 pub(crate) fn native_preferences(
     text: &str,
 ) -> Result<stackpress_framework_view::preferences::LoadedPreferences, &'static str> {
+    // Reject excess command output before decoding any public preference fields.
     if text.len() > 1024 {
         return Err("Preferences unavailable");
     }
     let settings: stackpress_framework_view::preferences::LoadedPreferences =
         serde_json::from_str(text).map_err(|_| "Preferences unavailable")?;
+    // Only the fixed revision and compiled locale catalog can seed this native root.
     if settings.revision != 1 || !matches!(settings.preferences.locale.as_str(), "en" | "fr") {
         return Err("Preferences unavailable");
     }

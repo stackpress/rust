@@ -1,8 +1,9 @@
 # Stackpress View API
 
-All public items are exported from `stackpress_framework_view`; implementation modules are
-private. Related enums/functions are documented with their owning surface. The final three
-rows require native feature `server`; the other contracts are client-safe by default.
+Page contracts are exported from `stackpress_framework_view`. Optional presentation
+capabilities live in explicit public modules; their implementation helpers remain private.
+The three native page rows require `server`; presentation host functions require their
+separate host features. Core page/access/theme contracts are browser-safe by default.
 
 ## Surfaces
 
@@ -10,6 +11,9 @@ Use these pages for inputs, defaults, returns, and failures. Guides remain task-
 
 | Surface | Public coverage |
 | --- | --- |
+| [Presentation modules](../migration-issue15.md) | preferences, flash, access, adapters and feature/import map |
+| [Presentation host registration](../presentation-host.md) | typed Config/Admission/Service APIs, register functions and asset composition |
+| [Initial theme](../migration-issue15.md) | theme asset identity and checked bootstrap_tag |
 | [PageId](page-id.md) | PageId; checked string conversions |
 | [PageLoad](page-load.md) | Ready(T), Abort |
 | [PageSnapshot](page-snapshot.md) | fields; validate, script_json[_with], decode[_with] |

@@ -4,7 +4,7 @@
 //! across SSR/hydration/CSR; application-specific branding remains with callers.
 //! Include CORE_STYLES for ordinary controls/action groups and ADVANCED_STYLES
 //! for table/dialog presentation and document scroll locking. Add BREADTH_STYLES
-//! for disclosure/navigation/collection surfaces. All are opt-in. System themes
+//! for disclosure/navigation/collection surfaces. All are opt-in. Themes
 //! use explicit Light/Dark values; initial environment selection belongs to adapters.
 
 mod advanced;

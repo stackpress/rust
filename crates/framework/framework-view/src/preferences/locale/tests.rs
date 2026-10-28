@@ -60,6 +60,28 @@ fn precedence_and_routes() {
             LocaleSource::Default,
             "/de/gallery",
         ),
+        // A bare duplicate and an alias cookie both retain the default fallback.
+        (
+            "/demo/v1/gallery",
+            "stackpress-locale; stackpress-locale=fr",
+            "en",
+            LocaleSource::Default,
+            "/gallery",
+        ),
+        (
+            "/demo/v1/gallery",
+            "stackpress-locale=fr; stackpress-locale",
+            "en",
+            LocaleSource::Default,
+            "/gallery",
+        ),
+        (
+            "/demo/v1/gallery",
+            "stackpress-locale=fr-FR",
+            "en",
+            LocaleSource::Default,
+            "/gallery",
+        ),
         ("/demo/v1/fr?x=1", "", "fr", LocaleSource::Prefix, "/?x=1"),
         ("/demo/v1/fr", "", "fr", LocaleSource::Prefix, "/"),
     ] {

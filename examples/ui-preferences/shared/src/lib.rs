@@ -21,12 +21,14 @@ pub fn PreferencesPage(
     #[prop(optional)]
     initial_draft: Option<String>,
 ) -> impl IntoView {
+    // Acknowledged settings and editable draft live in distinct root-owned signals.
     let state = RwSignal::new(PreferenceState::new(
         seed.preferences.clone(),
         seed.location,
     ));
     let phrases = LanguageContext::new(language(&seed.preferences.locale));
     let draft = RwSignal::new(initial_draft.unwrap_or_else(|| "Ada".into()));
+    // Public notices are admitted once per root; dismissal never touches persistence authority.
     let mut dedupe = FlashRoot::default();
     let flash = RwSignal::new(seed.flash.and_then(|notice| dedupe.admit(notice)));
     let input = NodeRef::<leptos::html::Input>::new();
@@ -35,6 +37,7 @@ pub fn PreferencesPage(
     Effect::new(move |_| {
         let current = state.get();
         if let Some(document) = web_sys::window().and_then(|window| window.document()) {
+            // Mirror acknowledged locale/theme only; unset preserves the already frozen head choice.
             if let Some(html) = document.document_element() {
                 let _ = html.set_attribute("lang", &current.current().locale);
                 // Unset preserves the pre-paint choice; locale saves never sample the OS again.
@@ -44,8 +47,10 @@ pub fn PreferencesPage(
             }
             document.set_title(&phrases.text("Preferences", &[]));
         }
+        // Keep the same native input/focus, including edits captured before hydration.
         if let Some(input) = input.get() {
             let value = draft.get();
+            // Avoid redundant DOM writes that would disturb selection while typing.
             if input.value() != value {
                 input.set_value(&value);
             }
@@ -53,13 +58,16 @@ pub fn PreferencesPage(
     });
     let base = seed.base.clone();
     let choose = move |locale: Option<&str>, theme: Option<ThemePreference>| {
+        // Start from acknowledged values so a locale-only action preserves saved theme absence.
         let mut desired = state.get_untracked().current().clone();
+        // Only the explicitly selected setting changes in this intent.
         if let Some(locale) = locale {
             desired.locale = locale.into();
         }
         if let Some(theme) = theme {
             desired.theme = Some(theme);
         }
+        // Reserve the single write slot before the optional browser adapter starts acquisition.
         let mut update = None;
         state.update(|state| update = state.begin(desired));
         #[cfg(target_arch = "wasm32")]
@@ -74,6 +82,7 @@ pub fn PreferencesPage(
     let light = choose.clone();
     let dark = choose.clone();
     let link_base = seed.base.as_str().to_owned();
+    // Public hints control rendering only; the host rechecks every protected operation.
     let allowed = seed
         .allowed
         .contains(&ActionId::new("private.page").expect("fixed action"));

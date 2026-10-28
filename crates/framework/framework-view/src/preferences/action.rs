@@ -22,6 +22,7 @@ pub enum ThemePreference {
 impl ThemePreference {
     /// Stable attribute and cookie token, without browser preference acquisition.
     pub fn as_str(self) -> &'static str {
+        // Only explicit choices become DOM/cookie tokens; unset is carried by Option.
         match self {
             Self::Light => "light",
             Self::Dark => "dark",
@@ -29,6 +30,7 @@ impl ThemePreference {
     }
     /// Parse only the two explicit exact tokens; legacy cookies become unset.
     pub fn parse(value: &str) -> Option<Self> {
+        // Unknown and legacy stored tokens cannot become an explicit live choice.
         match value {
             "light" => Some(Self::Light),
             "dark" => Some(Self::Dark),
@@ -43,7 +45,7 @@ impl ThemePreference {
 pub struct Preferences {
     /// Canonical registered language.
     pub locale: String,
-    /// Exact theme token applied by the host before first render.
+    /// Saved explicit choice; None leaves initial color acquisition to the host adapter.
     #[serde(default)]
     pub theme: Option<ThemePreference>,
 }
@@ -95,8 +97,10 @@ impl SettingsAction {
         body: &str,
         cookie: &str,
     ) -> Result<SettingsReply, PreferenceError> {
+        // Reuse write admission and canonicalization before checking browser readback.
         let mut reply = self.apply(method, origin, body)?;
         let locale = unique_cookie(cookie, super::LOCALE_COOKIE)?;
+        // Ambiguous theme readback must fail confirmation, even if locale readback matched.
         let theme = unique_cookie(cookie, THEME_COOKIE)?;
         // Only saved-data boundaries recognize the removed legacy mode as unset.
         let matches_theme = match (reply.preferences.theme, theme) {
@@ -105,6 +109,7 @@ impl SettingsAction {
             _ => false,
         };
         if locale != Some(reply.preferences.locale.as_str()) || !matches_theme {
+            // A blocked, duplicate or conflicting cookie cannot confirm persistence.
             return Err(PreferenceError::Request);
         }
         // Only the original write endpoint emits Set-Cookie. Confirmation is read-only.
@@ -113,6 +118,7 @@ impl SettingsAction {
     }
     /// Configure one action; hosts additionally enforce session CSRF when applicable.
     pub fn new(registry: LocaleRegistry, scope: CookieScope) -> Self {
+        // Both inputs are already checked; construction performs no storage or registration.
         Self { registry, scope }
     }
 
@@ -122,12 +128,15 @@ impl SettingsAction {
     /// Rejects an unsafe/out-of-mount location or oversized cookie header. Invalid
     /// theme values/duplicates fall back; no browser language guessing occurs.
     pub fn select(&self, location: &str, cookie: &str) -> Result<Preferences, PreferenceError> {
+        // Bound the entire header before locale selection or theme-cookie scanning.
         if cookie.len() > MAX_COOKIE_BYTES {
             return Err(PreferenceError::Limit);
         }
+        // Locale precedence is owned by routing; theme selection cannot override it.
         let locale = LocaleRouting::new(&self.registry, &self.scope.base)
             .select(location, cookie)?
             .locale;
+        // Invalid/ambiguous saved themes become unset without resetting the locale.
         let theme = unique_cookie(cookie, THEME_COOKIE)
             .ok()
             .flatten()
@@ -150,14 +159,17 @@ impl SettingsAction {
         if method != "POST" {
             return Err(PreferenceError::Request);
         }
+        // Compare the exact configured origin; request Host/forwarding data has no authority.
         if origin != Some(self.scope.origin.as_str()) {
             return Err(PreferenceError::Origin);
         }
+        // Reject excessive input before allocating the closed update DTO.
         if body.len() > MAX_PREFERENCE_BYTES {
             return Err(PreferenceError::Limit);
         }
         let update: SettingsUpdate =
             serde_json::from_str(body).map_err(|_| PreferenceError::Request)?;
+        // The locale action preserves canonical prefixes and encoded return-query bytes.
         let locale_action = PreferenceAction::new(
             self.registry.clone(),
             self.scope.origin.clone(),
@@ -173,6 +185,7 @@ impl SettingsAction {
         )?;
         // An unset value never persists the browser's initial OS-derived color.
         let mut cookies = vec![reply.cookie];
+        // Absence issues no theme header and never saves the OS-derived initial color.
         if let Some(theme) = update.theme {
             cookies.push(self.scope.header(THEME_COOKIE, theme.as_str(), 31536000));
         }
@@ -196,13 +209,16 @@ impl SettingsAction {
         text: &str,
         submitted: &SettingsUpdate,
     ) -> Result<SettingsReply, PreferenceError> {
+        // Bound untrusted acknowledgement text before decoding its public envelope.
         if text.len() > MAX_PREFERENCE_BYTES {
             return Err(PreferenceError::Limit);
         }
         let reply: SettingsReply =
             serde_json::from_str(text).map_err(|_| PreferenceError::Request)?;
+        // Recompute only the submitted locale-prefix change, never accept a reply redirect.
         let expected = LocaleRouting::new(&self.registry, &self.scope.base)
             .location(&submitted.location, &submitted.locale)?;
+        // Every acknowledged field must agree before any root state may be published.
         if Some(reply.preferences.locale.as_str()) != self.registry.canonical(&submitted.locale)
             || reply.preferences.theme != submitted.theme
             || reply.location != expected

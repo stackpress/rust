@@ -25,7 +25,8 @@ There is no reverse language re-export. Registry enumeration is available throug
 `PageContract.theme` and `PageSnapshot.theme` are `Option<String>` checked as
 `light`/`dark`. Missing/null means no explicit choice. Both theme enums contain only
 Light and Dark. Saved `system` cookies/files read as unset at those boundaries;
-live DTOs reject that token. Existing Light/Dark wires, cookie identities/scope and
+live DTOs reject that token. An unset update issues no theme cookie and does not clear a
+previous explicit choice. Existing Light/Dark wires, cookie identities/scope and
 native filename/revision remain unchanged. Loading never rewrites a legacy file.
 
 `PageAssets` adds `theme_bootstrap: Option<PublicLocation>` (missing decodes as None).

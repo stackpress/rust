@@ -25,7 +25,29 @@ def main():
     after = tomllib.loads((ROOT / 'Cargo.lock').read_text())['package']
     external = lambda packages: sorted((p['name'], p['version'], p['source'], p.get('checksum')) for p in packages if 'source' in p)
     assert external(before) == external(after), 'external dependency changed'
-    assert all(p['name'] != 'stackpress-framework-preferences' for p in after)
+    # Every local lock package must have a current workspace owner; removed crates cannot linger.
+    manifest = tomllib.loads((ROOT / 'Cargo.toml').read_text())
+    members = {manifest['package']['name']}
+    members.update(tomllib.loads((ROOT / member / 'Cargo.toml').read_text())['package']['name']
+                   for member in manifest['workspace']['members'])
+    assert {p['name'] for p in after if 'source' not in p} == members
+    # Live source/docs use canonical ownership; historical KB and golden inputs retain old names.
+    migration = ROOT / 'crates/framework/framework-view/docs/migration-issue15.md'
+    retired = re.search(r'`([^`]+)` is removed', migration.read_text())[1]
+    excluded = {migration, *(ROOT / 'examples/ui-preferences/proofs' / name
+                            for name in ['golden.py', 'golden.rs', 'contracts.py'])}
+    names = subprocess.check_output(['git', 'ls-files', '-z', '--cached', '--others', '--exclude-standard'], cwd=ROOT).split(b'\0')
+    for name in names:
+        if not name:
+            continue
+        relative = Path(name.decode())
+        live = relative.parts[0] in {'crates', 'examples', 'src', 'docs'} or relative.as_posix() in {'Cargo.toml', 'README.md'}
+        path = ROOT / relative
+        if not live or path in excluded or not path.is_file():
+            continue
+        text = path.read_bytes()
+        assert retired.encode() not in text and retired.replace('-', '_').encode() not in text, str(path)
+    print('PASS current workspace lock ownership and live-path retired-identifier audit')
     print('PASS workspace-only lock update:', len(external(after)), 'external versions/sources/checksums unchanged')
     assert not (ROOT / 'crates/framework/framework-view/proofs/issue15-m0').exists(), 'parallel prototype retained'
     view = 'stackpress-framework-view'

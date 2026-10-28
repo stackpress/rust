@@ -132,16 +132,19 @@ pub fn ProfileSearch(
         Ok(language) => LanguageContext::new(language),
         Err(message) => return view! { <p role="alert">{message}</p> }.into_any(),
     };
+    // Effective root color and the temporary SSR handoff marker are independent of search pending.
     let theme = ThemeState::new(initial_theme);
     let theme_pending = RwSignal::new(initial_theme_pending);
     // Hydration keeps the SSR tree identical. CSS covers it until this one-shot handoff.
     #[cfg(target_arch = "wasm32")]
     Effect::new(move |_| {
+        // Read untracked and clear once, so subsequent OS changes cannot drive this effect.
         if theme_pending.get_untracked() {
             let dark = web_sys::window()
                 .and_then(|w| w.document())
                 .and_then(|d| d.document_element())
                 .is_some_and(|html| html.get_attribute("data-theme").as_deref() == Some("dark"));
+            // Switch color and remove the CSS handoff marker atomically to avoid a wrong-color frame.
             batch(|| {
                 theme.set(if dark { Theme::Dark } else { Theme::Light });
                 theme_pending.set(false);

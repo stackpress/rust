@@ -8,6 +8,7 @@ mod browser {
     /// Hydrate/mount the same component, adopting any early native draft edit.
     #[wasm_bindgen]
     pub fn start(text: &str) -> Result<js_sys::Function, JsValue> {
+        // Closed seed admission runs before a root can publish any caller-supplied values.
         let seed = decode(text).map_err(|_| JsValue::from_str("Invalid page seed"))?;
         let document = web_sys::window()
             .and_then(|window| window.document())
@@ -16,16 +17,19 @@ mod browser {
             .get_element_by_id("app")
             .ok_or_else(|| JsValue::from_str("Missing root"))?
             .dyn_into()?;
+        // Capture the current native value before controlled hydration can reconcile it.
         let early = document
             .get_element_by_id("draft")
             .and_then(|element| element.dyn_into::<web_sys::HtmlInputElement>().ok())
             .map(|input| input.value())
             .unwrap_or_else(|| "Ada".into());
+        // Both render modes evaluate the same source and explicit initial settings.
         let root = move || view! { <PreferencesPage seed initial_draft=early/> };
         #[cfg(feature = "hydrate")]
         let handle = leptos::mount::hydrate_from(app, root);
         #[cfg(feature = "csr")]
         let handle = leptos::mount::mount_to(app, root);
+        // The returned disposer owns root lifetime and releases scoped browser work.
         let mut handle = Some(handle);
         let dispose = Closure::wrap(Box::new(move || {
             handle.take();

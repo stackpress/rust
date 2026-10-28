@@ -15,10 +15,12 @@ impl Drop for AbortOnDrop {
 }
 /// Acquire one finite acknowledgement from a fixed endpoint; no write retries.
 async fn post(path: &str, body: &str) -> Result<String, ()> {
+    // Keep the real fetch abortable through root disposal, including while JsFuture is pending.
     let guard = AbortOnDrop(web_sys::AbortController::new().map_err(|_| ())?);
     let signals = js_sys::Array::new();
     signals.push(&guard.0.signal());
     signals.push(&web_sys::AbortSignal::timeout_with_u32(10_000));
+    // The adapter owns method/body/header shape; user preferences cannot choose a URL or verb.
     let options = web_sys::RequestInit::new();
     options.set_method("POST");
     // Root disposal and the action deadline both abort real networking.
@@ -30,13 +32,16 @@ async fn post(path: &str, body: &str) -> Result<String, ()> {
         .map_err(|_| ())?;
     options.set_headers(&headers);
     let window = web_sys::window().ok_or(())?;
+    // Await only acquisition here; pure state admission still checks the complete reply later.
     let response = JsFuture::from(window.fetch_with_str_and_init(path, &options))
         .await
         .map_err(|_| ())?;
     let response: web_sys::Response = response.dyn_into().map_err(|_| ())?;
+    // Failed HTTP actions do not publish settings or trigger an automatic retry.
     if !response.ok() {
         return Err(());
     }
+    // Acknowledgements remain bounded public text, independent of inaccessible HttpOnly cookies.
     let text = JsFuture::from(response.text().map_err(|_| ())?)
         .await
         .map_err(|_| ())?
@@ -54,8 +59,10 @@ pub(super) fn save(
     state: RwSignal<PreferenceState>,
     phrases: LanguageContext,
 ) {
+    // Disposal drops acquisition and its abort lease; late work cannot retain this root.
     leptos::task::spawn_local_scoped_with_cancellation(async move {
         let result = async {
+            // Freeze the admitted intent once and use the same body for write and readback.
             let body = serde_json::to_string(&update).map_err(|_| ())?;
             let policy = action(base.clone());
             let written = post(&format!("{}/ui-preferences", base.as_str()), &body).await?;
@@ -71,6 +78,7 @@ pub(super) fn save(
                 .get_untracked()
                 .validate(&policy, &confirmed)
                 .map_err(|_| ())?;
+            // Stage history before publishing reactive settings; failure leaves drafts/content intact.
             web_sys::window()
                 .ok_or(())?
                 .history()
@@ -80,10 +88,12 @@ pub(super) fn save(
             Ok((reply, policy, confirmed))
         }
         .await;
+        // Publish dictionary/settings together only after both acknowledgements and history succeed.
         batch(move || match result {
             Ok((reply, policy, confirmed)) => {
                 let mut published = false;
                 state.update(|state| published = state.complete(&policy, &confirmed).is_ok());
+                // A stale/disposed completion cannot change the root dictionary.
                 if published {
                     phrases.change(language(&reply.preferences.locale));
                 }

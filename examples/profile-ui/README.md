@@ -74,7 +74,7 @@ PROFILE_UI_HOST=target/profile-ui-native/debug/stackpress-example-profile-ui-web
 
 Chromium uses a synthetic HTTPS origin and request interception over browser pipes. `probe` calls the actual gateway service API and emits one response, then exits. It cannot bind a socket. The gateway proof covers hashed assets, initial seed, version/build mismatch, missing JS/WASM, explicit reload recovery and a second typed search. The other proofs cover unchanged DOM/focus, hostile seed and literal hostile prefixes, errors/retry, disposal, responsive/keyboard behavior, navigation and initial French/dark agreement. `PROFILE_UI_BASE=/demo/v1` exercises mounted behavior for every proof.
 
-Run the complete eight-proof matrix; the wrapper rebuilds both finite hosts for the selected backend in the shared native target before using them:
+Run the complete nine-invocation matrix; the wrapper rebuilds both finite hosts for the selected backend in the shared native target before using them:
 
 ```sh
 python3 examples/profile-ui/proofs/browser.py
@@ -84,7 +84,7 @@ python3 examples/profile-ui/proofs/browser.py --sqlite
 
 List rows expose their stable application key as `data-item-id`, matching the generic framework List contract.
 
-The runner invokes all four scripts at the root and `/demo/v1`, creates and installs SQLite only inside a temporary directory when selected, and retains proof logs and a machine receipt in `dist/browser-logs`. Before setup, the SQLite runner checks both finite executables against missing and uninstalled files: startup must explain the setup remedy and leave each file untouched. Set `PROFILE_UI_BROWSER_LOGS` to retain separate backend receipts. `PROFILE_UI_NATIVE_TARGET` selects the same native target used by checks. Rust parity tests additionally compare complete SSR HTML, typed HTTP bytes/headers and detail/error statuses against the actual generated in-memory host, including empty, `%`, `_`, quotes, backslash, Unicode and NUL prefixes.
+The runner invokes all four scripts at the root and `/demo/v1`, then the initial-theme matrix once. It creates and installs SQLite only inside a temporary directory when selected, and retains proof logs and a machine receipt in `dist/browser-logs`. Before setup, the SQLite runner checks both finite executables against missing and uninstalled files: startup must explain the setup remedy and leave each file untouched. Set `PROFILE_UI_BROWSER_LOGS` to retain separate backend receipts. `PROFILE_UI_NATIVE_TARGET` selects the same native target used by checks. Rust parity tests additionally compare complete SSR HTML, typed HTTP bytes/headers and detail/error statuses against the actual generated in-memory host, including empty, `%`, `_`, quotes, backslash, Unicode and NUL prefixes.
 
 Gateway tests use `tokio::io::duplex` and the same Hyper connection/runner code as the executable. They exercise raw chunked requests, bounded body/header acquisition, incomplete/slow input, disconnect, excess admission and graceful shutdown without a TCP listener.
 
@@ -125,4 +125,4 @@ blocked bootstrap remains readable Light. See the [API migration](../../crates/f
 
 The standard `proofs/browser.py` driver runs nine proof invocations: the four
 existing scripts at both mounts and `browser-initial-theme.cjs` once (four internal
-initial-theme/draft cases). Its summary counts those nine invocations explicitly.
+initial-theme/draft cases). Its summary records the number of completed invocations.

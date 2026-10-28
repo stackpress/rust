@@ -7,10 +7,42 @@ Neither a feature nor configuration selects a plugin or writes cookies/files.
 
 Select ordinary functions with the existing `ServerBuilder::plugin` method:
 
-```rust,ignore
-app.on_config(host_admission)?; // registers Arc<preferences::Admission>
-app.plugin("preferences", preferences::register)?;
-app.plugin("flash", flash::register)?;
+```rust
+use std::sync::Arc;
+use stackpress_framework_view::{flash, preferences};
+use stackpress_lib::{Flow, Result};
+use stackpress_server::{ConfigLayers, ServerBuilder, StartupContext};
+
+// This example deliberately has no session; it does not authorize domain operations.
+async fn host_admission(start: &mut StartupContext) -> Result<Flow> {
+    start.register(Arc::new(preferences::Admission::sessionless()))?;
+    Ok(Flow::Continue)
+}
+
+#[tokio::main]
+async fn main() -> Result<()> {
+    let mut layers = ConfigLayers::new();
+    layers.value("application", serde_json::json!({
+        "view_preferences": {
+            "origin": "https://app.invalid", "base": "/demo",
+            "locales": ["en", "fr"], "default_locale": "en", "aliases": {},
+            "settings_path": "/settings", "confirmation_path": "/settings/confirm",
+            "serve_theme_bootstrap": true
+        },
+        "view_flash": {
+            "origin": "https://app.invalid", "base": "/demo", "pages": ["/preferences"]
+        }
+    }))?;
+    let mut app = ServerBuilder::new();
+    app.config_layers(layers)?;
+    app.on_config(host_admission)?;
+    app.plugin("preferences", preferences::register)?;
+    app.plugin("flash", flash::register)?;
+    // This constructs the selected services/routes; it opens no listener or file.
+    let server = app.build().await.map_err(stackpress_lib::Error::from_source)?;
+    assert_eq!(server.plugins().count(), 2);
+    Ok(())
+}
 ```
 
 Each function has signature `fn(&mut ServerBuilder) -> stackpress_lib::Result<()>`.

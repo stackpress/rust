@@ -1,4 +1,5 @@
 //! Location-aware locale selection and fixed same-origin actions.
+use crate::adapters::web::{CookieScope, unique_cookie};
 pub use crate::adapters::web::{LOCALE_COOKIE, MAX_COOKIE_BYTES, MAX_PREFERENCE_BYTES};
 use crate::{BasePath, PublicLocation};
 use serde::{Deserialize, Serialize};
@@ -36,6 +37,7 @@ pub struct LocaleRouting<'a> {
 impl<'a> LocaleRouting<'a> {
     /// Bind immutable routing inputs without registering handlers or effects.
     pub fn new(registry: &'a LocaleRegistry, base: &'a BasePath) -> Self {
+        // Borrow immutable authority only; selection installs no effects or handlers.
         Self { registry, base }
     }
     /// Apply prefix > valid saved cookie > default under one checked mount.
@@ -43,9 +45,11 @@ impl<'a> LocaleRouting<'a> {
     /// # Errors
     /// Rejects an unsafe/out-of-mount location or oversized cookie input.
     pub fn select(&self, location: &str, cookie: &str) -> Result<Selection, PreferenceError> {
+        // Validate and strip the trusted mount before considering any prefix or saved value.
         let base = self.base;
         PublicLocation::new(location).map_err(|_| PreferenceError::Request)?;
         let local = base.strip(location).ok_or(PreferenceError::Request)?;
+        // Preserve the whole-header limit even when a route prefix already determines locale.
         if cookie.len() > MAX_COOKIE_BYTES {
             return Err(PreferenceError::Limit);
         }
@@ -54,8 +58,10 @@ impl<'a> LocaleRouting<'a> {
         let end = local[1..]
             .find(['/', '?'])
             .map_or(local.len(), |index| index + 1);
+        // A compiled canonical/alias prefix wins; leave the remaining query bytes untouched.
         if let Some(locale) = self.registry.canonical(&local[1..end]) {
             let rest = &local[end..];
+            // A bare locale root becomes slash; query-only remainders need the same slash.
             let route = if rest.is_empty() {
                 "/".to_owned()
             } else if rest.starts_with('?') {
@@ -69,22 +75,14 @@ impl<'a> LocaleRouting<'a> {
                 route,
             });
         }
-        // Duplicate locale cookies are ambiguous and intentionally ignored.
-        let mut saved = None;
-        let mut duplicate = false;
-        for entry in cookie.split(';').map(str::trim) {
-            // A bare matching key still counts, so malformed duplicates cannot
-            // disappear during split_once and elevate a second value.
-            let (name, value) = entry.split_once('=').unwrap_or((entry, ""));
-            if name == LOCALE_COOKIE {
-                duplicate |= saved.is_some();
-                saved = Some(value);
-            }
-        }
-        if !duplicate
-            && let Some(saved) =
-                saved.filter(|saved| self.registry.locales().any(|locale| locale == *saved))
-        {
+        // The shared codec rejects duplicates, including bare matching keys. Saved
+        // aliases still do not count: only canonical persisted tokens may select a locale.
+        let saved = unique_cookie(cookie, LOCALE_COOKIE)
+            .ok()
+            .flatten()
+            .filter(|saved| self.registry.locales().any(|locale| locale == *saved));
+        // A single canonical cookie is used only when no compiled prefix matched.
+        if let Some(saved) = saved {
             return Ok(Selection {
                 locale: saved.to_owned(),
                 source: LocaleSource::Cookie,
@@ -120,7 +118,9 @@ impl<'a> LocaleRouting<'a> {
     /// # Errors
     /// Rejects unknown locale tokens, unsafe paths and paths outside the mount.
     pub fn location(&self, location: &str, locale: &str) -> Result<String, PreferenceError> {
+        // Borrow the same trusted mount for the canonical locale replacement.
         let base = self.base;
+        // Resolve an explicit registered target; unknown tokens never become route segments.
         let locale = self
             .registry
             .canonical(locale)
@@ -161,12 +161,8 @@ pub struct PreferenceReply {
 pub struct PreferenceAction {
     /// Registry is immutable; there is no process-global current locale.
     registry: LocaleRegistry,
-    /// Exact canonical application origin.
-    origin: String,
-    /// Cookie Path and return-location authority use the same checked mount.
-    base: BasePath,
-    /// HTTP development origin explicitly omits Secure; HTTPS always includes it.
-    secure: bool,
+    /// One validated owner of origin admission, cookie Path and HTTPS flags.
+    scope: CookieScope,
 }
 
 impl PreferenceAction {
@@ -179,24 +175,9 @@ impl PreferenceAction {
         origin: String,
         base: BasePath,
     ) -> Result<Self, PreferenceError> {
-        // Compare canonical origin serialization, excluding credentials/path tricks.
-        let parsed = url::Url::parse(&origin).map_err(|_| PreferenceError::Configuration)?;
-        if !matches!(parsed.scheme(), "http" | "https")
-            || parsed.origin().ascii_serialization() != origin
-            || !parsed.username().is_empty()
-            || parsed.password().is_some()
-            || parsed.query().is_some()
-            || parsed.fragment().is_some()
-            || parsed.path() != "/"
-        {
-            return Err(PreferenceError::Configuration);
-        }
-        Ok(Self {
-            registry,
-            secure: parsed.scheme() == "https",
-            origin,
-            base,
-        })
+        // Reuse the same origin/scope checks as combined settings and flash.
+        let scope = CookieScope::new(origin, base)?;
+        Ok(Self { registry, scope })
     }
 
     /// Validate one POST and return a canonical acknowledged preference/cookie.
@@ -214,30 +195,25 @@ impl PreferenceAction {
         if method != "POST" {
             return Err(PreferenceError::Request);
         }
-        if origin != Some(self.origin.as_str()) {
+        // An exact origin check precedes input projection and all cookie construction.
+        if origin != Some(self.scope.origin.as_str()) {
             return Err(PreferenceError::Origin);
         }
+        // Bound the already-decoded fixed fields before canonicalization/path work.
         if update.locale.len() + update.location.len() > MAX_PREFERENCE_BYTES {
             return Err(PreferenceError::Limit);
         }
+        // Resolve an explicit registered target; unknown tokens never become route segments.
         let locale = self
             .registry
             .canonical(&update.locale)
             .ok_or(PreferenceError::Locale)?
             .to_owned();
         // Re-prefix only the checked app path; encoded query text is preserved.
-        let location =
-            LocaleRouting::new(&self.registry, &self.base).location(&update.location, &locale)?;
-        let path = if self.base.as_str().is_empty() {
-            "/"
-        } else {
-            self.base.as_str()
-        };
-        let secure = if self.secure { "; Secure" } else { "" };
-        // Locale/base came from checked constructors, so no header syntax is accepted.
-        let cookie = format!(
-            "{LOCALE_COOKIE}={locale}; Path={path}; Max-Age=31536000; HttpOnly; SameSite=Lax{secure}"
-        );
+        let location = LocaleRouting::new(&self.registry, &self.scope.base)
+            .location(&update.location, &locale)?;
+        // The shared scope emits the unchanged locale identity, lifetime and flags.
+        let cookie = self.scope.header(LOCALE_COOKIE, &locale, 31536000);
         Ok(PreferenceReply {
             locale,
             location,

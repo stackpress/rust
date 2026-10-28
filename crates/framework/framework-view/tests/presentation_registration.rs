@@ -431,3 +431,82 @@ async fn preferences_only_and_optional_asset() {
     assert_eq!(asset.status().unwrap().code, 404);
     assert!(asset.headers().get("set-cookie").is_none());
 }
+
+/// Stored cookies cannot substitute for fresh admission or confirm ambiguous readback.
+#[tokio::test]
+async fn confirmation_denials_never_write_or_disclose_input() {
+    for base in ["", "/demo/v1"] {
+        let app = builder(config(base), true).build().await.unwrap();
+        let body =
+            json!({"locale":"fr","theme":"dark","location":format!("{base}/page")}).to_string();
+        let saved = "stackpress-locale=fr; stackpress-theme=dark";
+        let oversized = "x".repeat(preferences::MAX_COOKIE_BYTES + 1);
+        // Readback is a separate admitted request; saved values do not carry authority.
+        for (origin, csrf, cookie, status) in [
+            ("https://presentation.invalid", "", saved, 403),
+            ("https://wrong.invalid", "verified", saved, 403),
+            ("https://presentation.invalid", "verified", "", 400),
+            (
+                "https://presentation.invalid",
+                "verified",
+                "stackpress-locale=fr; stackpress-locale; stackpress-theme=dark",
+                400,
+            ),
+            (
+                "https://presentation.invalid",
+                "verified",
+                "stackpress-locale=fr; stackpress-theme=dark; stackpress-theme",
+                400,
+            ),
+            (
+                "https://presentation.invalid",
+                "verified",
+                oversized.as_str(),
+                413,
+            ),
+            ("https://presentation.invalid", "verified", saved, 200),
+        ] {
+            let res = exchange(
+                &app,
+                "POST",
+                &format!("{base}/confirm"),
+                Body::Text(body.clone()),
+                &[
+                    ("origin", origin),
+                    ("x-current-csrf", csrf),
+                    ("cookie", cookie),
+                ],
+            )
+            .await;
+            assert_eq!(res.status().unwrap().code, status);
+            // Both accepted and rejected confirmations remain persistence-free.
+            assert!(res.headers().get("set-cookie").is_none());
+            if status != 200 {
+                // Uniform errors must not reflect submitted cookies, paths or private causes.
+                assert!(
+                    matches!(res.body(), Body::Text(text) if serde_json::from_str::<Value>(text).unwrap() == json!({"error":"Action unavailable"}))
+                );
+            }
+        }
+        // Legacy normalization is read-only and cannot reset the independent French locale.
+        let body =
+            json!({"locale":"fr","theme":null,"location":format!("{base}/page")}).to_string();
+        let res = exchange(
+            &app,
+            "POST",
+            &format!("{base}/confirm"),
+            Body::Text(body),
+            &[
+                ("origin", "https://presentation.invalid"),
+                ("x-current-csrf", "verified"),
+                ("cookie", "stackpress-locale=fr; stackpress-theme=system"),
+            ],
+        )
+        .await;
+        assert_eq!(res.status().unwrap().code, 200);
+        assert!(res.headers().get("set-cookie").is_none());
+        assert!(
+            matches!(res.body(), Body::Text(text) if serde_json::from_str::<Value>(text).unwrap()["preferences"] == json!({"locale":"fr","theme":null}))
+        );
+    }
+}
