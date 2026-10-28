@@ -1,7 +1,49 @@
 //! Finite synchronous SSR after authorized generated loaders; one request-local Owner.
 use leptos::prelude::*;
 use stackpress_framework_admin::pages::Snapshot;
-use stackpress_framework_ui::components::{ADVANCED_STYLES, BREADTH_STYLES, CORE_STYLES};
+use stackpress_framework_ui::components::{
+    ADVANCED_STYLES, BASE_STYLES, BREADTH_STYLES, CORE_STYLES,
+};
+
+/// Render trusted catalogue component output with the same styles in every host.
+/// The module URL is host-selected; Leptos escapes it as an attribute, never HTML.
+pub fn roles_document(body: &str, module: &str) -> String {
+    let script = view! {<script type="module" src=module.to_owned()></script>}.to_html();
+    let catalogue = generated_admin_shared::ROLE_CATALOGUE_STYLES;
+    format!(
+        "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Generated roles</title><style>{BASE_STYLES}{CORE_STYLES}{ADVANCED_STYLES}{BREADTH_STYLES}{catalogue}body{{margin:0}}</style></head><body><div id=\"app\">{body}</div>{script}</body></html>"
+    )
+}
+
+/// Render a safe static document failure without any protected seed or bootstrap.
+/// Only the public status and compiled list URL enter the markup; causes stay private.
+pub fn failure_document(status: u16, list: &str) -> String {
+    let (heading, message) = match status {
+        401 | 403 => (
+            "Access denied",
+            "You do not have permission. Ask an administrator for access.",
+        ),
+        404 => (
+            "Page not found",
+            "This page or record is unavailable. Return to the list.",
+        ),
+        _ => (
+            "Unable to load this page",
+            "Reload this page or return to the list. No changes were made by this page request.",
+        ),
+    };
+    // Rendering escapes all dynamic text/attributes. GET recovery never retries a write.
+    let body = view! {
+        <div class="sp-root" data-theme="light"><main class="sp-blank">
+            <p>{format!("Error {status}")}</p><h1>{heading}</h1><p>{message}</p>
+            <a href=list.to_owned()>"Return to list"</a>
+        </main></div>
+    }
+    .to_html();
+    format!(
+        "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>{heading}</title><style>{BASE_STYLES}body{{margin:0}}</style></head><body>{body}</body></html>"
+    )
+}
 
 /// Render matching public state for SSR or CSR without executable inline bootstrap data.
 /// # Errors

@@ -105,6 +105,8 @@ async fn render_page(
             Ok(view! { <StreamDemo data=snapshot.data.clone()/> })
         },
     )
+    .map_err(view_error)?
+    .with_status_script(PublicLocation::new("/assets/stream-status.js").map_err(view_error)?)
     .map_err(view_error)?;
     let mode = mode.as_str();
     let seed = PageSnapshot {
@@ -196,6 +198,8 @@ pub struct Exchange {
     pub head: String,
     /// Actual decoded HTTP body fragments in received order.
     pub chunks: Vec<String>,
+    /// Whether the native peer actually delivered the terminating HTTP chunk.
+    pub terminal_chunk: bool,
     /// Host's original completion/failure/cancellation diagnostics.
     pub report: ConnectionReport,
     /// Shared independent counters.
@@ -237,6 +241,7 @@ pub async fn exchange(
             let mut bytes = Vec::new();
             let mut head = String::new();
             let mut chunks = Vec::new();
+            let mut terminal_chunk = false;
             let mut buffer = [0; 256];
             loop {
                 let count = client.read(&mut buffer).await.map_err(Error::from_source)?;
@@ -264,7 +269,12 @@ pub async fn exchange(
                         16,
                     )
                     .map_err(Error::from_source)?;
-                    if size == 0 || bytes.len() < index + 2 + size + 2 {
+                    // EOF alone is not successful delivery: retain actual HTTP framing.
+                    if size == 0 {
+                        terminal_chunk = bytes.starts_with(b"0\r\n\r\n");
+                        break;
+                    }
+                    if bytes.len() < index + 2 + size + 2 {
                         break;
                     }
                     bytes.drain(..index + 2);
@@ -278,7 +288,7 @@ pub async fn exchange(
                             .last()
                             .is_some_and(|chunk| chunk.contains("id=\"shell\""))
                     {
-                        return Ok((head, chunks));
+                        return Ok((head, chunks, terminal_chunk));
                     }
                 }
             }
@@ -292,10 +302,9 @@ pub async fn exchange(
                 emit(&chunk);
                 chunks.push(chunk);
             }
-            Ok::<_, Error>((head, chunks))
+            Ok::<_, Error>((head, chunks, terminal_chunk))
         };
-        let received =
-            tokio::select! { result = read => result, _ = stop => Ok((String::new(), Vec::new())) };
+        let received = tokio::select! { result = read => result, _ = stop => Ok((String::new(), Vec::new(), false)) };
         if mode == "shutdown" {
             let _ = shutdown.send(());
             // Keep the peer connected while the host's grace timer cancels the
@@ -311,10 +320,11 @@ pub async fn exchange(
     // Joint ownership means dropping this exchange drops host and client work;
     // no spawned host JoinHandle can be silently detached by cancellation.
     let (report, received) = tokio::join!(host_future, client_future);
-    let (head, chunks) = received?;
+    let (head, chunks, terminal_chunk) = received?;
     Ok(Exchange {
         head,
         chunks,
+        terminal_chunk,
         report,
         probe,
     })

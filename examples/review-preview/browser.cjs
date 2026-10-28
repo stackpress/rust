@@ -117,9 +117,12 @@ async function run(variant,mode,base) {
   }
 }
 
-(async()=>{
+/** Preserve the full original smoke when used as the executable entry point. */
+async function main(){
   const results=[];
   for(const [variant,mode,base] of [['disabled','hydrate',''],['plugin','hydrate',''],['disabled','csr','/demo']]){results.push(await run(variant,mode,base));fs.writeFileSync(path.join(directory,'review/browser-partial.json'),JSON.stringify(results,null,2)+'\n');}
   fs.writeFileSync(path.join(directory,'review/browser.json'),JSON.stringify(results,null,2)+'\n');
   console.log('PASS review browser smoke '+results.length+' cases');
-})().catch(error=>{console.error(error);process.exitCode=1;});
+}
+module.exports={bridge};
+if(require.main===module)main().catch(error=>{console.error(error);process.exitCode=1;});

@@ -31,7 +31,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     match result {
         Ok(exchange) => println!(
             "{}",
-            serde_json::json!({ "done": true, "head": exchange.head, "hooks": exchange.probe.hooks.load(Ordering::SeqCst), "errors": exchange.probe.errors.load(Ordering::SeqCst), "cleanups": exchange.probe.cleanups.load(Ordering::SeqCst), "released": exchange.probe.released(), "delivery": format!("{:?}", exchange.report.exchanges.last().map(|report| report.delivery)) })
+            serde_json::json!({ "done": true, "head": exchange.head, "terminal": exchange.terminal_chunk, "hooks": exchange.probe.hooks.load(Ordering::SeqCst), "errors": exchange.probe.errors.load(Ordering::SeqCst), "cleanups": exchange.probe.cleanups.load(Ordering::SeqCst), "released": exchange.probe.released(), "delivery": format!("{:?}", exchange.report.exchanges.last().map(|report| report.delivery)) })
         ),
         Err(error) => println!(
             "{}",

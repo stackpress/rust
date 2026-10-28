@@ -8,6 +8,10 @@
 //! additionally require SystemThemeStyles in the initial head before paint.
 
 mod advanced;
+/// Opt-in base layout tokens and control styles, also usable in static document shells.
+/// This is the same stylesheet LayoutProvider supplies; it adds no theme policy.
+pub const BASE_STYLES: &str = include_str!("styles.css");
+
 mod controls;
 mod display_values;
 mod inputs;

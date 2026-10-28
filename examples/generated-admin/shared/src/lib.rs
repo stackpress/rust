@@ -29,13 +29,18 @@ use serde_json::json;
 use stackpress_framework_admin::Draft;
 use stackpress_framework_schema::{Role, SchemaResult};
 
+/// Catalogue-only spacing and tables; selectors never target generated CRUD pages.
+pub const ROLE_CATALOGUE_STYLES: &str = include_str!("roles.css");
+
 /// Render fixture-backed list, view, field, filter and span roles for all three real models.
 #[component]
 pub fn Admin() -> impl IntoView {
-    match contents() {
+    let body = match contents() {
         Ok(contents) => contents,
         Err(_) => view! { <p role="alert">"Unable to render public fixture"</p> }.into_any(),
-    }
+    };
+    // This fixture has fixed light presentation, independent of preference ownership.
+    view! { <div class="sp-root sp-role-catalogue" data-theme="light">{body}</div> }
 }
 
 /// Construct only generated Public DTOs; stored rows/host fields never seed the root.

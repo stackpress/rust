@@ -55,7 +55,7 @@ def main():
     report(ctx, selection)
 
 
-def report(ctx, selection):
+def report(ctx, selection, packages=None, prefixes=None):
     """Use LLVM LCOV DA records, matching the existing ui-format coverage convention."""
     from proofs.runtime import TARGET
     ctx.run('coverage-command', ['cargo', 'llvm-cov', 'report', *selection, '--json',
@@ -74,7 +74,7 @@ def report(ctx, selection):
     for profile in TARGET.glob('*.profdata'):
         shutil.copy2(profile, ctx.logs/profile.name)
     results = {}
-    for package, prefix in zip(PACKAGES, PREFIXES):
+    for package, prefix in zip(packages or PACKAGES, prefixes or PREFIXES):
         excluded = {}
         for source in (review.ROOT/prefix).rglob('*.rs'):
             lines = source.read_text().splitlines()

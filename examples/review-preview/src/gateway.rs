@@ -197,11 +197,9 @@ fn pages(builder: &mut ServerBuilder, options: &Options) -> Result<()> {
                     owner.cleanup();
                     body
                 };
-                res.html(document(
-                    "Generated roles",
+                res.html(generated_admin_web::render::roles_document(
                     &body,
                     &format!("{base}/assets/start.js"),
-                    "",
                 ))?;
                 Ok(Flow::Continue)
             })

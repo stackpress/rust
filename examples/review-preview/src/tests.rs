@@ -116,8 +116,10 @@ fn launch_and_cookie_boundaries() {
     }
     assert_eq!(actor("slice8-review-role=editor"), "editor");
     assert_eq!(actor("slice8-review-role=reader"), "reader");
+    assert_eq!(actor(""), "editor");
+    assert_eq!(actor("unrelated=value"), "editor");
     for cookie in [
-        "",
+        "slice8-review-role=denied",
         "slice8-review-role=bad",
         "slice8-review-role=reader; slice8-review-role=editor",
         "slice8-review-role; slice8-review-role=editor",
@@ -161,8 +163,27 @@ async fn fresh_setup_and_attachment() {
 #[tokio::test]
 async fn composed_host_controls_and_denials() {
     let (_directory, host, options) = fixture("", false).await;
-    let denied = request(&host, "/generated-admin/profile/search", "GET", "", "").await;
+    let initial = request(&host, "/generated-admin/profile/search", "GET", "", "").await;
+    assert_eq!(initial.status(), 200);
+    let denied = request(
+        &host,
+        "/generated-admin/profile/search",
+        "GET",
+        "slice8-review-role=denied",
+        "",
+    )
+    .await;
     assert_eq!(denied.status(), 403);
+    assert!(
+        denied.headers()["content-type"]
+            .to_str()
+            .unwrap()
+            .starts_with("text/html")
+    );
+    let denied_html = String::from_utf8_lossy(denied.body());
+    assert!(denied_html.contains("Ask an administrator for access"));
+    assert!(denied_html.contains("Review fixtures (opens a second tab)"));
+    assert!(!denied_html.contains("admin-seed"));
     for (action, expected) in [
         ("editor", "slice8-review-role=editor"),
         ("reader", "slice8-review-role=reader"),
@@ -261,6 +282,16 @@ async fn composed_host_controls_and_denials() {
         let reply = request(&host, "/generated-admin/profile/search", "GET", cookie, "").await;
         if action == "failed" {
             assert_eq!(reply.status(), 503);
+            assert!(
+                reply.headers()["content-type"]
+                    .to_str()
+                    .unwrap()
+                    .starts_with("text/html")
+            );
+            let html = String::from_utf8_lossy(reply.body());
+            assert!(html.contains("Unable to load this page"));
+            assert!(!html.contains("fixture read refusal"));
+            assert!(!html.contains("admin-seed"));
         } else {
             assert_eq!(reply.status(), 200);
             assert!(start.elapsed() >= std::time::Duration::from_millis(750));
