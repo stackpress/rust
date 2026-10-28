@@ -89,6 +89,12 @@ Design checkpoint delivered on 2026-10-26: start at [Slice 8 design decisions](.
   - a fresh review build.
 
   Implementer coverage is 79.85–100% across the changed scopes.
+- **Owner review preview, installed iOS part** ([receipt](00013-receipt-review-preview.md#part-b)), coordinator review on 2026-10-28:
+  - **Launcher:** a bounded manual-review mode for the profile-ui iOS path (`launch-ios.py --manual-review`), with a disposable owned simulator, restart that keeps the app container for preference persistence, a stop/deadline cleanup watchdog, and a refusal to touch owner devices.
+  - **Catalogue screen:** a debug- and review-feature-only packaged role catalogue (`admin-review.html`, plugin and disabled variants; collapsed debug state; no IPC or mutation, and not installed admin CRUD). It is absent from normal and release builds, which refuse the review feature.
+  - **Coordinator rerun:** fmt; workspace Clippy; the full workspace including `tcp_watchdog` (740 passed); doctests; the native proof unit tests; profile-ui `check.py`; the installed assets, tests, browser, isolation and quality proofs; and the review-preview tests. All were recorded through the build-benchmark workflow.
+  - **Coverage (implementer):** 87.87% native.
+  - **Still to come:** the mobile build and simulator launch run by the coordinator, and owner checks 011 and the installed half of 013.
 - **License note:** `ammonia` brings `cssparser` 0.38.0 under MPL-2.0, the first file-level copyleft dependency; only in the opt-in `rich` feature. Reported to the owner.
 
 ## Acceptance notes
