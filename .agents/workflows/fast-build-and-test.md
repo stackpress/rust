@@ -32,8 +32,10 @@ Use one of two environment sets. Both share the compiler cache.
 
 ```sh
 # Edit loop: fastest rebuilds while working on a task.
+# Leave CARGO_INCREMENTAL unset: the dev/test profiles are incremental by default.
 export RUSTC_WRAPPER=sccache SCCACHE_CACHE_SIZE=20G
-export CARGO_INCREMENTAL=1 CARGO_PROFILE_DEV_DEBUG=0
+unset CARGO_INCREMENTAL
+export CARGO_PROFILE_DEV_DEBUG=0
 
 # Gate: milestone, refactoring-round close, coordinator verification, coverage.
 export RUSTC_WRAPPER=sccache SCCACHE_CACHE_SIZE=20G
@@ -41,7 +43,10 @@ export CARGO_INCREMENTAL=0 CARGO_PROFILE_DEV_DEBUG=0
 ```
 
 - `sccache` caches non-incremental crates only. In the edit loop it serves
-  dependencies; workspace crates use incremental compilation instead.
+  dependencies; workspace crates use Cargo's default incremental compilation.
+- Never set `CARGO_INCREMENTAL=1` with `sccache`: sccache 0.19 refuses it before
+  compiling ("incremental compilation is prohibited"). Unsetting it gives the same
+  incremental workspace builds, as verified on 2026-10-29.
 - Leave `SCCACHE_DIR` at its default so every worktree shares one cache. The cache is
   keyed by source, flags and toolchain, so sharing it never reuses stale target output.
 - Coverage builds (`cargo llvm-cov`) use their own instrumented flags and get few cache
@@ -59,6 +64,12 @@ export CARGO_INCREMENTAL=0 CARGO_PROFILE_DEV_DEBUG=0
   first build costs about half of a truly cold one.
 - Keep separate subdirectories when one target would mix incompatible outputs, such as
   Profile's native and WASM targets. Never point two concurrent builds at one directory.
+- Give each disposable consumer workspace (a throwaway project a test or proof
+  creates) its own subdirectory of the task target, such as `target/<task>/consumer-x`.
+  Sharing the main warm target lets it overwrite same-named binaries; a later
+  `cargo run` can then execute that stale binary instead of the one you meant.
+- When the shared target nears its cap, first delete only its `debug/incremental`
+  directory; that frees space while keeping the cached dependency builds.
 - Watch disk. Keep each target under the size cap in the brief (default 8 GiB) and
   report the peak. Clear a target mid-effort only when it approaches the cap.
 
