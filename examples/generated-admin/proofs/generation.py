@@ -5,6 +5,7 @@ from pathlib import Path
 import subprocess
 import shutil
 import tempfile
+import tomllib
 from .runtime import ROOT, TARGET
 
 
@@ -18,6 +19,10 @@ def compile_proof(ctx):
     """Prove the obsolete consumer actually fails after real marked-root replacement."""
     LOGS = ctx.logs
     run = ctx.run
+    # This consumer runs native binaries; metadata must not acquire unrelated embedded targets.
+    host_target = next(line.removeprefix('host: ') for line in
+                       subprocess.check_output(['rustc', '-vV'], text=True, timeout=30).splitlines()
+                       if line.startswith('host: '))
     run('compile-tool-clean', ['cargo','clean','-p','generated-admin-tool'])
     run('compile-tool-build', ['cargo','build','-p','generated-admin-tool','--features','format','--locked'])
     # Workspace tests may rebuild their own default tool. Freeze this proof's feature selection.
@@ -49,6 +54,9 @@ stackpress-server = {{ path = "{ROOT}/crates/server/server" }}
 stackpress-sql = {{ path = "{ROOT}/crates/sql/sql" }}
 '''
         (consumer / 'Cargo.toml').write_text(manifest)
+        # Seed the approved external versions before resolving this independent local package.
+        # Metadata may prune workspace members; all compilation below remains locked.
+        shutil.copy2(ROOT/'Cargo.lock', consumer/'Cargo.lock')
         (consumer / 'src/lib.rs').write_text('''#[path="generated/contracts/mod.rs"] pub mod contracts;
 #[path="generated/ui/mod.rs"] pub mod ui;
 #[path="generated/metadata/mod.rs"] pub mod metadata;
@@ -73,6 +81,9 @@ pub mod host {
         def library(source):
             (consumer/'src/lib.rs').write_text(source if 'pub mod generated {' in source else source + native)
         library((consumer/'src/lib.rs').read_text())
+        run('compile-consumer-metadata', ['cargo', 'metadata', '--offline', '--format-version', '1',
+                                         '--filter-platform', host_target,
+                                         '--manifest-path', str(consumer/'Cargo.toml')])
         tool = str(immutable_tool)
         generate = [tool, '--input', str(idea), '--output', str(output)]
         run('compile-bootstrap-generation', generate)
@@ -80,7 +91,7 @@ pub mod host {
         run('compile-stable-check', generate + ['--check'])
         run('compile-stable-regeneration', generate)
         assert initial == hashes(output)
-        check = ['cargo', 'check', '--offline', '--manifest-path', str(consumer / 'Cargo.toml')]
+        check = ['cargo', 'check', '--offline', '--locked', '--manifest-path', str(consumer / 'Cargo.toml')]
         run('compile-initial-consumer', check)
         # A stale metadata partition must fail against the selected revision-3 library.
         metadata = output/'metadata/schema.rs'
@@ -131,6 +142,12 @@ pub mod host {
         config['model']['Profile']['columns'][1]['attributes']['field.number'] = [{'label': '</script> "quote" \\ \n 🦀 {Role, SchemaError'}]
         source.write_text(json.dumps(config))
         (consumer/'Cargo.toml').write_text(manifest.replace('framework-admin" }','framework-admin", features = ["format"] }'))
+        # Changing the independent manifest activates formatter dependencies. Seed the same
+        # approved tuples again before resolving that local feature selection for locked checks.
+        shutil.copy2(ROOT/'Cargo.lock', consumer/'Cargo.lock')
+        run('compile-format-consumer-metadata', ['cargo', 'metadata', '--offline', '--format-version', '1',
+                                                '--filter-platform', host_target,
+                                                '--manifest-path', str(consumer/'Cargo.toml')])
         run('compile-hostile-format-generation', [tool, '--input', str(source), '--output', str(output)])
         run('compile-hostile-format-consumer', check)
         # Omitted field roles and complete removal remain real, warning-clean consumers.
@@ -143,7 +160,7 @@ pub mod host {
         run('compile-empty-generation',generate)
         library('\n'.join(['#[path="generated/contracts/mod.rs"] pub mod contracts;', '#[path="generated/ui/mod.rs"] pub mod ui;', 'pub fn consumer(){let _=ui::pages::MODELS;let _=ui::pages::spec("profile");}']))
         run('compile-empty-consumer',check)
-        run('compile-empty-clippy',['cargo','clippy','--offline','--manifest-path',str(consumer/'Cargo.toml'),'--','-D','warnings'])
+        run('compile-empty-clippy',['cargo','clippy','--offline','--locked','--manifest-path',str(consumer/'Cargo.toml'),'--','-D','warnings'])
         # Compile the full opt-in revision-3 fixture, including every new formatted family.
         formatted = [tool, '--input', str(ROOT/'examples/generated-admin/schema-format.idea'), '--output', str(output)]
         run('compile-format-generation', formatted)
@@ -154,4 +171,10 @@ pub mod host {
         (consumer/'Cargo.toml').write_text(manifest.replace('framework-admin" }','framework-admin", features = ["format"] }'))
         library('\n'.join(['#[path="generated/contracts/mod.rs"] pub mod contracts;', '#[path="generated/ui/mod.rs"] pub mod ui;', 'pub fn consumer(){let _=ui::task::descriptors();let _=ui::pages::task::spec();}']))
         run('compile-format-consumer', check)
+        # The independent consumer may contain fewer external packages, never different tuples.
+        def external(lock):
+            """Compare exact package versions, sources and checksums without local member paths."""
+            return {(p['name'],p['version'],p.get('source'),p.get('checksum'))
+                    for p in tomllib.loads(lock.read_text())['package'] if 'source' in p}
+        assert external(consumer/'Cargo.lock') <= external(ROOT/'Cargo.lock')
         (LOGS / 'compile-proof.json').write_text(json.dumps({'initialHashes': initial, 'staleExit': 101, 'mixedRevisionExit': 101, 'renamedConsumer': True, 'hostileJsonConsumer': True, 'hostileFormatConsumer': True, 'omittedRolesConsumer': True, 'removedAllConsumer': True, 'formattedConsumer': True, 'formatHashes': format_hashes}, indent=2))

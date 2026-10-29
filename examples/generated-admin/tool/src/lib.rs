@@ -15,7 +15,7 @@ use stackpress_idea::{
     parser::SchemaConfig,
     transformer::{
         CheckReport, Composer, GeneratedFile, OutputPlan, OutputWorkspace, ProjectLoader, Registry,
-        Result, TransformContext, TransformInputs, TransformSelection, TransformSpec,
+        Result, TransformContext, TransformInputs, TransformSelection,
     },
 };
 
@@ -130,6 +130,9 @@ pub fn number_plugin() -> Component {
     component
 }
 
+/// Explicit native page selection; other generated roles remain directly usable.
+const PAGE_MODELS: &[&str] = &["Profile", "Project", "Task"];
+
 /// Normalize identically in every registered transform, using only declared snapshots.
 fn normalized(
     context: &TransformContext<'_>,
@@ -174,12 +177,7 @@ fn ui_transform(context: &TransformContext<'_>, output: &mut OutputPlan) -> Resu
         &diagnostics,
         output,
     )?;
-    emit_pages(
-        &schema,
-        &definitions,
-        &["Profile", "Project", "Task"],
-        output,
-    )
+    emit_pages(&schema, &definitions, PAGE_MODELS, output)
 }
 
 /// One registry writer supplies aggregate module declarations for all selected partitions.
@@ -229,22 +227,15 @@ pub fn generate(input: &Path, output: &Path, check: bool, plugin: bool) -> Resul
     // compiled functions in dependency order; the registry diagnoses absent/out-of-order ones.
     for plugin in config.plugin.keys() {
         match plugin.as_str() {
-            "framework-schema" => registry.add(
-                TransformSpec::new(plugin).owns(&["contracts", "metadata"]),
-                schema_transform,
-            )?,
-            "framework-sql" => registry.add(
-                TransformSpec::new(plugin)
-                    .owns(&["stores"])
-                    .requires(&["framework-schema"]),
-                sql_transform,
-            )?,
-            "framework-admin" => registry.add(
-                TransformSpec::new(plugin)
-                    .owns(&["ui"])
-                    .requires(&["framework-schema"]),
-                ui_transform,
-            )?,
+            "framework-schema" => {
+                stackpress_framework_schema::codegen::register(&mut registry, schema_transform)?
+            }
+            "framework-sql" => {
+                stackpress_framework_sql::codegen::register(&mut registry, sql_transform)?
+            }
+            "framework-admin" => {
+                stackpress_framework_admin::codegen::register_pages(&mut registry, ui_transform)?
+            }
             _ => {
                 return Err(stackpress_idea::transformer::TransformError::new(
                     "generator plugin is not compiled into this tool",
@@ -253,6 +244,15 @@ pub fn generate(input: &Path, output: &Path, check: bool, plugin: bool) -> Resul
         }
     }
     let plan = registry.plan_with(&config, &selection, aggregate(&config)?)?;
+    // The application owns page selection and requires actual SQL operation output before
+    // either check/install can inspect or publish the root. Merely selecting SQL is insufficient.
+    require_page_operations(
+        &plan,
+        config.plugin.contains_key("framework-admin")
+            && PAGE_MODELS
+                .iter()
+                .any(|name| config.model.contains_key(*name)),
+    )?;
     let workspace = OutputWorkspace::new(output)?;
     if check {
         workspace.check(&plan)
@@ -265,3 +265,20 @@ pub fn generate(input: &Path, output: &Path, check: bool, plugin: bool) -> Resul
 fn codec(cause: serde_json::Error) -> stackpress_idea::transformer::TransformError {
     stackpress_idea::transformer::TransformError::from(std::io::Error::other(cause))
 }
+
+/// Validate the native page dependency on the finished plan before publication.
+fn require_page_operations(plan: &OutputPlan, pages: bool) -> Result<()> {
+    if pages
+        && !plan
+            .files()
+            .any(|(path, owner, _)| path == "stores/operations.rs" && owner == "framework-sql")
+    {
+        return Err(stackpress_idea::transformer::TransformError::new(
+            "admin pages require generated SQL operations",
+        ));
+    }
+    Ok(())
+}
+
+#[cfg(test)]
+mod registration_tests;

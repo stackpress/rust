@@ -107,10 +107,10 @@ fn model_remove_rename_and_failed_regeneration_preserve_writer_contract() {
     let input = input_dir.path().join("schema.idea");
     let output = temporary.path().join("generated");
     let run = || cli(&["--input", input.to_str().unwrap()], &output);
-    std::fs::write(&input, "plugin \"framework-schema\" {} plugin \"framework-admin\" {} model Profile { id String @id name String @field.input }").unwrap();
+    std::fs::write(&input, "plugin \"framework-schema\" {} plugin \"framework-sql\" {} plugin \"framework-admin\" {} model Profile { id String @id name String @field.input }").unwrap();
     assert!(run());
     assert!(output.join("ui/profile.rs").exists());
-    std::fs::write(&input, "plugin \"framework-schema\" {} plugin \"framework-admin\" {} model Project { id String @id title String @field.input }").unwrap();
+    std::fs::write(&input, "plugin \"framework-schema\" {} plugin \"framework-sql\" {} plugin \"framework-admin\" {} model Project { id String @id title String @field.input }").unwrap();
     assert!(run());
     assert!(!output.join("ui/profile.rs").exists());
     assert!(output.join("ui/project.rs").exists());
@@ -118,7 +118,7 @@ fn model_remove_rename_and_failed_regeneration_preserve_writer_contract() {
     for invalid in [
         "plugin \"framework-admin\" {} model Project { id String @id }",
         "plugin \"unknown\" {} model Project { id String @id }",
-        "plugin \"framework-schema\" {} plugin \"framework-admin\" {} model Project { id String @id title String @field.code }",
+        "plugin \"framework-schema\" {} plugin \"framework-sql\" {} plugin \"framework-admin\" {} model Project { id String @id title String @field.code }",
     ] {
         std::fs::write(&input, invalid).unwrap();
         assert!(!run());

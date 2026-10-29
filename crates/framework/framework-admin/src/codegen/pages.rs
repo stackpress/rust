@@ -20,9 +20,9 @@ pub fn emit_pages(
     output: &mut OutputPlan,
 ) -> Result<()> {
     let mut unique = std::collections::BTreeSet::new();
-    if selected.iter().any(|name| !unique.insert(*name)) {
+    if selected.len() > 128 || selected.iter().any(|name| !unique.insert(*name)) {
         return Err(stackpress_idea_transformer::TransformError::new(
-            "duplicate admin model selection",
+            "invalid or duplicate admin model selection",
         ));
     }
     let ui = schema.project_ui().map_err(transform_error)?;
@@ -128,6 +128,22 @@ pub fn emit_pages(
     host.push_str("Ok(())}\n");
     routes.push_str("Ok(())}\n");
     host.push_str(&routes);
+    if !models.is_empty() {
+        // The same compiler-owned inventory backs direct and plugin registration. Emit no
+        // registrar for an empty/removed selection: there is no runtime contribution to own.
+        host.push_str(include_str!("pages_host.rs.in"));
+        host.push_str(
+            &routes
+                .replace(
+                    "/// Register fixed routes beneath a previously validated application mount.",
+                    "/// Mount the selected mappings during the existing Route phase.",
+                )
+                .replace(
+                    "pub fn routes(builder:&mut stackpress_server::ServerBuilder",
+                    "fn mount_routes(builder:&mut StartupContext",
+                ),
+        );
+    }
     // Native conflict checks use the actual generated store, including inactive identities.
     host.push_str(if models.is_empty(){"/// No import model is selected.\npub async fn import_exists(_:&str,_:&mut stackpress_framework_sql::DataSession<'_>,_:serde_json::Value)->stackpress_framework_sql::DataResult<bool>{Err(stackpress_framework_sql::DataError::new(\"admin import unavailable\"))}\n"}else{"/// Authorized import preview only: existence, never a private row projection.\npub async fn import_exists(module:&str,db:&mut stackpress_framework_sql::DataSession<'_>,value:serde_json::Value)->stackpress_framework_sql::DataResult<bool>{match module{\n"});
     for (module, _) in &models {

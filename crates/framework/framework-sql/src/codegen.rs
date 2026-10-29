@@ -10,6 +10,24 @@ mod queries;
 mod selection;
 mod writes;
 
+/// Register a build-tool store transform after the explicit schema transform.
+///
+/// The caller still supplies normalization, diagnostics and operation/model selection.
+/// No Engine, runtime registration or output installation is performed by this helper.
+/// # Errors
+/// Preserves registry selection/ownership errors; planning verifies dependency order.
+pub fn register(
+    registry: &mut stackpress_idea_transformer::Registry,
+    transform: stackpress_idea_transformer::ContextTransform,
+) -> stackpress_idea_transformer::Result<()> {
+    registry.add(
+        stackpress_idea_transformer::TransformSpec::new("framework-sql")
+            .owns(&["stores"])
+            .requires(&["framework-schema"]),
+        transform,
+    )
+}
+
 /// Emit strict native stores, finite eager views and explicitly selected named handlers.
 pub fn emit_stores(
     schema: &Schema,

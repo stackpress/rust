@@ -13,6 +13,23 @@ use crate::{
     ValueType,
 };
 
+/// Register an application-supplied schema transform owning contracts and metadata.
+///
+/// Build tools supply normalization, frozen definitions and diagnostics explicitly. This
+/// helper selects no runtime plugin and runs no transform until the existing registry plans.
+/// # Errors
+/// Preserves registry errors, including duplicate plugin IDs or partition claims.
+pub fn register(
+    registry: &mut stackpress_idea_transformer::Registry,
+    transform: stackpress_idea_transformer::ContextTransform,
+) -> stackpress_idea_transformer::Result<()> {
+    registry.add(
+        stackpress_idea_transformer::TransformSpec::new("framework-schema")
+            .owns(&["contracts", "metadata"]),
+        transform,
+    )
+}
+
 mod budgets;
 use budgets::preflight;
 mod registry;
