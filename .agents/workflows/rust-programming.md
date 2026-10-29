@@ -76,7 +76,7 @@ Do not require the user to freeze an unrelated spec before a small authorized ch
 
 ## 8. Final verification and coverage
 
-- Run the meaningful affected test/contract suite after the final behavioral change. Broaden to affected consumers/targets for shared changes.
+- Run the meaningful affected test/contract suite after the final behavioral change. Broaden to affected consumers/targets for shared changes. Use the edit-loop and gate tiers in the [fast build and test workflow](fast-build-and-test.md).
 - Check formatting, lints, Rustdoc/doctests, relevant generation/exports, and compatible selected features.
 - Development coverage floor: 70% executable lines in each changed crate's declared scope. Publication-preparation floor: 90% for each published crate and applicable release scope.
 - Report tool, feature/target scope, actual result, exclusions, and remaining critical gaps. Do not manipulate exclusions or add shallow tests to reach a number.

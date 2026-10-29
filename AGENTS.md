@@ -18,6 +18,8 @@ For most crates the owner prefers [.agents/workflows/coordinated-crate-developme
 
 The user's standing instruction authorizes those routine behavior-preserving rounds inside the requested task. Do not stop between rounds for the coding skill's default audit-only approval question. Request a decision only for genuinely new scope, changed public behavior, or an unresolved product choice.
 
+For builds and tests, follow [.agents/workflows/fast-build-and-test.md](.agents/workflows/fast-build-and-test.md): warm per-effort targets, `sccache`, `cargo nextest`, and narrow edit-loop tests with full checks at milestone gates.
+
 Follow [.agents/context/rust-code-style.md](.agents/context/rust-code-style.md): conventional Rust formatting/names, Rustdoc, explanatory comments for every logical block, and line-level explanation for branching/stateful/non-obvious work. Use the installed chrisai-coding principles with the explicit Rust adaptation; do not apply JS-specific syntax rules to Rust.
 
 For UI icons (choosing, creating, packaging or auditing), follow the installed [chrisai-iconography](.agents/skills/chrisai-iconography/SKILL.md) skill. The owner's icon family is Lucide.

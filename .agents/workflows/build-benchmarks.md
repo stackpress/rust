@@ -3,6 +3,8 @@
 Use this workflow for every development Cargo build, test, check, Clippy, Rustdoc,
 coverage command, and clean operation, including coordinator re-verification.
 Recording begins with adoption of this workflow; it does not reconstruct history.
+For how to keep builds and tests fast (warm targets, `sccache`, `cargo nextest`, and
+edit-loop versus gate test tiers), follow the [fast build and test workflow](fast-build-and-test.md).
 
 ## Record commands
 
