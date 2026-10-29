@@ -140,3 +140,16 @@ Observed target peak, sampled every 2 s: **4,916,064 KiB (4.688 GiB)**, below **
 ## Acceptance notes
 
 Acceptance criteria: none. This receipt is implementer evidence, not owner acceptance or coordinator verification. No public-behavior decision is outstanding. The next step is coordinator source review and independent checks, including the explicitly skipped TCP watchdog. No historical status/acceptance record was changed.
+
+## Coordinator verification
+
+Independently reran on the committed tree at gate tier (`sccache`, non-incremental), recorded as `n19-verify gate *`. All passed:
+- Cargo.lock and Cargo.toml are unchanged.
+- fmt; workspace clippy `-D warnings`.
+- `cargo nextest run --workspace --all-targets --locked --no-fail-fast` twice with **no exclusions**: 740 passed each, including `tcp_watchdog`. The second run took 46.9 s.
+- `tcp_watchdog` was also run separately with cargo test.
+- Workspace doctests: 942.
+- `cargo test` on the four SQL packages: 135 passed, 41 ignored, with the unset-URL behaviour preserved.
+- The seven-harness protocol proof.
+
+The coordinator removed the stale `crates/target/` folder (gitignored) after merge. Merged into trial/3 on 2026-10-29.
