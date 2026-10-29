@@ -34,6 +34,8 @@ pub mod ddl_policy;
 pub mod migrations;
 #[cfg(feature = "server")]
 pub mod operations;
+#[cfg(all(feature = "server", not(target_arch = "wasm32")))]
+pub mod plugin;
 pub mod projection;
 pub mod stores;
 

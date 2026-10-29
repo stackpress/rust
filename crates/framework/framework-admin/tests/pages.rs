@@ -124,3 +124,44 @@ fn deterministic_pages_keep_native_registration_separate() {
     assert!(!host.contains("profile/search"));
     assert!(!host.contains("Operation::Restore"));
 }
+
+/// Empty or wholly removed model selections retain direct adapters but emit no empty registrar.
+#[test]
+fn empty_or_removed_selection_has_no_runtime_plugin() {
+    /// Generate against the current schema, retaining only a source-owned model selection.
+    fn transform(
+        context: &TransformContext<'_>,
+        output: &mut OutputPlan,
+    ) -> stackpress_idea_transformer::Result<()> {
+        let (schema, definitions, _) = fixture(context.input("source")?, true);
+        emit_pages(&schema, &definitions, &["Profile"], output)
+    }
+    for source in ["", "model Other { id String @id }"] {
+        let mut inputs = TransformInputs::new();
+        inputs.insert("source", source).unwrap();
+        let mut registry = Registry::new();
+        registry
+            .add(TransformSpec::new("ui").owns(&["ui"]), transform)
+            .unwrap();
+        let plan = registry
+            .plan_with(
+                &Default::default(),
+                &TransformSelection::new().with_inputs(inputs),
+                vec![],
+            )
+            .unwrap();
+        let host = plan
+            .files()
+            .find(|(path, _, _)| *path == "ui/pages_host.rs")
+            .unwrap()
+            .2;
+        assert!(!host.contains("pub fn register("));
+        assert!(!host.contains("struct Mount"));
+        assert!(!host.contains("builder.get("));
+        assert!(!host.contains("::register(start,marker"));
+    }
+    let (schema, definitions, _) = fixture("model Profile { id String @id }", true);
+    let mut plan = OutputPlan::default();
+    assert!(emit_pages(&schema, &definitions, &["Profile"; 129], &mut plan).is_err());
+    assert_eq!(plan.files().count(), 0);
+}

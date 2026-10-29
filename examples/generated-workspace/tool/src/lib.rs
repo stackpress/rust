@@ -16,7 +16,7 @@ use stackpress_idea::{
     parser::SchemaConfig,
     transformer::{
         CheckReport, GeneratedFile, OutputPlan, OutputWorkspace, ProjectLoader, Registry, Result,
-        TransformContext, TransformSpec,
+        TransformContext,
     },
 };
 use stackpress_lib::{Error, Flow, Invocation, Request, Response};
@@ -174,16 +174,12 @@ pub fn generate(input: &Path, output: &Path, check: bool) -> Result<CheckReport>
     let mut registry = Registry::new();
     for plugin in config.plugin.keys() {
         match plugin.as_str() {
-            "framework-schema" => registry.add(
-                TransformSpec::new("framework-schema").owns(&["contracts", "metadata"]),
-                schema_transform,
-            )?,
-            "framework-sql" => registry.add(
-                TransformSpec::new("framework-sql")
-                    .owns(&["stores"])
-                    .requires(&["framework-schema"]),
-                sql_transform,
-            )?,
+            "framework-schema" => {
+                stackpress_framework_schema::codegen::register(&mut registry, schema_transform)?
+            }
+            "framework-sql" => {
+                stackpress_framework_sql::codegen::register(&mut registry, sql_transform)?
+            }
             _ => {
                 return Err(stackpress_idea::transformer::TransformError::new(
                     "generator plugin is not compiled into this tool",

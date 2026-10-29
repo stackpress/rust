@@ -5,9 +5,9 @@ use stackpress_framework_admin::{
     pages::{Action, PageSpec, ParentScope, Snapshot},
     search::{SearchQuery, decode, encode},
 };
-use stackpress_framework_sql::operations::{Operation, OperationPolicy, Policy, Registration};
+use stackpress_framework_sql::operations::{Operation, OperationPolicy, Policy};
 use stackpress_lib::{Body, Error, Flow, Invocation, Nest, Request, Response, Result, queue::task};
-use stackpress_server::{Server, ServerBuilder, ServerInvocationExt, StartupContext};
+use stackpress_server::{PluginSpec, Server, ServerBuilder, ServerInvocationExt, StartupContext};
 mod document_errors;
 mod origin;
 pub mod transfer;
@@ -78,12 +78,13 @@ pub fn configure(
     origin: String,
 ) -> Result<()> {
     origin::validate(&origin)?;
-    stackpress_framework_admin::pages::mount(&config.mount).map_err(invalid_cause)?;
+    let page_mount = Arc::new(crate::generated::pages_host::Mount::new(&config.mount)?);
     if config.csrf.is_empty() || config.csrf.len() > 128 {
         return Err(Error::invalid("invalid admin CSRF configuration"));
     }
     config.transfer_limits.validate().map_err(invalid_cause)?;
-    let mount = config.mount.clone();
+    // Derive both configurations from the same checked input; pages and assets cannot diverge.
+    let mount = page_mount.as_str().to_owned();
     let config = Arc::new(config);
     let policy = Arc::new(Policy(policy));
     builder.on_config(task(move |start: &mut StartupContext| {
@@ -91,21 +92,22 @@ pub fn configure(
         let config = config.clone();
         let policy = policy.clone();
         let origin = origin.clone();
+        let page_mount = page_mount.clone();
         Box::pin(async move {
             start.register(engine)?;
             start.register(config)?;
             start.register(policy)?;
             start.register(Arc::new(MutationOrigin(origin)))?;
+            start.register(page_mount)?;
             Ok(Flow::Continue)
         })
     }))?;
-    builder.on_listen(task(|start: &mut StartupContext| {
-        Box::pin(async move {
-            crate::generated::pages_host::operations(start, &mut Registration::default())?;
-            Ok(Flow::Continue)
-        })
-    }))?;
-    crate::generated::pages_host::routes(builder, &mount)?;
+    // These ordinary compiled functions retain the existing handlers and dispatcher.
+    builder.plugin("framework-sql", stackpress_framework_sql::plugin::register)?;
+    builder.plugin_with(
+        PluginSpec::new("admin-pages").requires(&["framework-sql"]),
+        crate::generated::pages_host::register,
+    )?;
     document_errors::register(builder, mount)?;
     Ok(())
 }
