@@ -1,6 +1,9 @@
 //! Opt-in native M0 proofs: parent owns CREATE/DROP, child owns all hang-class scenarios.
 //! Unset gate variables are reported as ignored; child timeout is always failure.
 
+#[path = "../../test-support/harness.rs"]
+mod harness;
+
 use sqlx::postgres::{PgConnectOptions, PgConnection, PgSslMode};
 use sqlx::{ConnectOptions, Connection, Executor, SqlSafeStr};
 use stackpress_sql::{
@@ -454,6 +457,13 @@ fn main() {
             eprintln!("M0 scenario failed (native diagnostics redacted)");
             std::process::exit(1);
         }
+        return;
+    }
+    let harness = harness::Harness::from_env();
+    let ignored = std::env::var_os(GATE).is_none();
+    if harness.discover([("m0::native_lifecycle", ignored)])
+        || !harness.selects("m0::native_lifecycle", ignored)
+    {
         return;
     }
     if std::env::var_os(GATE).is_none() {

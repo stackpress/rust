@@ -1,8 +1,9 @@
-//! Safety follow-ups: real future suspension cuts, queued cancellation and runtime teardown.
+//! Safety follow-ups: native barriers, real suspension cuts, queued cancellation and teardown.
 
 use std::error::Error;
 use std::future::{Future, poll_fn};
 use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::task::Poll;
 use std::time::Duration;
 
@@ -10,14 +11,51 @@ use sqlx::Executor;
 use stackpress_sql::{
     Create, DialectId, Engine, ErrorKind, Field, Index, QueryResult, SqlType, Transaction,
 };
-use tokio::sync::Semaphore;
+use tokio::sync::{Semaphore, oneshot};
 
 use super::{SqliteDatabase, SqliteOptions, TempDir, count, options, sql, watchdog};
 
-/// Drop a real Send future at its nth Pending response, or retain its complete result.
-/// This sweeps observed suspension points; the native hook tests identify exact worker phases.
-async fn cut<F: Future + Send>(future: F, cutoff: usize) -> Option<F::Output> {
+/// A deterministic native cut, an opportunistic real suspension, or full acknowledgement.
+enum Cut {
+    /// Pause only after setup; cancellation must occur while the worker is held.
+    Native {
+        /// Caller arms immediately before polling the public operation.
+        armed: Arc<AtomicBool>,
+        /// Worker reports entry before waiting for release.
+        entered: oneshot::Receiver<()>,
+        /// Release follows future destruction, never precedes it.
+        release: std::sync::mpsc::Sender<()>,
+    },
+    /// Retain the original bounded sweep over actual Pending responses.
+    Pending(usize),
+    /// Await the real result without a cancellation cutoff.
+    Complete,
+}
+
+/// Drop the real future at an observed native barrier/suspension, or await its result.
+async fn cut<F: Future + Send>(future: F, mode: Cut) -> Option<F::Output> {
     let mut work = Box::pin(future);
+    let cutoff = match mode {
+        Cut::Native {
+            armed,
+            mut entered,
+            release,
+        } => {
+            // Setup is complete and the next native callback belongs to this operation.
+            armed.store(true, Ordering::SeqCst);
+            tokio::select! {
+                ready = &mut entered => ready.unwrap(),
+                _ = work.as_mut() => panic!("operation completed before its native cancellation gate"),
+            }
+            // The acknowledgement is impossible while the worker is paused. Destroy
+            // public ownership first, then allow native completion/retirement to proceed.
+            drop(work);
+            release.send(()).unwrap();
+            return None;
+        }
+        Cut::Complete => return Some(work.await),
+        Cut::Pending(cutoff) => cutoff,
+    };
     let mut pending = 0;
     let result = poll_fn(|cx| match work.as_mut().poll(cx) {
         Poll::Ready(result) => Poll::Ready(Some(result)),
@@ -57,10 +95,30 @@ async fn fixture(root: &TempDir, permits: usize) -> (Engine, Arc<Semaphore>) {
     (engine, admission)
 }
 
-/// Cut begin/run/completion/plan futures at successive real suspensions without injecting IO.
+/// Retain every suspension cut and require a gated cancellation plus full acknowledgement.
 async fn suspensions(phase: &str) {
     let root = TempDir::new().unwrap();
-    let (engine, admission) = fixture(&root, 1).await;
+    let mut opts = options(&root, 1);
+    opts.max_in_flight = 1;
+    let db = SqliteDatabase::open(opts).await.unwrap();
+    let admission = Arc::clone(&db.admission);
+    // Install while the single connection is available; arming after setup avoids
+    // accidentally pausing BEGIN or the prior writes of run/commit/rollback cases.
+    let hook = match phase {
+        "run" => super::transitions::Hook::Update,
+        "commit" | "plan" => super::transitions::Hook::Commit,
+        "rollback" => super::transitions::Hook::Rollback,
+        _ => super::transitions::Hook::Progress,
+    };
+    let armed = Arc::new(AtomicBool::new(false));
+    let (entered, release) = super::transitions::gate_when(&db, hook, Arc::clone(&armed)).await;
+    let engine = Engine::new(db);
+    engine
+        .execute(&sql(
+            "CREATE TABLE profile(id INTEGER PRIMARY KEY, name TEXT)",
+        ))
+        .await
+        .unwrap();
     let plan = Create::new("batch")
         .add_field(Field::new("id", SqlType::Integer))
         .add_index(Index::new("batch_index", ["id"]))
@@ -68,10 +126,18 @@ async fn suspensions(phase: &str) {
         .unwrap();
     let mut completed = 0;
     let mut cancelled = 0;
-    // Keep the sweep finite even if a driver regression produces excessive wakeups.
-    for cutoff in 1..=64 {
+    // Keep every original cut. A native barrier guarantees cancellation and an
+    // uninterrupted final operation guarantees completion regardless of worker speed.
+    let modes = std::iter::once(Cut::Native {
+        armed,
+        entered,
+        release,
+    })
+    .chain((1..=64).map(Cut::Pending))
+    .chain(std::iter::once(Cut::Complete));
+    for mode in modes {
         let finished = match phase {
-            "begin" => match cut(engine.begin(), cutoff).await {
+            "begin" => match cut(engine.begin(), mode).await {
                 Some(result) => {
                     result.unwrap().rollback().await.unwrap();
                     true
@@ -84,7 +150,7 @@ async fn suspensions(phase: &str) {
                     .await
                     .unwrap();
                 let query = sql("INSERT INTO profile(name) VALUES ('cancelled run') RETURNING id");
-                match cut(tx.execute(&query), cutoff).await {
+                match cut(tx.execute(&query), mode).await {
                     Some(result) => {
                         assert_eq!(result.unwrap().affected, 1);
                         tx.rollback().await.unwrap();
@@ -107,9 +173,9 @@ async fn suspensions(phase: &str) {
                     .await
                     .unwrap();
                 let result = if phase == "commit" {
-                    cut(tx.commit(), cutoff).await
+                    cut(tx.commit(), mode).await
                 } else {
-                    cut(tx.rollback(), cutoff).await
+                    cut(tx.rollback(), mode).await
                 };
                 if let Some(result) = &result {
                     assert!(result.is_ok(), "{result:?}");
@@ -117,7 +183,7 @@ async fn suspensions(phase: &str) {
                 result.is_some()
             }
             "plan" => {
-                let result = cut(engine.execute_plan(&plan), cutoff).await;
+                let result = cut(engine.execute_plan(&plan), mode).await;
                 if let Some(result) = &result {
                     assert_eq!(result.as_ref().unwrap().len(), 2);
                 }
@@ -125,7 +191,7 @@ async fn suspensions(phase: &str) {
             }
             "transaction_plan" => {
                 let mut tx = engine.begin().await.unwrap();
-                let result = cut(tx.execute_plan(&plan), cutoff).await;
+                let result = cut(tx.execute_plan(&plan), mode).await;
                 if let Some(result) = &result {
                     assert_eq!(result.as_ref().unwrap().len(), 2);
                     tx.rollback().await.unwrap();

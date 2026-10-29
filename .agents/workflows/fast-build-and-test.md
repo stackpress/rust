@@ -91,21 +91,16 @@ Run the full set, unchanged in scope from before:
 
 A gate never narrows scope to save time. Only the edit loop does.
 
-## 5. Known nextest gaps
+## 5. Nextest compatibility
 
-Until these are fixed, run the affected tests with `cargo test` in the gate:
+The SQL custom harnesses support nextest discovery, exact case selection, and
+runtime environment-gated ignored cases. The SQLite safety sweep includes explicit
+native cancellation barriers and uninterrupted completions, so it does not require
+a timing-flake exception. No package exclusions or cargo-test fallback lanes are
+needed for these tests. Live PostgreSQL/MySQL cases still require their opt-in
+`STACKPRESS_TEST_..._URL` variables; unset cases remain ignored.
 
-- **Custom test harnesses** (`harness = false`) in `stackpress-sql` (`tests/network.rs`),
-  `stackpress-sql-postgres` (`m0`, `m1`, `m2`) and `stackpress-sql-mysql` (`m0`, `m1`,
-  `m2`) do not answer nextest's `--list` format. Run nextest with
-  `--exclude stackpress-sql --exclude stackpress-sql-postgres --exclude stackpress-sql-mysql`,
-  then run those three packages with `cargo test -p <package> --all-targets --locked`.
-- **`stackpress-sql-sqlite` `tests::rounds::safety_under_watchdog`** depends on timing
-  and failed once under nextest's parallel load (no cancellation landed in the rollback
-  sweep). Treat a failure there as a known flake to fix, not a regression, and rerun it
-  alone with `cargo test`.
-
-Remove each item here once its fix lands.
+Nextest does not run doctests; keep the separate gate command in section 4.
 
 ## 6. Reporting
 

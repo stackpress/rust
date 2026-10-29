@@ -1,6 +1,9 @@
 //! Opt-in native M2 proofs: parent owns CREATE/DROP, child owns all hang-class scenarios.
 //! Unset gate variables are reported as ignored; child timeout is always failure.
 
+#[path = "../../../test-support/harness.rs"]
+mod harness;
+
 use crate::{PostgresDatabase, PostgresOptions, PostgresTls};
 use sqlx::postgres::{PgConnectOptions, PgConnection, PgSslMode};
 use sqlx::{ConnectOptions, Connection, Executor, SqlSafeStr};
@@ -272,22 +275,46 @@ pub(crate) fn main() {
         }
         return;
     }
-    // SQLite is an offline reference, independently owned/reaped before network fixtures.
-    if let Err(error) = sqlite::parent() {
-        report_error(error.as_ref());
-        std::process::exit(1);
+    let harness = harness::Harness::from_env();
+    let ignored = std::env::var_os(GATE).is_none();
+    if harness.discover([
+        ("m2::sqlite_reference", false),
+        ("m2::contract", ignored),
+        ("m2::stress", ignored),
+    ]) {
+        return;
     }
-    println!("test m2::sqlite_reference ... ok");
-    if std::env::var_os(GATE).is_none() {
+    // The offline reference remains independent of opt-in native cases, including
+    // exact nextest runs: selecting a network case cannot run this reference too.
+    let reference = harness.selects("m2::sqlite_reference", false);
+    if reference {
+        if let Err(error) = sqlite::parent() {
+            report_error(error.as_ref());
+            std::process::exit(1);
+        }
+        println!("test m2::sqlite_reference ... ok");
+    }
+    let groups: Vec<_> = ["contract", "stress"]
+        .into_iter()
+        .filter(|case| harness.selects(&format!("m2::{case}"), ignored))
+        .collect();
+    if groups.is_empty() {
+        return;
+    }
+    if ignored {
         println!("test m2::native_cases ... ignored ({GATE} unset)");
-        println!("test result: ok. 1 passed; 0 failed; 2 ignored");
+        println!(
+            "test result: ok. {} passed; 0 failed; {} ignored",
+            usize::from(reference),
+            groups.len()
+        );
         return;
     }
     let result = std::panic::catch_unwind(|| -> TestResult<()> {
         let mut fixture = Fixture::create()?;
         let start = Instant::now();
         let mut primary: TestResult<()> = Ok(());
-        for case in ["contract", "stress"] {
+        for case in &groups {
             let remaining = Duration::from_secs(120).saturating_sub(start.elapsed());
             let case_start = Instant::now();
             let status = watchdog(
@@ -318,5 +345,8 @@ pub(crate) fn main() {
         eprintln!("test result: FAILED (M2 setup/scenario/cleanup)");
         std::process::exit(1);
     }
-    println!("test result: ok. 3 M2 groups passed; 0 ignored");
+    println!(
+        "test result: ok. {} M2 groups passed; 0 ignored",
+        groups.len() + usize::from(reference)
+    );
 }

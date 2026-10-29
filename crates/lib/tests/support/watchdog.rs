@@ -2,7 +2,7 @@
 
 use std::fs::{self, File};
 use std::io::{self, Read};
-use std::path::Path;
+use std::path::PathBuf;
 use std::process::{Child, Command, ExitStatus, Stdio};
 use std::time::{Duration, Instant};
 
@@ -34,8 +34,12 @@ pub(crate) fn run(
     scenario: &str,
     deadline: Duration,
 ) -> io::Result<Completion> {
-    // Keep receipts in this build's ignored target directory, after M0 cleaning.
-    let directory = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../target/m0");
+    // Cargo supplies an absolute directory for integration targets. Unit-test
+    // inclusions have no such variable, so they use the OS temporary directory.
+    let directory = option_env!("CARGO_TARGET_TMPDIR")
+        .map(PathBuf::from)
+        .unwrap_or_else(std::env::temp_dir)
+        .join("stackpress-watchdog");
     fs::create_dir_all(&directory)?;
     let output_path = directory.join(format!("{}-{scenario}.log", std::process::id()));
     let output = File::create(&output_path)?;
