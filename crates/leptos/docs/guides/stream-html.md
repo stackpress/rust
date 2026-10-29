@@ -20,7 +20,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             let (metadata, head) = ServerMetaContext::new();
             provide_context(metadata);
             let chunks = view! { <p>"One local view"</p> }.to_html_stream_in_order();
-            writer.render(chunks, head, "<html><head></head><body>".into(),
+            // Upstream Title text is raw; the caller constructing Head owns its formatter.
+            let _ = view! {<stackpress_leptos::leptos_meta::Title
+                formatter=|text: String| stackpress_leptos::safety::escape_html(&text)/>}.to_html();
+            writer.render(chunks, head, "<html><head><!--HEAD--></head><body>".into(),
                 |body, _replay| Ok::<_, Infallible>(body), "</body></html>".into()).await
         },
     ).await?;

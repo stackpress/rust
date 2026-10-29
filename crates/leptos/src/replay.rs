@@ -3,7 +3,7 @@ pub use crate::replay_error::ReplayError;
 use crate::safety::escape_script_json;
 use std::collections::BTreeSet;
 
-/// Maximum Resource values in one buffered M0 root.
+/// Maximum Resource values in one buffered root.
 pub const MAX_RESOURCES: usize = 64;
 /// Bounded sparse resource identity for browser replay arrays.
 pub const MAX_RESOURCE_ID: usize = 1024;

@@ -3,6 +3,22 @@
 Import `stackpress_leptos::render` with native `ssr`. Start explicitly with `initialize_ssr`
 inside Tokio. See [a complete program](../getting-started.md) and [buffered rendering](../guides/render-native.md).
 
+## Document framing
+
+`document_shell(html_attributes: &str, head: &str, body: &str) -> String` frames one complete
+HTML document and always includes `<!--HEAD-->` at the end of its head. This upstream marker
+is required when hydrating metadata or styles. The helper itself needs no executor.
+
+| Parameter | Contract |
+| --- | --- |
+| `html_attributes` | Trusted attributes without a leading space; empty adds no space |
+| `head` | Trusted head fragment without a closing head element |
+| `body` | Trusted body fragment without a closing body element |
+
+**Returns** A doctype/html/head/body shell around unchanged fragments. It performs no escaping,
+admission, routing or asset/bootstrap selection. Escape untrusted values before building these
+fragments. Custom framing remains supported and owns its own metadata marker.
+
 ## Synchronous staging
 
 `Renderer::try_prepare(limits, component, shell) -> Result<PreparedRender<E>, RenderError<E>>`

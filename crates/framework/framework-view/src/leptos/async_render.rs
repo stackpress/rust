@@ -1,6 +1,6 @@
 //! Public-page adapter for complete buffered asynchronous Leptos rendering.
 use super::{
-    render::{limits as render_limits, map_error, require_executor},
+    render::{limits as render_limits, map_error, require_executor, validate_snapshot},
     safety::escape_html,
 };
 use crate::{
@@ -88,12 +88,10 @@ fn prepare<T: Serialize, V: IntoView>(
     assets: &PageAssets,
     component: impl FnOnce() -> Result<V, ViewError>,
 ) -> Result<AsyncRenderFuture<'static>, ViewError> {
+    // Policy/identity/settings/seed admission precedes synchronous component evaluation.
     require_executor()?;
     assets.validate(contract)?;
-    snapshot.validate(contract.revision, &contract.build)?;
-    if snapshot.locale != contract.locale || snapshot.theme != contract.theme {
-        return Err(ViewError::ContractMismatch);
-    }
+    validate_snapshot(snapshot, contract)?;
     let seed = snapshot.script_json_with(contract.limits)?;
     let bootstrap = assets.script_json()?;
     let module = assets.base.join(assets.module.as_str())?;
@@ -112,24 +110,30 @@ fn prepare<T: Serialize, V: IntoView>(
         String::new()
     };
     let limits = contract.limits;
-    let render=AsyncRenderer::try_prepare(render_limits(limits),||{
-        super::routing::provide_route_context(assets.base.clone());
-        provide_context(leptos_router::location::RequestUrl::new(&snapshot.location));
-        component()
-    },||{
-        // Resolve the checked stylesheet under the same mount as the bootstrap.
-        if let Some(style) = &assets.stylesheet {
-            let href = assets.base.join(style.as_str())?.as_str().to_owned();
-            let _ = view! { <leptos_meta::Stylesheet id="stackpress-style" href/> }.to_html();
-        }
-        Ok(())
-    },move|content,replay|{
-        let html = format!(
+    let render = AsyncRenderer::try_prepare(
+        render_limits(limits),
+        || {
+            super::routing::provide_route_context(assets.base.clone());
+            provide_context(leptos_router::location::RequestUrl::new(&snapshot.location));
+            component()
+        },
+        || {
+            // Resolve the checked stylesheet after body construction in the same Owner.
+            if let Some(style) = &assets.stylesheet {
+                let href = assets.base.join(style.as_str())?.as_str().to_owned();
+                let _ = view! { <leptos_meta::Stylesheet id="stackpress-style" href/> }.to_html();
+            }
+            Ok(())
+        },
+        move |content, replay| {
+            // Only owned checked data crosses into the Send assembly closure.
+            let html = format!(
             "<!DOCTYPE html><html lang=\"{locale}\" data-theme=\"{theme}\"{theme_marker}><head>{theme_head}<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><!--HEAD--></head><body><div id=\"app\">{content}</div><script type=\"application/json\" id=\"stackpress-page\">{seed}</script><script type=\"application/json\" id=\"stackpress-resources\">{replay}</script><script type=\"application/json\" id=\"stackpress-assets\">{bootstrap}</script><script type=\"module\" src=\"{}\"></script></body></html>",
             escape_html(module.as_str())
-        );
-        Ok(html)
-    }).map_err(map_error)?;
+            );
+            Ok(html)
+        },
+    ).map_err(map_error)?;
     Ok(Box::pin(async move {
         RenderedPage::with_limits(render.await.map_err(map_error)?, limits)
     }))

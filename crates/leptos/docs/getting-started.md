@@ -23,7 +23,7 @@ In that consumer, a native example can use the following complete program. Its m
 
 ```rust
 use leptos::prelude::*;
-use stackpress_leptos::render::{initialize_ssr, Renderer, RenderLimits};
+use stackpress_leptos::render::{document_shell, initialize_ssr, Renderer, RenderLimits};
 use std::convert::Infallible;
 
 #[tokio::main(flavor = "current_thread")]
@@ -32,7 +32,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let prepared = Renderer::try_prepare(
         RenderLimits::default(),
         || Ok::<_, Infallible>(view! { <h1>"Welcome"</h1> }),
-        |body| Ok(format!("<html><head></head><body>{body}</body></html>")),
+        |body| Ok(document_shell("lang=\"en\"", "", &body)),
     )?;
     let html = prepared.finish().await?;
     assert!(html.contains("Welcome"));
@@ -43,7 +43,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 `try_prepare` evaluates the component in a fresh Owner and passes its generated body to your
 shell closure. `finish` injects eager owned Head values and checks the complete document's
 byte limit. The runtime and explicit startup make the executor available; they open no port.
-Escape any untrusted text you interpolate into your own shell. Leptos escapes component text.
+`document_shell` supplies the metadata marker needed by hydration. Its attributes/head/body
+arguments are trusted HTML fragments; escape untrusted interpolations first. Leptos escapes
+component text. Custom framing remains available when an application owns a different shell.
 
 ## What the first render establishes
 

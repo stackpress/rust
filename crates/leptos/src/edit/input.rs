@@ -6,7 +6,8 @@ use leptos::prelude::*;
 ///
 /// Wraps label/help/error/committed hidden value. The visible draft has no form name:
 /// submission uses only the last valid canonical value. Invalid drafts remain visible.
-/// Typing never rewrites native value/undo. Blur commits without rewriting native text; Enter commits and normalizes with a native edit command; Escape cancels. During
+/// Typing never rewrites native value/undo. Blur commits without rewriting native text;
+/// Enter commits and normalizes with a native edit command; Escape cancels. During
 /// composition blur defers until the turn following compositionend/final input.
 #[component]
 pub fn FormattedInput<P: EditPolicy>(
@@ -48,17 +49,68 @@ pub fn FormattedInput<P: EditPolicy>(
         <input id=id node_ref=node type="text" class="sp-input" value=initial maxlength=max autocomplete="off" spellcheck="false"
             required= !nullable
             disabled=move ||disabled.get() aria-describedby=described aria-invalid=move ||state.with(|s|s.error().is_some()).to_string()
-            on:input=move |_event|{#[cfg(target_arch="wasm32")]super::dom::read(node,state,adapter.syncing);}
-            on:select=move |_event|{#[cfg(target_arch="wasm32")]super::dom::select(node,state,adapter.syncing);}
-            on:keyup=move |_event|{#[cfg(target_arch="wasm32")]super::dom::select(node,state,adapter.syncing);}
-            on:paste=move |_event:leptos::ev::ClipboardEvent|{#[cfg(target_arch="wasm32")]super::dom::paste(&_event,node,state);}
-            on:compositionstart=move |_event|{#[cfg(target_arch="wasm32")] {super::dom::read(node,state,adapter.syncing);state.update(EditState::composition_start);}}
-            on:compositionend=move |_event|{#[cfg(target_arch="wasm32")] {super::dom::read(node,state,adapter.syncing);state.update(EditState::composition_end);adapter.settle.run(());}}
-            on:blur=move |_event|{#[cfg(target_arch="wasm32")] {super::dom::read(node,state,adapter.syncing);super::dom::commit(state,nullable,on_commit,false);}}
-            on:keydown=move |_event:leptos::ev::KeyboardEvent|{#[cfg(target_arch="wasm32")] {
-                if _event.key()=="Enter" && !_event.is_composing() && !state.with(EditState::composing){_event.prevent_default();super::dom::read(node,state,adapter.syncing);super::dom::commit(state,nullable,on_commit,true);}
-                else if _event.key()=="Escape" && !_event.is_composing() && state.with(|s|s.dirty()||s.composing()||s.error().is_some()){_event.prevent_default();state.update(|s|if s.composing(){s.composition_cancel()}else{s.cancel()});}
-            }}/>
+            on:input=move |_event| {
+                // Adopt native text/selection; reading does not rewrite the browser undo stack.
+                #[cfg(target_arch = "wasm32")]
+                super::dom::read(node, state, adapter.syncing);
+            }
+            on:select=move |_event| {
+                #[cfg(target_arch = "wasm32")]
+                super::dom::select(node, state, adapter.syncing);
+            }
+            on:keyup=move |_event| {
+                #[cfg(target_arch = "wasm32")]
+                super::dom::select(node, state, adapter.syncing);
+            }
+            on:paste=move |_event: leptos::ev::ClipboardEvent| {
+                // Paste has its own strict grammar, separate from ordinary native typing.
+                #[cfg(target_arch = "wasm32")]
+                super::dom::paste(&_event, node, state);
+            }
+            on:compositionstart=move |_event| {
+                #[cfg(target_arch = "wasm32")]
+                {
+                    // Capture the native starting draft before entering composition state.
+                    super::dom::read(node, state, adapter.syncing);
+                    state.update(EditState::composition_start);
+                }
+            }
+            on:compositionend=move |_event| {
+                #[cfg(target_arch = "wasm32")]
+                {
+                    // Final input may follow compositionend; settlement owns that next turn.
+                    super::dom::read(node, state, adapter.syncing);
+                    state.update(EditState::composition_end);
+                    adapter.settle.run(());
+                }
+            }
+            on:blur=move |_event| {
+                #[cfg(target_arch = "wasm32")]
+                {
+                    // Blur may commit the canonical value while retaining native draft text.
+                    super::dom::read(node, state, adapter.syncing);
+                    super::dom::commit(state, nullable, on_commit, false);
+                }
+            }
+            on:keydown=move |_event: leptos::ev::KeyboardEvent| {
+                #[cfg(target_arch = "wasm32")]
+                {
+                    // IME Enter belongs to the browser until both composition signals settle.
+                    if _event.key() == "Enter" && !_event.is_composing() && !state.with(EditState::composing) {
+                        _event.prevent_default();
+                        super::dom::read(node, state, adapter.syncing);
+                        super::dom::commit(state, nullable, on_commit, true);
+                    } else if _event.key() == "Escape" && !_event.is_composing()
+                        && state.with(|state| state.dirty() || state.composing() || state.error().is_some())
+                    {
+                        // Cancellation distinguishes an unfinished composition from a normal draft.
+                        _event.prevent_default();
+                        state.update(|state| {
+                            if state.composing() { state.composition_cancel() } else { state.cancel() }
+                        });
+                    }
+                }
+            }/>
         <p id=help_id>{help}</p><p id=error_id role="alert">{move ||state.with(|s|s.error().map(|e|e.to_string()).unwrap_or_default())}</p>
         <input type="hidden" name=name disabled=move ||disabled.get()||state.with(|s|s.value().is_none()) value=move ||state.with(EditState::canonical).unwrap_or_default() prop:value=move ||state.with(EditState::canonical).unwrap_or_default()/>
     </div>}

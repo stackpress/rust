@@ -178,7 +178,7 @@ impl ReplayBudget {
             return Ok(String::new());
         }
         let json = ResourceReplay::new(values, self.limit)?.script_json()?;
-        // Bootstrap validates these inert templates and removes them before hydration.
+        // The caller owns inert framing/admission; no template identity belongs here.
         Ok(json)
     }
 }

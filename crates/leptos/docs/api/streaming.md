@@ -28,6 +28,10 @@ metadata output. It stages opening/Head, waits for demand, reserves bridge capac
 polling local body work, frames each body/checked-replay pair, and finishes with trailer/completion.
 `frame: FnMut(String,String) -> Result<String,E>` supplies application framing.
 
+The work factory also owns metadata construction. With the pinned upstream `Title`, install
+an HTML-escaping formatter before Head injection when title text is untrusted; view's page
+adapter already does this. The [stream guide](../guides/stream-html.md) shows the public seam.
+
 **Returns** Unit after explicit completion, or a generic execution/caller failure. Every affected
 fragment is admitted before publication. After commitment, failure bytes and a typed failure are
 sent under the reserved budget; arbitrary errors are not written into HTML.

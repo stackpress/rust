@@ -54,7 +54,7 @@ mod owner;
 #[cfg(all(feature = "ssr", not(target_arch = "wasm32")))]
 pub mod render;
 
-/// Opt-in complete asynchronous pages with cooperative resource ownership.
+/// Complete asynchronous HTML with cooperative resource ownership.
 #[cfg(all(feature = "ssr", not(target_arch = "wasm32")))]
 pub mod async_render;
 

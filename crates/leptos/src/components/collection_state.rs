@@ -34,8 +34,11 @@ pub struct CollectionRow<T> {
 /// ```
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct BoundedList<T> {
+    /// Ordered checked rows whose stable identities survive editing/reordering.
     rows: Vec<CollectionRow<T>>,
+    /// Construction-time row ceiling, never an implicit unbounded collection.
     limit: usize,
+    /// Next unused identity; removing a row never lowers this counter.
     next: u64,
 }
 impl<T: CollectionValue> BoundedList<T> {

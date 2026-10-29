@@ -78,24 +78,20 @@ impl StreamRenderer {
         let (cancel, cancelled) = oneshot::channel();
         let (start, started) = oneshot::channel();
         let (send, receive) = mpsc::channel(2);
-        let thread=std::thread::Builder::new().name("leptos-ssr".into()).spawn(move|| {
-            let runtime=match tokio::runtime::Builder::new_current_thread().enable_all().build() {
-                Ok(runtime)=>runtime,Err(error)=>{if let Some(ready)=ready_send.lock().unwrap_or_else(|e|e.into_inner()).take(){let _=ready.send(Err(RenderError::from_source(error)));}return;}
-            };
-            let local=tokio::task::LocalSet::new();
-            runtime.block_on(local.run_until(async {
-                let shared=Arc::new(StreamContext::new());let root=Root{owner:Owner::new_root(Some(shared.clone())),shared:shared.clone()};
-                let writer=StreamWriter{shared,ready:ready_send.clone(),send:send.clone(),started:Some(started),limits,budget:HtmlBudget{used:0,limit:limits.html_bytes,chunk:policy.max_chunk_bytes,reserve:failure.len()}};
-                let deadline=tokio::time::sleep(policy.render_timeout);let mut cancelled=cancelled;
-                let outcome={let work=std::panic::AssertUnwindSafe(root.run(async move {work(writer).await})).catch_unwind();tokio::select!{biased;_= &mut cancelled=>return,outcome=work=>outcome,_=deadline=>Ok(Err(RenderError::from_source(std::io::Error::new(std::io::ErrorKind::TimedOut,"streamed render deadline exceeded"))))}};
-                drop(root);
-                let outcome=outcome.unwrap_or_else(|p|Err(RenderError::from_source(RenderPanic::new("streamed component evaluation panicked",p.as_ref()))));
-                if let Err(error)=outcome {
-                    if let Some(ready)=ready_send.lock().unwrap_or_else(|e|e.into_inner()).take(){let _=ready.send(Err(error));}
-                    else{tokio::select!{biased;_= &mut cancelled=>{},_=async{if send.send(BridgeMessage::Chunk(failure.into_bytes())).await.is_ok(){let _=send.send(BridgeMessage::Failure(error)).await;}}=>{}}}
-                }
-            }));drop(local);drop(runtime);
-        }).map_err(RenderError::from_source)?;
+        // Move only Send inputs into the thread; construct local view state there.
+        let worker = Worker {
+            ready: ready_send,
+            cancelled,
+            started,
+            send,
+            limits,
+            policy,
+            failure,
+        };
+        let thread = std::thread::Builder::new()
+            .name("leptos-ssr".into())
+            .spawn(move || worker.run(work))
+            .map_err(RenderError::from_source)?;
         let supervisor = Supervisor {
             cancel: Some(cancel),
             thread: Some(thread),
@@ -117,13 +113,128 @@ impl StreamRenderer {
 /// A precommit result shared by the supervisor and local producer; consumed exactly once.
 type ReadySignal<E> = Arc<Mutex<Option<oneshot::Sender<Result<Vec<u8>, RenderError<E>>>>>>;
 
+/// Thread-owned execution inputs; only the factory and byte channel cross threads.
+struct Worker<E> {
+    /// One precommit result, shared with the writer until opening is published.
+    ready: ReadySignal<E>,
+    /// Consumer drop wins over production and late-failure publication.
+    cancelled: oneshot::Receiver<()>,
+    /// First body demand releases the local producer after opening staging.
+    started: oneshot::Receiver<()>,
+    /// Retain the sender until completion or explicit failure has been reported.
+    send: mpsc::Sender<BridgeMessage<E>>,
+    /// Aggregate HTML/replay ceilings admitted before thread creation.
+    limits: RenderLimits,
+    /// Admitted fragment ceiling and absolute production deadline.
+    policy: StreamLimits,
+    /// Trusted fixed bytes reserved for a failure after precommit.
+    failure: String,
+}
+impl<E: Send + 'static> Worker<E> {
+    /// Own the executor and LocalSet until production, cleanup and task teardown end.
+    fn run<F, Fut>(self, work: F)
+    where
+        F: FnOnce(StreamWriter<E>) -> Fut,
+        Fut: Future<Output = Result<(), RenderError<E>>> + 'static,
+    {
+        // Runtime failure is still precommit: report it without evaluating the factory.
+        let runtime = match tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+        {
+            Ok(runtime) => runtime,
+            Err(error) => {
+                if let Some(ready) = self.ready.lock().unwrap_or_else(|e| e.into_inner()).take() {
+                    let _ = ready.send(Err(RenderError::from_source(error)));
+                }
+                return;
+            }
+        };
+        let local = tokio::task::LocalSet::new();
+        runtime.block_on(local.run_until(self.produce(work)));
+        // Drop local tasks before the runtime; the caller joins only after both finish.
+        drop(local);
+        drop(runtime);
+    }
+
+    /// Keep cancellation, unwind and precommit/late failure routing in one ordered flow.
+    async fn produce<F, Fut>(mut self, work: F)
+    where
+        F: FnOnce(StreamWriter<E>) -> Fut,
+        Fut: Future<Output = Result<(), RenderError<E>>> + 'static,
+    {
+        let shared = Arc::new(StreamContext::new());
+        let root = Root {
+            owner: Owner::new_root(Some(shared.clone())),
+            shared: shared.clone(),
+        };
+        let writer = StreamWriter {
+            shared,
+            ready: self.ready.clone(),
+            send: self.send.clone(),
+            started: Some(self.started),
+            limits: self.limits,
+            budget: HtmlBudget {
+                used: 0,
+                limit: self.limits.html_bytes,
+                chunk: self.policy.max_chunk_bytes,
+                reserve: self.failure.len(),
+            },
+        };
+        let deadline = tokio::time::sleep(self.policy.render_timeout);
+        // Scope the polled future so no view borrow survives explicit root cleanup.
+        let outcome = {
+            let work = std::panic::AssertUnwindSafe(root.run(async move { work(writer).await }))
+                .catch_unwind();
+            tokio::select! {
+                biased;
+                _ = &mut self.cancelled => return,
+                outcome = work => outcome,
+                _ = deadline => Ok(Err(RenderError::from_source(std::io::Error::new(
+                    std::io::ErrorKind::TimedOut, "streamed render deadline exceeded",
+                )))),
+            }
+        };
+        drop(root);
+        let outcome = outcome.unwrap_or_else(|panic| {
+            Err(RenderError::from_source(RenderPanic::new(
+                "streamed component evaluation panicked",
+                panic.as_ref(),
+            )))
+        });
+        let Err(error) = outcome else { return };
+        // An unconsumed readiness sender means the host has not committed a body.
+        if let Some(ready) = self.ready.lock().unwrap_or_else(|e| e.into_inner()).take() {
+            let _ = ready.send(Err(error));
+            return;
+        }
+        // After commitment, preserve failure bytes before the typed error. Cancellation
+        // must still release a producer blocked on a full byte bridge.
+        tokio::select! {
+            biased;
+            _ = &mut self.cancelled => {},
+            _ = async {
+                if self.send.send(BridgeMessage::Chunk(self.failure.into_bytes())).await.is_ok() {
+                    let _ = self.send.send(BridgeMessage::Failure(error)).await;
+                }
+            } => {},
+        }
+    }
+}
+
 /// Owned local producer context; only its resulting byte body crosses threads.
 pub struct StreamWriter<E> {
+    /// This worker's bounded serializer/deferred queues, never application page state.
     shared: Arc<StreamContext>,
+    /// Taken once when Head/opening is frozen or the worker reports a staging failure.
     ready: ReadySignal<E>,
+    /// Two-slot byte bridge; reserve before polling any new local body work.
     send: mpsc::Sender<BridgeMessage<E>>,
+    /// Awaited once after precommit so an idle consumer cannot trigger production.
     started: Option<oneshot::Receiver<()>>,
+    /// Logical replay and complete framed-output ceilings admitted before work starts.
     limits: RenderLimits,
+    /// Cumulative published/reserved HTML budget, including the late-failure marker.
     budget: HtmlBudget,
 }
 impl<E> StreamWriter<E> {
@@ -151,6 +262,7 @@ impl<E> StreamWriter<E> {
             .await
             .collect::<String>()
             .await;
+        // Admit the complete frozen prefix before the host can observe commitment.
         self.budget.check(opening.len())?;
         if self
             .ready
@@ -161,8 +273,10 @@ impl<E> StreamWriter<E> {
             .send(Ok(opening.into_bytes()))
             .is_err()
         {
+            // Staging was abandoned; the worker's outer owner still performs teardown.
             return Ok(());
         }
+        // Ownership of this consuming writer proves both readiness/start are taken once.
         if self.started.take().expect("starts once").await.is_err() {
             return Ok(());
         }
@@ -186,6 +300,7 @@ impl<E> StreamWriter<E> {
             permit.send(BridgeMessage::Chunk(content.into_bytes()));
         }
         loop {
+            // Pending replay also consumes a bridge slot before serializers are polled.
             let permit = match self.send.reserve().await {
                 Ok(p) => p,
                 Err(_) => return Ok(()),
@@ -209,6 +324,7 @@ impl<E> StreamWriter<E> {
                 break;
             }
         }
+        // EOF is successful only after the admitted trailer travels as Complete.
         self.budget.check(trailer.len())?;
         let _ = self
             .send
@@ -219,10 +335,15 @@ impl<E> StreamWriter<E> {
 }
 /// Exclusive Send byte receiver; Drop cancels, closes capacity waits and joins the worker.
 pub struct StreamBody<E> {
+    /// Frozen opening/Head, yielded once before channel-driven fragments.
     prefix: Option<Vec<u8>>,
+    /// First demand unlocks production; dropping it before demand cancels staging.
     start: Option<oneshot::Sender<()>>,
+    /// Exclusive byte/error receiver; no hidden buffering in a higher-level adapter.
     receive: mpsc::Receiver<BridgeMessage<E>>,
+    /// Explicit completion/failure fuses later polls to None.
     finished: bool,
+    /// Drop closes receive capacity, then cancels and joins this exact worker.
     supervisor: Supervisor,
 }
 impl<E> Stream for StreamBody<E> {
@@ -265,11 +386,16 @@ impl<E> Drop for StreamBody<E> {
         self.supervisor.stop();
     }
 }
+/// Explicit terminal messages distinguish successful completion from worker disappearance.
 enum BridgeMessage<E> {
+    /// One fully admitted fragment, already framed and escaped by its owner.
     Chunk(Vec<u8>),
+    /// Final trailer establishes successful EOF after it has been yielded.
     Complete(Vec<u8>),
+    /// One typed late failure follows the reserved public failure bytes.
     Failure(RenderError<E>),
 }
+/// Join ownership exists before awaiting readiness, including abandoned precommit futures.
 struct Supervisor {
     /// Cancellation wins even if the producer is blocked by channel capacity.
     cancel: Option<oneshot::Sender<()>>,
@@ -294,6 +420,7 @@ impl Drop for Supervisor {
     }
 }
 
+/// Reactive state and replay cycles belong to the local worker, not its byte receiver.
 struct Root {
     /// Local reactive root, cleaned before runtime teardown.
     owner: Owner,
@@ -322,9 +449,13 @@ impl Drop for Root {
 
 /// Aggregate framed bytes reserve the caller's fixed late-failure signal.
 struct HtmlBudget {
+    /// Already admitted opening/body/replay/trailer bytes.
     used: usize,
+    /// Maximum complete bytes including the reserved failure signal.
     limit: usize,
+    /// Individual fragment maximum checked before any bridge send.
     chunk: usize,
+    /// Fixed failure bytes remain available even after a late production error.
     reserve: usize,
 }
 impl HtmlBudget {

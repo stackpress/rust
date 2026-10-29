@@ -171,8 +171,17 @@ pub fn Dialog(
         on:close=move |_| { open.try_set(false); }
         on:keydown=move |_event: leptos::ev::KeyboardEvent| { #[cfg(target_arch="wasm32")] {
             // Keep focused modeless Escape working even where native closedby is unavailable.
-            if mode==DialogMode::Nonmodal && _event.key()=="Escape" && !_event.default_prevented() && close_on_escape && super::dialog_dom::from_current_dialog(&_event) {_event.prevent_default();open.try_set(false);}
-            else if mode!=DialogMode::Nonmodal {super::dialog_dom::trap_tab(&_event);}
+            if mode == DialogMode::Nonmodal && _event.key() == "Escape"
+                && !_event.default_prevented() && close_on_escape
+                && super::dialog_dom::from_current_dialog(&_event)
+            {
+                // A nested dialog or earlier handler keeps its own Escape decision.
+                _event.prevent_default();
+                open.try_set(false);
+            } else if mode != DialogMode::Nonmodal {
+                // Only modal/drawer roots trap Tab; modeless content retains normal traversal.
+                super::dialog_dom::trap_tab(&_event);
+            }
         }}>
         <h2 id=labelled_by.clone()>{move || title.get()}</h2>{children()}
     </dialog> }

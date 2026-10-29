@@ -1,6 +1,6 @@
 //! Stackpress page framing around one independently supervised Leptos byte stream.
 use super::{
-    render::{limits as render_limits, map_error, require_executor},
+    render::{limits as render_limits, map_error, require_executor, validate_snapshot},
     safety::escape_html,
 };
 use crate::{PageAssets, PageContract, PageSnapshot, PublicLocation, ViewError};
@@ -116,12 +116,9 @@ impl<F> StreamLeptosRenderer<F> {
         V: IntoView,
     {
         require_executor()?;
-        snapshot.validate(self.contract.revision, &self.contract.build)?;
-        if snapshot.locale != self.contract.locale || snapshot.theme != self.contract.theme {
-            return Err(ViewError::ContractMismatch);
-        }
+        validate_snapshot(&snapshot, &self.contract)?;
         let seed = snapshot.script_json_with(self.contract.limits)?;
-        let contract = self.contract.clone();
+        let limits = render_limits(self.contract.limits);
         let assets = self.assets.clone();
         let status_script = self.status_script.clone();
         let component = self.component.clone();
@@ -130,13 +127,12 @@ impl<F> StreamLeptosRenderer<F> {
         let input = RenderInput {
             snapshot,
             seed,
-            contract,
             assets,
             status_script,
             component,
         };
         let body = stackpress_leptos::stream::StreamRenderer::render(
-            render_limits(input.contract.limits),
+            limits,
             policy,
             FAILURE.into(),
             move |writer| async move { produce(input, writer).await },
@@ -175,8 +171,6 @@ struct RenderInput<T, F> {
     snapshot: PageSnapshot<T>,
     /// Bounded escaped public seed, prepared before thread admission.
     seed: String,
-    /// Aggregate output and identity policy.
-    contract: PageContract,
     /// Checked mounted external bootstrap assets.
     assets: PageAssets,
     /// Optional mounted status asset, independent of the completion-gated module.
@@ -198,7 +192,6 @@ where
     let RenderInput {
         snapshot,
         seed,
-        contract: _,
         assets,
         status_script,
         component,
@@ -208,11 +201,10 @@ where
     leptos_meta::provide_meta_context();
     super::routing::provide_route_context(assets.base.clone());
     provide_context(leptos_router::location::RequestUrl::new(&snapshot.location));
-    let body = Box::pin(
-        (component)(&snapshot)
-            .map_err(stackpress_leptos::render::RenderError::Component)?
-            .to_html_stream_in_order(),
-    );
+    // The generic writer pins this local stream; a second box adds no ownership boundary.
+    let body = (component)(&snapshot)
+        .map_err(stackpress_leptos::render::RenderError::Component)?
+        .to_html_stream_in_order();
     let _ = view! { <leptos_meta::Title formatter=|value: String| escape_html(&value)/> }.to_html();
     if let Some(style) = &assets.stylesheet {
         let href = assets.base.join(style.as_str())?.as_str().to_owned();

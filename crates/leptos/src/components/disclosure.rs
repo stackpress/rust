@@ -58,7 +58,16 @@ pub fn Details(
     children: Children,
 ) -> impl IntoView {
     view! {<details id=id class="sp-disclosure" open=move ||open.get() prop:open=move ||open.get()
-    on:toggle=move |_event|{#[cfg(target_arch="wasm32")] {use wasm_bindgen::JsCast;if let Some(node)=_event.current_target().and_then(|v|v.dyn_into::<web_sys::HtmlDetailsElement>().ok()){open.try_set(node.open());}}}>
+    on:toggle=move |_event| {
+        #[cfg(target_arch = "wasm32")]
+        {
+            use wasm_bindgen::JsCast;
+            // Adopt the native disclosure state rather than invert a possibly stale signal.
+            if let Some(node) = _event.current_target().and_then(|value| value.dyn_into::<web_sys::HtmlDetailsElement>().ok()) {
+                open.try_set(node.open());
+            }
+        }
+    }>
     <summary>{label}</summary>{children()}</details>}
 }
 /// Tab selection follows focus only when automatic activation is selected.
@@ -99,11 +108,18 @@ pub fn Tabs(
                 on:focus=move |_|{state.focus(index);}
                 on:click=move |_|{state.choose(&key);}
                 on:keydown=move |event:leptos::ev::KeyboardEvent|{
-                    let direction=choice_movement(&event.key(), vertical);
-                    if let Some(direction)=direction {event.prevent_default();if let Some(next)=state.navigate(direction,matches!(activation,TabActivation::Automatic)){
-                        #[cfg(target_arch="wasm32")] super::dialog_dom::focus_id(&format!("{prefix}-tab-{next}"));
-                        #[cfg(not(target_arch="wasm32"))] let _=(&prefix,next);
-                    }}
+                    let direction = choice_movement(&event.key(), vertical);
+                    if let Some(direction) = direction {
+                        // Only recognized navigation keys suppress the browser default.
+                        event.prevent_default();
+                        if let Some(next) = state.navigate(direction, matches!(activation, TabActivation::Automatic)) {
+                            // Roving focus and automatic activation remain separate policies.
+                            #[cfg(target_arch = "wasm32")]
+                            super::dialog_dom::focus_id(&format!("{prefix}-tab-{next}"));
+                            #[cfg(not(target_arch = "wasm32"))]
+                            let _ = (&prefix, next);
+                        }
+                    }
                 }>{option.label.clone()}</button>}
         }).collect_view()}
     </div>}

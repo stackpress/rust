@@ -37,10 +37,11 @@ pub fn adopt(element: web_sys::Element) -> Result<(), wasm_bindgen::JsValue> {
 ```
 
 The native renderer must have produced that same `h1` inside the target. If the root uses
-metadata or `LayoutProvider` styles, its document head must retain upstream Leptos metadata's
-`<!--HEAD-->` marker (normally produced by `MetaTags`). Generic shell closures own this
-requirement; omitting it can trap when hydrating metadata. The independent
-fixture instead returns a JS disposer that retains the handle, adopts early input/focus,
+metadata or `LayoutProvider` styles, use native `render::document_shell` to supply upstream
+Leptos metadata's `<!--HEAD-->` marker. The independent consumer uses this helper and preserves
+the same document bytes. A fully custom shell or stream opening must retain the marker itself
+(normally produced by `MetaTags`); omitting it can trap when hydrating metadata. The independent
+fixture returns a JS disposer that retains the handle, adopts early input/focus,
 and validates its explicit choices before constructing its real root.
 
 ## Mount CSR and own teardown

@@ -31,6 +31,8 @@ impl Default for RenderLimits {
 }
 impl RenderLimits {
     /// Reject expanded limits before retaining application work.
+    /// # Errors
+    /// Returns InvalidPolicy when either ceiling exceeds its supported maximum.
     pub fn validate<E>(self) -> Result<(), RenderError<E>> {
         if self.html_bytes > 2 * 1024 * 1024 || self.replay_bytes > 1024 * 1024 {
             return Err(RenderError::InvalidPolicy);
@@ -108,11 +110,36 @@ pub fn initialize_ssr() -> Result<(), RenderError> {
     }
 }
 /// Reject an unavailable executor before invoking application code.
+/// # Errors
+/// Requires explicit initialization and an active native Tokio runtime on this call.
 pub fn require_executor<E>() -> Result<(), RenderError<E>> {
     if !INITIALIZED.load(Ordering::Acquire) || tokio::runtime::Handle::try_current().is_err() {
         return Err(RenderError::ExecutorUnavailable);
     }
     Ok(())
+}
+
+/// Frame a complete HTML document with the metadata marker required for hydration.
+///
+/// `html_attributes`, `head` and `body` are **trusted HTML fragments**, not plain text.
+/// Escape untrusted attribute/text values before interpolation. Attributes omit their
+/// leading space; head/body fragments must not close their enclosing elements.
+/// The helper supplies no assets, bootstrap data, route or application protocol.
+/// It requires no executor and always emits `<!--HEAD-->` at the end of the head,
+/// so a caller using metadata/styles does not have to remember that upstream marker.
+///
+/// # Examples
+/// ```
+/// use stackpress_leptos::render::document_shell;
+/// let html = document_shell("lang=\"en\"", "<meta charset=\"utf-8\">", "<h1>Welcome</h1>");
+/// assert!(html.contains("<!--HEAD--></head>"));
+/// ```
+pub fn document_shell(html_attributes: &str, head: &str, body: &str) -> String {
+    // Empty attributes must not add an extra space; supplied fragments remain byte-exact.
+    let space = if html_attributes.is_empty() { "" } else { " " };
+    format!(
+        "<!DOCTYPE html><html{space}{html_attributes}><head>{head}<!--HEAD--></head><body>{body}</body></html>"
+    )
 }
 /// Synchronous rendering entry, with no implicit document or application policy.
 pub struct Renderer;
@@ -229,5 +256,27 @@ impl<E> From<E> for RenderError<E> {
     /// Preserve a caller's original error at a generic execution boundary.
     fn from(error: E) -> Self {
         Self::Component(error)
+    }
+}
+
+#[cfg(test)]
+mod document_tests {
+    use super::document_shell;
+
+    /// Marker placement and trusted fragments stay exact with and without attributes.
+    #[test]
+    fn document_shell_always_supplies_metadata_marker() {
+        assert_eq!(
+            document_shell("", "", ""),
+            "<!DOCTYPE html><html><head><!--HEAD--></head><body></body></html>"
+        );
+        assert_eq!(
+            document_shell(
+                "lang=\"fr\" data-theme=\"dark\"",
+                "<meta charset=\"utf-8\">",
+                "<p>&lt;雪&gt;</p>"
+            ),
+            "<!DOCTYPE html><html lang=\"fr\" data-theme=\"dark\"><head><meta charset=\"utf-8\"><!--HEAD--></head><body><p>&lt;雪&gt;</p></body></html>"
+        );
     }
 }
