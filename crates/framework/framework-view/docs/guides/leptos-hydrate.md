@@ -2,7 +2,7 @@
 
 Adopt server markup only after the client can recreate the same first tree. Compile the
 shared component in a separate WASM consumer with `stackpress-leptos/hydrate`, plus
-View's default contracts. Add direct `leptos = "=0.8.22"` with defaults off and feature
+view's explicit `leptos-hydrate` integration (and `leptos-async` for replay). Add direct `leptos = "=0.8.22"` with defaults off and feature
 `hydrate` for macro expansion. Never enable native `ssr` in that consumer.
 
 ## Admit the bootstrap first

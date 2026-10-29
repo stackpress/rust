@@ -38,3 +38,19 @@ is reserved for issue 14 and is not introduced here. Importing a library registe
 See [page renderer](api/leptos-renderer.md), [routing](api/leptos-routing.md),
 [hydration](guides/leptos-hydrate.md), [independent library](../../../leptos/docs/README.md),
 and [presentation host](presentation-host.md).
+
+## Choose the replacement dependency
+
+A component-only crate replaces its old UI dependency with `stackpress-leptos`, defaults off,
+and keeps matching `ssr`, `hydrate` or `csr` selections. A page host also enables the appropriate
+view `leptos-*` adapter. Generated admin templates now emit generic library imports; regenerate
+through the writer and check idempotence rather than editing managed output.
+
+The old `framework-ui*` facade features and `framework_ui` alias are removed.
+`leptos-ssr` alone exposes generic rendering without view; use `framework-view-leptos-ssr`
+for the application page renderer. Default page contracts and preference/flash selections
+do not pull Leptos into a consumer.
+
+See [a complete native page](integration-leptos.md) and [the generic independent fixture](../../../../examples/leptos-independent/README.md).
+The fixture has its own workspace, two shared dependencies and runtime-only browser graph
+audits. Its shell/bootstrap are consumer-owned; no application page types are copied into it.

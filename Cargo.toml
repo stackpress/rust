@@ -22,6 +22,7 @@ members = [
     "examples/generated-admin/tool", "examples/generated-admin/shared",
     "examples/generated-admin/client", "examples/generated-admin/web",
 ]
+exclude = ["examples/leptos-independent"]
 resolver = "3"
 
 [workspace.package]

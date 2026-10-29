@@ -1,4 +1,4 @@
-# Stackpress UI API
+# Stackpress Leptos API
 
 Import from `stackpress_leptos` and its public `components`, `state`, `language`,
 `navigation`, and native-SSR `render` modules. Related data types/functions share their owning
@@ -15,6 +15,10 @@ Use [the mode matrix](../README.md#select-one-render-mode) before compiling a co
 
 | Surface | Public coverage |
 | --- | --- |
+| [Rendering kernels](rendering.md) | `Renderer, PreparedRender, RenderLimits, RenderError, AsyncRenderer, OwnedRender` |
+| [Supervised streams](streaming.md) | `StreamRenderer, StreamWriter, StreamBody, StreamLimits` |
+| [Replay and cancellation](replay.md) | `ResourceReplay, ReplayError, cancel_on_cleanup, ResourceFailure` |
+| [Locations and escaping](locations-and-escaping.md) | `LocalLocation, LocationError, ImageSource`, HTML/script escaping |
 | [Startup](initialize-ssr.md) | `render::initialize_ssr (native ssr)` |
 | [Button](button.md) | `components::Button, ButtonType` |
 | [Input](input.md) | `components::Input` |
@@ -50,7 +54,7 @@ they are not global-state constructors. SSR blocks use native `ssr`; the hydrati
 mount block is checked as wasm32 with `hydrate`. Shared UI examples also compile in WASM
 hydrate and CSR consumers. No mode combination or `--all-features` build is valid.
 
-Related: [Getting started](../getting-started.md), [Concepts](../../../framework/framework-view/docs/leptos-concepts.md),
+Related: [Getting started](../getting-started.md), [Concepts](../concepts.md),
 [View API](../../../framework/framework-view/docs/api/README.md),
 [canonical integration](../../../../examples/profile-ui/README.md).
 

@@ -21,7 +21,7 @@ The helper initializes Leptos's process-global Tokio executor and marks this bou
 
 **Returns** Unit on success, including repeated calls or an already initialized dependency
 executor. Outside Tokio it returns `ExecutorUnavailable`. Calling another executor initializer
-alone does not replace this helper. It starts no listener and enables buffered owned Head
-assembly only; buffered asynchronous rendering and reactive Head use `AsyncRenderer`.
+alone does not replace this helper. It starts no listener. Synchronous eager Head, buffered async and opt-in streaming all use
+this startup boundary; their different Owner lifetimes are documented separately.
 
 Related: [native ownership](../concepts.md).
