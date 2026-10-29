@@ -3,7 +3,7 @@
 `stackpress-framework-view` carries explicitly public page data between a native loader,
 a renderer, and a browser. It owns checked identities, locations, versions, routes, and
 byte limits. Optional modules supply settings, flash notices, access hints and host adapters.
-Leptos rendering belongs to [Stackpress UI](../../framework-ui/docs/README.md).
+Leptos rendering belongs to [Stackpress UI](../../../leptos/docs/README.md).
 
 These docs describe this checkout: Rust 1.96, edition 2024, local path dependencies,
 and `publish = false`. Import `stackpress_framework_view` directly, or use
@@ -28,7 +28,7 @@ Follow a guide for an integration task; use the [API index](api/README.md) for e
 | Register a native GET page and loader | [Add a page](guides/add-a-page.md) |
 | Use one route definition on both targets | [Share routes](guides/share-routes.md) |
 | Reject mismatched or malformed bootstrap data | [Handle contract mismatch](guides/contract-recovery.md) |
-| Hydrate or package shared UI | [UI guides](../../framework-ui/docs/README.md#choose-a-task) |
+| Hydrate or package shared UI | [UI guides](../../../leptos/docs/README.md#choose-a-task) |
 
 ## Features and integration
 
@@ -57,3 +57,5 @@ The example owns its DTO validation, query codec, transport, asset serving, and 
 Source authority: [exports](../src/lib.rs), [policies](../src/policy.rs),
 [routes](../src/routes.rs), [native extension](../src/server.rs), and [tests](../tests/).
 Markdown examples are compile-checked separately from Rustdoc doctests.
+
+Optional Leptos consumers: [issue-17 migration and features](migration-issue17.md).

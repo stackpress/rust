@@ -4,7 +4,7 @@ M2 implementation is ready for coordinator review; no M3 was started. Worktree `
 
 ## Scope and component evidence
 
-Contracts: [accepted inventory](../slice-8-design-inventory-components.md), [M2 gate](../slice-8-design-verification.md), [public component guide](../../../../crates/framework/framework-ui/docs/api/components-breadth.md). Explicit Rust controllers/slots replace React hooks/child reflection; source CSS/class/alias ABI is not claimed.
+Contracts: [accepted inventory](../slice-8-design-inventory-components.md), [M2 gate](../slice-8-design-verification.md), [public component guide](../../../../crates/leptos/docs/api/components-breadth.md). Explicit Rust controllers/slots replace React hooks/child reflection; source CSS/class/alias ABI is not claimed.
 
 | Selected M2 family | Native and real browser evidence |
 | --- | --- |

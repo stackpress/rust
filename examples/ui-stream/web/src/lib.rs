@@ -2,7 +2,8 @@
 use futures::StreamExt;
 use leptos::prelude::*;
 use stackpress_example_ui_stream_shared::{DemoData, StreamDemo};
-use stackpress_framework_ui::{
+
+use stackpress_framework_view::leptos::{
     render::initialize_ssr,
     stream::{StreamLeptosRenderer, StreamLimits as RenderStreamLimits},
 };

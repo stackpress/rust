@@ -250,9 +250,9 @@ pub async fn start_native() -> Result<js_sys::Function, JsValue> {
 #[cfg(feature = "csr")]
 fn effective_theme(
     theme: Option<stackpress_framework_view::preferences::ThemePreference>,
-) -> stackpress_framework_ui::state::Theme {
-    use stackpress_framework_ui::state::Theme;
+) -> stackpress_leptos::state::Theme {
     use stackpress_framework_view::preferences::ThemePreference;
+    use stackpress_leptos::state::Theme;
     // Keep saved choice and effective color separate; only the unset branch consults the OS.
     match theme {
         Some(ThemePreference::Light) => Theme::Light,
@@ -271,7 +271,7 @@ fn effective_theme(
 #[cfg(feature = "csr")]
 fn preference_transport(
     settings: stackpress_framework_view::preferences::Preferences,
-    initial_theme: stackpress_framework_ui::state::Theme,
+    initial_theme: stackpress_leptos::state::Theme,
 ) -> stackpress_example_profile_ui_shared::PreferenceTransport {
     use stackpress_example_profile_ui_shared::{
         DisplayPreferences, PreferenceChange, PreferenceTransport,
@@ -291,7 +291,7 @@ fn preference_transport(
             match change {
                 PreferenceChange::Locale(locale) => desired.locale = locale,
                 PreferenceChange::Theme(theme) => {
-                    desired.theme = Some(if theme == stackpress_framework_ui::state::Theme::Dark {
+                    desired.theme = Some(if theme == stackpress_leptos::state::Theme::Dark {
                         ThemePreference::Dark
                     } else {
                         ThemePreference::Light
@@ -323,12 +323,8 @@ fn preference_transport(
                         locale: reply.preferences.locale,
                         theme: reply.preferences.theme.map_or(frozen.get_value(), |value| {
                             match value {
-                                ThemePreference::Light => {
-                                    stackpress_framework_ui::state::Theme::Light
-                                }
-                                ThemePreference::Dark => {
-                                    stackpress_framework_ui::state::Theme::Dark
-                                }
+                                ThemePreference::Light => stackpress_leptos::state::Theme::Light,
+                                ThemePreference::Dark => stackpress_leptos::state::Theme::Dark,
                             }
                         }),
                     })
@@ -365,8 +361,8 @@ fn mount(
     #[cfg(not(feature = "hydrate"))]
     let early_draft = None;
     let root = move || {
-        stackpress_framework_ui::leptos_meta::provide_meta_context();
-        stackpress_framework_ui::routing::provide_route_context(initial.base.clone());
+        stackpress_leptos::leptos_meta::provide_meta_context();
+        stackpress_framework_view::leptos::routing::provide_route_context(initial.base.clone());
         let (transport, cancel) = transport(endpoint);
         let navigation = navigation();
         let recovered = settings.as_ref().is_some_and(|settings| settings.recovered);

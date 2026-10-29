@@ -7,7 +7,7 @@ use crate::RoleContext;
 use leptos::prelude::*;
 use serde_json::Value;
 use stackpress_framework_schema::{Input, UiField, ValueType};
-use stackpress_framework_ui::components::{
+use stackpress_leptos::components::{
     Combobox, ComboboxState, RangeScale, RangeState, RangeValue, RatingInput, RatingState,
     SelectOption, SelectOptions, Slider, SlugAlphabet, SlugInput, SlugStyle,
 };

@@ -16,15 +16,15 @@ required-features = ["ssr", "rich", "format"]
 
 [features]
 default = []
-ssr = ["stackpress-framework-ui/ssr"]
-hydrate = ["stackpress-framework-ui/hydrate"]
-csr = ["stackpress-framework-ui/csr"]
-rich = ["stackpress-framework-ui/rich"]
-format = ["stackpress-framework-ui/format"]
+ssr = ["stackpress-leptos/ssr"]
+hydrate = ["stackpress-leptos/hydrate"]
+csr = ["stackpress-leptos/csr"]
+rich = ["stackpress-leptos/rich"]
+format = ["stackpress-leptos/format"]
 
 [dependencies]
 leptos = { version = "=0.8.22", default-features = false }
-stackpress-framework-ui = { path = "../../crates/framework/framework-ui" }
+stackpress-leptos = { path = "../../crates/leptos" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 

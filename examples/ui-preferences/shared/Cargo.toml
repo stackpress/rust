@@ -8,9 +8,9 @@ publish.workspace = true
 
 [features]
 default = []
-ssr = ["stackpress-framework-ui/ssr"]
-hydrate = ["stackpress-framework-ui/hydrate"]
-csr = ["stackpress-framework-ui/csr"]
+ssr = ["stackpress-leptos/ssr"]
+hydrate = ["stackpress-leptos/hydrate"]
+csr = ["stackpress-leptos/csr"]
 
 [dependencies]
 leptos = { version = "=0.8.22", default-features = false }
@@ -18,7 +18,7 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 stackpress-framework-language = { path = "../../../crates/framework/framework-language" }
 stackpress-framework-view = { path = "../../../crates/framework/framework-view", features = ["preferences", "flash"] }
-stackpress-framework-ui = { path = "../../../crates/framework/framework-ui" }
+stackpress-leptos = { path = "../../../crates/leptos" }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 wasm-bindgen = "=0.2.129"

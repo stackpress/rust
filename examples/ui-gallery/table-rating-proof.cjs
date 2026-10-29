@@ -2,7 +2,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const assert = require('node:assert/strict');
-const folder = path.resolve(__dirname,'../../crates/framework/framework-ui/third-party/lucide');
+const folder = path.resolve(__dirname,'../../crates/leptos/third-party/lucide');
 
 /** Compare real inline primitives with a pinned master, without normalizing geometry away. */
 async function icon(svg, name, size) {

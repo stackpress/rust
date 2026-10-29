@@ -35,4 +35,4 @@ The enum is Clone, Debug, PartialEq/Eq and implements Display/Error. Policy vari
 by kind; Failure values compare by shared Arc identity, not equal cause text. It is not a
 serialized public error envelope and does not trigger automatic retries or reloads.
 
-Related: [recovery](../guides/contract-recovery.md), [SSR startup](../../../framework-ui/docs/api/initialize-ssr.md).
+Related: [recovery](../guides/contract-recovery.md), [SSR startup](../../../../leptos/docs/api/initialize-ssr.md).

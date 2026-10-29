@@ -1,6 +1,6 @@
 //! Explicit proof-only collection fixture; never rendered by the owner-facing Gallery.
 use leptos::prelude::*;
-use stackpress_framework_ui::components::{
+use stackpress_leptos::components::{
     BoundedList, CollectionFieldset, CollectionRow, ControlError, FieldValue, MetadataEntry,
     MetadataInput, RatingInput, RatingState, TagList, TextList,
 };

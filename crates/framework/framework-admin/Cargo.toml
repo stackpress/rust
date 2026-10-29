@@ -8,15 +8,15 @@ publish.workspace = true
 
 [features]
 default = []
-format = ["stackpress-framework-ui/format"]
-ssr = ["stackpress-framework-ui/ssr"]
-hydrate = ["stackpress-framework-ui/hydrate"]
-csr = ["stackpress-framework-ui/csr"]
+format = ["stackpress-leptos/format"]
+ssr = ["stackpress-leptos/ssr"]
+hydrate = ["stackpress-leptos/hydrate"]
+csr = ["stackpress-leptos/csr"]
 codegen = ["stackpress-framework-schema/codegen", "dep:stackpress-idea-transformer"]
 
 [dependencies]
 stackpress-framework-schema = { path = "../framework-schema" }
-stackpress-framework-ui = { path = "../framework-ui" }
+stackpress-leptos = { path = "../../leptos" }
 stackpress-idea-transformer = { path = "../../idea/idea-transformer", optional = true }
 leptos = { version = "=0.8.22", default-features = false }
 serde = { version = "1", features = ["derive"] }

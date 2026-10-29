@@ -32,7 +32,7 @@ can reveal it. No rollback, exactly-once write or automatic retry is promised.
 
 Language rendering uses the existing Language/LanguageContext facility. The fixed
 sample date/number are translated phrase examples. The shared formatters and
-specialized inputs are separate framework-ui facilities; this proof does not
+specialized inputs are separate stackpress-leptos facilities; this proof does not
 exercise them or claim ICU parity.
 
 Flash text is public and bounded. The host clears the same cookie identity and

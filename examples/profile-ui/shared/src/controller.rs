@@ -6,7 +6,7 @@ use stackpress_example_profile_ui_contracts::{
     REVISION, ReplyDecodeError, SearchFailure, SearchFailureKind, SearchInput, SearchPage,
     SearchReply,
 };
-use stackpress_framework_ui::state::{NoticeKind, Notifications};
+use stackpress_leptos::state::{NoticeKind, Notifications};
 
 /// Signal handles for one component; cleanup remains with the owning Leptos root.
 #[derive(Clone, Copy)]

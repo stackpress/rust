@@ -1,6 +1,6 @@
 //! Deliberately hostile examples, clearly separated from ordinary product fixtures.
 use leptos::prelude::*;
-use stackpress_framework_ui::{
+use stackpress_leptos::{
     components::{FieldControl, Textarea},
     rich::{RichContent, SafeHtml},
 };

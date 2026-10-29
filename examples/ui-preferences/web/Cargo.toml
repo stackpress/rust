@@ -12,7 +12,7 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 stackpress-framework-language = { path = "../../../crates/framework/framework-language" }
 stackpress-framework-view = { path = "../../../crates/framework/framework-view", features = ["web-preferences", "web-flash"] }
-stackpress-framework-ui = { path = "../../../crates/framework/framework-ui", features = ["ssr"] }
+stackpress-leptos = { path = "../../../crates/leptos", features = ["ssr"] }
 stackpress-example-ui-preferences-shared = { path = "../shared", features = ["ssr"] }
 stackpress-lib = { path = "../../../crates/lib" }
 stackpress-server = { path = "../../../crates/server/server", features = ["http"] }

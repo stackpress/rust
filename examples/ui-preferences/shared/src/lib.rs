@@ -1,11 +1,11 @@
 //! One deterministic shared preferences component; transport and policy stay in adapters.
 use leptos::prelude::*;
-use stackpress_framework_ui::language::LanguageContext;
 use stackpress_framework_view::access::ActionId;
 use stackpress_framework_view::flash::FlashRoot;
 use stackpress_framework_view::preferences::{PreferenceState, SaveState, ThemePreference};
 #[cfg(test)]
 use stackpress_framework_view::{access::AllowedActions, flash::FlashNotice};
+use stackpress_leptos::language::LanguageContext;
 
 mod model;
 pub use model::{STYLES, Seed, action, action_at_origin, decode, language, registry};

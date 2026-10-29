@@ -5,7 +5,7 @@ members = [
     "examples/generated-profile/codegen", "examples/generated-profile/app",
     "crates/sql/sql", "crates/sql/sql-sqlite", "examples/sql-profile",
     "crates/sql/sql-postgres", "crates/sql/sql-mysql",
-    "crates/framework/framework-view", "crates/framework/framework-ui", "crates/framework/framework-language",
+    "crates/framework/framework-view", "crates/leptos", "crates/framework/framework-language",
     "examples/profile-ui/contracts", "examples/profile-ui/shared",
     "examples/profile-ui/web", "examples/profile-ui/client", "examples/profile-ui/native",
     "examples/profile-ui/gateway",
@@ -54,7 +54,7 @@ stackpress-sql-sqlite = { path = "crates/sql/sql-sqlite", optional = true }
 stackpress-sql-postgres = { path = "crates/sql/sql-postgres", optional = true }
 stackpress-sql-mysql = { path = "crates/sql/sql-mysql", optional = true }
 stackpress-framework-view = { path = "crates/framework/framework-view", optional = true }
-stackpress-framework-ui = { path = "crates/framework/framework-ui", optional = true }
+stackpress-leptos = { path = "crates/leptos", optional = true, default-features = false }
 stackpress-framework-language = { path = "crates/framework/framework-language", optional = true }
 
 stackpress-framework-schema = { path = "crates/framework/framework-schema", optional = true }
@@ -85,13 +85,20 @@ framework-view-native-file = ["framework-view-preferences", "stackpress-framewor
 framework-view-server = ["framework-view", "stackpress-framework-view/server"]
 framework-view-web-preferences = ["framework-view", "stackpress-framework-view/web-preferences"]
 framework-view-web-flash = ["framework-view", "stackpress-framework-view/web-flash"]
-framework-ui = ["framework-view", "dep:stackpress-framework-ui"]
-framework-ui-ssr = ["framework-ui", "stackpress-framework-ui/ssr"]
-framework-ui-hydrate = ["framework-ui", "stackpress-framework-ui/hydrate"]
-framework-ui-csr = ["framework-ui", "stackpress-framework-ui/csr"]
-framework-ui-async = ["framework-ui", "stackpress-framework-ui/async"]
-framework-ui-rich = ["framework-ui", "stackpress-framework-ui/rich"]
-framework-ui-format = ["framework-ui", "stackpress-framework-ui/format"]
+leptos = ["dep:stackpress-leptos"]
+leptos-ssr = ["leptos", "stackpress-leptos/ssr"]
+leptos-hydrate = ["leptos", "stackpress-leptos/hydrate"]
+leptos-csr = ["leptos", "stackpress-leptos/csr"]
+leptos-async = ["leptos", "stackpress-leptos/async"]
+leptos-rich = ["leptos", "stackpress-leptos/rich"]
+leptos-format = ["leptos", "stackpress-leptos/format"]
+leptos-stream = ["leptos", "stackpress-leptos/stream"]
+framework-view-leptos = ["framework-view", "leptos", "stackpress-framework-view/leptos"]
+framework-view-leptos-ssr = ["framework-view", "leptos", "stackpress-framework-view/leptos-ssr"]
+framework-view-leptos-hydrate = ["framework-view", "leptos", "stackpress-framework-view/leptos-hydrate"]
+framework-view-leptos-csr = ["framework-view", "leptos", "stackpress-framework-view/leptos-csr"]
+framework-view-leptos-async = ["framework-view", "leptos", "stackpress-framework-view/leptos-async"]
+framework-view-leptos-stream = ["framework-view", "leptos", "stackpress-framework-view/leptos-stream"]
 framework-language = ["dep:stackpress-framework-language"]
 
 [dev-dependencies]

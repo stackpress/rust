@@ -1,6 +1,6 @@
 //! Actual M2 component composition, shared by SSR, hydrated web and CSR.
 use leptos::prelude::*;
-use stackpress_framework_ui::components::*;
+use stackpress_leptos::components::*;
 
 /// Native drafts copied before hydration; no persistence/environment lookup is performed.
 #[derive(Clone)]

@@ -65,7 +65,7 @@ def prepare(source, admin, destination, variant, profile='debug'):
     if (admin/'snippets').exists():
         shutil.copytree(admin/'snippets', catalog/'snippets')
     (catalog/'start.js').write_text(CATALOG_START)
-    styles = ROOT/'crates/framework/framework-ui/src/components'
+    styles = ROOT/'crates/leptos/src/components'
     css = ''.join((styles/name).read_text() for name in ('styles.css','core.css','advanced.css','breadth.css'))
     css += (ROOT/'examples/generated-admin/shared/src/roles.css').read_text()
     (catalog/'catalog.css').write_text(css+'''\nbody{margin:0}header{padding:1rem;font:16px system-ui}

@@ -1,7 +1,7 @@
 //! One real component source for native in-order SSR and browser hydration.
 use leptos::prelude::*;
 use serde::{Deserialize, Serialize};
-use stackpress_framework_ui::resources::cancel_on_cleanup;
+use stackpress_leptos::resources::cancel_on_cleanup;
 
 /// Only deliberately public rendering choices enter the seed.
 #[derive(Clone, Debug, Serialize, Deserialize)]

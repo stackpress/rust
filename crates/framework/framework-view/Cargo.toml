@@ -16,7 +16,20 @@ web-flash = ["flash", "server"]
 native-file = ["preferences", "dep:libc"]
 server = ["dep:stackpress-lib", "dep:stackpress-server"]
 
+leptos = ["dep:stackpress-leptos", "dep:leptos", "dep:leptos_meta", "dep:leptos_router"]
+leptos-async = ["leptos", "stackpress-leptos/async"]
+leptos-ssr = ["leptos-async", "stackpress-leptos/ssr", "server", "dep:futures"]
+leptos-hydrate = ["leptos", "stackpress-leptos/hydrate"]
+leptos-csr = ["leptos", "stackpress-leptos/csr"]
+leptos-stream = ["leptos-ssr", "stackpress-leptos/stream"]
+
 [dependencies]
+stackpress-leptos = { path = "../../leptos", optional = true, default-features = false }
+leptos = { version = "=0.8.22", optional = true, default-features = false }
+leptos_meta = { version = "=0.8.7", optional = true, default-features = false }
+leptos_router = { version = "=0.8.17", optional = true, default-features = false }
+futures = { version = "0.3", optional = true }
+
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 stackpress-framework-language = { path = "../framework-language", optional = true }
@@ -30,7 +43,13 @@ stackpress-lib = { path = "../../lib", optional = true }
 stackpress-server = { path = "../../server/server", optional = true }
 
 [dev-dependencies]
-tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+futures = "0.3"
+hydration_context = "=0.3.2"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "sync", "time"] }
 
 [lints]
 workspace = true
+
+[[example]]
+name = "issue17_parity"
+required-features = ["leptos-stream"]

@@ -13,7 +13,7 @@ const focus = (page,id) => page.waitForFunction(id => document.activeElement?.id
 
 /** Compare rendered primitives with the exact vendored masters, including decorative semantics. */
 async function iconGeometry(page) {
-  const folder=path.resolve(__dirname,'../../crates/framework/framework-ui/third-party/lucide');
+  const folder=path.resolve(__dirname,'../../crates/leptos/third-party/lucide');
   for(const [id,name] of [['proof-text-1-up','arrow-up'],['proof-text-1-down','arrow-down'],['proof-text-1-remove','trash'],['proof-tags-10-remove','x'],['proof-tags-add','plus']]) {
     const source=fs.readFileSync(path.join(folder,name+'.svg'),'utf8');
     const result=await page.locator('#'+id+' svg').evaluate((svg,source)=>{
@@ -154,7 +154,7 @@ async function controls(page) {
 
 /** Save icon masters at actual sizes/themes and representative active/disabled controls. */
 async function contactSheet(browser) {
-  const folder=path.resolve(__dirname,'../../crates/framework/framework-ui/third-party/lucide');
+  const folder=path.resolve(__dirname,'../../crates/leptos/third-party/lucide');
   const names=['arrow-up','arrow-down','arrow-up-down','trash','x','plus','star'];
   const icons=names.map(name=>({name,svg:fs.readFileSync(path.join(folder,name+'.svg'),'utf8')}));
   icons.push({name:'circle anchor',svg:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>'});

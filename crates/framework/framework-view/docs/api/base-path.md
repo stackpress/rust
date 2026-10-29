@@ -34,4 +34,4 @@ Non-root segments allow only ASCII letters/digits, `-`, `_`, `.`, `~`; empty or 
 segments are invalid. Query/fragment/percent escapes are not mount syntax. The type is
 Default, Clone, Debug, PartialEq/Eq, Serialize/Deserialize with checked decoding.
 
-Related: [PublicLocation](public-location.md), [routing context](../../../framework-ui/docs/api/routing.md).
+Related: [PublicLocation](public-location.md), [routing context](leptos-routing.md).

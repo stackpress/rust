@@ -6,7 +6,7 @@ use serde_json::Value;
 use stackpress_framework_schema::{
     Input, RoleBinding, SchemaError, SchemaErrorKind, SchemaResult, UiField, ValueType,
 };
-use stackpress_framework_ui::format::{
+use stackpress_leptos::format::{
     CalendarDate, DecimalValue, DisplayLocale, E164Phone, NumberFormat, OffsetDateTime, TimeOfDay,
     TimePrecision,
     edit::{
@@ -319,7 +319,7 @@ fn render<P: EditPolicy>(
     let published = StoredValue::new(draft.get_untracked());
     // Recover pre-hydration edits through the UI controller's checked native adoption contract.
     #[cfg(target_arch = "wasm32")]
-    stackpress_framework_ui::format::edit::adopt_native(&context.id, state).map_err(invalid)?;
+    stackpress_leptos::format::edit::adopt_native(&context.id, state).map_err(invalid)?;
     let decode_reset = decode.clone();
     Effect::watch(
         move || draft.get(),

@@ -4,7 +4,7 @@ The released M3 follow-up is implemented and ready for coordinator review. Workt
 
 ## Scope and completion contract
 
-Authority: the accepted [specialized editing table](../../../../examples/ui-format/README.md#specialized-editing-contract). Its table is preserved exactly. Production implementation is `crates/framework/framework-ui/src/edit/`, exported as `format::edit` under the existing `format` feature. [API entry](../../../../crates/framework/framework-ui/docs/api/README.md) and the example explain usage and decisions. Existing public enums gained no variants; downstream exhaustive-match compatibility is preserved.
+Authority: the accepted [specialized editing table](../../../../examples/ui-format/README.md#specialized-editing-contract). Its table is preserved exactly. Production implementation is `crates/framework/framework-ui/src/edit/`, exported as `format::edit` under the existing `format` feature. [API entry](../../../../crates/leptos/docs/api/README.md) and the example explain usage and decisions. Existing public enums gained no variants; downstream exhaustive-match compatibility is preserved.
 
 | Required area | Implementation and proof |
 | --- | --- |

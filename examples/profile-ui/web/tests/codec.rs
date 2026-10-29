@@ -218,7 +218,7 @@ async fn foreign_delivery_and_conversion_failure() {
         }
         Ok(Flow::Continue)
     }
-    stackpress_framework_ui::render::initialize_ssr().unwrap();
+    stackpress_framework_view::leptos::render::initialize_ssr().unwrap();
     let mut builder = ServerBuilder::new();
     builder.get("/ui/profiles", finalize).unwrap();
     stackpress_example_profile_ui_web::register_pages(&mut builder, BasePath::default()).unwrap();
@@ -272,7 +272,8 @@ async fn foreign_delivery_and_conversion_failure() {
 #[tokio::test]
 async fn encoded_route_contract() {
     use stackpress_example_profile_ui_web::routes;
-    use stackpress_framework_ui::{leptos_router::PossibleRouteMatch, routing::CatalogPath};
+    use stackpress_framework_view::leptos::routing::CatalogPath;
+    use stackpress_leptos::leptos_router::PossibleRouteMatch;
     let base = BasePath::new("/demo").unwrap();
     let detail = routes::detail().unwrap();
     let path = detail
@@ -375,10 +376,11 @@ async fn initial_settings_and_detail_projection() {
 /// Unsupported reactive Head becomes a sanitized HTTP error; the host serves the next page.
 #[tokio::test]
 async fn reactive_head_failure_does_not_escape_the_request() {
-    use stackpress_framework_ui::{leptos::prelude::*, render::LeptosRenderer};
+    use stackpress_framework_view::leptos::render::LeptosRenderer;
     use stackpress_framework_view::{
         PageAssets, PageContract, PageLoad, PageSpec, PublicLocation, ServerBuilderViewExt,
     };
+    use stackpress_leptos::leptos::prelude::*;
     use stackpress_lib::{Invocation, Request, Response, Result};
     use stackpress_server::ServerBuilder;
 
@@ -404,10 +406,10 @@ async fn reactive_head_failure_does_not_escape_the_request() {
         |snapshot: &PageSnapshot<bool>| {
             let title = RwSignal::new("Independent title".to_owned());
             Ok(if snapshot.data {
-                view! { <stackpress_framework_ui::leptos_meta::Title text=move || title.get()/> }
+                view! { <stackpress_leptos::leptos_meta::Title text=move || title.get()/> }
                     .into_any()
             } else {
-                view! { <stackpress_framework_ui::leptos_meta::Title text=title.get()/> }.into_any()
+                view! { <stackpress_leptos::leptos_meta::Title text=title.get()/> }.into_any()
             })
         },
     )

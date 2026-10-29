@@ -6,7 +6,7 @@ use stackpress_example_profile_ui_contracts::{
     DetailContext,
     routes::{self, Destination},
 };
-use stackpress_framework_ui::routing::BasePath;
+use stackpress_framework_view::leptos::routing::BasePath;
 use std::collections::BTreeMap;
 
 /// Thin host adapter: requested location/push intent and canonical URL publication.

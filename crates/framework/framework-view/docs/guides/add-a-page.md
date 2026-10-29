@@ -6,12 +6,12 @@ Send async function; return only the public data needed by the synchronous compo
 ## Select the native features
 
 Add local dependencies on `stackpress-lib`, `stackpress-server`, and `stackpress-framework-view`
-with feature `server`, plus `stackpress-framework-ui` with feature `ssr`. Add a direct `leptos = "=0.8.22"` dependency with defaults off and feature `ssr` for macro
+with feature `server`, plus `stackpress-leptos` with feature `ssr`. Add a direct `leptos = "=0.8.22"` dependency with defaults off and feature `ssr` for macro
 expansion. Add Tokio with `macros` and `rt-multi-thread`. The following complete program builds and handles one request
 in process, without a listener.
 
 ```rust
-use stackpress_framework_ui::{
+use stackpress_leptos::{
     leptos::prelude::*,
     render::{LeptosRenderer, initialize_ssr},
 };
@@ -81,5 +81,5 @@ the loaded data. Do not copy the original query wholesale. Use the shared
 [route catalog](share-routes.md) for mounted paths.
 
 You have added a page through ordinary server registration. For rendering prerequisites and
-owned Head, see [UI concepts](../../../framework-ui/docs/concepts.md); for error and Abort
+owned Head, see [UI concepts](../../../../leptos/docs/concepts.md); for error and Abort
 behavior, see the [lifecycle table](../concepts.md#lifecycle-remains-the-servers).

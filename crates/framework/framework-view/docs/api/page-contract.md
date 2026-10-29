@@ -35,4 +35,4 @@ Leptos renderer validate again. The type is Clone, Debug, PartialEq/Eq.
 Page locale syntax is narrower than `Language`'s standalone key syntax. Use a value accepted
 by both when putting language data into a page.
 
-Related: [PageAssets](page-assets.md), [Language](../../../framework-ui/docs/api/language.md).
+Related: [PageAssets](page-assets.md), [Language](../../../../leptos/docs/api/language.md).

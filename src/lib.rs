@@ -14,9 +14,9 @@
 //! native network adapters. All database features are disabled by default; a re-export
 //! does not open a database or expose a query capability.
 //!
-//! UI is opt-in with `framework-ui-ssr`, `framework-ui-hydrate` or `framework-ui-csr`.
+//! UI is opt-in with `leptos-ssr`, `leptos-hydrate` or `leptos-csr`.
 //! Build these mutually exclusive render modes separately. Native buffered SSR requires
-//! `framework_ui::render::initialize_ssr()` during startup inside an active Tokio runtime.
+//! `leptos::render::initialize_ssr()` during startup inside an active Tokio runtime.
 //!
 //! `server-http` retains the buffered adapter only. `server-http-host` separately
 //! exposes the supplied-IO HTTP/1 host as `server_http_host`; `server-http-host-tls`
@@ -44,8 +44,6 @@
 //! # }
 //! ```
 
-#[cfg(feature = "framework-ui")]
-pub use stackpress_framework_ui as framework_ui;
 #[cfg(feature = "framework-view")]
 pub use stackpress_framework_view as framework_view;
 #[cfg(feature = "idea")]
@@ -54,6 +52,8 @@ pub use stackpress_idea as idea;
 pub use stackpress_idea_parser as idea_parser;
 #[cfg(feature = "idea-transformer")]
 pub use stackpress_idea_transformer as idea_transformer;
+#[cfg(feature = "leptos")]
+pub use stackpress_leptos as leptos;
 pub use stackpress_lib as lib;
 pub use stackpress_lib::{
     Body, CookieOptions, DataMap, DataPath, DataSet, DeliveryState, DispatchOutcome,

@@ -70,9 +70,9 @@ def main():
         run(mode, [sys.executable, "examples/profile-ui/build-client.py", mode], WASM)
         asset_manifest.check(mode)
     run("gateway-build", ["cargo", "build", "--locked", "-p", "stackpress-example-profile-ui-gateway", "--bins", *features])
-    run("native-feature", ["cargo", "check", "--locked", "-p", "stackpress", "--features", "framework-ui-ssr"])
+    run("native-feature", ["cargo", "check", "--locked", "-p", "stackpress", "--features", "leptos-ssr"])
     for mode in ("hydrate", "csr"):
-        run(f"facade-{mode}", ["cargo", "check", "--locked", "-p", "stackpress", "--target", "wasm32-unknown-unknown", "--features", f"framework-ui-{mode}"], WASM)
+        run(f"facade-{mode}", ["cargo", "check", "--locked", "-p", "stackpress", "--target", "wasm32-unknown-unknown", "--features", f"leptos-{mode}"], WASM)
         # Cargo's explicit no-proc-macro edge filter separates host build tooling
         # (Leptos wasm_split_macros uses SHA-256) from the browser runtime graph.
         tree = run(f"runtime-{mode}", ["cargo", "tree", "--locked", "-p", "stackpress-example-profile-ui-client", "--target", "wasm32-unknown-unknown", "--features", mode, "--edges", "normal,no-proc-macro"], WASM, True)

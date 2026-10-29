@@ -1,5 +1,5 @@
 //! Finite specialized-editor composition; all policy/context is explicit fixture data.
-use stackpress_framework_ui::{
+use stackpress_leptos::{
     format::{
         DecimalValue, DisplayLocale, E164Phone,
         edit::{
@@ -24,7 +24,7 @@ fn state<P: EditPolicy>(
 #[cfg(target_arch = "wasm32")]
 fn adopt<P: EditPolicy>(id: &str, state: RwSignal<EditState<P>>) {
     // The library bridge enforces JS-owned byte/digit limits before any Rust text copy.
-    let _ = stackpress_framework_ui::format::edit::adopt_native(id, state);
+    let _ = stackpress_leptos::format::edit::adopt_native(id, state);
 }
 /// Shared SSR/hydrate/CSR editor source; neither locale nor region is negotiated.
 #[component]
@@ -112,7 +112,7 @@ pub fn EditingProof(
         </form><p>"Changed value commits: "<output id="edit-commits">{move ||count.get()}</output></p>
         <div class="edit-actions" role="group" aria-label="Editing actions"><button id="edit-outside" type="button">"Leave field"</button>
         <button id="edit-modal-open" type="button" on:click=move |_|modal.set(true)>"Open edit dialog"</button></div>
-        <stackpress_framework_ui::components::Dialog id="edit-modal" open=modal title="Editing dialog" initial_focus_id="edit-modal-number" fallback_focus_id="edit-modal-open"><FormattedInput id="edit-modal-number" name="modal-decimal" label="Modal amount" state=modal_edit/></stackpress_framework_ui::components::Dialog>
+        <stackpress_leptos::components::Dialog id="edit-modal" open=modal title="Editing dialog" initial_focus_id="edit-modal-number" fallback_focus_id="edit-modal-open"><FormattedInput id="edit-modal-number" name="modal-decimal" label="Modal amount" state=modal_edit/></stackpress_leptos::components::Dialog>
         <p>"Chromium composition sequences are synthetic test evidence. Real OS IME and packaged WebView are separate."</p>
     </main>}
 }

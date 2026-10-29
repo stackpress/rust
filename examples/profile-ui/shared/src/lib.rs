@@ -19,7 +19,8 @@ pub use locale::profile_language;
 use stackpress_example_profile_ui_contracts::{
     PublicStatus, SearchFailure, SearchInput, SearchPage, SearchReply, routes, validate_page,
 };
-use stackpress_framework_ui::{
+use stackpress_framework_view::leptos::routing::use_route_context;
+use stackpress_leptos::{
     components::{
         Alert, Button, ButtonType, FieldControl, Input, LayoutBlank, LayoutHead, LayoutLeft,
         LayoutMain, LayoutMenu, LayoutPanel, LayoutProvider, LayoutRight, Link, List, ListItem,
@@ -27,7 +28,6 @@ use stackpress_framework_ui::{
     },
     language::{Language, LanguageContext, LanguageProvider, Translate},
     leptos_meta::{Html, Meta, Title},
-    routing::use_route_context,
     state::{Theme, ThemeState},
 };
 
@@ -227,7 +227,7 @@ pub fn ProfileSearch(
     // recovery afterward so successful bootstrap cannot erase its explanation.
     if preference_recovered {
         let _ = controller.notices.notify(
-            stackpress_framework_ui::state::NoticeKind::Warning,
+            stackpress_leptos::state::NoticeKind::Warning,
             "Saved preferences could not be loaded. Defaults are in use.".into(),
         );
     }
@@ -355,7 +355,7 @@ pub fn ProfileDetail(
     return_href: String,
 ) -> impl IntoView {
     let profile = reply.rows.into_iter().find(|profile| profile.id == id);
-    let language = stackpress_framework_ui::language::use_language().ok();
+    let language = stackpress_leptos::language::use_language().ok();
     let text = move |phrase: &'static str| {
         language.map_or_else(|| phrase.to_owned(), |language| language.text(phrase, &[]))
     };

@@ -9,7 +9,7 @@ import time
 
 ROOT = Path(__file__).resolve().parents[3]
 OUTPUT_ROOT = Path(os.environ.get('ADMIN_PROOF_ROOT', '/private/tmp/s8-admin')).expanduser().resolve()
-TARGET = OUTPUT_ROOT / 'target'
+TARGET = Path(os.environ.get('CARGO_TARGET_DIR', OUTPUT_ROOT / 'target')).expanduser().resolve()
 
 
 class Context:
@@ -43,7 +43,7 @@ class Context:
     def run(self, name, command, timeout=900, extra=None, cwd=None):
         """Record exact argv and reap the entire group after timeout, cancellation or budget failure."""
         env = dict(os.environ, CARGO_TARGET_DIR=str(TARGET), CARGO_LLVM_COV_TARGET_DIR=str(TARGET),
-                   CARGO_BUILD_JOBS='4', CARGO_INCREMENTAL='0', CARGO_PROFILE_DEV_DEBUG='0')
+                   CARGO_BUILD_JOBS=os.environ.get('CARGO_BUILD_JOBS', '4'), CARGO_INCREMENTAL='0', CARGO_PROFILE_DEV_DEBUG='0')
         env.update(extra or {})
         start = time.monotonic()
         next_measure = start + 15

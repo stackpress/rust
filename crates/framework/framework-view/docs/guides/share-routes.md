@@ -33,7 +33,7 @@ Captures stay encoded; decode once using the application's strict codec. The cat
 duplicate IDs and identical pattern strings, but does not prove all routes are unambiguous.
 
 Pass `catalog.pattern(id)` to `PageSpec::get` and a cloned row to UI's
-[`CatalogPath`](../../../framework-ui/docs/api/routing.md). Supply the same `BasePath` to
+[`CatalogPath`](../api/leptos-routing.md). Supply the same `BasePath` to
 assets, the route context, the Leptos `Router` base, and operation URLs. Providing route context
 alone does not configure a `Router`.
 

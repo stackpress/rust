@@ -55,7 +55,7 @@ await import('./application.js');
 """)
     # This classic async asset must survive wrapping the deferred WASM entry point.
     if name=='stream':
-        expected=(ROOT/'crates/framework/framework-ui/src/stream_status.js').read_bytes()
+        expected=(ROOT/'crates/framework/framework-view/src/leptos/stream_status.js').read_bytes()
         if (destination/'stream-status.js').read_bytes()!=expected:
             raise RuntimeError('Review stream status asset differs from the approved fixed script')
     manifest(destination,name)

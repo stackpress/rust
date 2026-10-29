@@ -5,8 +5,8 @@ use crate::{
     setup,
 };
 use leptos::prelude::*;
-use stackpress_framework_ui::components::{ADVANCED_STYLES, BREADTH_STYLES, CORE_STYLES};
 use stackpress_framework_view::BasePath;
+use stackpress_leptos::components::{ADVANCED_STYLES, BREADTH_STYLES, CORE_STYLES};
 use stackpress_lib::{Error, Flow, Result, handler};
 use stackpress_server::{Server, ServerBuilder};
 use stackpress_server_http::{AssetBundle, AssetLimits, HttpServer, NetworkLimits, NetworkOptions};
@@ -38,7 +38,7 @@ impl Gateway {
                 "review executable and bundle variant disagree",
             ));
         }
-        stackpress_framework_ui::render::initialize_ssr().map_err(Error::from_source)?;
+        stackpress_framework_view::leptos::render::initialize_ssr().map_err(Error::from_source)?;
         let path = setup::attach(&options.directory)?;
         let (engine, acknowledgement) = generated_admin_web::database::open_controlled(&path)
             .await
@@ -221,9 +221,9 @@ fn pages(builder: &mut ServerBuilder, options: &Options) -> Result<()> {
                         String::new()
                     } else if let Some(locale) = locale {
                         stackpress_example_ui_format::editing::render(if locale == "fr" {
-                            stackpress_framework_ui::format::DisplayLocale::French
+                            stackpress_leptos::format::DisplayLocale::French
                         } else {
-                            stackpress_framework_ui::format::DisplayLocale::English
+                            stackpress_leptos::format::DisplayLocale::English
                         })
                     } else {
                         stackpress_example_ui_format::render_html()

@@ -39,4 +39,4 @@ adds **Reload page**, and avoids automatic reload loops. Its
 build manifests and port-free recovery proofs. Those behaviors are example-owned.
 
 You now have a place to stop incompatible data before hydration. Continue with
-[browser hydration](../../../framework-ui/docs/guides/hydrate.md) for the mount sequence.
+[browser hydration](leptos-hydrate.md) for the mount sequence.

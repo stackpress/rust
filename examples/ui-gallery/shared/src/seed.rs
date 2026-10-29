@@ -59,7 +59,10 @@ pub fn decode_initial(
     page: &str,
     replay: &str,
 ) -> Result<
-    (GallerySeed, stackpress_framework_ui::replay::ResourceReplay),
+    (
+        GallerySeed,
+        stackpress_framework_view::leptos::replay::ResourceReplay,
+    ),
     stackpress_framework_view::ViewError,
 > {
     use stackpress_framework_language::LocaleRegistry;
@@ -87,7 +90,7 @@ pub fn decode_initial(
     {
         return Err(ViewError::ContractMismatch);
     }
-    let replay = stackpress_framework_ui::replay::ResourceReplay::decode(
+    let replay = stackpress_framework_view::leptos::replay::ResourceReplay::decode(
         replay,
         PageLimits::default().snapshot_bytes,
     )?;

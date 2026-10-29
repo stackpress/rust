@@ -1,6 +1,6 @@
 //! Explicit small translation fixture; no browser detection or dictionary fetch.
 
-use stackpress_framework_ui::language::Language;
+use stackpress_leptos::language::Language;
 
 /// Construct the checked English/French fixture used identically by every target.
 ///
