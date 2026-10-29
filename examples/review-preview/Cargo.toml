@@ -13,7 +13,7 @@ review-preview = [
     "dep:stackpress-server",
     "dep:stackpress-server-http",
     "dep:stackpress-framework-view",
-    "dep:stackpress-framework-ui",
+    "dep:stackpress-leptos",
     "dep:stackpress-sql",
     "dep:stackpress-example-ui-gallery-web",
     "dep:stackpress-example-ui-preferences-web",
@@ -42,8 +42,8 @@ required-features = ["review-preview"]
 stackpress-lib = { path = "../../crates/lib", optional = true }
 stackpress-server = { path = "../../crates/server/server", features = ["http-stream"], optional = true }
 stackpress-server-http = { path = "../../crates/server/http", optional = true }
-stackpress-framework-view = { path = "../../crates/framework/framework-view", optional = true, features = ["preferences", "flash"] }
-stackpress-framework-ui = { path = "../../crates/framework/framework-ui", features = ["ssr", "rich", "format", "stream"], optional = true }
+stackpress-framework-view = { path = "../../crates/framework/framework-view", optional = true, features = ["leptos-ssr", "preferences", "flash"] }
+stackpress-leptos = { path = "../../crates/leptos", features = ["ssr", "rich", "format", "stream"], optional = true }
 stackpress-sql = { path = "../../crates/sql/sql", optional = true }
 stackpress-example-ui-gallery-web = { path = "../ui-gallery/web", optional = true }
 stackpress-example-ui-preferences-web = { path = "../ui-preferences/web", optional = true }

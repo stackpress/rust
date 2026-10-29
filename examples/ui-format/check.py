@@ -98,12 +98,12 @@ def builds():
 
 def verify():
     """Valid separate render features, MSRV, warning-clean docs/lints and workspace suite."""
-    scope = ['-p', 'stackpress-framework-ui', '-p', PACKAGE]
+    scope = ['-p', 'stackpress-leptos', '-p', PACKAGE]
     selected = ['--features', 'ssr,rich,format']
     for name, args in [
         ('fmt', ['fmt', '--all', '--', '--check']),
         ('tests', ['test', '--locked', '--offline', *scope, *selected]),
-        ('ssr-tests', ['test', '--locked', '--offline', '-p', 'stackpress-framework-ui', '--features', 'ssr']),
+        ('ssr-tests', ['test', '--locked', '--offline', '-p', 'stackpress-leptos', '--features', 'ssr']),
         ('clippy', ['clippy', '--locked', '--offline', *scope, *selected, '--all-targets', '--', '-D', 'warnings']),
         ('msrv', ['+1.96.0', 'check', '--locked', '--offline', *scope, *selected, '--all-targets']),
         ('workspace-tests', ['test', '--workspace', '--all-targets', '--locked', '--offline']),

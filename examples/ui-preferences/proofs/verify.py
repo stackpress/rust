@@ -11,11 +11,11 @@ def run(*command):
 
 if __name__ == '__main__':
     scopes = ['-p', 'stackpress-framework-language', '-p', 'stackpress-framework-view',
-              '-p', 'stackpress-framework-ui', '-p', 'stackpress-example-ui-preferences-shared',
+              '-p', 'stackpress-leptos', '-p', 'stackpress-example-ui-preferences-shared',
               '-p', 'stackpress-example-ui-preferences-web', '-p', 'stackpress-example-profile-ui-shared',
               '-p', 'stackpress-example-profile-ui-web', '-p', 'stackpress-example-profile-ui-client',
               '-p', 'stackpress-example-ui-gallery-shared', '-p', 'stackpress-example-ui-gallery-web']
-    features = ['--features', 'stackpress-framework-view/native-file,stackpress-framework-view/flash,stackpress-framework-ui/stream,stackpress-framework-ui/rich']
+    features = ['--features', 'stackpress-framework-view/native-file,stackpress-framework-view/flash,stackpress-leptos/stream,stackpress-leptos/rich']
     run('cargo', 'test', '--offline', '--locked', *scopes, *features, '--all-targets')
     run('cargo', 'test', '--offline', '--locked', *scopes, *features, '--doc')
     run('cargo', 'clippy', '--offline', '--locked', *scopes, *features, '--all-targets', '--', '-D', 'warnings')

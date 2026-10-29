@@ -1,13 +1,13 @@
 //! Pure public seed admission and the compiled locale/phrase catalog.
 use serde::{Deserialize, Serialize};
 use stackpress_framework_language::{LocaleRegistry, PreferenceError};
-use stackpress_framework_ui::language::Language;
 use stackpress_framework_view::BasePath;
 use stackpress_framework_view::access::AllowedActions;
 use stackpress_framework_view::flash::FlashNotice;
 use stackpress_framework_view::preferences::{
     CookieScope, LocaleRouting, Preferences, SettingsAction,
 };
+use stackpress_leptos::language::Language;
 use std::collections::BTreeMap;
 
 /// Closed app seed, with no headers, identity, roles or token snapshots.

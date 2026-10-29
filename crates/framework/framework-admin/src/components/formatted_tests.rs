@@ -2,7 +2,7 @@
 use super::*;
 use serde_json::json;
 use stackpress_framework_schema::{FieldAccess, Role, Schema, codegen::DefinitionRegistry};
-use stackpress_framework_ui::format::edit::EditSelection;
+use stackpress_leptos::format::edit::EditSelection;
 
 fn field(kind: &str, selection: &str) -> UiField {
     let source = format!("model Example {{ id String @id value {kind} {selection} }}");

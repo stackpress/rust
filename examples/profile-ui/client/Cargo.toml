@@ -11,13 +11,13 @@ crate-type = ["cdylib", "rlib"]
 
 [features]
 default = []
-hydrate = ["stackpress-framework-ui/hydrate", "stackpress-example-profile-ui-shared/hydrate"]
-csr = ["stackpress-framework-ui/csr", "stackpress-example-profile-ui-shared/csr"]
+hydrate = ["stackpress-framework-view/leptos-hydrate", "stackpress-leptos/hydrate", "stackpress-example-profile-ui-shared/hydrate"]
+csr = ["stackpress-framework-view/leptos-csr", "stackpress-leptos/csr", "stackpress-example-profile-ui-shared/csr"]
 
 [dependencies]
 leptos = { version = "=0.8.22", default-features = false }
-stackpress-framework-ui = { path = "../../../crates/framework/framework-ui" }
-stackpress-framework-view = { path = "../../../crates/framework/framework-view", features = ["preferences", "flash"] }
+stackpress-leptos = { path = "../../../crates/leptos" }
+stackpress-framework-view = { path = "../../../crates/framework/framework-view", features = ["leptos", "preferences", "flash"] }
 stackpress-example-profile-ui-shared = { path = "../shared" }
 stackpress-example-profile-ui-contracts = { path = "../contracts" }
 serde_json = "1"

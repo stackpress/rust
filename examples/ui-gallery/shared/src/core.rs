@@ -1,6 +1,6 @@
 //! Lane A ordinary controls and safe display fixtures, shared by every renderer.
 use leptos::prelude::*;
-use stackpress_framework_ui::components::*;
+use stackpress_leptos::components::*;
 
 /// Native edits adopted before hydration; no read of browser preferences occurs.
 #[derive(Clone)]

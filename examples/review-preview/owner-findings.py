@@ -7,8 +7,8 @@ import time
 from pathlib import Path
 import review
 
-PACKAGES = ['stackpress-framework-ui', 'generated-admin-shared', 'generated-admin-web', review.PACKAGE]
-PREFIXES = ['crates/framework/framework-ui/src/', 'examples/generated-admin/shared/src/',
+PACKAGES = ['stackpress-leptos', 'generated-admin-shared', 'generated-admin-web', review.PACKAGE]
+PREFIXES = ['crates/leptos/src/', 'examples/generated-admin/shared/src/',
             'examples/generated-admin/web/src/', 'examples/review-preview/src/']
 
 

@@ -1,6 +1,6 @@
 //! Validate the merged inert seed/replay before mounting the shared component.
 use stackpress_example_ui_stream_shared::DemoData;
-use stackpress_framework_ui::replay::ResourceReplay;
+use stackpress_framework_view::leptos::replay::ResourceReplay;
 use stackpress_framework_view::{PageSnapshot, ViewError};
 
 /// Admit the exact seed/build and aggregate replay before browser mounting.

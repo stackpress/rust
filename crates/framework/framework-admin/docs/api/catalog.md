@@ -30,7 +30,7 @@ Rich text, file/media and relation/service suggestions remain unavailable. `fiel
 
 ## Optional formatted roles
 
-Enable the admin `format` feature before registering definitions or consuming generated formatted wrappers. It enables framework-ui's existing formatting policies. Without it, these selections remain diagnosed as unavailable. The default dependency graph retains the existing URL/IDNA ICU normalizer baseline and gains none of the formatting ICU packages or phonenumber.
+Enable the admin `format` feature before registering definitions or consuming generated formatted wrappers. It enables stackpress-leptos's existing formatting policies. Without it, these selections remain diagnosed as unavailable. The default dependency graph retains the existing URL/IDNA ICU normalizer baseline and gains none of the formatting ICU packages or phonenumber.
 
 | Canonical selection | Public value | Additional props / bounds |
 | --- | --- | --- |

@@ -14,7 +14,7 @@ starting another top-level handle would duplicate lifecycle work.
 The native extension constructs a snapshot from that data, the renderer's `PageContract`,
 the checked public location, and the response's explicitly public status/error. It gives
 `PageRenderer<T>` no native output authority. A complete `RenderedPage` is staged through
-the existing response; [UI rendering](../../framework-ui/docs/concepts.md) owns Leptos cleanup.
+the existing response; [UI rendering](../../../leptos/docs/concepts.md) owns Leptos cleanup.
 
 ## A snapshot is a disclosure decision
 
@@ -42,7 +42,7 @@ after Head, seed, and assets are assembled. These are output limits, not a CPU s
 ## Routes describe compiled choices
 
 `PageRoute` describes literal segments and required parameters; `RouteCatalog` adds an explicit
-mount. A catalog supplies native patterns and a [Leptos path adapter](../../framework-ui/docs/api/routing.md).
+mount. A catalog supplies native patterns and a [Leptos path adapter](api/leptos-routing.md).
 It never loads code by caller-supplied names or replaces native all-matching route dispatch.
 
 Locations retain encoded parameter text. Applications own decoding and query policy;

@@ -7,7 +7,7 @@ use crate::RoleContext;
 use leptos::prelude::*;
 use serde_json::Value;
 use stackpress_framework_schema::Input;
-use stackpress_framework_ui::components::{
+use stackpress_leptos::components::{
     BoundedList, CollectionRow, MetadataEntry, MetadataInput, TagList, TextList,
 };
 
@@ -27,7 +27,7 @@ fn strings(value: Input<Value>) -> Admission<Vec<String>> {
 }
 
 /// Assign initial identities once; later user edits/reorders retain the checked row itself.
-fn rows<T: stackpress_framework_ui::components::CollectionValue>(values: Vec<T>) -> BoundedList<T> {
+fn rows<T: stackpress_leptos::components::CollectionValue>(values: Vec<T>) -> BoundedList<T> {
     BoundedList::new(
         values
             .into_iter()

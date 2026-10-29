@@ -1,6 +1,6 @@
 # Issue 17: independent Leptos library design checkpoint
 
-2026-10-29, Asia/Manila. M0 design ready for coordinator review; **M1 is not released**. Branch `trial/3-issue17-leptos-library`, inspected HEAD/base `8ee2bdfa9feb24d5b864f1756696db68067cebaf`. This document proposes names and signatures; none is compile-verified. The coordinator reviews and independently verifies; the owner decides the two choices below. Acceptance criteria: none for this design-only task; implementation and visual parity require later evidence.
+2026-10-29, Asia/Manila. M0 design accepted; **M1 released** under G41. Branch `trial/3-issue17-leptos-library`, inspected HEAD/base `8ee2bdfa9feb24d5b864f1756696db68067cebaf`. The source inventory records M0; the M1 receipt records executable evidence and final signatures. The coordinator reviews and independently verifies; G41 resolves the two owner choices below. Acceptance criteria: none for this design-only task; implementation and visual parity require later evidence.
 
 ## Contract and authority
 
@@ -24,7 +24,7 @@ Paths in this section are relative to `crates/framework/framework-ui/`. **L** me
 | `src/language.rs` | L: `PluralCategory`, `Language`, `LanguageContext`, `use_language`, `LanguageProvider`, `Translate`. Keep checked dictionaries/interpolation/plural policy; no locale registry/cookie/host dependency. |
 | `src/language/tests.rs` | L: phrase/slot/locale/budget and wire admission tests. |
 | `src/resources.rs` | L (`async`): `ResourceFailureKind`, `ResourceFailure`, `cancel_on_cleanup`; preserve safe serialized failures, native cause and cooperative cancellation. |
-| `src/replay.rs` | S: `ResourceReplay`, `MAX_RESOURCES=64`, `MAX_RESOURCE_ID=1024` to L (`async`), returning `ReplayError`; V supplies a page-policy/error adapter. Replace `PageLimits`/`ViewError` imports; share script escaping rather than copy it. |
+| `src/replay.rs` | S: `ResourceReplay`, `MAX_RESOURCES=64`, `MAX_RESOURCE_ID=1024` to L (`async`), returning `ReplayError`; V supplies a page-policy/error adapter. Replace `PageLimits`/`ViewError` imports; use library-local script escaping, with differential parity tests. |
 | `src/owner.rs` | L (`ssr`, native): private `RestoreOwner` and native Owner guards shared by extracted kernels; no public protocol type. |
 | `src/render.rs` | S: `initialize_ssr`, executor admission, Owner staging/cleanup, eager Head handling and escaping to L's generic `render`; `LeptosRenderer`, `PreparedPage`, their constructors/`prepare`/`finish`, `PageRenderer` implementation and complete Stackpress shell to V's `render`. |
 | `src/async_render.rs` | S: per-poll Owner restoration, `OwnedRender` lifetime, body/Head consumption and serialization-queue cleanup to L's `async_render`; `AsyncLeptosRenderer`, `AsyncPageRenderer` implementation, snapshot/assets/settings validation and page shell to V. |
@@ -35,7 +35,7 @@ Paths in this section are relative to `crates/framework/framework-ui/`. **L** me
 | `src/routing.rs` | V in full: `RouteContext`, `provide_route_context`, `use_route_context`, `CatalogPath`; `BasePath`, `PageRoute`, `RouteCatalog`, `RouteSegment` re-exports resolve to view's existing root definitions. Generic users use upstream Leptos routing directly. |
 | `src/components/mod.rs` | L: all existing component/value re-exports below; `BASE_STYLES`; preserve optional/target gates and `SuggestionCompletion`'s `async` gate. |
 | `src/components/controls.rs` | L: `ButtonType`, `safe_href`, `Button`, `Input`, `FieldControl`, `Alert`, `Loader`, `LoaderContainer`, `Link`, `ListItem`, `List`, `NotifierContainer`. Keep the existing navigation policy and disabled-anchor semantics. |
-| `src/components/display_values.rs` | S: all values remain generic in L: `DisplayError`, `ProgressValue`, `ProgressAmount`, `RatingRound`, `RatingValue`, `HexColor`, `EmailAddress`, `PhoneNumber`, `ImageSource`, `DisplayValues`, `DisplayRow`, `DisplayTable`, `TextLimit`, `overflow_text`, `MetadataValues`. `ImageSource` must use the shared generic checked local location; `DisplayError::Location` changes from `ViewError` to `LocationError`. |
+| `src/components/display_values.rs` | S: all values remain generic in L: `DisplayError`, `ProgressValue`, `ProgressAmount`, `RatingRound`, `RatingValue`, `HexColor`, `EmailAddress`, `PhoneNumber`, `ImageSource`, `DisplayValues`, `DisplayRow`, `DisplayTable`, `TextLimit`, `overflow_text`, `MetadataValues`. `ImageSource` must use the library-local checked local location; `DisplayError::Location` changes from `ViewError` to `LocationError`. |
 | `src/components/inputs.rs` | L: `ControlError`, `SelectOption`, `SelectOptions`, `SelectValue`, `Select`, `Checkbox`, `Switch`, `Radio`, `Textarea`, `PasswordInput`. |
 | `src/components/input_dom.rs` | L: private WASM select-value adapter; retain target gate. |
 | `src/components/presentation.rs` | L: `CORE_STYLES`, `ActionGroup`, `Badge`, `Card`, `CardHead`, `CardBody`, `CardFoot`, `CardTitle`, `CardDescription`, `Progress`, `ColorView`, `EmailLink`, `PhoneLink`, `Image`, `RatingView`, `YesNo`, `TextCase`, `TextTransform`, `TextOverflow`, `MetadataView`, `SpreadSeparator`, `Spread`, `Tags`, `Tabular`. |
@@ -89,15 +89,13 @@ Paths in this section are relative to `crates/framework/framework-ui/`. **L** me
 | `third-party/lucide/{arrow-down,arrow-up-down,arrow-up,plus,star,trash,x}.svg` | L: copy/move exact assets with `NOTICE`, `LICENSE`, `FEATHER-LICENSE`; verify include paths. No icon artwork change. |
 | `docs/**` | S: component/state/language/format/rich/direct-library guides to L; page renderer/prepared-page/catalog-routing and Stackpress bootstrap recipes to V. Rebase API indexes, links, examples and feature names; retain generic route/Leptos guidance in L. |
 
-## Shared safety ownership
+## Accepted decisions
 
-There are two deliberately different policies today: `components::safe_href` admits relative/fragment/HTTP(S) navigation; `PublicLocation::new` admits exact bounded same-origin pathname/query bytes and rejects malformed percent escapes and dot-segment aliases. An image must retain the latter restriction plus its raster/suffix/dimension/byte checks. Substituting `safe_href` for `PublicLocation` would weaken image validation.
+G41 (owner, 2026-10-29) removes `stackpress-framework-ui` outright, with no shim, including old member/facade features/aliases/lock entry. All callers migrate in M1. No shared safety package or move into `stackpress-lib` is authorized.
 
-**Recommendation requiring owner approval:** extract the existing local-location checker and script-JSON/HTML escaping into a small dependency-free `crates/html` package, `stackpress-html`. Its concrete surfaces are `LocalLocation::{new,as_str}`, `LocationError`, `escape_script_json` and `escape_html`. No Leptos, serde, host, URL normalization or new third-party crate is needed. This is real extracted code, not an empty facade. Keep the broader `safe_href` implementation solely in `stackpress_leptos::components`; the two named policies remain distinct.
+Each library owns its location validation and HTML/script escaping. Leptos receives local `navigation::{LocalLocation,LocationError}` retaining the exact strict `PublicLocation` admission policy needed by images, plus its own escaping helpers. View keeps `PublicLocation` and page/script escaping unchanged. Image raster/suffix/dimension/byte checks remain; broader `safe_href` is a separate policy.
 
-View's existing `PublicLocation` stays a serde/error wrapper over `LocalLocation`, preserving exact strings, serialization and `ViewError::InvalidSnapshot`; its public constructor/signature stays unchanged. View's public `escape_script_json` delegates/re-exports without changing bytes. L re-exports `LocalLocation`/`LocationError` under `navigation`, and `ImageSource::new` validates through that one checker. `DisplayError::Location(LocationError)` retains a concrete safe source. Replay and all renderers use the shared escape functions. `BasePath`, page budgets and asset policies remain in view.
-
-Alternative: put the same generic primitives in `stackpress-lib`. It is allowed by the forbidden-edge list, but makes independent UI/default view acquire the event/value foundation's regex/url/etc. graph. Recommend the smaller real package; do not silently choose an alternative or duplicate the checker in M1. The added package changes only workspace-local lock entries; default view gains this std-only dependency and still gains no Leptos/server/persistence.
+A single normal view-integration test table, gated by `leptos`, runs identical valid/invalid location cases against both implementations and compares script/HTML escape outputs. Cover valid/malformed percent escapes, dot segments, Unicode, query and exact length limits, script terminators and Unicode separators. This differential guard is required; neither implementation may weaken.
 
 ## Renderer and replay seams
 
@@ -144,32 +142,30 @@ Replay compatibility pins the exact JSON array-of-`[id, encoded-string]` shape, 
 
 ## Target dependencies and features
 
-Arrows mean normal dependencies. `stackpress-html` below is the proposed shared-safety choice, pending owner approval. All external dependency versions/features are retained unless an edge moves with its existing responsibility; no re-resolution or upgrades.
+Arrows mean normal dependencies. G41 keeps safety code local to each library; no additional package is introduced. All external dependency versions/features are retained unless an edge moves with its existing responsibility; no re-resolution or upgrades.
 
 ```text
 independent consumer -> stackpress-leptos -> upstream leptos/meta/router + generic helpers
-                              |-> stackpress-html -> std only
 Stackpress app -> framework-view --optional leptos integration--> stackpress-leptos
-                       |-> stackpress-html
                        |--existing optional server--> stackpress-lib + stackpress-server
                        |--existing preferences/flash/native-file--> their current owners
 framework-admin -> stackpress-leptos + framework-schema; codegen remains opt-in build tooling
 stackpress facade -> each explicitly selected library; no library -> facade edge
 ```
 
-No feature of L or `stackpress-html` depends on view, server, facade, framework-language/preferences, SQL/schema/admin, Idea or Tauri. Normal graph audits include transitive edges and inspect selected target features, not just the top-level manifest. A shared workspace lock may contain unrelated packages; that is not evidence of a selected graph edge.
+No feature of L depends on view, server, facade, framework-language/preferences, SQL/schema/admin, Idea or Tauri. Normal graph audits include transitive edges and inspect selected target features, not just the top-level manifest. A shared workspace lock may contain unrelated packages; that is not evidence of a selected graph edge.
 
 | Package/feature | Exact intended feature forwarding / resulting graph |
 | --- | --- |
-| L `default=[]` | Components/state/language/navigation and upstream Leptos/meta/router with defaults off, serde, shared safety; no renderer runtime/server or optional async/rich/format dependency. Zero selected render modes is valid for helpers. |
+| L `default=[]` | Components/state/language/navigation and upstream Leptos/meta/router with defaults off, serde, local safety; no renderer runtime/server or optional async/rich/format dependency. Zero selected render modes is valid for helpers. |
 | L `async` | `dep:futures`, `dep:serde_json`; generic resources/replay and async suggestions, with no native host. |
 | L `ssr` | Upstream `leptos/ssr`, `leptos_meta/ssr`, `leptos_router/ssr`, `async`, `dep:hydration_context`, `dep:serde_json`, native-only `dep:any_spawner`, `dep:tokio`; **no** view/server forwarding. Preserve existing pins and executor initialization. |
 | L `hydrate` | `leptos/hydrate`; WASM browser DOM dependencies stay target-specific. Add `async` explicitly for replay/resources, as current clients do. |
 | L `csr` | `leptos/csr`; same browser isolation; add optional helpers explicitly. |
 | L `stream` | `ssr`, `tokio/sync`, `tokio/macros`, `tokio/time`; native opt-in only. Default/ordinary `ssr` never selects it. |
 | L `rich` / `format` | Existing ammonia/pulldown-cmark and ICU/phone dependency lists respectively; preserve existing compiled-data choices. No host edge. |
-| V `default=[]` | Existing page/access/theme contracts + serde/serde_json + shared std-only safety; no L/upstream Leptos/server/language/cookies/files. `PageRenderer`/`AsyncPageRenderer` remain engine-independent. |
-| V `leptos` | `dep:stackpress-leptos`, dependency `path="../../leptos", optional=true, default-features=false`; routing/presentation adapter namespace, no server. Use L's upstream re-exports instead of another unconditional Leptos dependency. |
+| V `default=[]` | Existing page/access/theme contracts + serde/serde_json with its existing local safety; no L/upstream Leptos/server/language/cookies/files. `PageRenderer`/`AsyncPageRenderer` remain engine-independent. |
+| V `leptos` | `dep:stackpress-leptos`, dependency `path="../../leptos", optional=true, default-features=false`; routing/presentation adapter namespace, no server. Upstream Leptos/meta/router dependencies are also optional on V: upstream component macros resolve those crate names directly. They use the same pins and defaults-off flags; no unconditional Leptos edge is added. |
 | V `leptos-async` | `leptos`, `stackpress-leptos/async`; page replay wrapper available to native/browser admission, no server. |
 | V `leptos-ssr` | `leptos`, `leptos-async`, `stackpress-leptos/ssr`, existing `server`; native sync + buffered async page adapters. |
 | V `leptos-hydrate` | `leptos`, `stackpress-leptos/hydrate`; no native services; replay requires explicit `leptos-async`. |
@@ -208,13 +204,13 @@ Preferences bridge: V optionally maps `Some(ThemePreference::Light/Dark)` to L's
 
 ## Compatibility recommendation and consequences
 
-**Recommend outright removal of `stackpress-framework-ui`, with no shim**, matching the owner's issue-15 choice. Nothing is published; migrate every in-tree caller in M1, delete the member/old package lock entry and old facade features/alias, and document deliberate Rust path/error-payload changes. Owner approval is still required: G40 decided preferences removal, not automatically UI removal. No wire/HTML behavior break is proposed.
+**G41 accepts outright removal of `stackpress-framework-ui`, with no shim**. Nothing is published; migrate every in-tree caller in M1, delete the member/old package lock entry and old facade features/alias, and document deliberate Rust path/error-payload changes. G41 explicitly decides UI removal. No wire/HTML behavior break is proposed.
 
-Alternative: a temporary old-package shim depends on L and optional V adapters, forwarding the old render modes and re-exporting each canonical owner. Neither L nor V could depend back on it. This reduces external source migration but retains an extra package/feature matrix and mixed-ownership facade; it needs an explicit removal milestone/version policy. Do not implement both approaches or preserve old aliases silently. Existing docs become migration guidance, not evidence that the old APIs still compile.
+No shim or old aliases remain. Existing docs become migration guidance, not evidence that old APIs compile.
 
 ## Independent consumer and proofs
 
-Create a small maintained fixture at `examples/leptos-independent` after release, with its **own `[workspace]`**, explicitly excluded from the root workspace so workspace feature unification cannot hide an integration edge. Its direct normal dependencies are upstream `leptos = =0.8.22` and path `stackpress-leptos` with defaults off; WASM ABI/browser and native test-runtime dependencies are target/dev-only and use existing locked versions. It has no direct or transitive view/server/facade/preferences/language-integration/SQL/schema/admin/Idea/Tauri edge. The proposed shared `stackpress-html` std-only dependency is allowed and visible in its graph.
+Create a small maintained fixture at `examples/leptos-independent` after release, with its **own `[workspace]`**, explicitly excluded from the root workspace so workspace feature unification cannot hide an integration edge. Its direct normal dependencies are upstream `leptos = =0.8.22` and path `stackpress-leptos` with defaults off; WASM ABI/browser and native test-runtime dependencies are target/dev-only and use existing locked versions. It has no direct or transitive view/server/facade/preferences/language-integration/SQL/schema/admin/Idea/Tauri edge. No shared safety package is added.
 
 Fixture features: `default=[]`; `ssr=[leptos/ssr,stackpress-leptos/ssr]`; `hydrate=[leptos/hydrate,stackpress-leptos/hydrate]`; `csr=[leptos/csr,stackpress-leptos/csr]`; `async`, `rich`, `format` forward to L; `stream=[ssr,stackpress-leptos/stream]`. Reject mixed modes. Seed its disposable lock from current approved workspace tuples and permit only local-edge changes; never `cargo generate-lockfile`. Record an audit of every external name/version/source/checksum tuple for both locks. If the already installed offline cache cannot resolve the fixture without a new external tuple, stop and report rather than install/upgrade.
 
@@ -234,8 +230,8 @@ Browser proofs use finite request interception and real generated artifacts, nev
 
 | Gate | Work and what it proves |
 | --- | --- |
-| M0 — stop here | Source inventory, proposed APIs/features/safety ownership, migration/compatibility and proof plan only. Coordinator reviews; owner resolves the two decisions. No implementation/build proof claimed. |
-| M1 — extraction, adaptation, migration; stop | First prove fallible factory/Head lifetimes, Send futures/body, worker/drop/error translation and safe location parity with production types under watchdogs. Then extract L/shared safety, add optional V adapters and migrate facade/admin/templates/all callers together. Existing component tests and pinned before/after page/seed/HTML/replay/error/route/theme outputs prove behavioral parity; generators prove current/idempotent output. Run relevant native tests/doctests/lint/docs/format and separate actual WASM builds/browser regressions, measure changed production crates; stop before M2. |
+| M0 — stop here | Source inventory, proposed APIs/features/safety ownership, migration/compatibility and proof plan only. Coordinator accepted the design; G41 resolves removal and local safety ownership. No implementation/build proof claimed. |
+| M1 — extraction, adaptation, migration; stop | First prove fallible factory/Head lifetimes, Send futures/body, worker/drop/error translation and safe location parity with production types under watchdogs. Then extract L/local safety, add optional V adapters and migrate facade/admin/templates/all callers together. Existing component tests and pinned before/after page/seed/HTML/replay/error/route/theme outputs prove behavioral parity; generators prove current/idempotent output. Run relevant native tests/doctests/lint/docs/format and separate actual WASM builds/browser regressions, measure changed production crates; stop before M2. |
 | M2 — independent consumer, graphs, docs; stop | Implement/execute the fixture above; audit all selected default/native/browser normal graphs, invalid-mode failures, feature-on/integration-absent behavior, lock tuples and source migration completeness. Produce L's README/getting-started/concepts/guides/API docs and V's integration/migration docs using chrisai-docing; compile-check Markdown examples in the isolated consumer. Proves independent use and optional integration, not release/platform acceptance. |
 | M3 — reviewed rounds; stop | Four distinct test-verified passes: complexity/branch/error-order risk; responsibility/abstraction/ownership/coupling; consistency/idiomatic Rust/Rustdoc/block and non-obvious-line comments; safety/soundness at validation/unwind/cancel/Send/stream/CSP boundaries. Refactor only justified findings, rerun meaningful affected tests after each pass, and repeat targeted rounds while material findings remain. Coordinator independently re-verifies before closeout. |
 
@@ -245,7 +241,7 @@ Deadlock-class proofs run in supervised child process groups with finite deadlin
 
 Per released milestone use one task-owned target root, e.g. `target/issue17`, aggregate **8 GiB** across native/WASM/consumer/LLVM subdirectories, incremental/debug info off and bounded jobs. Before its first build recorder-wrap Cargo clean and LLVM coverage clean for that root. Recorder-wrap every Cargo/proof/clean command with the persistent store `/Users/cblanquera/server/projects/stackpress/rust/.agents/resources/build-benchmarks`, explicit milestone/mode/cache labels, finite watchdog and cap. Delete only that owned target at milestone end; retain records/review evidence and verify child cleanup. M0 creates no target and requires no cleanup/build.
 
-Applicable final commands include locked selected/workspace tests and doctests, `cargo fmt --all -- --check`, warning-denied Clippy/Rustdoc, separate SSR/hydrate/CSR and stream/rich/format selections and facade/independent compile-fail consumers. Avoid invalid all-feature unification; enumerate actual scopes. Development requires >=70% executable-line coverage **per changed production crate** (including shared safety if accepted), preserving valuable existing coverage and documenting exclusions/critical branches; publication >=90% is a separate unrequested gate. Never use empty-scope or native coverage as browser/mobile coverage.
+Applicable final commands include locked selected/workspace tests and doctests, `cargo fmt --all -- --check`, warning-denied Clippy/Rustdoc, separate SSR/hydrate/CSR and stream/rich/format selections and facade/independent compile-fail consumers. Avoid invalid all-feature unification; enumerate actual scopes. Development requires >=70% executable-line coverage **per changed production crate** (including any changed production scope), preserving valuable existing coverage and documenting exclusions/critical branches; publication >=90% is a separate unrequested gate. Never use empty-scope or native coverage as browser/mobile coverage.
 
 ## Risks and owner decisions
 
@@ -253,13 +249,13 @@ Applicable final commands include locked selected/workspace tests and doctests, 
 | --- | --- |
 | Hidden protocol coupling or cycle | Audit signatures/errors/template strings and all selected normal graphs; no view/server edge anywhere in L. Default V negative graph and independent fixture must fail if an integration edge leaks. |
 | Lifetime/backpressure/error drift at a cross-crate seam | Move existing Owner/worker supervision intact; preserve staging order and generic error passthrough; watchdog success/cancel/panic/slow-consumer/teardown and exact page-output/error parity. |
-| Safety or hydration/first-paint regression | One location/escape implementation, differential old/new valid/invalid tables including percent/dot/Unicode/query limits, raster bounds and script terminators; real delayed hydration, CSP, replay and G39 proofs. |
+| Safety or hydration/first-paint regression | Library-local safety plus a shared differential table, differential old/new valid/invalid tables including percent/dot/Unicode/query limits, raster bounds and script terminators; real delayed hydration, CSP, replay and G39 proofs. |
 | Incomplete migration or dependency drift | Generator-before-output migration, second clean generation, active retired-path audit, explicit feature matrix and exact external lock tuple comparison; no generate-lockfile or installs. |
 
-Owner decisions before M1: **(1)** remove the old UI package/features outright (recommended) or retain a time-bounded shim; **(2)** approve the small shared `stackpress-html` extraction (recommended), or place its exact primitives in existing `stackpress-lib` accepting the larger transitive graph. No theme, plugin, renderer-default or platform behavior choice is reopened. Coordinator can resolve routine implementation signatures against the chosen graph; any required public-behavior deviation returns for review.
+G41 resolves the two owner decisions. No theme, plugin, renderer-default or platform behavior choice is reopened. Coordinator can resolve routine implementation signatures against the accepted graph; any required public-behavior deviation returns for review.
 
 ## M0 implementation and verification notes
 
 Only this issue-17 design is a worktree change; no production code/manifests/lock/history/status/context changes, Cargo build/tree/metadata, target, listener, install, commit or GitHub mutation. GitHub issue bodies and comments were read with `gh issue view`; source reads establish the inventory, not executable correctness. Baseline `20261028T231342.700365Z-659521e9dff8` and document validation `20261028T232140.428382Z-51c579ee9e5a` both exit 1: the same **146 inherited errors / 25 inherited warnings**, plus one new advisory line-count warning for this coherent **265-line** checkpoint (146 errors / 26 warnings total; no new hard errors or removed diagnostics). Keep it intact for combined inventory/API/graph review; it is below the 500-line cap. Static audit `20261028T232154.273121Z-54c40d028080` passes: **all 60 source files classified**, exact one-file change scope, unchanged tracked production/lock/historical files, clean whitespace, balanced fences and diagnostic-set comparison. These three recorder attempts total **0.813464 s command time**, **zero compilation/check/documenting events and zero rebuilds**; Cargo-stage time is unavailable, not zero. A disposable read-only audit script lives only under `/private/tmp`; no target exists to delete.
 
-Verification notes: coordinator review pending. Acceptance notes: no visual artifact or product acceptance is claimed at M0. Recommended next step is review of this design and the two owner choices, then an explicit M1 release; implementation remains stopped.
+Verification notes: coordinator review pending. Acceptance notes: no visual artifact or product acceptance is claimed at M0. M0 was accepted and M1 explicitly released; the M1 receipt will record implementation evidence.

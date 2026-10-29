@@ -6,7 +6,7 @@
 use leptos::prelude::*;
 use serde_json::Value;
 use stackpress_framework_schema::{Input as FieldInput, ValueType};
-use stackpress_framework_ui::components::{
+use stackpress_leptos::components::{
     Checkbox, FieldControl, Input, Select, SelectOption, SelectOptions, SelectValue, Switch,
     TextCase, TextTransform, Textarea, YesNo,
 };

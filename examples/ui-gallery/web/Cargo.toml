@@ -9,8 +9,8 @@ publish.workspace = true
 [dependencies]
 leptos = { version = "=0.8.22", default-features = false }
 stackpress-example-ui-gallery-shared = { path = "../shared", features = ["ssr"] }
-stackpress-framework-ui = { path = "../../../crates/framework/framework-ui", features = ["ssr", "rich"] }
-stackpress-framework-view = { path = "../../../crates/framework/framework-view", features = ["preferences"] }
+stackpress-leptos = { path = "../../../crates/leptos", features = ["ssr", "rich"] }
+stackpress-framework-view = { path = "../../../crates/framework/framework-view", features = ["leptos-ssr", "preferences"] }
 stackpress-framework-language = { path = "../../../crates/framework/framework-language" }
 stackpress-lib = { path = "../../../crates/lib" }
 stackpress-server = { path = "../../../crates/server/server", features = ["http"] }

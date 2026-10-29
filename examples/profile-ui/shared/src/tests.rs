@@ -60,7 +60,7 @@ fn counted_profile_phrases() {
         for count in [0_u64, 1, 2] {
             let owner = Owner::new();
             owner.with(|| {
-                stackpress_framework_ui::leptos_meta::provide_meta_context();
+                stackpress_leptos::leptos_meta::provide_meta_context();
                 let data = SearchPage { input: SearchInput::new("abc".into()).unwrap(), detail: None,
                     reply: SearchReply { revision: REVISION, total: count,
                         rows: (0..count).map(|index| Profile { id: format!("abc{index}"), name: "Public fixture".into() }).collect() } };
@@ -313,7 +313,7 @@ fn reply_validation_and_generation_exhaustion() {
 fn shared_views_and_explicit_bootstrap() {
     let owner = Owner::new();
     owner.with(|| {
-        stackpress_framework_ui::leptos_meta::provide_meta_context();
+        stackpress_leptos::leptos_meta::provide_meta_context();
         let calls = Rc::new(std::cell::Cell::new(0));
         let count = Rc::clone(&calls);
         let transport = UnsyncCallback::new(move |(_, done): (SearchInput, SearchCompletion)| {
@@ -355,7 +355,7 @@ fn shared_views_and_explicit_bootstrap() {
 fn recovery_notice_survives_initial_search() {
     let owner = Owner::new();
     owner.with(|| {
-        stackpress_framework_ui::leptos_meta::provide_meta_context();
+        stackpress_leptos::leptos_meta::provide_meta_context();
         let transport = UnsyncCallback::new(move |(_, done): (SearchInput, SearchCompletion)| {
             done(Ok(reply("Loaded locally")));
         });
@@ -390,7 +390,7 @@ fn concurrent_locales_remain_isolated() {
     let renders = ["en", "fr"].map(|locale| std::thread::spawn(move || {
         let owner = Owner::new();
         let html = owner.with(|| {
-            stackpress_framework_ui::leptos_meta::provide_meta_context();
+            stackpress_leptos::leptos_meta::provide_meta_context();
             view! { <ProfileSearch seed=seed() initial_language=profile_language(locale).unwrap()/> }.to_html()
         });
         owner.cleanup();
@@ -414,9 +414,9 @@ fn concurrent_locales_remain_isolated() {
 fn mounted_form_action() {
     let owner = Owner::new();
     owner.with(|| {
-        stackpress_framework_ui::leptos_meta::provide_meta_context();
-        stackpress_framework_ui::routing::provide_route_context(
-            stackpress_framework_ui::routing::BasePath::new("/office").unwrap(),
+        stackpress_leptos::leptos_meta::provide_meta_context();
+        stackpress_framework_view::leptos::routing::provide_route_context(
+            stackpress_framework_view::leptos::routing::BasePath::new("/office").unwrap(),
         );
         let html = view! { <ProfileSearch seed=seed()/> }.to_html();
         assert!(html.contains("action=\"/office/ui/profiles\""));

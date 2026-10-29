@@ -8,11 +8,12 @@ use stackpress_example_profile_ui_contracts::{
     BUILD, DetailContext, MAX_REQUEST_BYTES, REVISION, SearchInput, SearchPage, SearchReply,
 };
 use stackpress_example_profile_ui_shared::ProfilePage;
-use stackpress_framework_ui::{leptos::prelude::*, render::LeptosRenderer};
+use stackpress_framework_view::leptos::render::LeptosRenderer;
 use stackpress_framework_view::{
     BasePath, PageAssets, PageContract, PageLoad, PageRenderer, PageSnapshot, PageSpec,
     PublicLocation, ServerBuilderViewExt, ViewError,
 };
+use stackpress_leptos::leptos::prelude::*;
 use stackpress_lib::{Body, Error, Flow, Invocation, Request, Response, Result};
 use stackpress_server::{BuildResult, ConfigLayers, Server, ServerBuilder, ServerInvocationExt};
 
@@ -30,7 +31,7 @@ pub mod customization;
 /// # Errors
 /// Returns a typed missing-runtime/SSR-executor error.
 pub fn initialize_renderer() -> Result<()> {
-    stackpress_framework_ui::render::initialize_ssr().map_err(Error::from_source)
+    stackpress_framework_view::leptos::render::initialize_ssr().map_err(Error::from_source)
 }
 
 /// Build the compiled read-only backend at the root mount with registered defaults.
@@ -281,7 +282,7 @@ fn renderer_with_settings(
         Ok(
             view! { <ProfilePage seed page=snapshot.page.as_str().to_owned() status=snapshot.status.clone()
             initial_language=stackpress_example_profile_ui_shared::profile_language(&snapshot.locale).map_err(|_| ViewError::InvalidSnapshot)?
-            initial_theme=if snapshot.theme.as_deref() == Some("dark") { stackpress_framework_ui::state::Theme::Dark } else { stackpress_framework_ui::state::Theme::Light } initial_theme_pending=snapshot.theme.is_none()/> },
+            initial_theme=if snapshot.theme.as_deref() == Some("dark") { stackpress_leptos::state::Theme::Dark } else { stackpress_leptos::state::Theme::Light } initial_theme_pending=snapshot.theme.is_none()/> },
         )
     })
 }

@@ -5,7 +5,7 @@
 pub mod editing;
 
 use serde::{Deserialize, Serialize};
-use stackpress_framework_ui::leptos::prelude::*;
+use stackpress_leptos::leptos::prelude::*;
 
 /// Reviewable text or checked-rich output, with a deterministic stable identity.
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
@@ -41,7 +41,7 @@ pub fn proof_rows() -> Result<Vec<ProofRow>, Box<dyn std::error::Error>> {
 /// Run the same hostile corpus through both closed-policy entry points.
 #[cfg(feature = "rich")]
 fn append_rich(rows: &mut Vec<ProofRow>) -> Result<(), Box<dyn std::error::Error>> {
-    use stackpress_framework_ui::rich::SafeHtml;
+    use stackpress_leptos::rich::SafeHtml;
     let corpus: Vec<serde_json::Value> = serde_json::from_str(include_str!("../corpus.json"))?;
     for entry in corpus {
         // Checked fixture lookup failures retain a real error, never invent empty input.
@@ -67,7 +67,7 @@ fn append_rich(rows: &mut Vec<ProofRow>) -> Result<(), Box<dyn std::error::Error
 /// Compare exact Unicode strings and safe invalid outcomes on both execution targets.
 #[cfg(feature = "format")]
 fn append_formats(rows: &mut Vec<ProofRow>) -> Result<(), Box<dyn std::error::Error>> {
-    use stackpress_framework_ui::format::{
+    use stackpress_leptos::format::{
         CalendarDate, DecimalValue, DisplayLocale, E164Phone, NumberFormat, OffsetDateTime,
         TimeOfDay, TimePrecision,
     };
@@ -197,7 +197,7 @@ pub fn Proof(
                 #[cfg(feature = "rich")]
                 if row.rich {
                     // The UI boundary never accepts a raw deserialized HTML string.
-                    use stackpress_framework_ui::rich::{RichContent, SafeHtml};
+                    use stackpress_leptos::rich::{RichContent, SafeHtml};
                     return match SafeHtml::html(&row.output) {
                         Ok(content) => view! { <section data-proof=id><h2>"Inert rich content"</h2><RichContent content/></section> }.into_any(),
                         Err(error) => view! { <section data-proof=id><p>{error.to_string()}</p></section> }.into_any(),
@@ -246,8 +246,8 @@ mod browser {
     #[wasm_bindgen]
     pub fn start_editor(locale: &str) -> Result<js_sys::Function, JsValue> {
         let locale = match locale {
-            "en" => stackpress_framework_ui::format::DisplayLocale::English,
-            "fr" => stackpress_framework_ui::format::DisplayLocale::French,
+            "en" => stackpress_leptos::format::DisplayLocale::English,
+            "fr" => stackpress_leptos::format::DisplayLocale::French,
             _ => return Err(JsValue::from_str("Unsupported editing locale")),
         };
         let app: web_sys::HtmlElement = web_sys::window()
@@ -256,12 +256,12 @@ mod browser {
             .ok_or_else(|| JsValue::from_str("Missing editor root"))?
             .dyn_into()?;
         #[cfg(feature = "hydrate")]
-        let handle = stackpress_framework_ui::leptos::mount::hydrate_from(
+        let handle = stackpress_leptos::leptos::mount::hydrate_from(
             app,
             move || view! {<crate::editing::EditingProof locale/>},
         );
         #[cfg(feature = "csr")]
-        let handle = stackpress_framework_ui::leptos::mount::mount_to(
+        let handle = stackpress_leptos::leptos::mount::mount_to(
             app,
             move || view! {<crate::editing::EditingProof locale/>},
         );
@@ -282,13 +282,11 @@ mod browser {
             .ok_or_else(|| JsValue::from_str("Missing proof root"))?
             .dyn_into()?;
         #[cfg(feature = "hydrate")]
-        let handle = stackpress_framework_ui::leptos::mount::hydrate_from(
-            app,
-            move || view! { <Proof rows/> },
-        );
+        let handle =
+            stackpress_leptos::leptos::mount::hydrate_from(app, move || view! { <Proof rows/> });
         #[cfg(feature = "csr")]
         let handle =
-            stackpress_framework_ui::leptos::mount::mount_to(app, move || view! { <Proof rows/> });
+            stackpress_leptos::leptos::mount::mount_to(app, move || view! { <Proof rows/> });
         let mut handle = Some(handle);
         let dispose = Closure::wrap(Box::new(move || {
             handle.take();

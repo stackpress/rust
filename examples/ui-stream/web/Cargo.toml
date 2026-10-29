@@ -8,8 +8,8 @@ publish.workspace = true
 
 [dependencies]
 stackpress-example-ui-stream-shared = { path = "../shared", features = ["ssr"] }
-stackpress-framework-ui = { path = "../../../crates/framework/framework-ui", features = ["stream"] }
-stackpress-framework-view = { path = "../../../crates/framework/framework-view" }
+stackpress-leptos = { path = "../../../crates/leptos", features = ["stream"] }
+stackpress-framework-view = { path = "../../../crates/framework/framework-view" , features = ["leptos-stream"] }
 stackpress-lib = { path = "../../../crates/lib" }
 stackpress-server = { path = "../../../crates/server/server", features = ["http-stream"] }
 stackpress-server-http = { path = "../../../crates/server/http" }

@@ -1,6 +1,6 @@
 //! Finite proof-only SSR document; no registration or listener enters the ordinary gallery.
 use leptos::prelude::*;
-use stackpress_framework_ui::components::{BASE_STYLES, BREADTH_STYLES, CORE_STYLES};
+use stackpress_leptos::components::{BASE_STYLES, BREADTH_STYLES, CORE_STYLES};
 
 /// Write matching collection markup or an empty CSR root for intercepted browser proofs.
 fn main() {

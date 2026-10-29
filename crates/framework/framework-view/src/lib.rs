@@ -352,3 +352,7 @@ mod presentation_tests;
 
 /// Initial-theme asset and checked head metadata.
 pub mod theme;
+
+/// Optional Leptos page, route, replay and presentation adapters.
+#[cfg(feature = "leptos")]
+pub mod leptos;

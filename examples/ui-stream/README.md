@@ -4,7 +4,7 @@ This example uses the real `stackpress-server-http` Hyper host over a 128-byte
 Tokio duplex connection. It never binds or listens. One shared Leptos component
 supplies a useful shell, an 800 ms Resource/Suspense section, hostile plain text,
 and a hydrated counter. Buffered renderers remain unchanged and remain the
-default; opt in with `stackpress-framework-ui/stream`.
+default; opt in with `stackpress-leptos/stream`.
 
 `StreamLeptosRenderer::render` returns owned `status` and an exclusive Send body.
 The host maps `ViewError` into its native error envelope, attaches that body with

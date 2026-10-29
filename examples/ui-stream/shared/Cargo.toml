@@ -8,11 +8,11 @@ publish.workspace = true
 
 [features]
 default = []
-ssr = ["stackpress-framework-ui/stream", "dep:tokio"]
-hydrate = ["stackpress-framework-ui/hydrate"]
+ssr = ["stackpress-leptos/stream", "dep:tokio"]
+hydrate = ["stackpress-leptos/hydrate"]
 
 [dependencies]
-stackpress-framework-ui = { path = "../../../crates/framework/framework-ui", features = ["async"] }
+stackpress-leptos = { path = "../../../crates/leptos", features = ["async"] }
 leptos = { version = "=0.8.22", default-features = false }
 futures = "0.3"
 serde = { version = "1", features = ["derive"] }

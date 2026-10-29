@@ -38,7 +38,7 @@ validated. Explicit saved choices need no bootstrap. Without its execution unset
 SSR remains readable Light. The asset samples the OS once, never stores a choice,
 and never tracks later OS changes. Only a user toggle saves.
 
-`framework-ui` remains the Leptos layer. Its LayoutProvider accepts an optional
+`stackpress-leptos` now owns the generic Leptos layer (see [issue-17 migration](migration-issue17.md)). Its LayoutProvider accepts an optional
 `initial_theme_pending: Signal<bool>` for the frozen ancestor CSS handoff; supply the
 same initial Light tree for SSR/hydration, then adopt the document choice in one batch.
 The profile and preferences examples demonstrate the integration. SystemThemeStyles,

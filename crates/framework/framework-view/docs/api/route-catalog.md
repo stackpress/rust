@@ -40,4 +40,4 @@ Uniqueness compares exact pattern strings. It does not reject every semantically
 pattern or choose native dispatch precedence; that remains normal server routing. Build a
 Leptos descriptor from a known row with UI's `CatalogPath`.
 
-Related: [PageRoute](page-route.md), [CatalogPath](../../../framework-ui/docs/api/routing.md).
+Related: [PageRoute](page-route.md), [CatalogPath](leptos-routing.md).

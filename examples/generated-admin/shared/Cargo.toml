@@ -15,7 +15,7 @@ csr = ["stackpress-framework-admin/csr"]
 [dependencies]
 stackpress-framework-admin = { path = "../../../crates/framework/framework-admin" }
 stackpress-framework-schema = { path = "../../../crates/framework/framework-schema" }
-stackpress-framework-ui = { path = "../../../crates/framework/framework-ui" }
+stackpress-leptos = { path = "../../../crates/leptos" }
 leptos = { version = "=0.8.22", default-features = false }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"

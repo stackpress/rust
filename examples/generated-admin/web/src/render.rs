@@ -1,9 +1,7 @@
 //! Finite synchronous SSR after authorized generated loaders; one request-local Owner.
 use leptos::prelude::*;
 use stackpress_framework_admin::pages::Snapshot;
-use stackpress_framework_ui::components::{
-    ADVANCED_STYLES, BASE_STYLES, BREADTH_STYLES, CORE_STYLES,
-};
+use stackpress_leptos::components::{ADVANCED_STYLES, BASE_STYLES, BREADTH_STYLES, CORE_STYLES};
 
 /// Render trusted catalogue component output with the same styles in every host.
 /// The module URL is host-selected; Leptos escapes it as an attribute, never HTML.

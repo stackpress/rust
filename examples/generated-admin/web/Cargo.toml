@@ -13,7 +13,7 @@ format = ["stackpress-framework-admin/format", "generated-admin-shared/format"]
 
 [dependencies]
 generated-admin-shared = { path = "../shared", features = ["ssr"] }
-stackpress-framework-ui = { path = "../../../crates/framework/framework-ui" }
+stackpress-leptos = { path = "../../../crates/leptos" }
 leptos = { version = "=0.8.22", default-features = false, features = ["ssr"] }
 stackpress-framework-admin = { path = "../../../crates/framework/framework-admin", features = ["ssr"] }
 stackpress-framework-schema = { path = "../../../crates/framework/framework-schema" }

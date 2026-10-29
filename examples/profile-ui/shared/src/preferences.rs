@@ -1,6 +1,6 @@
 //! Optional persistence boundary; omitted hooks preserve the existing immediate UI.
 use leptos::prelude::*;
-use stackpress_framework_ui::{
+use stackpress_leptos::{
     language::LanguageContext,
     state::{NoticeKind, Notifications, Theme, ThemeState},
 };

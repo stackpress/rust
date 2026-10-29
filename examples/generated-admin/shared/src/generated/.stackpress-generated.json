@@ -118,23 +118,23 @@
     },
     "ui/profile.rs": {
       "owner": "framework-admin",
-      "sha256": "0bbe5904d972ac41b8bd186b43e6a04a541310ed16ccd8ffa6227ba2f6407bd0",
-      "bytes": 13644
+      "sha256": "d33ea9480b0c9d4a3127195b40592ac29c973d8c7140cb7de6db2ddd61ab4263",
+      "bytes": 13638
     },
     "ui/project.rs": {
       "owner": "framework-admin",
-      "sha256": "92a533d97ceda02305c8b18f3c567d08e6f1f14cc1774d9ef698c44abf74ebee",
-      "bytes": 24938
+      "sha256": "c8693b7f6a52fc78834b90758642cb33e29541b918e9e793530ecf8e6bb68635",
+      "bytes": 24932
     },
     "ui/role_proof.rs": {
       "owner": "framework-admin",
-      "sha256": "637e2dda8285be88ed4c7d1caa1e4e80e6bac12efad7344429bfdbd059210471",
-      "bytes": 35827
+      "sha256": "e7c2418b84cf2980818f00acac79a241edd9afd6058132b72785d396b3b36eda",
+      "bytes": 35821
     },
     "ui/task.rs": {
       "owner": "framework-admin",
-      "sha256": "f4ac076f7383febe206470a551c5816288db15b64404e06050f5ad95b5491cc5",
-      "bytes": 33301
+      "sha256": "0cac2bd06eb07f3b5c0d0229b0a84a004ccc616f72edad9d1d4bb43bfa047e39",
+      "bytes": 33295
     }
   }
 }

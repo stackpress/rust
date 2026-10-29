@@ -6,9 +6,9 @@ import shlex
 import shutil
 import review
 
-PACKAGES = ['stackpress-framework-admin', 'stackpress-framework-ui', 'stackpress-example-ui-gallery-shared', 'stackpress-example-ui-gallery-web']
-PREFIXES = ['crates/framework/framework-admin/src/', 'crates/framework/framework-ui/src/', 'examples/ui-gallery/shared/src/', 'examples/ui-gallery/web/src/']
-FEATURES = 'stackpress-framework-admin/ssr,stackpress-framework-admin/codegen,stackpress-framework-ui/ssr,stackpress-example-ui-gallery-shared/ssr'
+PACKAGES = ['stackpress-framework-admin', 'stackpress-leptos', 'stackpress-example-ui-gallery-shared', 'stackpress-example-ui-gallery-web']
+PREFIXES = ['crates/framework/framework-admin/src/', 'crates/leptos/src/', 'examples/ui-gallery/shared/src/', 'examples/ui-gallery/web/src/']
+FEATURES = 'stackpress-framework-admin/ssr,stackpress-framework-admin/codegen,stackpress-leptos/ssr,stackpress-example-ui-gallery-shared/ssr'
 
 
 def environment(ctx):

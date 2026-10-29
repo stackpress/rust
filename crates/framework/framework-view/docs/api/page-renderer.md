@@ -38,4 +38,4 @@ that embeds data must validate, escape, and bound it itself; the trait signature
 automatically implement those policies. The supported Leptos adapter does implement them.
 Never carry live reactive state or native output authority across this boundary.
 
-Related: [LeptosRenderer](../../../framework-ui/docs/api/leptos-renderer.md), [RenderedPage](rendered-page.md).
+Related: [LeptosRenderer](leptos-renderer.md), [RenderedPage](rendered-page.md).

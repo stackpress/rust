@@ -3,7 +3,10 @@
 use leptos::prelude::*;
 use serde::Deserialize;
 use stackpress_example_ui_gallery_shared::{Gallery, GallerySeed, RESOURCE_TEXT};
-use stackpress_framework_ui::{async_render::AsyncLeptosRenderer, render::initialize_ssr};
+
+use stackpress_framework_view::leptos::{
+    async_render::AsyncLeptosRenderer, render::initialize_ssr,
+};
 use stackpress_framework_view::preferences::LocaleRouting;
 use stackpress_framework_view::preferences::{
     LocaleRegistry, MAX_PREFERENCE_BYTES, PreferenceAction, PreferenceUpdate,
@@ -316,7 +319,7 @@ pub async fn run() -> std::result::Result<(), Box<dyn std::error::Error>> {
         let safe = stackpress_example_ui_gallery_shared::CORPUS
             .iter()
             .map(|input| {
-                stackpress_framework_ui::rich::SafeHtml::html(input)
+                stackpress_leptos::rich::SafeHtml::html(input)
                     .map(|value| value.as_str().to_owned())
             })
             .collect::<std::result::Result<Vec<_>, _>>()?;

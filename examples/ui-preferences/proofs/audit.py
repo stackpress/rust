@@ -14,7 +14,7 @@ def main():
     changed = subprocess.check_output(['git','diff','--name-only'],cwd=ROOT,text=True).splitlines()
     new = subprocess.check_output(['git','ls-files','--others','--exclude-standard'],cwd=ROOT,text=True).splitlines()
     allowed = ('Cargo.toml','Cargo.lock','src/lib.rs','crates/framework/framework-language/',
-               'crates/framework/framework-view/','crates/framework/framework-ui/','crates/framework/framework-preferences/',
+               'crates/framework/framework-view/','crates/leptos/','crates/framework/framework-preferences/',
                'examples/profile-ui/','examples/ui-preferences/','examples/ui-gallery/',
                'examples/ui-stream/web/src/lib.rs','examples/review-preview/Cargo.toml',
                'examples/review-preview/src/panel.rs',
@@ -22,7 +22,7 @@ def main():
                '.agents/specs/00001-stackpress-rust-foundation/tasks/00013-receipt-lane-b-m1.md')
     files = sorted(set(changed + new))
     assert all(file.startswith(allowed) for file in files), [file for file in files if not file.startswith(allowed)]
-    for removed in ['crates/framework/framework-preferences','crates/framework/framework-ui/src/components/system.css',
+    for removed in ['crates/framework/framework-preferences','crates/leptos/src/components/system.css',
                     'crates/framework/framework-view/proofs/issue15-m0']:
         assert not (ROOT / removed).exists(), removed
     for name in files:

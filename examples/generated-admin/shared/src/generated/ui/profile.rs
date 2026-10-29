@@ -201,7 +201,7 @@ pub fn table(
     rows: &[(String, super::super::contracts::public::PublicProfile)],
     instance: &str,
 ) -> SchemaResult<AnyView> {
-    use stackpress_framework_ui::components::{
+    use stackpress_leptos::components::{
         Table, TableCell, TableGroup, TableHead, TableHeader, TableRow,
     };
     let mut keys = std::collections::BTreeSet::new();

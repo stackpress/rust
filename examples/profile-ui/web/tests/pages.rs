@@ -55,7 +55,7 @@ async fn abort(_: &mut Request, res: &mut Response, _: Invocation<'_>) -> Result
 /// Delegation preserves the child response and never appends a page shell.
 #[tokio::test]
 async fn child_abort_never_renders() {
-    stackpress_framework_ui::render::initialize_ssr().unwrap();
+    stackpress_framework_view::leptos::render::initialize_ssr().unwrap();
     let mut builder = ServerBuilder::new();
     builder.on("profile-search", abort).unwrap();
     builder

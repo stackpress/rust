@@ -59,7 +59,7 @@ def main():
     OUT.mkdir(parents=True, exist_ok=True)
     if '--run' in sys.argv:
         run('precoverage-clean', ['cargo', 'clean', '--target-dir', TARGET])
-        selected = ['--locked', '--offline', '-p', 'stackpress-framework-ui', '-p',
+        selected = ['--locked', '--offline', '-p', 'stackpress-leptos', '-p',
                     'stackpress-example-ui-format', '--features', 'ssr,rich,format']
         run('coverage-tests', ['cargo', 'llvm-cov', '--no-rustc-wrapper', '--no-report', *selected])
         run('coverage-native', ['cargo', 'llvm-cov', 'run', '--no-rustc-wrapper', '--no-report',
@@ -113,7 +113,7 @@ def main():
         if not path.is_relative_to(ROOT):
             continue
         relative = str(path.relative_to(ROOT))
-        if not relative.startswith(('crates/framework/framework-ui/src/', 'examples/ui-format/src/')):
+        if not relative.startswith(('crates/leptos/src/', 'examples/ui-format/src/')):
             continue
         if path.name == 'tests.rs' or path.name.endswith('_tests.rs'):
             continue
@@ -124,9 +124,9 @@ def main():
             if number not in excluded:
                 entry['counts'][number] = max(entry['counts'].get(number, 0), count)
     summary = {}
-    for name, prefix in [('framework-ui', 'crates/framework/framework-ui/src/'),
+    for name, prefix in [('leptos', 'crates/leptos/src/'),
                          ('ui-format', 'examples/ui-format/src/'),
-                         ('controllers', 'crates/framework/framework-ui/src/edit/')]:
+                         ('controllers', 'crates/leptos/src/edit/')]:
         selected = {}
         for path, entry in files.items():
             if not path.startswith(prefix) or name == 'controllers' and Path(path).name in ('dom.rs', 'input.rs'):

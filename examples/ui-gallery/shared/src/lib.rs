@@ -1,6 +1,6 @@
 //! One real component source for native SSR, hydration and CSR; no host authority.
 use leptos::prelude::*;
-use stackpress_framework_ui::{
+use stackpress_leptos::{
     components::{
         ADVANCED_STYLES, Dialog, FieldControl, FieldError, Form, FormState, Input, Table,
     },
@@ -23,7 +23,7 @@ pub use breadth::BreadthDraft;
 pub use collection_proof::parse_presence;
 pub mod collection_proof;
 /// Typed early nested-field presence shared with the thin client adapter.
-pub use stackpress_framework_ui::components::FieldValue;
+pub use stackpress_leptos::components::FieldValue;
 mod seed;
 pub use core::CoreDraft;
 pub use seed::{GallerySeed, decode_initial, decode_preference};
@@ -134,13 +134,13 @@ pub fn Gallery(
     let french = choose.clone();
     let styles = format!(
         "{}{}{}{}",
-        include_str!("../../../../crates/framework/framework-ui/src/components/styles.css"),
+        include_str!("../../../../crates/leptos/src/components/styles.css"),
         ADVANCED_STYLES,
-        stackpress_framework_ui::components::CORE_STYLES,
-        stackpress_framework_ui::components::BREADTH_STYLES
+        stackpress_leptos::components::CORE_STYLES,
+        stackpress_leptos::components::BREADTH_STYLES
     );
     view! {
-        <stackpress_framework_ui::leptos_meta::Title text=move || format!("{} · {}", phrase(&locale.get(), "UI gallery", "Galerie UI"), resource_title.get())/>
+        <stackpress_leptos::leptos_meta::Title text=move || format!("{} · {}", phrase(&locale.get(), "UI gallery", "Galerie UI"), resource_title.get())/>
         <style>{styles}</style>
         <main class="sp-root" data-initial-theme-pending=seed.theme.is_none().then_some("") data-theme=seed.theme.clone().unwrap_or("light".into())><div class="sp-blank">
             <header class="sp-head"><h1>{move || phrase(&locale.get(), "UI gallery", "Galerie UI")}</h1>
@@ -168,11 +168,11 @@ pub fn Gallery(
                         <button id="save" type="submit">"Save"</button>
                         <button id="close" type="button" on:click=move |_| open.set(false)>"Close"</button>
                     </Form>
-                    <stackpress_framework_ui::components::ActionGroup label="Dialog actions"><button id="nested-opener" type="button" on:click=move |_| nested.set(true)>"Nested dialog"</button>
+                    <stackpress_leptos::components::ActionGroup label="Dialog actions"><button id="nested-opener" type="button" on:click=move |_| nested.set(true)>"Nested dialog"</button>
                     <button id="locked-opener" type="button" on:click=move |_| locked.set(true)>"Explicit close dialog"</button>
                     <button id="remove-opener" type="button" on:click=move |_| trigger.set(false)>"Remove opener"</button>
                     <button id="unmount" type="button" on:click=move |_| { open.set(false); mounted.set(false); }>"Unmount dialog"</button>
-                    </stackpress_framework_ui::components::ActionGroup><Dialog id="nested" open=nested title="Nested dialog" initial_focus_id="nested-close" fallback_focus_id="profile-name">
+                    </stackpress_leptos::components::ActionGroup><Dialog id="nested" open=nested title="Nested dialog" initial_focus_id="nested-close" fallback_focus_id="profile-name">
                         <button id="nested-close" type="button" on:click=move |_| nested.set(false)>"Close nested"</button>
                     </Dialog>
                     <Dialog id="locked" open=locked title="Explicit close dialog" close_on_escape=false initial_focus_id="locked-close" fallback_focus_id="profile-name">
@@ -199,13 +199,16 @@ pub fn Gallery(
 
 /// Install only the normal scoped metadata context for a browser root.
 pub fn provide_meta() {
-    stackpress_framework_ui::leptos_meta::provide_meta_context();
+    stackpress_leptos::leptos_meta::provide_meta_context();
 }
 
 #[cfg(all(test, feature = "ssr"))]
 mod tests {
     use super::*;
-    use stackpress_framework_ui::{async_render::AsyncLeptosRenderer, render::initialize_ssr};
+
+    use stackpress_framework_view::leptos::{
+        async_render::AsyncLeptosRenderer, render::initialize_ssr,
+    };
     use stackpress_framework_view::{
         AsyncPageRenderer, BasePath, PageAssets, PageContract, PageId, PageSnapshot,
         PublicLocation, PublicStatus,

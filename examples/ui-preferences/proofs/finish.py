@@ -22,8 +22,8 @@ if __name__ == '__main__':
         run('cargo','test','--offline','--locked',*profiles,'--all-targets')
         run('cargo','clippy','--offline','--locked',*profiles,'--all-targets','--','-D','warnings')
         run('cargo','check','--offline','--locked','--workspace','--all-targets')
-        scopes = ['-p','stackpress-framework-view','-p','stackpress-framework-language','-p','stackpress-framework-ui']
-        features='stackpress-framework-view/native-file,stackpress-framework-view/flash,stackpress-framework-ui/stream,stackpress-framework-ui/rich'
+        scopes = ['-p','stackpress-framework-view','-p','stackpress-framework-language','-p','stackpress-leptos']
+        features='stackpress-framework-view/native-file,stackpress-framework-view/flash,stackpress-leptos/stream,stackpress-leptos/rich'
         run('cargo','doc','--offline','--locked',*scopes,'--features',features,'--no-deps', env=dict(os.environ,RUSTDOCFLAGS='-D warnings'))
         run('cargo','build','--offline','--locked','-p','stackpress-example-profile-ui-web')
     for mode in ['hydrate','csr']:
@@ -31,7 +31,7 @@ if __name__ == '__main__':
         run(sys.executable,'examples/profile-ui/asset_manifest.py','check',mode)
         clients=['-p','stackpress-example-profile-ui-client','-p','stackpress-example-ui-preferences-client','-p','stackpress-example-ui-gallery-client']
         run('cargo','clippy','--offline','--locked',*clients,'--target','wasm32-unknown-unknown','--features',mode,'--','-D','warnings')
-        run('cargo','check','--offline','--locked','-p','stackpress','--target','wasm32-unknown-unknown','--features',f'framework-view-preferences,framework-view-flash,framework-ui-{mode}')
+        run('cargo','check','--offline','--locked','-p','stackpress','--target','wasm32-unknown-unknown','--features',f'framework-view-preferences,framework-view-flash,leptos-{mode}')
     run(sys.executable,'examples/ui-gallery/build.py')
     run('cargo','check','--offline','--locked','-p','stackpress','--features','framework-view-native-file,framework-view-flash')
     run('cargo','fmt','--all','--','--check')

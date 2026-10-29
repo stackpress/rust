@@ -41,4 +41,4 @@ of Cargo's Rustdoc test discovery.
 
 The facade path is `stackpress::framework_view` with `framework-view`, or
 `framework-view-server` for the native extension. See [feature selection](../README.md#features-and-integration)
-and the [UI API](../../../framework-ui/docs/api/README.md).
+and the [UI API](../../../../leptos/docs/api/README.md).

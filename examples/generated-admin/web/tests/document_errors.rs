@@ -19,7 +19,7 @@ fn document_failures_keep_html_and_api_failures_keep_json() {
 
 /// Keep all real SQLite connections inside the owned finite runtime.
 async fn prove_document_errors() {
-    stackpress_framework_ui::render::initialize_ssr().unwrap();
+    stackpress_leptos::render::initialize_ssr().unwrap();
     for mount in ["/", "/demo/admin/"] {
         let directory = tempfile::tempdir().unwrap();
         let engine = database::open(&directory.path().join("fixture.sqlite"), false)

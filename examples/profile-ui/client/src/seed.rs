@@ -8,10 +8,10 @@ use stackpress_example_profile_ui_contracts::{
     SearchFailure, SearchOutcome, SearchPage, SearchReply, decode_search_reply,
 };
 use stackpress_example_profile_ui_shared::profile_language;
-use stackpress_framework_ui::routing::BasePath;
-use stackpress_framework_ui::{language::Language, state::Theme};
 #[cfg(any(feature = "hydrate", test))]
 use stackpress_framework_view::PageSnapshot;
+use stackpress_framework_view::leptos::routing::BasePath;
+use stackpress_leptos::{language::Language, state::Theme};
 
 /// Checked public page and initial presentation settings admitted before mounting.
 pub(crate) struct ClientSeed {

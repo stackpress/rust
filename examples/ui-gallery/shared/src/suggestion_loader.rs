@@ -1,5 +1,5 @@
 //! Explicit example-only yielding suggestion acquisition; no hidden endpoint or initial fetch.
-use stackpress_framework_ui::components::{ControlError, SelectOption, SelectOptions};
+use stackpress_leptos::components::{ControlError, SelectOption, SelectOptions};
 
 /// The same fixed owned option values are delivered after an explicit user query.
 pub async fn load(query: String) -> Result<SelectOptions, ControlError> {
