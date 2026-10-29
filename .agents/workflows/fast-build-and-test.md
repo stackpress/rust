@@ -64,6 +64,12 @@ export CARGO_INCREMENTAL=0 CARGO_PROFILE_DEV_DEBUG=0
   first build costs about half of a truly cold one.
 - Keep separate subdirectories when one target would mix incompatible outputs, such as
   Profile's native and WASM targets. Never point two concurrent builds at one directory.
+- Give each disposable consumer workspace (a throwaway project a test or proof
+  creates) its own subdirectory of the task target, such as `target/<task>/consumer-x`.
+  Sharing the main warm target lets it overwrite same-named binaries; a later
+  `cargo run` can then execute that stale binary instead of the one you meant.
+- When the shared target nears its cap, first delete only its `debug/incremental`
+  directory; that frees space while keeping the cached dependency builds.
 - Watch disk. Keep each target under the size cap in the brief (default 8 GiB) and
   report the peak. Clear a target mid-effort only when it approaches the cap.
 
