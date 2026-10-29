@@ -147,7 +147,7 @@ Independently reran on the committed tree at gate tier (`sccache`, non-increment
 - Cargo.lock and Cargo.toml are unchanged.
 - fmt; workspace clippy `-D warnings`.
 - `cargo nextest run --workspace --all-targets --locked --no-fail-fast` twice with **no exclusions**: 740 passed each, including `tcp_watchdog`. The second run took 46.9 s.
-- `tcp_watchdog` was also run separately with cargo test.
+- Correction (2026-10-29): the separate cargo-test lane targeted `stackpress-server` instead of `stackpress-server-http` and ran no tests. The nextest runs above did execute `tcp_watchdog`. It was rerun alone in the correct package during the issue 14 M2 verification and passed.
 - Workspace doctests: 942.
 - `cargo test` on the four SQL packages: 135 passed, 41 ignored, with the unset-URL behaviour preserved.
 - The seven-harness protocol proof.
