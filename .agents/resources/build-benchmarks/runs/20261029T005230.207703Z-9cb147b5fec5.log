@@ -1,0 +1,2 @@
+{"target_absent": true, "matching_task_processes": [], "external_lock_tuples": 616, "evidence_retained": "/private/tmp/stackpress-issue17-m1/evidence"}
+supervisor: child 72472 reaped; peak target 0 KiB

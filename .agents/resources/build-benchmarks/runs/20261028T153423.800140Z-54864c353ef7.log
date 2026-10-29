@@ -1,0 +1,183 @@
+   Compiling tokio v1.54.1
+   Compiling bitflags v2.13.2
+   Compiling ammonia v4.2.4
+   Compiling pulldown-cmark v0.13.5
+   Compiling any_spawner v0.3.0
+   Compiling reactive_graph v0.2.16
+   Compiling reactive_stores v0.4.4
+   Compiling tachys v0.2.19
+   Compiling leptos_dom v0.8.8
+   Compiling leptos_server v0.8.8
+   Compiling leptos v0.8.22
+   Compiling leptos_meta v0.8.7
+   Compiling leptos_router v0.8.17
+   Compiling stackpress-framework-ui v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-ui)
+    Finished `test` profile [unoptimized] target(s) in 21.88s
+     Running unittests src/lib.rs (/private/tmp/i15-m2-verify/target/debug/deps/stackpress_framework_ui-e1ec478beb17ac77)
+
+running 66 tests
+test components::breadth_tests::paging_and_geometry ... ok
+test components::breadth_tests::css_zoom_admission ... ok
+test components::breadth_tests::foreign_suggestion_completion_is_rejected ... ok
+test components::breadth_tests::local_table_controller ... ok
+test components::breadth_tests::bounded_input_policies ... ok
+test components::breadth_tests::typed_collections ... ok
+test components::breadth_tests::disclosure_and_choice_admission ... ok
+test components::breadth_tests::searchable_choice_boundaries ... ok
+test components::core_tests::checked_display_boundaries ... ok
+test components::core_tests::text_and_collection_boundaries ... ok
+test components::tag_list::tests::exact_append_and_neighbour_removal ... ok
+test components::core_tests::pinned_leptos_raw_text_characterization ... ok
+test components::core_tests::select_admission_and_state ... ok
+test components::tests::safe_navigation_targets ... ok
+test components::breadth_tests::native_dialog_mode_policies ... ok
+test components::tests::controls_render_native_accessible_markup ... ok
+test components::breadth_tests::table_selection_is_native_before_javascript ... ok
+test components::tests::advanced_components_are_native_and_inert_before_javascript ... ok
+test components::core_tests::ordinary_semantic_markup ... ok
+test components::tests::list_layout_and_notifications ... ok
+test format::edit::tests::escaped_ssr_editor_contract ... ok
+test format::edit::tests::exact_bounds_and_budgets ... ok
+test format::edit::tests::dirty_locale_and_region_context ... ok
+test format::edit::tests::clear_fail_and_recover ... ok
+test format::edit::tests::composition_orders_cancel_and_duplicate ... ok
+test format::edit::tests::explicit_offset_suffix_grammar ... ok
+test components::breadth_tests::table_layout_and_rating_minimum_markup ... ok
+test format::edit::tests::utf16_transport_budgets ... ok
+test format::edit::tests::preserved_draft_and_fresh_composition ... ok
+test format::edit::tests::selection_and_paste ... ok
+test components::breadth_tests::breadth_semantic_markup_and_hostile_text ... ok
+test format::edit::tests::middle_edit_grouping_and_locale_during_composition ... ok
+test format::number::tests::decimal_admission_and_limits ... ok
+test format::edit::tests::decimal_grammar_and_rounding ... ok
+test format::edit::tests::temporal_values_and_bounds ... ok
+test components::breadth_tests::collection_rows_and_plain_chips_are_accessible_before_javascript ... ok
+test format::number::tests::decimal_precision_and_unicode ... ok
+test format::tests::strict_wire_boundaries_preserve_utf8_safety ... ok
+test format::tests::error_categories_and_retained_cause ... ok
+test language::tests::integer_plural_categories_and_text ... ok
+test language::tests::checked_language_bounds ... ok
+test language::tests::phrase_and_text_policy ... ok
+test language::tests::scoped_replacement_and_disposal ... ok
+test language::tests::counted_node_translation ... ok
+test language::tests::translated_nodes_render_as_safe_views ... ok
+test format::time::tests::dates_and_errors ... ok
+test render::escaping_tests::escaping_borrows_text ... ok
+test format::time::tests::time_precision ... ok
+test resources::tests::cancellation_before_poll_and_after_completion ... ok
+test replay::tests::replay_roundtrip_and_limits ... ok
+test state::tests::configurable_notification_budgets ... ok
+test format::time::tests::dst_boundaries_and_offsets ... ok
+test state::tests::notification_limits_duplicates_and_dismissal ... ok
+test state::tests::providers_are_explicit_isolated_and_disposed ... ok
+test stream::tests::child ... ignored, called by stream watchdog
+test stream::tests::budget_and_replay_contract ... ok
+test stream::tests::explicit_completion_protocol ... ok
+test rich::tests::explicit_http_authorities_only ... ok
+test rich::tests::closed_policy_and_budgets ... ok
+test rich::tests::markdown_and_exact_budget_edges ... ok
+test rich::tests::mutation_corpus_is_stable ... ok
+test stream::tests::watchdog ... ok
+test format::edit::tests::identical_native_read_keeps_clean_cancellation_base ... ok
+test format::phone::tests::invalid_and_bounded ... ok
+test format::phone::tests::canonical_and_display ... ok
+test format::edit::tests::phone_drafts_and_switching ... ok
+
+test result: ok. 65 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.43s
+
+     Running tests/async_feasibility.rs (/private/tmp/i15-m2-verify/target/debug/deps/async_feasibility-cf567b6c418acbee)
+
+running 8 tests
+test watchdog::exact_completion_marker ... ok
+test unmatched_child_filter_is_rejected - should panic ... ok
+test resource_success_control ... ok
+test cooperative_success_releases_loader ... ok
+test cooperative_cancel_releases_loader ... ok
+test resource_unwind_counterexample ... ok
+test resource_cancellation_counterexample ... ok
+test cooperative_unwind_releases_loader ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/async_renderer.rs (/private/tmp/i15-m2-verify/target/debug/deps/async_renderer-ebf4b551a4f98415)
+
+running 3 tests
+test watchdog::exact_completion_marker ... ok
+test owned_render_migrates_between_threads ... ok
+test owned_async_renderer_exit_matrix ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/cleanup.rs (/private/tmp/i15-m2-verify/target/debug/deps/cleanup-4c28bd01e9d1fbca)
+
+running 5 tests
+test staged_render_releases_owner_state ... ok
+test no_runtime_never_panics ... ok
+test every_render_exit_releases_reactive_state ... ok
+test reactive_title_survives_owner_cleanup ... ok
+test unwind_child_releases_render_state ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/executor.rs (/private/tmp/i15-m2-verify/target/debug/deps/executor-4c25fe5a8e5e2521)
+
+running 1 test
+test startup_is_explicit_idempotent_and_checked ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/routing.rs (/private/tmp/i15-m2-verify/target/debug/deps/routing-29e2db9b445263b0)
+
+running 2 tests
+test compiled_path_uses_leptos_segments ... ok
+test head_router_and_limits ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/suggestions.rs (/private/tmp/i15-m2-verify/target/debug/deps/suggestions-4c3de01aafea8c7c)
+
+running 2 tests
+test watchdog::exact_completion_marker ... ok
+test yielding_suggestion_lifetime ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/system_theme.rs (/private/tmp/i15-m2-verify/target/debug/deps/system_theme-aac9871ef86041b5)
+
+running 1 test
+test saved_choices_and_unset_head ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests stackpress_framework_ui
+
+running 19 tests
+test crates/framework/framework-ui/src/components/controls.rs - components::controls::safe_href (line 36) ... ok
+test crates/framework/framework-ui/src/components/display_values.rs - components::display_values (line 3) ... ok
+test crates/framework/framework-ui/src/async_render.rs - async_render::AsyncLeptosRenderer (line 35) ... ok
+test crates/framework/framework-ui/src/components/controls.rs - components::controls::Input (line 115) ... ok
+test crates/framework/framework-ui/src/components/controls.rs - components::controls::InputProps (line 134) ... ok
+test crates/framework/framework-ui/src/components/overlay.rs - components::overlay::Popover (line 32) ... ok
+test crates/framework/framework-ui/src/components/controls.rs - components::controls::__component_input (line 115) ... ok
+test crates/framework/framework-ui/src/components/collection_state.rs - components::collection_state::BoundedList (line 25) ... ok
+test crates/framework/framework-ui/src/resources.rs - resources::cancel_on_cleanup (line 100) - compile ... ok
+test crates/framework/framework-ui/src/components/choice.rs - components::choice::ChoiceState (line 33) ... ok
+test crates/framework/framework-ui/src/components/overlay.rs - components::overlay::PopoverProps (line 58) ... ok
+test crates/framework/framework-ui/src/language.rs - language::Language::text (line 157) ... ok
+test crates/framework/framework-ui/src/components/paging.rs - components::paging::PageWindow (line 18) ... ok
+test crates/framework/framework-ui/src/stream.rs - stream::StreamLeptosRenderer (line 81) ... ok
+test crates/framework/framework-ui/src/lib.rs - format (line 52) ... ok
+test crates/framework/framework-ui/src/render.rs - render::LeptosRenderer (line 63) ... ok
+test crates/framework/framework-ui/src/components/table_state.rs - components::table_state::TableState (line 16) ... ok
+test crates/framework/framework-ui/src/components/overlay.rs - components::overlay::__component_popover (line 32) ... ok
+test crates/framework/framework-ui/src/format.rs - format::edit (line 35) ... ok
+
+test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+
+running 1 test
+test crates/framework/framework-ui/src/resources.rs - resources::cancel_on_cleanup (line 108) - compile fail ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s
+
+all doctests ran in 1.51s; merged doctests compilation took 0.91s

@@ -1,0 +1,46 @@
+   Compiling proc-macro2 v1.0.107
+   Compiling memchr v2.8.3
+   Compiling indexmap v2.14.2
+   Compiling percent-encoding v2.3.2
+   Compiling form_urlencoded v1.2.2
+   Compiling aho-corasick v1.1.5
+   Compiling serde_json v1.0.154
+   Compiling regex-automata v0.4.18
+   Compiling quote v1.0.47
+   Compiling syn v3.0.9
+   Compiling regex v1.13.1
+   Compiling synstructure v0.14.0
+   Compiling zerofrom-derive v0.1.8
+   Compiling yoke-derive v0.8.4
+   Compiling zerovec-derive v0.11.7
+   Compiling displaydoc v0.2.7
+   Compiling serde_derive v1.0.229
+   Compiling tokio-macros v2.7.2
+   Compiling zerofrom v0.1.8
+   Compiling tokio v1.54.1
+   Compiling yoke v0.8.4
+   Compiling serde v1.0.229
+   Compiling zerovec v0.11.9
+   Compiling zerotrie v0.2.5
+   Compiling stackpress-idea-parser v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/crates/idea/idea-parser)
+   Compiling tinystr v0.8.5
+   Compiling potential_utf v0.1.6
+   Compiling icu_collections v2.4.0
+   Compiling icu_locale_core v2.4.0
+   Compiling stackpress-idea-transformer v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/crates/idea/idea-transformer)
+   Compiling icu_provider v2.4.0
+   Compiling stackpress-idea v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/crates/idea/idea)
+   Compiling icu_properties v2.4.0
+   Compiling icu_normalizer v2.4.0
+   Compiling idna_adapter v1.2.2
+   Compiling idna v1.1.0
+   Compiling url v2.5.8
+   Compiling stackpress-lib v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/crates/lib)
+   Compiling stackpress-framework-schema v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/crates/framework/framework-schema)
+   Compiling stackpress-server v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/crates/server/server)
+   Compiling stackpress-cli v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/tools/cli)
+   Compiling stackpress-framework-sql v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/crates/framework/framework-sql)
+   Compiling generated-workspace-tool v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/examples/generated-workspace/tool)
+    Finished `dev` profile [unoptimized] target(s) in 13.95s
+     Running `target/debug/generated-workspace-tool emit generate --input /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/examples/generated-workspace/app/schema.idea --output /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/examples/generated-workspace/app/src/generated`
+{"code":200,"status":"OK","errors":{},"results":{"differences":[]},"total":1}

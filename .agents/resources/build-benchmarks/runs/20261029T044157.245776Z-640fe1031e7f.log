@@ -1,0 +1,184 @@
+   Compiling stable_deref_trait v1.2.1
+   Compiling writeable v0.6.4
+   Compiling zerofrom v0.1.8
+   Compiling litemap v0.8.3
+   Compiling js-sys v0.3.106
+   Compiling serde_core v1.0.229
+   Compiling serde v1.0.229
+   Compiling yoke v0.8.4
+   Compiling tokio v1.54.1
+   Compiling icu_locale_fallback_data v2.4.0
+   Compiling zerovec v0.11.9
+   Compiling zerotrie v0.2.5
+   Compiling tinystr v0.8.5
+   Compiling icu_locale_core v2.4.0
+   Compiling potential_utf v0.1.6
+   Compiling icu_collections v2.4.0
+   Compiling heapless v0.7.17
+   Compiling byteorder v1.5.0
+   Compiling icu_provider v2.4.0
+   Compiling hash32 v0.2.1
+   Compiling icu_properties v2.4.0
+   Compiling icu_normalizer v2.4.0
+   Compiling libm v0.2.16
+   Compiling icu_locale_fallback v2.4.0
+   Compiling cobs v0.3.0
+   Compiling icu_calendar_data v2.4.0
+   Compiling leptos_hot_reload v0.8.7
+   Compiling idna_adapter v1.2.2
+   Compiling idna v1.1.0
+   Compiling icu_plurals_data v2.4.0
+   Compiling icu_decimal_data v2.4.0
+   Compiling url v2.5.8
+   Compiling icu_time_data v2.4.0
+   Compiling leptos_macro v0.8.19
+   Compiling core_maths v0.1.1
+   Compiling calendrical_calculations v0.2.4
+   Compiling postcard v1.1.3
+   Compiling fixed_decimal v0.7.3
+   Compiling quick-xml v0.41.0
+   Compiling heck v0.5.0
+   Compiling icu_datetime_data v2.4.0
+   Compiling wasm-bindgen-futures v0.4.79
+   Compiling web-sys v0.3.106
+   Compiling any_spawner v0.3.0
+   Compiling hydration_context v0.3.2
+   Compiling linked-hash-map v0.5.6
+   Compiling reactive_graph v0.2.16
+   Compiling icu_locale_data v2.4.0
+   Compiling phonenumber v0.3.10+9.0.33
+   Compiling lru-cache v0.1.2
+   Compiling strum_macros v0.27.2
+   Compiling icu_calendar v2.4.0
+   Compiling regex-syntax v0.6.29
+   Compiling reactive_stores v0.4.4
+   Compiling oncemutex v0.1.1
+   Compiling minimal-lexical v0.2.1
+   Compiling icu_time v2.4.0
+   Compiling nom v7.1.3
+   Compiling strum v0.27.2
+   Compiling regex-cache v0.2.1
+   Compiling icu_decimal v2.4.0
+   Compiling icu_plurals v2.4.0
+   Compiling icu_pattern v0.5.1
+   Compiling bitflags v2.13.2
+   Compiling fnv v1.0.7
+   Compiling ammonia v4.2.4
+   Compiling pulldown-cmark v0.13.5
+   Compiling icu_locale v2.4.0
+   Compiling icu_datetime v2.4.0
+   Compiling gloo-utils v0.2.0
+   Compiling tachys v0.2.19
+   Compiling gloo-net v0.6.0
+   Compiling wasm-streams v0.5.0
+   Compiling server_fn v0.8.13
+   Compiling leptos_server v0.8.8
+   Compiling leptos_dom v0.8.8
+   Compiling leptos v0.8.22
+   Compiling leptos_meta v0.8.7
+   Compiling leptos_router v0.8.17
+   Compiling stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+    Finished `test` profile [unoptimized] target(s) in 36.00s
+     Running unittests src/lib.rs (/private/tmp/i17-m3-verify/target/debug/deps/stackpress_leptos-bd49b516972c795e)
+
+running 64 tests
+test components::breadth_tests::css_zoom_admission ... ok
+test components::breadth_tests::paging_and_geometry ... ok
+test components::breadth_tests::disclosure_and_choice_admission ... ok
+test components::breadth_tests::local_table_controller ... ok
+test components::breadth_tests::foreign_suggestion_completion_is_rejected ... ok
+test components::core_tests::checked_display_boundaries ... ok
+test components::breadth_tests::typed_collections ... ok
+test components::breadth_tests::searchable_choice_boundaries ... ok
+test components::breadth_tests::bounded_input_policies ... ok
+test components::core_tests::text_and_collection_boundaries ... ok
+test components::tag_list::tests::exact_append_and_neighbour_removal ... ok
+test components::core_tests::select_admission_and_state ... ok
+test components::core_tests::pinned_leptos_raw_text_characterization ... ok
+test components::tests::safe_navigation_targets ... ok
+test components::breadth_tests::native_dialog_mode_policies ... ok
+test components::tests::controls_render_native_accessible_markup ... ok
+test components::breadth_tests::table_selection_is_native_before_javascript ... ok
+test components::tests::list_layout_and_notifications ... ok
+test format::edit::tests::dirty_locale_and_region_context ... ok
+test format::edit::tests::clear_fail_and_recover ... ok
+test components::tests::advanced_components_are_native_and_inert_before_javascript ... ok
+test format::edit::tests::composition_orders_cancel_and_duplicate ... ok
+test components::core_tests::ordinary_semantic_markup ... ok
+test format::edit::tests::explicit_offset_suffix_grammar ... ok
+test format::edit::tests::decimal_grammar_and_rounding ... ok
+test components::breadth_tests::table_layout_and_rating_minimum_markup ... ok
+test format::edit::tests::middle_edit_grouping_and_locale_during_composition ... ok
+test format::edit::tests::preserved_draft_and_fresh_composition ... ok
+test format::edit::tests::escaped_ssr_editor_contract ... ok
+test format::edit::tests::exact_bounds_and_budgets ... ok
+test format::edit::tests::selection_and_paste ... ok
+test components::breadth_tests::breadth_semantic_markup_and_hostile_text ... ok
+test components::breadth_tests::collection_rows_and_plain_chips_are_accessible_before_javascript ... ok
+test format::edit::tests::utf16_transport_budgets ... ok
+test format::number::tests::decimal_admission_and_limits ... ok
+test format::edit::tests::temporal_values_and_bounds ... ok
+test format::tests::error_categories_and_retained_cause ... ok
+test format::number::tests::decimal_precision_and_unicode ... ok
+test format::tests::strict_wire_boundaries_preserve_utf8_safety ... ok
+test language::tests::integer_plural_categories_and_text ... ok
+test language::tests::phrase_and_text_policy ... ok
+test language::tests::checked_language_bounds ... ok
+test language::tests::translated_nodes_render_as_safe_views ... ok
+test language::tests::counted_node_translation ... ok
+test language::tests::scoped_replacement_and_disposal ... ok
+test format::time::tests::dates_and_errors ... ok
+test render::document_tests::document_shell_always_supplies_metadata_marker ... ok
+test format::time::tests::time_precision ... ok
+test resources::tests::cancellation_before_poll_and_after_completion ... ok
+test replay::tests::replay_roundtrip_and_limits ... ok
+test state::tests::configurable_notification_budgets ... ok
+test state::tests::notification_limits_duplicates_and_dismissal ... ok
+test state::tests::providers_are_explicit_isolated_and_disposed ... ok
+test stream::extracted_tests::budget_replay_and_pending_overflow ... ok
+test format::time::tests::dst_boundaries_and_offsets ... ok
+test stream::extracted_tests::explicit_completion_protocol ... ok
+test rich::tests::explicit_http_authorities_only ... ok
+test rich::tests::closed_policy_and_budgets ... ok
+test rich::tests::markdown_and_exact_budget_edges ... ok
+test rich::tests::mutation_corpus_is_stable ... ok
+test format::edit::tests::identical_native_read_keeps_clean_cancellation_base ... ok
+test format::phone::tests::canonical_and_display ... ok
+test format::phone::tests::invalid_and_bounded ... ok
+test format::edit::tests::phone_drafts_and_switching ... ok
+
+test result: ok. 64 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.47s
+
+     Running tests/async_feasibility.rs (/private/tmp/i17-m3-verify/target/debug/deps/async_feasibility-996dedf5a8ac7396)
+
+running 8 tests
+test watchdog::exact_completion_marker ... ok
+test resource_cancellation_counterexample ... ok
+test cooperative_unwind_releases_loader ... ok
+test resource_unwind_counterexample ... ok
+test resource_success_control ... ok
+test unmatched_child_filter_is_rejected - should panic ... ok
+test cooperative_success_releases_loader ... ok
+test cooperative_cancel_releases_loader ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/render_seams.rs (/private/tmp/i17-m3-verify/target/debug/deps/render_seams-a70b501b817885f2)
+
+running 5 tests
+test watchdog::exact_completion_marker ... ok
+test zero_chunk_budget_is_never_unlimited ... ok
+test stream_drop_before_demand_joins_local_owner ... ok
+test native_seams_preserve_errors_owner_and_send_boundaries ... ok
+test stream_backpressure_has_exact_capacity ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/suggestions.rs (/private/tmp/i17-m3-verify/target/debug/deps/suggestions-f1aa2a04f66c0994)
+
+running 2 tests
+test watchdog::exact_completion_marker ... ok
+test yielding_suggestion_lifetime ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+

@@ -1,0 +1,2 @@
+PASS expected KB diagnostic delta:171 errors (146 inherited +25 protected historical relocations),26 warnings, no own-file errors; cargo-llvm-cov 0.8.6
+supervisor: child 70228 reaped; peak target 4326588 KiB

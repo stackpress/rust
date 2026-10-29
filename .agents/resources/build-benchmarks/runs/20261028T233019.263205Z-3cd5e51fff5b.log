@@ -1,0 +1,303 @@
+   Compiling unicode-ident v1.0.27
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling version_check v0.9.5
+   Compiling memchr v2.8.3
+   Compiling syn v3.0.9
+   Compiling semver v1.0.28
+   Compiling rustc_version v0.4.1
+   Compiling pin-project-lite v0.2.17
+   Compiling serde_core v1.0.229
+   Compiling synstructure v0.14.0
+   Compiling cfg-if v1.0.5
+   Compiling serde_derive v1.0.229
+   Compiling wasm-bindgen-shared v0.2.129
+   Compiling zerofrom-derive v0.1.8
+   Compiling futures-core v0.3.34
+   Compiling serde v1.0.229
+   Compiling rustversion v1.0.23
+   Compiling zerofrom v0.1.8
+   Compiling yoke-derive v0.8.4
+   Compiling equivalent v1.0.3
+   Compiling thiserror v2.0.21
+   Compiling hashbrown v0.17.1
+   Compiling futures-sink v0.3.34
+   Compiling stable_deref_trait v1.2.1
+   Compiling yoke v0.8.4
+   Compiling futures-channel v0.3.34
+   Compiling futures-macro v0.3.34
+   Compiling thiserror-impl v2.0.21
+   Compiling syn v2.0.119
+   Compiling futures-task v0.3.34
+   Compiling futures-io v0.3.34
+   Compiling slab v0.4.12
+   Compiling smallvec v1.16.4
+   Compiling bumpalo v3.20.3
+   Compiling wasm-bindgen-macro-support v0.2.129
+   Compiling futures-util v0.3.34
+   Compiling wasm-bindgen v0.2.129
+   Compiling zerovec-derive v0.11.7
+   Compiling zerovec v0.11.9
+   Compiling wasm-bindgen-macro v0.2.129
+   Compiling displaydoc v0.2.7
+   Compiling once_cell v1.21.4
+   Compiling indexmap v2.14.2
+   Compiling unicode-segmentation v1.13.3
+   Compiling tinystr v0.8.5
+   Compiling js-sys v0.3.106
+   Compiling writeable v0.6.4
+   Compiling litemap v0.8.3
+   Compiling icu_locale_core v2.4.0
+   Compiling potential_utf v0.1.6
+   Compiling zerotrie v0.2.5
+   Compiling icu_properties_data v2.4.0
+   Compiling utf8_iter v1.0.4
+   Compiling icu_normalizer_data v2.4.0
+   Compiling zmij v1.0.23
+   Compiling icu_collections v2.4.0
+   Compiling icu_provider v2.4.0
+   Compiling convert_case v0.11.0
+   Compiling or_poisoned v0.1.0
+   Compiling itoa v1.0.18
+   Compiling serde_json v1.0.154
+   Compiling wasm-bindgen-futures v0.4.79
+   Compiling futures-executor v0.3.34
+   Compiling libc v0.2.191
+   Compiling foldhash v0.2.0
+   Compiling futures v0.3.34
+   Compiling icu_normalizer v2.4.0
+   Compiling icu_properties v2.4.0
+   Compiling proc-macro2-diagnostics v0.11.0
+   Compiling generic-array v0.14.7
+   Compiling parking v2.2.1
+   Compiling percent-encoding v2.3.2
+   Compiling paste v1.0.15
+   Compiling idna_adapter v1.2.2
+   Compiling event-listener v5.4.2
+   Compiling web-sys v0.3.106
+   Compiling proc-macro-utils v0.10.0
+   Compiling tokio-macros v2.7.2
+   Compiling throw_error v0.3.1
+   Compiling slotmap v1.1.1
+   Compiling konst_macro_rules v0.2.19
+   Compiling unicode-xid v0.2.6
+   Compiling typenum v1.20.1
+   Compiling const_format_proc_macros v0.2.37
+   Compiling konst v0.2.20
+   Compiling tokio v1.54.1
+   Compiling event-listener-strategy v0.5.4
+   Compiling idna v1.1.0
+   Compiling form_urlencoded v1.2.2
+   Compiling send_wrapper v0.6.0
+   Compiling reactive_graph v0.2.16
+   Compiling server_fn_macro v0.8.12
+   Compiling aho-corasick v1.1.5
+   Compiling either v1.19.0
+   Compiling rstml v0.13.1
+   Compiling regex-syntax v0.8.11
+   Compiling regex-automata v0.4.18
+   Compiling itertools v0.14.0
+   Compiling url v2.5.8
+   Compiling async-lock v3.4.2
+   Compiling any_spawner v0.3.0
+   Compiling const_format v0.2.37
+   Compiling hydration_context v0.3.2
+   Compiling derive-where v1.7.0
+   Compiling rustc-hash v2.1.3
+   Compiling anyhow v1.0.104
+   Compiling camino v1.2.6
+   Compiling guardian v1.3.0
+   Compiling thiserror v1.0.69
+   Compiling xxhash-rust v0.8.19
+   Compiling regex v1.13.1
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling quote-use-macros v0.9.0
+   Compiling manyhow-macros v0.14.1
+   Compiling reactive_stores_macro v0.4.4
+   Compiling pin-project-internal v1.1.13
+   Compiling thiserror-impl v1.0.69
+   Compiling tachys v0.2.19
+   Compiling prettyplease v0.3.0
+   Compiling html-escape v0.2.15
+   Compiling bytes v1.12.1
+   Compiling winnow v1.0.4
+   Compiling getrandom v0.4.3
+   Compiling same-file v1.0.6
+   Compiling walkdir v2.5.0
+   Compiling toml_parser v1.1.5+spec-1.1.0
+   Compiling http v1.5.0
+   Compiling pin-project v1.1.13
+   Compiling reactive_stores v0.4.4
+   Compiling manyhow v0.14.1
+   Compiling quote-use v0.9.0
+   Compiling digest v0.10.7
+   Compiling gloo-utils v0.2.0
+   Compiling either_of v0.1.9
+   Compiling cpufeatures v0.2.17
+   Compiling oco_ref v0.2.1
+   Compiling async-trait v0.1.92
+   Compiling server_fn v0.8.13
+   Compiling next_tuple v0.1.0
+   Compiling drain_filter_polyfill v0.1.3
+   Compiling erased v0.1.2
+   Compiling serde_spanned v1.1.2
+   Compiling const_str_slice_concat v0.1.0
+   Compiling toml_datetime v1.1.2+spec-1.1.0
+   Compiling interpolator v0.5.0
+   Compiling collection_literals v1.0.3
+   Compiling attribute-derive-macro v0.11.0
+   Compiling toml v1.1.8+spec-1.1.0
+   Compiling sha2 v0.10.9
+   Compiling gloo-net v0.6.0
+   Compiling server_fn_macro_default v0.8.6
+   Compiling wasm-streams v0.5.0
+   Compiling serde_qs v0.15.0
+   Compiling convert_case v0.6.0
+   Compiling typed-builder-macro v0.23.2
+   Compiling leptos_macro v0.8.19
+   Compiling inventory v0.3.25
+   Compiling pathdiff v0.2.3
+   Compiling base64 v0.22.1
+   Compiling const-str v1.1.0
+   Compiling base16 v0.2.1
+   Compiling wasm_split_macros v0.2.2
+   Compiling config v0.15.27
+   Compiling leptos_hot_reload v0.8.7
+   Compiling typed-builder v0.23.2
+   Compiling uuid v1.29.0
+   Compiling attribute-derive v0.11.0
+   Compiling codee v0.3.5
+   Compiling convert_case_extras v0.2.0
+   Compiling leptos v0.8.22
+   Compiling async-once-cell v0.5.4
+   Compiling wasm_split_helpers v0.2.3
+   Compiling leptos_server v0.8.8
+   Compiling leptos_config v0.8.10
+   Compiling leptos_dom v0.8.8
+   Compiling httpdate v1.0.3
+   Compiling stackpress-lib v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/lib)
+   Compiling leptos_router v0.8.17
+   Compiling stackpress-server v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/server/server)
+   Compiling leptos_router_macro v0.8.7
+   Compiling stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-view)
+   Compiling leptos_meta v0.8.7
+   Compiling stackpress-framework-ui v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-ui)
+error[E0308]: mismatched types
+   --> crates/framework/framework-ui/examples/issue17_parity.rs:20:207
+    |
+ 20 | ...e.css")?), theme_bootstrap:Some(stackpress_framework_view::theme::bootstrap_location()) };
+    |                               ---- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `PublicLocation`, found `Result<PublicLocation, ViewError>`
+    |                               |
+    |                               arguments to this enum variant are incorrect
+    |
+    = note: expected struct `PublicLocation`
+                 found enum `Result<PublicLocation, ViewError>`
+help: the type constructed contains `Result<PublicLocation, ViewError>` due to the type of the argument passed
+   --> crates/framework/framework-ui/examples/issue17_parity.rs:20:202
+    |
+ 20 | ...e_bootstrap:Some(stackpress_framework_view::theme::bootstrap_location()) };
+    |                ^^^^^------------------------------------------------------^
+    |                     |
+    |                     this argument influences the type of `Some`
+note: tuple variant defined here
+   --> /Users/cblanquera/.rustup/toolchains/stable-aarch64-apple-darwin/lib/rustlib/src/rust/library/core/src/option.rs:608:5
+    |
+608 |     Some(#[stable(feature = "rust1", since = "1.0.0")] T),
+    |     ^^^^
+help: consider using `Result::expect` to unwrap the `Result<PublicLocation, ViewError>` value, panicking if the value is a `Result::Err`
+    |
+ 20 |         let assets = PageAssets { build:"parity".into(), base:BasePath::new("/demo/v1")?, module:PublicLocation::new("/start.js")?, stylesheet:Some(PublicLocation::new("/style.css")?), theme_bootstrap:Some(stackpress_framework_view::theme::bootstrap_location().expect("REASON")) };
+    |                                                                                                                                                                                                                                                                     +++++++++++++++++
+
+error[E0599]: the method `render` exists for struct `LeptosRenderer<fn(&PageSnapshot<String>) -> ... {content}>`, but its trait bounds were not satisfied
+  --> crates/framework/framework-ui/examples/issue17_parity.rs:22:82
+   |
+22 |         let sync = LeptosRenderer::new(contract.clone(),assets.clone(),content)?.render(snapshot.clone()).await?.into_html();
+   |                                                                                  ^^^^^^ method cannot be called due to unsatisfied trait bounds
+   |
+  ::: crates/framework/framework-ui/src/render.rs:78:1
+   |
+78 | pub struct LeptosRenderer<F = ()> {
+   | --------------------------------- doesn't satisfy `_: PageRenderer<_>`
+   |
+   = note: the following trait bounds were not satisfied:
+           `<for<'a> fn(&'a PageSnapshot<std::string::String>) -> Result<impl leptos::IntoView, ViewError> {content} as FnOnce<(&PageSnapshot<_>,)>>::Output = Result<_, ViewError>`
+           which is required by `LeptosRenderer<for<'a> fn(&'a PageSnapshot<std::string::String>) -> Result<impl leptos::IntoView, ViewError> {content}>: PageRenderer<_>`
+   = note: the full name for the type has been written to '/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/target/issue17/debug/examples/issue17_parity-ec4c3487e7706b1e.long-type-8806724779498523451.txt'
+   = note: consider using `--verbose` to print the full type name to the console
+
+error[E0599]: no method named `clone` found for struct `PageSnapshot<T>` in the current scope
+  --> crates/framework/framework-ui/examples/issue17_parity.rs:22:98
+   |
+22 |         let sync = LeptosRenderer::new(contract.clone(),assets.clone(),content)?.render(snapshot.clone()).await?.into_html();
+   |                                                                                                  ^^^^^ method not found in `PageSnapshot<std::string::String>`
+
+error[E0599]: the method `render_async` exists for struct `AsyncLeptosRenderer<fn(&PageSnapshot<String>) -> ... {content}>`, but its trait bounds were not satisfied
+  --> crates/framework/framework-ui/examples/issue17_parity.rs:23:95
+   |
+23 | ...ne(),assets.clone(),content)?.render_async(snapshot.clone()).await?.into_html();
+   |                                  ^^^^^^^^^^^^ method cannot be called due to unsatisfied trait bounds
+   |
+  ::: crates/framework/framework-ui/src/async_render.rs:50:1
+   |
+50 | pub struct AsyncLeptosRenderer<F> {
+   | --------------------------------- doesn't satisfy `_: AsyncPageRenderer<_>`
+   |
+   = note: the following trait bounds were not satisfied:
+           `<for<'a> fn(&'a PageSnapshot<std::string::String>) -> Result<impl leptos::IntoView, ViewError> {content} as FnOnce<(&PageSnapshot<_>,)>>::Output = Result<_, ViewError>`
+           which is required by `AsyncLeptosRenderer<for<'a> fn(&'a PageSnapshot<std::string::String>) -> Result<impl leptos::IntoView, ViewError> {content}>: AsyncPageRenderer<_>`
+   = note: the full name for the type has been written to '/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/target/issue17/debug/examples/issue17_parity-ec4c3487e7706b1e.long-type-2719424857760530395.txt'
+   = note: consider using `--verbose` to print the full type name to the console
+
+error[E0599]: no method named `clone` found for struct `PageSnapshot<T>` in the current scope
+  --> crates/framework/framework-ui/examples/issue17_parity.rs:23:117
+   |
+23 | ...),content)?.render_async(snapshot.clone()).await?.into_html();
+   |                                      ^^^^^ method not found in `PageSnapshot<std::string::String>`
+
+error[E0599]: no method named `clone` found for struct `PageSnapshot<T>` in the current scope
+  --> crates/framework/framework-ui/examples/issue17_parity.rs:24:136
+   |
+24 | ...fault(),content)?.render(snapshot.clone()).await?;
+   |                                      ^^^^^ method not found in `PageSnapshot<std::string::String>`
+
+error[E0599]: no method named `clone` found for struct `PageSnapshot<T>` in the current scope
+  --> crates/framework/framework-ui/examples/issue17_parity.rs:28:34
+   |
+28 |         let mut invalid=snapshot.clone(); invalid.build="wrong".into();
+   |                                  ^^^^^ method not found in `PageSnapshot<std::string::String>`
+
+error[E0599]: the method `render` exists for struct `LeptosRenderer<fn(&PageSnapshot<String>) -> ... {content}>`, but its trait bounds were not satisfied
+  --> crates/framework/framework-ui/examples/issue17_parity.rs:29:81
+   |
+29 |         let error=LeptosRenderer::new(contract.clone(),assets.clone(),content)?.render(invalid).await.err().unwrap();
+   |                                                                                 ^^^^^^ method cannot be called due to unsatisfied trait bounds
+   |
+  ::: crates/framework/framework-ui/src/render.rs:78:1
+   |
+78 | pub struct LeptosRenderer<F = ()> {
+   | --------------------------------- doesn't satisfy `_: PageRenderer<_>`
+   |
+   = note: the following trait bounds were not satisfied:
+           `<for<'a> fn(&'a PageSnapshot<std::string::String>) -> Result<impl leptos::IntoView, ViewError> {content} as FnOnce<(&PageSnapshot<_>,)>>::Output = Result<_, ViewError>`
+           which is required by `LeptosRenderer<for<'a> fn(&'a PageSnapshot<std::string::String>) -> Result<impl leptos::IntoView, ViewError> {content}>: PageRenderer<_>`
+   = note: the full name for the type has been written to '/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/target/issue17/debug/examples/issue17_parity-ec4c3487e7706b1e.long-type-8806724779498523451.txt'
+   = note: consider using `--verbose` to print the full type name to the console
+
+Some errors have detailed explanations: E0308, E0599.
+For more information about an error, try `rustc --explain E0308`.
+error: could not compile `stackpress-framework-ui` (example "issue17_parity") due to 8 previous errors
+Traceback (most recent call last):
+  File "/private/tmp/stackpress-issue17-m1/baseline.py", line 4, in <module>
+    subprocess.run(['cargo','run','--offline','--locked','-p','stackpress-framework-ui','--features','stream','--example','issue17_parity'],stdout=f,check=True)
+  File "/Users/cblanquera/.pyenv/versions/3.11.4/lib/python3.11/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['cargo', 'run', '--offline', '--locked', '-p', 'stackpress-framework-ui', '--features', 'stream', '--example', 'issue17_parity']' returned non-zero exit status 101.
+supervisor: child 98685 reaped; peak target 543516 KiB
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/proofs/supervise.py", line 75, in <module>
+    main()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/proofs/supervise.py", line 68, in main
+    raise subprocess.CalledProcessError(child.returncode, command)
+subprocess.CalledProcessError: Command '['python3', '/private/tmp/stackpress-issue17-m1/baseline.py']' returned non-zero exit status 1.

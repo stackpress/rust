@@ -1,0 +1,75 @@
+$ cargo build --manifest-path /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/Cargo.toml --locked --offline --example document --features ssr
+   Compiling leptos-independent v0.0.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent)
+    Finished `dev` profile [unoptimized] target(s) in 3.29s
+$ /private/tmp/stackpress-issue17-m2/evidence/base/document hydrate light en
+$ /private/tmp/stackpress-issue17-m2/evidence/base/document hydrate dark fr
+$ cargo build --manifest-path /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/Cargo.toml --locked --offline --lib --target wasm32-unknown-unknown --features hydrate
+   Compiling leptos-independent v0.0.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent)
+    Finished `dev` profile [unoptimized] target(s) in 1.76s
+$ wasm-bindgen --target web --no-typescript --out-dir /private/tmp/stackpress-issue17-m2/evidence/base/hydrate --out-name independent /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/target/issue17/wasm32-unknown-unknown/debug/leptos_independent.wasm
+$ /private/tmp/stackpress-issue17-m2/evidence/base/document csr light en
+$ /private/tmp/stackpress-issue17-m2/evidence/base/document csr dark fr
+$ cargo build --manifest-path /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/Cargo.toml --locked --offline --lib --target wasm32-unknown-unknown --features csr
+   Compiling leptos-independent v0.0.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent)
+    Finished `dev` profile [unoptimized] target(s) in 0.90s
+$ wasm-bindgen --target web --no-typescript --out-dir /private/tmp/stackpress-issue17-m2/evidence/base/csr --out-name independent /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/target/issue17/wasm32-unknown-unknown/debug/leptos_independent.wasm
+$ cargo build --manifest-path /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/Cargo.toml --locked --offline --example document --features ssr,async,rich,format
+   Compiling leptos-independent v0.0.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent)
+    Finished `dev` profile [unoptimized] target(s) in 3.77s
+$ /private/tmp/stackpress-issue17-m2/evidence/helpers/document hydrate light en
+$ /private/tmp/stackpress-issue17-m2/evidence/helpers/document hydrate dark fr
+$ cargo build --manifest-path /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/Cargo.toml --locked --offline --lib --target wasm32-unknown-unknown --features hydrate,async,rich,format
+   Compiling leptos-independent v0.0.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent)
+    Finished `dev` profile [unoptimized] target(s) in 2.46s
+$ wasm-bindgen --target web --no-typescript --out-dir /private/tmp/stackpress-issue17-m2/evidence/helpers/hydrate --out-name independent /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/target/issue17/wasm32-unknown-unknown/debug/leptos_independent.wasm
+$ /private/tmp/stackpress-issue17-m2/evidence/helpers/document csr light en
+$ /private/tmp/stackpress-issue17-m2/evidence/helpers/document csr dark fr
+$ cargo build --manifest-path /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/Cargo.toml --locked --offline --lib --target wasm32-unknown-unknown --features csr,async,rich,format
+   Compiling leptos-independent v0.0.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent)
+    Finished `dev` profile [unoptimized] target(s) in 1.32s
+$ wasm-bindgen --target web --no-typescript --out-dir /private/tmp/stackpress-issue17-m2/evidence/helpers/csr --out-name independent /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/target/issue17/wasm32-unknown-unknown/debug/leptos_independent.wasm
+PASS separate independent native/hydrate/CSR artifacts
+$ node /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/browser.cjs
+PASS base-hydrate-light-en-1280
+PASS base-hydrate-light-en-375
+PASS base-hydrate-dark-fr-1280
+PASS base-hydrate-dark-fr-375
+PASS base-csr-light-en-1280
+PASS base-csr-light-en-375
+PASS base-csr-dark-fr-1280
+PASS base-csr-dark-fr-375
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+'12.34' !== '7.25'
+
+    at /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/browser.cjs:97:47 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: '12.34',
+  expected: '7.25',
+  operator: 'strictEqual'
+}
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/proof.py", line 111, in <module>
+    main()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/proof.py", line 105, in main
+    globals()[action]()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/proof.py", line 95, in browser
+    run(['node', HERE / 'browser.cjs'], timeout=180)
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/proof.py", line 45, in run
+    raise subprocess.CalledProcessError(child.returncode, args)
+subprocess.CalledProcessError: Command '['node', PosixPath('/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/browser.cjs')]' returned non-zero exit status 1.
+Traceback (most recent call last):
+  File "/private/tmp/stackpress-issue17-m2/rebuild_browser.py", line 5, in <module>
+    for action in ['build','browser']:subprocess.run(['python3',fixture+'/proof.py',action],env=env,check=True)
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cblanquera/.pyenv/versions/3.11.4/lib/python3.11/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['python3', 'examples/leptos-independent/proof.py', 'browser']' returned non-zero exit status 1.
+supervisor: child 8206 reaped; peak target 2348192 KiB
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/proofs/supervise.py", line 75, in <module>
+    main()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/proofs/supervise.py", line 68, in main
+    raise subprocess.CalledProcessError(child.returncode, command)
+subprocess.CalledProcessError: Command '['python3', '/private/tmp/stackpress-issue17-m2/rebuild_browser.py']' returned non-zero exit status 1.

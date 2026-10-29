@@ -1,0 +1,9 @@
+error: cannot update the lock file /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/Cargo.lock because --locked was passed to prevent this
+help: to generate the lock file without accessing the network, remove the --locked flag and use --offline instead.
+supervisor: child 41095 reaped; peak target 777076 KiB
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/supervise.py", line 60, in <module>
+    main()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/supervise.py", line 53, in main
+    raise subprocess.CalledProcessError(child.returncode, command)
+subprocess.CalledProcessError: Command '['cargo', 'test', '--offline', '--locked', '-p', 'stackpress-framework-view', '-p', 'stackpress-framework-language', '-p', 'stackpress-framework-ui', '-p', 'stackpress-example-ui-preferences-web', '-p', 'stackpress-example-profile-ui-web', '-p', 'stackpress-example-profile-ui-client', '-p', 'stackpress-example-ui-gallery-web', '--features', 'stackpress-framework-view/native-file,stackpress-framework-view/flash,stackpress-framework-ui/ssr', '--all-targets']' returned non-zero exit status 101.

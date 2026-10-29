@@ -1,0 +1,336 @@
+   Compiling stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view)
+   Compiling stackpress-framework-ui v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-ui)
+   Compiling stackpress-example-profile-ui-contracts v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/contracts)
+   Compiling stackpress-example-profile-ui-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/shared)
+   Compiling stackpress-example-profile-ui-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/web)
+   Compiling stackpress-example-profile-ui-client v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/client)
+    Finished `test` profile [unoptimized] target(s) in 16.41s
+     Running unittests src/lib.rs (target/issue15-m1/debug/deps/stackpress_example_profile_ui_client-8757bebe914ae383)
+
+running 6 tests
+test seed::tests::host_rejection_is_not_transport_failure ... ok
+test seed::native_settings_tests::admit_native_preferences_before_mount ... ok
+test seed::tests::checked_language_wire_roundtrip ... ok
+test seed::tests::typed_reply_admission ... ok
+test seed::tests::bounded_asset_admission_and_mount_agreement ... ok
+test seed::tests::public_seed_admission ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/issue15-m1/debug/deps/stackpress_example_profile_ui_shared-a48363404d57e08e)
+
+running 15 tests
+test preferences::tests::omitted_hook_is_immediate ... ok
+test preferences::tests::invalid_acknowledgement_and_disposed_root_are_inert ... ok
+test tests::controller_retains_host_rejection_identity ... ok
+test tests::controller_rejects_ambiguous_rows_without_publishing ... ok
+test preferences::tests::publish_only_after_a_successful_acknowledgement ... ok
+test tests::exact_detail_and_not_found ... ok
+test tests::reply_validation_and_generation_exhaustion ... ok
+test tests::controller_preserves_newest_result_and_disposal ... ok
+test tests::invalidation_cancellation_and_retry_preserve_useful_rows ... ok
+test tests::catalog_navigation_and_retained_history ... ok
+test tests::mounted_form_action ... ok
+test tests::concurrent_locales_remain_isolated ... ok
+test tests::recovery_notice_survives_initial_search ... ok
+test tests::shared_views_and_explicit_bootstrap ... ok
+test tests::counted_profile_phrases ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/lib.rs (target/issue15-m1/debug/deps/stackpress_example_profile_ui_web-af44f9d58b49d75b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/issue15-m1/debug/deps/stackpress_example_profile_ui_web-7616c04793377e4b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/codec.rs (target/issue15-m1/debug/deps/codec-38664eb1b8e2a468)
+
+running 8 tests
+test route_component_edge_table ... ok
+test foreign_delivery_and_conversion_failure ... ok
+test public_error_envelope_contract ... ok
+test reactive_head_failure_does_not_escape_the_request ... ok
+test strict_fixed_codec ... ok
+test encoded_route_contract ... ok
+test mounted_route_head_and_seed_agreement ... ok
+test initial_settings_and_detail_projection ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/config.rs (target/issue15-m1/debug/deps/config-d808a429312b3d6d)
+
+running 1 test
+test explicit_file_and_input_failures ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/pages.rs (target/issue15-m1/debug/deps/pages-4041e70a6e0316e2)
+
+running 2 tests
+test child_abort_never_renders ... ok
+test generated_html_and_safe_seed ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/reuse.rs (target/issue15-m1/debug/deps/reuse-93b0dc0adf6e3df6)
+
+running 1 test
+test one_operation_one_compiled_customization ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/sqlite.rs (target/issue15-m1/debug/deps/sqlite-e1ef7d6aaf1169a3)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+    Checking stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view)
+    Checking stackpress-example-profile-ui-contracts v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/contracts)
+    Checking stackpress-framework-ui v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-ui)
+    Checking stackpress-example-profile-ui-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/shared)
+    Checking stackpress-example-profile-ui-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/web)
+    Checking stackpress-example-profile-ui-client v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/client)
+    Finished `dev` profile [unoptimized] target(s) in 4.93s
+   Compiling serde_json v1.0.154
+    Checking smallvec v1.16.4
+    Checking icu_normalizer v2.4.0
+    Checking idna_adapter v1.2.2
+    Checking idna v1.1.0
+    Checking form_urlencoded v1.2.2
+    Checking url v2.5.8
+    Checking socket2 v0.6.5
+    Checking tokio v1.54.1
+    Checking once_cell v1.21.4
+    Checking stackpress-lib v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/lib)
+    Checking stackpress-server v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/server/server)
+    Checking parking_lot_core v0.9.12
+    Checking parking_lot v0.12.5
+    Checking typenum v1.20.1
+    Checking futures-io v0.3.34
+    Checking futures-util v0.3.34
+    Checking generic-array v0.14.7
+    Checking crypto-common v0.1.7
+    Checking block-buffer v0.10.4
+    Checking digest v0.10.7
+    Checking cpufeatures v0.2.17
+    Checking sha2 v0.10.9
+   Compiling getrandom v0.4.3
+    Checking rand_core v0.10.1
+    Checking event-listener v5.4.2
+    Checking futures-executor v0.3.34
+    Checking either v1.19.0
+    Checking toml_datetime v1.1.2+spec-1.1.0
+    Checking serde_spanned v1.1.2
+    Checking toml_writer v1.1.3+spec-1.1.0
+    Checking tempfile v3.27.0
+    Checking toml v1.1.8+spec-1.1.0
+    Checking stackpress-idea-parser v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/idea/idea-parser)
+    Checking stackpress-idea-transformer v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/idea/idea-transformer)
+    Checking wasm-bindgen v0.2.129
+    Checking stackpress-framework-language v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-language)
+    Checking stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view)
+    Checking js-sys v0.3.106
+    Checking futures v0.3.34
+    Checking event-listener-strategy v0.5.4
+    Checking async-lock v3.4.2
+    Checking itertools v0.14.0
+    Checking string_cache v0.11.0
+    Checking config v0.15.27
+    Checking codee v0.3.5
+    Checking web_atoms v0.3.0
+    Checking leptos_config v0.8.10
+    Checking markup5ever v0.40.0
+    Checking html5ever v0.40.1
+    Checking cssparser v0.38.0
+    Checking ammonia v4.2.4
+    Checking deranged v0.5.9
+    Checking wasm-bindgen-futures v0.4.79
+    Checking web-sys v0.3.106
+    Checking any_spawner v0.3.0
+    Checking hydration_context v0.3.2
+    Checking reactive_graph v0.2.16
+    Checking reactive_stores v0.4.4
+    Checking powerfmt v0.2.1
+    Checking num-conv v0.2.2
+    Checking time-core v0.1.9
+    Checking time v0.3.55
+    Checking stackpress-sql v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/sql/sql)
+    Checking stackpress-framework-schema v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-schema)
+    Checking crossterm v0.29.0
+    Checking stackpress-cli v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/tools/cli)
+   Compiling find-msvc-tools v0.1.15
+   Compiling shlex v2.0.1
+   Compiling cc v1.10.0
+    Checking hybrid-array v0.4.15
+   Compiling ring v0.17.14
+    Checking cmov v0.5.4
+    Checking ctutils v0.4.2
+    Checking gloo-utils v0.2.0
+    Checking tachys v0.2.19
+    Checking gloo-net v0.6.0
+    Checking wasm-streams v0.5.0
+    Checking server_fn v0.8.13
+    Checking block-buffer v0.12.1
+    Checking crypto-common v0.2.2
+    Checking zeroize v1.9.1
+    Checking rustls-pki-types v1.15.1
+    Checking digest v0.11.3
+    Checking getrandom v0.2.17
+   Compiling crossbeam-utils v0.8.23
+    Checking untrusted v0.9.0
+   Compiling rustls v0.23.46
+    Checking allocator-api2 v0.2.21
+   Compiling autocfg v1.5.1
+   Compiling num-traits v0.2.19
+    Checking hashbrown v0.16.1
+    Checking leptos_server v0.8.8
+    Checking leptos_dom v0.8.8
+    Checking leptos v0.8.22
+    Checking rustls-webpki v0.103.16
+   Compiling tracing-attributes v0.1.31
+    Checking leptos_meta v0.8.7
+    Checking leptos_router v0.8.17
+    Checking tracing-core v0.1.36
+    Checking crc-catalog v2.5.0
+    Checking subtle v2.6.1
+    Checking stackpress-framework-ui v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-ui)
+    Checking crc v3.4.0
+    Checking tracing v0.1.44
+    Checking crossbeam-queue v0.3.14
+    Checking hashlink v0.11.1
+    Checking webpki-roots v1.0.10
+    Checking tokio-stream v0.1.19
+    Checking futures-intrusive v0.5.0
+    Checking cpufeatures v0.3.1
+   Compiling pkg-config v0.3.34
+   Compiling vcpkg v0.2.15
+    Checking sqlx-core v0.9.0
+   Compiling libsqlite3-sys v0.37.0
+    Checking tinyvec v1.13.3
+    Checking unicode-normalization v0.1.25
+    Checking atoi v2.0.0
+    Checking sha2 v0.11.1
+    Checking hmac v0.13.0
+    Checking chacha20 v0.10.2
+    Checking spin v0.9.9
+    Checking unicode-bidi v0.3.18
+    Checking dotenvy v0.15.7
+    Checking unicode-properties v0.1.4
+    Checking byteorder v1.5.0
+    Checking stringprep v0.1.5
+    Checking flume v0.12.0
+    Checking rand v0.10.3
+    Checking hkdf v0.13.0
+    Checking sha1 v0.11.0
+    Checking md-5 v0.11.0
+    Checking whoami v2.1.3
+    Checking hex v0.4.3
+    Checking sqlx-postgres v0.9.0
+    Checking sqlx-sqlite v0.9.0
+    Checking sqlx-mysql v0.9.0
+    Checking stackpress-framework-sql v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-sql)
+    Checking sqlx v0.9.0
+   Compiling target-tuple v1.0.2
+    Checking glob v0.3.4
+    Checking termcolor v1.4.1
+    Checking trybuild v1.0.122
+    Checking stackpress-sql-sqlite v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/sql/sql-sqlite)
+    Checking stackpress-framework-admin v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-admin)
+    Checking stackpress-example-profile-ui-contracts v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/contracts)
+   Compiling httparse v1.10.1
+    Checking generated-workspace-app v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/generated-workspace/app)
+    Checking stackpress-idea v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/idea/idea)
+    Checking http-body v1.1.0
+    Checking try-lock v0.2.5
+    Checking want v0.3.1
+    Checking stackpress-example-generated-profile v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/generated-profile/app)
+    Checking atomic-waker v1.1.2
+    Checking hyper v1.10.1
+    Checking hyper-util v0.1.20
+    Checking http-body-util v0.1.4
+    Checking stackpress-example-profile-ui-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/shared)
+    Checking generated-admin-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/generated-admin/shared)
+    Checking stackpress-example-capability-host v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/capability-host)
+    Checking stackpress-example-profile-ui-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/web)
+    Checking generated-workspace-tool v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/generated-workspace/tool)
+    Checking stackpress-server-http v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/server/http)
+    Checking stackpress-example-sql-profile v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/sql-profile)
+    Checking stackpress-example-ui-gallery-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-gallery/shared)
+    Checking generated-admin-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/generated-admin/web)
+    Checking stackpress-example-ui-stream-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-stream/shared)
+    Checking stackpress-example-ui-preferences-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/shared)
+    Checking stackpress-example-profile-codegen v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/generated-profile/codegen)
+    Checking stackpress-example-ui-gallery-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-gallery/web)
+    Checking stackpress-example-profile-ui-gateway v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/gateway)
+   Compiling stackpress-example-review-preview v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/review-preview)
+    Checking stackpress-example-ui-preferences-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/web)
+    Checking stackpress-example-ui-stream-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-stream/web)
+    Checking generated-admin-tool v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/generated-admin/tool)
+    Checking stackpress-sql-mysql v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/sql/sql-mysql)
+    Checking stackpress-sql-postgres v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/sql/sql-postgres)
+    Checking data-quickstart v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/data-quickstart)
+   Compiling stackpress-example-profile-ui-native v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/native)
+    Checking generated-workspace-contracts v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/generated-workspace/contracts)
+    Checking stackpress v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15)
+error[E0433]: cannot find module or crate `stackpress_framework_view` in this scope
+ --> examples/profile-ui/native/src/preferences.rs:3:5
+  |
+3 | use stackpress_framework_view::adapters::native::PreferenceFile;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `stackpress_framework_view`
+  |
+help: there is a crate or module with a similar name
+  |
+3 - use stackpress_framework_view::adapters::native::PreferenceFile;
+3 + use stackpress_framework_language::adapters::native::PreferenceFile;
+  |
+
+error[E0433]: cannot find module or crate `stackpress_framework_view` in this scope
+ --> examples/profile-ui/native/src/preferences.rs:4:5
+  |
+4 | use stackpress_framework_view::preferences::{
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `stackpress_framework_view`
+  |
+help: there is a crate or module with a similar name
+  |
+4 - use stackpress_framework_view::preferences::{
+4 + use stackpress_framework_language::preferences::{
+  |
+
+error[E0433]: cannot find module or crate `stackpress_framework_view` in this scope
+   --> examples/profile-ui/native/src/preferences.rs:120:37
+    |
+120 |         let destination = root.join(stackpress_framework_view::adapters::native::FILE_NAME);
+    |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `stackpress_framework_view`
+    |
+help: there is a crate or module with a similar name
+    |
+120 -         let destination = root.join(stackpress_framework_view::adapters::native::FILE_NAME);
+120 +         let destination = root.join(stackpress_framework_language::adapters::native::FILE_NAME);
+    |
+
+For more information about this error, try `rustc --explain E0433`.
+error: could not compile `stackpress-example-profile-ui-native` (lib test) due to 3 previous errors
+warning: build failed, waiting for other jobs to finish...
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/finish.py", line 20, in <module>
+    run('cargo','check','--offline','--locked','--workspace','--all-targets')
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/finish.py", line 13, in run
+    subprocess.run(args, check=True, timeout=600, **kwargs)
+  File "/Users/cblanquera/.pyenv/versions/3.11.4/lib/python3.11/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '('cargo', 'check', '--offline', '--locked', '--workspace', '--all-targets')' returned non-zero exit status 101.
+supervisor: child 96458 reaped; peak target 3758612 KiB
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/supervise.py", line 60, in <module>
+    main()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/supervise.py", line 53, in main
+    raise subprocess.CalledProcessError(child.returncode, command)
+subprocess.CalledProcessError: Command '['python3', 'examples/ui-preferences/proofs/finish.py']' returned non-zero exit status 1.

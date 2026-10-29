@@ -1,0 +1,424 @@
+info: cargo-llvm-cov currently setting cfg(coverage); you can opt-out it by passing --no-cfg-coverage
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.27
+   Compiling quote v1.0.47
+   Compiling memchr v2.8.3
+   Compiling smallvec v1.16.4
+   Compiling syn v3.0.9
+   Compiling pin-project-lite v0.2.17
+   Compiling cfg-if v1.0.5
+   Compiling serde_core v1.0.229
+   Compiling synstructure v0.14.0
+   Compiling version_check v0.9.5
+   Compiling semver v1.0.28
+   Compiling stable_deref_trait v1.2.1
+   Compiling serde v1.0.229
+   Compiling serde_derive v1.0.229
+   Compiling zerofrom-derive v0.1.8
+   Compiling zerofrom v0.1.8
+   Compiling yoke-derive v0.8.4
+   Compiling yoke v0.8.4
+   Compiling rustc_version v0.4.1
+   Compiling equivalent v1.0.3
+   Compiling hashbrown v0.17.1
+   Compiling zerovec-derive v0.11.7
+   Compiling zerovec v0.11.9
+   Compiling displaydoc v0.2.7
+   Compiling wasm-bindgen-shared v0.2.129
+   Compiling indexmap v2.14.2
+   Compiling futures-core v0.3.34
+   Compiling rustversion v1.0.23
+   Compiling tinystr v0.8.5
+   Compiling litemap v0.8.3
+   Compiling thiserror v2.0.21
+   Compiling writeable v0.6.4
+   Compiling futures-sink v0.3.34
+   Compiling futures-channel v0.3.34
+   Compiling icu_locale_core v2.4.0
+   Compiling potential_utf v0.1.6
+   Compiling zerotrie v0.2.5
+   Compiling thiserror-impl v2.0.21
+   Compiling futures-macro v0.3.34
+   Compiling syn v2.0.119
+   Compiling futures-io v0.3.34
+   Compiling itoa v1.0.18
+   Compiling icu_normalizer_data v2.4.0
+   Compiling slab v0.4.12
+   Compiling utf8_iter v1.0.4
+   Compiling futures-task v0.3.34
+   Compiling icu_properties_data v2.4.0
+   Compiling bumpalo v3.20.3
+   Compiling wasm-bindgen-macro-support v0.2.129
+   Compiling futures-util v0.3.34
+   Compiling icu_collections v2.4.0
+   Compiling icu_provider v2.4.0
+   Compiling wasm-bindgen v0.2.129
+   Compiling zmij v1.0.23
+   Compiling wasm-bindgen-macro v0.2.129
+   Compiling serde_json v1.0.154
+   Compiling once_cell v1.21.4
+   Compiling icu_properties v2.4.0
+   Compiling icu_normalizer v2.4.0
+   Compiling unicode-segmentation v1.13.3
+   Compiling percent-encoding v2.3.2
+   Compiling foldhash v0.2.0
+   Compiling idna_adapter v1.2.2
+   Compiling js-sys v0.3.106
+   Compiling idna v1.1.0
+   Compiling form_urlencoded v1.2.2
+   Compiling tokio-macros v2.7.2
+   Compiling libc v0.2.191
+   Compiling tokio v1.54.1
+   Compiling url v2.5.8
+   Compiling aho-corasick v1.1.5
+   Compiling regex-syntax v0.8.11
+   Compiling regex-automata v0.4.18
+   Compiling convert_case v0.11.0
+   Compiling or_poisoned v0.1.0
+   Compiling wasm-bindgen-futures v0.4.79
+   Compiling futures-executor v0.3.34
+   Compiling siphasher v1.0.4
+   Compiling regex v1.13.1
+   Compiling phf_shared v0.14.0
+   Compiling futures v0.3.34
+   Compiling proc-macro2-diagnostics v0.11.0
+   Compiling generic-array v0.14.7
+   Compiling paste v1.0.15
+   Compiling parking v2.2.1
+   Compiling event-listener v5.4.2
+   Compiling web-sys v0.3.106
+   Compiling slotmap v1.1.1
+   Compiling throw_error v0.3.1
+   Compiling proc-macro-utils v0.10.0
+   Compiling unicode-xid v0.2.6
+   Compiling typenum v1.20.1
+   Compiling konst_macro_rules v0.2.19
+   Compiling konst v0.2.20
+   Compiling const_format_proc_macros v0.2.37
+   Compiling event-listener-strategy v0.5.4
+   Compiling send_wrapper v0.6.0
+   Compiling server_fn_macro v0.8.12
+   Compiling reactive_graph v0.2.16
+   Compiling fastrand v2.5.0
+   Compiling either v1.19.0
+   Compiling rstml v0.13.1
+   Compiling itertools v0.14.0
+   Compiling phf_generator v0.14.0
+   Compiling async-lock v3.4.2
+   Compiling const_format v0.2.37
+   Compiling hydration_context v0.3.2
+   Compiling any_spawner v0.3.0
+   Compiling derive-where v1.7.0
+   Compiling httpdate v1.0.3
+   Compiling parking_lot_core v0.9.12
+   Compiling xxhash-rust v0.8.19
+   Compiling guardian v1.3.0
+   Compiling camino v1.2.6
+   Compiling anyhow v1.0.104
+   Compiling thiserror v1.0.69
+   Compiling rustc-hash v2.1.3
+   Compiling stackpress-lib v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/lib)
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling quote-use-macros v0.9.0
+   Compiling manyhow-macros v0.14.1
+   Compiling reactive_stores_macro v0.4.4
+   Compiling thiserror-impl v1.0.69
+   Compiling pin-project-internal v1.1.13
+   Compiling tachys v0.2.19
+   Compiling scopeguard v1.2.0
+   Compiling same-file v1.0.6
+   Compiling html-escape v0.2.15
+   Compiling bytes v1.12.1
+   Compiling getrandom v0.4.3
+   Compiling prettyplease v0.3.0
+   Compiling winnow v1.0.4
+   Compiling toml_parser v1.1.5+spec-1.1.0
+   Compiling http v1.5.0
+   Compiling pin-project v1.1.13
+   Compiling walkdir v2.5.0
+   Compiling lock_api v0.4.14
+   Compiling reactive_stores v0.4.4
+   Compiling manyhow v0.14.1
+   Compiling quote-use v0.9.0
+   Compiling stackpress-server v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/server/server)
+   Compiling digest v0.10.7
+   Compiling gloo-utils v0.2.0
+   Compiling phf_codegen v0.14.0
+   Compiling string_cache_codegen v0.11.2
+   Compiling either_of v0.1.9
+   Compiling cpufeatures v0.2.17
+   Compiling oco_ref v0.2.1
+   Compiling server_fn v0.8.13
+   Compiling async-trait v0.1.92
+   Compiling new_debug_unreachable v1.0.6
+   Compiling next_tuple v0.1.0
+   Compiling collection_literals v1.0.3
+   Compiling interpolator v0.5.0
+   Compiling toml_datetime v1.1.2+spec-1.1.0
+   Compiling serde_spanned v1.1.2
+   Compiling const_str_slice_concat v0.1.0
+   Compiling drain_filter_polyfill v0.1.3
+   Compiling erased v0.1.2
+   Compiling stackpress-framework-language v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-language)
+   Compiling toml v1.1.8+spec-1.1.0
+   Compiling attribute-derive-macro v0.11.0
+   Compiling sha2 v0.10.9
+   Compiling web_atoms v0.3.0
+   Compiling gloo-net v0.6.0
+   Compiling parking_lot v0.12.5
+   Compiling server_fn_macro_default v0.8.6
+   Compiling wasm-streams v0.5.0
+   Compiling convert_case v0.6.0
+   Compiling serde_qs v0.15.0
+   Compiling typed-builder-macro v0.23.2
+   Compiling leptos_macro v0.8.19
+   Compiling pathdiff v0.2.3
+   Compiling inventory v0.3.25
+   Compiling base16 v0.2.1
+   Compiling precomputed-hash v0.1.1
+   Compiling base64 v0.22.1
+   Compiling const-str v1.1.0
+   Compiling wasm_split_macros v0.2.2
+   Compiling string_cache v0.11.0
+   Compiling config v0.15.27
+   Compiling typed-builder v0.23.2
+   Compiling leptos_hot_reload v0.8.7
+   Compiling uuid v1.29.0
+   Compiling attribute-derive v0.11.0
+   Compiling stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view)
+   Compiling phf v0.14.0
+   Compiling convert_case_extras v0.2.0
+   Compiling codee v0.3.5
+   Compiling leptos v0.8.22
+   Compiling async-once-cell v0.5.4
+   Compiling wasm_split_helpers v0.2.3
+   Compiling leptos_server v0.8.8
+   Compiling leptos_config v0.8.10
+   Compiling leptos_dom v0.8.8
+   Compiling tendril v0.5.1
+   Compiling dtoa v1.0.11
+   Compiling log v0.4.34
+   Compiling markup5ever v0.40.0
+   Compiling dtoa-short v0.3.5
+   Compiling leptos_router v0.8.17
+   Compiling pulldown-cmark v0.13.5
+   Compiling html5ever v0.40.1
+   Compiling cssparser v0.38.0
+   Compiling leptos_router_macro v0.8.7
+   Compiling pulldown-cmark-escape v0.11.0
+   Compiling maplit v1.0.2
+   Compiling unicase v2.10.0
+   Compiling bitflags v2.13.2
+   Compiling ammonia v4.2.4
+   Compiling leptos_meta v0.8.7
+   Compiling stackpress-framework-ui v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-ui)
+    Finished `test` profile [unoptimized] target(s) in 1m 24s
+     Running unittests src/lib.rs (target/issue15-m3/llvm-cov-target/debug/deps/stackpress_framework_language-ffe160b6346e8140)
+
+running 2 tests
+test tests::registry_aliases_and_borrowed_enumeration ... ok
+test tests::invalid_registry_configuration ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/issue15-m3/llvm-cov-target/debug/deps/stackpress_framework_ui-6a8d8bd6b0ce5a64)
+
+running 43 tests
+test components::breadth_tests::paging_and_geometry ... ok
+test components::breadth_tests::css_zoom_admission ... ok
+test components::breadth_tests::bounded_input_policies ... ok
+test components::breadth_tests::foreign_suggestion_completion_is_rejected ... ok
+test components::breadth_tests::disclosure_and_choice_admission ... ok
+test components::breadth_tests::typed_collections ... ok
+test components::breadth_tests::local_table_controller ... ok
+test components::core_tests::select_admission_and_state ... ok
+test components::core_tests::checked_display_boundaries ... ok
+test components::core_tests::text_and_collection_boundaries ... ok
+test components::core_tests::pinned_leptos_raw_text_characterization ... ok
+test components::breadth_tests::searchable_choice_boundaries ... ok
+test components::tag_list::tests::exact_append_and_neighbour_removal ... ok
+test components::breadth_tests::native_dialog_mode_policies ... ok
+test components::tests::safe_navigation_targets ... ok
+test components::breadth_tests::table_selection_is_native_before_javascript ... ok
+test language::tests::checked_language_bounds ... ok
+test components::tests::advanced_components_are_native_and_inert_before_javascript ... ok
+test components::tests::controls_render_native_accessible_markup ... ok
+test components::tests::list_layout_and_notifications ... ok
+test language::tests::phrase_and_text_policy ... ok
+test language::tests::integer_plural_categories_and_text ... ok
+test language::tests::translated_nodes_render_as_safe_views ... ok
+test language::tests::scoped_replacement_and_disposal ... ok
+test components::core_tests::ordinary_semantic_markup ... ok
+test language::tests::counted_node_translation ... ok
+test render::escaping_tests::escaping_borrows_text ... ok
+test resources::tests::cancellation_before_poll_and_after_completion ... ok
+test replay::tests::replay_roundtrip_and_limits ... ok
+test state::tests::configurable_notification_budgets ... ok
+test components::breadth_tests::table_layout_and_rating_minimum_markup ... ok
+test stream::tests::child ... ignored, called by stream watchdog
+test components::breadth_tests::breadth_semantic_markup_and_hostile_text ... ok
+test state::tests::providers_are_explicit_isolated_and_disposed ... ok
+test components::breadth_tests::collection_rows_and_plain_chips_are_accessible_before_javascript ... ok
+test state::tests::notification_limits_duplicates_and_dismissal ... ok
+test stream::tests::budget_and_replay_contract ... ok
+test stream::tests::explicit_completion_protocol ... ok
+test rich::tests::explicit_http_authorities_only ... ok
+test rich::tests::closed_policy_and_budgets ... ok
+test rich::tests::markdown_and_exact_budget_edges ... ok
+test rich::tests::mutation_corpus_is_stable ... ok
+test stream::tests::watchdog ... ok
+
+test result: ok. 42 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.20s
+
+     Running tests/async_feasibility.rs (target/issue15-m3/llvm-cov-target/debug/deps/async_feasibility-ab6e28bb6d33b7ab)
+
+running 8 tests
+test watchdog::exact_completion_marker ... ok
+test resource_unwind_counterexample ... ok
+test cooperative_success_releases_loader ... ok
+test resource_cancellation_counterexample ... ok
+test resource_success_control ... ok
+test cooperative_unwind_releases_loader ... ok
+test cooperative_cancel_releases_loader ... ok
+test unmatched_child_filter_is_rejected - should panic ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/async_renderer.rs (target/issue15-m3/llvm-cov-target/debug/deps/async_renderer-5a3a8ca4cf2317c0)
+
+running 3 tests
+test watchdog::exact_completion_marker ... ok
+test owned_render_migrates_between_threads ... ok
+test owned_async_renderer_exit_matrix ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/cleanup.rs (target/issue15-m3/llvm-cov-target/debug/deps/cleanup-476079367857d17d)
+
+running 5 tests
+test staged_render_releases_owner_state ... ok
+test no_runtime_never_panics ... ok
+test every_render_exit_releases_reactive_state ... ok
+test reactive_title_survives_owner_cleanup ... ok
+test unwind_child_releases_render_state ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/executor.rs (target/issue15-m3/llvm-cov-target/debug/deps/executor-91d9cfcb5382e48a)
+
+running 1 test
+test startup_is_explicit_idempotent_and_checked ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/routing.rs (target/issue15-m3/llvm-cov-target/debug/deps/routing-3de96ba78fa472ec)
+
+running 2 tests
+test compiled_path_uses_leptos_segments ... ok
+test head_router_and_limits ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/suggestions.rs (target/issue15-m3/llvm-cov-target/debug/deps/suggestions-435c618c02ccd166)
+
+running 2 tests
+test watchdog::exact_completion_marker ... ok
+test yielding_suggestion_lifetime ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/system_theme.rs (target/issue15-m3/llvm-cov-target/debug/deps/system_theme-6f12c1199f8416e8)
+
+running 1 test
+test saved_choices_and_unset_head ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/issue15-m3/llvm-cov-target/debug/deps/stackpress_framework_view-826d9505e1e3e8ef)
+
+running 18 tests
+test preferences::locale::tests::compiled_prefixes_and_exact_return_context ... ok
+test preferences::locale::tests::invalid_configuration ... ok
+test preferences::locale::tests::action_admission_and_persistence ... ok
+test preferences::locale::tests::precedence_and_routes ... ok
+test presentation_tests::explicit_host_policy_or_fail_closed ... ok
+test presentation_tests::confirm_actual_cookie_readback ... ok
+test presentation_tests::scope_and_theme_tokens ... ok
+test presentation_tests::flash_wire_expansion_is_bounded ... ok
+test presentation_tests::single_writer_and_failure_preserve_content ... ok
+test presentation_tests::flash_consumption_bounds_and_root_dedupe ... ok
+test theme::tests::checked_external_tag_and_nonce ... ok
+test presentation_tests::unset_is_absence_and_legacy_readback_only ... ok
+test presentation_tests::select_and_admit_settings ... ok
+test adapters::native::tests::corrupt_inputs_are_bounded_and_not_rewritten ... ok
+test adapters::native::tests::symlinks_and_non_regular_files_are_not_followed ... ok
+test adapters::native::tests::real_restart_and_invalid_updates ... ok
+test adapters::native::tests::abandoned_staging_is_bounded_and_never_followed ... ok
+test adapters::native::tests::fifo_open_cannot_hang ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/contracts.rs (target/issue15-m3/llvm-cov-target/debug/deps/contracts-b865d16bb8a84db6)
+
+running 3 tests
+test hostile_seed_and_contract_drift ... ok
+test saved_theme_or_unset ... ok
+test bounds_and_checked_metadata ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running tests/lifecycle.rs (target/issue15-m3/llvm-cov-target/debug/deps/lifecycle-552a7e8f535f8fd8)
+
+running 2 tests
+test duplicate_and_invalid_registration ... ok
+test stage_table_and_drop ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/policies.rs (target/issue15-m3/llvm-cov-target/debug/deps/policies-93cbe551f7d0e479)
+
+running 8 tests
+test compiled_capture_boundaries ... ok
+test serialization_preserves_cause_without_disclosure ... ok
+test catalog_and_exact_parameters ... ok
+test status_and_lower_limits_roundtrip ... ok
+test metadata_and_assets_are_checked ... ok
+test asset_logical_byte_boundary_precedes_build_matching ... ok
+test escaped_assets_roundtrip ... ok
+test asset_decode_boundaries ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/presentation_registration.rs (target/issue15-m3/llvm-cov-target/debug/deps/presentation_registration-6b6939ffa99432fe)
+
+running 6 tests
+test preferences_only_and_optional_asset ... ok
+test unselected_and_independent_flash ... ok
+test selected_settings_and_assets ... ok
+test confirmation_denials_never_write_or_disclose_input ... ok
+test rejected_startup ... ok
+test independent_protected_admission_and_lifecycle ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+
+    Finished report saved to /private/tmp/stackpress-issue15-m3-20261028/evidence/coverage.json
+{
+  "framework-language": {
+    "covered": 50,
+    "count": 58,
+    "percent": 86.20689655172414
+  },
+  "framework-view": {
+    "covered": 1358,
+    "count": 1420,
+    "percent": 95.63380281690141
+  },
+  "framework-ui": {
+    "covered": 4216,
+    "count": 4784,
+    "percent": 88.12709030100335
+  }
+}
+supervisor: child 27533 reaped; peak target 3992512 KiB

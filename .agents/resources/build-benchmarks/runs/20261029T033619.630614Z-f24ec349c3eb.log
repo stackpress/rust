@@ -1,0 +1,4 @@
+    Checking stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+    Checking stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-view)
+    Finished `dev` profile [unoptimized] target(s) in 8.47s
+supervisor: child 80774 reaped; peak target 5630612 KiB

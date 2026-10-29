@@ -1,0 +1,12 @@
+   Compiling issue17-seam v0.1.0 (/private/tmp/stackpress-issue17-m1/seam)
+    Finished `test` profile [unoptimized] target(s) in 2.60s
+     Running tests/seams.rs (target/issue17/debug/deps/seams-22828a0a092f7e72)
+
+running 2 tests
+test stream_drop_before_demand_joins_local_owner ... ok
+test native_seams_preserve_errors_owner_and_send_boundaries ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+seam external package tuples unchanged
+supervisor: child 12051 reaped; peak target 671912 KiB

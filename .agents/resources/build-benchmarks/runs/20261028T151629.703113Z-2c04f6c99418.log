@@ -1,0 +1,14 @@
+PASS selected-backend-build
+PASS setup-build
+PASS startup-errors-without-setup
+PASS explicit-setup
+PASS browser-root
+PASS browser-m2-root
+PASS browser-navigation-root
+PASS browser-gateway-root
+PASS browser-mounted
+PASS browser-m2-mounted
+PASS browser-navigation-mounted
+PASS browser-gateway-mounted
+PASS initial-theme
+supervisor: child 83003 reaped; peak target 3938444 KiB

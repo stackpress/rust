@@ -1,0 +1,77 @@
+   Compiling once_cell v1.21.4
+   Compiling errno v0.3.14
+   Compiling wasm-bindgen v0.2.129
+   Compiling server_fn_macro v0.8.12
+   Compiling rustix v1.1.5
+   Compiling js-sys v0.3.106
+   Compiling hydration_context v0.3.2
+   Compiling bitflags v2.13.2
+   Compiling tachys v0.2.19
+   Compiling server_fn v0.8.13
+   Compiling wasm-bindgen-futures v0.4.79
+   Compiling web-sys v0.3.106
+   Compiling any_spawner v0.3.0
+   Compiling reactive_graph v0.2.16
+   Compiling reactive_stores v0.4.4
+   Compiling server_fn_macro_default v0.8.6
+   Compiling getrandom v0.4.3
+   Compiling cpufeatures v0.2.17
+   Compiling leptos_macro v0.8.19
+   Compiling fastrand v2.5.0
+   Compiling tempfile v3.27.0
+   Compiling sha2 v0.10.9
+   Compiling stackpress-idea-parser v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/idea/idea-parser)
+   Compiling leptos v0.8.22
+   Compiling signal-hook v0.3.18
+   Compiling stackpress-idea-transformer v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/idea/idea-transformer)
+   Compiling gloo-utils v0.2.0
+   Compiling gloo-net v0.6.0
+   Compiling wasm-streams v0.5.0
+   Compiling signal-hook-registry v1.4.8
+   Compiling powerfmt v0.2.1
+   Compiling deranged v0.5.9
+   Compiling num-conv v0.2.2
+   Compiling time-core v0.1.9
+   Compiling time v0.3.55
+   Compiling mio v1.2.4
+   Compiling parking_lot_core v0.9.12
+   Compiling leptos_router v0.8.17
+   Compiling litrs v1.0.1
+   Compiling document-features v0.2.12
+   Compiling parking_lot v0.12.5
+   Compiling signal-hook-mio v0.2.5
+   Compiling stackpress-framework-schema v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-schema)
+   Compiling leptos_dom v0.8.8
+   Compiling leptos_server v0.8.8
+   Compiling tokio v1.54.1
+   Compiling leptos_meta v0.8.7
+   Compiling crossterm v0.29.0
+   Compiling unicode-width v0.2.2
+   Compiling stackpress-sql v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/sql/sql)
+   Compiling stackpress-framework-sql v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-sql)
+   Compiling stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+   Compiling stackpress-cli v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/tools/cli)
+   Compiling stackpress-idea v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/idea/idea)
+   Compiling generated-workspace-tool v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-workspace/tool)
+   Compiling stackpress-framework-admin v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-admin)
+   Compiling generated-admin-tool v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-admin/tool)
+    Finished `dev` profile [unoptimized] target(s) in 30.37s
+     Running `target/issue17/debug/generated-admin-tool`
+TransformError { kind: Ownership, message: "manually edited generated file; restore it explicitly", cause: None }
+Traceback (most recent call last):
+  File "/private/tmp/stackpress-issue17-m1/workspace.py", line 7, in <module>
+    for suffix in [[],['--check'],[]]:run(*(command+suffix))
+                                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/stackpress-issue17-m1/workspace.py", line 2, in <lambda>
+    run=lambda *a,**kw:subprocess.run(a,check=True,**kw)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cblanquera/.pyenv/versions/3.11.4/lib/python3.11/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '('cargo', 'run', '--locked', '--offline', '-p', 'generated-admin-tool', '--')' returned non-zero exit status 1.
+supervisor: child 37199 reaped; peak target 1689360 KiB
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/proofs/supervise.py", line 75, in <module>
+    main()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/proofs/supervise.py", line 68, in main
+    raise subprocess.CalledProcessError(child.returncode, command)
+subprocess.CalledProcessError: Command '['python3', '/private/tmp/stackpress-issue17-m1/workspace.py']' returned non-zero exit status 1.

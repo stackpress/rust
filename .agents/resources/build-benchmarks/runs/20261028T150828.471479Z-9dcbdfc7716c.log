@@ -1,0 +1,56 @@
+$ cargo fmt --all
+$ cargo clippy --offline --locked -p stackpress-framework-view --features web-preferences --all-targets -- -D warnings
+    Checking zerofrom v0.1.8
+    Checking serde v1.0.229
+    Checking yoke v0.8.4
+    Checking zerovec v0.11.9
+    Checking zerotrie v0.2.5
+    Checking stackpress-framework-language v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-language)
+    Checking tokio v1.54.1
+    Checking tinystr v0.8.5
+    Checking icu_locale_core v2.4.0
+    Checking potential_utf v0.1.6
+    Checking icu_collections v2.4.0
+    Checking icu_provider v2.4.0
+    Checking icu_normalizer v2.4.0
+    Checking icu_properties v2.4.0
+    Checking idna_adapter v1.2.2
+    Checking idna v1.1.0
+    Checking url v2.5.8
+    Checking stackpress-lib v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/lib)
+    Checking stackpress-server v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/server/server)
+    Checking stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view)
+    Finished `dev` profile [unoptimized] target(s) in 4.16s
+$ cargo clippy --offline --locked -p stackpress-framework-view --features web-flash --all-targets -- -D warnings
+    Checking stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view)
+error: field `origin` is never read
+  --> crates/framework/framework-view/src/adapters/web.rs:16:16
+   |
+14 | pub struct CookieScope {
+   |            ----------- field in this struct
+15 |     /// Exact origin is checked before accepting any persistence action.
+16 |     pub(crate) origin: String,
+   |                ^^^^^^
+   |
+   = note: `CookieScope` has derived impls for the traits `Debug` and `Clone`, but these are intentionally ignored during dead code analysis
+   = note: `-D dead-code` implied by `-D warnings`
+   = help: to override `-D warnings` add `#[expect(dead_code)]` or `#[allow(dead_code)]`
+
+error: could not compile `stackpress-framework-view` (lib test) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `stackpress-framework-view` (lib) due to 1 previous error
+Traceback (most recent call last):
+  File "/private/tmp/stackpress-issue15-m2-20261028/check-m2.py", line 11, in <module>
+    run('cargo','clippy','--offline','--locked','-p','stackpress-framework-view','--features',features,'--all-targets','--','-D','warnings')
+  File "/private/tmp/stackpress-issue15-m2-20261028/check-m2.py", line 5, in run
+    subprocess.run(command,check=True,timeout=900,**kwargs)
+  File "/Users/cblanquera/.pyenv/versions/3.11.4/lib/python3.11/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '('cargo', 'clippy', '--offline', '--locked', '-p', 'stackpress-framework-view', '--features', 'web-flash', '--all-targets', '--', '-D', 'warnings')' returned non-zero exit status 101.
+supervisor: child 65429 reaped; peak target 1604240 KiB
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/supervise.py", line 75, in <module>
+    main()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/supervise.py", line 68, in main
+    raise subprocess.CalledProcessError(child.returncode, command)
+subprocess.CalledProcessError: Command '['python3', '/private/tmp/stackpress-issue15-m2-20261028/check-m2.py']' returned non-zero exit status 1.

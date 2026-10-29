@@ -1,0 +1,3 @@
+$ cargo clean --offline --manifest-path /private/tmp/stackpress-issue15-m0-20261028/work/Cargo.toml
+     Removed 4936 files, 1.0GiB total
+{"removed_target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/target/issue15-m0", "before_kib": 1107292, "target_remaining": false, "retained_evidence": "/private/tmp/stackpress-issue15-m0-20261028/evidence", "retained_disposable_source": "/private/tmp/stackpress-issue15-m0-20261028/work"}

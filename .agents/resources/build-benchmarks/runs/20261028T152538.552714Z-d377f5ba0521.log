@@ -1,0 +1,2 @@
+PASS M1 scope, source/syntax and whitespace audit: 24 paths
+PASS final source scope, lock/HEAD, receipt bounds and complete target/owned-output cleanup

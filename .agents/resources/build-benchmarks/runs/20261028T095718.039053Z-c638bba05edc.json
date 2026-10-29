@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "id": "20261028T095718.039053Z-c638bba05edc",
+  "started_at": "2026-10-28T09:57:18.039053+00:00",
+  "status": "failed",
+  "label": "coordinator 00013 iOS plugin manual owner review (after display-order fix)",
+  "kind": "test",
+  "scope": "other",
+  "cache": "unknown",
+  "command": [
+    "env",
+    "PROFILE_UI_IOS_LOGS=/private/tmp/s8-review/ios-logs/plugin",
+    "python3",
+    "examples/profile-ui/native/proofs/launch-ios.py",
+    "--manual-review",
+    "--variant",
+    "plugin",
+    "--duration-seconds",
+    "1800"
+  ],
+  "cwd": "/Users/cblanquera/server/projects/stackpress/rust",
+  "commit": "e32947f61184c156e74fdc0c29d7215c9be2378e",
+  "branch": "trial/3",
+  "dirty": true,
+  "host": "macOS-26.6.2-arm64-arm-64bit",
+  "machine": "arm64",
+  "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+  "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+  "environment": {},
+  "cargo_activity": {
+    "compiling": 0,
+    "checking": 0,
+    "documenting": 0
+  },
+  "cargo_build_stages": [],
+  "log": "runs/20261028T095718.039053Z-c638bba05edc.log",
+  "ended_at": "2026-10-28T10:00:21.732958+00:00",
+  "command_seconds": 183.408815,
+  "exit_code": 1,
+  "cargo_build_seconds": null
+}

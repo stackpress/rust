@@ -1,0 +1,604 @@
+   Compiling bitflags v2.13.2
+   Compiling rustix v1.1.5
+   Compiling pulldown-cmark v0.13.5
+   Compiling stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+   Compiling errno v0.3.14
+   Compiling getrandom v0.4.3
+   Compiling cpufeatures v0.2.17
+   Compiling fastrand v2.5.0
+   Compiling tempfile v3.27.0
+   Compiling sha2 v0.10.9
+   Compiling stackpress-idea-parser v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/idea/idea-parser)
+   Compiling powerfmt v0.2.1
+   Compiling time-core v0.1.9
+   Compiling num-conv v0.2.2
+   Compiling deranged v0.5.9
+   Compiling time v0.3.55
+   Compiling stackpress-idea-transformer v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/idea/idea-transformer)
+   Compiling stackpress-framework-schema v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-schema)
+   Compiling stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-view)
+   Compiling stackpress-framework-admin v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-admin)
+   Compiling stackpress v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17)
+    Finished `test` profile [unoptimized] target(s) in 32.82s
+     Running unittests src/lib.rs (target/issue17/debug/deps/stackpress-892a1d4ad07b9521)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/foundation.rs (target/issue17/debug/deps/foundation-237f021013cfb4b1)
+
+running 1 test
+test bootstrap_named_plugin_and_plain_data_resolve_through_facade ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/idea.rs (target/issue17/debug/deps/idea-fa4cfde696a55b9b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/issue17/debug/deps/stackpress_framework_admin-0cbc463e3cdf1a68)
+
+running 6 tests
+test components::catalog_inputs::tests::scalar_admission_boundaries_and_absence ... ok
+test components::collection_inputs::tests::exact_collection_shapes_and_budgets ... ok
+test components::formatted::tests::partials_and_valid_blur_keep_distinct_state ... ok
+test components::formatted::tests::temporal_presentation_keeps_exact_commits_and_declared_precision ... ok
+test components::formatted::tests::typed_policies_and_wire_boundaries ... ok
+test components::formatted::tests::props_types_and_all_rendered_families ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.39s
+
+     Running tests/admin_state.rs (target/issue17/debug/deps/admin_state-b19db7caddfdc8ea)
+
+running 2 tests
+test layout_identity_and_honest_acknowledgements ... ok
+test exact_state_roundtrip_and_generated_query_shape ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/catalog.rs (target/issue17/debug/deps/catalog-6167ea0e9e588a86)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/pages.rs (target/issue17/debug/deps/pages-07a960f150346acd)
+
+running 2 tests
+test invalid_page_selection_cannot_publish ... ok
+test deterministic_pages_keep_native_registration_separate ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/presentation.rs (target/issue17/debug/deps/presentation-1b78cf95a703029d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/roles.rs (target/issue17/debug/deps/roles-664873a0a952dfad)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/transfer.rs (target/issue17/debug/deps/transfer-7dc101aaa7d5a28b)
+
+running 5 tests
+test uncertain_or_malformed_acknowledgements_never_claim_imported ... ok
+test strict_parser_and_lowerable_budgets ... ok
+test typed_preview_headers_presence_and_literal_escapes ... ok
+test export_guard_round_trips_are_explicit_and_no_field_is_invented ... ok
+test export_does_not_inherit_import_only_cell_or_column_limits ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/lib.rs (target/issue17/debug/deps/stackpress_framework_view-09f9563dfd99ddf1)
+
+running 21 tests
+test leptos::stream::tests::child ... ignored, called by stream watchdog
+test leptos::stream::tests::budget_and_replay_contract ... ok
+test preferences::locale::tests::compiled_prefixes_and_exact_return_context ... ok
+test preferences::locale::tests::precedence_and_routes ... ok
+test preferences::locale::tests::invalid_configuration ... ok
+test presentation_tests::explicit_host_policy_or_fail_closed ... ok
+test preferences::locale::tests::action_admission_and_persistence ... ok
+test presentation_tests::scope_and_theme_tokens ... ok
+test presentation_tests::confirm_actual_cookie_readback ... ok
+test presentation_tests::flash_consumption_bounds_and_root_dedupe ... ok
+test presentation_tests::flash_wire_expansion_is_bounded ... ok
+test theme::tests::checked_external_tag_and_nonce ... ok
+test presentation_tests::single_writer_and_failure_preserve_content ... ok
+test presentation_tests::unset_is_absence_and_legacy_readback_only ... ok
+test presentation_tests::select_and_admit_settings ... ok
+test adapters::native::tests::symlinks_and_non_regular_files_are_not_followed ... ok
+test adapters::native::tests::corrupt_inputs_are_bounded_and_not_rewritten ... ok
+test adapters::native::tests::real_restart_and_invalid_updates ... ok
+test adapters::native::tests::abandoned_staging_is_bounded_and_never_followed ... ok
+test adapters::native::tests::fifo_open_cannot_hang ... ok
+test leptos::stream::tests::watchdog ... ok
+
+test result: ok. 20 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.20s
+
+     Running tests/contracts.rs (target/issue17/debug/deps/contracts-b1f2be592631a26c)
+
+running 3 tests
+test saved_theme_or_unset ... ok
+test hostile_seed_and_contract_drift ... ok
+test bounds_and_checked_metadata ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running tests/leptos_async_renderer.rs (target/issue17/debug/deps/leptos_async_renderer-b265a00cbd6ccd3d)
+
+running 3 tests
+test watchdog::exact_completion_marker ... ok
+test owned_render_migrates_between_threads ... ok
+test owned_async_renderer_exit_matrix ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/leptos_cleanup.rs (target/issue17/debug/deps/leptos_cleanup-ba159331fe76a31e)
+
+running 5 tests
+test staged_render_releases_owner_state ... ok
+test no_runtime_never_panics ... ok
+test every_render_exit_releases_reactive_state ... ok
+test reactive_title_survives_owner_cleanup ... ok
+test unwind_child_releases_render_state ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/leptos_executor.rs (target/issue17/debug/deps/leptos_executor-6606c72be85796f1)
+
+running 1 test
+test startup_is_explicit_idempotent_and_checked ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/leptos_routing.rs (target/issue17/debug/deps/leptos_routing-9a7c3a78e8184d0a)
+
+running 3 tests
+test compiled_path_uses_leptos_segments ... ok
+test renderer_admission_preserves_error_precedence ... ok
+test head_router_and_limits ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/leptos_safety.rs (target/issue17/debug/deps/leptos_safety-16382fc0260f72e2)
+
+running 3 tests
+test acknowledged_theme_mapping_preserves_absence ... ok
+test script_and_html_escapers_do_not_drift ... ok
+test strict_local_locations_do_not_drift ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/leptos_system_theme.rs (target/issue17/debug/deps/leptos_system_theme-1b8c1d30fd35bcb3)
+
+running 1 test
+test saved_choices_and_unset_head ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lifecycle.rs (target/issue17/debug/deps/lifecycle-5b447401105d09ca)
+
+running 2 tests
+test duplicate_and_invalid_registration ... ok
+test stage_table_and_drop ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/policies.rs (target/issue17/debug/deps/policies-81574c58e12748b8)
+
+running 8 tests
+test compiled_capture_boundaries ... ok
+test serialization_preserves_cause_without_disclosure ... ok
+test catalog_and_exact_parameters ... ok
+test status_and_lower_limits_roundtrip ... ok
+test metadata_and_assets_are_checked ... ok
+test asset_logical_byte_boundary_precedes_build_matching ... ok
+test escaped_assets_roundtrip ... ok
+test asset_decode_boundaries ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/presentation_registration.rs (target/issue17/debug/deps/presentation_registration-42a5cc2887455c18)
+
+running 6 tests
+test preferences_only_and_optional_asset ... ok
+test unselected_and_independent_flash ... ok
+test selected_settings_and_assets ... ok
+test confirmation_denials_never_write_or_disclose_input ... ok
+test rejected_startup ... ok
+test independent_protected_admission_and_lifecycle ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests examples/issue17_parity.rs (target/issue17/debug/examples/issue17_parity-ace5064f3e067b9b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/issue17/debug/deps/stackpress_leptos-26316b827c8585db)
+
+running 64 tests
+test components::breadth_tests::css_zoom_admission ... ok
+test components::breadth_tests::paging_and_geometry ... ok
+test components::breadth_tests::bounded_input_policies ... ok
+test components::breadth_tests::disclosure_and_choice_admission ... ok
+test components::breadth_tests::foreign_suggestion_completion_is_rejected ... ok
+test components::breadth_tests::local_table_controller ... ok
+test components::breadth_tests::typed_collections ... ok
+test components::breadth_tests::searchable_choice_boundaries ... ok
+test components::core_tests::pinned_leptos_raw_text_characterization ... ok
+test components::core_tests::text_and_collection_boundaries ... ok
+test components::breadth_tests::native_dialog_mode_policies ... ok
+test components::tag_list::tests::exact_append_and_neighbour_removal ... ok
+test components::core_tests::checked_display_boundaries ... ok
+test components::core_tests::select_admission_and_state ... ok
+test components::tests::safe_navigation_targets ... ok
+test components::tests::advanced_components_are_native_and_inert_before_javascript ... ok
+test components::tests::controls_render_native_accessible_markup ... ok
+test components::breadth_tests::table_selection_is_native_before_javascript ... ok
+test format::edit::tests::clear_fail_and_recover ... ok
+test components::tests::list_layout_and_notifications ... ok
+test format::edit::tests::dirty_locale_and_region_context ... ok
+test components::core_tests::ordinary_semantic_markup ... ok
+test format::edit::tests::escaped_ssr_editor_contract ... ok
+test format::edit::tests::composition_orders_cancel_and_duplicate ... ok
+test components::breadth_tests::table_layout_and_rating_minimum_markup ... ok
+test components::breadth_tests::breadth_semantic_markup_and_hostile_text ... ok
+test format::edit::tests::exact_bounds_and_budgets ... ok
+test format::edit::tests::explicit_offset_suffix_grammar ... ok
+test format::edit::tests::decimal_grammar_and_rounding ... ok
+test format::edit::tests::middle_edit_grouping_and_locale_during_composition ... ok
+test components::breadth_tests::collection_rows_and_plain_chips_are_accessible_before_javascript ... ok
+test format::edit::tests::preserved_draft_and_fresh_composition ... ok
+test format::edit::tests::selection_and_paste ... ok
+test format::edit::tests::utf16_transport_budgets ... ok
+test format::number::tests::decimal_admission_and_limits ... ok
+test format::edit::tests::temporal_values_and_bounds ... ok
+test format::number::tests::decimal_precision_and_unicode ... ok
+test format::tests::error_categories_and_retained_cause ... ok
+test format::tests::strict_wire_boundaries_preserve_utf8_safety ... ok
+test format::time::tests::dates_and_errors ... ok
+test language::tests::counted_node_translation ... ok
+test format::time::tests::time_precision ... ok
+test language::tests::checked_language_bounds ... ok
+test language::tests::integer_plural_categories_and_text ... ok
+test language::tests::phrase_and_text_policy ... ok
+test render::document_tests::document_shell_always_supplies_metadata_marker ... ok
+test language::tests::scoped_replacement_and_disposal ... ok
+test language::tests::translated_nodes_render_as_safe_views ... ok
+test resources::tests::cancellation_before_poll_and_after_completion ... ok
+test format::time::tests::dst_boundaries_and_offsets ... ok
+test replay::tests::replay_roundtrip_and_limits ... ok
+test state::tests::configurable_notification_budgets ... ok
+test state::tests::providers_are_explicit_isolated_and_disposed ... ok
+test state::tests::notification_limits_duplicates_and_dismissal ... ok
+test stream::extracted_tests::budget_replay_and_pending_overflow ... ok
+test stream::extracted_tests::explicit_completion_protocol ... ok
+test rich::tests::explicit_http_authorities_only ... ok
+test rich::tests::closed_policy_and_budgets ... ok
+test rich::tests::markdown_and_exact_budget_edges ... ok
+test rich::tests::mutation_corpus_is_stable ... ok
+test format::edit::tests::identical_native_read_keeps_clean_cancellation_base ... ok
+test format::phone::tests::invalid_and_bounded ... ok
+test format::phone::tests::canonical_and_display ... ok
+test format::edit::tests::phone_drafts_and_switching ... ok
+
+test result: ok. 64 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.43s
+
+     Running tests/async_feasibility.rs (target/issue17/debug/deps/async_feasibility-4c2b7fabf10733d5)
+
+running 8 tests
+test watchdog::exact_completion_marker ... ok
+test cooperative_success_releases_loader ... ok
+test resource_success_control ... ok
+test unmatched_child_filter_is_rejected - should panic ... ok
+test resource_unwind_counterexample ... ok
+test cooperative_unwind_releases_loader ... ok
+test cooperative_cancel_releases_loader ... ok
+test resource_cancellation_counterexample ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/render_seams.rs (target/issue17/debug/deps/render_seams-6c290fbf5819bc9d)
+
+running 3 tests
+test zero_chunk_budget_is_never_unlimited ... ok
+test stream_drop_before_demand_joins_local_owner ... ok
+test native_seams_preserve_errors_owner_and_send_boundaries ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/suggestions.rs (target/issue17/debug/deps/suggestions-4c87c79d99ca0953)
+
+running 2 tests
+test watchdog::exact_completion_marker ... ok
+test yielding_suggestion_lifetime ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+    Checking serde_core v1.0.229
+    Checking foldhash v0.2.0
+    Checking bitflags v2.13.2
+    Checking pulldown-cmark v0.13.5
+    Checking httpdate v1.0.3
+    Checking typenum v1.20.1
+    Checking serde v1.0.229
+    Checking indexmap v2.14.2
+    Checking hydration_context v0.3.2
+    Checking oco_ref v0.2.1
+    Checking serde_qs v0.15.0
+    Checking serde_json v1.0.154
+    Checking reactive_graph v0.2.16
+    Checking gloo-utils v0.2.0
+    Checking gloo-net v0.6.0
+    Checking server_fn v0.8.13
+    Checking reactive_stores v0.4.4
+    Checking codee v0.3.5
+    Checking config v0.15.27
+    Checking tachys v0.2.19
+    Checking leptos_config v0.8.10
+    Checking leptos_hot_reload v0.8.7
+    Checking heapless v0.7.17
+    Checking postcard v1.1.3
+    Checking phonenumber v0.3.10+9.0.33
+    Checking stackpress-lib v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/lib)
+    Checking generic-array v0.14.7
+    Checking stackpress-server v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/server/server)
+    Checking stackpress-framework-language v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-language)
+    Checking crypto-common v0.1.7
+    Checking block-buffer v0.10.4
+    Checking errno v0.3.14
+    Checking rustix v1.1.5
+    Checking digest v0.10.7
+    Checking getrandom v0.4.3
+    Checking cpufeatures v0.2.17
+    Checking fastrand v2.5.0
+    Checking tempfile v3.27.0
+    Checking sha2 v0.10.9
+    Checking stackpress-idea-parser v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/idea/idea-parser)
+    Checking time-core v0.1.9
+    Checking deranged v0.5.9
+    Checking powerfmt v0.2.1
+    Checking num-conv v0.2.2
+    Checking time v0.3.55
+    Checking stackpress-idea-transformer v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/idea/idea-transformer)
+    Checking leptos_server v0.8.8
+    Checking leptos_dom v0.8.8
+    Checking stackpress-framework-schema v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-schema)
+    Checking leptos v0.8.22
+    Checking leptos_meta v0.8.7
+    Checking leptos_router v0.8.17
+    Checking stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+    Checking stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-view)
+    Checking stackpress-framework-admin v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-admin)
+    Checking stackpress v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17)
+    Finished `dev` profile [unoptimized] target(s) in 18.33s
+    Finished `test` profile [unoptimized] target(s) in 0.72s
+   Doc-tests stackpress
+
+running 1 test
+test src/lib.rs - (line 28) ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+all doctests ran in 1.75s; merged doctests compilation took 1.32s
+   Doc-tests stackpress_framework_admin
+
+running 2 tests
+test crates/framework/framework-admin/src/lib.rs - (line 7) ... ok
+test crates/framework/framework-admin/src/transfer/mod.rs - transfer (line 3) ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+all doctests ran in 1.10s; merged doctests compilation took 0.66s
+   Doc-tests stackpress_framework_view
+
+running 6 tests
+test crates/framework/framework-view/src/leptos/render.rs - leptos::render::LeptosRenderer (line 78) ... ok
+test crates/framework/framework-view/src/leptos/async_render.rs - leptos::async_render::AsyncLeptosRenderer (line 16) ... ok
+test crates/framework/framework-view/src/leptos/stream.rs - leptos::stream::StreamLeptosRenderer (line 24) ... ok
+test crates/framework/framework-view/src/lib.rs - preferences (line 353) ... ok
+test crates/framework/framework-view/src/policy.rs - policy::BasePath::new (line 124) ... ok
+test crates/framework/framework-view/src/lib.rs - PageSnapshot (line 69) ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 1 test
+test crates/framework/framework-view/src/server.rs - server::PageSpec (line 19) - compile fail ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
+
+all doctests ran in 1.09s; merged doctests compilation took 0.55s
+   Doc-tests stackpress_leptos
+
+running 17 tests
+test crates/leptos/src/components/collection_state.rs - components::collection_state::BoundedList (line 25) ... ok
+test crates/leptos/src/components/overlay.rs - components::overlay::PopoverProps (line 58) ... ok
+test crates/leptos/src/components/choice.rs - components::choice::ChoiceState (line 33) ... ok
+test crates/leptos/src/components/controls.rs - components::controls::InputProps (line 134) ... ok
+test crates/leptos/src/components/overlay.rs - components::overlay::__component_popover (line 32) ... ok
+test crates/leptos/src/components/controls.rs - components::controls::Input (line 115) ... ok
+test crates/leptos/src/components/overlay.rs - components::overlay::Popover (line 32) ... ok
+test crates/leptos/src/components/controls.rs - components::controls::safe_href (line 36) ... ok
+test crates/leptos/src/resources.rs - resources::cancel_on_cleanup (line 100) - compile ... ok
+test crates/leptos/src/components/display_values.rs - components::display_values (line 3) ... ok
+test crates/leptos/src/components/controls.rs - components::controls::__component_input (line 115) ... ok
+test crates/leptos/src/components/paging.rs - components::paging::PageWindow (line 18) ... ok
+test crates/leptos/src/render.rs - render::document_shell (line 132) ... ok
+test crates/leptos/src/lib.rs - format (line 53) ... ok
+test crates/leptos/src/format.rs - format::edit (line 35) ... ok
+test crates/leptos/src/components/table_state.rs - components::table_state::TableState (line 16) ... ok
+test crates/leptos/src/language.rs - language::Language::text (line 157) ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+
+running 1 test
+test crates/leptos/src/resources.rs - resources::cancel_on_cleanup (line 108) - compile fail ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.18s
+
+all doctests ran in 1.95s; merged doctests compilation took 1.26s
+    Checking reactive_graph v0.2.16
+    Checking stackpress-idea-parser v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/idea/idea-parser)
+    Checking stackpress-lib v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/lib)
+    Checking reactive_stores v0.4.4
+    Checking stackpress-idea-transformer v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/idea/idea-transformer)
+    Checking stackpress-framework-schema v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-schema)
+    Checking tachys v0.2.19
+    Checking stackpress-server v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/server/server)
+    Checking stackpress-framework-language v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-language)
+    Checking leptos_server v0.8.8
+    Checking leptos_dom v0.8.8
+    Checking leptos v0.8.22
+    Checking leptos_meta v0.8.7
+    Checking leptos_router v0.8.17
+    Checking stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+ Documenting stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+    Checking stackpress-framework-admin v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-admin)
+    Checking stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-view)
+ Documenting stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-view)
+ Documenting stackpress v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17)
+ Documenting stackpress-framework-admin v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-admin)
+    Finished `dev` profile [unoptimized] target(s) in 15.33s
+   Generated /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/target/issue17/doc/stackpress/index.html and 3 other files
+   Compiling once_cell v1.21.4
+   Compiling errno v0.3.14
+   Compiling rustix v1.1.5
+   Compiling wasm-bindgen v0.2.129
+   Compiling js-sys v0.3.106
+   Compiling hydration_context v0.3.2
+   Compiling tempfile v3.27.0
+   Compiling signal-hook v0.3.18
+   Compiling stackpress-idea-transformer v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/idea/idea-transformer)
+   Compiling signal-hook-registry v1.4.8
+   Compiling mio v1.2.4
+   Compiling wasm-bindgen-futures v0.4.79
+   Compiling web-sys v0.3.106
+   Compiling any_spawner v0.3.0
+   Compiling reactive_graph v0.2.16
+   Compiling reactive_stores v0.4.4
+   Compiling parking_lot_core v0.9.12
+   Compiling litrs v1.0.1
+   Compiling document-features v0.2.12
+   Compiling parking_lot v0.12.5
+   Compiling signal-hook-mio v0.2.5
+   Compiling stackpress-framework-schema v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-schema)
+   Compiling tokio v1.54.1
+   Compiling crossterm v0.29.0
+   Compiling gloo-utils v0.2.0
+   Compiling gloo-net v0.6.0
+   Compiling wasm-streams v0.5.0
+   Compiling tachys v0.2.19
+   Compiling server_fn v0.8.13
+   Compiling unicode-width v0.2.2
+   Compiling stackpress-sql v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/sql/sql)
+   Compiling stackpress-framework-sql v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-sql)
+   Compiling stackpress-cli v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/tools/cli)
+   Compiling stackpress-idea v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/idea/idea)
+   Compiling generated-workspace-tool v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-workspace/tool)
+   Compiling leptos_server v0.8.8
+   Compiling leptos_dom v0.8.8
+   Compiling leptos v0.8.22
+   Compiling leptos_router v0.8.17
+   Compiling leptos_meta v0.8.7
+   Compiling stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+   Compiling stackpress-framework-admin v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-admin)
+   Compiling generated-admin-tool v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-admin/tool)
+    Finished `dev` profile [unoptimized] target(s) in 28.52s
+     Running `target/issue17/debug/generated-admin-tool --check`
+{"differences":[]}
+   Compiling any_spawner v0.3.0
+   Compiling server_fn v0.8.13
+   Compiling reactive_graph v0.2.16
+   Compiling tempfile v3.27.0
+   Compiling stackpress-idea-transformer v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/idea/idea-transformer)
+   Compiling reactive_stores v0.4.4
+   Compiling leptos_macro v0.8.19
+   Compiling tachys v0.2.19
+   Compiling stackpress-framework-schema v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-schema)
+   Compiling crossterm v0.29.0
+   Compiling stackpress-cli v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/tools/cli)
+   Compiling stackpress-framework-sql v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-sql)
+   Compiling leptos_dom v0.8.8
+   Compiling leptos_server v0.8.8
+   Compiling leptos v0.8.22
+   Compiling stackpress-idea v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/idea/idea)
+   Compiling generated-workspace-tool v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-workspace/tool)
+   Compiling leptos_router v0.8.17
+   Compiling leptos_meta v0.8.7
+   Compiling stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+   Compiling stackpress-framework-admin v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-admin)
+   Compiling generated-admin-tool v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-admin/tool)
+    Finished `dev` profile [unoptimized] target(s) in 19.74s
+     Running `target/issue17/debug/generated-admin-tool --check --input examples/generated-admin/schema-format.idea --output examples/generated-admin/shared/src/generated-format`
+{"differences":[]}
+    Finished `dev` profile [unoptimized] target(s) in 0.42s
+     Running `target/issue17/debug/generated-admin-tool --check`
+{"differences":[]}
+    Finished `dev` profile [unoptimized] target(s) in 0.24s
+     Running `target/issue17/debug/generated-admin-tool --check --input examples/generated-admin/schema-format.idea --output examples/generated-admin/shared/src/generated-format`
+{"differences":[]}
+   Compiling proc-macro2 v1.0.107
+   Compiling memchr v2.8.3
+   Compiling libc v0.2.191
+   Compiling quote v1.0.47
+   Compiling syn v3.0.9
+   Compiling indexmap v2.14.2
+   Compiling serde_json v1.0.154
+   Compiling aho-corasick v1.1.5
+   Compiling synstructure v0.14.0
+   Compiling percent-encoding v2.3.2
+   Compiling form_urlencoded v1.2.2
+   Compiling zerofrom-derive v0.1.8
+   Compiling yoke-derive v0.8.4
+   Compiling zerovec-derive v0.11.7
+   Compiling zerofrom v0.1.8
+   Compiling yoke v0.8.4
+   Compiling displaydoc v0.2.7
+   Compiling serde_derive v1.0.229
+   Compiling zerovec v0.11.9
+   Compiling tinystr v0.8.5
+   Compiling icu_locale_core v2.4.0
+   Compiling potential_utf v0.1.6
+   Compiling zerotrie v0.2.5
+   Compiling icu_collections v2.4.0
+   Compiling icu_provider v2.4.0
+   Compiling serde v1.0.229
+   Compiling icu_properties v2.4.0
+   Compiling icu_normalizer v2.4.0
+   Compiling regex-automata v0.4.18
+   Compiling idna_adapter v1.2.2
+   Compiling idna v1.1.0
+   Compiling errno v0.3.14
+   Compiling rustix v1.1.5
+   Compiling regex v1.13.1
+   Compiling url v2.5.8
+   Compiling getrandom v0.4.3
+   Compiling cpufeatures v0.2.17
+   Compiling stackpress-lib v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/lib)
+   Compiling tempfile v3.27.0
+   Compiling sha2 v0.10.9
+   Compiling stackpress-idea-parser v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/idea/idea-parser)
+   Compiling tokio-macros v2.7.2
+   Compiling stackpress-idea-transformer v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/idea/idea-transformer)
+   Compiling tokio v1.54.1
+   Compiling stackpress-server v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/server/server)
+   Compiling stackpress-idea v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/idea/idea)
+   Compiling stackpress-cli v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/tools/cli)
+   Compiling stackpress-example-profile-codegen v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-profile/codegen)
+    Finished `dev` profile [unoptimized] target(s) in 14.21s
+     Running `target/issue17/debug/profile-codegen emit generate -c`
+{"code":200,"status":"OK","errors":{},"results":{"differences":[]},"total":1}
+PASS selected facade/admin/native consumers, generators twice, doctests, lint, docs and fmt
+supervisor: child 96752 reaped; peak target 2766552 KiB

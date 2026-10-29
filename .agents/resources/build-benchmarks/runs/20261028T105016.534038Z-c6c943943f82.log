@@ -1,0 +1,3 @@
+    Finished `dev` profile [unoptimized] target(s) in 0.16s
+     Running `target/debug/generated-workspace-tool emit generate --input /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/examples/generated-workspace/app/native.idea --output /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/examples/generated-workspace/app/src/matrix_generated`
+{"code":200,"status":"OK","errors":{},"results":{"differences":[]},"total":1}

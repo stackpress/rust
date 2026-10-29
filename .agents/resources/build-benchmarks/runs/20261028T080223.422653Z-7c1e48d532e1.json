@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "id": "20261028T080223.422653Z-7c1e48d532e1",
+  "started_at": "2026-10-28T08:02:23.422653+00:00",
+  "status": "passed",
+  "label": "00013 Part B fresh owned target cleanup",
+  "kind": "clean",
+  "scope": "selected",
+  "cache": "unknown",
+  "command": [
+    "python3",
+    "examples/review-preview/review.py",
+    "run",
+    "--directory",
+    "/private/tmp/s8-review",
+    "--name",
+    "part-b-cargo-clean",
+    "--",
+    "cargo",
+    "clean"
+  ],
+  "cwd": "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-s8-review",
+  "commit": "1c6755255f219d0687456b1596dd27a48872e808",
+  "branch": "trial/3-s8-review",
+  "dirty": false,
+  "host": "macOS-26.6.2-arm64-arm-64bit",
+  "machine": "arm64",
+  "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+  "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+  "environment": {},
+  "cargo_activity": {
+    "compiling": 0,
+    "checking": 0,
+    "documenting": 0
+  },
+  "cargo_build_stages": [],
+  "log": "runs/20261028T080223.422653Z-7c1e48d532e1.log",
+  "ended_at": "2026-10-28T08:02:24.074687+00:00",
+  "command_seconds": 0.255199,
+  "exit_code": 0,
+  "cargo_build_seconds": null
+}

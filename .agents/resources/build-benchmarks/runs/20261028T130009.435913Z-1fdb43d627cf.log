@@ -1,0 +1,13 @@
+Error writing files: failed to resolve mod `server`: /private/tmp/stackpress-issue15-m0-20261028/work/view/src/server.rs does not exist
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/Users/cblanquera/.pyenv/versions/3.11.4/lib/python3.11/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['rustfmt', '--edition', '2024', '/private/tmp/stackpress-issue15-m0-20261028/work/language/src/lib.rs', '/private/tmp/stackpress-issue15-m0-20261028/work/theme/src/lib.rs', '/private/tmp/stackpress-issue15-m0-20261028/work/theme/src/main.rs', '/private/tmp/stackpress-issue15-m0-20261028/work/view/src/policy.rs', '/private/tmp/stackpress-issue15-m0-20261028/work/view/src/lib.rs', '/private/tmp/stackpress-issue15-m0-20261028/work/view/src/routes.rs', '/private/tmp/stackpress-issue15-m0-20261028/work/view/src/preferences/mod.rs', '/private/tmp/stackpress-issue15-m0-20261028/work/view/src/preferences/locale.rs', '/private/tmp/stackpress-issue15-m0-20261028/work/view/src/preferences/locale/tests.rs']' returned non-zero exit status 1.
+supervisor: child 58008 reaped; peak target 884480 KiB
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view/proofs/issue15-m0/supervise.py", line 58, in <module>
+    main()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view/proofs/issue15-m0/supervise.py", line 51, in main
+    raise subprocess.CalledProcessError(child.returncode, command)
+subprocess.CalledProcessError: Command '['python3', '-c', 'import ast, pathlib, shutil, subprocess; p=pathlib.Path("/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view/proofs/issue15-m0"); w=pathlib.Path("/private/tmp/stackpress-issue15-m0-20261028/work"); files=list((p/\'theme/src\').glob(\'*.rs\')); subprocess.run([\'rustfmt\',\'--edition\',\'2024\',*map(str,files)],check=True); [shutil.copyfile(f,w/\'theme/src\'/f.name) for f in files]; subprocess.run([\'rustfmt\',\'--edition\',\'2024\',*map(str,w.rglob(\'*.rs\'))],check=True); [ast.parse(f.read_text()) for f in p.glob(\'*.py\')]; [subprocess.run([\'node\',\'--check\',str(p/f)],check=True) for f in [\'browser.cjs\',\'initial-theme.js\',\'start.js\']]; print(\'proof Rust formatting and Python/JavaScript syntax passed\')']' returned non-zero exit status 1.

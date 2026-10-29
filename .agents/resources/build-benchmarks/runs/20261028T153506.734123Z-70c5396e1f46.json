@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "id": "20261028T153506.734123Z-70c5396e1f46",
+  "started_at": "2026-10-28T15:35:06.734123+00:00",
+  "status": "passed",
+  "label": "i15-m2-verify clippy-view-web-preferences",
+  "kind": "clippy",
+  "scope": "selected",
+  "cache": "cold",
+  "command": [
+    "cargo",
+    "clippy",
+    "-p",
+    "stackpress-framework-view",
+    "--features",
+    "web-preferences",
+    "--all-targets",
+    "--locked",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "cwd": "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15",
+  "commit": "415062ad53ab67cd9cef788d3ef807b556d1d1be",
+  "branch": "trial/3-issue15-view-presentation",
+  "dirty": true,
+  "host": "macOS-26.6.2-arm64-arm-64bit",
+  "machine": "arm64",
+  "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+  "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+  "environment": {
+    "CARGO_TARGET_DIR": "/private/tmp/i15-m2-verify/target",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_BUILD_JOBS": "6"
+  },
+  "cargo_activity": {
+    "compiling": 0,
+    "checking": 29,
+    "documenting": 0
+  },
+  "cargo_build_stages": [
+    {
+      "profile": "dev",
+      "seconds": 3.43
+    }
+  ],
+  "log": "runs/20261028T153506.734123Z-70c5396e1f46.log",
+  "ended_at": "2026-10-28T15:35:10.343840+00:00",
+  "command_seconds": 3.495925,
+  "exit_code": 0,
+  "cargo_build_seconds": 3.43
+}

@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "id": "20261029T021216.165086Z-bd20c6ed6eb6",
+  "started_at": "2026-10-29T02:12:16.165086+00:00",
+  "status": "passed",
+  "label": "issue17 M2 final independent input-state native browser and WASM lint gates",
+  "kind": "test",
+  "scope": "consumer",
+  "cache": "warm",
+  "command": [
+    "python3",
+    "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/proofs/supervise.py",
+    "--target",
+    "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/target/issue17",
+    "--seconds",
+    "1800",
+    "--",
+    "python3",
+    "/private/tmp/stackpress-issue17-m2/final_fixture.py"
+  ],
+  "cwd": "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17",
+  "commit": "68f38b7731f13b23f894bd4bd82d617b1a8bbfb7",
+  "branch": "trial/3-issue17-leptos-library",
+  "dirty": true,
+  "host": "macOS-26.6.2-arm64-arm-64bit",
+  "machine": "arm64",
+  "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+  "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+  "environment": {
+    "CARGO_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/target/issue17",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_BUILD_JOBS": "2"
+  },
+  "cargo_activity": {
+    "compiling": 9,
+    "checking": 112,
+    "documenting": 1
+  },
+  "cargo_build_stages": [
+    {
+      "profile": "test",
+      "seconds": 2.22
+    },
+    {
+      "profile": "test",
+      "seconds": 2.92
+    },
+    {
+      "profile": "test",
+      "seconds": 4.52
+    },
+    {
+      "profile": "dev",
+      "seconds": 1.07
+    },
+    {
+      "profile": "test",
+      "seconds": 0.24
+    },
+    {
+      "profile": "dev",
+      "seconds": 1.43
+    },
+    {
+      "profile": "dev",
+      "seconds": 2.17
+    },
+    {
+      "profile": "dev",
+      "seconds": 1.99
+    },
+    {
+      "profile": "dev",
+      "seconds": 0.97
+    },
+    {
+      "profile": "dev",
+      "seconds": 3.03
+    },
+    {
+      "profile": "dev",
+      "seconds": 3.2
+    },
+    {
+      "profile": "dev",
+      "seconds": 1.72
+    },
+    {
+      "profile": "dev",
+      "seconds": 32.97
+    },
+    {
+      "profile": "dev",
+      "seconds": 11.94
+    }
+  ],
+  "log": "runs/20261029T021216.165086Z-bd20c6ed6eb6.log",
+  "ended_at": "2026-10-29T02:13:51.165816+00:00",
+  "command_seconds": 94.739191,
+  "exit_code": 0,
+  "cargo_build_seconds": 70.39
+}

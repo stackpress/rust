@@ -1,0 +1,16 @@
+   Compiling tokio v1.54.1
+   Compiling any_spawner v0.3.0
+   Compiling reactive_graph v0.2.16
+   Compiling reactive_stores v0.4.4
+   Compiling tachys v0.2.19
+   Compiling leptos_dom v0.8.8
+   Compiling leptos_server v0.8.8
+   Compiling leptos v0.8.22
+   Compiling leptos_router v0.8.17
+   Compiling leptos_meta v0.8.7
+   Compiling stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+   Compiling issue17-doc-consumer v0.0.0 (/private/tmp/stackpress-issue17-m1/doc-consumer)
+    Finished `dev` profile [unoptimized] target(s) in 20.41s
+     Running `target/issue17/debug/issue17-doc-consumer`
+actual getting-started example executed without view/server/facade/persistence dependencies
+supervisor: child 10814 reaped; peak target 5622064 KiB

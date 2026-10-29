@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "id": "20261028T083746.044446Z-5f13854467ad",
+  "started_at": "2026-10-28T08:37:46.044446+00:00",
+  "status": "passed",
+  "label": "00013 Part B final fixed-denial scenario and packaged assets rebuild",
+  "kind": "build",
+  "scope": "selected",
+  "cache": "warm",
+  "command": [
+    "python3",
+    "examples/review-preview/installed.py",
+    "assets",
+    "--directory",
+    "/private/tmp/s8-review"
+  ],
+  "cwd": "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-s8-review",
+  "commit": "1c6755255f219d0687456b1596dd27a48872e808",
+  "branch": "trial/3-s8-review",
+  "dirty": true,
+  "host": "macOS-26.6.2-arm64-arm-64bit",
+  "machine": "arm64",
+  "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+  "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+  "environment": {},
+  "cargo_activity": {
+    "compiling": 0,
+    "checking": 0,
+    "documenting": 0
+  },
+  "cargo_build_stages": [],
+  "log": "runs/20261028T083746.044446Z-5f13854467ad.log",
+  "ended_at": "2026-10-28T08:38:10.868282+00:00",
+  "command_seconds": 24.551975,
+  "exit_code": 0,
+  "cargo_build_seconds": null
+}

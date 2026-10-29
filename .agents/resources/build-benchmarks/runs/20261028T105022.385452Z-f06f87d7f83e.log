@@ -1,0 +1,3 @@
+    Finished `dev` profile [unoptimized] target(s) in 0.31s
+     Running `target/debug/generated-admin-tool emit generate --input /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/examples/generated-admin/schema-format.idea --output /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/examples/generated-admin/shared/src/generated-format --check`
+{"differences":[]}

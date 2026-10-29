@@ -1,0 +1,93 @@
+$ cargo fmt --all
+$ cargo clippy --offline --locked -p stackpress-framework-view --all-features --all-targets -- -D warnings
+    Checking stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view)
+    Finished `dev` profile [unoptimized] target(s) in 1.89s
+$ python3 /private/tmp/stackpress-issue15-m2-20261028/coverage-m2.py
+$ cargo llvm-cov --offline --locked -p stackpress-framework-view --all-features --all-targets --no-report
+info: cargo-llvm-cov currently setting cfg(coverage); you can opt-out it by passing --no-cfg-coverage
+   Compiling stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view)
+    Finished `test` profile [unoptimized] target(s) in 0.87s
+     Running unittests src/lib.rs (target/issue15-m2/llvm-cov-target/debug/deps/stackpress_framework_view-4d4191168182ba0a)
+
+running 18 tests
+test preferences::locale::tests::compiled_prefixes_and_exact_return_context ... ok
+test preferences::locale::tests::precedence_and_routes ... ok
+test presentation_tests::explicit_host_policy_or_fail_closed ... ok
+test preferences::locale::tests::invalid_configuration ... ok
+test preferences::locale::tests::action_admission_and_persistence ... ok
+test presentation_tests::scope_and_theme_tokens ... ok
+test presentation_tests::flash_consumption_bounds_and_root_dedupe ... ok
+test presentation_tests::flash_wire_expansion_is_bounded ... ok
+test presentation_tests::confirm_actual_cookie_readback ... ok
+test theme::tests::checked_external_tag_and_nonce ... ok
+test presentation_tests::single_writer_and_failure_preserve_content ... ok
+test presentation_tests::select_and_admit_settings ... ok
+test presentation_tests::unset_is_absence_and_legacy_readback_only ... ok
+test adapters::native::tests::corrupt_inputs_are_bounded_and_not_rewritten ... ok
+test adapters::native::tests::real_restart_and_invalid_updates ... ok
+test adapters::native::tests::abandoned_staging_is_bounded_and_never_followed ... ok
+test adapters::native::tests::symlinks_and_non_regular_files_are_not_followed ... ok
+test adapters::native::tests::fifo_open_cannot_hang ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/contracts.rs (target/issue15-m2/llvm-cov-target/debug/deps/contracts-5c173e7841c0fdbe)
+
+running 3 tests
+test hostile_seed_and_contract_drift ... ok
+test saved_theme_or_unset ... ok
+test bounds_and_checked_metadata ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running tests/lifecycle.rs (target/issue15-m2/llvm-cov-target/debug/deps/lifecycle-ec373351f4616993)
+
+running 2 tests
+test duplicate_and_invalid_registration ... ok
+test stage_table_and_drop ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/policies.rs (target/issue15-m2/llvm-cov-target/debug/deps/policies-5c0fe697c660bf95)
+
+running 8 tests
+test serialization_preserves_cause_without_disclosure ... ok
+test compiled_capture_boundaries ... ok
+test catalog_and_exact_parameters ... ok
+test status_and_lower_limits_roundtrip ... ok
+test metadata_and_assets_are_checked ... ok
+test asset_logical_byte_boundary_precedes_build_matching ... ok
+test escaped_assets_roundtrip ... ok
+test asset_decode_boundaries ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/presentation_registration.rs (target/issue15-m2/llvm-cov-target/debug/deps/presentation_registration-7eb127419bf76d73)
+
+running 5 tests
+test preferences_only_and_optional_asset ... ok
+test unselected_and_independent_flash ... ok
+test selected_settings_and_assets ... ok
+test rejected_startup ... ok
+test independent_protected_admission_and_lifecycle ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+$ cargo llvm-cov report -p stackpress-framework-view --json --output-path /private/tmp/stackpress-issue15-m2-20261028/evidence/coverage.json
+
+    Finished report saved to /private/tmp/stackpress-issue15-m2-20261028/evidence/coverage.json
+{"crate": "framework-view", "covered": 1374, "count": 1443, "percent": 95.21829521829522, "files": [{"file": "crates/framework/framework-view/src/access.rs", "covered": 57, "count": 63, "percent": 90.47619047619048}, {"file": "crates/framework/framework-view/src/adapters/native.rs", "covered": 112, "count": 127, "percent": 88.18897637795276}, {"file": "crates/framework/framework-view/src/adapters/web.rs", "covered": 42, "count": 43, "percent": 97.67441860465115}, {"file": "crates/framework/framework-view/src/adapters/web/host.rs", "covered": 10, "count": 10, "percent": 100.0}, {"file": "crates/framework/framework-view/src/flash.rs", "covered": 68, "count": 72, "percent": 94.44444444444444}, {"file": "crates/framework/framework-view/src/flash/host.rs", "covered": 92, "count": 94, "percent": 97.87234042553192}, {"file": "crates/framework/framework-view/src/lib.rs", "covered": 108, "count": 115, "percent": 93.91304347826087}, {"file": "crates/framework/framework-view/src/policy.rs", "covered": 203, "count": 207, "percent": 98.06763285024155}, {"file": "crates/framework/framework-view/src/preferences/action.rs", "covered": 106, "count": 108, "percent": 98.14814814814817}, {"file": "crates/framework/framework-view/src/preferences/host.rs", "covered": 133, "count": 144, "percent": 92.36111111111111}, {"file": "crates/framework/framework-view/src/preferences/locale.rs", "covered": 129, "count": 129, "percent": 100.0}, {"file": "crates/framework/framework-view/src/preferences/state.rs", "covered": 50, "count": 50, "percent": 100.0}, {"file": "crates/framework/framework-view/src/routes.rs", "covered": 122, "count": 128, "percent": 95.3125}, {"file": "crates/framework/framework-view/src/server.rs", "covered": 96, "count": 106, "percent": 90.56603773584906}, {"file": "crates/framework/framework-view/src/theme.rs", "covered": 46, "count": 47, "percent": 97.87234042553192}], "scope": "native executable production lines; dedicated test files excluded", "production_subtotal": {"covered": 1328, "count": 1396, "percent": 95.12893982808023, "excludes": "dedicated tests and unchanged theme.rs containing an inline test module"}}
+$ python3 /private/tmp/stackpress-issue15-m2-20261028/audit-m2.py
+$ python3 /private/tmp/stackpress-issue15-m2-20261028/source-baseline-audit.py
+PASS pre-M1 throwaway source matches 886 git-show-equivalent committed blobs
+$ python3 examples/ui-preferences/proofs/audit.py /private/tmp/stackpress-issue15-m2-20261028/evidence/scope-audit.json
+PASS M1 scope, source/syntax and whitespace audit: 22 paths
+$ python3 -m unittest discover -s examples/ui-preferences/proofs -p test_supervise.py
+.....
+----------------------------------------------------------------------
+Ran 5 tests in 2.160s
+
+OK
+$ cargo fmt --all -- --check
+PASS unchanged lock bytes, both standard Profile proof counts, no reserved plugin entry point
+supervisor: child 94068 reaped; peak target 4118616 KiB

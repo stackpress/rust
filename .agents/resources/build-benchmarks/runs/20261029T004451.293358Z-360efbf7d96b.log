@@ -1,0 +1,1149 @@
+info: cargo-llvm-cov currently setting cfg(coverage); you can opt-out it by passing --no-cfg-coverage
+   Compiling stable_deref_trait v1.2.1
+   Compiling zerofrom v0.1.8
+   Compiling smallvec v1.16.4
+   Compiling yoke v0.8.4
+   Compiling zerovec v0.11.9
+   Compiling writeable v0.6.4
+   Compiling litemap v0.8.3
+   Compiling zerotrie v0.2.5
+   Compiling tinystr v0.8.5
+   Compiling icu_locale_core v2.4.0
+   Compiling potential_utf v0.1.6
+   Compiling icu_collections v2.4.0
+   Compiling tokio v1.54.1
+   Compiling icu_provider v2.4.0
+   Compiling icu_normalizer v2.4.0
+   Compiling icu_properties v2.4.0
+   Compiling idna_adapter v1.2.2
+   Compiling idna v1.1.0
+   Compiling url v2.5.8
+   Compiling parking_lot_core v0.9.12
+   Compiling parking_lot v0.12.5
+   Compiling serde_core v1.0.229
+   Compiling siphasher v1.0.4
+   Compiling serde v1.0.229
+   Compiling phf_shared v0.14.0
+   Compiling fastrand v2.5.0
+   Compiling icu_locale_fallback_data v2.4.0
+   Compiling phf_generator v0.14.0
+   Compiling any_spawner v0.3.0
+   Compiling heapless v0.7.17
+   Compiling byteorder v1.5.0
+   Compiling reactive_graph v0.2.16
+   Compiling hash32 v0.2.1
+   Compiling libm v0.2.16
+   Compiling reactive_stores v0.4.4
+   Compiling icu_locale_fallback v2.4.0
+   Compiling phf_codegen v0.14.0
+   Compiling string_cache_codegen v0.11.2
+   Compiling new_debug_unreachable v1.0.6
+   Compiling tachys v0.2.19
+   Compiling web_atoms v0.3.0
+   Compiling cobs v0.3.0
+   Compiling precomputed-hash v0.1.1
+   Compiling icu_calendar_data v2.4.0
+   Compiling server_fn v0.8.13
+   Compiling string_cache v0.11.0
+   Compiling leptos_hot_reload v0.8.7
+   Compiling core_maths v0.1.1
+   Compiling phf v0.14.0
+   Compiling icu_plurals_data v2.4.0
+   Compiling icu_decimal_data v2.4.0
+   Compiling icu_time_data v2.4.0
+   Compiling leptos_macro v0.8.19
+   Compiling leptos_dom v0.8.8
+   Compiling leptos_server v0.8.8
+   Compiling calendrical_calculations v0.2.4
+   Compiling postcard v1.1.3
+   Compiling tendril v0.5.1
+   Compiling fixed_decimal v0.7.3
+   Compiling quick-xml v0.41.0
+   Compiling icu_datetime_data v2.4.0
+   Compiling icu_locale_data v2.4.0
+   Compiling dtoa v1.0.11
+   Compiling heck v0.5.0
+   Compiling linked-hash-map v0.5.6
+   Compiling strum_macros v0.27.2
+   Compiling lru-cache v0.1.2
+   Compiling phonenumber v0.3.10+9.0.33
+   Compiling dtoa-short v0.3.5
+   Compiling markup5ever v0.40.0
+   Compiling icu_calendar v2.4.0
+   Compiling leptos v0.8.22
+   Compiling pulldown-cmark v0.13.5
+   Compiling regex-syntax v0.6.29
+   Compiling minimal-lexical v0.2.1
+   Compiling oncemutex v0.1.1
+   Compiling nom v7.1.3
+   Compiling regex-cache v0.2.1
+   Compiling icu_time v2.4.0
+   Compiling icu_decimal v2.4.0
+   Compiling icu_plurals v2.4.0
+   Compiling html5ever v0.40.1
+   Compiling strum v0.27.2
+   Compiling cssparser v0.38.0
+   Compiling icu_pattern v0.5.1
+   Compiling maplit v1.0.2
+   Compiling fnv v1.0.7
+   Compiling pulldown-cmark-escape v0.11.0
+   Compiling unicase v2.10.0
+   Compiling ammonia v4.2.4
+   Compiling icu_datetime v2.4.0
+   Compiling leptos_router v0.8.17
+   Compiling icu_locale v2.4.0
+   Compiling leptos_meta v0.8.7
+   Compiling stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+   Compiling stackpress-lib v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/lib)
+   Compiling stackpress-server v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/server/server)
+   Compiling stackpress-framework-language v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-language)
+   Compiling stackpress-framework-schema v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-schema)
+   Compiling stackpress-framework-sql v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-sql)
+   Compiling stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-view)
+   Compiling stackpress-framework-admin v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-admin)
+   Compiling generated-admin-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-admin/shared)
+   Compiling futures-intrusive v0.5.0
+   Compiling tokio-stream v0.1.19
+   Compiling sqlx-core v0.9.0
+   Compiling crossterm v0.29.0
+   Compiling stackpress-cli v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/tools/cli)
+   Compiling sqlx-sqlite v0.9.0
+   Compiling sqlx v0.9.0
+   Compiling httparse v1.10.1
+   Compiling stackpress-sql-sqlite v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/sql/sql-sqlite)
+   Compiling http-body v1.1.0
+   Compiling try-lock v0.2.5
+   Compiling want v0.3.1
+   Compiling atomic-waker v1.1.2
+   Compiling hyper v1.10.1
+   Compiling generated-admin-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-admin/web)
+   Compiling stackpress-example-profile-ui-contracts v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/profile-ui/contracts)
+   Compiling hyper-util v0.1.20
+   Compiling http-body-util v0.1.4
+   Compiling stackpress-example-ui-preferences-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/shared)
+   Compiling stackpress-example-ui-gallery-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-gallery/shared)
+   Compiling stackpress-example-ui-stream-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-stream/shared)
+   Compiling stackpress-server-http v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/server/http)
+   Compiling stackpress-example-profile-ui-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/profile-ui/shared)
+   Compiling stackpress-example-ui-gallery-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-gallery/web)
+   Compiling stackpress-example-generated-profile v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-profile/app)
+   Compiling stackpress-example-ui-stream-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-stream/web)
+   Compiling stackpress-example-ui-preferences-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/web)
+   Compiling stackpress-example-profile-ui-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/profile-ui/web)
+   Compiling stackpress-example-ui-format v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-format)
+   Compiling stackpress-example-review-preview v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/review-preview)
+   Compiling generated-workspace-tool v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-workspace/tool)
+   Compiling generated-admin-tool v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-admin/tool)
+   Compiling stackpress v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17)
+   Compiling stackpress-example-profile-ui-client v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/profile-ui/client)
+   Compiling stackpress-example-ui-stream-client v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-stream/client)
+   Compiling stackpress-example-ui-preferences-client v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/client)
+    Finished `test` profile [unoptimized] target(s) in 1m 47s
+     Running unittests src/lib.rs (target/issue17/coverage/debug/deps/generated_admin_shared-928daa0b8edf9f45)
+
+running 5 tests
+test transfer::tests::preview_permission_is_bound_to_the_exact_current_file ... ok
+test write_version::tests::submitted_snapshot_feedback_preserves_later_edits ... ok
+test crud::tests::completion_keeps_public_errors_and_honest_states ... ok
+test write_version::tests::live_versions_never_overwrite_newer_controls ... ok
+test crud::tests::every_editor_write_freezes_its_exact_operation_and_version ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/pages.rs (target/issue17/coverage/debug/deps/pages-f451224ca8c2144b)
+
+running 1 test
+test typed_page_adapters_preserve_models_and_drafts ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/public_boundary.rs (target/issue17/coverage/debug/deps/public_boundary-ac92e0e1254b4e49)
+
+running 4 tests
+test app_component_accepts_the_public_role_interface ... ok
+test app_collection_component_keeps_the_exact_role_interface ... ok
+test normalized_boundary_defaults_and_exact_supplied_values ... ok
+test public_inputs_and_queries_keep_the_same_projection_policy ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/render.rs (target/issue17/coverage/debug/deps/render-77c655d447bdd5c8)
+
+running 4 tests
+test generated_fieldsets_and_missing_drafts ... ok
+test generated_public_tables_validate_keys_before_rendering ... ok
+test actual_generated_admin_ssr ... ok
+test generated_contracts_remain_real ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s
+
+     Running tests/transfer.rs (target/issue17/coverage/debug/deps/transfer-e207fb8b863ef6dc)
+
+running 1 test
+test import_ssr_preserves_drafts_and_requires_preview_then_confirmation ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/issue17/coverage/debug/deps/generated_admin_tool-4cf9553983af5a40)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/issue17/coverage/debug/deps/generated_admin_tool-8e287b2d19acaf78)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/generation.rs (target/issue17/coverage/debug/deps/generation-f109dbc72f757e4c)
+
+running 2 tests
+test model_remove_rename_and_failed_regeneration_preserve_writer_contract ... ok
+test actual_three_model_writer_is_stable_and_plugin_is_removable ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.34s
+
+     Running unittests src/lib.rs (target/issue17/coverage/debug/deps/generated_admin_web-c00153e3fe7db626)
+
+running 2 tests
+test host::origin::tests::accepted_origin_shapes ... ok
+test host::origin::tests::rejected_origin_shapes ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/issue17/coverage/debug/deps/generated_admin_web-0ec837ccde271511)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/crud.rs (target/issue17/coverage/debug/deps/crud-0ed48059e4a8b4e4)
+
+running 2 tests
+test related_scope_and_typed_search_urls ... ok
+test generated_core_crud_policy_and_unknown_outcome ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.85s
+
+     Running tests/document_errors.rs (target/issue17/coverage/debug/deps/document_errors-3051e94852c8809f)
+
+running 2 tests
+test error_markup_does_not_allow_attribute_breakout ... ok
+test document_failures_keep_html_and_api_failures_keep_json ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running tests/finite.rs (target/issue17/coverage/debug/deps/finite-b5c8569888c03c36)
+
+running 1 test
+test executable_modes_are_finite ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/native_layer.rs (target/issue17/coverage/debug/deps/native_layer-12a8ef77410aef4b)
+
+running 2 tests
+test native_contract_boundaries ... ok
+test native_generated_capabilities ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.17s
+
+     Running tests/transfer.rs (target/issue17/coverage/debug/deps/transfer-b1a362f4d405367c)
+
+running 5 tests
+test related_import_and_export_preserve_parent_scope ... ok
+test limits_headers_denials_and_required_omission_refuse_without_writes ... ok
+test preview_is_read_only_and_confirm_is_atomic_create_only ... ok
+test deterministic_public_export_ignores_paging_and_guard_decoding_is_explicit ... ok
+test large_export_refuses_without_truncating_and_can_be_narrowed ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.79s
+
+     Running unittests src/lib.rs (target/issue17/coverage/debug/deps/stackpress-960e3c1a21bb9560)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/foundation.rs (target/issue17/coverage/debug/deps/foundation-7d020019ad9a8013)
+
+running 1 test
+test bootstrap_named_plugin_and_plain_data_resolve_through_facade ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/idea.rs (target/issue17/coverage/debug/deps/idea-c3aa4ccfbac5f734)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/issue17/coverage/debug/deps/stackpress_example_profile_ui_client-0f969bc7cd5f0897)
+
+running 6 tests
+test seed::native_settings_tests::admit_native_preferences_before_mount ... ok
+test seed::tests::host_rejection_is_not_transport_failure ... ok
+test seed::tests::checked_language_wire_roundtrip ... ok
+test seed::tests::typed_reply_admission ... ok
+test seed::tests::bounded_asset_admission_and_mount_agreement ... ok
+test seed::tests::public_seed_admission ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/issue17/coverage/debug/deps/stackpress_example_profile_ui_shared-03160b7757737ad3)
+
+running 15 tests
+test preferences::tests::omitted_hook_is_immediate ... ok
+test tests::controller_retains_host_rejection_identity ... ok
+test preferences::tests::invalid_acknowledgement_and_disposed_root_are_inert ... ok
+test tests::controller_rejects_ambiguous_rows_without_publishing ... ok
+test tests::invalidation_cancellation_and_retry_preserve_useful_rows ... ok
+test preferences::tests::publish_only_after_a_successful_acknowledgement ... ok
+test tests::exact_detail_and_not_found ... ok
+test tests::catalog_navigation_and_retained_history ... ok
+test tests::reply_validation_and_generation_exhaustion ... ok
+test tests::controller_preserves_newest_result_and_disposal ... ok
+test tests::mounted_form_action ... ok
+test tests::concurrent_locales_remain_isolated ... ok
+test tests::recovery_notice_survives_initial_search ... ok
+test tests::shared_views_and_explicit_bootstrap ... ok
+test tests::counted_profile_phrases ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/lib.rs (target/issue17/coverage/debug/deps/stackpress_example_profile_ui_web-bd04644cdbda33f5)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/issue17/coverage/debug/deps/stackpress_example_profile_ui_web-b1a3f8cf6d89f218)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/codec.rs (target/issue17/coverage/debug/deps/codec-0479fbc68e0a4736)
+
+running 8 tests
+test route_component_edge_table ... ok
+test foreign_delivery_and_conversion_failure ... ok
+test public_error_envelope_contract ... ok
+test strict_fixed_codec ... ok
+test reactive_head_failure_does_not_escape_the_request ... ok
+test encoded_route_contract ... ok
+test mounted_route_head_and_seed_agreement ... ok
+test initial_settings_and_detail_projection ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/config.rs (target/issue17/coverage/debug/deps/config-238f0b234be4248c)
+
+running 1 test
+test explicit_file_and_input_failures ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/pages.rs (target/issue17/coverage/debug/deps/pages-255a6f1c052eb598)
+
+running 2 tests
+test child_abort_never_renders ... ok
+test generated_html_and_safe_seed ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/reuse.rs (target/issue17/coverage/debug/deps/reuse-5cf5e325bfd0cfdc)
+
+running 1 test
+test one_operation_one_compiled_customization ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/sqlite.rs (target/issue17/coverage/debug/deps/sqlite-9e5fb63a0f43a59e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/issue17/coverage/debug/deps/stackpress_example_review_preview-80cbf52b52ab3e1d)
+
+running 7 tests
+test tests::launch_and_cookie_boundaries ... ok
+test tests::fresh_setup_and_attachment ... ok
+test tests::filesystem_admission_limits ... ok
+test tests::mounted_csr_and_fail_closed_assets ... ok
+test tests::native_csv_preview_confirm_and_export ... ok
+test tests::composed_host_controls_and_denials ... ok
+test tests::plain_http_preferences_and_stream_cancellation ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.08s
+
+     Running unittests src/main.rs (target/issue17/coverage/debug/deps/slice8_review-cdc46916c565abb4)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/cli.rs (target/issue17/coverage/debug/deps/cli-2cca399f90493fae)
+
+running 1 test
+test cli_setup_and_prebind_refusals ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.80s
+
+     Running unittests src/lib.rs (target/issue17/coverage/debug/deps/stackpress_example_ui_format-de3ba58c660518b0)
+
+running 1 test
+test tests::shared_render_and_payload ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.46s
+
+     Running unittests src/main.rs (target/issue17/coverage/debug/deps/ui_format-c9f508f23392806e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/issue17/coverage/debug/deps/stackpress_example_ui_gallery_shared-2fe8a6184b9272d8)
+
+running 8 tests
+test collection_proof::tests::presence_codec_boundaries ... ok
+test tests::local_form_validation ... ok
+test seed::tests::acknowledged_location_is_same_app ... ok
+test breadth::tests::early_draft_boundaries ... ok
+test suggestion_loader::tests::explicit_acquisition_results ... ok
+test seed::tests::seed_and_replay_admission ... ok
+test breadth::tests::rich_people_fixture_and_layout ... ok
+test tests::shared_gallery_renders_independent_async_roots ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running unittests src/lib.rs (target/issue17/coverage/debug/deps/stackpress_example_ui_gallery_web-d636f4b0fb064ea1)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/issue17/coverage/debug/deps/stackpress_example_ui_gallery_web-459b9e19f79cee11)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/finite.rs (target/issue17/coverage/debug/deps/finite-f691786fe14891b6)
+
+running 2 tests
+test preference_action_edges ... ok
+test locale_pages_and_csr_seed ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.14s
+
+     Running unittests examples/collections.rs (target/issue17/coverage/debug/examples/collections-0aab064dbbcae5d8)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/issue17/coverage/debug/deps/stackpress_example_ui_preferences_client-50f184bea969a260)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/issue17/coverage/debug/deps/stackpress_example_ui_preferences_shared-cdc77d5acdcbd7ce)
+
+running 1 test
+test tests::seed_phrases_and_ssr ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/issue17/coverage/debug/deps/stackpress_example_ui_preferences_web-d5390360815f0e24)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/issue17/coverage/debug/deps/stackpress_example_ui_preferences_web-b92d28e9c76640d2)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/finite.rs (target/issue17/coverage/debug/deps/finite-ef43293fa1302841)
+
+running 5 tests
+test protected_routes_reject_other_mounts ... ok
+test persistence_and_cookie_scope ... ok
+test protected_links_follow_the_configured_mount ... ok
+test host_selected_pages_and_route_denials ... ok
+test protected_exposure_fails_closed ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.93s
+
+     Running unittests src/lib.rs (target/issue17/coverage/debug/deps/stackpress_example_ui_stream_client-5c2f21f51c515d21)
+
+running 1 test
+test tests::admission ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/issue17/coverage/debug/deps/stackpress_example_ui_stream_shared-d45b34484750f1c7)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/issue17/coverage/debug/deps/stackpress_example_ui_stream_web-22ba0f6a5ceb9ddc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/issue17/coverage/debug/deps/stackpress_example_ui_stream_web-ef21862eda995e64)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/finite.rs (target/issue17/coverage/debug/deps/finite-bdd7a36698f08d8e)
+
+running 3 tests
+test child ... ignored, launched by parent watchdog
+test cli_protocol ... ok
+test watchdog ... ok
+
+test result: ok. 2 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 5.89s
+
+     Running unittests src/lib.rs (target/issue17/coverage/debug/deps/stackpress_framework_admin-08dc8942f295c3f9)
+
+running 6 tests
+test components::catalog_inputs::tests::scalar_admission_boundaries_and_absence ... ok
+test components::collection_inputs::tests::exact_collection_shapes_and_budgets ... ok
+test components::formatted::tests::partials_and_valid_blur_keep_distinct_state ... ok
+test components::formatted::tests::temporal_presentation_keeps_exact_commits_and_declared_precision ... ok
+test components::formatted::tests::typed_policies_and_wire_boundaries ... ok
+test components::formatted::tests::props_types_and_all_rendered_families ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.41s
+
+     Running tests/admin_state.rs (target/issue17/coverage/debug/deps/admin_state-b4abeece3bc1c3b9)
+
+running 2 tests
+test layout_identity_and_honest_acknowledgements ... ok
+test exact_state_roundtrip_and_generated_query_shape ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/catalog.rs (target/issue17/coverage/debug/deps/catalog-42e0f4a4ee0080be)
+
+running 3 tests
+test rating_minimum_reaches_native_controls ... ok
+test new_native_controls_have_escaped_labels_and_exact_seeds ... ok
+test new_catalog_roles_and_invalid_configuration_diagnostics ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
+
+     Running tests/pages.rs (target/issue17/coverage/debug/deps/pages-8dc0537cd62024fe)
+
+running 2 tests
+test invalid_page_selection_cannot_publish ... ok
+test deterministic_pages_keep_native_registration_separate ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/presentation.rs (target/issue17/coverage/debug/deps/presentation-f4fe46f363c3e6a0)
+
+running 2 tests
+test public_wording_and_labels ... ok
+test presence_is_only_offered_when_meaningful ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/roles.rs (target/issue17/coverage/debug/deps/roles-249fff6c3644fb72)
+
+running 7 tests
+test drafts_preserve_missing_null_false_zero_defaults_and_projection ... ok
+test generation::incompatible_control_and_json_path_diagnostics ... ok
+test text_view_formats_lists_without_mutating_values ... ok
+test concrete_adapters_render_escaped_semantic_controls ... ok
+test generation::fixed_precedence_and_registry_rejections ... ok
+test generation::unknown_props_components_alias_collision_and_coordinates ... ok
+test generation::deterministic_escaped_public_wrappers_and_import_diagnostics ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/transfer.rs (target/issue17/coverage/debug/deps/transfer-5e78287c2c4f51bc)
+
+running 5 tests
+test uncertain_or_malformed_acknowledgements_never_claim_imported ... ok
+test strict_parser_and_lowerable_budgets ... ok
+test typed_preview_headers_presence_and_literal_escapes ... ok
+test export_guard_round_trips_are_explicit_and_no_field_is_invented ... ok
+test export_does_not_inherit_import_only_cell_or_column_limits ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/lib.rs (target/issue17/coverage/debug/deps/stackpress_framework_view-0bc5df7f7d2f8abb)
+
+running 21 tests
+test leptos::stream::tests::child ... ignored, called by stream watchdog
+test preferences::locale::tests::invalid_configuration ... ok
+test preferences::locale::tests::compiled_prefixes_and_exact_return_context ... ok
+test leptos::stream::tests::budget_and_replay_contract ... ok
+test preferences::locale::tests::action_admission_and_persistence ... ok
+test preferences::locale::tests::precedence_and_routes ... ok
+test presentation_tests::confirm_actual_cookie_readback ... ok
+test presentation_tests::flash_consumption_bounds_and_root_dedupe ... ok
+test presentation_tests::explicit_host_policy_or_fail_closed ... ok
+test presentation_tests::flash_wire_expansion_is_bounded ... ok
+test presentation_tests::scope_and_theme_tokens ... ok
+test presentation_tests::single_writer_and_failure_preserve_content ... ok
+test presentation_tests::select_and_admit_settings ... ok
+test presentation_tests::unset_is_absence_and_legacy_readback_only ... ok
+test theme::tests::checked_external_tag_and_nonce ... ok
+test adapters::native::tests::corrupt_inputs_are_bounded_and_not_rewritten ... ok
+test adapters::native::tests::symlinks_and_non_regular_files_are_not_followed ... ok
+test adapters::native::tests::real_restart_and_invalid_updates ... ok
+test adapters::native::tests::abandoned_staging_is_bounded_and_never_followed ... ok
+test adapters::native::tests::fifo_open_cannot_hang ... ok
+test leptos::stream::tests::watchdog ... ok
+
+test result: ok. 20 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.19s
+
+     Running tests/contracts.rs (target/issue17/coverage/debug/deps/contracts-574c30d408cef3bf)
+
+running 3 tests
+test saved_theme_or_unset ... ok
+test hostile_seed_and_contract_drift ... ok
+test bounds_and_checked_metadata ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+     Running tests/leptos_async_renderer.rs (target/issue17/coverage/debug/deps/leptos_async_renderer-f39a75fd0e23d02c)
+
+running 3 tests
+test watchdog::exact_completion_marker ... ok
+test owned_render_migrates_between_threads ... ok
+test owned_async_renderer_exit_matrix ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/leptos_cleanup.rs (target/issue17/coverage/debug/deps/leptos_cleanup-9439edc2804269f8)
+
+running 5 tests
+test staged_render_releases_owner_state ... ok
+test no_runtime_never_panics ... ok
+test reactive_title_survives_owner_cleanup ... ok
+test every_render_exit_releases_reactive_state ... ok
+test unwind_child_releases_render_state ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/leptos_executor.rs (target/issue17/coverage/debug/deps/leptos_executor-66134833655d58a6)
+
+running 1 test
+test startup_is_explicit_idempotent_and_checked ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/leptos_routing.rs (target/issue17/coverage/debug/deps/leptos_routing-666f80c192984fcf)
+
+running 2 tests
+test compiled_path_uses_leptos_segments ... ok
+test head_router_and_limits ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/leptos_safety.rs (target/issue17/coverage/debug/deps/leptos_safety-62effb7537270a25)
+
+running 3 tests
+test acknowledged_theme_mapping_preserves_absence ... ok
+test script_and_html_escapers_do_not_drift ... ok
+test strict_local_locations_do_not_drift ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/leptos_system_theme.rs (target/issue17/coverage/debug/deps/leptos_system_theme-4c18cf6276313046)
+
+running 1 test
+test saved_choices_and_unset_head ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lifecycle.rs (target/issue17/coverage/debug/deps/lifecycle-27ae545920f64564)
+
+running 2 tests
+test duplicate_and_invalid_registration ... ok
+test stage_table_and_drop ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/policies.rs (target/issue17/coverage/debug/deps/policies-4caa5c9f3b1e95fd)
+
+running 8 tests
+test catalog_and_exact_parameters ... ok
+test compiled_capture_boundaries ... ok
+test serialization_preserves_cause_without_disclosure ... ok
+test status_and_lower_limits_roundtrip ... ok
+test metadata_and_assets_are_checked ... ok
+test asset_logical_byte_boundary_precedes_build_matching ... ok
+test escaped_assets_roundtrip ... ok
+test asset_decode_boundaries ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/presentation_registration.rs (target/issue17/coverage/debug/deps/presentation_registration-de55b98aea83bf78)
+
+running 6 tests
+test preferences_only_and_optional_asset ... ok
+test unselected_and_independent_flash ... ok
+test confirmation_denials_never_write_or_disclose_input ... ok
+test rejected_startup ... ok
+test selected_settings_and_assets ... ok
+test independent_protected_admission_and_lifecycle ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running unittests examples/issue17_parity.rs (target/issue17/coverage/debug/examples/issue17_parity-b79d13b03220836e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/issue17/coverage/debug/deps/stackpress_leptos-248d6047367b44b2)
+
+running 63 tests
+test components::breadth_tests::css_zoom_admission ... ok
+test components::breadth_tests::paging_and_geometry ... ok
+test components::breadth_tests::foreign_suggestion_completion_is_rejected ... ok
+test components::breadth_tests::disclosure_and_choice_admission ... ok
+test components::breadth_tests::typed_collections ... ok
+test components::breadth_tests::bounded_input_policies ... ok
+test components::breadth_tests::local_table_controller ... ok
+test components::core_tests::checked_display_boundaries ... ok
+test components::breadth_tests::native_dialog_mode_policies ... ok
+test components::breadth_tests::searchable_choice_boundaries ... ok
+test components::core_tests::select_admission_and_state ... ok
+test components::core_tests::text_and_collection_boundaries ... ok
+test components::tag_list::tests::exact_append_and_neighbour_removal ... ok
+test components::core_tests::pinned_leptos_raw_text_characterization ... ok
+test components::tests::safe_navigation_targets ... ok
+test components::tests::advanced_components_are_native_and_inert_before_javascript ... ok
+test components::breadth_tests::table_selection_is_native_before_javascript ... ok
+test components::tests::controls_render_native_accessible_markup ... ok
+test components::tests::list_layout_and_notifications ... ok
+test format::edit::tests::clear_fail_and_recover ... ok
+test format::edit::tests::composition_orders_cancel_and_duplicate ... ok
+test format::edit::tests::dirty_locale_and_region_context ... ok
+test format::edit::tests::escaped_ssr_editor_contract ... ok
+test format::edit::tests::explicit_offset_suffix_grammar ... ok
+test format::edit::tests::exact_bounds_and_budgets ... ok
+test components::core_tests::ordinary_semantic_markup ... ok
+test format::edit::tests::middle_edit_grouping_and_locale_during_composition ... ok
+test format::edit::tests::preserved_draft_and_fresh_composition ... ok
+test components::breadth_tests::table_layout_and_rating_minimum_markup ... ok
+test format::edit::tests::decimal_grammar_and_rounding ... ok
+test format::edit::tests::selection_and_paste ... ok
+test format::edit::tests::utf16_transport_budgets ... ok
+test format::edit::tests::temporal_values_and_bounds ... ok
+test format::number::tests::decimal_admission_and_limits ... ok
+test components::breadth_tests::collection_rows_and_plain_chips_are_accessible_before_javascript ... ok
+test format::tests::error_categories_and_retained_cause ... ok
+test format::tests::strict_wire_boundaries_preserve_utf8_safety ... ok
+test format::number::tests::decimal_precision_and_unicode ... ok
+test format::time::tests::dates_and_errors ... ok
+test components::breadth_tests::breadth_semantic_markup_and_hostile_text ... ok
+test format::time::tests::time_precision ... ok
+test language::tests::checked_language_bounds ... ok
+test language::tests::integer_plural_categories_and_text ... ok
+test language::tests::phrase_and_text_policy ... ok
+test language::tests::counted_node_translation ... ok
+test language::tests::scoped_replacement_and_disposal ... ok
+test language::tests::translated_nodes_render_as_safe_views ... ok
+test resources::tests::cancellation_before_poll_and_after_completion ... ok
+test replay::tests::replay_roundtrip_and_limits ... ok
+test state::tests::configurable_notification_budgets ... ok
+test format::time::tests::dst_boundaries_and_offsets ... ok
+test state::tests::providers_are_explicit_isolated_and_disposed ... ok
+test state::tests::notification_limits_duplicates_and_dismissal ... ok
+test stream::extracted_tests::budget_replay_and_pending_overflow ... ok
+test stream::extracted_tests::explicit_completion_protocol ... ok
+test rich::tests::explicit_http_authorities_only ... ok
+test rich::tests::closed_policy_and_budgets ... ok
+test rich::tests::markdown_and_exact_budget_edges ... ok
+test rich::tests::mutation_corpus_is_stable ... ok
+test format::edit::tests::identical_native_read_keeps_clean_cancellation_base ... ok
+test format::phone::tests::invalid_and_bounded ... ok
+test format::phone::tests::canonical_and_display ... ok
+test format::edit::tests::phone_drafts_and_switching ... ok
+
+test result: ok. 63 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.43s
+
+     Running tests/async_feasibility.rs (target/issue17/coverage/debug/deps/async_feasibility-6641d0ffb1e88bb3)
+
+running 8 tests
+test watchdog::exact_completion_marker ... ok
+test resource_success_control ... ok
+test cooperative_cancel_releases_loader ... ok
+test cooperative_success_releases_loader ... ok
+test resource_cancellation_counterexample ... ok
+test cooperative_unwind_releases_loader ... ok
+test resource_unwind_counterexample ... ok
+test unmatched_child_filter_is_rejected - should panic ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/render_seams.rs (target/issue17/coverage/debug/deps/render_seams-8de2356a750cd481)
+
+running 3 tests
+test zero_chunk_budget_is_never_unlimited ... ok
+test stream_drop_before_demand_joins_local_owner ... ok
+test native_seams_preserve_errors_owner_and_send_boundaries ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/suggestions.rs (target/issue17/coverage/debug/deps/suggestions-bf93a0ccb9f7c082)
+
+running 2 tests
+test watchdog::exact_completion_marker ... ok
+test yielding_suggestion_lifetime ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+
+    Finished report saved to /private/tmp/stackpress-issue17-m1/evidence/coverage/initial-combined.json
+{
+  "stackpress": {
+    "covered": 0,
+    "executable": 0,
+    "percent": null
+  },
+  "stackpress-framework-view": {
+    "covered": 1783,
+    "executable": 1839,
+    "percent": 96.95486677542142
+  },
+  "stackpress-framework-admin": {
+    "covered": 2503,
+    "executable": 2774,
+    "percent": 90.23071377072819
+  },
+  "stackpress-leptos": {
+    "covered": 5601,
+    "executable": 6089,
+    "percent": 91.98554770898342
+  },
+  "stackpress-example-profile-ui-web": {
+    "covered": 343,
+    "executable": 489,
+    "percent": 70.14314928425358
+  },
+  "stackpress-example-profile-ui-shared": {
+    "covered": 619,
+    "executable": 660,
+    "percent": 93.78787878787878
+  },
+  "stackpress-example-profile-ui-client": {
+    "covered": 83,
+    "executable": 90,
+    "percent": 92.22222222222223
+  },
+  "stackpress-example-review-preview": {
+    "covered": 769,
+    "executable": 886,
+    "percent": 86.79458239277652
+  },
+  "stackpress-example-ui-stream-web": {
+    "covered": 296,
+    "executable": 306,
+    "percent": 96.73202614379085
+  },
+  "stackpress-example-ui-stream-shared": {
+    "covered": 39,
+    "executable": 41,
+    "percent": 95.1219512195122
+  },
+  "stackpress-example-ui-stream-client": {
+    "covered": 16,
+    "executable": 16,
+    "percent": 100.0
+  },
+  "stackpress-example-ui-preferences-web": {
+    "covered": 296,
+    "executable": 323,
+    "percent": 91.64086687306502
+  },
+  "stackpress-example-ui-preferences-shared": {
+    "covered": 135,
+    "executable": 163,
+    "percent": 82.82208588957056
+  },
+  "stackpress-example-ui-preferences-client": {
+    "covered": 0,
+    "executable": 0,
+    "percent": null
+  },
+  "stackpress-example-ui-gallery-web": {
+    "covered": 262,
+    "executable": 302,
+    "percent": 86.75496688741723
+  },
+  "stackpress-example-ui-gallery-shared": {
+    "covered": 733,
+    "executable": 977,
+    "percent": 75.02558853633572
+  },
+  "stackpress-example-ui-format": {
+    "covered": 241,
+    "executable": 280,
+    "percent": 86.07142857142857
+  },
+  "generated-admin-web": {
+    "covered": 10326,
+    "executable": 12397,
+    "percent": 83.29434540614665
+  },
+  "generated-admin-shared": {
+    "covered": 7252,
+    "executable": 10203,
+    "percent": 71.07713417622269
+  },
+  "generated-admin-tool": {
+    "covered": 219,
+    "executable": 238,
+    "percent": 92.01680672268908
+  }
+}
+production line counters: {
+  "stackpress": {
+    "covered": 0,
+    "executable": 0,
+    "percent": null,
+    "inline_test_exclusions": []
+  },
+  "stackpress-framework-view": {
+    "covered": 1712,
+    "executable": 1750,
+    "percent": 97.82857142857142,
+    "inline_test_exclusions": [
+      {
+        "file": "crates/framework/framework-view/src/theme.rs",
+        "first": 57,
+        "last": 80
+      }
+    ]
+  },
+  "stackpress-framework-admin": {
+    "covered": 2292,
+    "executable": 2534,
+    "percent": 90.44988161010261,
+    "inline_test_exclusions": [
+      {
+        "file": "crates/framework/framework-admin/src/components/catalog_inputs.rs",
+        "first": 119,
+        "last": 170
+      },
+      {
+        "file": "crates/framework/framework-admin/src/components/collection_inputs.rs",
+        "first": 145,
+        "last": 177
+      }
+    ]
+  },
+  "stackpress-leptos": {
+    "covered": 4756,
+    "executable": 5059,
+    "percent": 94.0106740462542,
+    "inline_test_exclusions": [
+      {
+        "file": "crates/leptos/src/components/tag_list.rs",
+        "first": 175,
+        "last": 214
+      },
+      {
+        "file": "crates/leptos/src/format.rs",
+        "first": 140,
+        "last": 208
+      },
+      {
+        "file": "crates/leptos/src/format_number.rs",
+        "first": 93,
+        "last": 174
+      },
+      {
+        "file": "crates/leptos/src/format_phone.rs",
+        "first": 58,
+        "last": 103
+      },
+      {
+        "file": "crates/leptos/src/format_time.rs",
+        "first": 232,
+        "last": 387
+      },
+      {
+        "file": "crates/leptos/src/replay.rs",
+        "first": 75,
+        "last": 116
+      },
+      {
+        "file": "crates/leptos/src/resources.rs",
+        "first": 143,
+        "last": 178
+      },
+      {
+        "file": "crates/leptos/src/rich.rs",
+        "first": 163,
+        "last": 293
+      },
+      {
+        "file": "crates/leptos/src/stream.rs",
+        "first": 342,
+        "last": 404
+      }
+    ]
+  },
+  "stackpress-example-profile-ui-web": {
+    "covered": 326,
+    "executable": 437,
+    "percent": 74.59954233409611,
+    "inline_test_exclusions": []
+  },
+  "stackpress-example-profile-ui-shared": {
+    "covered": 485,
+    "executable": 517,
+    "percent": 93.81044487427467,
+    "inline_test_exclusions": [
+      {
+        "file": "examples/profile-ui/shared/src/preferences.rs",
+        "first": 124,
+        "last": 223
+      }
+    ]
+  },
+  "stackpress-example-profile-ui-client": {
+    "covered": 68,
+    "executable": 74,
+    "percent": 91.89189189189189,
+    "inline_test_exclusions": [
+      {
+        "file": "examples/profile-ui/client/src/seed.rs",
+        "first": 140,
+        "last": 161
+      }
+    ]
+  },
+  "stackpress-example-review-preview": {
+    "covered": 733,
+    "executable": 838,
+    "percent": 87.47016706443914,
+    "inline_test_exclusions": []
+  },
+  "stackpress-example-ui-stream-web": {
+    "covered": 272,
+    "executable": 278,
+    "percent": 97.84172661870504,
+    "inline_test_exclusions": []
+  },
+  "stackpress-example-ui-stream-shared": {
+    "covered": 35,
+    "executable": 35,
+    "percent": 100.0,
+    "inline_test_exclusions": []
+  },
+  "stackpress-example-ui-stream-client": {
+    "covered": 5,
+    "executable": 5,
+    "percent": 100.0,
+    "inline_test_exclusions": [
+      {
+        "file": "examples/ui-stream/client/src/lib.rs",
+        "first": 55,
+        "last": 73
+      }
+    ]
+  },
+  "stackpress-example-ui-preferences-web": {
+    "covered": 278,
+    "executable": 294,
+    "percent": 94.5578231292517,
+    "inline_test_exclusions": []
+  },
+  "stackpress-example-ui-preferences-shared": {
+    "covered": 84,
+    "executable": 104,
+    "percent": 80.76923076923077,
+    "inline_test_exclusions": [
+      {
+        "file": "examples/ui-preferences/shared/src/lib.rs",
+        "first": 115,
+        "last": 167
+      }
+    ]
+  },
+  "stackpress-example-ui-preferences-client": {
+    "covered": 0,
+    "executable": 0,
+    "percent": null,
+    "inline_test_exclusions": []
+  },
+  "stackpress-example-ui-gallery-web": {
+    "covered": 243,
+    "executable": 270,
+    "percent": 90.0,
+    "inline_test_exclusions": []
+  },
+  "stackpress-example-ui-gallery-shared": {
+    "covered": 569,
+    "executable": 743,
+    "percent": 76.5814266487214,
+    "inline_test_exclusions": [
+      {
+        "file": "examples/ui-gallery/shared/src/breadth.rs",
+        "first": 331,
+        "last": 406
+      },
+      {
+        "file": "examples/ui-gallery/shared/src/collection_proof.rs",
+        "first": 166,
+        "last": 180
+      },
+      {
+        "file": "examples/ui-gallery/shared/src/seed.rs",
+        "first": 100,
+        "last": 188
+      }
+    ]
+  },
+  "stackpress-example-ui-format": {
+    "covered": 234,
+    "executable": 254,
+    "percent": 92.1259842519685,
+    "inline_test_exclusions": []
+  },
+  "generated-admin-web": {
+    "covered": 9867,
+    "executable": 11386,
+    "percent": 86.65905497979975,
+    "inline_test_exclusions": [
+      {
+        "file": "examples/generated-admin/web/src/host/origin.rs",
+        "first": 55,
+        "last": 114
+      }
+    ]
+  },
+  "generated-admin-shared": {
+    "covered": 6866,
+    "executable": 8690,
+    "percent": 79.01035673187572,
+    "inline_test_exclusions": []
+  },
+  "generated-admin-tool": {
+    "covered": 216,
+    "executable": 231,
+    "percent": 93.50649350649351,
+    "inline_test_exclusions": []
+  }
+}
+supervisor: child 48955 reaped; peak target 4326588 KiB

@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "id": "20261028T234707.180005Z-ca8fe9ca7824",
+  "started_at": "2026-10-28T23:47:07.180005+00:00",
+  "status": "failed",
+  "label": "issue17 M1 official regeneration and workspace checks",
+  "kind": "test",
+  "scope": "selected",
+  "cache": "unknown",
+  "command": [
+    "python3",
+    "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/proofs/supervise.py",
+    "--target",
+    "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/target/issue17",
+    "--seconds",
+    "1800",
+    "--",
+    "python3",
+    "/private/tmp/stackpress-issue17-m1/workspace.py"
+  ],
+  "cwd": "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17",
+  "commit": "0c07794b7233ddd5df64ade802cff52e29f2a69a",
+  "branch": "trial/3-issue17-leptos-library",
+  "dirty": true,
+  "host": "macOS-26.6.2-arm64-arm-64bit",
+  "machine": "arm64",
+  "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+  "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+  "environment": {
+    "CARGO_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/target/issue17",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_BUILD_JOBS": "2"
+  },
+  "cargo_activity": {
+    "compiling": 262,
+    "checking": 153,
+    "documenting": 0
+  },
+  "cargo_build_stages": [
+    {
+      "profile": "dev",
+      "seconds": 0.54
+    },
+    {
+      "profile": "dev",
+      "seconds": 0.22
+    },
+    {
+      "profile": "dev",
+      "seconds": 0.2
+    },
+    {
+      "profile": "dev",
+      "seconds": 20.37
+    },
+    {
+      "profile": "dev",
+      "seconds": 0.6
+    },
+    {
+      "profile": "dev",
+      "seconds": 0.28
+    },
+    {
+      "profile": "dev",
+      "seconds": 14.63
+    },
+    {
+      "profile": "test",
+      "seconds": 146.0
+    },
+    {
+      "profile": "test",
+      "seconds": 26.49
+    }
+  ],
+  "log": "runs/20261028T234707.180005Z-ca8fe9ca7824.log",
+  "ended_at": "2026-10-28T23:55:56.759597+00:00",
+  "command_seconds": 529.314681,
+  "exit_code": 1,
+  "cargo_build_seconds": 209.33
+}

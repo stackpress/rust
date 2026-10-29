@@ -1,0 +1,38 @@
+$ cargo fmt --all
+$ cargo clippy --offline --locked -p stackpress-framework-view --features web-preferences --all-targets -- -D warnings
+    Checking stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view)
+    Finished `dev` profile [unoptimized] target(s) in 1.42s
+$ cargo clippy --offline --locked -p stackpress-framework-view --features web-flash --all-targets -- -D warnings
+    Checking stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view)
+    Finished `dev` profile [unoptimized] target(s) in 0.58s
+$ cargo clippy --offline --locked -p stackpress-framework-view --features web-preferences,web-flash --all-targets -- -D warnings
+    Checking stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view)
+error[E0308]: `?` operator has incompatible types
+  --> crates/framework/framework-view/tests/presentation_registration.rs:53:37
+   |
+53 |             .set("x-issued-cookie", service.issue(&notice)?)?;
+   |                                     ^^^^^^^^^^^^^^^^^^^^^^^ expected `&str`, found `String`
+   |
+   = note: `?` operator cannot convert from `std::string::String` to `&str`
+help: consider borrowing here
+   |
+53 |             .set("x-issued-cookie", &service.issue(&notice)?)?;
+   |                                     +
+
+For more information about this error, try `rustc --explain E0308`.
+error: could not compile `stackpress-framework-view` (test "presentation_registration") due to 1 previous error
+Traceback (most recent call last):
+  File "/private/tmp/stackpress-issue15-m2-20261028/check-m2.py", line 11, in <module>
+    run('cargo','clippy','--offline','--locked','-p','stackpress-framework-view','--features',features,'--all-targets','--','-D','warnings')
+  File "/private/tmp/stackpress-issue15-m2-20261028/check-m2.py", line 5, in run
+    subprocess.run(command,check=True,timeout=900,**kwargs)
+  File "/Users/cblanquera/.pyenv/versions/3.11.4/lib/python3.11/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '('cargo', 'clippy', '--offline', '--locked', '-p', 'stackpress-framework-view', '--features', 'web-preferences,web-flash', '--all-targets', '--', '-D', 'warnings')' returned non-zero exit status 101.
+supervisor: child 65776 reaped; peak target 1604732 KiB
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/supervise.py", line 75, in <module>
+    main()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/supervise.py", line 68, in main
+    raise subprocess.CalledProcessError(child.returncode, command)
+subprocess.CalledProcessError: Command '['python3', '/private/tmp/stackpress-issue15-m2-20261028/check-m2.py']' returned non-zero exit status 1.

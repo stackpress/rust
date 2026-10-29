@@ -1,0 +1,2 @@
+PASS preferences-browser
+supervisor: child 55413 reaped; peak target 2060980 KiB

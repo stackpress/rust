@@ -1,0 +1,2 @@
+PASS M1 scope, source/syntax and whitespace audit: 121 paths
+supervisor: child 41125 reaped; peak target 4826360 KiB

@@ -1,0 +1,11 @@
+installed-profile-csr: 0
+installed-plugin-generate-tool-clean: 0
+installed-plugin-generate: 0
+installed-plugin-wasm-clean: 0
+installed-plugin-csr: 0
+installed-plugin-bindgen: 0
+installed-disabled-generate-tool-clean: 0
+installed-disabled-generate: 0
+installed-disabled-wasm-clean: 0
+installed-disabled-csr: 0
+installed-disabled-bindgen: 0

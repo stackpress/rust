@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "id": "20261028T054824.898630Z-e7f6167d4153",
+  "started_at": "2026-10-28T05:48:24.898630+00:00",
+  "status": "passed",
+  "label": "coordinator M3 verify: admin proof.py browser roles",
+  "kind": "test",
+  "scope": "selected",
+  "cache": "warm",
+  "command": [
+    "python3",
+    "examples/generated-admin/proof.py",
+    "browser",
+    "--suite",
+    "roles"
+  ],
+  "cwd": "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-s8-polish",
+  "commit": "75756970ef9f7e6c35d9a354b3806261a83f5a20",
+  "branch": "trial/3-s8-polish",
+  "dirty": true,
+  "host": "macOS-26.6.2-arm64-arm-64bit",
+  "machine": "arm64",
+  "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+  "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+  "environment": {
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_BUILD_JOBS": "6"
+  },
+  "cargo_activity": {
+    "compiling": 0,
+    "checking": 0,
+    "documenting": 0
+  },
+  "cargo_build_stages": [],
+  "log": "runs/20261028T054824.898630Z-e7f6167d4153.log",
+  "ended_at": "2026-10-28T05:49:25.187795+00:00",
+  "command_seconds": 60.141906,
+  "exit_code": 0,
+  "cargo_build_seconds": null
+}

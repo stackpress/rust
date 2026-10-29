@@ -1,0 +1,37 @@
+PASS five identical normal dependency graphs (only moved paths normalized)
+{
+  "graphs": {
+    "default": {
+      "lines": 104,
+      "sha256": "8c0d5e79550cd0805a7aeceb48906fb5cb83beed6767ae9c5e2af87f434263ed"
+    },
+    "server": {
+      "lines": 108,
+      "sha256": "0a6a25fbbb9b5502986ba4f96f966551a3a36649fcaeab67429a9f322d3780b8"
+    },
+    "server-http": {
+      "lines": 111,
+      "sha256": "0961ec74aae0139b6696c7f81e8546c3963aa868554d3c3f21d9952d62453456"
+    },
+    "server-http-host": {
+      "lines": 173,
+      "sha256": "cc6178ec154cb164d955bcae07c35d57e5e8739513ff84216d1adb4d9cbb9830"
+    },
+    "server-http-host-tls": {
+      "lines": 193,
+      "sha256": "43491eaa541f2d43b494260cc9a779b4bcc1a145654dbc190f2bcfb7c095e037"
+    }
+  },
+  "manifests": 48,
+  "moved_files": {
+    "crates/server": 58,
+    "crates/server-http": 50
+  },
+  "rust_edits": [
+    "crates/server/server/src/core_tests.rs",
+    "crates/server/server/tests/concurrency.rs",
+    "crates/server/server/tests/ownership.rs"
+  ],
+  "new_broken_links": []
+}
+PASS manifests preserve every non-path value; lock/history unchanged; only three Rust include paths changed

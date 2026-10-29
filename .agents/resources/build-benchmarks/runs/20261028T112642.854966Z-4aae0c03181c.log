@@ -1,0 +1,1311 @@
+   Compiling stackpress-example-ui-gallery-client v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/examples/ui-gallery/client)
+   Compiling stackpress-example-ui-preferences-client v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/examples/ui-preferences/client)
+   Compiling stackpress-example-profile-ui-native v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/examples/profile-ui/native)
+   Compiling stackpress-example-ui-stream-client v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/examples/ui-stream/client)
+   Compiling generated-admin-client v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/examples/generated-admin/client)
+   Compiling stackpress-example-profile-ui-client v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/examples/profile-ui/client)
+   Compiling stackpress-example-ui-format v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/examples/ui-format)
+    Finished `test` profile [unoptimized] target(s) in 1.70s
+   Doc-tests data_quickstart
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests generated_admin_client
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests generated_admin_shared
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests generated_admin_tool
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests generated_admin_web
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests generated_workspace_app
+
+running 1 test
+test examples/generated-workspace/app/src/lib.rs - (line 3) - compile ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+all doctests ran in 0.70s; merged doctests compilation took 0.28s
+   Doc-tests generated_workspace_contracts
+
+running 1 test
+test examples/generated-workspace/contracts/src/lib.rs - (line 3) ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+all doctests ran in 0.78s; merged doctests compilation took 0.32s
+   Doc-tests generated_workspace_tool
+
+running 1 test
+test examples/generated-workspace/tool/src/maintenance.rs - maintenance::run (line 33) - compile ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+all doctests ran in 0.66s; merged doctests compilation took 0.24s
+   Doc-tests stackpress
+
+running 1 test
+test src/lib.rs - (line 27) ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+all doctests ran in 0.84s; merged doctests compilation took 0.39s
+   Doc-tests stackpress_cli
+
+running 53 tests
+test tools/cli/src/control.rs - control::Control::new (line 85) ... ok
+test tools/cli/src/control.rs - control::Control::format (line 110) ... ok
+test tools/cli/src/control.rs - control::Control::error (line 225) ... ok
+test tools/cli/src/control.rs - control::ColorMode (line 10) ... ok
+test tools/cli/src/control.rs - control::Control::input (line 350) ... ok
+test tools/cli/src/args.rs - args::Terminal::parse_os (line 116) ... ok
+test tools/cli/src/args.rs - args::Terminal::parse (line 96) ... ok
+test tools/cli/src/args.rs - args::Terminal::expect (line 268) ... ok
+test tools/cli/src/args.rs - args::Terminal::parse_with_options (line 150) ... ok
+test tools/cli/src/control.rs - control::Control::info (line 250) ... ok
+test tools/cli/src/control.rs - control::Control::success (line 275) ... ok
+test tools/cli/src/control.rs - control::Control::warning (line 325) ... ok
+test tools/cli/src/control.rs - control::Control::system (line 300) ... ok
+test tools/cli/src/entry.rs - entry::main_with (line 28) ... ok
+test tools/cli/src/control.rs - control::OutputEnvironment::stderr (line 57) ... ok
+test tools/cli/src/control.rs - control::Control::write (line 171) ... ok
+test tools/cli/src/execution.rs - execution::CliSinks<'a>::new (line 28) ... ok
+test tools/cli/src/execution.rs - execution::CliContext (line 45) ... ok
+test tools/cli/src/control.rs - control::Control::output (line 200) ... ok
+test tools/cli/src/entry.rs - entry::main_with_args (line 60) ... ok
+test tools/cli/src/prompt/driver.rs - prompt::driver::BufferedInput<std::iter::Empty<PromptEvent>>::lines (line 140) ... ok
+test tools/cli/src/prompt/driver.rs - prompt::driver::prompt_native (line 407) - compile ... ok
+test tools/cli/src/prompt/driver.rs - prompt::driver::PromptCancellation::cancel (line 45) ... ok
+test tools/cli/src/execution.rs - execution::run (line 93) ... ok
+test tools/cli/src/prompt/driver.rs - prompt::driver::PromptCancellation::is_cancelled (line 60) ... ok
+test tools/cli/src/lib.rs - (line 9) ... ok
+test tools/cli/src/prompt/driver.rs - prompt::driver::PromptCancellation::new (line 31) ... ok
+test tools/cli/src/prompt/driver.rs - prompt::driver::BufferedInput<I>::new (line 123) ... ok
+test tools/cli/src/prompt/driver.rs - prompt::driver::prompt (line 192) ... ok
+test tools/cli/src/prompt/driver.rs - prompt::driver::PromptCancellation::cancelled (line 75) ... ok
+test tools/cli/src/prompt/mod.rs - prompt (line 8) ... ok
+test tools/cli/src/prompt/options.rs - prompt::options::PromptOptions::async_validator (line 298) ... ok
+test tools/cli/src/prompt/options.rs - prompt::options::PromptOptions::transform (line 338) ... ok
+test tools/cli/src/prompt/options.rs - prompt::options::PromptError::callback (line 40) ... ok
+test tools/cli/src/prompt/options.rs - prompt::options::PromptOptions::new (line 201) ... ok
+test tools/cli/src/prompt/options.rs - prompt::options::PromptOptions::pattern (line 230) ... ok
+test tools/cli/src/prompt/driver.rs - prompt::driver::prompt_native (line 392) ... ok
+test tools/cli/src/prompt/options.rs - prompt::options::PromptOptions::validator (line 275) ... ok
+test tools/cli/src/prompt/options.rs - prompt::options::PromptOptions::without_pattern (line 261) ... ok
+test tools/cli/src/prompt/options.rs - prompt::options::PromptOptions::with_pattern (line 246) ... ok
+test tools/cli/src/prompt/options.rs - prompt::options::PromptOptions::without_transform (line 360) ... ok
+test tools/cli/src/tty.rs - tty::TtyInput::acquire (line 198) - compile ... ok
+test tools/cli/src/tty.rs - tty::TtyInput::close (line 237) - compile ... ok
+test tools/cli/src/prompt/options.rs - prompt::options::PromptOptions::without_validator (line 324) ... ok
+test tools/cli/src/prompt/options.rs - prompt::options::Validator::asynchronous (line 128) ... ok
+test tools/cli/src/prompt/render.rs - prompt::render::PromptState::render (line 57) ... ok
+test tools/cli/src/tty.rs - tty::TtySession::acquire (line 41) - compile ... ok
+test tools/cli/src/tty.rs - tty::TtySession::close (line 122) - compile ... ok
+test tools/cli/src/tty.rs - tty::TtySession::poll (line 90) - compile ... ok
+test tools/cli/src/prompt/options.rs - prompt::options::Validator::sync (line 112) ... ok
+test tools/cli/src/prompt/state.rs - prompt::state::PromptState::new (line 115) ... ok
+test tools/cli/src/prompt/state.rs - prompt::state::PromptState::apply (line 188) ... ok
+test tools/cli/src/prompt/render.rs - prompt::render::RenderOptions (line 18) ... ok
+
+test result: ok. 53 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+all doctests ran in 1.26s; merged doctests compilation took 0.74s
+   Doc-tests stackpress_example_capability_host
+
+running 1 test
+test examples/capability-host/src/lib.rs - (line 9) ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+
+running 1 test
+test examples/capability-host/src/lib.rs - (line 25) - compile fail ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+all doctests ran in 0.90s; merged doctests compilation took 0.33s
+   Doc-tests stackpress_example_generated_profile
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests stackpress_example_profile_codegen
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests stackpress_example_profile_ui_client
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests stackpress_example_profile_ui_contracts
+
+running 1 test
+test examples/profile-ui/contracts/src/reply.rs - reply::decode_search_reply (line 123) ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+all doctests ran in 0.65s; merged doctests compilation took 0.22s
+   Doc-tests stackpress_example_profile_ui_gateway
+
+running 1 test
+test examples/profile-ui/gateway/src/options.rs - options::LaunchOptions::parse (line 92) ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+all doctests ran in 1.23s; merged doctests compilation took 0.80s
+   Doc-tests stackpress_example_profile_ui_native
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests stackpress_example_profile_ui_shared
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests stackpress_example_profile_ui_web
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests stackpress_example_review_preview
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests stackpress_example_sql_profile
+
+running 1 test
+test examples/sql-profile/src/lib.rs - (line 7) - compile ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+all doctests ran in 0.79s; merged doctests compilation took 0.35s
+   Doc-tests stackpress_example_ui_format
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests stackpress_example_ui_gallery_client
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests stackpress_example_ui_gallery_shared
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests stackpress_example_ui_gallery_web
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests stackpress_example_ui_preferences_client
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests stackpress_example_ui_preferences_shared
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests stackpress_example_ui_preferences_web
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests stackpress_example_ui_stream_client
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests stackpress_example_ui_stream_shared
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests stackpress_example_ui_stream_web
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests stackpress_framework_admin
+
+running 2 tests
+test crates/framework/framework-admin/src/lib.rs - (line 7) ... ok
+test crates/framework/framework-admin/src/transfer/mod.rs - transfer (line 3) ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+all doctests ran in 0.98s; merged doctests compilation took 0.52s
+   Doc-tests stackpress_framework_language
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests stackpress_framework_preferences
+
+running 1 test
+test crates/framework/framework-preferences/src/lib.rs - (line 10) ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+all doctests ran in 0.69s; merged doctests compilation took 0.24s
+   Doc-tests stackpress_framework_schema
+
+running 2 tests
+test crates/framework/framework-schema/src/lib.rs - Input (line 314) ... ok
+test crates/framework/framework-schema/src/lib.rs - Patch (line 341) ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+all doctests ran in 0.75s; merged doctests compilation took 0.30s
+   Doc-tests stackpress_framework_sql
+
+running 4 tests
+test crates/framework/framework-sql/src/lib.rs - (line 7) - compile ... ok
+test crates/framework/framework-sql/src/stores.rs - stores::Loaded<T>::try_map (line 55) ... ok
+test crates/framework/framework-sql/src/ddl_policy.rs - ddl_policy::mysql_definitions (line 17) ... ok
+test crates/framework/framework-sql/src/migrations.rs - migrations (line 19) ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+
+running 1 test
+test crates/framework/framework-sql/src/migrations.rs - migrations::RenameMap (line 333) - compile fail ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+all doctests ran in 0.88s; merged doctests compilation took 0.34s
+   Doc-tests stackpress_framework_ui
+
+running 17 tests
+test crates/framework/framework-ui/src/components/collection_state.rs - components::collection_state::BoundedList (line 25) ... ok
+test crates/framework/framework-ui/src/components/display_values.rs - components::display_values (line 3) ... ok
+test crates/framework/framework-ui/src/async_render.rs - async_render::AsyncLeptosRenderer (line 35) ... ok
+test crates/framework/framework-ui/src/components/controls.rs - components::controls::__component_input (line 115) ... ok
+test crates/framework/framework-ui/src/components/controls.rs - components::controls::InputProps (line 134) ... ok
+test crates/framework/framework-ui/src/components/overlay.rs - components::overlay::Popover (line 32) ... ok
+test crates/framework/framework-ui/src/components/choice.rs - components::choice::ChoiceState (line 33) ... ok
+test crates/framework/framework-ui/src/resources.rs - resources::cancel_on_cleanup (line 100) - compile ... ok
+test crates/framework/framework-ui/src/components/overlay.rs - components::overlay::PopoverProps (line 58) ... ok
+test crates/framework/framework-ui/src/components/controls.rs - components::controls::safe_href (line 36) ... ok
+test crates/framework/framework-ui/src/components/controls.rs - components::controls::Input (line 115) ... ok
+test crates/framework/framework-ui/src/render.rs - render::LeptosRenderer (line 63) ... ok
+test crates/framework/framework-ui/src/components/paging.rs - components::paging::PageWindow (line 18) ... ok
+test crates/framework/framework-ui/src/language.rs - language::Language::text (line 157) ... ok
+test crates/framework/framework-ui/src/components/overlay.rs - components::overlay::__component_popover (line 32) ... ok
+test crates/framework/framework-ui/src/stream.rs - stream::StreamLeptosRenderer (line 81) ... ok
+test crates/framework/framework-ui/src/components/table_state.rs - components::table_state::TableState (line 16) ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+
+running 1 test
+test crates/framework/framework-ui/src/resources.rs - resources::cancel_on_cleanup (line 108) - compile fail ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.14s
+
+all doctests ran in 1.80s; merged doctests compilation took 1.19s
+   Doc-tests stackpress_framework_view
+
+running 2 tests
+test crates/framework/framework-view/src/policy.rs - policy::BasePath::new (line 124) ... ok
+test crates/framework/framework-view/src/lib.rs - PageSnapshot (line 68) ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 1 test
+test crates/framework/framework-view/src/server.rs - server::PageSpec (line 19) - compile fail ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+all doctests ran in 0.75s; merged doctests compilation took 0.24s
+   Doc-tests stackpress_idea
+
+running 1 test
+test crates/idea/idea/src/lib.rs - generate (line 73) - compile ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+all doctests ran in 0.72s; merged doctests compilation took 0.26s
+   Doc-tests stackpress_idea_parser
+
+running 22 tests
+test crates/idea/idea-parser/src/lib.rs - ParseLimits::max_collection (line 69) ... ok
+test crates/idea/idea-parser/src/json.rs - json::CompiledSchema::from_json (line 156) ... ok
+test crates/idea/idea-parser/src/lib.rs - ParseLimits::max_nodes (line 58) ... ok
+test crates/idea/idea-parser/src/json.rs - json::SchemaConfig::to_json (line 120) ... ok
+test crates/idea/idea-parser/src/json.rs - json::CompiledSchema::to_json (line 138) ... ok
+test crates/idea/idea-parser/src/lib.rs - finalize (line 130) ... ok
+test crates/idea/idea-parser/src/lib.rs - (line 7) ... ok
+test crates/idea/idea-parser/src/json.rs - json::SchemaConfig::from_json_named (line 45) ... ok
+test crates/idea/idea-parser/src/json.rs - json::SchemaConfig::from_json (line 29) ... ok
+test crates/idea/idea-parser/src/json.rs - json::SchemaConfig::validate (line 67) ... ok
+test crates/idea/idea-parser/src/stages.rs - stages::Ast::syntax (line 115) ... ok
+test crates/idea/idea-parser/src/stages.rs - stages::Ast::source (line 100) ... ok
+test crates/idea/idea-parser/src/stages.rs - stages::SourceFile::name (line 67) ... ok
+test crates/idea/idea-parser/src/stages.rs - stages::finalize_ast (line 322) ... ok
+test crates/idea/idea-parser/src/references.rs - references::finalize_with_references (line 28) ... ok
+test crates/idea/idea-parser/src/stages.rs - stages::SourceFile::text (line 78) ... ok
+test crates/idea/idea-parser/src/lib.rs - parse (line 109) ... ok
+test crates/idea/idea-parser/src/stages.rs - stages::compile_ast (line 282) ... ok
+test crates/idea/idea-parser/src/stages.rs - stages::SourceFile::new (line 29) ... ok
+test crates/idea/idea-parser/src/stages.rs - stages::compile_ast_with_references (line 299) ... ok
+test crates/idea/idea-parser/src/stages.rs - stages::parse_ast (line 245) ... ok
+test crates/idea/idea-parser/src/token.rs - token::tokenize (line 54) ... ok
+
+test result: ok. 22 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+all doctests ran in 0.70s; merged doctests compilation took 0.25s
+   Doc-tests stackpress_idea_transformer
+
+running 13 tests
+test crates/idea/idea-transformer/src/output.rs - output::OutputWorkspace::new (line 61) - compile ... ok
+test crates/idea/idea-transformer/src/output.rs - output::OutputWorkspace::check (line 146) - compile ... ok
+test crates/idea/idea-transformer/src/output.rs - output::OutputWorkspace::install (line 183) - compile ... ok
+test crates/idea/idea-transformer/src/output.rs - output::OutputWorkspace::install_report (line 203) - compile ... ok
+test crates/idea/idea-transformer/src/output.rs - output::OutputWorkspace::recover (line 330) - compile ... ok
+test crates/idea/idea-transformer/src/source/native.rs - source::native::ProjectLoader::new (line 23) - compile ... ok
+test crates/idea/idea-transformer/src/plan/mod.rs - plan::OutputPlan::write (line 68) ... ok
+test crates/idea/idea-transformer/src/registry/context.rs - registry::context::TransformInputs::insert (line 33) ... ok
+test crates/idea/idea-transformer/src/registry.rs - registry::Registry::plan_with (line 292) ... ok
+test crates/idea/idea-transformer/src/registry.rs - registry::Registry::add (line 185) ... ok
+test crates/idea/idea-transformer/src/source/memory.rs - source::memory::MemoryLoader::new (line 26) ... ok
+test crates/idea/idea-transformer/src/compose/mod.rs - compose::Composer<L>::new (line 127) ... ok
+test crates/idea/idea-transformer/src/compose/mod.rs - compose::ComposedSchema (line 80) ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+all doctests ran in 0.81s; merged doctests compilation took 0.33s
+   Doc-tests stackpress_lib
+
+running 268 tests
+test crates/lib/src/data/nest.rs - data::nest::IntoNest::into_nest (line 39) ... ok
+test crates/lib/src/data/nest.rs - data::nest (line 8) ... ok
+test crates/lib/src/body.rs - body::Body::type_name (line 23) ... ok
+test crates/lib/src/data/nest.rs - data::nest::IntoNest::into_nest_with (line 51) ... ok
+test crates/lib/src/data/nest.rs - data::nest::Nest::entries (line 294) ... ok
+test crates/lib/src/data/nest.rs - data::nest::Nest::from_value (line 194) ... ok
+test crates/lib/src/data/nest.rs - data::nest::Nest::clear (line 655) ... ok
+test crates/lib/src/data/nest.rs - data::nest::Nest::from_object (line 175) ... ok
+test crates/lib/src/body.rs - body::Body::validate (line 56) ... ok
+test crates/lib/src/data/mod.rs - data (line 3) ... ok
+test crates/lib/src/data/nest.rs - data::nest::Nest::get (line 342) ... ok
+test crates/lib/src/data/nest.rs - data::nest::Nest::is_empty (line 279) ... ok
+test crates/lib/src/data/nest.rs - data::nest::Nest::has_path (line 391) ... ok
+test crates/lib/src/data/nest.rs - data::nest::Nest::into_value (line 234) ... ok
+test crates/lib/src/data/nest.rs - data::nest::Nest::has (line 358) ... ok
+test crates/lib/src/data/nest.rs - data::nest::Nest::limits (line 249) ... ok
+test crates/lib/src/data/nest.rs - data::nest::Nest::keys (line 312) ... ok
+test crates/lib/src/data/nest.rs - data::nest::Nest::new (line 136) ... ok
+test crates/lib/src/data/nest.rs - data::nest::Nest::len (line 264) ... ok
+test crates/lib/src/data/nest.rs - data::nest::Nest::merge (line 601) ... ok
+test crates/lib/src/data/nest.rs - data::nest::Nest::path_as (line 414) ... ok
+test crates/lib/src/data/nest.rs - data::nest::Nest::remove_path (line 544) ... ok
+test crates/lib/src/data/nest.rs - data::nest::Nest::set_path (line 491) ... ok
+test crates/lib/src/data/nest.rs - data::nest::Nest::stringify (line 695) ... ok
+test crates/lib/src/data/nest.rs - data::nest::Nest::path (line 374) ... ok
+test crates/lib/src/data/nest.rs - data::nest::Nest::set (line 459) ... ok
+test crates/lib/src/data/nest.rs - data::nest::Nest::remove (line 575) ... ok
+test crates/lib/src/data/nest.rs - data::nest::Nest::value (line 219) ... ok
+test crates/lib/src/data/nest.rs - data::nest::Nest::to_json (line 677) ... ok
+test crates/lib/src/data/nest.rs - data::nest::Nest::visit (line 718) ... ok
+test crates/lib/src/data/nest.rs - data::nest::Nest::with_limits (line 152) ... ok
+test crates/lib/src/data/nest.rs - data::nest::make_array (line 829) ... ok
+test crates/lib/src/data/nest.rs - data::nest::Nest::values (line 327) ... ok
+test crates/lib/src/data/nest.rs - data::nest::make_object (line 852) ... ok
+test crates/lib/src/data/parsers.rs - data::parsers::parse_body (line 627) ... ok
+test crates/lib/src/data/parsers.rs - data::parsers::parse_args (line 172) ... ok
+test crates/lib/src/data/parsers.rs - data::parsers::parse_arg_string (line 253) ... ok
+test crates/lib/src/data/nest.rs - data::nest::should_be_an_array (line 813) ... ok
+test crates/lib/src/data/parsers.rs - data::parsers::parse_json_object (line 317) ... ok
+test crates/lib/src/data/path.rs - data::path::DataPath::dot (line 117) ... ok
+test crates/lib/src/data/parsers.rs - data::parsers::parse_multipart (line 461) ... ok
+test crates/lib/src/data/path.rs - data::path::DataPath::from_segments (line 163) ... ok
+test crates/lib/src/data/path.rs - data::path::DataPath::segments (line 199) ... ok
+test crates/lib/src/data/parsers.rs - data::parsers::parse_query (line 128) ... ok
+test crates/lib/src/data/path.rs - data::path::IntoPath::into_path (line 27) ... ok
+test crates/lib/src/data/path.rs - data::path::DataPath::separated (line 134) ... ok
+test crates/lib/src/data/value.rs - data::value::FileData::new (line 83) ... ok
+test crates/lib/src/data/value.rs - data::value::SharedNative::downcast_ref (line 130) ... ok
+test crates/lib/src/data/value.rs - data::value::SharedNative::ptr_eq (line 144) ... ok
+test crates/lib/src/data/value.rs - data::value::Timestamp::nanoseconds (line 57) ... ok
+test crates/lib/src/data/value.rs - data::value::Value::as_array (line 305) ... ok
+test crates/lib/src/data/value.rs - data::value::Timestamp::new (line 36) ... ok
+test crates/lib/src/data/value.rs - data::value::SharedNative::new (line 115) ... ok
+test crates/lib/src/data/value.rs - data::value::Value::as_f64 (line 288) ... ok
+test crates/lib/src/data/value.rs - data::value::Value::as_bool (line 236) ... ok
+test crates/lib/src/data/value.rs - data::value::Value::as_i64 (line 253) ... ok
+test crates/lib/src/data/value.rs - data::value::Value::as_bytes (line 340) ... ok
+test crates/lib/src/data/value.rs - data::value::Value::as_object (line 322) ... ok
+test crates/lib/src/data/value.rs - data::value::Value::as_str (line 219) ... ok
+test crates/lib/src/data/value.rs - data::value::Value::as_shared (line 360) ... ok
+test crates/lib/src/data/value.rs - data::value::Value::is_object (line 378) ... ok
+test crates/lib/src/data/value.rs - data::value::Value::as_u64 (line 271) ... ok
+test crates/lib/src/data/value.rs - data::value::Value::number (line 204) ... ok
+test crates/lib/src/data/value.rs - data::value::Value::is_null (line 391) ... ok
+test crates/lib/src/data/value.rs - data::value::Value::to_json_with (line 506) ... ok
+test crates/lib/src/data/value.rs - data::value::Value::to_json (line 485) ... ok
+test crates/lib/src/data/value.rs - data::value::Value::validate (line 408) ... ok
+test crates/lib/src/error.rs - error::Error::at_path (line 449) ... ok
+test crates/lib/src/error.rs - error::Error::frames (line 330) ... ok
+test crates/lib/src/error.rs - error::Error::invalid (line 182) ... ok
+test crates/lib/src/error.rs - error::Error::code (line 273) ... ok
+test crates/lib/src/error.rs - error::Error::backtrace (line 363) ... ok
+test crates/lib/src/error.rs - error::Error::from_source (line 223) ... ok
+test crates/lib/src/error.rs - error::Error::kind (line 260) ... ok
+test crates/lib/src/error.rs - error (line 3) ... ok
+test crates/lib/src/error.rs - error::Error::message (line 286) ... ok
+test crates/lib/src/error.rs - error::Error::limit (line 201) ... ok
+test crates/lib/src/error.rs - error::Error::new (line 154) ... ok
+test crates/lib/src/error.rs - error::Error::origin (line 316) ... ok
+test crates/lib/src/error.rs - error::Error::span (line 343) ... ok
+test crates/lib/src/error.rs - error::Error::with_cause (line 243) ... ok
+test crates/lib/src/error.rs - error::Error::public_view (line 499) ... ok
+test crates/lib/src/error.rs - error::Error::with_code (line 397) ... ok
+test crates/lib/src/error.rs - error::Error::path (line 300) ... ok
+test crates/lib/src/error.rs - error::Error::with_errors (line 433) ... ok
+test crates/lib/src/error.rs - error::Error::with_public_message (line 412) ... ok
+test crates/lib/src/error.rs - error::Error::with_kind (line 378) ... ok
+test crates/lib/src/error.rs - error::SourceLocation::caller (line 52) ... ok
+test crates/lib/src/event.rs - event (line 8) ... ok
+test crates/lib/src/error.rs - error::Error::with_span (line 470) ... ok
+test crates/lib/src/event.rs - event::EmitterBuilder::after (line 697) ... ok
+test crates/lib/src/event.rs - event::EmitterBuilder::build (line 901) ... ok
+test crates/lib/src/event.rs - event::EmitterBuilder::clear (line 830) ... ok
+test crates/lib/src/event.rs - event::EmitterBuilder::before (line 671) ... ok
+test crates/lib/src/event.rs - event::EmitterBuilder::new (line 437) ... ok
+test crates/lib/src/event.rs - event::EmitterBuilder::extend (line 859) ... ok
+test crates/lib/src/event.rs - event::EmitterBuilder::on (line 470) ... ok
+test crates/lib/src/event.rs - event::EmitterBuilder::listen (line 581) ... ok
+test crates/lib/src/event.rs - event::EmitterBuilder::remove (line 759) ... ok
+test crates/lib/src/event.rs - event::EmitterBuilder::depth_limit (line 725) ... ok
+test crates/lib/src/event.rs - event::EmitterBuilder::on_priority (line 494) ... ok
+test crates/lib/src/event.rs - event::EmitterBuilder::on_pattern (line 523) ... ok
+test crates/lib/src/event.rs - event::EmitterBuilder::replace (line 795) ... ok
+test crates/lib/src/event.rs - event::EventEmitter::emit (line 1168) ... ok
+test crates/lib/src/event.rs - event::EventEmitter::emit_with_context (line 1202) ... ok
+test crates/lib/src/event.rs - event::EventEmitter::listeners (line 1092) ... ok
+test crates/lib/src/event.rs - event::EmitterBuilder::route (line 552) ... ok
+test crates/lib/src/event.rs - event::EventEmitter::resolve (line 999) ... ok
+test crates/lib/src/event.rs - event::EventEmitter::matches (line 1116) ... ok
+test crates/lib/src/event.rs - event::IntoRequest::into_request (line 51) ... ok
+test crates/lib/src/event.rs - event::Invocation<'_>::context (line 1358) ... ok
+test crates/lib/src/event.rs - event::Invocation<'_>::emit (line 1552) ... ok
+test crates/lib/src/event.rs - event::Invocation<'_>::captures (line 1498) ... ok
+test crates/lib/src/event.rs - event::EventEmitter::resolve_with_context (line 1031) ... ok
+test crates/lib/src/event.rs - event::Invocation<'_>::param (line 1375) ... ok
+test crates/lib/src/event.rs - event::Invocation<'_>::event (line 1472) ... ok
+test crates/lib/src/event.rs - event::Invocation<'_>::listener (line 1443) ... ok
+test crates/lib/src/event.rs - event::Invocation<'_>::path (line 1523) ... ok
+test crates/lib/src/event.rs - event::ListenerSpec::exact (line 123) ... ok
+test crates/lib/src/event.rs - event::Invocation<'_>::resolve (line 1404) ... ok
+test crates/lib/src/event.rs - event::ListenerSpec::label (line 190) ... ok
+test crates/lib/src/event.rs - event::ListenerSpec::priority (line 170) ... ok
+test crates/lib/src/event.rs - event::handler (line 337) ... ok
+test crates/lib/src/flow.rs - flow::Flow (line 10) ... ok
+test crates/lib/src/event.rs - event::ListenerSpec::plugin (line 210) ... ok
+test crates/lib/src/event.rs - event::ListenerSpec::pattern (line 144) ... ok
+test crates/lib/src/future.rs - future::HandlerFuture (line 15) ... ok
+test crates/lib/src/flow.rs - flow::DispatchOutcome (line 31) ... ok
+test crates/lib/src/headers.rs - headers (line 3) ... ok
+test crates/lib/src/headers.rs - headers::Headers::append (line 171) ... ok
+test crates/lib/src/headers.rs - headers::Headers::entries (line 135) ... ok
+test crates/lib/src/headers.rs - headers::Headers::get (line 61) ... ok
+test crates/lib/src/headers.rs - headers::Headers::len (line 107) ... ok
+test crates/lib/src/headers.rs - headers::Headers::from_pairs (line 41) ... ok
+test crates/lib/src/headers.rs - headers::Headers::get_all (line 78) ... ok
+test crates/lib/src/headers.rs - headers::Headers::is_empty (line 121) ... ok
+test crates/lib/src/headers.rs - headers::Headers::new (line 24) ... ok
+test crates/lib/src/headers.rs - headers::Headers::has (line 93) ... ok
+test crates/lib/src/headers.rs - headers::Headers::set (line 152) ... ok
+test crates/lib/src/lib.rs - (line 10) ... ok
+test crates/lib/src/headers.rs - headers::Headers::remove (line 188) ... ok
+test crates/lib/src/pattern.rs - pattern::EventPattern::exact (line 336) ... ok
+test crates/lib/src/pattern.rs - pattern::EventPattern (line 158) ... ok
+test crates/lib/src/pattern.rs - pattern::EventPattern::express (line 361) ... ok
+test crates/lib/src/pattern.rs - pattern::EventPattern::route_metadata (line 480) ... ok
+test crates/lib/src/pattern.rs - pattern::EventPattern::route (line 418) ... ok
+test crates/lib/src/pattern.rs - pattern::EventPattern::captures (line 523) ... ok
+test crates/lib/src/pattern.rs - pattern::EventPattern::regex (line 392) ... ok
+test crates/lib/src/pattern.rs - pattern::EventPattern::source (line 467) ... ok
+test crates/lib/src/pattern.rs - pattern::Method::as_str (line 66) ... ok
+test crates/lib/src/pattern.rs - pattern::EventPattern::same_pattern (line 495) ... ok
+test crates/lib/src/pattern.rs - pattern::Method::new (line 45) ... ok
+test crates/lib/src/pattern.rs - pattern::MethodPattern::exact (line 119) ... ok
+test crates/lib/src/queue.rs - queue::ItemQueue<T>::add (line 95) ... ok
+test crates/lib/src/queue.rs - queue (line 3) ... ok
+test crates/lib/src/queue.rs - queue::ItemQueue<T>::entries (line 228) ... ok
+test crates/lib/src/queue.rs - queue::ItemQueue<T>::len (line 196) ... ok
+test crates/lib/src/queue.rs - queue::ItemQueue<T>::new (line 71) ... ok
+test crates/lib/src/queue.rs - queue::ItemQueue<T>::pop (line 181) ... ok
+test crates/lib/src/queue.rs - queue::ItemQueue<T>::is_empty (line 211) ... ok
+test crates/lib/src/queue.rs - queue::ItemQueue<T>::push_back (line 137) ... ok
+test crates/lib/src/queue.rs - queue::ItemQueue<T>::push_front (line 160) ... ok
+test crates/lib/src/queue.rs - queue::TaskQueue<C>::before (line 468) ... ok
+test crates/lib/src/queue.rs - queue::TaskQueue<C>::after (line 491) ... ok
+test crates/lib/src/queue.rs - queue::TaskQueue<C>::add (line 390) ... ok
+test crates/lib/src/queue.rs - queue::TaskQueue<C>::is_empty (line 534) ... ok
+test crates/lib/src/queue.rs - queue::TaskQueue<C>::push_back (line 417) ... ok
+test crates/lib/src/queue.rs - queue::TaskQueue<C>::len (line 514) ... ok
+test crates/lib/src/queue.rs - queue::TaskQueue<C>::new (line 362) ... ok
+test crates/lib/src/queue.rs - queue::TaskQueue<C>::run (line 556) ... ok
+test crates/lib/src/queue.rs - queue::TaskQueue<C>::push_front (line 444) ... ok
+test crates/lib/src/queue.rs - queue::task (line 309) ... ok
+test crates/lib/src/request.rs - request::Request::body (line 169) ... ok
+test crates/lib/src/request.rs - request::Request::load (line 258) ... ok
+test crates/lib/src/request.rs - request (line 3) ... ok
+test crates/lib/src/request.rs - request::Request::builder (line 155) ... ok
+test crates/lib/src/request.rs - request::Request::load_with (line 290) ... ok
+test crates/lib/src/request.rs - request::Request::load_state (line 209) ... ok
+test crates/lib/src/request.rs - request::Request::loaded (line 195) ... ok
+test crates/lib/src/request.rs - request::Request::new (line 127) ... ok
+test crates/lib/src/request.rs - request::Request::mimetype (line 182) ... ok
+test crates/lib/src/request.rs - request::RequestBuilder::body (line 580) ... ok
+test crates/lib/src/request.rs - request::Request::view (line 226) ... ok
+test crates/lib/src/request.rs - request::RequestBuilder::build (line 638) ... ok
+test crates/lib/src/request.rs - request::RequestBuilder::data (line 540) ... ok
+test crates/lib/src/request.rs - request::RequestBuilder::data_serialized (line 557) ... ok
+test crates/lib/src/request.rs - request::RequestBuilder::headers (line 443) ... ok
+test crates/lib/src/request.rs - request::RequestBuilder::limits (line 611) ... ok
+test crates/lib/src/request.rs - request::RequestBuilder::method (line 428) ... ok
+test crates/lib/src/request.rs - request::RequestBuilder::mimetype (line 595) ... ok
+test crates/lib/src/request.rs - request::RequestBuilder::post (line 522) ... ok
+test crates/lib/src/request.rs - request::RequestBuilder::query (line 488) ... ok
+test crates/lib/src/request.rs - request::RequestBuilder::session (line 466) ... ok
+test crates/lib/src/request.rs - request::RequestBuilder::url (line 412) ... ok
+test crates/lib/src/response.rs - response (line 8) ... ok
+test crates/lib/src/request.rs - request::with_unknown_host (line 743) ... ok
+test crates/lib/src/response.rs - response::Response::apply_error (line 1038) ... ok
+test crates/lib/src/response.rs - response::Response::body (line 330) ... ok
+test crates/lib/src/response.rs - response::Response::apply_envelope (line 1096) ... ok
+test crates/lib/src/response.rs - response::Response::data (line 626) ... ok
+test crates/lib/src/request.rs - request::RequestBuilder::query_string (line 506) ... ok
+test crates/lib/src/response.rs - response::Response::delivery_state (line 481) ... ok
+test crates/lib/src/response.rs - response::Response::data_mut (line 648) ... ok
+test crates/lib/src/response.rs - response::Response::diagnostic (line 462) ... ok
+test crates/lib/src/response.rs - response::Response::dispatch (line 1323) ... ok
+test crates/lib/src/response.rs - response::Response::error (line 425) ... ok
+test crates/lib/src/response.rs - response::Response::dispatch_with (line 1358) ... ok
+test crates/lib/src/response.rs - response::Response::errors_mut (line 688) ... ok
+test crates/lib/src/response.rs - response::Response::headers_mut (line 564) ... ok
+test crates/lib/src/response.rs - response::Response::headers (line 541) ... ok
+test crates/lib/src/response.rs - response::Response::html (line 783) ... ok
+test crates/lib/src/response.rs - response::Response::into_envelope (line 1231) ... ok
+test crates/lib/src/response.rs - response::Response::errors (line 667) ... ok
+test crates/lib/src/response.rs - response::Response::into_error (line 1260) ... ok
+test crates/lib/src/response.rs - response::Response::json (line 833) ... ok
+test crates/lib/src/response.rs - response::Response::mimetype (line 389) ... ok
+test crates/lib/src/response.rs - response::Response::limits (line 315) ... ok
+test crates/lib/src/response.rs - response::Response::new (line 259) ... ok
+test crates/lib/src/response.rs - response::Response::results (line 865) ... ok
+test crates/lib/src/response.rs - response::Response::redirect (line 973) ... ok
+test crates/lib/src/response.rs - response::Response::redirected (line 521) ... ok
+test crates/lib/src/response.rs - response::Response::rows (line 917) ... ok
+test crates/lib/src/response.rs - response::Response::results_value (line 892) ... ok
+test crates/lib/src/response.rs - response::Response::result (line 348) ... ok
+test crates/lib/src/response.rs - response::Response::sent (line 502) ... ok
+test crates/lib/src/response.rs - response::Response::session (line 584) ... ok
+test crates/lib/src/response.rs - response::Response::set (line 753) ... ok
+test crates/lib/src/response.rs - response::Response::session_mut (line 605) ... ok
+test crates/lib/src/response.rs - response::Response::stack (line 444) ... ok
+test crates/lib/src/response.rs - response::Response::set_total (line 948) ... ok
+test crates/lib/src/response.rs - response::Response::set_error (line 1001) ... ok
+test crates/lib/src/response.rs - response::Response::status (line 371) ... ok
+test crates/lib/src/response.rs - response::Response::set_stack (line 1068) ... ok
+test crates/lib/src/response.rs - response::Response::status_code (line 723) ... ok
+test crates/lib/src/response.rs - response::Response::total (line 407) ... ok
+test crates/lib/src/response.rs - response::Response::stop (line 1416) ... ok
+test crates/lib/src/response.rs - response::Response::to_envelope (line 1201) ... ok
+test crates/lib/src/response.rs - response::Response::xml (line 805) ... ok
+test crates/lib/src/response.rs - response::Response::with_limits (line 277) ... ok
+test crates/lib/src/response.rs - response::Response::view (line 1290) ... ok
+test crates/lib/src/response.rs - response::ResponseEnvelope::try_to_json_with (line 123) ... ok
+test crates/lib/src/response.rs - response::ResponseEnvelope::try_to_json (line 94) ... ok
+test crates/lib/src/response.rs - response::Response::try_to_json (line 1176) ... ok
+test crates/lib/src/session.rs - session (line 3) ... ok
+test crates/lib/src/session.rs - session::CookieOptions::validate (line 74) ... ok
+test crates/lib/src/session.rs - session::Session::clear (line 706) ... ok
+test crates/lib/src/session.rs - session::Session::cookie_headers (line 738) ... ok
+test crates/lib/src/session.rs - session::Session::entries (line 527) ... ok
+test crates/lib/src/session.rs - session::Session::cookie_headers_with (line 772) ... ok
+test crates/lib/src/session.rs - session::Session::is_empty (line 571) ... ok
+test crates/lib/src/session.rs - session::Session::len (line 549) ... ok
+test crates/lib/src/session.rs - session::Session::get (line 453) ... ok
+test crates/lib/src/session.rs - session::Session::from_pairs (line 422) ... ok
+test crates/lib/src/session.rs - session::Session::new (line 397) ... ok
+test crates/lib/src/session.rs - session::Session::options (line 479) ... ok
+test crates/lib/src/session.rs - session::SessionValue::as_str (line 328) ... ok
+test crates/lib/src/session.rs - session::Session::revisions (line 504) ... ok
+test crates/lib/src/session.rs - session::Session::remove (line 658) ... ok
+test crates/lib/src/session.rs - session::Session::set (line 596) ... ok
+test crates/lib/src/session.rs - session::cookie::parse (line 140) ... ok
+test crates/lib/src/session.rs - session::cookie::parse_with (line 159) ... ok
+test crates/lib/src/session.rs - session::cookie::serialize (line 213) ... ok
+test crates/lib/src/status.rs - status (line 3) ... ok
+test crates/lib/src/session.rs - session::cookie::serialize_with (line 230) ... ok
+test crates/lib/src/status.rs - status::Status::find (line 319) ... ok
+test crates/lib/src/status.rs - status::Status::lookup (line 306) ... ok
+test crates/lib/src/status.rs - status::Status::from_code (line 289) ... ok
+test crates/lib/src/status.rs - status::Status::new (line 271) ... ok
+
+test result: ok. 268 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
+
+
+running 1 test
+test crates/lib/src/request.rs - request::RequestBuilder (line 387) - compile fail ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+all doctests ran in 1.69s; merged doctests compilation took 1.05s
+   Doc-tests stackpress_server
+
+running 76 tests
+test crates/server/server/src/builder.rs - builder::ServerBuilder::new (line 69) ... ok
+test crates/server/server/src/config.rs - config::ConfigLayers (line 32) ... ok
+test crates/server/server/src/config.rs - config::ConfigLayers::new (line 55) ... ok
+test crates/server/server/src/config.rs - config::ConfigLayers::json (line 71) ... ok
+test crates/server/server/src/builder.rs - builder::ServerBuilder::plugin_with (line 120) ... ok
+test crates/server/server/src/builder.rs - builder::ServerBuilder::config_section (line 210) ... ok
+test crates/server/server/src/config.rs - config::ConfigLayers::entries (line 154) ... ok
+test crates/server/server/src/builder.rs - builder::ServerBuilder::build (line 341) ... ok
+test crates/server/server/src/builder.rs - builder::ServerBuilder::config_layers (line 171) ... ok
+test crates/server/server/src/builder.rs - builder::ServerBuilder::plugin (line 86) ... ok
+test crates/server/server/src/http.rs - http::HttpAdapter::handle_with_options (line 230) ... ok
+test crates/server/server/src/context.rs - context::ServerInvocationExt::service (line 124) ... ok
+test crates/server/server/src/config.rs - config::ConfigLayers::value (line 104) ... ok
+test crates/server/server/src/http.rs - http::HttpAdapter::new (line 155) ... ok
+test crates/server/server/src/context.rs - context::ServerInvocationExt::delegate (line 212) ... ok
+test crates/server/server/src/http.rs - http::HttpAdapter::handle (line 203) ... ok
+test crates/server/server/src/context.rs - context::ServerInvocationExt::config (line 154) ... ok
+test crates/server/server/src/http.rs - http::HttpOutput (line 83) ... ok
+test crates/server/server/src/http.rs - http::HttpOptions (line 34) ... ok
+test crates/server/server/src/http/stream.rs - http::stream::HttpResponseExt::immutable_bytes (line 196) ... ok
+test crates/server/server/src/http/stream.rs - http::stream::StreamingHttpAdapter::handle_body (line 426) ... ok
+test crates/server/server/src/http/stream.rs - http::stream::HttpResponseExt::stream (line 166) ... ok
+test crates/server/server/src/http/stream.rs - http::stream::StreamLimits (line 25) ... ok
+test crates/server/server/src/lib.rs - (line 8) ... ok
+test crates/server/server/src/lifecycle.rs - lifecycle::Server::call (line 97) ... ok
+test crates/server/server/src/plugin.rs - plugin::PluginSpec (line 15) ... ok
+test crates/server/server/src/plugin.rs - plugin::PluginSpec::after_if_present (line 79) ... ok
+test crates/server/server/src/lifecycle.rs - lifecycle::Server::handle_route (line 151) ... ok
+test crates/server/server/src/lifecycle.rs - lifecycle::Server::handle (line 34) ... ok
+test crates/server/server/src/http/stream.rs - http::stream::StreamingHttpAdapter::new (line 403) ... ok
+test crates/server/server/src/plugin.rs - plugin::PluginSpec::new (line 44) ... ok
+test crates/server/server/src/registration.rs - registration::ServerBuilder::connect (line 965) ... ok
+test crates/server/server/src/registration.rs - registration::ServerBuilder::delete (line 890) ... ok
+test crates/server/server/src/plugin.rs - plugin::PluginSpec::requires (line 63) ... ok
+test crates/server/server/src/registration.rs - registration::ServerBuilder::all (line 1015) ... ok
+test crates/server/server/src/registration.rs - registration::ServerBuilder::get (line 790) ... ok
+test crates/server/server/src/registration.rs - registration::ServerBuilder::head (line 915) ... ok
+test crates/server/server/src/registration.rs - registration::ServerBuilder::listen (line 676) ... ok
+test crates/server/server/src/registration.rs - registration::ServerBuilder::on (line 625) ... ok
+test crates/server/server/src/registration.rs - registration::ServerBuilder::on_priority (line 646) ... ok
+test crates/server/server/src/registration.rs - registration::ServerBuilder::patch (line 865) ... ok
+test crates/server/server/src/registration.rs - registration::ServerBuilder::route (line 705) ... ok
+test crates/server/server/src/registration.rs - registration::ServerBuilder::put (line 840) ... ok
+test crates/server/server/src/registration.rs - registration::ServerBuilder::options (line 940) ... ok
+test crates/server/server/src/registration.rs - registration::ServerBuilder::trace (line 990) ... ok
+test crates/server/server/src/registration.rs - registration::ServerBuilder::post (line 815) ... ok
+test crates/server/server/src/registration.rs - registration::ServerBuilder::route_with (line 735) ... ok
+test crates/server/server/src/registration.rs - registration::StartupContext::connect (line 512) ... ok
+test crates/server/server/src/registration.rs - registration::StartupContext::all (line 578) ... ok
+test crates/server/server/src/registration.rs - registration::StartupContext::delete (line 413) ... ok
+test crates/server/server/src/registration.rs - registration::StartupContext::head (line 446) ... ok
+test crates/server/server/src/registration.rs - registration::StartupContext::get (line 281) ... ok
+test crates/server/server/src/registration.rs - registration::StartupContext::listen (line 90) ... ok
+test crates/server/server/src/registration.rs - registration::StartupContext::on (line 20) ... ok
+test crates/server/server/src/registration.rs - registration::StartupContext::on_priority (line 50) ... ok
+test crates/server/server/src/registration.rs - registration::StartupContext::options (line 479) ... ok
+test crates/server/server/src/registration.rs - registration::StartupContext::patch (line 380) ... ok
+test crates/server/server/src/registration.rs - registration::StartupContext::route (line 195) ... ok
+test crates/server/server/src/registration.rs - registration::StartupContext::post (line 314) ... ok
+test crates/server/server/src/registration.rs - registration::StartupContext::put (line 347) ... ok
+test crates/server/server/src/registration.rs - registration::StartupContext::trace (line 545) ... ok
+test crates/server/server/src/report.rs - report::CorrelationId::as_str (line 98) ... ok
+test crates/server/server/src/registration.rs - registration::StartupContext::route_with (line 233) ... ok
+test crates/server/server/src/report.rs - report::HandleReport::developer (line 362) ... ok
+test crates/server/server/src/report.rs - report::HandleReport::record_output_failure (line 259) ... ok
+test crates/server/server/src/report.rs - report::HandleReport::is_success (line 328) ... ok
+test crates/server/server/src/router.rs - router::RouteSpec (line 24) ... ok
+test crates/server/server/src/report.rs - report::HandleReport::record_output (line 291) ... ok
+test crates/server/server/src/router.rs - router::RouteSpec::label (line 109) ... ok
+test crates/server/server/src/server.rs - server::Server::emit (line 73) ... ok
+test crates/server/server/src/router.rs - router::RouteSpec::new (line 58) ... ok
+test crates/server/server/src/router.rs - router::RouteSpec::priority (line 86) ... ok
+test crates/server/server/src/server.rs - server::Server::resolve (line 118) ... ok
+test crates/server/server/src/startup.rs - startup::StartupContext::config (line 173) ... ok
+test crates/server/server/src/startup.rs - startup::StartupContext::register (line 208) ... ok
+test crates/server/server/src/startup.rs - startup::StartupContext::service (line 299) ... ok
+
+test result: ok. 76 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+
+running 5 tests
+test crates/server/server/src/plugin.rs - plugin::PluginSpec (line 23) - compile fail ... ok
+test crates/server/server/src/http/stream.rs - http::stream::HttpResponseExt::stream (line 122) - compile fail ... ok
+test crates/server/server/src/http/stream.rs - http::stream::HttpResponseExt::stream (line 136) - compile fail ... ok
+test crates/server/server/src/http/stream.rs - http::stream::HttpResponseExt::stream (line 150) - compile fail ... ok
+test crates/server/server/src/http/stream.rs - http::stream::HttpResponseExt::stream (line 109) - compile fail ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+all doctests ran in 2.03s; merged doctests compilation took 1.41s
+   Doc-tests stackpress_server_http
+
+running 11 tests
+test crates/server/http/src/assets.rs - assets::AssetBundle::load (line 94) - compile ... ok
+test crates/server/http/src/deployment.rs - deployment::HttpServer::bind (line 136) - compile ... ok
+test crates/server/http/src/lib.rs - HttpServer::new (line 118) ... ok
+test crates/server/http/src/supervisor.rs - supervisor::HttpServer::serve_acceptor (line 197) ... ok
+test crates/server/http/src/options.rs - options::NetworkLimits (line 10) ... ok
+test crates/server/http/src/lib.rs - Cancellation (line 56) ... ok
+test crates/server/http/src/deployment.rs - deployment::HttpServer::from_options (line 93) ... ok
+test crates/server/http/src/deployment.rs - deployment::NetworkOptions::http (line 33) ... ok
+test crates/server/http/src/observe.rs - observe::ExchangeObserver (line 40) ... ok
+test crates/server/http/src/supervisor.rs - supervisor::Shutdown (line 21) ... ok
+test crates/server/http/src/proxy.rs - proxy::IpCidr (line 17) ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+all doctests ran in 0.82s; merged doctests compilation took 0.38s
+   Doc-tests stackpress_sql
+
+running 418 tests
+test crates/sql/sql/src/ddl.rs - ddl::Alter::operation (line 1029) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::Alter::add_field (line 1050) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::Alter::build (line 1239) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::Alter::add_index (line 1131) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::Alter::primary_key (line 1165) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::Alter (line 931) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::Alter::remove_field (line 1084) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::Alter::add_foreign_key (line 1201) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::Alter::new (line 968) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::Alter::change_field (line 1067) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::AlterData::table (line 881) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::Alter::render (line 1283) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::Alter::remove_index (line 1148) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::Alter::remove_primary_key (line 1184) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::AlterData (line 856) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::AlterData::operations (line 907) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::Alter::rename_field (line 1101) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::Alter::remove_foreign_key (line 1218) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::Alter::source_field (line 1001) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::AlterData::source_fields (line 894) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::AlterOperation::AddForeignKey (line 825) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::AlterOperation::ChangeField (line 689) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::AlterOperation::RemoveForeignKey (line 840) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::AlterOperation::AddIndex (line 769) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::AlterOperation::AddField (line 675) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::AlterOperation::RemoveIndex (line 783) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::AlterOperation::AddPrimary (line 797) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::AlterOperation::RemoveField (line 703) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::AlterOperation (line 650) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::AlterOperation::RemovePrimary (line 811) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::Create (line 288) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::Create::add_field (line 402) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::AlterOperation::RenameField (line 717) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::AlterOperation::RenameField::from (line 734) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::AlterOperation::RenameField::to (line 751) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::Create::add_index (line 454) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::Create::build (line 526) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::Create::if_not_exists (line 497) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::Create::add_foreign_key (line 480) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::Create::mysql_utf8mb4_dynamic (line 373) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::Create::new (line 323) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::CreateData (line 176) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::CreateData::fields (line 215) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::Create::primary_key (line 428) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::Create::render (line 586) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::CreateData::indexes (line 241) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::CreateData::foreign_keys (line 254) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::CreateData::if_not_exists (line 267) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::CreateData::primary (line 228) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::CreateData::table (line 202) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::QueryPlan::queries (line 94) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::QueryPlan::validate (line 126) ... ok
+test crates/sql/sql/src/ddl.rs - ddl::QueryPlan (line 66) ... ok
+test crates/sql/sql/src/dialect.rs - dialect::DialectCapabilities::cascade (line 70) ... ok
+test crates/sql/sql/src/dialect.rs - dialect::DialectCapabilities (line 13) ... ok
+test crates/sql/sql/src/dialect.rs - dialect::DialectCapabilities::alter_constraints (line 48) ... ok
+test crates/sql/sql/src/dialect.rs - dialect::DialectCapabilities::distinct_json_number_kinds (line 92) ... ok
+test crates/sql/sql/src/dialect.rs - dialect::DialectCapabilities::returning (line 26) ... ok
+test crates/sql/sql/src/dialect.rs - dialect::DialectCapabilities::full_join (line 59) ... ok
+test crates/sql/sql/src/dialect.rs - dialect::DialectCapabilities::idempotent_indexes (line 81) ... ok
+test crates/sql/sql/src/dialect.rs - dialect::DialectCapabilities::text_nul (line 103) ... ok
+test crates/sql/sql/src/dialect.rs - dialect::DialectId::capabilities (line 134) ... ok
+test crates/sql/sql/src/diff.rs - diff::Create::definition (line 229) ... ok
+test crates/sql/sql/src/dialect.rs - dialect::DialectCapabilities::transactional_ddl (line 37) ... ok
+test crates/sql/sql/src/diff.rs - diff::SchemaDiff (line 255) ... ok
+test crates/sql/sql/src/diff.rs - diff::SchemaDiff::Changes::alteration (line 369) ... ok
+test crates/sql/sql/src/diff.rs - diff::SchemaDiff::Changes (line 288) ... ok
+test crates/sql/sql/src/diff.rs - diff::SchemaDiff::Changes::target (line 342) ... ok
+test crates/sql/sql/src/diff.rs - diff::SchemaDiff::alteration (line 544) ... ok
+test crates/sql/sql/src/diff.rs - diff::SchemaDiff::Changes::source (line 315) ... ok
+test crates/sql/sql/src/diff.rs - diff::SchemaDiff::rename_field (line 578) ... ok
+test crates/sql/sql/src/diff.rs - diff::SchemaDiff::between (line 404) ... ok
+test crates/sql/sql/src/diff.rs - diff::SchemaDiff::render (line 655) ... ok
+test crates/sql/sql/src/diff.rs - diff::TableDefinition (line 18) ... ok
+test crates/sql/sql/src/diff.rs - diff::TableDefinition::create (line 112) ... ok
+test crates/sql/sql/src/diff.rs - diff::TableDefinition::diff (line 184) ... ok
+test crates/sql/sql/src/diff.rs - diff::SchemaDiff::NoChanges (line 278) ... ok
+test crates/sql/sql/src/diff.rs - diff::TableDefinition::name (line 44) ... ok
+test crates/sql/sql/src/diff.rs - diff::TableDefinition::indexes (line 83) ... ok
+test crates/sql/sql/src/diff.rs - diff::TableDefinition::foreign_keys (line 96) ... ok
+test crates/sql/sql/src/diff.rs - diff::TableDefinition::fields (line 57) ... ok
+test crates/sql/sql/src/dml.rs - dml::Delete (line 1911) ... ok
+test crates/sql/sql/src/diff.rs - diff::TableDefinition::primary (line 70) ... ok
+test crates/sql/sql/src/dml.rs - dml::Delete::and_where (line 1987) ... ok
+test crates/sql/sql/src/dml.rs - dml::Delete::build (line 1954) ... ok
+test crates/sql/sql/src/diff.rs - diff::TableDefinition::normalized (line 154) ... ok
+test crates/sql/sql/src/dml.rs - dml::Delete::all_rows (line 2048) ... ok
+test crates/sql/sql/src/dml.rs - dml::Delete::new (line 1938) ... ok
+test crates/sql/sql/src/dml.rs - dml::Delete::returning (line 2064) ... ok
+test crates/sql/sql/src/dml.rs - dml::Delete::where_eq (line 1971) ... ok
+test crates/sql/sql/src/dml.rs - dml::Delete::returning_all (line 2082) ... ok
+test crates/sql/sql/src/dml.rs - dml::Delete::where_json_contains (line 2023) ... ok
+test crates/sql/sql/src/dml.rs - dml::Delete::where_json (line 2002) ... ok
+test crates/sql/sql/src/dml.rs - dml::Insert (line 1240) ... ok
+test crates/sql/sql/src/dml.rs - dml::Insert::build (line 1318) ... ok
+test crates/sql/sql/src/dml.rs - dml::Insert::default_values (line 1384) ... ok
+test crates/sql/sql/src/dml.rs - dml::Insert::new (line 1276) ... ok
+test crates/sql/sql/src/dml.rs - dml::Insert::on_conflict (line 1297) ... ok
+test crates/sql/sql/src/dml.rs - dml::Insert::returning (line 1405) ... ok
+test crates/sql/sql/src/dml.rs - dml::Insert::returning_all (line 1430) ... ok
+test crates/sql/sql/src/dml.rs - dml::Insert::columns (line 1342) ... ok
+test crates/sql/sql/src/dml.rs - dml::InsertData (line 1150) ... ok
+test crates/sql/sql/src/dml.rs - dml::Insert::values (line 1357) ... ok
+test crates/sql/sql/src/dml.rs - dml::InsertData::returning (line 1208) ... ok
+test crates/sql/sql/src/dml.rs - dml::InsertData::rows (line 1196) ... ok
+test crates/sql/sql/src/dml.rs - dml::InsertData::columns (line 1184) ... ok
+test crates/sql/sql/src/dml.rs - dml::InsertData::default_values (line 1220) ... ok
+test crates/sql/sql/src/dml.rs - dml::Join::kind (line 257) ... ok
+test crates/sql/sql/src/dml.rs - dml::Join (line 216) ... ok
+test crates/sql/sql/src/dml.rs - dml::InsertData::table (line 1172) ... ok
+test crates/sql/sql/src/dml.rs - dml::JoinKind (line 83) ... ok
+test crates/sql/sql/src/dml.rs - dml::Join::on (line 287) ... ok
+test crates/sql/sql/src/dml.rs - dml::JoinKind::Full (line 178) ... ok
+test crates/sql/sql/src/dml.rs - dml::Join::table (line 272) ... ok
+test crates/sql/sql/src/dml.rs - dml::JoinKind::Inner (line 124) ... ok
+test crates/sql/sql/src/dml.rs - dml::JoinKind::Cross (line 196) ... ok
+test crates/sql/sql/src/dml.rs - dml::JoinKind::Right (line 160) ... ok
+test crates/sql/sql/src/dml.rs - dml::MutationData (line 1536) ... ok
+test crates/sql/sql/src/dml.rs - dml::JoinKind::Left (line 142) ... ok
+test crates/sql/sql/src/dml.rs - dml::MutationData::all_rows (line 1575) ... ok
+test crates/sql/sql/src/dml.rs - dml::MutationData::filters (line 1563) ... ok
+test crates/sql/sql/src/dml.rs - dml::MutationData::table (line 1551) ... ok
+test crates/sql/sql/src/dml.rs - dml::Order::Asc (line 58) ... ok
+test crates/sql/sql/src/dml.rs - dml::Order (line 17) ... ok
+test crates/sql/sql/src/dml.rs - dml::Order::Desc (line 70) ... ok
+test crates/sql/sql/src/dml.rs - dml::Select::and_where (line 730) ... ok
+test crates/sql/sql/src/dml.rs - dml::Select (line 520) ... ok
+test crates/sql/sql/src/dml.rs - dml::MutationData::returning (line 1587) ... ok
+test crates/sql/sql/src/dml.rs - dml::Select::distinct (line 650) ... ok
+test crates/sql/sql/src/dml.rs - dml::Select::build (line 606) ... ok
+test crates/sql/sql/src/dml.rs - dml::Select::join (line 664) ... ok
+test crates/sql/sql/src/dml.rs - dml::Select::limit (line 875) ... ok
+test crates/sql/sql/src/dml.rs - dml::Select::from (line 635) ... ok
+test crates/sql/sql/src/dml.rs - dml::Select::offset (line 889) ... ok
+test crates/sql/sql/src/dml.rs - dml::Select::new (line 581) ... ok
+test crates/sql/sql/src/dml.rs - dml::Select::order (line 815) ... ok
+test crates/sql/sql/src/dml.rs - dml::Select::order_by (line 797) ... ok
+test crates/sql/sql/src/dml.rs - dml::Select::sort (line 831) ... ok
+test crates/sql/sql/src/dml.rs - dml::Select::select (line 620) ... ok
+test crates/sql/sql/src/dml.rs - dml::Select::where_eq (line 708) ... ok
+test crates/sql/sql/src/dml.rs - dml::SelectData::distinct (line 500) ... ok
+test crates/sql/sql/src/dml.rs - dml::SelectData (line 375) ... ok
+test crates/sql/sql/src/dml.rs - dml::Select::where_json (line 747) ... ok
+test crates/sql/sql/src/dml.rs - dml::SelectData::filters (line 452) ... ok
+test crates/sql/sql/src/dml.rs - dml::Select::where_json_contains (line 772) ... ok
+test crates/sql/sql/src/dml.rs - dml::SelectData::limit (line 476) ... ok
+test crates/sql/sql/src/dml.rs - dml::SelectData::joins (line 440) ... ok
+test crates/sql/sql/src/dml.rs - dml::SelectData::selectors (line 416) ... ok
+test crates/sql/sql/src/dml.rs - dml::SelectData::sort (line 464) ... ok
+test crates/sql/sql/src/dml.rs - dml::Sort::expression (line 345) ... ok
+test crates/sql/sql/src/dml.rs - dml::Sort (line 304) ... ok
+test crates/sql/sql/src/dml.rs - dml::SelectData::table (line 428) ... ok
+test crates/sql/sql/src/dml.rs - dml::SelectData::offset (line 488) ... ok
+test crates/sql/sql/src/dml.rs - dml::Update::all_rows (line 1813) ... ok
+test crates/sql/sql/src/dml.rs - dml::Update (line 1626) ... ok
+test crates/sql/sql/src/dml.rs - dml::Update::and_where (line 1748) ... ok
+test crates/sql/sql/src/dml.rs - dml::Update::assignments (line 1696) ... ok
+test crates/sql/sql/src/dml.rs - dml::Update::build (line 1676) ... ok
+test crates/sql/sql/src/dml.rs - dml::Sort::order (line 359) ... ok
+test crates/sql/sql/src/dml.rs - dml::Update::new (line 1659) ... ok
+test crates/sql/sql/src/dml.rs - dml::Update::returning_all (line 1850) ... ok
+test crates/sql/sql/src/dml.rs - dml::Update::set (line 1713) ... ok
+test crates/sql/sql/src/dml.rs - dml::Update::returning (line 1829) ... ok
+test crates/sql/sql/src/dml.rs - dml::Update::where_json (line 1765) ... ok
+test crates/sql/sql/src/dml.rs - dml::Update::where_eq (line 1731) ... ok
+test crates/sql/sql/src/dml.rs - dml::Update::where_json_contains (line 1790) ... ok
+test crates/sql/sql/src/dml.rs - dml::WriteValue (line 979) ... ok
+test crates/sql/sql/src/dml.rs - dml::WriteValue::Default (line 1027) ... ok
+test crates/sql/sql/src/dml.rs - dml::WriteValue::Expression (line 1040) ... ok
+test crates/sql/sql/src/dml.rs - dml::WriteValue::Json (line 1001) ... ok
+test crates/sql/sql/src/engine.rs - engine::Database (line 58) ... ok
+test crates/sql/sql/src/dml.rs - dml::WriteValue::Value (line 1014) ... ok
+test crates/sql/sql/src/engine.rs - engine::Database::close (line 210) ... ok
+test crates/sql/sql/src/engine.rs - engine::Database::begin (line 171) ... ok
+test crates/sql/sql/src/engine.rs - engine::Database::dialect (line 93) ... ok
+test crates/sql/sql/src/engine.rs - engine::Database::run (line 132) ... ok
+test crates/sql/sql/src/engine.rs - engine::Engine (line 416) ... ok
+test crates/sql/sql/src/engine.rs - engine::Engine::create (line 736) ... ok
+test crates/sql/sql/src/engine.rs - engine::Engine::alter (line 769) ... ok
+test crates/sql/sql/src/engine.rs - engine::Engine::begin (line 1061) ... ok
+test crates/sql/sql/src/engine.rs - engine::Engine::close (line 1104) ... ok
+test crates/sql/sql/src/engine.rs - engine::Engine::diff (line 458) ... ok
+test crates/sql/sql/src/engine.rs - engine::Engine::delete (line 705) ... ok
+test crates/sql/sql/src/engine.rs - engine::Engine::execute (line 991) ... ok
+test crates/sql/sql/src/engine.rs - engine::Engine::dialect (line 552) ... ok
+test crates/sql/sql/src/engine.rs - engine::Engine::execute_plan (line 505) ... ok
+test crates/sql/sql/src/engine.rs - engine::Engine::insert (line 640) ... ok
+test crates/sql/sql/src/engine.rs - engine::Engine::drop_table (line 802) ... ok
+test crates/sql/sql/src/engine.rs - engine::Engine::new (line 909) ... ok
+test crates/sql/sql/src/engine.rs - engine::Engine::limits (line 589) ... ok
+test crates/sql/sql/src/engine.rs - engine::Engine::fetch (line 1028) ... ok
+test crates/sql/sql/src/engine.rs - engine::Engine::rename_table (line 838) ... ok
+test crates/sql/sql/src/engine.rs - engine::Engine::select (line 606) ... ok
+test crates/sql/sql/src/engine.rs - engine::Engine::truncate (line 873) ... ok
+test crates/sql/sql/src/engine.rs - engine::Engine::update (line 671) ... ok
+test crates/sql/sql/src/engine.rs - engine::Engine::with_limits (line 947) ... ok
+test crates/sql/sql/src/engine.rs - engine::SqlFuture (line 12) ... ok
+test crates/sql/sql/src/engine.rs - engine::Transaction (line 1142) ... ok
+test crates/sql/sql/src/engine.rs - engine::Transaction::execute_plan (line 1229) ... ok
+test crates/sql/sql/src/engine.rs - engine::Transaction::execute (line 1278) ... ok
+test crates/sql/sql/src/engine.rs - engine::Transaction::commit (line 1356) ... ok
+test crates/sql/sql/src/engine.rs - engine::Transaction::rollback (line 1393) ... ok
+test crates/sql/sql/src/engine.rs - engine::Transaction::rollback_after (line 1425) ... ok
+test crates/sql/sql/src/engine.rs - engine::Transaction::limits (line 1199) ... ok
+test crates/sql/sql/src/engine.rs - engine::Transaction::fetch (line 1318) ... ok
+test crates/sql/sql/src/engine.rs - engine::TransactionSession (line 256) ... ok
+test crates/sql/sql/src/engine.rs - engine::TransactionOptions (line 36) ... ok
+test crates/sql/sql/src/error.rs - error::ErrorKind (line 24) ... ok
+test crates/sql/sql/src/engine.rs - engine::TransactionSession::commit (line 334) ... ok
+test crates/sql/sql/src/engine.rs - engine::TransactionSession::rollback (line 373) ... ok
+test crates/sql/sql/src/error.rs - error::ErrorKind::Arity (line 67) ... ok
+test crates/sql/sql/src/engine.rs - engine::TransactionSession::run (line 295) ... ok
+test crates/sql/sql/src/error.rs - error::ErrorKind::Closed (line 141) ... ok
+test crates/sql/sql/src/error.rs - error::ErrorKind::Arity::actual (line 101) ... ok
+test crates/sql/sql/src/error.rs - error::ErrorKind::Arity::expected (line 84) ... ok
+test crates/sql/sql/src/error.rs - error::ErrorKind::Busy (line 152) ... ok
+test crates/sql/sql/src/error.rs - error::ErrorKind::Driver (line 196) ... ok
+test crates/sql/sql/src/error.rs - error::ErrorKind::Decode (line 174) ... ok
+test crates/sql/sql/src/error.rs - error::ErrorKind::InvalidQuery (line 45) ... ok
+test crates/sql/sql/src/error.rs - error::ErrorKind::PoolTimedOut (line 130) ... ok
+test crates/sql/sql/src/error.rs - error::ErrorKind::Limit (line 119) ... ok
+test crates/sql/sql/src/error.rs - error::ErrorKind::Configuration (line 185) ... ok
+test crates/sql/sql/src/error.rs - error::ErrorKind::Unsupported (line 56) ... ok
+test crates/sql/sql/src/error.rs - error::Result (line 10) ... ok
+test crates/sql/sql/src/error.rs - error::ErrorKind::RollbackOnly (line 163) ... ok
+test crates/sql/sql/src/error.rs - error::SqlError (line 212) ... ok
+test crates/sql/sql/src/error.rs - error::SqlError::kind (line 313) ... ok
+test crates/sql/sql/src/error.rs - error::SqlError::cleanup_error (line 361) ... ok
+test crates/sql/sql/src/error.rs - error::SqlError::with_cleanup (line 336) ... ok
+test crates/sql/sql/src/error.rs - error::SqlError::new (line 253) ... ok
+test crates/sql/sql/src/error.rs - error::SqlError::with_source (line 281) ... ok
+test crates/sql/sql/src/expr.rs - expr::Compare (line 13) ... ok
+test crates/sql/sql/src/expr.rs - expr::Compare::Eq (line 32) ... ok
+test crates/sql/sql/src/expr.rs - expr::Compare::Ge (line 102) ... ok
+test crates/sql/sql/src/expr.rs - expr::Compare::Gt (line 88) ... ok
+test crates/sql/sql/src/expr.rs - expr::Compare::Le (line 74) ... ok
+test crates/sql/sql/src/expr.rs - expr::Compare::Lt (line 60) ... ok
+test crates/sql/sql/src/expr.rs - expr::Compare::Like (line 116) ... ok
+test crates/sql/sql/src/expr.rs - expr::Compare::Ne (line 46) ... ok
+test crates/sql/sql/src/expr.rs - expr::Expr::All (line 219) ... ok
+test crates/sql/sql/src/expr.rs - expr::Expr::Compare (line 202) ... ok
+test crates/sql/sql/src/expr.rs - expr::Expr::Any (line 232) ... ok
+test crates/sql/sql/src/expr.rs - expr::Expr (line 156) ... ok
+test crates/sql/sql/src/expr.rs - expr::Expr::IsNull (line 258) ... ok
+test crates/sql/sql/src/expr.rs - expr::Expr::In (line 271) ... ok
+test crates/sql/sql/src/expr.rs - expr::Expr::Column (line 176) ... ok
+test crates/sql/sql/src/expr.rs - expr::Expr::JsonEq (line 314) ... ok
+test crates/sql/sql/src/expr.rs - expr::Expr::JsonContains (line 327) ... ok
+test crates/sql/sql/src/expr.rs - expr::Expr::Like (line 288) ... ok
+test crates/sql/sql/src/expr.rs - expr::Expr::JsonExtract (line 301) ... ok
+test crates/sql/sql/src/expr.rs - expr::Expr::Trusted (line 340) ... ok
+test crates/sql/sql/src/expr.rs - expr::Expr::Not (line 245) ... ok
+test crates/sql/sql/src/expr.rs - expr::Expr::Value (line 189) ... ok
+test crates/sql/sql/src/expr.rs - expr::Expr::any (line 465) ... ok
+test crates/sql/sql/src/expr.rs - expr::Expr::all (line 444) ... ok
+test crates/sql/sql/src/expr.rs - expr::Expr::eq (line 423) ... ok
+test crates/sql/sql/src/expr.rs - expr::Expr::compare (line 402) ... ok
+test crates/sql/sql/src/expr.rs - expr::Expr::json_contains (line 522) ... ok
+test crates/sql/sql/src/expr.rs - expr::Expr::json (line 486) ... ok
+test crates/sql/sql/src/expr.rs - expr::Expr::json_eq (line 504) ... ok
+test crates/sql/sql/src/expr.rs - expr::Expr::value (line 381) ... ok
+test crates/sql/sql/src/expr.rs - expr::Selector::alias (line 620) ... ok
+test crates/sql/sql/src/expr.rs - expr::Selector (line 545) ... ok
+test crates/sql/sql/src/expr.rs - expr::Expr::column (line 360) ... ok
+test crates/sql/sql/src/expr.rs - expr::Selector::expression (line 574) ... ok
+test crates/sql/sql/src/identifier.rs - identifier::Identifier (line 12) ... ok
+test crates/sql/sql/src/expr.rs - expr::Selector::wildcard (line 599) ... ok
+test crates/sql/sql/src/identifier.rs - identifier::Identifier::segments (line 42) ... ok
+test crates/sql/sql/src/identifier.rs - identifier::Identifier::qualified (line 27) ... ok
+test crates/sql/sql/src/identifier.rs - identifier::TableRef::alias (line 112) ... ok
+test crates/sql/sql/src/identifier.rs - identifier::TableRef::name (line 101) ... ok
+test crates/sql/sql/src/identifier.rs - identifier::TableRef (line 85) ... ok
+test crates/sql/sql/src/identifier.rs - identifier::TableRef::alias (line 146) ... ok
+test crates/sql/sql/src/identifier.rs - identifier::TableRef::new (line 126) ... ok
+test crates/sql/sql/src/json.rs - json::JsonPath::parse (line 407) ... ok
+test crates/sql/sql/src/json.rs - json::JsonPath::new (line 381) ... ok
+test crates/sql/sql/src/json.rs - json::JsonPath (line 359) ... ok
+test crates/sql/sql/src/json.rs - json::JsonPath::segments (line 450) ... ok
+test crates/sql/sql/src/json.rs - json::JsonPathOptions (line 314) ... ok
+test crates/sql/sql/src/json.rs - json::JsonScalar::Integer (line 57) ... ok
+test crates/sql/sql/src/json.rs - json::JsonScalar (line 13) ... ok
+test crates/sql/sql/src/json.rs - json::JsonScalar::Bool (line 46) ... ok
+test crates/sql/sql/src/json.rs - json::JsonPathOptions::separator (line 334) ... ok
+test crates/sql/sql/src/json.rs - json::JsonScalar::String (line 79) ... ok
+test crates/sql/sql/src/json.rs - json::JsonScalar::Null (line 35) ... ok
+test crates/sql/sql/src/json.rs - json::JsonScalar::Real (line 68) ... ok
+test crates/sql/sql/src/json.rs - json::JsonSegment::Index (line 301) ... ok
+test crates/sql/sql/src/json.rs - json::JsonSegment (line 270) ... ok
+test crates/sql/sql/src/json.rs - json::JsonValue (line 118) ... ok
+test crates/sql/sql/src/json.rs - json::JsonSegment::Key (line 290) ... ok
+test crates/sql/sql/src/json.rs - json::JsonValue::Object (line 162) ... ok
+test crates/sql/sql/src/json.rs - json::JsonValue::Array (line 151) ... ok
+test crates/sql/sql/src/json.rs - json::JsonValue::Scalar (line 140) ... ok
+test crates/sql/sql/src/lib.rs - (line 12) ... ok
+test crates/sql/sql/src/json.rs - json::JsonValue::to_json (line 182) ... ok
+test crates/sql/sql/src/lib.rs - (line 73) ... ok
+test crates/sql/sql/src/query.rs - query::DialectId::Mysql (line 44) ... ok
+test crates/sql/sql/src/query.rs - query::DialectId::Sqlite (line 22) ... ok
+test crates/sql/sql/src/query.rs - query::DialectId (line 9) ... ok
+test crates/sql/sql/src/query.rs - query::DialectId::Postgres (line 33) ... ok
+test crates/sql/sql/src/query.rs - query::Query (line 147) ... ok
+test crates/sql/sql/src/query.rs - query::Query::dialect (line 233) ... ok
+test crates/sql/sql/src/query.rs - query::Query::binds (line 213) ... ok
+test crates/sql/sql/src/query.rs - query::Query::sql (line 193) ... ok
+test crates/sql/sql/src/query.rs - query::Query::validate (line 258) ... ok
+test crates/sql/sql/src/query.rs - query::QueryLimits (line 62) ... ok
+test crates/sql/sql/src/query.rs - query::QueryLimits::bytes (line 117) ... ok
+test crates/sql/sql/src/query.rs - query::QueryLimits::rows (line 106) ... ok
+test crates/sql/sql/src/query.rs - query::QueryLimits::sql_bytes (line 84) ... ok
+test crates/sql/sql/src/query.rs - query::QueryLimits::binds (line 95) ... ok
+test crates/sql/sql/src/query.rs - query::Render::render (line 324) ... ok
+test crates/sql/sql/src/query.rs - query::Sql::bind (line 469) ... ok
+test crates/sql/sql/src/query.rs - query::Sql (line 402) ... ok
+test crates/sql/sql/src/query.rs - query::Render (line 304) ... ok
+test crates/sql/sql/src/query.rs - query::Sql::trusted (line 446) ... ok
+test crates/sql/sql/src/query.rs - query::Sql::literal (line 429) ... ok
+test crates/sql/sql/src/schema.rs - schema::DefaultValue (line 266) ... ok
+test crates/sql/sql/src/query.rs - query::TrustedSql (line 353) ... ok
+test crates/sql/sql/src/query.rs - query::TrustedSql::audited (line 378) ... ok
+test crates/sql/sql/src/schema.rs - schema::Field::auto_increment (line 424) ... ok
+test crates/sql/sql/src/schema.rs - schema::DefaultValue::CurrentTimestamp (line 301) ... ok
+test crates/sql/sql/src/schema.rs - schema::DefaultValue::Value (line 288) ... ok
+test crates/sql/sql/src/schema.rs - schema::DefaultValue::Trusted (line 314) ... ok
+test crates/sql/sql/src/schema.rs - schema::Field (line 339) ... ok
+test crates/sql/sql/src/schema.rs - schema::Field::auto_increment (line 543) ... ok
+test crates/sql/sql/src/schema.rs - schema::Field::comment (line 446) ... ok
+test crates/sql/sql/src/schema.rs - schema::Field::data_type (line 380) ... ok
+test crates/sql/sql/src/schema.rs - schema::Field::default (line 518) ... ok
+test crates/sql/sql/src/schema.rs - schema::Field::default (line 413) ... ok
+test crates/sql/sql/src/schema.rs - schema::Field::length (line 402) ... ok
+test crates/sql/sql/src/schema.rs - schema::Field::name (line 369) ... ok
+test crates/sql/sql/src/schema.rs - schema::Field::new (line 460) ... ok
+test crates/sql/sql/src/schema.rs - schema::Field::unsigned (line 435) ... ok
+test crates/sql/sql/src/schema.rs - schema::Field::length (line 564) ... ok
+test crates/sql/sql/src/schema.rs - schema::Field::nullable (line 391) ... ok
+test crates/sql/sql/src/schema.rs - schema::Field::not_null (line 493) ... ok
+test crates/sql/sql/src/schema.rs - schema::ForeignKey::columns (line 962) ... ok
+test crates/sql/sql/src/schema.rs - schema::ForeignKey::name (line 951) ... ok
+test crates/sql/sql/src/schema.rs - schema::ForeignKey::foreign_columns (line 984) ... ok
+test crates/sql/sql/src/schema.rs - schema::ForeignKey (line 928) ... ok
+test crates/sql/sql/src/schema.rs - schema::ForeignKey::new (line 1020) ... ok
+test crates/sql/sql/src/schema.rs - schema::ForeignKey::on_delete (line 995) ... ok
+test crates/sql/sql/src/schema.rs - schema::Index::columns (line 722) ... ok
+test crates/sql/sql/src/schema.rs - schema::ForeignKey::on_update (line 1006) ... ok
+test crates/sql/sql/src/schema.rs - schema::Index (line 696) ... ok
+test crates/sql/sql/src/schema.rs - schema::Index::name (line 711) ... ok
+test crates/sql/sql/src/schema.rs - schema::ForeignKey::table (line 973) ... ok
+test crates/sql/sql/src/schema.rs - schema::Index::new (line 747) ... ok
+test crates/sql/sql/src/schema.rs - schema::Index::unique (line 770) ... ok
+test crates/sql/sql/src/schema.rs - schema::Length::Precision (line 215) ... ok
+test crates/sql/sql/src/schema.rs - schema::Length (line 180) ... ok
+test crates/sql/sql/src/schema.rs - schema::Length::Size (line 202) ... ok
+test crates/sql/sql/src/schema.rs - schema::Index::unique (line 733) ... ok
+test crates/sql/sql/src/schema.rs - schema::Length::Precision::precision (line 231) ... ok
+test crates/sql/sql/src/schema.rs - schema::Length::Precision::scale (line 247) ... ok
+test crates/sql/sql/src/schema.rs - schema::ReferentialAction (line 800) ... ok
+test crates/sql/sql/src/schema.rs - schema::ReferentialAction::Cascade (line 858) ... ok
+test crates/sql/sql/src/schema.rs - schema::ReferentialAction::NoAction (line 823) ... ok
+test crates/sql/sql/src/schema.rs - schema::ReferentialAction::Restrict (line 841) ... ok
+test crates/sql/sql/src/schema.rs - schema::ReferentialAction::SetDefault (line 892) ... ok
+test crates/sql/sql/src/schema.rs - schema::ReferentialAction::SetNull (line 875) ... ok
+test crates/sql/sql/src/schema.rs - schema::SqlType::Blob (line 106) ... ok
+test crates/sql/sql/src/schema.rs - schema::SqlType (line 19) ... ok
+test crates/sql/sql/src/schema.rs - schema::SqlType::Boolean (line 67) ... ok
+test crates/sql/sql/src/schema.rs - schema::SqlType::Decimal (line 146) ... ok
+test crates/sql/sql/src/schema.rs - schema::SqlType::DateTime (line 132) ... ok
+test crates/sql/sql/src/schema.rs - schema::SqlType::Integer (line 41) ... ok
+test crates/sql/sql/src/schema.rs - schema::SqlType::Text (line 80) ... ok
+test crates/sql/sql/src/schema.rs - schema::SqlType::Trusted (line 162) ... ok
+test crates/sql/sql/src/schema.rs - schema::SqlType::Json (line 119) ... ok
+test crates/sql/sql/src/table.rs - table::TableCommand (line 15) ... ok
+test crates/sql/sql/src/schema.rs - schema::SqlType::Real (line 54) ... ok
+test crates/sql/sql/src/schema.rs - schema::SqlType::Varchar (line 93) ... ok
+test crates/sql/sql/src/table.rs - table::TableCommand::Drop (line 31) ... ok
+test crates/sql/sql/src/table.rs - table::TableCommand::Drop::cascade (line 76) ... ok
+test crates/sql/sql/src/table.rs - table::TableCommand::Drop::table (line 46) ... ok
+test crates/sql/sql/src/table.rs - table::TableCommand::Drop::if_exists (line 61) ... ok
+test crates/sql/sql/src/table.rs - table::TableCommand::Rename::from (line 106) ... ok
+test crates/sql/sql/src/table.rs - table::TableCommand::Rename::to (line 120) ... ok
+test crates/sql/sql/src/table.rs - table::TableCommand::Rename (line 92) ... ok
+test crates/sql/sql/src/table.rs - table::TableCommand::Truncate (line 135) ... ok
+test crates/sql/sql/src/table.rs - table::TableCommand::Truncate::cascade (line 163) ... ok
+test crates/sql/sql/src/table.rs - table::TableCommand::Truncate::table (line 149) ... ok
+test crates/sql/sql/src/table.rs - table::TableCommand::drop_table (line 181) ... ok
+test crates/sql/sql/src/table.rs - table::TableCommand::rename (line 203) ... ok
+test crates/sql/sql/src/value.rs - value::ColumnMetadata (line 386) ... ok
+test crates/sql/sql/src/table.rs - table::TableCommand::truncate (line 224) ... ok
+test crates/sql/sql/src/value.rs - value::ColumnMetadata::declared_type (line 448) ... ok
+test crates/sql/sql/src/value.rs - value::ColumnMetadata::ordinal (line 433) ... ok
+test crates/sql/sql/src/value.rs - value::ColumnMetadataRef (line 465) ... ok
+test crates/sql/sql/src/value.rs - value::ColumnMetadata::name (line 418) ... ok
+test crates/sql/sql/src/value.rs - value::ColumnMetadataRef::name (line 497) ... ok
+test crates/sql/sql/src/value.rs - value::FromSqlValue (line 282) ... ok
+test crates/sql/sql/src/value.rs - value::ColumnMetadataRef::ordinal (line 509) ... ok
+test crates/sql/sql/src/value.rs - value::FromSqlValue::from_sql (line 297) ... ok
+test crates/sql/sql/src/value.rs - value::ColumnMetadataRef::declared_type (line 521) ... ok
+test crates/sql/sql/src/value.rs - value::QueryResult::affected (line 975) ... ok
+test crates/sql/sql/src/value.rs - value::QueryResult (line 943) ... ok
+test crates/sql/sql/src/value.rs - value::QueryResult::insert_id (line 995) ... ok
+test crates/sql/sql/src/value.rs - value::QueryResult::rows (line 960) ... ok
+test crates/sql/sql/src/value.rs - value::Row::columns (line 674) ... ok
+test crates/sql/sql/src/value.rs - value::Row::cells (line 803) ... ok
+test crates/sql/sql/src/value.rs - value::Row::retained_bytes (line 719) ... ok
+test crates/sql/sql/src/value.rs - value::Row::new (line 580) ... ok
+test crates/sql/sql/src/value.rs - value::Row (line 541) ... ok
+test crates/sql/sql/src/value.rs - value::Row::try_get_at (line 765) ... ok
+test crates/sql/sql/src/value.rs - value::Row::try_get (line 841) ... ok
+test crates/sql/sql/src/value.rs - value::SqlValue (line 14) ... ok
+test crates/sql/sql/src/value.rs - value::Row::with_metadata (line 623) ... ok
+test crates/sql/sql/src/value.rs - value::SqlValue::Blob (line 99) ... ok
+test crates/sql/sql/src/value.rs - value::SqlValue::Real (line 71) ... ok
+test crates/sql/sql/src/value.rs - value::SqlValue::Integer (line 57) ... ok
+test crates/sql/sql/src/value.rs - value::SqlValue::Null (line 29) ... ok
+test crates/sql/sql/src/value.rs - value::SqlValue::Text (line 85) ... ok
+test crates/sql/sql/src/value.rs - value::SqlValue::retained_bytes (line 191) ... ok
+test crates/sql/sql/src/value.rs - value::SqlValue::Bool (line 43) ... ok
+test crates/sql/sql/src/value.rs - value::SqlValue::json (line 121) ... ok
+test crates/sql/sql/src/value.rs - value::SqlValue::utc_text (line 149) ... ok
+
+test result: ok. 418 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.16s
+
+
+running 11 tests
+test crates/sql/sql/src/dml.rs - dml::Delete (line 1923) - compile fail ... ok
+test crates/sql/sql/src/query.rs - query::Sql (line 414) - compile fail ... ok
+test crates/sql/sql/src/ddl.rs - ddl::Alter (line 953) - compile fail ... ok
+test crates/sql/sql/src/ddl.rs - ddl::Create (line 308) - compile fail ... ok
+test crates/sql/sql/src/lib.rs - (line 121) - compile fail ... ok
+test crates/sql/sql/src/engine.rs - engine::Transaction (line 1171) - compile fail ... ok
+test crates/sql/sql/src/dml.rs - dml::Select (line 558) - compile fail ... ok
+test crates/sql/sql/src/dml.rs - dml::Insert (line 1259) - compile fail ... ok
+test crates/sql/sql/src/dml.rs - dml::Update (line 1641) - compile fail ... ok
+test crates/sql/sql/src/lib.rs - (line 126) - compile fail ... ok
+test crates/sql/sql/src/schema.rs - schema::Field (line 358) - compile fail ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+all doctests ran in 2.96s; merged doctests compilation took 2.22s
+   Doc-tests stackpress_sql_mysql
+
+running 6 tests
+test crates/sql/sql-mysql/src/lib.rs - (line 16) - compile ... ok
+test crates/sql/sql-mysql/src/database.rs - database::MysqlDatabase::open (line 39) - compile ... ok
+test crates/sql/sql-mysql/src/options.rs - options::MysqlTls (line 14) ... ok
+test crates/sql/sql-mysql/src/options.rs - options::MysqlOptions::new (line 108) ... ok
+test crates/sql/sql-mysql/src/options.rs - options::MysqlOptions (line 46) ... ok
+test crates/sql/sql-mysql/src/options.rs - options::MysqlOptions::validate (line 142) ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+
+running 3 tests
+test crates/sql/sql-mysql/src/lib.rs - (line 37) - compile fail ... ok
+test crates/sql/sql-mysql/src/lib.rs - (line 49) - compile fail ... ok
+test crates/sql/sql-mysql/src/lib.rs - (line 30) - compile fail ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s
+
+all doctests ran in 0.97s; merged doctests compilation took 0.40s
+   Doc-tests stackpress_sql_postgres
+
+running 6 tests
+test crates/sql/sql-postgres/src/database.rs - database::PostgresDatabase::open (line 39) - compile ... ok
+test crates/sql/sql-postgres/src/lib.rs - (line 16) - compile ... ok
+test crates/sql/sql-postgres/src/options.rs - options::PostgresOptions::new (line 108) ... ok
+test crates/sql/sql-postgres/src/options.rs - options::PostgresOptions::validate (line 142) ... ok
+test crates/sql/sql-postgres/src/options.rs - options::PostgresTls (line 14) ... ok
+test crates/sql/sql-postgres/src/options.rs - options::PostgresOptions (line 46) ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 3 tests
+test crates/sql/sql-postgres/src/lib.rs - (line 37) - compile fail ... ok
+test crates/sql/sql-postgres/src/lib.rs - (line 49) - compile fail ... ok
+test crates/sql/sql-postgres/src/lib.rs - (line 30) - compile fail ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s
+
+all doctests ran in 0.93s; merged doctests compilation took 0.34s
+   Doc-tests stackpress_sql_sqlite
+
+running 2 tests
+test crates/sql/sql-sqlite/src/lib.rs - (line 22) - compile ... ok
+test crates/sql/sql-sqlite/src/options.rs - options::SqliteOptions::read_only (line 69) ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 1 test
+test crates/sql/sql-sqlite/src/options.rs - options::SqliteOptions (line 18) - compile fail ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+all doctests ran in 1.17s; merged doctests compilation took 0.68s

@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "id": "20261029T011213.185816Z-a5b3ff6c741b",
+  "started_at": "2026-10-29T01:12:13.185816+00:00",
+  "status": "passed",
+  "label": "i17-m1-verify stream-build",
+  "kind": "build",
+  "scope": "consumer",
+  "cache": "cold",
+  "command": [
+    "python3",
+    "examples/ui-stream/build.py"
+  ],
+  "cwd": "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17",
+  "commit": "0c07794b7233ddd5df64ade802cff52e29f2a69a",
+  "branch": "trial/3-issue17-leptos-library",
+  "dirty": true,
+  "host": "macOS-26.6.2-arm64-arm-64bit",
+  "machine": "arm64",
+  "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+  "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+  "environment": {
+    "CARGO_TARGET_DIR": "/private/tmp/i17-m1-verify/target",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_BUILD_JOBS": "6"
+  },
+  "cargo_activity": {
+    "compiling": 0,
+    "checking": 0,
+    "documenting": 0
+  },
+  "cargo_build_stages": [],
+  "log": "runs/20261029T011213.185816Z-a5b3ff6c741b.log",
+  "ended_at": "2026-10-29T01:12:41.141101+00:00",
+  "command_seconds": 27.692624,
+  "exit_code": 0,
+  "cargo_build_seconds": null
+}

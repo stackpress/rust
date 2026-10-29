@@ -1,0 +1,213 @@
+PASS gallery-native-build
+PASS gallery-hydrate-build
+PASS gallery-hydrate-bindgen
+PASS gallery-csr-build
+PASS gallery-csr-bindgen
+PASS preferences-native-build
+PASS preferences-hydrate-build
+PASS preferences-hydrate-bindgen
+PASS preferences-csr-build
+PASS preferences-csr-bindgen
+PASS native-build
+PASS hydrate-build
+PASS bindgen
+PASS proof-wrapper-tests
+PASS manifest-tests
+PASS fmt
+PASS generated-freshness
+PASS native-ssr
+PASS hydrate
+PASS csr
+PASS gateway-build
+PASS native-feature
+PASS facade-hydrate
+PASS runtime-hydrate
+PASS facade-csr
+PASS runtime-csr
+PASS existing-build-hash
+PASS default-facade
+PASS gateway-runtime
+PASS tests
+PASS customized-reuse
+PASS native-ssr-final
+PASS doctests
+PASS clippy
+PASS service-proof
+All checks passed; logs: /private/tmp/stackpress-issue17-m3/evidence/profile-check
+PASS native-build
+PASS hydrate-base-build
+PASS hydrate-base-bindgen
+PASS hydrate-base-tree
+PASS hydrate-rich-build
+PASS hydrate-rich-bindgen
+PASS hydrate-rich-tree
+PASS hydrate-format-build
+PASS hydrate-format-bindgen
+PASS hydrate-format-tree
+PASS hydrate-both-build
+PASS hydrate-both-bindgen
+PASS hydrate-both-tree
+PASS csr-base-build
+PASS csr-base-bindgen
+PASS csr-base-tree
+PASS csr-rich-build
+PASS csr-rich-bindgen
+PASS csr-rich-tree
+PASS csr-format-build
+PASS csr-format-bindgen
+PASS csr-format-tree
+PASS csr-both-build
+PASS csr-both-bindgen
+PASS csr-both-tree
+$ cargo build --manifest-path /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/Cargo.toml --locked --offline --example document --features ssr
+   Compiling hydration_context v0.3.2
+   Compiling gloo-utils v0.2.0
+   Compiling gloo-net v0.6.0
+   Compiling reactive_graph v0.2.16
+   Compiling server_fn v0.8.13
+   Compiling reactive_stores v0.4.4
+   Compiling tachys v0.2.19
+   Compiling leptos_server v0.8.8
+   Compiling leptos_dom v0.8.8
+   Compiling leptos v0.8.22
+   Compiling leptos_meta v0.8.7
+   Compiling leptos_router v0.8.17
+   Compiling stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+   Compiling leptos-independent v0.0.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent)
+    Finished `dev` profile [unoptimized] target(s) in 25.77s
+$ /private/tmp/stackpress-issue17-m3/evidence/independent/base/document hydrate light en
+$ /private/tmp/stackpress-issue17-m3/evidence/independent/base/document hydrate dark fr
+$ cargo build --manifest-path /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/Cargo.toml --locked --offline --lib --target wasm32-unknown-unknown --features hydrate
+   Compiling stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+   Compiling leptos-independent v0.0.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent)
+    Finished `dev` profile [unoptimized] target(s) in 10.26s
+$ wasm-bindgen --target web --no-typescript --out-dir /private/tmp/stackpress-issue17-m3/evidence/independent/base/hydrate --out-name independent /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/target/issue17/wasm32-unknown-unknown/debug/leptos_independent.wasm
+$ /private/tmp/stackpress-issue17-m3/evidence/independent/base/document csr light en
+$ /private/tmp/stackpress-issue17-m3/evidence/independent/base/document csr dark fr
+$ cargo build --manifest-path /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/Cargo.toml --locked --offline --lib --target wasm32-unknown-unknown --features csr
+   Compiling stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+   Compiling leptos-independent v0.0.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent)
+    Finished `dev` profile [unoptimized] target(s) in 7.34s
+$ wasm-bindgen --target web --no-typescript --out-dir /private/tmp/stackpress-issue17-m3/evidence/independent/base/csr --out-name independent /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/target/issue17/wasm32-unknown-unknown/debug/leptos_independent.wasm
+$ cargo build --manifest-path /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/Cargo.toml --locked --offline --example document --features ssr,async,rich,format
+   Compiling any_spawner v0.3.0
+   Compiling reactive_graph v0.2.16
+   Compiling reactive_stores v0.4.4
+   Compiling tachys v0.2.19
+   Compiling leptos_server v0.8.8
+   Compiling leptos_dom v0.8.8
+   Compiling leptos v0.8.22
+   Compiling leptos_meta v0.8.7
+   Compiling leptos_router v0.8.17
+   Compiling stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+   Compiling leptos-independent v0.0.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent)
+    Finished `dev` profile [unoptimized] target(s) in 27.72s
+$ /private/tmp/stackpress-issue17-m3/evidence/independent/helpers/document hydrate light en
+$ /private/tmp/stackpress-issue17-m3/evidence/independent/helpers/document hydrate dark fr
+$ cargo build --manifest-path /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/Cargo.toml --locked --offline --lib --target wasm32-unknown-unknown --features hydrate,async,rich,format
+   Compiling either v1.19.0
+   Compiling stable_deref_trait v1.2.1
+   Compiling zerofrom v0.1.8
+   Compiling yoke v0.8.4
+   Compiling writeable v0.6.4
+   Compiling zerovec v0.11.9
+   Compiling smallvec v1.16.4
+   Compiling litemap v0.8.3
+   Compiling zerotrie v0.2.5
+   Compiling tinystr v0.8.5
+   Compiling icu_locale_core v2.4.0
+   Compiling potential_utf v0.1.6
+   Compiling once_cell v1.21.4
+   Compiling wasm-bindgen v0.2.129
+   Compiling icu_provider v2.4.0
+   Compiling js-sys v0.3.106
+   Compiling icu_collections v2.4.0
+   Compiling icu_properties v2.4.0
+   Compiling icu_normalizer v2.4.0
+   Compiling icu_locale_fallback_data v2.4.0
+   Compiling idna_adapter v1.2.2
+   Compiling idna v1.1.0
+   Compiling itertools v0.14.0
+   Compiling libm v0.2.16
+   Compiling url v2.5.8
+   Compiling icu_locale_fallback v2.4.0
+   Compiling parking_lot_core v0.9.12
+   Compiling parking_lot v0.12.5
+   Compiling string_cache v0.11.0
+   Compiling icu_calendar_data v2.4.0
+   Compiling core_maths v0.1.1
+   Compiling byteorder v1.5.0
+   Compiling icu_plurals_data v2.4.0
+   Compiling web-sys v0.3.106
+   Compiling wasm-bindgen-futures v0.4.79
+   Compiling any_spawner v0.3.0
+   Compiling hydration_context v0.3.2
+   Compiling icu_time_data v2.4.0
+   Compiling icu_decimal_data v2.4.0
+   Compiling hash32 v0.2.1
+   Compiling leptos_macro v0.8.19
+   Compiling web_atoms v0.3.0
+   Compiling calendrical_calculations v0.2.4
+   Compiling heapless v0.7.17
+   Compiling fixed_decimal v0.7.3
+   Compiling linked-hash-map v0.5.6
+   Compiling icu_datetime_data v2.4.0
+   Compiling markup5ever v0.40.0
+   Compiling icu_locale_data v2.4.0
+   Compiling lru-cache v0.1.2
+   Compiling icu_calendar v2.4.0
+   Compiling cobs v0.3.0
+   Compiling oncemutex v0.1.1
+   Compiling regex-syntax v0.6.29
+   Compiling minimal-lexical v0.2.1
+   Compiling nom v7.1.3
+   Compiling regex-cache v0.2.1
+   Compiling postcard v1.1.3
+   Compiling icu_plurals v2.4.0
+   Compiling icu_time v2.4.0
+   Compiling icu_decimal v2.4.0
+   Compiling phonenumber v0.3.10+9.0.33
+   Compiling cssparser v0.38.0
+   Compiling strum v0.27.2
+   Compiling html5ever v0.40.1
+   Compiling icu_pattern v0.5.1
+   Compiling quick-xml v0.41.0
+   Compiling fnv v1.0.7
+   Compiling ammonia v4.2.4
+   Compiling reactive_graph v0.2.16
+   Compiling gloo-utils v0.2.0
+   Compiling gloo-net v0.6.0
+   Compiling reactive_stores v0.4.4
+   Compiling wasm-streams v0.5.0
+   Compiling tachys v0.2.19
+   Compiling server_fn v0.8.13
+   Compiling icu_datetime v2.4.0
+   Compiling icu_locale v2.4.0
+   Compiling leptos_server v0.8.8
+   Compiling leptos_dom v0.8.8
+   Compiling leptos v0.8.22
+   Compiling leptos_router v0.8.17
+   Compiling leptos_meta v0.8.7
+   Compiling stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+   Compiling leptos-independent v0.0.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent)
+    Finished `dev` profile [unoptimized] target(s) in 58.16s
+$ wasm-bindgen --target web --no-typescript --out-dir /private/tmp/stackpress-issue17-m3/evidence/independent/helpers/hydrate --out-name independent /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/target/issue17/wasm32-unknown-unknown/debug/leptos_independent.wasm
+$ /private/tmp/stackpress-issue17-m3/evidence/independent/helpers/document csr light en
+$ /private/tmp/stackpress-issue17-m3/evidence/independent/helpers/document csr dark fr
+$ cargo build --manifest-path /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/Cargo.toml --locked --offline --lib --target wasm32-unknown-unknown --features csr,async,rich,format
+   Compiling reactive_graph v0.2.16
+   Compiling leptos_macro v0.8.19
+   Compiling reactive_stores v0.4.4
+   Compiling tachys v0.2.19
+   Compiling leptos_server v0.8.8
+   Compiling leptos_dom v0.8.8
+   Compiling leptos v0.8.22
+   Compiling leptos_router v0.8.17
+   Compiling leptos_meta v0.8.7
+   Compiling stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+   Compiling leptos-independent v0.0.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent)
+    Finished `dev` profile [unoptimized] target(s) in 24.27s
+$ wasm-bindgen --target web --no-typescript --out-dir /private/tmp/stackpress-issue17-m3/evidence/independent/helpers/csr --out-name independent /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/target/issue17/wasm32-unknown-unknown/debug/leptos_independent.wasm
+PASS separate independent native/hydrate/CSR artifacts
+PASS all eight independent documents byte-identical with document_shell
+supervisor: child 91891 reaped; peak target 6555948 KiB

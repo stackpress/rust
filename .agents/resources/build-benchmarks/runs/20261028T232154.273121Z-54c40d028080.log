@@ -1,0 +1,16 @@
+{
+  "source_files_classified": 60,
+  "document_lines": 265,
+  "changed_files": [
+    ".agents/specs/00001-stackpress-rust-foundation/tasks/00017-issue17-design.md"
+  ],
+  "baseline_errors": 146,
+  "baseline_warnings": 25,
+  "final_validation_id": "20261028T232140.428382Z-51c579ee9e5a",
+  "final_errors": 146,
+  "final_warnings": 26,
+  "added_diagnostics": [
+    "WARN: specs/00001-stackpress-rust-foundation/tasks/00017-issue17-design.md has 265 lines; preferred target is 200 lines or fewer. Keep a coherent file at 201-500 lines, or split losslessly when that improves routing; do not shorten content merely to clear this warning"
+  ],
+  "removed_diagnostics": []
+}

@@ -1,0 +1,86 @@
+   Compiling stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view)
+    Finished `test` profile [unoptimized] target(s) in 1.68s
+     Running unittests src/lib.rs (target/issue15-m2/debug/deps/stackpress_framework_view-4d4191168182ba0a)
+
+running 18 tests
+test preferences::locale::tests::precedence_and_routes ... ok
+test preferences::locale::tests::compiled_prefixes_and_exact_return_context ... ok
+test presentation_tests::explicit_host_policy_or_fail_closed ... ok
+test preferences::locale::tests::invalid_configuration ... ok
+test preferences::locale::tests::action_admission_and_persistence ... ok
+test presentation_tests::flash_consumption_bounds_and_root_dedupe ... ok
+test presentation_tests::flash_wire_expansion_is_bounded ... ok
+test presentation_tests::scope_and_theme_tokens ... ok
+test theme::tests::checked_external_tag_and_nonce ... ok
+test presentation_tests::confirm_actual_cookie_readback ... ok
+test presentation_tests::single_writer_and_failure_preserve_content ... ok
+test presentation_tests::unset_is_absence_and_legacy_readback_only ... ok
+test presentation_tests::select_and_admit_settings ... ok
+test adapters::native::tests::symlinks_and_non_regular_files_are_not_followed ... ok
+test adapters::native::tests::corrupt_inputs_are_bounded_and_not_rewritten ... ok
+test adapters::native::tests::fifo_open_cannot_hang ... ok
+test adapters::native::tests::real_restart_and_invalid_updates ... ok
+test adapters::native::tests::abandoned_staging_is_bounded_and_never_followed ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/contracts.rs (target/issue15-m2/debug/deps/contracts-5c173e7841c0fdbe)
+
+running 3 tests
+test hostile_seed_and_contract_drift ... ok
+test saved_theme_or_unset ... ok
+test bounds_and_checked_metadata ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running tests/lifecycle.rs (target/issue15-m2/debug/deps/lifecycle-ec373351f4616993)
+
+running 2 tests
+test duplicate_and_invalid_registration ... ok
+test stage_table_and_drop ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/policies.rs (target/issue15-m2/debug/deps/policies-5c0fe697c660bf95)
+
+running 8 tests
+test serialization_preserves_cause_without_disclosure ... ok
+test compiled_capture_boundaries ... ok
+test catalog_and_exact_parameters ... ok
+test status_and_lower_limits_roundtrip ... ok
+test metadata_and_assets_are_checked ... ok
+test asset_logical_byte_boundary_precedes_build_matching ... ok
+test escaped_assets_roundtrip ... ok
+test asset_decode_boundaries ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/presentation_registration.rs (target/issue15-m2/debug/deps/presentation_registration-7eb127419bf76d73)
+
+running 3 tests
+test unselected_and_independent_flash ... FAILED
+test selected_settings_and_assets ... ok
+test rejected_startup ... ok
+
+failures:
+
+---- unselected_and_independent_flash stdout ----
+
+thread 'unselected_and_independent_flash' (114528267) panicked at crates/framework/framework-view/tests/presentation_registration.rs:61:5:
+HandleReport { correlation_id: CorrelationId("1"), event: "POST /settings", outcome: Failed { stage: Operation }, stages: [StageRecord { stage: Input, event: None, outcome: Completed, delivery_state: Open }, StageRecord { stage: Request, event: Some("request"), outcome: NoListener, delivery_state: Open }, StageRecord { stage: Operation, event: Some("POST /settings"), outcome: NoListener, delivery_state: Open }, StageRecord { stage: Operation, event: Some("POST /settings"), outcome: Failed, delivery_state: Open }, StageRecord { stage: Error, event: Some("error"), outcome: NoListener, delivery_state: Open }, StageRecord { stage: Response, event: Some("response"), outcome: NoListener, delivery_state: Open }], failures: [StageFailure { stage: Operation, frames: [], .. }], error_offers: [ErrorOffer { failure: 0, outcome: NoListener }], operation: Some(NoListener), output_eligible: true, terminal_failure: false }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    unselected_and_independent_flash
+
+test result: FAILED. 2 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p stackpress-framework-view --test presentation_registration`
+supervisor: child 52565 reaped; peak target 1284968 KiB
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/supervise.py", line 60, in <module>
+    main()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/supervise.py", line 53, in main
+    raise subprocess.CalledProcessError(child.returncode, command)
+subprocess.CalledProcessError: Command '['cargo', 'test', '--offline', '--locked', '-p', 'stackpress-framework-view', '--all-features']' returned non-zero exit status 101.

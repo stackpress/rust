@@ -1,0 +1,6 @@
+     Locking 194 packages to latest Rust 1.96.0 compatible versions
+   Compiling issue15-golden v0.0.0 (/private/tmp/stackpress-issue15-m1-20261028/golden-before)
+    Finished `dev` profile [unoptimized] target(s) in 1.83s
+     Running `target/issue15-m1/debug/issue15-golden`
+{"phase": "before", "golden": "exact match", "legacy_theme": "system", "legacy_french_retained": true, "legacy_file_bytes_unchanged": true}
+supervisor: child 96497 reaped; peak target 591464 KiB

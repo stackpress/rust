@@ -1,0 +1,227 @@
+   Compiling icu_normalizer v2.4.0
+   Compiling tokio v1.54.1
+   Compiling futures-channel v0.3.34
+   Compiling rustls v0.23.46
+   Compiling rustix v1.1.5
+   Compiling idna_adapter v1.2.2
+   Compiling idna v1.1.0
+   Compiling url v2.5.8
+   Compiling tempfile v3.27.0
+   Compiling stackpress-lib v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/crates/lib)
+   Compiling stackpress-server v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/crates/server/server)
+   Compiling hyper v1.10.1
+   Compiling tokio-rustls v0.26.6
+   Compiling hyper-util v0.1.20
+   Compiling stackpress-server-http v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/crates/server/http)
+    Finished `test` profile [unoptimized] target(s) in 7.00s
+     Running unittests src/lib.rs (target/debug/deps/stackpress_server_http-6953864e9b9243e9)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/duplex.rs (target/debug/deps/duplex-d1c1bbb2da4134bb)
+
+running 2 tests
+test duplex_child ... ignored, run only by parent watchdog
+
+running 1 test
+test duplex_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.18s
+
+test duplex_watchdog ... ok
+
+test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.19s
+
+     Running tests/m1.rs (target/debug/deps/m1-a3af8cb8481b593d)
+
+running 2 tests
+test scenario_child ... ignored, run only by external M1 watchdog
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.06s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.05s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.27s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.10s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.40s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.17s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.06s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+running 1 test
+
+thread 'tokio-rt-worker' (112368851) panicked at crates/server/http/tests/m1.rs:113:13:
+intentional M1 task panic
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.06s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.04s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.21s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.10s
+
+test m1_watchdog ... ok
+
+test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 1.71s
+
+     Running tests/m2.rs (target/debug/deps/m2-93659f9f3af0c705)
+
+running 2 tests
+test scenario_child ... ignored, run only by M2 external watchdog
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.01s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.01s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.01s
+
+
+running 1 test
+
+thread 'tokio-rt-worker' (112368940) panicked at crates/server/http/tests/m2.rs:55:13:
+private handler panic
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+running 1 test
+
+thread 'tokio-rt-worker' (112368943) panicked at crates/server/http/tests/m2.rs:690:13:
+intentional observer panic
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.05s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.05s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.01s
+
+test m2_watchdog ... ok
+
+test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.26s
+
+     Running tests/tcp.rs (target/debug/deps/tcp-279164c601bf84f5)
+
+running 1 test
+test tcp_child ... ignored, run only by the TCP parent watchdog
+
+test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running unittests examples/deployment.rs (target/debug/examples/deployment-76b67ba99c690c2f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

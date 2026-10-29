@@ -1,0 +1,2 @@
+m4-final-cargo-clean: 0
+{"target": "/private/tmp/s8-polish-m4/target", "before_kib": 2829136, "largest_observed_main_target_kib": 6990196, "cap_kib": 8388608, "removed": true, "owned_remaining_processes": [], "consumer_scratch_leftovers": []}

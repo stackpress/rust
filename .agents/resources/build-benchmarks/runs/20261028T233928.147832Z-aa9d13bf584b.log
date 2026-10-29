@@ -1,0 +1,88 @@
+    Checking stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+    Checking stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-view)
+error[E0428]: the name `safety` is defined multiple times
+  --> crates/framework/framework-view/src/leptos/mod.rs:18:1
+   |
+15 | pub mod safety;
+   | --------------- previous definition of the module `safety` here
+...
+18 | pub mod safety;
+   | ^^^^^^^^^^^^^^^ `safety` redefined here
+   |
+   = note: `safety` must be defined only once in the type namespace of this module
+
+error[E0433]: cannot find module or crate `stackpress_framework_view` in this scope
+ --> crates/framework/framework-view/src/leptos/replay.rs:3:9
+  |
+3 | pub use stackpress_framework_view::leptos::replay::{MAX_RESOURCES,MAX_RESOURCE_ID};
+  |         ^^^^^^^^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `stackpress_framework_view`
+  |
+  = help: if you wanted to use a crate named `stackpress_framework_view`, use `cargo add stackpress_framework_view` to add it to your `Cargo.toml`
+
+error[E0433]: cannot find module or crate `stackpress_framework_view` in this scope
+ --> crates/framework/framework-view/src/leptos/replay.rs:9:9
+  |
+9 |     use stackpress_framework_view::leptos::replay::ReplayError;
+  |         ^^^^^^^^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `stackpress_framework_view`
+  |
+  = help: if you wanted to use a crate named `stackpress_framework_view`, use `cargo add stackpress_framework_view` to add it to your `Cargo.toml`
+
+error[E0433]: cannot find module or crate `stackpress_framework_view` in this scope
+ --> crates/framework/framework-view/src/leptos/replay.rs:6:27
+  |
+6 | pub struct ResourceReplay(stackpress_framework_view::leptos::replay::ResourceReplay);
+  |                           ^^^^^^^^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `stackpress_framework_view`
+  |
+  = help: if you wanted to use a crate named `stackpress_framework_view`, use `cargo add stackpress_framework_view` to add it to your `Cargo.toml`
+
+error[E0433]: cannot find module or crate `stackpress_framework_view` in this scope
+ --> crates/framework/framework-view/src/leptos/replay.rs:8:31
+  |
+8 | pub(super) fn map_error(error:stackpress_framework_view::leptos::replay::ReplayError)->ViewError {
+  |                               ^^^^^^^^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `stackpress_framework_view`
+  |
+  = help: if you wanted to use a crate named `stackpress_framework_view`, use `cargo add stackpress_framework_view` to add it to your `Cargo.toml`
+
+error[E0433]: cannot find module or crate `stackpress_framework_view` in this scope
+  --> crates/framework/framework-view/src/leptos/replay.rs:16:156
+   |
+16 | ...()}.validate()?;stackpress_framework_view::leptos::replay::ResourceReplay::new(values,byte_limit).map(Self).map_err(map_error)}
+   |                    ^^^^^^^^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `stackpress_framework_view`
+   |
+   = help: if you wanted to use a crate named `stackpress_framework_view`, use `cargo add stackpress_framework_view` to add it to your `Cargo.toml`
+
+error[E0433]: cannot find module or crate `stackpress_framework_view` in this scope
+  --> crates/framework/framework-view/src/leptos/replay.rs:20:142
+   |
+20 | ...()}.validate()?;stackpress_framework_view::leptos::replay::ResourceReplay::decode(text,byte_limit).map(Self).map_err(map_error)}
+   |                    ^^^^^^^^^^^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `stackpress_framework_view`
+   |
+   = help: if you wanted to use a crate named `stackpress_framework_view`, use `cargo add stackpress_framework_view` to add it to your `Cargo.toml`
+
+warning: variable does not need to be mutable
+   --> crates/framework/framework-view/src/leptos/stream.rs:177:9
+    |
+177 |     let mut body = Box::pin((component)(&snapshot).map_err(stackpress_leptos::render::RenderError::Component)?.to_html_stream_in_or...
+    |         ----^^^^
+    |         |
+    |         help: remove this `mut`
+    |
+    = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+Some errors have detailed explanations: E0428, E0433.
+For more information about an error, try `rustc --explain E0428`.
+warning: `stackpress-framework-view` (lib) generated 1 warning
+error: could not compile `stackpress-framework-view` (lib) due to 7 previous errors; 1 warning emitted
+Traceback (most recent call last):
+  File "/private/tmp/stackpress-issue17-m1/check.py", line 2, in <module>
+    subprocess.run(['cargo','check','--offline','-p','stackpress-framework-view','--features','leptos-stream'],check=True)
+  File "/Users/cblanquera/.pyenv/versions/3.11.4/lib/python3.11/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['cargo', 'check', '--offline', '-p', 'stackpress-framework-view', '--features', 'leptos-stream']' returned non-zero exit status 101.
+supervisor: child 23774 reaped; peak target 774872 KiB
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/proofs/supervise.py", line 75, in <module>
+    main()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/proofs/supervise.py", line 68, in main
+    raise subprocess.CalledProcessError(child.returncode, command)
+subprocess.CalledProcessError: Command '['python3', '/private/tmp/stackpress-issue17-m1/check.py']' returned non-zero exit status 1.

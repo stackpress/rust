@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "id": "20261028T061218.253118Z-3f6206aed568",
+  "started_at": "2026-10-28T06:12:18.253118+00:00",
+  "status": "passed",
+  "label": "owner findings M4: collection and remaining browser proofs after scoping native FormData to its original form",
+  "kind": "test",
+  "scope": "other",
+  "cache": "unknown",
+  "command": [
+    "python3",
+    "/private/tmp/s8-polish-m4/example-browsers.py",
+    "1"
+  ],
+  "cwd": "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-s8-polish",
+  "commit": "f8607648a7735c5cfcc28fce95511859357991e1",
+  "branch": "trial/3-s8-polish",
+  "dirty": true,
+  "host": "macOS-26.6.2-arm64-arm-64bit",
+  "machine": "arm64",
+  "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+  "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+  "environment": {
+    "CARGO_TARGET_DIR": "/private/tmp/s8-polish-m4/target"
+  },
+  "cargo_activity": {
+    "compiling": 0,
+    "checking": 0,
+    "documenting": 0
+  },
+  "cargo_build_stages": [],
+  "log": "runs/20261028T061218.253118Z-3f6206aed568.log",
+  "ended_at": "2026-10-28T06:15:23.375591+00:00",
+  "command_seconds": 184.962598,
+  "exit_code": 0,
+  "cargo_build_seconds": null
+}

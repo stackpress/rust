@@ -1,0 +1,18 @@
+$ node /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/browser.cjs
+PASS base-hydrate-light-en-1280
+PASS base-hydrate-light-en-375
+PASS base-hydrate-dark-fr-1280
+PASS base-hydrate-dark-fr-375
+PASS base-csr-light-en-1280
+PASS base-csr-light-en-375
+PASS base-csr-dark-fr-1280
+PASS base-csr-dark-fr-375
+PASS helpers-hydrate-light-en-1280
+PASS helpers-hydrate-light-en-375
+PASS helpers-hydrate-dark-fr-1280
+PASS helpers-hydrate-dark-fr-375
+PASS helpers-csr-light-en-1280
+PASS helpers-csr-light-en-375
+PASS helpers-csr-dark-fr-1280
+PASS helpers-csr-dark-fr-375
+supervisor: child 10218 reaped; peak target 2345152 KiB

@@ -1,0 +1,24 @@
+AssertionError [ERR_ASSERTION]: pre-WASM root must already be dark
++ actual - expected
+
++ 'rgb(255, 255, 255)'
+- 'rgb(32, 33, 36)'
+       ^
+
+    at /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/proofs/browser-initial-theme.cjs:24:16
+    at runNextTicks (node:internal/process/task_queues:65:5)
+    at process.processImmediate (node:internal/timers:472:9) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 'rgb(255, 255, 255)',
+  expected: 'rgb(32, 33, 36)',
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+supervisor: child 87427 reaped; peak target 3391628 KiB
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/supervise.py", line 60, in <module>
+    main()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/supervise.py", line 53, in main
+    raise subprocess.CalledProcessError(child.returncode, command)
+subprocess.CalledProcessError: Command '['node', 'examples/profile-ui/proofs/browser-initial-theme.cjs']' returned non-zero exit status 1.

@@ -1,0 +1,263 @@
+$ cargo test --manifest-path /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/Cargo.toml --locked --offline --all-targets
+   Compiling leptos-independent v0.0.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent)
+    Finished `test` profile [unoptimized] target(s) in 2.22s
+     Running unittests src/lib.rs (target/issue17/debug/deps/leptos_independent-0482a8ed0d47255e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lifecycle.rs (target/issue17/debug/deps/lifecycle-f0ac551f8d10b6df)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/values.rs (target/issue17/debug/deps/values-8503579cf9b75147)
+
+running 1 test
+test admission_and_images ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+$ cargo test --manifest-path /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/Cargo.toml --locked --offline --all-targets --features ssr
+   Compiling leptos-independent v0.0.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent)
+    Finished `test` profile [unoptimized] target(s) in 2.92s
+     Running unittests src/lib.rs (target/issue17/debug/deps/leptos_independent-2a6c6eabcdaebe0e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lifecycle.rs (target/issue17/debug/deps/lifecycle-dff62b0794bf5097)
+
+running 2 tests
+test lifecycle_child ... ignored, executed by independent_lifecycle_watchdog
+test independent_lifecycle_watchdog ... ok
+
+test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/values.rs (target/issue17/debug/deps/values-91ad17605ab92a45)
+
+running 1 test
+test admission_and_images ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/document.rs (target/issue17/debug/examples/document-d034c5746fa02d10)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+$ cargo test --manifest-path /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/Cargo.toml --locked --offline --all-targets --features ssr,async,rich,format,stream
+   Compiling leptos-independent v0.0.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent)
+    Finished `test` profile [unoptimized] target(s) in 4.52s
+     Running unittests src/lib.rs (target/issue17/debug/deps/leptos_independent-6e67f5f13b04fcc8)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lifecycle.rs (target/issue17/debug/deps/lifecycle-6ae5d133a2943dd0)
+
+running 2 tests
+test lifecycle_child ... ignored, executed by independent_lifecycle_watchdog
+test independent_lifecycle_watchdog ... ok
+
+test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.16s
+
+     Running tests/values.rs (target/issue17/debug/deps/values-9c98c4042533e17c)
+
+running 4 tests
+test admission_and_images ... ok
+test async_completion_ownership ... ok
+test explicit_edit_policy ... ok
+test hostile_helpers ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/document.rs (target/issue17/debug/examples/document-f29753da91db7dd1)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+$ cargo fmt --manifest-path /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/Cargo.toml -- --check
+$ cargo clippy --manifest-path /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/Cargo.toml --locked --offline --all-targets --features ssr,async,rich,format,stream -- -D warnings
+    Checking leptos-independent v0.0.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent)
+    Finished `dev` profile [unoptimized] target(s) in 1.07s
+$ cargo test --manifest-path /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/Cargo.toml --locked --offline --doc --features ssr,async,rich,format,stream
+    Finished `test` profile [unoptimized] target(s) in 0.24s
+   Doc-tests leptos_independent
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+$ cargo doc --manifest-path /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/Cargo.toml --locked --offline --no-deps --features ssr,async,rich,format,stream
+ Documenting leptos-independent v0.0.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent)
+    Finished `dev` profile [unoptimized] target(s) in 1.43s
+   Generated /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/target/issue17/doc/leptos_independent/index.html
+$ cargo build --manifest-path /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/Cargo.toml --locked --offline --example document --features ssr
+   Compiling leptos-independent v0.0.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent)
+    Finished `dev` profile [unoptimized] target(s) in 2.17s
+$ /private/tmp/stackpress-issue17-m2/evidence/base/document hydrate light en
+$ /private/tmp/stackpress-issue17-m2/evidence/base/document hydrate dark fr
+$ cargo build --manifest-path /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/Cargo.toml --locked --offline --lib --target wasm32-unknown-unknown --features hydrate
+   Compiling leptos-independent v0.0.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent)
+    Finished `dev` profile [unoptimized] target(s) in 1.99s
+$ wasm-bindgen --target web --no-typescript --out-dir /private/tmp/stackpress-issue17-m2/evidence/base/hydrate --out-name independent /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/target/issue17/wasm32-unknown-unknown/debug/leptos_independent.wasm
+$ /private/tmp/stackpress-issue17-m2/evidence/base/document csr light en
+$ /private/tmp/stackpress-issue17-m2/evidence/base/document csr dark fr
+$ cargo build --manifest-path /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/Cargo.toml --locked --offline --lib --target wasm32-unknown-unknown --features csr
+   Compiling leptos-independent v0.0.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent)
+    Finished `dev` profile [unoptimized] target(s) in 0.97s
+$ wasm-bindgen --target web --no-typescript --out-dir /private/tmp/stackpress-issue17-m2/evidence/base/csr --out-name independent /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/target/issue17/wasm32-unknown-unknown/debug/leptos_independent.wasm
+$ cargo build --manifest-path /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/Cargo.toml --locked --offline --example document --features ssr,async,rich,format
+   Compiling leptos-independent v0.0.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent)
+    Finished `dev` profile [unoptimized] target(s) in 3.03s
+$ /private/tmp/stackpress-issue17-m2/evidence/helpers/document hydrate light en
+$ /private/tmp/stackpress-issue17-m2/evidence/helpers/document hydrate dark fr
+$ cargo build --manifest-path /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/Cargo.toml --locked --offline --lib --target wasm32-unknown-unknown --features hydrate,async,rich,format
+   Compiling leptos-independent v0.0.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent)
+    Finished `dev` profile [unoptimized] target(s) in 3.20s
+$ wasm-bindgen --target web --no-typescript --out-dir /private/tmp/stackpress-issue17-m2/evidence/helpers/hydrate --out-name independent /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/target/issue17/wasm32-unknown-unknown/debug/leptos_independent.wasm
+$ /private/tmp/stackpress-issue17-m2/evidence/helpers/document csr light en
+$ /private/tmp/stackpress-issue17-m2/evidence/helpers/document csr dark fr
+$ cargo build --manifest-path /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/Cargo.toml --locked --offline --lib --target wasm32-unknown-unknown --features csr,async,rich,format
+   Compiling leptos-independent v0.0.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent)
+    Finished `dev` profile [unoptimized] target(s) in 1.72s
+$ wasm-bindgen --target web --no-typescript --out-dir /private/tmp/stackpress-issue17-m2/evidence/helpers/csr --out-name independent /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/target/issue17/wasm32-unknown-unknown/debug/leptos_independent.wasm
+PASS separate independent native/hydrate/CSR artifacts
+$ node /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/browser.cjs
+PASS base-hydrate-light-en-1280
+PASS base-hydrate-light-en-375
+PASS base-hydrate-dark-fr-1280
+PASS base-hydrate-dark-fr-375
+PASS base-csr-light-en-1280
+PASS base-csr-light-en-375
+PASS base-csr-dark-fr-1280
+PASS base-csr-dark-fr-375
+PASS helpers-hydrate-light-en-1280
+PASS helpers-hydrate-light-en-375
+PASS helpers-hydrate-dark-fr-1280
+PASS helpers-hydrate-dark-fr-375
+PASS helpers-csr-light-en-1280
+PASS helpers-csr-light-en-375
+PASS helpers-csr-dark-fr-1280
+PASS helpers-csr-dark-fr-375
+    Checking stable_deref_trait v1.2.1
+    Checking either v1.19.0
+    Checking zerofrom v0.1.8
+    Checking yoke v0.8.4
+    Checking writeable v0.6.4
+    Checking zerovec v0.11.9
+    Checking smallvec v1.16.4
+    Checking litemap v0.8.3
+    Checking zerotrie v0.2.5
+    Checking tinystr v0.8.5
+    Checking potential_utf v0.1.6
+    Checking once_cell v1.21.4
+    Checking icu_locale_core v2.4.0
+    Checking wasm-bindgen v0.2.129
+    Checking icu_provider v2.4.0
+    Checking icu_collections v2.4.0
+    Checking js-sys v0.3.106
+    Checking icu_normalizer v2.4.0
+    Checking icu_properties v2.4.0
+    Checking idna_adapter v1.2.2
+    Checking idna v1.1.0
+    Checking icu_locale_fallback_data v2.4.0
+    Checking itertools v0.14.0
+    Checking siphasher v1.0.4
+    Checking scopeguard v1.2.0
+    Checking lock_api v0.4.14
+    Checking phf_shared v0.14.0
+    Checking url v2.5.8
+    Checking icu_locale_fallback v2.4.0
+    Checking parking_lot_core v0.9.12
+    Checking new_debug_unreachable v1.0.6
+    Checking parking_lot v0.12.5
+    Checking libm v0.2.16
+    Checking precomputed-hash v0.1.1
+    Checking string_cache v0.11.0
+    Checking core_maths v0.1.1
+    Checking phf v0.14.0
+    Checking byteorder v1.5.0
+    Checking hash32 v0.2.1
+    Checking web_atoms v0.3.0
+    Checking calendrical_calculations v0.2.4
+    Checking icu_calendar_data v2.4.0
+    Checking tendril v0.5.1
+    Checking fixed_decimal v0.7.3
+    Checking dtoa v1.0.11
+    Checking log v0.4.34
+    Checking linked-hash-map v0.5.6
+    Checking lru-cache v0.1.2
+    Checking markup5ever v0.40.0
+    Checking dtoa-short v0.3.5
+    Checking heapless v0.7.17
+    Checking icu_calendar v2.4.0
+    Checking icu_time_data v2.4.0
+    Checking icu_decimal_data v2.4.0
+    Checking icu_plurals_data v2.4.0
+    Checking cobs v0.3.0
+    Checking regex-syntax v0.6.29
+    Checking wasm-bindgen-futures v0.4.79
+    Checking web-sys v0.3.106
+    Checking any_spawner v0.3.0
+    Checking hydration_context v0.3.2
+    Checking minimal-lexical v0.2.1
+    Checking oncemutex v0.1.1
+    Checking regex-cache v0.2.1
+    Checking nom v7.1.3
+    Checking postcard v1.1.3
+    Checking icu_plurals v2.4.0
+    Checking icu_decimal v2.4.0
+    Checking icu_time v2.4.0
+    Checking strum v0.27.2
+    Checking cssparser v0.38.0
+    Checking html5ever v0.40.1
+    Checking icu_datetime_data v2.4.0
+    Checking icu_locale_data v2.4.0
+    Checking icu_pattern v0.5.1
+    Checking quick-xml v0.41.0
+    Checking fnv v1.0.7
+    Checking maplit v1.0.2
+    Checking bitflags v2.13.2
+    Checking unicase v2.10.0
+    Checking pulldown-cmark-escape v0.11.0
+    Checking pulldown-cmark v0.13.5
+    Checking ammonia v4.2.4
+    Checking phonenumber v0.3.10+9.0.33
+    Checking icu_datetime v2.4.0
+    Checking icu_locale v2.4.0
+    Checking reactive_graph v0.2.16
+    Checking gloo-utils v0.2.0
+    Checking gloo-net v0.6.0
+    Checking wasm-streams v0.5.0
+    Checking server_fn v0.8.13
+    Checking reactive_stores v0.4.4
+    Checking tachys v0.2.19
+    Checking leptos_dom v0.8.8
+    Checking leptos_server v0.8.8
+    Checking leptos v0.8.22
+    Checking leptos_meta v0.8.7
+    Checking leptos_router v0.8.17
+    Checking stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+    Checking leptos-independent v0.0.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent)
+    Finished `dev` profile [unoptimized] target(s) in 32.97s
+    Checking hydration_context v0.3.2
+    Checking reactive_graph v0.2.16
+    Checking reactive_stores v0.4.4
+    Checking tachys v0.2.19
+    Checking leptos_dom v0.8.8
+    Checking leptos_server v0.8.8
+    Checking leptos v0.8.22
+    Checking leptos_meta v0.8.7
+    Checking leptos_router v0.8.17
+    Checking stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+    Checking leptos-independent v0.0.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent)
+    Finished `dev` profile [unoptimized] target(s) in 11.94s
+supervisor: child 23646 reaped; peak target 2922116 KiB

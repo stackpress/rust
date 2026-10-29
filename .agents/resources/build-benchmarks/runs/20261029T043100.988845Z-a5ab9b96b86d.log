@@ -1,0 +1,24 @@
+{
+  "root_lock_byte_identical": true,
+  "consumer_lock_byte_identical": true,
+  "root_external_tuples": 616,
+  "consumer_external_tuples": 255,
+  "unchanged_policy_and_asset_files": [
+    "crates/leptos/src/navigation.rs",
+    "crates/leptos/src/safety.rs",
+    "crates/leptos/src/components/display_values.rs",
+    "crates/framework/framework-view/src/lib.rs",
+    "crates/framework/framework-view/src/policy.rs",
+    "crates/framework/framework-view/src/leptos/safety.rs",
+    "crates/framework/framework-view/src/leptos/stream_status.js",
+    "crates/framework/framework-admin/Cargo.toml"
+  ],
+  "public_parity_sha256": "44cd66f38f8c2f927071058fd85c69612c09e37fe38246c5efb29e946a145e69",
+  "kb": {
+    "exit": 1,
+    "inherited_errors": 146,
+    "new_errors": [],
+    "warnings": 26
+  }
+}
+supervisor: child 32464 reaped; peak target 2702820 KiB

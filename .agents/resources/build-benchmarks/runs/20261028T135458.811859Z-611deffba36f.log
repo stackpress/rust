@@ -1,0 +1,17 @@
+error: cannot update the lock file /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/Cargo.lock because --locked was passed to prevent this
+help: to generate the lock file without accessing the network, remove the --locked flag and use --offline instead.
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/finish.py", line 19, in <module>
+    run('cargo','test','--offline','--locked',*profiles,'--all-targets')
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/finish.py", line 13, in run
+    subprocess.run(args, check=True, timeout=600, **kwargs)
+  File "/Users/cblanquera/.pyenv/versions/3.11.4/lib/python3.11/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '('cargo', 'test', '--offline', '--locked', '-p', 'stackpress-example-profile-ui-shared', '-p', 'stackpress-example-profile-ui-web', '-p', 'stackpress-example-profile-ui-client', '--all-targets')' returned non-zero exit status 101.
+supervisor: child 99099 reaped; peak target 3759500 KiB
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/supervise.py", line 60, in <module>
+    main()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/supervise.py", line 53, in main
+    raise subprocess.CalledProcessError(child.returncode, command)
+subprocess.CalledProcessError: Command '['python3', 'examples/ui-preferences/proofs/finish.py']' returned non-zero exit status 1.

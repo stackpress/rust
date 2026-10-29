@@ -1,0 +1,166 @@
+$ python3 /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/docs.py
+$ cargo check --locked --offline --manifest-path /private/tmp/i17-m2-verify/independent/docs/independent-m0bnkbi2/Cargo.toml --features ssr,async,rich,format,stream --example doc_000 --example doc_001 --example doc_002 --example doc_003 --example doc_004 --example doc_005 --example doc_006 --example doc_007 --example doc_008 --example doc_009 --example doc_010 --example doc_011 --example doc_012 --example doc_013 --example doc_014 --example doc_015 --example doc_016 --example doc_017 --example doc_018 --example doc_019 --example doc_020 --example doc_021 --example doc_023 --example doc_024 --example doc_025 --example doc_026 --example doc_027
+    Checking leptos-independent v0.0.0 (/private/tmp/i17-m2-verify/independent/docs/independent-m0bnkbi2)
+    Finished `dev` profile [unoptimized] target(s) in 1.21s
+$ cargo check --locked --offline --manifest-path /private/tmp/i17-m2-verify/independent/docs/independent-m0bnkbi2/Cargo.toml --features hydrate,async,rich,format --target wasm32-unknown-unknown --example doc_000 --example doc_001 --example doc_002 --example doc_004 --example doc_005 --example doc_006 --example doc_007 --example doc_008 --example doc_009 --example doc_010 --example doc_011 --example doc_012 --example doc_013 --example doc_014 --example doc_015 --example doc_016 --example doc_017 --example doc_018 --example doc_020 --example doc_021 --example doc_022 --example doc_023 --example doc_026 --example doc_027
+    Checking either v1.19.0
+    Checking stable_deref_trait v1.2.1
+    Checking zerofrom v0.1.8
+    Checking smallvec v1.16.4
+    Checking litemap v0.8.3
+    Checking once_cell v1.21.4
+    Checking icu_locale_fallback_data v2.4.0
+    Checking yoke v0.8.4
+    Checking scopeguard v1.2.0
+    Checking writeable v0.6.4
+    Checking wasm-bindgen v0.2.129
+    Checking itertools v0.14.0
+    Checking siphasher v1.0.4
+    Checking lock_api v0.4.14
+    Checking zerovec v0.11.9
+    Checking zerotrie v0.2.5
+    Checking phf_shared v0.14.0
+    Checking parking_lot_core v0.9.12
+    Checking new_debug_unreachable v1.0.6
+    Checking libm v0.2.16
+    Checking parking_lot v0.12.5
+    Checking precomputed-hash v0.1.1
+    Checking phf v0.14.0
+    Checking string_cache v0.11.0
+    Checking byteorder v1.5.0
+    Checking web_atoms v0.3.0
+    Checking hash32 v0.2.1
+    Checking tinystr v0.8.5
+    Checking potential_utf v0.1.6
+    Checking icu_locale_core v2.4.0
+    Checking icu_collections v2.4.0
+    Checking icu_calendar_data v2.4.0
+    Checking js-sys v0.3.106
+    Checking tendril v0.5.1
+    Checking core_maths v0.1.1
+    Checking calendrical_calculations v0.2.4
+    Checking fixed_decimal v0.7.3
+    Checking dtoa v1.0.11
+    Checking linked-hash-map v0.5.6
+    Checking log v0.4.34
+    Checking lru-cache v0.1.2
+    Checking dtoa-short v0.3.5
+    Checking heapless v0.7.17
+    Checking markup5ever v0.40.0
+    Checking icu_decimal_data v2.4.0
+    Checking icu_time_data v2.4.0
+    Checking icu_plurals_data v2.4.0
+    Checking cobs v0.3.0
+    Checking minimal-lexical v0.2.1
+    Checking icu_provider v2.4.0
+    Checking regex-syntax v0.6.29
+    Checking oncemutex v0.1.1
+    Checking html5ever v0.40.1
+    Checking nom v7.1.3
+    Checking icu_properties v2.4.0
+    Checking icu_normalizer v2.4.0
+    Checking icu_locale_fallback v2.4.0
+    Checking postcard v1.1.3
+    Checking icu_calendar v2.4.0
+    Checking icu_plurals v2.4.0
+    Checking regex-cache v0.2.1
+    Checking idna_adapter v1.2.2
+    Checking icu_decimal v2.4.0
+    Checking idna v1.1.0
+    Checking cssparser v0.38.0
+    Checking strum v0.27.2
+    Checking icu_locale_data v2.4.0
+    Checking icu_datetime_data v2.4.0
+    Checking url v2.5.8
+    Checking icu_pattern v0.5.1
+    Checking quick-xml v0.41.0
+    Checking icu_time v2.4.0
+    Checking pulldown-cmark-escape v0.11.0
+    Checking unicase v2.10.0
+    Checking maplit v1.0.2
+    Checking fnv v1.0.7
+    Checking bitflags v2.13.2
+    Checking ammonia v4.2.4
+    Checking icu_locale v2.4.0
+    Checking icu_datetime v2.4.0
+    Checking pulldown-cmark v0.13.5
+    Checking phonenumber v0.3.10+9.0.33
+    Checking wasm-bindgen-futures v0.4.79
+    Checking web-sys v0.3.106
+    Checking hydration_context v0.3.2
+    Checking any_spawner v0.3.0
+    Checking reactive_graph v0.2.16
+    Checking gloo-utils v0.2.0
+    Checking wasm-streams v0.5.0
+    Checking gloo-net v0.6.0
+    Checking server_fn v0.8.13
+    Checking reactive_stores v0.4.4
+    Checking tachys v0.2.19
+    Checking leptos_dom v0.8.8
+    Checking leptos_server v0.8.8
+    Checking leptos v0.8.22
+    Checking leptos_meta v0.8.7
+    Checking leptos_router v0.8.17
+    Checking stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+    Checking leptos-independent v0.0.0 (/private/tmp/i17-m2-verify/independent/docs/independent-m0bnkbi2)
+    Finished `dev` profile [unoptimized] target(s) in 32.17s
+$ cargo check --locked --offline --manifest-path /private/tmp/i17-m2-verify/independent/docs/independent-m0bnkbi2/Cargo.toml --features csr,async,rich,format --target wasm32-unknown-unknown --example doc_000 --example doc_001 --example doc_002 --example doc_004 --example doc_005 --example doc_006 --example doc_007 --example doc_008 --example doc_009 --example doc_010 --example doc_011 --example doc_012 --example doc_013 --example doc_014 --example doc_015 --example doc_016 --example doc_017 --example doc_018 --example doc_020 --example doc_021 --example doc_023 --example doc_026 --example doc_027
+    Checking hydration_context v0.3.2
+    Checking reactive_graph v0.2.16
+    Checking reactive_stores v0.4.4
+    Checking tachys v0.2.19
+    Checking leptos_dom v0.8.8
+    Checking leptos_server v0.8.8
+    Checking leptos v0.8.22
+    Checking leptos_router v0.8.17
+    Checking leptos_meta v0.8.7
+    Checking stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+    Checking leptos-independent v0.0.0 (/private/tmp/i17-m2-verify/independent/docs/independent-m0bnkbi2)
+    Finished `dev` profile [unoptimized] target(s) in 12.55s
+$ cargo run --locked --offline --manifest-path /private/tmp/i17-m2-verify/independent/docs/independent-m0bnkbi2/Cargo.toml --features ssr,async,rich,format,stream --example doc_019
+   Compiling leptos-independent v0.0.0 (/private/tmp/i17-m2-verify/independent/docs/independent-m0bnkbi2)
+    Finished `dev` profile [unoptimized] target(s) in 3.12s
+     Running `/private/tmp/i17-m2-verify/target/debug/examples/doc_019`
+$ cargo check --locked --offline --manifest-path /private/tmp/i17-m2-verify/independent/docs/view-mpvyvb6c/Cargo.toml --features ssr --example doc_028 --example doc_029 --example doc_030 --example doc_031
+    Checking any_spawner v0.3.0
+    Checking stackpress-server v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/server/server)
+    Checking reactive_graph v0.2.16
+    Checking reactive_stores v0.4.4
+    Checking tachys v0.2.19
+    Checking leptos_server v0.8.8
+    Checking leptos_dom v0.8.8
+    Checking leptos v0.8.22
+    Checking leptos_meta v0.8.7
+    Checking leptos_router v0.8.17
+    Checking stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+    Checking stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-view)
+    Checking view-doc-examples v0.0.0 (/private/tmp/i17-m2-verify/independent/docs/view-mpvyvb6c)
+    Finished `dev` profile [unoptimized] target(s) in 12.14s
+$ cargo check --locked --offline --manifest-path /private/tmp/i17-m2-verify/independent/docs/view-mpvyvb6c/Cargo.toml --features hydrate --target wasm32-unknown-unknown --example doc_031 --example doc_032
+    Checking reactive_graph v0.2.16
+    Checking server_fn v0.8.13
+    Checking reactive_stores v0.4.4
+    Checking tachys v0.2.19
+    Checking leptos_server v0.8.8
+    Checking leptos_dom v0.8.8
+    Checking leptos v0.8.22
+    Checking leptos_router v0.8.17
+    Checking leptos_meta v0.8.7
+    Checking stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+    Checking stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-view)
+    Checking view-doc-examples v0.0.0 (/private/tmp/i17-m2-verify/independent/docs/view-mpvyvb6c)
+    Finished `dev` profile [unoptimized] target(s) in 11.93s
+$ cargo check --locked --offline --manifest-path /private/tmp/i17-m2-verify/independent/docs/view-mpvyvb6c/Cargo.toml --features csr --target wasm32-unknown-unknown --example doc_031
+    Checking reactive_graph v0.2.16
+    Checking reactive_stores v0.4.4
+    Checking tachys v0.2.19
+    Checking leptos_server v0.8.8
+    Checking leptos_dom v0.8.8
+    Checking leptos v0.8.22
+    Checking leptos_meta v0.8.7
+    Checking leptos_router v0.8.17
+    Checking stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+    Checking stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-view)
+    Checking view-doc-examples v0.0.0 (/private/tmp/i17-m2-verify/independent/docs/view-mpvyvb6c)
+    Finished `dev` profile [unoptimized] target(s) in 11.68s
+PASS 33 literal Markdown Rust examples; native quick start executed

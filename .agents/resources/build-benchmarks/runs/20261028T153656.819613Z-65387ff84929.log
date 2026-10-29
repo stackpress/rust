@@ -1,0 +1,3 @@
+PASS workspace-only lock update: 616 external versions/sources/checksums unchanged
+PASS pure language, unchanged default view, opt-in native-file and six browser runtime graphs
+PASS immutable one-shot asset: initial-theme-152fe9618311a2eb.js 248 bytes; no persistence/listeners/fetch

@@ -1,0 +1,17 @@
+error: failed to parse manifest at `/private/tmp/stackpress-issue17-m1/seam/Cargo.toml`
+
+Caused by:
+  rust-version 0.1.0 is incompatible with the version (1.85.0) required by the specified edition (2024)
+Traceback (most recent call last):
+  File "/private/tmp/stackpress-issue17-m1/seam_check.py", line 3, in <module>
+    subprocess.run(['cargo','test','--offline','--manifest-path',str(manifest),'--features','stream','--test','seams'],check=True)
+  File "/Users/cblanquera/.pyenv/versions/3.11.4/lib/python3.11/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['cargo', 'test', '--offline', '--manifest-path', '/private/tmp/stackpress-issue17-m1/seam/Cargo.toml', '--features', 'stream', '--test', 'seams']' returned non-zero exit status 101.
+supervisor: child 11421 reaped; peak target 573548 KiB
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/proofs/supervise.py", line 75, in <module>
+    main()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/proofs/supervise.py", line 68, in main
+    raise subprocess.CalledProcessError(child.returncode, command)
+subprocess.CalledProcessError: Command '['python3', '/private/tmp/stackpress-issue17-m1/seam_check.py']' returned non-zero exit status 1.

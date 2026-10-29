@@ -1,0 +1,231 @@
+   Compiling tokio v1.54.1
+   Compiling trybuild v1.0.122
+   Compiling stackpress-server v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/crates/server/server)
+    Finished `test` profile [unoptimized] target(s) in 4.02s
+     Running unittests src/lib.rs (target/debug/deps/stackpress_server-67e019ecf918e734)
+
+running 10 tests
+test core_tests::host_child ... ignored, run by the M0 host watchdog parent
+test core_tests::response_replacement_cannot_repeat_native_output ... ok
+test core_tests::output_failure_and_suppression_do_not_retry ... ok
+test core_tests::startup_and_registry_missing_values_are_explicit ... ok
+test core_tests::failed_startup_never_publishes_and_cancel_releases ... ok
+test core_tests::delegation_and_missing_host_are_explicit ... ok
+test lifecycle::tests::checked_correlation_exhaustion_and_host_scope ... ok
+test lifecycle::tests::common_adapter_input_boundary ... ok
+test core_tests::host_context_and_wrapper_proof_under_watchdog ... ok
+test core_tests::explicit_config_layers_validate_before_append ... ok
+
+test result: ok. 9 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+     Running tests/concurrency.rs (target/debug/deps/concurrency-7e737ebc3af88f01)
+
+running 2 tests
+test concurrency_child ... ignored, launched only by external watchdog parent
+test concurrent_nested_cancel_and_panic_under_watchdog ... ok
+
+test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/construction.rs (target/debug/deps/construction-6cd8b1bdce2b4402)
+
+running 10 tests
+test dependency_preflight ... ok
+test stable_phase_priorities_and_failure_stops ... ok
+test composed_builder_preserves_handles ... ok
+test typed_configuration ... ok
+test services_and_phase_gates ... ok
+test route_handles_and_capture_policy ... ok
+test configuration_exact_boundaries ... ok
+test merged_configuration_budgets_cover_defaults_and_layers ... ok
+test bounded_configuration_is_atomic ... ok
+test rejected_composed_config_keeps_accepted_layers ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.15s
+
+     Running tests/error_causes.rs (target/debug/deps/error_causes-8374508bec524f44)
+
+running 2 tests
+test configuration_retains_private_serialization_cause ... ok
+test configuration_retains_private_parse_cause ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/http_immutable.rs (target/debug/deps/http_immutable-ebb09d0249d0a957)
+
+running 3 tests
+test immutable_policy_is_checked_before_installation ... ok
+test known_length_and_one_shot_views ... ok
+test disposition_and_buffered_rejection ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/http_input.rs (target/debug/deps/http_input-8f048842f2c24497)
+
+running 12 tests
+test multipart_binary_file_input ... ok
+test invalid_headers_and_method_are_no_request_failures ... ok
+test method_and_event_selection ... ok
+test malformed_targets_have_only_input_and_output ... ok
+test trusted_base_validation ... ok
+test input_limit_boundaries ... ok
+test parsed_and_merged_limits_use_the_shared_input_stage ... ok
+test strict_parse_failure_is_atomic_and_recoverable ... ok
+test repeated_headers_cookies_and_raw_mime ... ok
+test exact_path_and_trusted_authority ... ok
+test call_and_http_public_envelope_parity ... ok
+test structured_body_loading ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/http_output.rs (target/debug/deps/http_output-889b580e3de0ee8a)
+
+running 13 tests
+test cancelled_http_call_leaves_adapter_and_host_usable ... ok
+test head_failure_paths_preserve_output_suppression ... ok
+test forbidden_body_statuses_skip_rich_value_conversion ... ok
+test cookies_and_multivalue_headers_are_never_folded ... ok
+test application_errors_keep_private_diagnostics_off_wire ... ok
+test finalized_states_are_not_retried ... ok
+test conversion_failure_is_one_sanitized_empty_500 ... ok
+test exact_text_and_binary_representations ... ok
+test handling_futures_are_send_and_independent ... ok
+test body_forbidden_statuses_and_completed_status_range ... ok
+test head_never_falls_back_to_get ... ok
+test public_envelopes_keep_scalar_presence_and_zero_total ... ok
+test structured_conversion_retains_response_limits ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/http_stream.rs (target/debug/deps/http_stream-a10043213a690965)
+
+running 9 tests
+test trusted_options_reach_both_entrypoints ... ok
+test normalization_and_loader_failures_preserve_g12_g17 ... ok
+test producer_errors_fuse_and_byte_limits_are_exact ... ok
+test buffered_adapter_rejects_stream_without_polling ... ok
+test cloned_views_share_only_one_shot_identity ... ok
+test replacement_and_error_detach_success_stream ... ok
+test head_and_bodyless_are_unpolled_and_framed ... ok
+test stream_byte_boundaries_and_drop_release ... ok
+test preflight_headers_failures_suppression_and_foreign_output ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/lifecycle.rs (target/debug/deps/lifecycle-b9266236cd488690)
+
+running 11 tests
+test adapter_context_is_inherited_separately ... ok
+test conversion_and_existing_load_failure_are_distinct ... ok
+test aborts_preserve_response_and_stop_hooks ... ok
+test bodies_status_only_missing_and_response_clear ... ok
+test prebuffered_output_and_abort_status_defaults ... ok
+test invalid_public_error_setup_is_nonrecursive ... ok
+test two_stage_failures_have_exactly_two_offers ... ok
+test raw_and_handled_entry_points ... ok
+test delivery_states_are_authoritative ... ok
+test failures_and_error_offers_follow_decision_table ... ok
+test capture_collisions_literal_names_and_budget_failure ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/ownership.rs (target/debug/deps/ownership-9cecf75f44f375cc)
+
+running 2 tests
+test compiler_rejections_child ... ignored, invoked by the compiler watchdog test
+test host_ownership_and_send_contracts_are_compiler_enforced ... ok
+
+test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.54s
+
+   Doc-tests stackpress_server
+
+running 76 tests
+test crates/server/server/src/config.rs - config::ConfigLayers (line 32) ... ok
+test crates/server/server/src/builder.rs - builder::ServerBuilder::new (line 69) ... ok
+test crates/server/server/src/config.rs - config::ConfigLayers::entries (line 154) ... ok
+test crates/server/server/src/config.rs - config::ConfigLayers::new (line 55) ... ok
+test crates/server/server/src/builder.rs - builder::ServerBuilder::plugin_with (line 120) ... ok
+test crates/server/server/src/builder.rs - builder::ServerBuilder::build (line 341) ... ok
+test crates/server/server/src/builder.rs - builder::ServerBuilder::config_layers (line 171) ... ok
+test crates/server/server/src/config.rs - config::ConfigLayers::json (line 71) ... ok
+test crates/server/server/src/builder.rs - builder::ServerBuilder::config_section (line 210) ... ok
+test crates/server/server/src/builder.rs - builder::ServerBuilder::plugin (line 86) ... ok
+test crates/server/server/src/config.rs - config::ConfigLayers::value (line 104) ... ok
+test crates/server/server/src/context.rs - context::ServerInvocationExt::delegate (line 212) ... ok
+test crates/server/server/src/http.rs - http::HttpAdapter::handle (line 203) ... ok
+test crates/server/server/src/context.rs - context::ServerInvocationExt::service (line 124) ... ok
+test crates/server/server/src/context.rs - context::ServerInvocationExt::config (line 154) ... ok
+test crates/server/server/src/http.rs - http::HttpAdapter::handle_with_options (line 230) ... ok
+test crates/server/server/src/http.rs - http::HttpAdapter::new (line 155) ... ok
+test crates/server/server/src/http.rs - http::HttpOptions (line 34) ... ok
+test crates/server/server/src/http/stream.rs - http::stream::HttpResponseExt::immutable_bytes (line 196) ... ok
+test crates/server/server/src/http/stream.rs - http::stream::HttpResponseExt::stream (line 166) ... ok
+test crates/server/server/src/http.rs - http::HttpOutput (line 83) ... ok
+test crates/server/server/src/http/stream.rs - http::stream::StreamingHttpAdapter::handle_body (line 426) ... ok
+test crates/server/server/src/lib.rs - (line 8) ... ok
+test crates/server/server/src/http/stream.rs - http::stream::StreamingHttpAdapter::new (line 403) ... ok
+test crates/server/server/src/http/stream.rs - http::stream::StreamLimits (line 25) ... ok
+test crates/server/server/src/plugin.rs - plugin::PluginSpec::new (line 44) ... ok
+test crates/server/server/src/plugin.rs - plugin::PluginSpec (line 15) ... ok
+test crates/server/server/src/lifecycle.rs - lifecycle::Server::handle (line 34) ... ok
+test crates/server/server/src/lifecycle.rs - lifecycle::Server::handle_route (line 151) ... ok
+test crates/server/server/src/registration.rs - registration::ServerBuilder::delete (line 890) ... ok
+test crates/server/server/src/plugin.rs - plugin::PluginSpec::after_if_present (line 79) ... ok
+test crates/server/server/src/lifecycle.rs - lifecycle::Server::call (line 97) ... ok
+test crates/server/server/src/registration.rs - registration::ServerBuilder::all (line 1015) ... ok
+test crates/server/server/src/plugin.rs - plugin::PluginSpec::requires (line 63) ... ok
+test crates/server/server/src/registration.rs - registration::ServerBuilder::connect (line 965) ... ok
+test crates/server/server/src/registration.rs - registration::ServerBuilder::get (line 790) ... ok
+test crates/server/server/src/registration.rs - registration::ServerBuilder::head (line 915) ... ok
+test crates/server/server/src/registration.rs - registration::ServerBuilder::on (line 625) ... ok
+test crates/server/server/src/registration.rs - registration::ServerBuilder::on_priority (line 646) ... ok
+test crates/server/server/src/registration.rs - registration::ServerBuilder::post (line 815) ... ok
+test crates/server/server/src/registration.rs - registration::ServerBuilder::options (line 940) ... ok
+test crates/server/server/src/registration.rs - registration::ServerBuilder::put (line 840) ... ok
+test crates/server/server/src/registration.rs - registration::ServerBuilder::patch (line 865) ... ok
+test crates/server/server/src/registration.rs - registration::ServerBuilder::listen (line 676) ... ok
+test crates/server/server/src/registration.rs - registration::ServerBuilder::trace (line 990) ... ok
+test crates/server/server/src/registration.rs - registration::ServerBuilder::route_with (line 735) ... ok
+test crates/server/server/src/registration.rs - registration::StartupContext::all (line 578) ... ok
+test crates/server/server/src/registration.rs - registration::StartupContext::connect (line 512) ... ok
+test crates/server/server/src/registration.rs - registration::StartupContext::get (line 281) ... ok
+test crates/server/server/src/registration.rs - registration::ServerBuilder::route (line 705) ... ok
+test crates/server/server/src/registration.rs - registration::StartupContext::delete (line 413) ... ok
+test crates/server/server/src/registration.rs - registration::StartupContext::on (line 20) ... ok
+test crates/server/server/src/registration.rs - registration::StartupContext::head (line 446) ... ok
+test crates/server/server/src/registration.rs - registration::StartupContext::on_priority (line 50) ... ok
+test crates/server/server/src/registration.rs - registration::StartupContext::patch (line 380) ... ok
+test crates/server/server/src/registration.rs - registration::StartupContext::options (line 479) ... ok
+test crates/server/server/src/registration.rs - registration::StartupContext::post (line 314) ... ok
+test crates/server/server/src/registration.rs - registration::StartupContext::listen (line 90) ... ok
+test crates/server/server/src/registration.rs - registration::StartupContext::route_with (line 233) ... ok
+test crates/server/server/src/registration.rs - registration::StartupContext::put (line 347) ... ok
+test crates/server/server/src/registration.rs - registration::StartupContext::route (line 195) ... ok
+test crates/server/server/src/registration.rs - registration::StartupContext::trace (line 545) ... ok
+test crates/server/server/src/report.rs - report::HandleReport::record_output_failure (line 259) ... ok
+test crates/server/server/src/report.rs - report::HandleReport::record_output (line 291) ... ok
+test crates/server/server/src/router.rs - router::RouteSpec::label (line 109) ... ok
+test crates/server/server/src/report.rs - report::HandleReport::developer (line 362) ... ok
+test crates/server/server/src/report.rs - report::CorrelationId::as_str (line 98) ... ok
+test crates/server/server/src/report.rs - report::HandleReport::is_success (line 328) ... ok
+test crates/server/server/src/router.rs - router::RouteSpec (line 24) ... ok
+test crates/server/server/src/router.rs - router::RouteSpec::new (line 58) ... ok
+test crates/server/server/src/router.rs - router::RouteSpec::priority (line 86) ... ok
+test crates/server/server/src/server.rs - server::Server::emit (line 73) ... ok
+test crates/server/server/src/startup.rs - startup::StartupContext::config (line 173) ... ok
+test crates/server/server/src/server.rs - server::Server::resolve (line 118) ... ok
+test crates/server/server/src/startup.rs - startup::StartupContext::register (line 208) ... ok
+test crates/server/server/src/startup.rs - startup::StartupContext::service (line 299) ... ok
+
+test result: ok. 76 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+
+running 5 tests
+test crates/server/server/src/http/stream.rs - http::stream::HttpResponseExt::stream (line 122) - compile fail ... ok
+test crates/server/server/src/http/stream.rs - http::stream::HttpResponseExt::stream (line 136) - compile fail ... ok
+test crates/server/server/src/plugin.rs - plugin::PluginSpec (line 23) - compile fail ... ok
+test crates/server/server/src/http/stream.rs - http::stream::HttpResponseExt::stream (line 150) - compile fail ... ok
+test crates/server/server/src/http/stream.rs - http::stream::HttpResponseExt::stream (line 109) - compile fail ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+all doctests ran in 2.38s; merged doctests compilation took 1.70s

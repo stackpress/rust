@@ -1,0 +1,18 @@
+crates/framework/framework-view/docs/api/base-path.md -> ../../../../leptos/docs/api/routing.md
+crates/framework/framework-view/docs/api/page-renderer.md -> ../../../../leptos/docs/api/leptos-renderer.md
+crates/framework/framework-view/docs/api/route-catalog.md -> ../../../../leptos/docs/api/routing.md
+crates/framework/framework-view/docs/concepts.md -> ../../../leptos/docs/api/routing.md
+crates/framework/framework-view/docs/guides/contract-recovery.md -> ../../../../leptos/docs/guides/hydrate.md
+crates/framework/framework-view/docs/guides/share-routes.md -> ../../../../leptos/docs/api/routing.md
+crates/framework/framework-view/docs/leptos-concepts.md -> ../../../leptos/tests/cleanup.rs
+Traceback (most recent call last):
+  File "/private/tmp/stackpress-issue17-m1/links.py", line 12, in <module>
+    assert not broken, f'{len(broken)} broken links in changed docs'
+AssertionError: 7 broken links in changed docs
+supervisor: child 72275 reaped; peak target 4726484 KiB
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/proofs/supervise.py", line 75, in <module>
+    main()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/proofs/supervise.py", line 68, in main
+    raise subprocess.CalledProcessError(child.returncode, command)
+subprocess.CalledProcessError: Command '['python3', '/private/tmp/stackpress-issue17-m1/links.py']' returned non-zero exit status 1.

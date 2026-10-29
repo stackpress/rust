@@ -1,0 +1,44 @@
+   Compiling stackpress-framework-language v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-language)
+   Compiling stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view)
+   Compiling stackpress-framework-ui v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-ui)
+   Compiling stackpress-example-profile-ui-contracts v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/contracts)
+   Compiling stackpress-example-profile-ui-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/shared)
+   Compiling stackpress-example-profile-ui-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/web)
+   Compiling stackpress-example-ui-gallery-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-gallery/shared)
+   Compiling stackpress-example-ui-preferences-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/shared)
+   Compiling stackpress-example-ui-preferences-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/web)
+   Compiling stackpress-example-ui-gallery-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-gallery/web)
+   Compiling stackpress-example-profile-ui-client v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/client)
+error[E0277]: the trait bound `std::option::Option<std::string::String>: From<&str>` is not satisfied
+   --> examples/ui-gallery/shared/src/seed.rs:152:34
+    |
+152 |         bad.data.theme = "light".into();
+    |                                  ^^^^ the trait `From<&str>` is not implemented for `std::option::Option<std::string::String>`
+    |
+    = help: the following other types implement trait `From<T>`:
+              `std::option::Option<&T>` implements `From<&std::option::Option<T>>`
+              `std::option::Option<&mut T>` implements `From<&mut std::option::Option<T>>`
+              `std::option::Option<Signal<std::option::Option<T>, LocalStorage>>` implements `From<MaybeProp<T, LocalStorage>>`
+              `std::option::Option<Signal<std::option::Option<T>>>` implements `From<MaybeProp<T>>`
+              `std::option::Option<T>` implements `From<T>`
+              `std::option::Option<either::Either<A, B>>` implements `From<itertools::either_or_both::EitherOrBoth<A, B>>`
+    = note: required for `&str` to implement `Into<std::option::Option<std::string::String>>`
+
+For more information about this error, try `rustc --explain E0277`.
+error: could not compile `stackpress-example-ui-gallery-shared` (lib test) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/verify.py", line 19, in <module>
+    run('cargo', 'test', '--offline', '--locked', *scopes, *features, '--all-targets')
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/verify.py", line 9, in run
+    subprocess.run(command, check=True)
+  File "/Users/cblanquera/.pyenv/versions/3.11.4/lib/python3.11/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '('cargo', 'test', '--offline', '--locked', '-p', 'stackpress-framework-language', '-p', 'stackpress-framework-view', '-p', 'stackpress-framework-ui', '-p', 'stackpress-example-ui-preferences-shared', '-p', 'stackpress-example-ui-preferences-web', '-p', 'stackpress-example-profile-ui-shared', '-p', 'stackpress-example-profile-ui-web', '-p', 'stackpress-example-profile-ui-client', '-p', 'stackpress-example-ui-gallery-shared', '-p', 'stackpress-example-ui-gallery-web', '--features', 'stackpress-framework-view/native-file,stackpress-framework-view/flash,stackpress-framework-ui/stream,stackpress-framework-ui/rich', '--all-targets')' returned non-zero exit status 101.
+supervisor: child 67543 reaped; peak target 2491224 KiB
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/supervise.py", line 60, in <module>
+    main()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/supervise.py", line 53, in main
+    raise subprocess.CalledProcessError(child.returncode, command)
+subprocess.CalledProcessError: Command '['python3', 'examples/ui-preferences/proofs/verify.py']' returned non-zero exit status 1.

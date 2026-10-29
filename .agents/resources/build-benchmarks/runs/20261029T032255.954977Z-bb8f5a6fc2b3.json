@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "id": "20261029T032255.954977Z-bb8f5a6fc2b3",
+  "started_at": "2026-10-29T03:22:55.954977+00:00",
+  "status": "failed",
+  "label": "issue17 M3 changed crate native production coverage and Send proof",
+  "kind": "coverage",
+  "scope": "selected",
+  "cache": "cold",
+  "command": [
+    "python3",
+    "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/proofs/supervise.py",
+    "--target",
+    "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/target/issue17",
+    "--seconds",
+    "1800",
+    "--",
+    "python3",
+    "/private/tmp/stackpress-issue17-m3/coverage.py"
+  ],
+  "cwd": "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17",
+  "commit": "dcca20a6d9d66da4475bd295dcea79ae082a0f56",
+  "branch": "trial/3-issue17-leptos-library",
+  "dirty": true,
+  "host": "macOS-26.6.2-arm64-arm-64bit",
+  "machine": "arm64",
+  "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+  "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+  "environment": {
+    "CARGO_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/target/issue17",
+    "CARGO_LLVM_COV_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/target/issue17/coverage",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_BUILD_JOBS": "2"
+  },
+  "cargo_activity": {
+    "compiling": 432,
+    "checking": 0,
+    "documenting": 0
+  },
+  "cargo_build_stages": [
+    {
+      "profile": "test",
+      "seconds": 132.0
+    },
+    {
+      "profile": "test",
+      "seconds": 86.0
+    }
+  ],
+  "log": "runs/20261029T032255.954977Z-bb8f5a6fc2b3.log",
+  "ended_at": "2026-10-29T03:26:53.820420+00:00",
+  "command_seconds": 237.547052,
+  "exit_code": 1,
+  "cargo_build_seconds": 218.0
+}

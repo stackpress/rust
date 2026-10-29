@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "id": "20261028T112746.461351Z-8caef8694c08",
+  "started_at": "2026-10-28T11:27:46.461351+00:00",
+  "status": "passed",
+  "label": "coordinator #16 verify: generated-admin format --check",
+  "kind": "check",
+  "scope": "selected",
+  "cache": "warm",
+  "command": [
+    "cargo",
+    "run",
+    "-q",
+    "-p",
+    "generated-admin-tool",
+    "--features",
+    "format",
+    "--locked",
+    "--",
+    "--input",
+    "examples/generated-admin/schema-format.idea",
+    "--output",
+    "examples/generated-admin/shared/src/generated-format",
+    "--check"
+  ],
+  "cwd": "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16",
+  "commit": "c8d52c0490d0cf5fabc80cd8fdc7f00b8bcd56f8",
+  "branch": "trial/3-issue16-server-layout",
+  "dirty": true,
+  "host": "macOS-26.6.2-arm64-arm-64bit",
+  "machine": "arm64",
+  "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+  "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+  "environment": {
+    "CARGO_TARGET_DIR": "/private/tmp/i16-verify/target",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_BUILD_JOBS": "6"
+  },
+  "cargo_activity": {
+    "compiling": 0,
+    "checking": 0,
+    "documenting": 0
+  },
+  "cargo_build_stages": [],
+  "log": "runs/20261028T112746.461351Z-8caef8694c08.log",
+  "ended_at": "2026-10-28T11:28:16.866090+00:00",
+  "command_seconds": 30.277178,
+  "exit_code": 0,
+  "cargo_build_seconds": null
+}

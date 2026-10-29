@@ -1,0 +1,3 @@
+    Finished `dev` profile [unoptimized] target(s) in 0.39s
+     Running `target/debug/generated-admin-tool emit generate --check`
+{"differences":[]}

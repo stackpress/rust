@@ -1,0 +1,119 @@
+   Compiling proc-macro2 v1.0.107
+   Compiling memchr v2.8.3
+   Compiling percent-encoding v2.3.2
+   Compiling indexmap v2.14.2
+   Compiling form_urlencoded v1.2.2
+   Compiling aho-corasick v1.1.5
+   Compiling serde_json v1.0.154
+   Compiling regex-automata v0.4.18
+   Compiling quote v1.0.47
+   Compiling syn v3.0.9
+   Compiling regex v1.13.1
+   Compiling synstructure v0.14.0
+   Compiling zerofrom-derive v0.1.8
+   Compiling yoke-derive v0.8.4
+   Compiling zerovec-derive v0.11.7
+   Compiling displaydoc v0.2.7
+   Compiling serde_derive v1.0.229
+   Compiling tokio-macros v2.7.2
+   Compiling tokio v1.54.1
+   Compiling zerofrom v0.1.8
+   Compiling serde v1.0.229
+   Compiling yoke v0.8.4
+   Compiling zerovec v0.11.9
+   Compiling zerotrie v0.2.5
+   Compiling tinystr v0.8.5
+   Compiling potential_utf v0.1.6
+   Compiling icu_collections v2.4.0
+   Compiling icu_locale_core v2.4.0
+   Compiling icu_provider v2.4.0
+   Compiling icu_properties v2.4.0
+   Compiling icu_normalizer v2.4.0
+   Compiling idna_adapter v1.2.2
+   Compiling idna v1.1.0
+   Compiling url v2.5.8
+   Compiling stackpress-lib v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/lib)
+   Compiling stackpress-server v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/server/server)
+   Compiling stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view)
+    Finished `test` profile [unoptimized] target(s) in 10.14s
+     Running unittests src/lib.rs (/private/tmp/i15-m2-verify/target/debug/deps/stackpress_framework_view-4d4191168182ba0a)
+
+running 18 tests
+test preferences::locale::tests::compiled_prefixes_and_exact_return_context ... ok
+test preferences::locale::tests::precedence_and_routes ... ok
+test preferences::locale::tests::invalid_configuration ... ok
+test preferences::locale::tests::action_admission_and_persistence ... ok
+test presentation_tests::explicit_host_policy_or_fail_closed ... ok
+test presentation_tests::flash_consumption_bounds_and_root_dedupe ... ok
+test presentation_tests::flash_wire_expansion_is_bounded ... ok
+test presentation_tests::scope_and_theme_tokens ... ok
+test presentation_tests::confirm_actual_cookie_readback ... ok
+test presentation_tests::single_writer_and_failure_preserve_content ... ok
+test presentation_tests::select_and_admit_settings ... ok
+test theme::tests::checked_external_tag_and_nonce ... ok
+test presentation_tests::unset_is_absence_and_legacy_readback_only ... ok
+test adapters::native::tests::corrupt_inputs_are_bounded_and_not_rewritten ... ok
+test adapters::native::tests::symlinks_and_non_regular_files_are_not_followed ... ok
+test adapters::native::tests::fifo_open_cannot_hang ... ok
+test adapters::native::tests::real_restart_and_invalid_updates ... ok
+test adapters::native::tests::abandoned_staging_is_bounded_and_never_followed ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running tests/contracts.rs (/private/tmp/i15-m2-verify/target/debug/deps/contracts-5c173e7841c0fdbe)
+
+running 3 tests
+test saved_theme_or_unset ... ok
+test hostile_seed_and_contract_drift ... ok
+test bounds_and_checked_metadata ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+     Running tests/lifecycle.rs (/private/tmp/i15-m2-verify/target/debug/deps/lifecycle-ec373351f4616993)
+
+running 2 tests
+test duplicate_and_invalid_registration ... ok
+test stage_table_and_drop ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/policies.rs (/private/tmp/i15-m2-verify/target/debug/deps/policies-5c0fe697c660bf95)
+
+running 8 tests
+test serialization_preserves_cause_without_disclosure ... ok
+test compiled_capture_boundaries ... ok
+test catalog_and_exact_parameters ... ok
+test status_and_lower_limits_roundtrip ... ok
+test metadata_and_assets_are_checked ... ok
+test asset_logical_byte_boundary_precedes_build_matching ... ok
+test escaped_assets_roundtrip ... ok
+test asset_decode_boundaries ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/presentation_registration.rs (/private/tmp/i15-m2-verify/target/debug/deps/presentation_registration-7eb127419bf76d73)
+
+running 5 tests
+test preferences_only_and_optional_asset ... ok
+test unselected_and_independent_flash ... ok
+test selected_settings_and_assets ... ok
+test rejected_startup ... ok
+test independent_protected_admission_and_lifecycle ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+   Doc-tests stackpress_framework_view
+
+running 2 tests
+test crates/framework/framework-view/src/policy.rs - policy::BasePath::new (line 124) ... ok
+test crates/framework/framework-view/src/lib.rs - PageSnapshot (line 69) ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 1 test
+test crates/framework/framework-view/src/server.rs - server::PageSpec (line 19) - compile fail ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+all doctests ran in 0.76s; merged doctests compilation took 0.25s

@@ -1,0 +1,21 @@
+    Finished `test` profile [unoptimized] target(s) in 0.42s
+   Doc-tests stackpress_server_http
+
+running 13 tests
+test crates/server/http/src/assets.rs - assets::AssetBundle::load (line 94) - compile ... ok
+test crates/server/http/src/deployment.rs - deployment::HttpServer::bind (line 136) - compile ... ok
+test crates/server/http/src/tls.rs - tls::TlsConfig::from_files (line 70) - compile ... ok
+test crates/server/http/src/supervisor.rs - supervisor::HttpServer::serve_acceptor (line 197) ... ok
+test crates/server/http/src/deployment.rs - deployment::HttpServer::from_options (line 93) ... ok
+test crates/server/http/src/observe.rs - observe::ExchangeObserver (line 40) ... ok
+test crates/server/http/src/lib.rs - Cancellation (line 56) ... ok
+test crates/server/http/src/deployment.rs - deployment::NetworkOptions::http (line 33) ... ok
+test crates/server/http/src/lib.rs - HttpServer::new (line 118) ... ok
+test crates/server/http/src/proxy.rs - proxy::IpCidr (line 17) ... ok
+test crates/server/http/src/options.rs - options::NetworkLimits (line 10) ... ok
+test crates/server/http/src/tls.rs - tls::TlsFiles::pem (line 49) ... ok
+test crates/server/http/src/supervisor.rs - supervisor::Shutdown (line 21) ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+all doctests ran in 1.17s; merged doctests compilation took 0.73s

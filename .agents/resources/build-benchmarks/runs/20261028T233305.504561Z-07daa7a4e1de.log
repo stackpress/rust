@@ -1,0 +1,64 @@
+   Compiling serde_core v1.0.229
+   Compiling serde_json v1.0.154
+   Compiling serde v1.0.229
+   Compiling hydration_context v0.3.2
+   Compiling reactive_graph v0.2.16
+   Compiling gloo-utils v0.2.0
+   Compiling oco_ref v0.2.1
+   Compiling gloo-net v0.6.0
+   Compiling serde_qs v0.15.0
+   Compiling server_fn v0.8.13
+   Compiling reactive_stores v0.4.4
+   Compiling codee v0.3.5
+   Compiling config v0.15.27
+   Compiling tachys v0.2.19
+   Compiling leptos_config v0.8.10
+   Compiling leptos_hot_reload v0.8.7
+   Compiling leptos_server v0.8.8
+   Compiling leptos_dom v0.8.8
+   Compiling leptos v0.8.22
+   Compiling leptos_router v0.8.17
+   Compiling leptos_meta v0.8.7
+   Compiling issue17-seam v0.1.0 (/private/tmp/stackpress-issue17-m1/seam)
+error[E0603]: enum import `ReplayError` is private
+  --> src/render.rs:41:27
+   |
+41 |     Replay(crate::replay::ReplayError),
+   |                           ^^^^^^^^^^^ private enum import
+   |
+note: the enum import `ReplayError` is defined here...
+  --> src/replay.rs:3:5
+   |
+ 3 | use crate::replay_error::ReplayError;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+note: ...and refers to the enum `ReplayError` which is defined here
+  --> src/replay_error.rs:3:1
+   |
+ 3 | pub enum ReplayError {
+   | ^^^^^^^^^^^^^^^^^^^^ you could import this directly
+help: consider importing this enum instead
+   |
+41 |     Replay(crate::replay_error::ReplayError),
+   |                         ++++++
+help: import `ReplayError` through the re-export
+   |
+41 -     Replay(crate::replay::ReplayError),
+41 +     Replay(replay_error::ReplayError),
+   |
+
+For more information about this error, try `rustc --explain E0603`.
+error: could not compile `issue17-seam` (lib) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+Traceback (most recent call last):
+  File "/private/tmp/stackpress-issue17-m1/seam_check.py", line 3, in <module>
+    subprocess.run(['cargo','test','--offline','--manifest-path',str(manifest),'--features','stream','--test','seams'],check=True)
+  File "/Users/cblanquera/.pyenv/versions/3.11.4/lib/python3.11/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['cargo', 'test', '--offline', '--manifest-path', '/private/tmp/stackpress-issue17-m1/seam/Cargo.toml', '--features', 'stream', '--test', 'seams']' returned non-zero exit status 101.
+supervisor: child 11643 reaped; peak target 662432 KiB
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/proofs/supervise.py", line 75, in <module>
+    main()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/proofs/supervise.py", line 68, in main
+    raise subprocess.CalledProcessError(child.returncode, command)
+subprocess.CalledProcessError: Command '['python3', '/private/tmp/stackpress-issue17-m1/seam_check.py']' returned non-zero exit status 1.

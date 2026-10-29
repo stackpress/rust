@@ -1,0 +1,21 @@
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
++ actual - expected
+
++ 'abc'
+- 'EARLY-profile-draft'
+
+    at /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/proofs/browser-initial-theme.cjs:30:16 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 'abc',
+  expected: 'EARLY-profile-draft',
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+supervisor: child 11562 reaped; peak target 3978928 KiB
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/supervise.py", line 60, in <module>
+    main()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/supervise.py", line 53, in main
+    raise subprocess.CalledProcessError(child.returncode, command)
+subprocess.CalledProcessError: Command '['node', 'examples/profile-ui/proofs/browser-initial-theme.cjs']' returned non-zero exit status 1.

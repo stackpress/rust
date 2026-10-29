@@ -1,0 +1,9 @@
+{
+  "removed_target_kib": 3786240,
+  "target_absent": true,
+  "cap_kib": 8388608,
+  "remaining_fixture_processes": [],
+  "remaining_owned_workspaces": [],
+  "simulator_or_mobile_app_launched": false,
+  "owner_preview_and_data_untouched": true
+}

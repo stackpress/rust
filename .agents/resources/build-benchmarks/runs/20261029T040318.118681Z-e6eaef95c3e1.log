@@ -1,0 +1,62 @@
+PASS gallery-browser
+PASS breadth-browser
+PASS preferences-browser
+PASS browser proof
+PASS M0 success root
+PASS M0 truncated root
+PASS M0 pending root
+PASS M0 deadline root
+PASS M0 late root
+PASS M0 held-pending root
+PASS M0 delayed-status root
+PASS M0 success /demo
+PASS M0 truncated /demo
+PASS M0 pending /demo
+PASS M0 deadline /demo
+PASS M0 late /demo
+PASS M0 held-pending /demo
+PASS M0 delayed-status /demo
+PASS selected-backend-build
+PASS browser-root
+PASS browser-m2-root
+PASS browser-navigation-root
+PASS browser-gateway-root
+PASS browser-mounted
+PASS browser-m2-mounted
+PASS browser-navigation-mounted
+PASS browser-gateway-mounted
+PASS initial-theme
+PASS selected-backend-build
+PASS setup-build
+PASS startup-errors-without-setup
+PASS explicit-setup
+PASS browser-root
+PASS browser-m2-root
+PASS browser-navigation-root
+PASS browser-gateway-root
+PASS browser-mounted
+PASS browser-m2-mounted
+PASS browser-navigation-mounted
+PASS browser-gateway-mounted
+PASS initial-theme
+{"initialModes":["unset","light","dark"],"cases":6,"firstRoot":"host preferences","persistenceBeforePublication":true,"failureKeepsDraftAndRoot":true,"listener":false}
+PASS Chromium proof
+PASS specialized editor Chromium proof
+$ node /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/browser.cjs
+PASS base-hydrate-light-en-1280
+PASS base-hydrate-light-en-375
+PASS base-hydrate-dark-fr-1280
+PASS base-hydrate-dark-fr-375
+PASS base-csr-light-en-1280
+PASS base-csr-light-en-375
+PASS base-csr-dark-fr-1280
+PASS base-csr-dark-fr-375
+PASS helpers-hydrate-light-en-1280
+PASS helpers-hydrate-light-en-375
+PASS helpers-hydrate-dark-fr-1280
+PASS helpers-hydrate-dark-fr-375
+PASS helpers-csr-light-en-1280
+PASS helpers-csr-light-en-375
+PASS helpers-csr-dark-fr-1280
+PASS helpers-csr-dark-fr-375
+supervisor: child 59719 reaped; peak target 6974396 KiB

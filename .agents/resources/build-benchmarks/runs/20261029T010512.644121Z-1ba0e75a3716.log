@@ -1,0 +1,96 @@
+   Compiling proc-macro2 v1.0.107
+   Compiling futures-core v0.3.34
+   Compiling futures-sink v0.3.34
+   Compiling serde_json v1.0.154
+   Compiling futures-channel v0.3.34
+   Compiling quote v1.0.47
+   Compiling syn v3.0.9
+   Compiling futures-macro v0.3.34
+   Compiling serde_derive v1.0.229
+   Compiling tokio-macros v2.7.2
+   Compiling tokio v1.54.1
+   Compiling futures-util v0.3.34
+   Compiling serde v1.0.229
+   Compiling stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-view)
+   Compiling futures-executor v0.3.34
+   Compiling futures v0.3.34
+   Compiling hydration_context v0.3.2
+    Finished `test` profile [unoptimized] target(s) in 5.68s
+     Running unittests src/lib.rs (/private/tmp/i17-m1-verify/target/debug/deps/stackpress_framework_view-de638fdda7196224)
+
+running 1 test
+test theme::tests::checked_external_tag_and_nonce ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/contracts.rs (/private/tmp/i17-m1-verify/target/debug/deps/contracts-d076e4a2a042439c)
+
+running 3 tests
+test hostile_seed_and_contract_drift ... ok
+test saved_theme_or_unset ... ok
+test bounds_and_checked_metadata ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running tests/leptos_async_renderer.rs (/private/tmp/i17-m1-verify/target/debug/deps/leptos_async_renderer-2af752dc34f2e139)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/leptos_cleanup.rs (/private/tmp/i17-m1-verify/target/debug/deps/leptos_cleanup-a22d1f5224051030)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/leptos_executor.rs (/private/tmp/i17-m1-verify/target/debug/deps/leptos_executor-b1eb066e55789eee)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/leptos_routing.rs (/private/tmp/i17-m1-verify/target/debug/deps/leptos_routing-ab5bf833e01afb2d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/leptos_safety.rs (/private/tmp/i17-m1-verify/target/debug/deps/leptos_safety-3bf9925ddc0b50c8)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/leptos_system_theme.rs (/private/tmp/i17-m1-verify/target/debug/deps/leptos_system_theme-3d4b8a32eeba52ad)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lifecycle.rs (/private/tmp/i17-m1-verify/target/debug/deps/lifecycle-69f93662f460e8f6)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/policies.rs (/private/tmp/i17-m1-verify/target/debug/deps/policies-e4d09d48735c63ab)
+
+running 8 tests
+test serialization_preserves_cause_without_disclosure ... ok
+test compiled_capture_boundaries ... ok
+test catalog_and_exact_parameters ... ok
+test status_and_lower_limits_roundtrip ... ok
+test metadata_and_assets_are_checked ... ok
+test escaped_assets_roundtrip ... ok
+test asset_logical_byte_boundary_precedes_build_matching ... ok
+test asset_decode_boundaries ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/presentation_registration.rs (/private/tmp/i17-m1-verify/target/debug/deps/presentation_registration-e3e70371fa834bff)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
