@@ -55,6 +55,10 @@ packaging, streaming, native screen-reader evidence or owner visual acceptance.
 
 The standard `browser.py` command runs both preference flows and the maintained
 40-case first-paint matrix, including the real finite host bootstrap route and its cache
-policy. `web::configure` explicitly composes view preferences/flash registrations; the
+policy. `web::configure` selects `framework_view::plugin::register` with the explicit
+`presentation` feature, after supplying its trusted sections and Admission; the
 finite host owns the immutable asset route and review-preview owns its AssetBundle.
+Application and plugin authors own route inventories. Multiple handlers may process a route
+in priority/FIFO order, and cooperative abort can stop later handlers. Protected handlers
+still check their own policy. Independent preference/flash and direct-page APIs remain usable.
 See [host composition](../../crates/framework/framework-view/docs/presentation-host.md).

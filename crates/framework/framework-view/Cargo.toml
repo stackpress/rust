@@ -13,6 +13,7 @@ preferences = ["cookies"]
 flash = ["cookies"]
 web-preferences = ["preferences", "server"]
 web-flash = ["flash", "server"]
+presentation = ["web-preferences", "web-flash"]
 native-file = ["preferences", "dep:libc"]
 server = ["dep:stackpress-lib", "dep:stackpress-server"]
 

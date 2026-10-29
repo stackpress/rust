@@ -44,12 +44,15 @@ Leptos rendering is selected only by its integration features; persistence requi
 | `flash` | Bounded public notices, cookie codec and per-root deduplication. |
 | `server` | Native page registration: PageSpec, PageLoader and ServerBuilderViewExt. |
 | `web-preferences` / `web-flash` | Independently selectable native registration functions and typed services. |
+| `presentation` | Native `plugin::register` composing preferences then flash; no Leptos dependency. |
 | `native-file` | Fixed revision-1 Unix file adapter, independent of server registration. |
 
 The facade forwards `preferences`, `flash`, `native-file`, `server`, `web-preferences`
 and `web-flash` as `framework-view-*` features; `cookies` is selected by its dependent modules.
 View's `leptos-ssr` selects the native page extension. Server features fail explicitly on wasm32;
 pure preference/flash contracts remain usable there. Native files are Unix-only.
+Select `presentation` on the direct view dependency to use the composite; existing facade
+features continue to forward the independent capabilities.
 See [host composition](presentation-host.md) for configuration, admission and asset ownership.
 
 The [Profile UI example](../../../../examples/profile-ui/README.md) is the canonical integration:
