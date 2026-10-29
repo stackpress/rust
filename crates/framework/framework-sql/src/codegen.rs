@@ -14,6 +14,7 @@ mod writes;
 ///
 /// The caller still supplies normalization, diagnostics and operation/model selection.
 /// No Engine, runtime registration or output installation is performed by this helper.
+///
 /// # Errors
 /// Preserves registry selection/ownership errors; planning verifies dependency order.
 pub fn register(

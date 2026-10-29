@@ -49,7 +49,43 @@ class WatchdogTests(unittest.TestCase):
         self.ctx.run('environment', [sys.executable,'-c',"import os;print(os.environ['CARGO_TARGET_DIR']);print(os.environ['CARGO_INCREMENTAL'])"])
         log = (self.ctx.logs/'environment.log').read_text().splitlines()
         self.assertEqual(log[-2:], [str(runtime.TARGET),'0'])
-        self.assertEqual(runtime.TARGET.parent, runtime.OUTPUT_ROOT)
+
+    def test_disposable_workspaces_have_distinct_stable_targets(self):
+        first, second = self.ctx.logs/'first', self.ctx.logs/'second'
+        first.mkdir()
+        second.mkdir()
+        command = [sys.executable, '-c', "import os;print(os.environ['CARGO_TARGET_DIR'])"]
+        for name, root in [('first', first), ('second', second), ('again', first)]:
+            self.ctx.run(name, command, cwd=root)
+        targets = [json.loads((self.ctx.logs/(name+'-result.json')).read_text())['target']
+                   for name in ['first', 'second', 'again']]
+        self.assertEqual(targets[0], targets[2])
+        self.assertNotEqual(targets[0], targets[1])
+        for name, target in zip(['first', 'second', 'again'], targets):
+            self.assertTrue(Path(target).is_relative_to(runtime.TARGET/'consumers'))
+            self.assertEqual((self.ctx.logs/(name+'.log')).read_text().splitlines()[-1], target)
+        self.assertEqual(self.ctx.target(runtime.ROOT), runtime.TARGET)
+
+    def test_workspace_removes_only_its_target_on_success_and_exception(self):
+        target_root = self.ctx.logs/'target'
+        target_root.mkdir()
+        retained = target_root/'repository-artifact'
+        retained.write_text('keep warm')
+        for fails in [False, True]:
+            with self.subTest(fails=fails), patch.object(runtime, 'TARGET', target_root):
+                try:
+                    with self.ctx.workspace() as root:
+                        target = self.ctx.target(root)
+                        target.mkdir(parents=True)
+                        (target/'consumer-artifact').write_text('temporary')
+                        if fails:
+                            raise RuntimeError('fixture failure')
+                except RuntimeError as error:
+                    self.assertTrue(fails)
+                    self.assertEqual(str(error), 'fixture failure')
+                self.assertFalse(root.exists())
+                self.assertFalse(target.exists())
+                self.assertEqual(retained.read_text(), 'keep warm')
 
     def test_slow_disk_measurement_cannot_extend_the_deadline(self):
         bindir = self.ctx.logs/'bin'

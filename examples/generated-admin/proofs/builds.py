@@ -2,12 +2,10 @@
 from contextlib import contextmanager
 import hashlib
 import io
-from pathlib import Path
 import shutil
 import subprocess
 import tarfile
-import tempfile
-from .runtime import ROOT, TARGET
+from .runtime import ROOT
 
 
 def hashes(root):
@@ -20,8 +18,7 @@ def hashes(root):
 def isolated_workspace(ctx):
     """Overlay current source onto a tracked snapshot, so plugin proofs never touch shared outputs."""
     archive = subprocess.check_output(['git','archive','--format=tar','HEAD'],cwd=ROOT,timeout=60)
-    with tempfile.TemporaryDirectory(prefix='workspace-',dir=ctx.logs) as temp:
-        root=Path(temp)
+    with ctx.workspace(prefix='workspace-') as root:
         with tarfile.open(fileobj=io.BytesIO(archive)) as source:
             source.extractall(root,filter='data')
         changed=subprocess.check_output(['git','diff','--name-only','HEAD'],cwd=ROOT,text=True,timeout=30).splitlines()
@@ -43,22 +40,20 @@ def artifacts(ctx, formatted=False, destination=None, root=ROOT, prefix='build')
     assert subprocess.check_output(['wasm-bindgen','--version'],text=True,timeout=30).strip()=='wasm-bindgen 0.2.129'
     destination=destination or ctx.logs
     destination.mkdir(parents=True,exist_ok=True)
+    target = ctx.target(root)
     features=['--features','format'] if formatted else []
-    # Separate workspaces share top-level artifact names in this sole target. A fresh Cargo
-    # fingerprint alone can leave another workspace's binary there (including its manifest path).
-    # Review-only labels can leave newer shared objects in this one warm target.
-    # Clear shared native output before consuming a new generated tree; old source
-    # timestamps in an isolated snapshot are not sufficient proof. WASM is cleared below.
+    # A single isolated workspace still changes generated trees between plugin variants.
+    # Clear only their first-party artifacts; dependencies remain warm in its own target.
     ctx.run(prefix+'-shared-clean',['cargo','clean','-p','generated-admin-shared'],cwd=root)
     ctx.run(prefix+'-web-clean',['cargo','clean','-p','generated-admin-web'],cwd=root)
     ctx.run(prefix+'-web',['cargo','build','-p','generated-admin-web',*features,'--locked'],cwd=root)
-    shutil.copy2(TARGET/'debug/generated-admin-web',destination/'admin-web')
+    shutil.copy2(target/'debug/generated-admin-web',destination/'admin-web')
     for mode in ['hydrate','csr']:
         ctx.run(prefix+'-'+mode+'-clean',['cargo','clean','--target','wasm32-unknown-unknown','-p','generated-admin-client','-p','generated-admin-shared'],cwd=root)
         ctx.run(prefix+'-'+mode,['cargo','build','-p','generated-admin-client','--target','wasm32-unknown-unknown','--features',mode+(',format' if formatted else ''),'--locked'],cwd=root)
         assets=destination/'assets'/mode
         assets.mkdir(parents=True,exist_ok=True)
-        ctx.run(prefix+'-'+mode+'-bindgen',['wasm-bindgen','--target','web','--no-typescript','--out-dir',str(assets),'--out-name','admin',str(TARGET/'wasm32-unknown-unknown/debug/generated_admin_client.wasm')])
+        ctx.run(prefix+'-'+mode+'-bindgen',['wasm-bindgen','--target','web','--no-typescript','--out-dir',str(assets),'--out-name','admin',str(target/'wasm32-unknown-unknown/debug/generated_admin_client.wasm')])
         shutil.copy2(ROOT/'examples/generated-admin/bootstrap.js',assets/'start.js')
 
 

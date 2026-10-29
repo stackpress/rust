@@ -12,7 +12,8 @@ A model with an explicit list selection also exports `table(rows: &[(String, Pub
 
 Rust import mappings are trusted compiled application choices, checked lexically before emission. A custom symbol's existence and `RoleContext` interface are proved by compiling the generated consumer. Public labels/props never become imports, identifiers, templates, or expressions. Idea diagnostics retain actual UTF-8 ranges; normalized JSON retains file/structural paths without invented coordinates.
 
-
 `emit_pages(schema, definitions, selected_models, output)` follows `emit_roles` in the same ordinary function transform. It projects the frozen UI contract, rejects duplicate selection and missing public identities, and contributes deterministic `ui/pages.rs` to the same UI partition. Removed models contribute no adapters or routes. Pure per-model and dispatch adapters decode actual generated public create/patch/query DTOs, compose role forms and filters, and render typed public list/detail snapshots.
 
 `ui/pages_host.rs` is a separate explicit native include, omitted from the pure UI aggregate. It registers selected actual generated operations and fixed page/API routes under the application's validated mount. It imports native server/data crates only in the native host. Applications must provide policy, transport, anti-forgery admission, error handling and SQLite lifecycle; generation does not grant authority.
+
+The [build-time registration reference](../../../framework-schema/docs/README.md) describes the separate schema/SQL/admin transform helpers, their partitions and dependency order.

@@ -168,7 +168,7 @@ fn sql_transform(context: &TransformContext<'_>, output: &mut OutputPlan) -> Res
     )
 }
 
-/// UI consumes only the approved revision-2 projection of the same normalized schema.
+/// UI consumes only the approved revision-3 projection of the same normalized schema.
 fn ui_transform(context: &TransformContext<'_>, output: &mut OutputPlan) -> Result<()> {
     let (schema, definitions, diagnostics) = normalized(context)?;
     emit_roles(

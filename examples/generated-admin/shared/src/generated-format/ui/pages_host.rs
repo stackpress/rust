@@ -128,8 +128,10 @@ pub fn routes(
 
 /// Validated application-owned mount for this explicit nonempty generated page selection.
 pub struct Mount(String);
+
 impl Mount {
     /// Validate the same mount supplied to the application's page/asset host configuration.
+    ///
     /// # Errors
     /// Preserves invalid mount errors; no route or service is registered on failure.
     pub fn new(value: &str) -> Result<Self> {
@@ -139,11 +141,13 @@ impl Mount {
                 stackpress_lib::Error::invalid("invalid admin mount").with_cause(cause)
             })
     }
+
     /// Borrow the normalized mount; the application uses this same value for its host config.
     pub fn as_str(&self) -> &str {
         &self.0
     }
 }
+
 /// Config-only claim preventing repeated selection under different plugin identities.
 struct Service;
 
@@ -156,12 +160,14 @@ struct Service;
 /// direct operations/routes helpers instead. No database setup or listener runs at startup.
 /// Developers own route inventories, priorities and cooperative abort behavior; each protected
 /// handler enforces its own policy. Shared admin and Leptos imports register nothing.
+///
 /// # Errors
 /// Build fails on missing/wrong-order SQL integration or Mount, duplicate singleton/services,
 /// conflicting operation selections, or invalid routes. No partial Server is published.
 pub fn register(app: &mut stackpress_server::ServerBuilder) -> Result<()> {
     use stackpress_lib::{Flow, queue::task};
     use std::sync::Arc;
+
     app.on_config(task(|start: &mut StartupContext| {
         Box::pin(async move {
             // Underlying Engine/Policy alone cannot substitute for explicit SQL integration.
@@ -174,6 +180,7 @@ pub fn register(app: &mut stackpress_server::ServerBuilder) -> Result<()> {
             Ok(Flow::Continue)
         })
     }))?;
+
     app.on_route(task(|start: &mut StartupContext| {
         Box::pin(async move {
             // Release the immutable service borrow before contributing the fixed mappings.
@@ -184,6 +191,7 @@ pub fn register(app: &mut stackpress_server::ServerBuilder) -> Result<()> {
     }))?;
     Ok(())
 }
+
 /// Mount the selected mappings during the existing Route phase.
 fn mount_routes(builder: &mut StartupContext, mount: &str) -> stackpress_lib::Result<()> {
     builder.get(&format!("{mount}profile/search"), crate::host::page)?;

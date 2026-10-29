@@ -1,11 +1,15 @@
 """One configurable output root and target; all proof subprocesses have kill/reap watchdogs."""
+from contextlib import contextmanager
+import hashlib
 import json
 import os
 from pathlib import Path
 import shlex
 import signal
+import shutil
 import subprocess
 import time
+import tempfile
 
 ROOT = Path(__file__).resolve().parents[3]
 OUTPUT_ROOT = Path(os.environ.get('ADMIN_PROOF_ROOT', '/private/tmp/s8-admin')).expanduser().resolve()
@@ -17,6 +21,33 @@ class Context:
     def __init__(self, suite):
         self.logs = OUTPUT_ROOT / suite
         self.logs.mkdir(parents=True, exist_ok=True)
+
+    def target(self, cwd=None):
+        """Keep each disposable workspace's binaries apart inside the one aggregate budget."""
+        root = Path(cwd or ROOT).resolve()
+        if root == ROOT:
+            return TARGET
+        # A stable workspace identity permits warm variants without sharing entry binaries
+        # with either the repository or a later snapshot at another temporary path.
+        identity = hashlib.sha256(os.fsencode(root)).hexdigest()[:20]
+        return TARGET / 'consumers' / identity
+
+    @contextmanager
+    def workspace(self, prefix='consumer-'):
+        """Own temporary source and its exact consumer target, including failure cleanup."""
+        with tempfile.TemporaryDirectory(prefix=prefix, dir=self.logs) as temporary:
+            root = Path(temporary)
+            try:
+                yield root
+            finally:
+                # Context.run reaps each child before returning or raising. Only this
+                # workspace's hashed subdirectory can be removed after that boundary.
+                target = self.target(root)
+                consumers = (TARGET / 'consumers').resolve()
+                assert target.resolve().is_relative_to(consumers)
+                assert target.parent.resolve() == consumers
+                if target.exists():
+                    shutil.rmtree(target)
 
     def size_kib(self, deadline=None):
         """Retry transient rustc removals while measuring; never ignore a failed measurement."""
@@ -42,7 +73,8 @@ class Context:
 
     def run(self, name, command, timeout=900, extra=None, cwd=None):
         """Record exact argv and reap the entire group after timeout, cancellation or budget failure."""
-        env = dict(os.environ, CARGO_TARGET_DIR=str(TARGET), CARGO_LLVM_COV_TARGET_DIR=str(TARGET),
+        target = self.target(cwd)
+        env = dict(os.environ, CARGO_TARGET_DIR=str(target), CARGO_LLVM_COV_TARGET_DIR=str(target),
                    CARGO_BUILD_JOBS=os.environ.get('CARGO_BUILD_JOBS', '4'), CARGO_INCREMENTAL='0', CARGO_PROFILE_DEV_DEBUG='0')
         env.update(extra or {})
         start = time.monotonic()
@@ -76,7 +108,7 @@ class Context:
                     raise
                 finally:
                     (self.logs / (name + '-result.json')).write_text(json.dumps({
-                        'command': command, 'cwd':str(cwd or ROOT), 'code': child.returncode, 'expired': expired,
+                        'command': command, 'cwd':str(cwd or ROOT), 'target': str(target), 'code': child.returncode, 'expired': expired,
                         'seconds': time.monotonic()-start}, indent=2))
         print(f'{name}: {child.returncode}', flush=True)
         if child.returncode:

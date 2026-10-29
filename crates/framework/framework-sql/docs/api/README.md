@@ -5,3 +5,5 @@ See [runtime and emitted API](runtime.md) for the callable surface and [concepts
 Use [revisions and migrations](migrations.md) for immutable history, exact plan approvals, SQLite reconstruction and the app-owned operator commands.
 
 See [explicit string storage length](storage-length.md) for G38 declarations, target facts, validation and format-3 migration compatibility.
+
+See the [native SQL plugin](plugin.md) for startup services, contribution bounds and errors.
