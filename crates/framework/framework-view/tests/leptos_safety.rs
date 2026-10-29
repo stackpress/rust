@@ -67,6 +67,7 @@ fn script_and_html_escapers_do_not_drift() {
         "",
         "plain 雪",
         "</script><script>alert(1)</script>",
+        "</ScRiPt data-x='quoted'><!--&-->",
         "</template>&\"'<>\u{2028}\u{2029}",
         "&amp;\\u003c",
         "\0\n\r",

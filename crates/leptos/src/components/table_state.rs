@@ -2,7 +2,7 @@
 use super::{ControlError, DisplayRow, DisplayTable, PageTotal, PageWindow};
 use leptos::prelude::*;
 use std::collections::BTreeSet;
-/// Explicit stable lexical sorting; locale-aware numeric formatting belongs to M3.
+/// Explicit stable lexical sorting; typed display formatting does not alter sort order.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum SortDirection {
     /// Ascending Unicode string order.
@@ -32,11 +32,17 @@ pub enum SortDirection {
 /// ```
 #[derive(Clone, Copy)]
 pub struct TableState {
+    /// Bounded checked row/column snapshot owned by this root.
     data: RwSignal<DisplayTable>,
+    /// Applied literal filter; adopted early drafts do not immediately change SSR rows.
     filter: RwSignal<String>,
+    /// Native editable/adopted draft, including a not-yet-applied early edit.
     filter_draft: RwSignal<String>,
+    /// Optional column/order over the checked snapshot, with stable ties.
     sort: RwSignal<Option<(usize, SortDirection)>>,
+    /// Explicit paging state recalculated by projection changes.
     page: RwSignal<PageWindow>,
+    /// Admitted row identities, independent of visible position or current filter.
     selected: RwSignal<BTreeSet<String>>,
 }
 impl TableState {

@@ -15,7 +15,7 @@ Use [the mode matrix](../README.md#select-one-render-mode) before compiling a co
 
 | Surface | Public coverage |
 | --- | --- |
-| [Rendering kernels](rendering.md) | `Renderer, PreparedRender, RenderLimits, RenderError, AsyncRenderer, OwnedRender` |
+| [Rendering kernels](rendering.md) | `Renderer, PreparedRender, RenderLimits, RenderError, document_shell, AsyncRenderer, OwnedRender` |
 | [Supervised streams](streaming.md) | `StreamRenderer, StreamWriter, StreamBody, StreamLimits` |
 | [Replay and cancellation](replay.md) | `ResourceReplay, ReplayError, cancel_on_cleanup, ResourceFailure` |
 | [Locations and escaping](locations-and-escaping.md) | `LocalLocation, LocationError, ImageSource`, HTML/script escaping |

@@ -42,9 +42,25 @@ pub(super) fn limits(value: PageLimits) -> RenderLimits {
         replay_bytes: value.snapshot_bytes,
     }
 }
+
+/// Admit snapshot identity/metadata before comparing acknowledged presentation settings.
+/// Callers retain their existing executor/assets checks before entering this phase.
+pub(super) fn validate_snapshot<T>(
+    snapshot: &PageSnapshot<T>,
+    contract: &PageContract,
+) -> Result<(), ViewError> {
+    snapshot.validate(contract.revision, &contract.build)?;
+    // Keep metadata failure ahead of settings mismatch and component side effects.
+    if snapshot.locale != contract.locale || snapshot.theme != contract.theme {
+        return Err(ViewError::ContractMismatch);
+    }
+    Ok(())
+}
 /// Staged page shell; generic execution has already disposed its synchronous Owner.
 pub struct PreparedPage {
+    /// Eager owned buffers; no component Owner survives synchronous staging.
     inner: PreparedRender<ViewError>,
+    /// Recheck the final public page wrapper with the original admitted policy.
     limits: PageLimits,
 }
 impl PreparedPage {
@@ -174,12 +190,10 @@ fn prepare<T: Serialize, V: IntoView>(
     assets: &PageAssets,
     component: impl FnOnce() -> Result<V, ViewError>,
 ) -> Result<PreparedPage, ViewError> {
+    // Preserve admission order before any application component can run.
     require_executor()?;
     assets.validate(contract)?;
-    snapshot.validate(contract.revision, &contract.build)?;
-    if snapshot.locale != contract.locale || snapshot.theme != contract.theme {
-        return Err(ViewError::ContractMismatch);
-    }
+    validate_snapshot(snapshot, contract)?;
     let seed = snapshot.script_json_with(contract.limits)?;
     let bootstrap = assets.script_json()?;
     let module = assets.base.join(assets.module.as_str())?;
@@ -195,26 +209,31 @@ fn prepare<T: Serialize, V: IntoView>(
     } else {
         ""
     };
-    let inner=Renderer::try_prepare(limits(contract.limits),||{
-        super::routing::provide_route_context(assets.base.clone());
-        // Router SSR sees only the canonical public path, never an origin/cookie/header dump.
-        provide_context(leptos_router::location::RequestUrl::new(&snapshot.location));
-        component()
-    },|body|{
-        let _ =
-            view! { <leptos_meta::Link rel="canonical" href=snapshot.location.clone()/> }.to_html();
-        if let Some(style) = &assets.stylesheet {
-            let href = assets.base.join(style.as_str())?.as_str().to_owned();
-            let _ = view! { <leptos_meta::Stylesheet id="stackpress-style" href/> }.to_html();
-        }
-    let html = format!(
+    let inner = Renderer::try_prepare(
+        limits(contract.limits),
+        || {
+            super::routing::provide_route_context(assets.base.clone());
+            // Router SSR sees only the public path, never an origin/cookie/header dump.
+            provide_context(leptos_router::location::RequestUrl::new(&snapshot.location));
+            component()
+        },
+        |body| {
+            // This synchronous page policy retains its existing canonical/stylesheet ordering.
+            let _ = view! { <leptos_meta::Link rel="canonical" href=snapshot.location.clone()/> }.to_html();
+            if let Some(style) = &assets.stylesheet {
+                let href = assets.base.join(style.as_str())?.as_str().to_owned();
+                let _ = view! { <leptos_meta::Stylesheet id="stackpress-style" href/> }.to_html();
+            }
+            // Keep the established page shell byte-for-byte; generic framing is opt-in.
+            let html = format!(
         "<!DOCTYPE html><html lang=\"{}\" data-theme=\"{}\"{theme_marker}><head>{theme_head}<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><!--HEAD--></head><body><div id=\"app\">{body}</div><script type=\"application/json\" id=\"stackpress-page\">{seed}</script><script type=\"application/json\" id=\"stackpress-assets\">{bootstrap}</script><script type=\"module\" src=\"{}\"></script></body></html>",
         snapshot.locale,
         snapshot.theme.as_deref().unwrap_or("light"),
         escape_html(module.as_str())
-    );
-        Ok(html)
-    }).map_err(map_error)?;
+            );
+            Ok(html)
+        },
+    ).map_err(map_error)?;
     Ok(PreparedPage {
         inner,
         limits: contract.limits,

@@ -195,10 +195,26 @@ pub fn Tooltip(
     view! {<span class="sp-tooltip"><button id=anchor type="button" aria-describedby=description.clone()
     on:mouseenter=move |_|activity.update(|a|a.hover(true)) on:mouseleave=move |_|activity.update(|a|a.hover(false))
     on:focus=move |_|activity.update(|a|a.focus(true)) on:blur=move |_|activity.update(|a|a.focus(false))
-    on:keydown=move |event:leptos::ev::KeyboardEvent|{if event.key()=="Escape" && activity.get().requested(){event.prevent_default();activity.update(TooltipActivity::dismiss);open.set(false);}}>{label}</button>
+    on:keydown=move |event: leptos::ev::KeyboardEvent| {
+        if event.key() == "Escape" && activity.get().requested() {
+            // Dismiss until a fresh entry/focus transition, retaining trigger focus.
+            event.prevent_default();
+            activity.update(TooltipActivity::dismiss);
+            open.set(false);
+        }
+    }>{label}</button>
     // Native hint close-watching also dismisses a hover-only tooltip on Escape.
     <div id=description node_ref=popup class="sp-popover" popover="hint" role="tooltip"
-    on:toggle=move |_event|{#[cfg(target_arch="wasm32")] {super::overlay_dom::sync_toggle(&_event,open);if !open.get() && activity.get().requested(){activity.update(TooltipActivity::dismiss);}}}
+    on:toggle=move |_event| {
+        #[cfg(target_arch = "wasm32")]
+        {
+            // Native close-watching can dismiss without a trigger key event.
+            super::overlay_dom::sync_toggle(&_event, open);
+            if !open.get() && activity.get().requested() {
+                activity.update(TooltipActivity::dismiss);
+            }
+        }
+    }
     on:mouseenter=move |_|activity.update(|a|a.hover(true)) on:mouseleave=move |_|activity.update(|a|a.hover(false))>{text}</div></span>}
 }
 /// Explicit scoped toast; dismissible notices never become a process-wide singleton.

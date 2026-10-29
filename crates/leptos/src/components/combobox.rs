@@ -13,6 +13,7 @@ pub enum SuggestionStatus {
     Failed,
 }
 #[cfg(feature = "async")]
+/// Abort ownership follows the root rather than the caller awaiting a result.
 struct AbortLease(futures::future::AbortHandle);
 #[cfg(feature = "async")]
 impl Drop for AbortLease {
@@ -24,15 +25,24 @@ impl Drop for AbortLease {
 /// Root-owned searchable choices; selected value and editable query are distinct.
 #[derive(Clone, Copy)]
 pub struct ComboboxState {
+    /// Bounded checked result snapshot, replaced only by an admitted generation.
     options: RwSignal<SelectOptions>,
+    /// Editable display text, distinct from the submitted machine selection.
     query: RwSignal<String>,
+    /// Optional selected machine key; editing invalidates an obsolete selection.
     selected: RwSignal<Option<String>>,
+    /// Current enabled result index used for the active descendant.
     active: RwSignal<Option<usize>>,
+    /// Root-owned popover visibility; close/disable cancels pending acquisition.
     open: RwSignal<bool>,
+    /// Ready/loading/failed stays distinct from an empty successful result.
     status: RwSignal<SuggestionStatus>,
+    /// Monotonic ticket generation prevents stale completion publication.
     generation: RwSignal<u64>,
+    /// Unique root identity rejects otherwise matching foreign completions.
     #[cfg(feature = "async")]
     identity: StoredValue<std::sync::Arc<()>>,
+    /// The current cooperative abort lease is dropped on replacement or root disposal.
     #[cfg(feature = "async")]
     abort: StoredValue<Option<AbortLease>>,
 }
@@ -335,16 +345,39 @@ pub fn Combobox(
             aria-expanded=move ||state.open.get().to_string() aria-activedescendant=move ||if state.open.get(){state.active().map(|index|format!("{active_prefix}-option-{index}"))}else{None}
             aria-describedby=format!("{id}-error") aria-invalid=move ||(!error.get().is_empty()).to_string() disabled=move ||disabled.get()
             value=move ||state.query() prop:value=move ||state.query()
-            on:input=move |event|{if disabled.get(){return;}match state.admit_native_edit(event_target_value(&event)){
-                Ok(query)=>{admission_error.set(String::new());if let Some(lookup)=lookup{lookup.run(query);}else{let _=state.edit(query);}},
-                Err(_)=>admission_error.set("Query exceeds the field byte budget".into()),
-            }}
-            on:keydown=move |event:leptos::ev::KeyboardEvent|{if disabled.get(){return;}match event.key().as_str(){
-                "ArrowDown"=>{event.prevent_default();state.navigate(true,false);},"ArrowUp"=>{event.prevent_default();state.navigate(false,false);},
-                "Home" if state.open.get()=>{event.prevent_default();state.navigate(true,true);},"End" if state.open.get()=>{event.prevent_default();state.navigate(false,true);},
-                "Enter" if state.open.get()=>{event.prevent_default();if let Some(index)=state.active() && state.choose(index){admission_error.set(String::new());}},
-                "Escape"=>{event.prevent_default();state.cancel();state.open.set(false);},"Tab"=>{state.cancel();state.open.set(false);},_=>{}
-            }}/>
+            on:input=move |event| {
+                // Disabled controls neither edit state nor invoke acquisition callbacks.
+                if disabled.get() { return; }
+                match state.admit_native_edit(event_target_value(&event)) {
+                    Ok(query) => {
+                        // Admission completes before application code can start asynchronous work.
+                        admission_error.set(String::new());
+                        if let Some(lookup) = lookup { lookup.run(query); }
+                        else { let _ = state.edit(query); }
+                    },
+                    Err(_) => admission_error.set("Query exceeds the field byte budget".into()),
+                }
+            }
+            on:keydown=move |event: leptos::ev::KeyboardEvent| {
+                if disabled.get() { return; }
+                // Navigation only moves the active descendant; Enter publishes a checked choice.
+                match event.key().as_str() {
+                    "ArrowDown" => { event.prevent_default(); state.navigate(true, false); },
+                    "ArrowUp" => { event.prevent_default(); state.navigate(false, false); },
+                    "Home" if state.open.get() => { event.prevent_default(); state.navigate(true, true); },
+                    "End" if state.open.get() => { event.prevent_default(); state.navigate(false, true); },
+                    "Enter" if state.open.get() => {
+                        event.prevent_default();
+                        if let Some(index) = state.active() && state.choose(index) {
+                            admission_error.set(String::new());
+                        }
+                    },
+                    // Both exits cancel pending work; Tab retains native focus traversal.
+                    "Escape" => { event.prevent_default(); state.cancel(); state.open.set(false); },
+                    "Tab" => { state.cancel(); state.open.set(false); },
+                    _ => {},
+                }
+            }/>
         <input type="hidden" name=name disabled=move ||disabled.get() ||state.selected().is_none() value=move ||state.selected().unwrap_or_default()/>
         <p id=format!("{id}-error") role="alert">{move ||error.get()}</p>
         <Popover id=popup anchor=id label=label open=state.open() role=PopupRole::Listbox>

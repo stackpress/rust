@@ -134,3 +134,72 @@ async fn head_router_and_limits() {
         Err(ViewError::Failure(_))
     ));
 }
+
+/// Shared admission must reject identity, then location, then settings before a factory runs.
+#[tokio::test]
+async fn renderer_admission_preserves_error_precedence() {
+    use stackpress_framework_view::{AsyncPageRenderer, leptos::async_render::AsyncLeptosRenderer};
+    use std::sync::{
+        Arc,
+        atomic::{AtomicUsize, Ordering},
+    };
+
+    initialize_ssr().unwrap();
+    let contract = PageContract::new(1, "test").unwrap();
+    let assets = PageAssets {
+        theme_bootstrap: None,
+        build: "test".into(),
+        base: BasePath::default(),
+        module: PublicLocation::new("/start.js").unwrap(),
+        stylesheet: None,
+    };
+    for (build, location, locale, expected) in [
+        ("wrong", "unsafe", "fr", ViewError::ContractMismatch),
+        ("test", "unsafe", "fr", ViewError::InvalidSnapshot),
+        ("test", "/", "fr", ViewError::ContractMismatch),
+        ("test", "/", "en", ViewError::InvalidSnapshot),
+    ] {
+        let called = Arc::new(AtomicUsize::new(0));
+        let capture = called.clone();
+        let component = move |_: &PageSnapshot<()>| {
+            capture.fetch_add(1, Ordering::SeqCst);
+            Err::<AnyView, _>(ViewError::InvalidSnapshot)
+        };
+        let snapshot = || PageSnapshot {
+            revision: 1,
+            build: build.into(),
+            page: PageId::try_from("admission".to_owned()).unwrap(),
+            location: location.into(),
+            locale: locale.into(),
+            theme: contract.theme.clone(),
+            status: PublicStatus::ok(),
+            data: (),
+        };
+        // The typed factory error is reachable only after every earlier admission phase.
+        let admitted = usize::from(build == "test" && location == "/" && locale == "en");
+        let sync =
+            LeptosRenderer::new(contract.clone(), assets.clone(), component.clone()).unwrap();
+        assert_eq!(sync.render(snapshot()).await.err().unwrap(), expected);
+        assert_eq!(called.swap(0, Ordering::SeqCst), admitted);
+        let buffered =
+            AsyncLeptosRenderer::new(contract.clone(), assets.clone(), component.clone()).unwrap();
+        assert_eq!(
+            buffered.render_async(snapshot()).await.err().unwrap(),
+            expected
+        );
+        assert_eq!(called.swap(0, Ordering::SeqCst), admitted);
+        #[cfg(feature = "leptos-stream")]
+        {
+            use stackpress_framework_view::leptos::stream::{StreamLeptosRenderer, StreamLimits};
+            let streamed = StreamLeptosRenderer::new(
+                contract.clone(),
+                assets.clone(),
+                StreamLimits::default(),
+                component,
+            )
+            .unwrap();
+            assert_eq!(streamed.render(snapshot()).await.err().unwrap(), expected);
+            assert_eq!(called.swap(0, Ordering::SeqCst), admitted);
+        }
+    }
+}

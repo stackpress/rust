@@ -1,7 +1,7 @@
 //! Finite document assembly using only the generic rendering kernels.
 use crate::{IndependentRoot, Initial};
 use leptos::prelude::*;
-use stackpress_leptos::render::{RenderError, RenderLimits};
+use stackpress_leptos::render::{RenderError, RenderLimits, document_shell};
 use std::convert::Infallible;
 
 /// Assemble this consumer's inert configuration, replay and external bootstrap.
@@ -11,8 +11,14 @@ pub fn document(initial: &Initial, csr: bool, body: String, replay: String) -> S
     let theme = initial.theme.as_str();
     let locale = initial.language.locale();
     let mode = if csr { "csr" } else { "hydrate" };
-    format!(
-        "<!DOCTYPE html><html lang=\"{locale}\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><!--HEAD--></head><body><div id=\"independent-root\">{body}</div><script id=\"independent-config\" type=\"application/json\">{{\"theme\":\"{theme}\",\"language\":\"{locale}\",\"mode\":\"{mode}\"}}</script><script id=\"independent-replay\" type=\"application/json\">{replay}</script><script type=\"module\" src=\"/assets/start.js\"></script></body></html>"
+    let body = format!(
+        "<div id=\"independent-root\">{body}</div><script id=\"independent-config\" type=\"application/json\">{{\"theme\":\"{theme}\",\"language\":\"{locale}\",\"mode\":\"{mode}\"}}</script><script id=\"independent-replay\" type=\"application/json\">{replay}</script><script type=\"module\" src=\"/assets/start.js\"></script>"
+    );
+    // Generic framing supplies the upstream marker; this consumer owns only its fragments.
+    document_shell(
+        &format!("lang=\"{locale}\""),
+        "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">",
+        &body,
     )
 }
 

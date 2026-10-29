@@ -48,8 +48,11 @@ pub(super) fn choice_movement(key: &str, vertical: bool) -> Option<ChoiceMove> {
 /// ```
 #[derive(Clone, Copy)]
 pub struct ChoiceState {
+    /// Immutable checked identities/disabled flags shared by this root's controls.
     options: StoredValue<SelectOptions>,
+    /// Selected machine key; absence is distinct from a concrete empty key.
     selected: RwSignal<Option<String>>,
+    /// Roving keyboard stop, independent of manual selection policy.
     focused: RwSignal<Option<usize>>,
 }
 impl ChoiceState {
@@ -185,9 +188,13 @@ impl ChoiceState {
 /// Root-owned disclosure selection, with explicit multiple/collapsible policy.
 #[derive(Clone, Copy)]
 pub struct DisclosureState {
+    /// Checked keys and navigation policy shared with the disclosure controls.
     choices: ChoiceState,
+    /// Current admitted open keys, with no mutation access outside this controller.
     opened: RwSignal<Vec<String>>,
+    /// Construction-time policy permitting more than one open key.
     multiple: bool,
+    /// Construction-time policy permitting the last open key to close.
     collapsible: bool,
 }
 impl DisclosureState {

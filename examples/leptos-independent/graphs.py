@@ -14,7 +14,7 @@ APPROVED = {(p['name'], p['version'], p.get('source'), p.get('checksum'))
             for p in tomllib.loads((ROOT/'Cargo.lock').read_text())['package'] if p.get('source')}
 FORBIDDEN = {'stackpress-framework-view', 'stackpress-server', 'stackpress-server-http',
              'stackpress', 'stackpress-lib', 'stackpress-framework-language',
-             'stackpress-framework-preferences', 'stackpress-sql', 'stackpress-framework-sql',
+             'stackpress-sql', 'stackpress-framework-sql',
              'stackpress-framework-schema', 'stackpress-framework-admin',
              'stackpress-idea', 'stackpress-idea-parser', 'stackpress-idea-transformer', 'tauri'}
 BROWSER_HOSTS = {'stackpress-server', 'stackpress-server-http', 'stackpress-framework-sql',

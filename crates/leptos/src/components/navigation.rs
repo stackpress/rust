@@ -89,9 +89,25 @@ pub fn Menu(
                         } else { None }
                     }
                 };
-                if let Some(next)=next{event.prevent_default();#[cfg(target_arch="wasm32")]super::dialog_dom::focus_id(&format!("{prefix}-item-{next}"));#[cfg(not(target_arch="wasm32"))]let _=(&prefix,next);}
-                if event.key()=="Tab"{open.set(false);}
-                if matches!(event.key().as_str(),"ArrowLeft"|"ArrowRight") && let Some(horizontal)=horizontal{event.prevent_default();horizontal.run(event.key()=="ArrowRight");}
+                if let Some(next) = next {
+                    // Choice admission decides the index before any DOM focus mutation.
+                    event.prevent_default();
+                    #[cfg(target_arch = "wasm32")]
+                    super::dialog_dom::focus_id(&format!("{prefix}-item-{next}"));
+                    #[cfg(not(target_arch = "wasm32"))]
+                    let _ = (&prefix, next);
+                }
+                if event.key() == "Tab" {
+                    // Close the menu without preventing normal native focus traversal.
+                    open.set(false);
+                }
+                if matches!(event.key().as_str(), "ArrowLeft" | "ArrowRight")
+                    && let Some(horizontal) = horizontal
+                {
+                    // Only a caller-supplied menubar adapter owns horizontal transitions.
+                    event.prevent_default();
+                    horizontal.run(event.key() == "ArrowRight");
+                }
             }>{option.label.clone()}</button>}
     }).collect_view()}</div>}
 }
@@ -139,8 +155,20 @@ pub fn Menubar(
             on:focus=move |_|{state.focus(index);} on:click=move |_|open.update(|v|*v= !*v)
             on:keydown=move |event:leptos::ev::KeyboardEvent|{
                 let next=choice_movement(&event.key(), false).and_then(|direction| state.navigate(direction, false));
-                if let Some(next)=next{event.prevent_default();open.set(false);#[cfg(target_arch="wasm32")]super::dialog_dom::focus_id(&format!("{prefix}-trigger-{next}"));#[cfg(not(target_arch="wasm32"))]let _=(&prefix,next);}
-                if event.key()=="ArrowDown"{event.prevent_default();open.set(true);}
+                if let Some(next) = next {
+                    // Trigger navigation closes the old popup before moving focus.
+                    event.prevent_default();
+                    open.set(false);
+                    #[cfg(target_arch = "wasm32")]
+                    super::dialog_dom::focus_id(&format!("{prefix}-trigger-{next}"));
+                    #[cfg(not(target_arch = "wasm32"))]
+                    let _ = (&prefix, next);
+                }
+                if event.key() == "ArrowDown" {
+                    // Down opens this trigger's popup without a horizontal transition.
+                    event.prevent_default();
+                    open.set(true);
+                }
             }>{option.label.clone()}</button>
             <Popover id=popup anchor=trigger label=option.label.clone() open role=PopupRole::Menu initial_focus_id=focus><Menu id=menu state=choices open action horizontal/></Popover></div>}
     }).collect_view()}</div>}

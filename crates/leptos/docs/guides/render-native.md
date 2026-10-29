@@ -7,7 +7,7 @@ use `AsyncRenderer` so its Owner stays alive through complete assembly. Both req
 ```rust
 use leptos::prelude::*;
 use stackpress_leptos::async_render::AsyncRenderer;
-use stackpress_leptos::render::{initialize_ssr, RenderLimits};
+use stackpress_leptos::render::{document_shell, initialize_ssr, RenderLimits};
 use std::convert::Infallible;
 
 #[tokio::main(flavor = "current_thread")]
@@ -17,9 +17,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         RenderLimits::default(),
         || Ok::<_, Infallible>(view! { <p>"Owned asynchronous result"</p> }),
         || Ok(()),
-        |body, replay| Ok(format!(
-            "<html><head></head><body>{body}<script type=\"application/json\">{replay}</script></body></html>"
-        )),
+        |body, replay| Ok(document_shell("lang=\"en\"", "", &format!(
+            "{body}<script type=\"application/json\">{replay}</script>"
+        ))),
     )?;
     let html = render.await?;
     assert!(html.contains("Owned asynchronous result"));
@@ -29,7 +29,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 The third closure runs after the component's stream is created while its Owner is active.
 Here it has no extra work. The final closure receives generated body and checked script-safe
-replay; its framing is application code. The returned concrete `OwnedRender` is `Send` and owns
+replay; its framing is application code. `document_shell` supplies the upstream metadata marker
+without adding any bootstrap/asset policy. The returned concrete `OwnedRender` is `Send` and owns
 its captures. Drop it when the caller disconnects, and keep the executor alive long enough for
 cooperative loader cancellation to be polled.
 

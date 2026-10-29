@@ -11,6 +11,9 @@ Resource/Suspense, checked rich content and decimal editor. The [native shell](s
 [inert bootstrap](bootstrap.js) and [WASM adapter](src/browser.rs) belong to this consumer.
 They do not copy a page snapshot, route catalog or application status protocol.
 
+The native shell uses generic `render::document_shell` to supply the upstream metadata marker.
+It owns only its explicit attributes/head/body fragments, avoiding a hand-maintained marker.
+
 ## First result
 
 With the existing approved toolchain/cache, run from the repository root:
