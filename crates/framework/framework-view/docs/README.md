@@ -3,7 +3,8 @@
 `stackpress-framework-view` carries explicitly public page data between a native loader,
 a renderer, and a browser. It owns checked identities, locations, versions, routes, and
 byte limits. Optional modules supply settings, flash notices, access hints and host adapters.
-Leptos rendering belongs to [Stackpress UI](../../../leptos/docs/README.md).
+Reusable UI and generic rendering belong to [Stackpress Leptos](../../../leptos/docs/README.md).
+View optionally adapts it to page contracts through [explicit integration](integration-leptos.md).
 
 These docs describe this checkout: Rust 1.96, edition 2024, local path dependencies,
 and `publish = false`. Import `stackpress_framework_view` directly, or use
@@ -28,15 +29,16 @@ Follow a guide for an integration task; use the [API index](api/README.md) for e
 | Register a native GET page and loader | [Add a page](guides/add-a-page.md) |
 | Use one route definition on both targets | [Share routes](guides/share-routes.md) |
 | Reject mismatched or malformed bootstrap data | [Handle contract mismatch](guides/contract-recovery.md) |
-| Hydrate or package shared UI | [UI guides](../../../leptos/docs/README.md#choose-a-task) |
+| Render, hydrate or package Leptos pages | [Explicit Leptos integration](integration-leptos.md) |
 
 ## Features and integration
 
 Default features are empty. Public page contracts, `access` and `theme` are browser-safe;
-Leptos rendering and persistence are not acquired by import or feature selection.
+Leptos rendering is selected only by its integration features; persistence requires explicit host configuration.
 
 | Feature | Adds |
 | --- | --- |
+| `leptos*` | Explicit optional rendering/routing integration; see the [mode table](integration-leptos.md#select-the-integration). |
 | `cookies` | Checked canonical origin/mount and cookie codecs; no server. |
 | `preferences` | Locale routing, Light/Dark-or-unset settings, fixed actions and root save state. |
 | `flash` | Bounded public notices, cookie codec and per-root deduplication. |
@@ -46,7 +48,7 @@ Leptos rendering and persistence are not acquired by import or feature selection
 
 The facade forwards `preferences`, `flash`, `native-file`, `server`, `web-preferences`
 and `web-flash` as `framework-view-*` features; `cookies` is selected by its dependent modules.
-UI's `ssr` selects the native page extension. Server features fail explicitly on wasm32;
+View's `leptos-ssr` selects the native page extension. Server features fail explicitly on wasm32;
 pure preference/flash contracts remain usable there. Native files are Unix-only.
 See [host composition](presentation-host.md) for configuration, admission and asset ownership.
 

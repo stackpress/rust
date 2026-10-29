@@ -1,7 +1,25 @@
-# Render an independent component
+# Render your first component
 
-Add `stackpress-leptos` from `crates/leptos` with `ssr`, upstream `leptos = =0.8.22`
-with defaults off and `ssr`, and Tokio with `macros` and `rt`. No view/server dependency is needed.
+A shared component needs a renderer and an initial value before it needs an HTTP server.
+This walkthrough produces a complete HTML string using the generic native kernel.
+
+## Try the maintained consumer
+
+From the repository root, run the finite example with the installed toolchain and cached lock:
+
+```sh
+cargo run --manifest-path examples/leptos-independent/Cargo.toml --locked --offline \
+  --features ssr --example document -- hydrate light en
+```
+
+It prints one document and exits. Look for `Welcome`, a labelled draft input and an escaped
+`Independent < & >` title. The consumer owns its shell; it has no view/server dependency.
+Change the final choices to `dark fr` to render an independent French root.
+
+## Render a small component yourself
+
+In that consumer, a native example can use the following complete program. Its manifest selects
+`ssr` on both libraries and supplies Tokio as a native development dependency for examples.
 
 ```rust
 use leptos::prelude::*;
@@ -22,7 +40,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 ```
 
-The synchronous component runs under a fresh Owner, which is cleaned before preparation
-returns. Finish injects eager owned Head and admits the fully framed bytes. A shell is trusted
-application code: it must escape its own interpolated values. No page seed, bootstrap, route,
-listener or persistent setting is inferred. Use buffered async rendering for reactive Head.
+`try_prepare` evaluates the component in a fresh Owner and passes its generated body to your
+shell closure. `finish` injects eager owned Head values and checks the complete document's
+byte limit. The runtime and explicit startup make the executor available; they open no port.
+Escape any untrusted text you interpolate into your own shell. Leptos escapes component text.
+
+## What the first render establishes
+
+The synchronous Owner is already cleaned when preparation returns. Use eager owned title/Head
+values here; [buffered async rendering](guides/render-native.md) retains a root for Resources and
+reactive Head. A successful render does not create routing, bootstrap data or persistence.
+
+You now have a real owned HTML result. [Compose controls](guides/compose-a-root.md) next, then
+[hydrate or mount](guides/hydrate-and-mount.md) the same tree from explicit initial values.
+The [API index](api/README.md) is the lookup path for types, features and failure contracts.
