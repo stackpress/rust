@@ -16,6 +16,7 @@ pub use pages::emit_pages;
 ///
 /// Applications supply their frozen catalog and actual emitter callback. This alternative
 /// to [`register_pages`] does not require SQL and adds no runtime/framework plugin.
+///
 /// # Errors
 /// Preserves registry errors, including selecting both admin transform alternatives.
 pub fn register(
@@ -35,6 +36,7 @@ pub fn register(
 /// The application also checks the finished plan contains `stores/operations.rs` before
 /// installation: selecting a SQL transform does not itself promise emitted operations.
 /// Pure role generation can instead use [`register`]. Generic shared admin stays plugin-free.
+///
 /// # Errors
 /// Preserves registry errors; planning rejects missing or wrong-order dependencies.
 pub fn register_pages(

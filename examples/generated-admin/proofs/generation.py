@@ -28,9 +28,11 @@ def compile_proof(ctx):
     # Workspace tests may rebuild their own default tool. Freeze this proof's feature selection.
     immutable_tool = LOGS/'admin-tool-proof'
     shutil.copy2(TARGET/'debug/generated-admin-tool', immutable_tool)
-    with tempfile.TemporaryDirectory(dir=ROOT / 'examples/generated-admin/tool') as inputs, tempfile.TemporaryDirectory(dir=LOGS) as temp:
+    with tempfile.TemporaryDirectory(dir=ROOT / 'examples/generated-admin/tool') as inputs, ctx.workspace() as consumer:
         source = Path(inputs) / 'schema.json'
-        consumer = Path(temp)
+        def run(name, command):
+            """Compile this independent consumer in its own bounded target subdirectory."""
+            ctx.run(name, command, cwd=consumer if command[0] == 'cargo' else ROOT)
         output = consumer / 'src/generated'
         (consumer / 'src').mkdir()
         base = '''plugin "framework-schema" {} plugin "framework-sql" {} plugin "framework-admin" {} model Profile { id String @id name String @field.string @filter.string @span.string @list.string @view.string }'''

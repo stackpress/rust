@@ -17,6 +17,7 @@ use crate::{
 ///
 /// Build tools supply normalization, frozen definitions and diagnostics explicitly. This
 /// helper selects no runtime plugin and runs no transform until the existing registry plans.
+///
 /// # Errors
 /// Preserves registry errors, including duplicate plugin IDs or partition claims.
 pub fn register(

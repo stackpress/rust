@@ -11,6 +11,7 @@ use stackpress_idea_transformer::{OutputPlan, Result};
 /// Call `emit_roles` first for its complete role/source-coordinate preflight. Pure adapters
 /// compile in the frontend; the separate host file is explicitly included only by the native
 /// application. Both files belong to the existing UI partition and the same output writer.
+///
 /// # Errors
 /// Refuses duplicate selections/private identities and preserves schema/generator causes.
 pub fn emit_pages(
@@ -132,6 +133,7 @@ pub fn emit_pages(
         // The same compiler-owned inventory backs direct and plugin registration. Emit no
         // registrar for an empty/removed selection: there is no runtime contribution to own.
         host.push_str(include_str!("pages_host.rs.in"));
+        host.push('\n');
         host.push_str(
             &routes
                 .replace(

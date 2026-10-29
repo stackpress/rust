@@ -132,6 +132,12 @@ async fn selected_and_maximum_inventory_use_one_host_without_database_setup() {
         app.plugin("sql", plugin::register).unwrap();
         let server = app.build().await.unwrap();
         assert!(server.host().service::<plugin::Service>().is_ok());
+        // Callback functions retain the SQL Listen task's selected plugin identity.
+        assert!(
+            server
+                .listeners()
+                .all(|listener| listener.plugin.as_deref() == Some("sql"))
+        );
         assert_eq!(
             trace.0.lock().unwrap().as_slice(),
             (0..callbacks.len()).collect::<Vec<_>>()
@@ -167,17 +173,48 @@ async fn missing_dependencies_and_invalid_counts_register_nothing() {
 /// Aliased double selection and callback conflicts fail through singleton/marker contracts.
 #[tokio::test]
 async fn duplicate_plugins_callbacks_and_callback_errors_publish_no_server() {
-    for (twice, callbacks) in [
-        (true, &[counted as RegisterOperations][..]),
-        (false, &[conflicting as RegisterOperations, conflicting][..]),
-        (false, &[counted as RegisterOperations, failing][..]),
+    for (twice, callbacks, completed) in [
+        (true, &[counted as RegisterOperations][..], 0),
+        (
+            false,
+            &[conflicting as RegisterOperations, conflicting][..],
+            1,
+        ),
+        (
+            false,
+            &[counted as RegisterOperations, failing, counted][..],
+            1,
+        ),
+        (false, &[failing as RegisterOperations, counted][..], 0),
     ] {
-        let (mut app, calls, _) = fixture(true, true, Some(callbacks));
+        let (mut app, calls, trace) = fixture(true, true, Some(callbacks));
         app.plugin("sql", plugin::register).unwrap();
         if twice {
             app.plugin("sql-alias", plugin::register).unwrap();
         }
-        assert!(app.build().await.is_err());
+        app.on_route(task(|start: &mut StartupContext| {
+            Box::pin(async move {
+                // A Listen failure must prevent the later Route phase from running.
+                start.service::<Trace>()?.0.lock().unwrap().push(999);
+                Ok(Flow::Continue)
+            })
+        }))
+        .unwrap();
+        let error = app.build().await.err().expect("registration must fail");
+        assert_eq!(
+            error.stage,
+            if twice {
+                stackpress_server::StartupStage::Config
+            } else {
+                stackpress_server::StartupStage::Listen
+            }
+        );
+        // Earlier callbacks have observable effects: failure stops later work without
+        // rolling them back. A failed build still cannot publish a partial Server.
+        assert_eq!(
+            trace.0.lock().unwrap().as_slice(),
+            (0..completed).collect::<Vec<_>>()
+        );
         assert_eq!(calls.load(Ordering::SeqCst), 0);
     }
 }
@@ -240,4 +277,48 @@ async fn wrong_order_and_declared_missing_dependencies_fail_before_listen() {
         stackpress_server::StartupStage::Registration
     );
     assert!(trace.0.lock().unwrap().is_empty());
+}
+
+/// A suspended later Listen task cannot retain the SQL build's resources after cancellation.
+#[tokio::test]
+async fn cancelled_build_releases_sql_startup_state_without_database_effects() {
+    use std::future::Future;
+
+    /// Suspend after SQL's synchronous contribution, before the Route phase can start.
+    fn suspend(app: &mut ServerBuilder) -> Result<()> {
+        app.on_listen(task(|start: &mut StartupContext| {
+            Box::pin(async move {
+                start.service::<Trace>()?.0.lock().unwrap().push(128);
+                std::future::pending().await
+            })
+        }))?;
+        app.on_route(task(|start: &mut StartupContext| {
+            Box::pin(async move {
+                start.service::<Trace>()?.0.lock().unwrap().push(999);
+                Ok(Flow::Continue)
+            })
+        }))?;
+        Ok(())
+    }
+
+    let (mut app, calls, trace) = fixture(true, true, Some(&[counted]));
+    app.plugin("sql", plugin::register).unwrap();
+    app.plugin("suspended", suspend).unwrap();
+    let mut build = Box::pin(app.build());
+    // Poll to the actual suspension, matching the server's existing cancellation proof.
+    // No scheduler delay or background task establishes this interleaving.
+    std::future::poll_fn(|context| {
+        assert!(build.as_mut().poll(context).is_pending());
+        std::task::Poll::Ready(())
+    })
+    .await;
+    assert_eq!(trace.0.lock().unwrap().as_slice(), &[0, 128]);
+    assert!(Arc::strong_count(&trace) > 1);
+    drop(build);
+    // Cancellation releases services and callbacks without closing the app-owned database
+    // or rolling back the earlier callback's trace. Route never ran and no Server escaped.
+    assert_eq!(Arc::strong_count(&trace), 1);
+    assert_eq!(Arc::strong_count(&calls), 1);
+    assert_eq!(calls.load(Ordering::SeqCst), 0);
+    assert_eq!(trace.0.lock().unwrap().as_slice(), &[0, 128]);
 }

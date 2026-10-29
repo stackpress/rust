@@ -5,3 +5,5 @@ Start with [getting started](getting-started.md), then [executor and result conc
 M2 executes generated CRUD, queries, relations and selected handlers on SQLite. PostgreSQL conflict SQL has renderer tests; network generated-CRUD integration remains a later SQL-lane checkpoint. MySQL targeted conflicts and generated RETURNING writes fail before submission. M3 adds explicit immutable history, reviewed plans and SQLite reconstruction/operator tooling; see the [migration API and operator reference](api/migrations.md) for safety contracts and backend limits.
 
 The accepted shared changes are recorded in the [upsert proposal](m2-upsert-proposal.md) and [executor-limit proposal](m2-executor-limits-proposal.md). Those proposal pages preserve the original reasoning, not current milestone status. The coordinator's M2 receipt records final verification.
+
+Use [framework selection and migration](guides/select-plugins.md) for function plugins, typed setup, composition and direct alternatives.

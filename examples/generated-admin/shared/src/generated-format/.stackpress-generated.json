@@ -113,8 +113,8 @@
     },
     "ui/pages_host.rs": {
       "owner": "framework-admin",
-      "sha256": "f4ac136d7b58c24e6a85636e7aa28beea69fd56626ba4bf75973c3dfaca77843",
-      "bytes": 13580
+      "sha256": "1ff094d39aaff18714701e3029604074bd2ffc98a4c7a7a367a4d9dca0a494d1",
+      "bytes": 13598
     },
     "ui/profile.rs": {
       "owner": "framework-admin",

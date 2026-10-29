@@ -76,6 +76,16 @@ async fn selected_and_direct_hosts_match_without_implicit_database_setup() {
         entries
     };
     assert_eq!(inventory(&selected), inventory(&direct));
+    // Operations come from SQL Listen; routes come from the generated host's Route task.
+    for listener in selected.listeners() {
+        let plugin = if listener.pattern.contains("/admin/") {
+            "pages"
+        } else {
+            "sql"
+        };
+        assert_eq!(listener.plugin.as_deref(), Some(plugin));
+    }
+    assert!(direct.listeners().all(|listener| listener.plugin.is_none()));
     assert!(
         selected.listeners().count() > 40,
         "real selected mappings and operations"
