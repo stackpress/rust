@@ -14,7 +14,8 @@
 //! native network adapters. All database features are disabled by default; a re-export
 //! does not open a database or expose a query capability.
 //!
-//! UI is opt-in with `leptos-ssr`, `leptos-hydrate` or `leptos-csr`.
+//! `leptos` exposes shared UI/value APIs without selecting a renderer. Select
+//! `leptos-ssr`, `leptos-hydrate` or `leptos-csr` for a rendering artifact.
 //! Build these mutually exclusive render modes separately. Native buffered SSR requires
 //! `leptos::render::initialize_ssr()` during startup inside an active Tokio runtime.
 //!
