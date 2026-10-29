@@ -353,6 +353,10 @@ mod presentation_tests;
 /// Initial-theme asset and checked head metadata.
 pub mod theme;
 
+/// Explicit native composition of preference and flash host contributions.
+#[cfg(all(feature = "presentation", not(target_arch = "wasm32")))]
+pub mod plugin;
+
 /// Optional Leptos page, route, replay and presentation adapters.
 #[cfg(feature = "leptos")]
 pub mod leptos;

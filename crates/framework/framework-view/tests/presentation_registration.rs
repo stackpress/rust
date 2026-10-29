@@ -29,8 +29,17 @@ async fn admission(start: &mut StartupContext) -> Result<Flow> {
 /// An application composite calls functions, without selecting plugins during sealed startup.
 fn presentation(app: &mut ServerBuilder) -> Result<()> {
     app.on_config(admission)?;
-    preferences::register(app)?;
-    flash::register(app)
+    #[cfg(feature = "presentation")]
+    {
+        // Customize the real framework composite with application-owned admission.
+        stackpress_framework_view::plugin::register(app)
+    }
+    #[cfg(not(feature = "presentation"))]
+    {
+        // Independent host features keep their direct-library composition available.
+        preferences::register(app)?;
+        flash::register(app)
+    }
 }
 /// Trusted layers and executable selection remain separate operations.
 fn builder(value: Value, selected: bool) -> ServerBuilder {
@@ -430,6 +439,128 @@ async fn preferences_only_and_optional_asset() {
     .await;
     assert_eq!(asset.status().unwrap().code, 404);
     assert!(asset.headers().get("set-cookie").is_none());
+}
+
+/// Direct selection and an application composite expose the same existing capabilities.
+#[cfg(feature = "presentation")]
+#[tokio::test]
+async fn framework_and_customized_composites() {
+    for customized in [false, true] {
+        let mut app = builder(config("/demo"), false);
+        if customized {
+            // This named wrapper also contributes Admission and one application page.
+            app.plugin("application-presentation", customized_presentation)
+                .unwrap();
+        } else {
+            app.on_config(admission).unwrap();
+            app.plugin("framework", stackpress_framework_view::plugin::register)
+                .unwrap();
+        }
+        let app = app.build().await.unwrap();
+        assert_eq!(app.plugins().count(), 1);
+        assert!(app.host().service::<preferences::Service>().is_ok());
+        assert!(app.host().service::<flash::Service>().is_ok());
+        let res = exchange(&app, "GET", "/demo/page", Body::Empty, &[]).await;
+        assert_eq!(
+            res.status().unwrap().code,
+            if customized { 200 } else { 404 }
+        );
+    }
+}
+
+/// Compose real framework contributions and app-owned pages without nested plugin selection.
+#[cfg(feature = "presentation")]
+fn customized_presentation(app: &mut ServerBuilder) -> Result<()> {
+    app.on_config(admission)?;
+    stackpress_framework_view::plugin::register(app)?;
+    // The ordinary page handler borrows flash from the composite's existing service.
+    app.get("/demo/page", page)?;
+    Ok(())
+}
+
+/// Constituent/config/service claims reject repeated selection before a host is published.
+#[cfg(feature = "presentation")]
+#[tokio::test]
+async fn composite_prerequisites_and_repeated_selection() {
+    use stackpress_framework_view::plugin;
+    use stackpress_server::StartupStage;
+
+    for omitted in ["view_preferences", "view_flash"] {
+        let mut value = config("");
+        value.as_object_mut().unwrap().remove(omitted);
+        let mut app = builder(value, false);
+        app.on_config(admission).unwrap();
+        app.plugin("framework", plugin::register).unwrap();
+        assert_eq!(app.build().await.err().unwrap().stage, StartupStage::Config);
+    }
+    let mut app = builder(config(""), false);
+    app.plugin("framework", plugin::register).unwrap();
+    let error = app.build().await.err().unwrap();
+    assert_eq!(error.stage, StartupStage::Config);
+    assert!(error.to_string().contains("Admission"));
+
+    // Either selection order and either constituent use the same typed-section checks.
+    for constituent in [preferences::register, flash::register, plugin::register] {
+        for composite_first in [false, true] {
+            let mut app = builder(config(""), false);
+            app.on_config(admission).unwrap();
+            let callbacks = if composite_first {
+                [
+                    plugin::register as fn(&mut ServerBuilder) -> Result<()>,
+                    constituent,
+                ]
+            } else {
+                [constituent, plugin::register]
+            };
+            app.plugin("first", callbacks[0]).unwrap();
+            app.plugin("second", callbacks[1]).unwrap();
+            assert_eq!(
+                app.build().await.err().unwrap().stage,
+                StartupStage::Registration
+            );
+        }
+    }
+}
+
+/// Sharing a route is intentional: priorities, FIFO ties and cooperative abort decide execution.
+#[cfg(feature = "presentation")]
+#[tokio::test]
+async fn overlapping_routes_preserve_order_and_abort() {
+    use stackpress_lib::{MethodPattern, handler};
+    use stackpress_server::RouteSpec;
+    use std::sync::Mutex;
+
+    for abort in [false, true] {
+        let mut app = builder(config(""), true);
+        let calls = Arc::new(Mutex::new(Vec::new()));
+        // Register the low-priority handler first, then two FIFO peers at higher priority.
+        for (label, priority) in [("last", 0), ("first", 10), ("second", 10)] {
+            let calls = calls.clone();
+            app.route_with(
+                RouteSpec::new(MethodPattern::GET, "/shared").priority(priority),
+                handler(move |_, _, _| {
+                    // The synchronous observation holds no guard across the returned future.
+                    calls.lock().unwrap().push(label);
+                    Box::pin(async move {
+                        Ok(if abort && label == "first" {
+                            Flow::Abort
+                        } else {
+                            Flow::Continue
+                        })
+                    })
+                }),
+            )
+            .unwrap();
+        }
+        let app = app.build().await.unwrap();
+        exchange(&app, "GET", "/shared", Body::Empty, &[]).await;
+        let expected = if abort {
+            vec!["first"]
+        } else {
+            vec!["first", "second", "last"]
+        };
+        assert_eq!(*calls.lock().unwrap(), expected);
+    }
 }
 
 /// Stored cookies cannot substitute for fresh admission or confirm ambiguous readback.

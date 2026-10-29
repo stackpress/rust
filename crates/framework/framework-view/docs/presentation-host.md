@@ -1,6 +1,8 @@
 # Explicit native presentation contributions
 
-Enable `web-preferences` and/or `web-flash` on `stackpress-framework-view`.
+Enable `presentation` on `stackpress-framework-view` for the preferences/flash composite.
+It forwards only `web-preferences` and `web-flash`, without selecting Leptos or changing defaults.
+Enable `web-preferences` and/or `web-flash` for independently selected capabilities.
 Facade equivalents are `framework-view-web-preferences` and `framework-view-web-flash`.
 Pure `preferences`/`flash` contracts still compile for the browser without a server.
 Neither a feature nor configuration selects a plugin or writes cookies/files.
@@ -9,7 +11,7 @@ Select ordinary functions with the existing `ServerBuilder::plugin` method:
 
 ```rust
 use std::sync::Arc;
-use stackpress_framework_view::{flash, preferences};
+use stackpress_framework_view::{plugin, preferences};
 use stackpress_lib::{Flow, Result};
 use stackpress_server::{ConfigLayers, ServerBuilder, StartupContext};
 
@@ -36,20 +38,54 @@ async fn main() -> Result<()> {
     let mut app = ServerBuilder::new();
     app.config_layers(layers)?;
     app.on_config(host_admission)?;
-    app.plugin("preferences", preferences::register)?;
-    app.plugin("flash", flash::register)?;
+    app.plugin("presentation", plugin::register)?;
     // This constructs the selected services/routes; it opens no listener or file.
     let server = app.build().await.map_err(stackpress_lib::Error::from_source)?;
-    assert_eq!(server.plugins().count(), 2);
+    assert_eq!(server.plugins().count(), 1);
     Ok(())
 }
 ```
 
-Each function has signature `fn(&mut ServerBuilder) -> stackpress_lib::Result<()>`.
-Application composites can call both functions directly in their own selected callback.
+`plugin::register`, `preferences::register` and `flash::register` each have signature
+`fn(&mut ServerBuilder) -> stackpress_lib::Result<()>`. The composite calls preferences
+then flash, retaining their own validators, services and startup phases. Select either
+constituent directly for a smaller integration. Selecting the composite and a constituent,
+or selecting the composite twice under different IDs, rejects duplicate typed sections.
+Application composites can call `plugin::register` directly in their selected callback:
+
+```rust
+use stackpress_framework_view::plugin;
+use stackpress_lib::{Flow, Invocation, Request, Response, Result};
+use stackpress_server::{ServerBuilder, StartupContext};
+
+async fn preferences_page(_: &mut Request, res: &mut Response, _: Invocation<'_>) -> Result<Flow> {
+    res.html("Application preferences")?;
+    Ok(Flow::Continue)
+}
+
+async fn pages(start: &mut StartupContext) -> Result<Flow> {
+    start.get("/demo/preferences", preferences_page)?;
+    Ok(Flow::Continue)
+}
+
+pub fn application_presentation(app: &mut ServerBuilder) -> Result<()> {
+    plugin::register(app)?;
+    app.on_route(pages)?;
+    Ok(())
+}
+```
+
+With the same trusted sections and Admission setup from the first example, select
+`application_presentation` in place of `plugin::register`. All contributions retain the
+application composite's plugin identity. Loaders, renderers and protected-operation policy
+remain application choices. Direct `ServerBuilderViewExt::page`, pure settings/flash APIs
+and native file adapters do not require the composite.
+
 Do not call `app.plugin` from a selected callback: selection is already sealed there.
 Plugin identifiers/order/prerequisites use the existing ServerBuilder/PluginSpec API.
-There is no `framework_view::plugin::register`; the generic plugin work is issue 14.
+The function participates only in runtime construction. It has no generation hook, parser,
+database installation/migration/seed, renderer initialization or network-host startup.
+The final native app and browser continue to select their own dependencies separately.
 
 Supply trusted `ConfigLayers` sections before building:
 
@@ -61,8 +97,11 @@ Supply trusted `ConfigLayers` sections before building:
 Both configurations deny unknown fields. Missing data, invalid origins/paths/locales,
 duplicate sections/services and missing admission fail startup before a Server is returned.
 Paths have no captures/query and are mounted through checked BasePath. These integrations
-reject their own conflicting paths; existing ServerBuilder semantics for unrelated routes
-remain unchanged, so the application must not register additional handlers at these paths.
+reject conflicts within their own declared inventories. Multiple handlers may intentionally
+process the same route: priorities order execution, equal priorities retain FIFO order,
+and cooperative abort (returning false) can stop later handlers. Application and plugin
+authors own their route inventories and decide how handlers cooperate. Every protected
+handler enforces its own policy; shared routing and public UI hints grant no authority.
 
 Preferences additionally requires an explicit `preferences::Admission` service in Config,
 registered before its configure callback. `Admission::new(fn(&Request) -> bool)` evaluates

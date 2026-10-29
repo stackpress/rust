@@ -32,8 +32,9 @@ No additional safety crate or foundation dependency is introduced.
 Page, seed, asset, replay and stream marker wires retain their formats. Light/Dark/unset,
 one-shot pre-paint sampling and readable no-JS Light remain the issue-15 contracts.
 Persistence and authorization stay in view/host adapters; UI state provides no authority.
-Existing preferences/flash registration functions remain explicit. The base `plugin::register`
-is reserved for issue 14 and is not introduced here. Importing a library registers nothing.
+Existing preferences/flash registration functions remain explicit. Issue 14's optional
+`presentation` feature exposes their `plugin::register` composite; it does not select Leptos.
+Importing a library registers nothing, and `stackpress-leptos` remains plugin-free.
 
 See [page renderer](api/leptos-renderer.md), [routing](api/leptos-routing.md),
 [hydration](guides/leptos-hydrate.md), [independent library](../../../leptos/docs/README.md),

@@ -170,11 +170,13 @@ fn register(
     origin: String,
     scoped_lifecycle: bool,
 ) -> Result<()> {
-    // This example explicitly composes ordinary registration functions; no nested plugin API.
-    // Explicit admission precedes the selected preference Config callback.
+    // The application supplies Admission before the selected composite's Config callbacks.
     app.on_config(sessionless)?;
-    preferences::register(app)?;
-    flash::register(app)?;
+    // The same selection serves the finite host and the composed review-host mount.
+    app.plugin(
+        "view-presentation",
+        stackpress_framework_view::plugin::register,
+    )?;
     // Compile the same canonical/alias page set used by shared seed selection.
     let locales = registry();
     let pages = LocaleRouting::new(&locales, &base)

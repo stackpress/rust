@@ -99,7 +99,8 @@ impl Service {
 /// Application composites may call this function directly; do not select nested plugins.
 /// # Errors
 /// Rejects duplicate config contributions; build additionally rejects missing/invalid config,
-/// missing admission, duplicate services and conflicting endpoint paths before publication.
+/// missing admission, duplicate services and conflicting paths within this inventory before
+/// publication. Other handlers may share routes; application/plugin authors own cooperation.
 pub fn register(app: &mut ServerBuilder) -> Result<()> {
     // Claim data separately from executable selection; missing config has no host defaults.
     app.config_section("view_preferences", None::<Config>, validate)?;

@@ -77,5 +77,6 @@ values; actual authorization remains in the host.
 Follow [hydration](guides/leptos-hydrate.md), [routing](api/leptos-routing.md) and
 [presentation host composition](presentation-host.md). The [migration map](migration-issue17.md)
 lists retired paths; [the independent consumer](../../../../examples/leptos-independent/README.md)
-proves the lower-level library without any view/server/facade edge. Base `plugin::register`
-remains reserved for issue 14; existing preference/flash registrations remain explicit.
+proves the lower-level library without any view/server/facade edge. View's optional
+`presentation` composite registers preferences/flash only; Leptos integration and renderer
+initialization remain separate explicit choices. The generic library has no plugin.

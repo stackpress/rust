@@ -49,5 +49,7 @@ Facade users replace the removed `framework-preferences` feature/import with
 and `stackpress::framework_view` paths as applicable. Host features remain explicit.
 The function entry points `view::{preferences,flash}::register` use the existing server
 phases and explicit selection. See [native presentation composition](presentation-host.md)
-for host features, typed configuration and mandatory host admission. The generic plugin
-entry point remains reserved for issue 14.
+for host features, typed configuration and mandatory host admission. With the `presentation`
+feature, issue 14 adds `plugin::register` as a preferences-then-flash composite. Replace the
+two direct contribution calls with one selected composite while retaining application setup,
+pages, policies and asset ownership. Independent registration remains available.
