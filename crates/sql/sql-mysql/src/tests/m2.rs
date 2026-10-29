@@ -1,6 +1,9 @@
 //! Opt-in native M2 proofs: parent owns CREATE/DROP, child owns all hang-class scenarios.
 //! Unset gate variables are reported as ignored; child timeout is always failure.
 
+#[path = "../../../test-support/harness.rs"]
+mod harness;
+
 use crate::{MysqlDatabase, MysqlOptions, MysqlTls};
 use sqlx::mysql::{MySqlConnectOptions, MySqlConnection, MySqlSslMode};
 use sqlx::{ConnectOptions, Connection, Executor, SqlSafeStr};
@@ -264,6 +267,20 @@ pub(crate) fn main() {
     } else {
         &["contract", "stress"]
     };
+    let harness = harness::Harness::from_env();
+    let ignored = std::env::var_os(GATE).is_none();
+    let names: Vec<_> = groups.iter().map(|case| format!("m2::{case}")).collect();
+    if harness.discover(names.iter().map(|name| (name.as_str(), ignored))) {
+        return;
+    }
+    let groups: Vec<_> = groups
+        .iter()
+        .copied()
+        .filter(|case| harness.selects(&format!("m2::{case}"), ignored))
+        .collect();
+    if groups.is_empty() {
+        return;
+    }
     if std::env::var_os(GATE).is_none() {
         println!("test m2::native_cases ... ignored ({GATE} unset)");
         println!(
@@ -276,7 +293,7 @@ pub(crate) fn main() {
         let mut fixture = Fixture::create()?;
         let start = Instant::now();
         let mut primary: TestResult<()> = Ok(());
-        for case in groups {
+        for case in &groups {
             let remaining = Duration::from_secs(120).saturating_sub(start.elapsed());
             let case_start = Instant::now();
             let status = watchdog(

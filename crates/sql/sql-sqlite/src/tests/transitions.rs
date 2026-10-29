@@ -32,10 +32,24 @@ pub(super) async fn gate(
     db: &SqliteDatabase,
     hook: Hook,
 ) -> (oneshot::Receiver<()>, mpsc::Sender<()>) {
+    gate_when(db, hook, Arc::new(AtomicBool::new(true))).await
+}
+
+/// Install before leasing, but let the caller arm the pause after transaction setup.
+pub(super) async fn gate_when(
+    db: &SqliteDatabase,
+    hook: Hook,
+    armed: Arc<AtomicBool>,
+) -> (oneshot::Receiver<()>, mpsc::Sender<()>) {
     let (ready, entered) = oneshot::channel();
     let (release, go) = mpsc::channel();
     let mut ready = Some(ready);
     let mut pause = move || {
+        // Setup may use the same native phase. It must not consume the one-shot
+        // pause before the public future being tested has begun polling.
+        if !armed.load(Ordering::SeqCst) {
+            return;
+        }
         if let Some(ready) = ready.take() {
             ready.send(()).unwrap();
             // The parent enforces 10s even if this native callback cannot progress.

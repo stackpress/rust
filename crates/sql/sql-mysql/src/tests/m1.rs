@@ -1,6 +1,9 @@
 //! Opt-in native M1 proofs: parent owns CREATE/DROP, child owns all hang-class scenarios.
 //! Unset gate variables are reported as ignored; child timeout is always failure.
 
+#[path = "../../../test-support/harness.rs"]
+mod harness;
+
 use crate::{MysqlDatabase, MysqlOptions, MysqlTls};
 use sqlx::mysql::{MySqlConnectOptions, MySqlConnection, MySqlSslMode};
 use sqlx::{ConnectOptions, Connection, Executor, SqlSafeStr};
@@ -274,16 +277,32 @@ pub(crate) fn main() {
         }
         return;
     }
+    let harness = harness::Harness::from_env();
+    let ignored = std::env::var_os(GATE).is_none();
+    let names = ["values", "outcomes", "reuse", "lifecycle"].map(|case| format!("m1::{case}"));
+    if harness.discover(names.iter().map(|name| (name.as_str(), ignored))) {
+        return;
+    }
+    let groups: Vec<_> = ["values", "outcomes", "reuse", "lifecycle"]
+        .into_iter()
+        .filter(|case| harness.selects(&format!("m1::{case}"), ignored))
+        .collect();
+    if groups.is_empty() {
+        return;
+    }
     if std::env::var_os(GATE).is_none() {
         println!("test m1::native_cases ... ignored ({GATE} unset)");
-        println!("test result: ok. 0 passed; 0 failed; 4 ignored");
+        println!(
+            "test result: ok. 0 passed; 0 failed; {} ignored",
+            groups.len()
+        );
         return;
     }
     let result = std::panic::catch_unwind(|| -> TestResult<()> {
         let mut fixture = Fixture::create()?;
         let start = Instant::now();
         let mut primary: TestResult<()> = Ok(());
-        for case in ["values", "outcomes", "reuse", "lifecycle"] {
+        for case in &groups {
             let remaining = Duration::from_secs(120).saturating_sub(start.elapsed());
             let status = watchdog(
                 Command::new(std::env::current_exe()?)
@@ -312,5 +331,8 @@ pub(crate) fn main() {
         eprintln!("test result: FAILED (M1 setup/scenario/cleanup)");
         std::process::exit(1);
     }
-    println!("test result: ok. 4 M1 native groups passed; 0 ignored");
+    println!(
+        "test result: ok. {} M1 native groups passed; 0 ignored",
+        groups.len()
+    );
 }

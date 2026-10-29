@@ -2,6 +2,8 @@
 //! Only generated throwaway databases are created/dropped; no other database is inspected.
 #[path = "network/cases.rs"]
 mod cases;
+#[path = "../../test-support/harness.rs"]
+mod harness;
 use sqlx::mysql::{MySqlConnectOptions, MySqlConnection};
 use sqlx::postgres::{PgConnectOptions, PgConnection};
 use sqlx::{Connection, Executor, Row, SqlSafeStr};
@@ -225,7 +227,12 @@ impl Drop for DropDatabase {
     }
 }
 /// Record each case separately, even when a previous case failed; always attempt cleanup.
-async fn backend(url: &str, dialect: DialectId, label: &str) -> TestResult<(usize, usize)> {
+async fn backend(
+    url: &str,
+    dialect: DialectId,
+    label: &str,
+    selected: &[(usize, &str)],
+) -> TestResult<(usize, usize)> {
     let mut admin = Native::connect(dialect, url, None).await?;
     println!(
         "{label} server version: {}",
@@ -245,7 +252,19 @@ async fn backend(url: &str, dialect: DialectId, label: &str) -> TestResult<(usiz
         guard.name.0
     );
     let (mut passed, mut failed) = (0, 0);
-    for (index, name) in CASES.iter().enumerate() {
+    let mut prepared = 0;
+    for &(index, name) in selected {
+        // The historical cases share an ordered fixture (profiles/parent rows,
+        // then altered tables). An exact later case needs that same prerequisite
+        // state, without reporting unselected cases as separately executed tests.
+        while prepared < index {
+            tokio::time::timeout(
+                Duration::from_secs(15),
+                cases::run(prepared, &mut connection, dialect),
+            )
+            .await??;
+            prepared += 1;
+        }
         match tokio::time::timeout(
             Duration::from_secs(15),
             cases::run(index, &mut connection, dialect),
@@ -261,6 +280,9 @@ async fn backend(url: &str, dialect: DialectId, label: &str) -> TestResult<(usiz
                 eprintln!("test network::{label}::{name} ... FAILED: {other:?}");
             }
         }
+        // Preserve the original full-run behavior after a selected failure: later
+        // selected cases still run, rather than retrying prior side effects.
+        prepared = index + 1;
     }
     connection.close().await?;
     guard.cleanup()?;
@@ -268,6 +290,28 @@ async fn backend(url: &str, dialect: DialectId, label: &str) -> TestResult<(usiz
 }
 /// This harness reports runtime-gated skips as ignored instead of passing early-return tests.
 fn main() {
+    let harness = harness::Harness::from_env();
+    let names: Vec<_> = [
+        ("postgres", "STACKPRESS_TEST_POSTGRES_URL"),
+        ("mysql", "STACKPRESS_TEST_MYSQL_URL"),
+    ]
+    .into_iter()
+    .flat_map(|(label, variable)| {
+        CASES.map(|name| {
+            (
+                format!("network::{label}::{name}"),
+                std::env::var(variable).is_err(),
+            )
+        })
+    })
+    .collect();
+    if harness.discover(
+        names
+            .iter()
+            .map(|(name, ignored)| (name.as_str(), *ignored)),
+    ) {
+        return;
+    }
     let (mut passed, mut failed, mut skipped) = (0, 0, 0);
     for (dialect, label, variable) in [
         (
@@ -277,8 +321,22 @@ fn main() {
         ),
         (DialectId::Mysql, "mysql", "STACKPRESS_TEST_MYSQL_URL"),
     ] {
+        let selected: Vec<_> = CASES
+            .iter()
+            .copied()
+            .enumerate()
+            .filter(|(_, name)| {
+                harness.selects(
+                    &format!("network::{label}::{name}"),
+                    std::env::var(variable).is_err(),
+                )
+            })
+            .collect();
+        if selected.is_empty() {
+            continue;
+        }
         let Ok(url) = std::env::var(variable) else {
-            for name in CASES {
+            for &(_, name) in &selected {
                 println!("test network::{label}::{name} ... ignored ({variable} unset)");
                 skipped += 1;
             }
@@ -289,7 +347,7 @@ fn main() {
                 .enable_all()
                 .build()
                 .unwrap();
-            runtime.block_on(backend(&url, dialect, label))
+            runtime.block_on(backend(&url, dialect, label, &selected))
         });
         match result {
             Ok(Ok((ok, errors))) => {
@@ -298,7 +356,7 @@ fn main() {
             }
             other => {
                 eprintln!("{label} setup/teardown failed: {other:?}");
-                failed += CASES.len();
+                failed += selected.len();
             }
         }
     }
