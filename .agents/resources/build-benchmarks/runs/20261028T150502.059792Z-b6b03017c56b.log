@@ -1,0 +1,15 @@
+$ python3 examples/ui-preferences/build.py
+du: /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/target/issue15-m2/debug/deps/.tmpTdNxKf.temp-archive: No such file or directory
+supervisor: child 54586 reaped; peak target 1285112 KiB
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/supervise.py", line 60, in <module>
+    main()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/supervise.py", line 45, in main
+    usage = subprocess.check_output(['du', '-sk', str(args.target)], text=True, timeout=10)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cblanquera/.pyenv/versions/3.11.4/lib/python3.11/subprocess.py", line 466, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cblanquera/.pyenv/versions/3.11.4/lib/python3.11/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['du', '-sk', '/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/target/issue15-m2']' returned non-zero exit status 1.

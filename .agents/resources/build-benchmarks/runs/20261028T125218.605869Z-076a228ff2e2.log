@@ -1,0 +1,23 @@
+   Compiling issue15-language-proof v0.0.0 (/private/tmp/stackpress-issue15-m0-20261028/work/language)
+   Compiling issue15-view-proof v0.0.0 (/private/tmp/stackpress-issue15-m0-20261028/work/view)
+    Finished `test` profile [unoptimized] target(s) in 1.36s
+     Running unittests src/lib.rs (target/issue15-m0/debug/deps/stackpress_framework_view-740ec3c05faf4caf)
+
+running 4 tests
+test preferences::locale::tests::compiled_prefixes_and_exact_return_context ... ok
+test preferences::locale::tests::precedence_and_routes ... ok
+test preferences::locale::tests::action_admission_and_persistence ... ok
+test preferences::locale::tests::invalid_configuration ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests stackpress_framework_view
+
+running 2 tests
+test view/src/lib.rs - PageSnapshot (line 68) ... ok
+test view/src/policy.rs - policy::BasePath::new (line 124) ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+all doctests ran in 0.70s; merged doctests compilation took 0.28s
+supervisor: child 32099 reaped; peak target 86724 KiB

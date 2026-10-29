@@ -1,0 +1,120 @@
+   Compiling stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-view)
+    Finished `test` profile [unoptimized] target(s) in 3.41s
+     Running unittests src/lib.rs (/private/tmp/i17-m1-verify/target/debug/deps/stackpress_framework_view-25cd031aeb195279)
+
+running 18 tests
+test preferences::locale::tests::compiled_prefixes_and_exact_return_context ... ok
+test preferences::locale::tests::precedence_and_routes ... ok
+test presentation_tests::explicit_host_policy_or_fail_closed ... ok
+test preferences::locale::tests::invalid_configuration ... ok
+test preferences::locale::tests::action_admission_and_persistence ... ok
+test presentation_tests::flash_consumption_bounds_and_root_dedupe ... ok
+test presentation_tests::confirm_actual_cookie_readback ... ok
+test presentation_tests::scope_and_theme_tokens ... ok
+test presentation_tests::flash_wire_expansion_is_bounded ... ok
+test presentation_tests::single_writer_and_failure_preserve_content ... ok
+test theme::tests::checked_external_tag_and_nonce ... ok
+test presentation_tests::select_and_admit_settings ... ok
+test presentation_tests::unset_is_absence_and_legacy_readback_only ... ok
+test adapters::native::tests::corrupt_inputs_are_bounded_and_not_rewritten ... ok
+test adapters::native::tests::symlinks_and_non_regular_files_are_not_followed ... ok
+test adapters::native::tests::real_restart_and_invalid_updates ... ok
+test adapters::native::tests::abandoned_staging_is_bounded_and_never_followed ... ok
+test adapters::native::tests::fifo_open_cannot_hang ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/contracts.rs (/private/tmp/i17-m1-verify/target/debug/deps/contracts-4f30314bf2e631c3)
+
+running 3 tests
+test hostile_seed_and_contract_drift ... ok
+test saved_theme_or_unset ... ok
+test bounds_and_checked_metadata ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+     Running tests/leptos_async_renderer.rs (/private/tmp/i17-m1-verify/target/debug/deps/leptos_async_renderer-b80a1bf08cb16ea9)
+
+running 3 tests
+test watchdog::exact_completion_marker ... ok
+test owned_async_renderer_exit_matrix ... ok
+test owned_render_migrates_between_threads ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/leptos_cleanup.rs (/private/tmp/i17-m1-verify/target/debug/deps/leptos_cleanup-7943aad63b52a354)
+
+running 5 tests
+test staged_render_releases_owner_state ... ok
+test no_runtime_never_panics ... ok
+test every_render_exit_releases_reactive_state ... ok
+test reactive_title_survives_owner_cleanup ... ok
+test unwind_child_releases_render_state ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/leptos_executor.rs (/private/tmp/i17-m1-verify/target/debug/deps/leptos_executor-03cecd93fe5c2d61)
+
+running 1 test
+test startup_is_explicit_idempotent_and_checked ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/leptos_routing.rs (/private/tmp/i17-m1-verify/target/debug/deps/leptos_routing-3c2d59dcd4150c93)
+
+running 2 tests
+test compiled_path_uses_leptos_segments ... ok
+test head_router_and_limits ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/leptos_safety.rs (/private/tmp/i17-m1-verify/target/debug/deps/leptos_safety-4dfebd4ba26b18ce)
+
+running 3 tests
+test acknowledged_theme_mapping_preserves_absence ... ok
+test script_and_html_escapers_do_not_drift ... ok
+test strict_local_locations_do_not_drift ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/leptos_system_theme.rs (/private/tmp/i17-m1-verify/target/debug/deps/leptos_system_theme-33e1834ef3ffd95e)
+
+running 1 test
+test saved_choices_and_unset_head ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lifecycle.rs (/private/tmp/i17-m1-verify/target/debug/deps/lifecycle-5a1d60deef2cffca)
+
+running 2 tests
+test duplicate_and_invalid_registration ... ok
+test stage_table_and_drop ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/policies.rs (/private/tmp/i17-m1-verify/target/debug/deps/policies-deddc9388e84c92c)
+
+running 8 tests
+test compiled_capture_boundaries ... ok
+test catalog_and_exact_parameters ... ok
+test serialization_preserves_cause_without_disclosure ... ok
+test status_and_lower_limits_roundtrip ... ok
+test metadata_and_assets_are_checked ... ok
+test asset_logical_byte_boundary_precedes_build_matching ... ok
+test escaped_assets_roundtrip ... ok
+test asset_decode_boundaries ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/presentation_registration.rs (/private/tmp/i17-m1-verify/target/debug/deps/presentation_registration-6cdeb3c6d6ba5385)
+
+running 6 tests
+test preferences_only_and_optional_asset ... ok
+test unselected_and_independent_flash ... ok
+test selected_settings_and_assets ... ok
+test confirmation_denials_never_write_or_disclose_input ... ok
+test rejected_startup ... ok
+test independent_protected_admission_and_lifecycle ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+

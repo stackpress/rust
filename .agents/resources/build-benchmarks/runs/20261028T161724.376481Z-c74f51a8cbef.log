@@ -1,0 +1,391 @@
+$ python3 /private/tmp/stackpress-issue15-m3-20261028/round-test.py
+$ cargo fmt --all
+$ cargo test --offline --locked -p stackpress-framework-language -p stackpress-framework-view -p stackpress-framework-ui -p stackpress-example-ui-preferences-shared -p stackpress-example-ui-preferences-web -p stackpress-example-profile-ui-shared -p stackpress-example-profile-ui-client -p stackpress-example-profile-ui-web -p stackpress-example-profile-ui-native --features stackpress-framework-view/native-file,stackpress-framework-view/web-preferences,stackpress-framework-view/web-flash,stackpress-framework-ui/stream,stackpress-framework-ui/rich --all-targets
+   Compiling stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view)
+   Compiling stackpress-framework-ui v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-ui)
+   Compiling stackpress-example-profile-ui-contracts v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/contracts)
+   Compiling stackpress-example-profile-ui-native v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/native)
+   Compiling stackpress-example-profile-ui-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/shared)
+   Compiling stackpress-example-profile-ui-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/web)
+   Compiling stackpress-example-ui-preferences-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/shared)
+   Compiling stackpress-example-ui-preferences-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/web)
+   Compiling stackpress-example-profile-ui-client v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/client)
+    Finished `test` profile [unoptimized] target(s) in 27.76s
+     Running unittests src/lib.rs (target/issue15-m3/debug/deps/stackpress_example_profile_ui_client-2f8b5921132880a2)
+
+running 6 tests
+test seed::native_settings_tests::admit_native_preferences_before_mount ... ok
+test seed::tests::host_rejection_is_not_transport_failure ... ok
+test seed::tests::checked_language_wire_roundtrip ... ok
+test seed::tests::typed_reply_admission ... ok
+test seed::tests::bounded_asset_admission_and_mount_agreement ... ok
+test seed::tests::public_seed_admission ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/issue15-m3/debug/deps/stackpress_example_profile_ui_native-8f375f58740e511b)
+
+running 2 tests
+
+running 1 test
+test preferences::tests::command_fields_and_restart ... ok
+
+thread '<unnamed>' (115286045) panicked at examples/profile-ui/native/src/tests.rs:295:13:
+controlled registry poison
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test tests::native_cases ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.05s
+
+test tests::native_cases ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running unittests src/lib.rs (target/issue15-m3/debug/deps/stackpress_example_profile_ui_shared-6c2b6bb2884cdf67)
+
+running 15 tests
+test preferences::tests::omitted_hook_is_immediate ... ok
+test tests::controller_retains_host_rejection_identity ... ok
+test preferences::tests::invalid_acknowledgement_and_disposed_root_are_inert ... ok
+test tests::controller_rejects_ambiguous_rows_without_publishing ... ok
+test preferences::tests::publish_only_after_a_successful_acknowledgement ... ok
+test tests::controller_preserves_newest_result_and_disposal ... ok
+test tests::exact_detail_and_not_found ... ok
+test tests::reply_validation_and_generation_exhaustion ... ok
+test tests::invalidation_cancellation_and_retry_preserve_useful_rows ... ok
+test tests::catalog_navigation_and_retained_history ... ok
+test tests::mounted_form_action ... ok
+test tests::recovery_notice_survives_initial_search ... ok
+test tests::concurrent_locales_remain_isolated ... ok
+test tests::shared_views_and_explicit_bootstrap ... ok
+test tests::counted_profile_phrases ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/lib.rs (target/issue15-m3/debug/deps/stackpress_example_profile_ui_web-684cc513c87150ca)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/issue15-m3/debug/deps/stackpress_example_profile_ui_web-5710d0fff3e8eda3)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/codec.rs (target/issue15-m3/debug/deps/codec-f9030f46544967ea)
+
+running 8 tests
+test route_component_edge_table ... ok
+test foreign_delivery_and_conversion_failure ... ok
+test public_error_envelope_contract ... ok
+test reactive_head_failure_does_not_escape_the_request ... ok
+test strict_fixed_codec ... ok
+test encoded_route_contract ... ok
+test initial_settings_and_detail_projection ... ok
+test mounted_route_head_and_seed_agreement ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/config.rs (target/issue15-m3/debug/deps/config-43fe19c232ac5ac6)
+
+running 1 test
+test explicit_file_and_input_failures ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/pages.rs (target/issue15-m3/debug/deps/pages-fe35110a3928a75e)
+
+running 2 tests
+test child_abort_never_renders ... ok
+test generated_html_and_safe_seed ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/reuse.rs (target/issue15-m3/debug/deps/reuse-53671d344ed13170)
+
+running 1 test
+test one_operation_one_compiled_customization ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/sqlite.rs (target/issue15-m3/debug/deps/sqlite-108fd3c81ea4c15f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/issue15-m3/debug/deps/stackpress_example_ui_preferences_shared-3dd02cbb3f58fd3c)
+
+running 1 test
+test tests::seed_phrases_and_ssr ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/issue15-m3/debug/deps/stackpress_example_ui_preferences_web-80e0313cd8dfc4bb)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/issue15-m3/debug/deps/stackpress_example_ui_preferences_web-db961a6f6b5ff5cb)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/finite.rs (target/issue15-m3/debug/deps/finite-d0adc19c509e9b5e)
+
+running 5 tests
+test protected_routes_reject_other_mounts ... ok
+test protected_links_follow_the_configured_mount ... ok
+test persistence_and_cookie_scope ... ok
+test host_selected_pages_and_route_denials ... ok
+test protected_exposure_fails_closed ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.90s
+
+     Running unittests src/lib.rs (target/issue15-m3/debug/deps/stackpress_framework_language-ffe160b6346e8140)
+
+running 2 tests
+test tests::registry_aliases_and_borrowed_enumeration ... ok
+test tests::invalid_registry_configuration ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/issue15-m3/debug/deps/stackpress_framework_ui-3fc436aecff8eaa0)
+
+running 43 tests
+test components::breadth_tests::css_zoom_admission ... ok
+test components::breadth_tests::paging_and_geometry ... ok
+test components::breadth_tests::disclosure_and_choice_admission ... ok
+test components::breadth_tests::foreign_suggestion_completion_is_rejected ... ok
+test components::breadth_tests::bounded_input_policies ... ok
+test components::breadth_tests::local_table_controller ... ok
+test components::breadth_tests::typed_collections ... ok
+test components::breadth_tests::searchable_choice_boundaries ... ok
+test components::core_tests::text_and_collection_boundaries ... ok
+test components::core_tests::select_admission_and_state ... ok
+test components::tag_list::tests::exact_append_and_neighbour_removal ... ok
+test components::core_tests::checked_display_boundaries ... ok
+test components::breadth_tests::native_dialog_mode_policies ... ok
+test components::core_tests::pinned_leptos_raw_text_characterization ... ok
+test components::tests::safe_navigation_targets ... ok
+test components::tests::advanced_components_are_native_and_inert_before_javascript ... ok
+test components::tests::list_layout_and_notifications ... ok
+test components::tests::controls_render_native_accessible_markup ... ok
+test language::tests::checked_language_bounds ... ok
+test components::breadth_tests::table_selection_is_native_before_javascript ... ok
+test language::tests::integer_plural_categories_and_text ... ok
+test components::core_tests::ordinary_semantic_markup ... ok
+test language::tests::counted_node_translation ... ok
+test components::breadth_tests::table_layout_and_rating_minimum_markup ... ok
+test components::breadth_tests::collection_rows_and_plain_chips_are_accessible_before_javascript ... ok
+test components::breadth_tests::breadth_semantic_markup_and_hostile_text ... ok
+test language::tests::phrase_and_text_policy ... ok
+test language::tests::scoped_replacement_and_disposal ... ok
+test language::tests::translated_nodes_render_as_safe_views ... ok
+test render::escaping_tests::escaping_borrows_text ... ok
+test replay::tests::replay_roundtrip_and_limits ... ok
+test resources::tests::cancellation_before_poll_and_after_completion ... ok
+test state::tests::configurable_notification_budgets ... ok
+test state::tests::providers_are_explicit_isolated_and_disposed ... ok
+test state::tests::notification_limits_duplicates_and_dismissal ... ok
+test stream::tests::budget_and_replay_contract ... ok
+test stream::tests::child ... ignored, called by stream watchdog
+test stream::tests::explicit_completion_protocol ... ok
+test rich::tests::explicit_http_authorities_only ... ok
+test rich::tests::closed_policy_and_budgets ... ok
+test rich::tests::markdown_and_exact_budget_edges ... ok
+test rich::tests::mutation_corpus_is_stable ... ok
+test stream::tests::watchdog ... ok
+
+test result: ok. 42 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.18s
+
+     Running tests/async_feasibility.rs (target/issue15-m3/debug/deps/async_feasibility-60d3b679687ab248)
+
+running 8 tests
+test watchdog::exact_completion_marker ... ok
+test cooperative_unwind_releases_loader ... ok
+test resource_success_control ... ok
+test resource_cancellation_counterexample ... ok
+test resource_unwind_counterexample ... ok
+test unmatched_child_filter_is_rejected - should panic ... ok
+test cooperative_cancel_releases_loader ... ok
+test cooperative_success_releases_loader ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/async_renderer.rs (target/issue15-m3/debug/deps/async_renderer-a1dbfa3d42bbc382)
+
+running 3 tests
+test watchdog::exact_completion_marker ... ok
+test owned_async_renderer_exit_matrix ... ok
+test owned_render_migrates_between_threads ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/cleanup.rs (target/issue15-m3/debug/deps/cleanup-dfe2a62f30ad3cf9)
+
+running 5 tests
+test staged_render_releases_owner_state ... ok
+test no_runtime_never_panics ... ok
+test every_render_exit_releases_reactive_state ... ok
+test reactive_title_survives_owner_cleanup ... ok
+test unwind_child_releases_render_state ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/executor.rs (target/issue15-m3/debug/deps/executor-6548a3a0e95aa71b)
+
+running 1 test
+test startup_is_explicit_idempotent_and_checked ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/routing.rs (target/issue15-m3/debug/deps/routing-8d687f409cd3f396)
+
+running 2 tests
+test compiled_path_uses_leptos_segments ... ok
+test head_router_and_limits ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/suggestions.rs (target/issue15-m3/debug/deps/suggestions-c266188223db949d)
+
+running 2 tests
+test watchdog::exact_completion_marker ... ok
+test yielding_suggestion_lifetime ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/system_theme.rs (target/issue15-m3/debug/deps/system_theme-1e85aa4bc24407d9)
+
+running 1 test
+test saved_choices_and_unset_head ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/issue15-m3/debug/deps/stackpress_framework_view-754e9e8ead19441b)
+
+running 18 tests
+test preferences::locale::tests::compiled_prefixes_and_exact_return_context ... ok
+test preferences::locale::tests::invalid_configuration ... ok
+test preferences::locale::tests::precedence_and_routes ... ok
+test preferences::locale::tests::action_admission_and_persistence ... ok
+test presentation_tests::explicit_host_policy_or_fail_closed ... ok
+test presentation_tests::confirm_actual_cookie_readback ... ok
+test presentation_tests::flash_consumption_bounds_and_root_dedupe ... ok
+test presentation_tests::scope_and_theme_tokens ... ok
+test theme::tests::checked_external_tag_and_nonce ... ok
+test presentation_tests::single_writer_and_failure_preserve_content ... ok
+test presentation_tests::unset_is_absence_and_legacy_readback_only ... ok
+test presentation_tests::flash_wire_expansion_is_bounded ... ok
+test presentation_tests::select_and_admit_settings ... ok
+test adapters::native::tests::corrupt_inputs_are_bounded_and_not_rewritten ... ok
+test adapters::native::tests::symlinks_and_non_regular_files_are_not_followed ... ok
+test adapters::native::tests::real_restart_and_invalid_updates ... ok
+test adapters::native::tests::abandoned_staging_is_bounded_and_never_followed ... ok
+test adapters::native::tests::fifo_open_cannot_hang ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/contracts.rs (target/issue15-m3/debug/deps/contracts-7b6e4f63e830068e)
+
+running 3 tests
+test hostile_seed_and_contract_drift ... ok
+test saved_theme_or_unset ... ok
+test bounds_and_checked_metadata ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+     Running tests/lifecycle.rs (target/issue15-m3/debug/deps/lifecycle-4468698ff585a019)
+
+running 2 tests
+test duplicate_and_invalid_registration ... ok
+test stage_table_and_drop ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/policies.rs (target/issue15-m3/debug/deps/policies-8756044d264a8653)
+
+running 8 tests
+test compiled_capture_boundaries ... ok
+test catalog_and_exact_parameters ... ok
+test serialization_preserves_cause_without_disclosure ... ok
+test status_and_lower_limits_roundtrip ... ok
+test metadata_and_assets_are_checked ... ok
+test asset_logical_byte_boundary_precedes_build_matching ... ok
+test escaped_assets_roundtrip ... ok
+test asset_decode_boundaries ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/presentation_registration.rs (target/issue15-m3/debug/deps/presentation_registration-7570884b925b193d)
+
+running 6 tests
+test preferences_only_and_optional_asset ... ok
+test selected_settings_and_assets ... ok
+test confirmation_denials_never_write_or_disclose_input ... ok
+test unselected_and_independent_flash ... ok
+test independent_protected_admission_and_lifecycle ... ok
+test rejected_startup ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+$ cargo clippy --offline --locked -p stackpress-framework-view --all-features --all-targets -- -D warnings
+   Compiling proc-macro2 v1.0.107
+   Compiling serde_core v1.0.229
+    Checking memchr v2.8.3
+   Compiling quote v1.0.47
+   Compiling syn v3.0.9
+    Checking aho-corasick v1.1.5
+    Checking percent-encoding v2.3.2
+    Checking indexmap v2.14.2
+    Checking regex-automata v0.4.18
+   Compiling synstructure v0.14.0
+   Compiling zerovec-derive v0.11.7
+   Compiling zerofrom-derive v0.1.8
+   Compiling yoke-derive v0.8.4
+    Checking zerofrom v0.1.8
+   Compiling displaydoc v0.2.7
+    Checking yoke v0.8.4
+   Compiling serde_derive v1.0.229
+    Checking zerovec v0.11.9
+    Checking tinystr v0.8.5
+    Checking potential_utf v0.1.6
+    Checking zerotrie v0.2.5
+    Checking icu_locale_core v2.4.0
+    Checking icu_collections v2.4.0
+    Checking form_urlencoded v1.2.2
+    Checking serde_json v1.0.154
+    Checking icu_provider v2.4.0
+    Checking icu_normalizer v2.4.0
+    Checking icu_properties v2.4.0
+    Checking serde v1.0.229
+    Checking idna_adapter v1.2.2
+    Checking idna v1.1.0
+    Checking regex v1.13.1
+    Checking url v2.5.8
+   Compiling tokio-macros v2.7.2
+    Checking stackpress-lib v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/lib)
+    Checking tokio v1.54.1
+    Checking stackpress-server v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/server/server)
+    Checking stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view)
+    Finished `dev` profile [unoptimized] target(s) in 11.73s
+$ python3 examples/ui-preferences/proofs/golden.py after /private/tmp/stackpress-issue15-m3-20261028/golden-consumer /private/tmp/stackpress-issue15-m3-20261028/golden
+   Compiling stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view)
+   Compiling stackpress-framework-ui v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-ui)
+   Compiling stackpress-example-ui-preferences-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/shared)
+   Compiling stackpress-example-ui-preferences-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/web)
+   Compiling issue15-golden v0.0.0 (/private/tmp/stackpress-issue15-m3-20261028/golden-consumer)
+    Finished `dev` profile [unoptimized] target(s) in 9.78s
+     Running `target/issue15-m3/debug/issue15-golden`
+{"phase": "after", "golden": "exact match", "legacy_theme": null, "legacy_french_retained": true, "legacy_file_bytes_unchanged": true}
+$ python3 examples/ui-preferences/proofs/contracts.py
+PASS current workspace lock ownership and live-path retired-identifier audit
+PASS workspace-only lock update: 616 external versions/sources/checksums unchanged
+PASS pure language, unchanged default view, opt-in native-file and six browser runtime graphs
+PASS immutable one-shot asset: initial-theme-152fe9618311a2eb.js 248 bytes; no persistence/listeners/fetch
+supervisor: child 1141 reaped; peak target 1547676 KiB

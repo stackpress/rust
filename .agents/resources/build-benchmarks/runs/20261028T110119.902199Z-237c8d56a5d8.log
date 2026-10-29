@@ -1,0 +1,18 @@
+     Locking 64 packages to latest Rust 1.96.0 compatible versions
+   Compiling stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/crates/framework/framework-view)
+   Compiling stackpress-lib v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/crates/lib)
+   Compiling stackpress-example-profile-ui-native v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/examples/profile-ui/native)
+   Compiling stackpress-framework-language v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/crates/framework/framework-language)
+   Compiling stackpress-example-profile-ui-contracts v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/examples/profile-ui/contracts)
+   Compiling stackpress-framework-preferences v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/crates/framework/framework-preferences)
+   Compiling stackpress-server v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/crates/server/server)
+   Compiling stackpress-cli v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/tools/cli)
+   Compiling stackpress-example-generated-profile v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/examples/generated-profile/app)
+   Compiling profile-ui-native-parity v0.0.0 (/var/folders/w2/g12vs0ts64g_3k6kjf_dd_bc0000gn/T/profile-ui-native-parity-3eokl421)
+    Finished `test` profile [unoptimized] target(s) in 2.83s
+
+running 1 test
+test adapters_share_g12_table ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+

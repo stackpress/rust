@@ -1,0 +1,58 @@
+   Compiling once_cell v1.21.4
+   Compiling tokio v1.54.1
+   Compiling url v2.5.8
+   Compiling wasm-bindgen v0.2.129
+   Compiling stackpress-lib v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/crates/lib)
+   Compiling js-sys v0.3.106
+   Compiling stackpress-server v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/crates/server/server)
+   Compiling stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/crates/framework/framework-view)
+   Compiling hyper v1.10.1
+   Compiling hyper-util v0.1.20
+   Compiling stackpress-server-http v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/crates/server/http)
+   Compiling wasm-bindgen-futures v0.4.79
+   Compiling web-sys v0.3.106
+   Compiling hydration_context v0.3.2
+   Compiling any_spawner v0.3.0
+   Compiling reactive_graph v0.2.16
+   Compiling reactive_stores v0.4.4
+   Compiling gloo-utils v0.2.0
+   Compiling tachys v0.2.19
+   Compiling gloo-net v0.6.0
+   Compiling wasm-streams v0.5.0
+   Compiling server_fn v0.8.13
+   Compiling leptos_server v0.8.8
+   Compiling leptos_dom v0.8.8
+   Compiling leptos v0.8.22
+   Compiling leptos_meta v0.8.7
+   Compiling leptos_router v0.8.17
+   Compiling stackpress-framework-ui v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/crates/framework/framework-ui)
+   Compiling stackpress-example-ui-stream-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/examples/ui-stream/shared)
+   Compiling stackpress-example-ui-stream-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/examples/ui-stream/web)
+    Finished `test` profile [unoptimized] target(s) in 34.64s
+     Running unittests src/lib.rs (target/debug/deps/stackpress_example_ui_stream_web-80af242386669a50)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/debug/deps/stackpress_example_ui_stream_web-9b77e3286fbfd9f5)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/finite.rs (target/debug/deps/finite-1f8e009a8dc7d45e)
+
+running 3 tests
+test child ... ignored, launched by parent watchdog
+test cli_protocol ... ok
+test watchdog ... ok
+
+test result: ok. 2 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 5.90s
+
+   Doc-tests stackpress_example_ui_stream_web
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

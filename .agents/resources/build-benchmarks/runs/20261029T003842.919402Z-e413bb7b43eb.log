@@ -1,0 +1,316 @@
+    Checking libc v0.2.191
+    Checking cfg-if v1.0.5
+    Checking memchr v2.8.3
+    Checking serde_core v1.0.229
+    Checking equivalent v1.0.3
+    Checking itoa v1.0.18
+    Checking smallvec v1.16.4
+    Checking hashbrown v0.17.1
+    Checking futures-core v0.3.34
+    Checking pin-project-lite v0.2.17
+    Checking zerofrom v0.1.8
+    Checking stable_deref_trait v1.2.1
+    Checking yoke v0.8.4
+    Checking errno v0.3.14
+    Checking foldhash v0.2.0
+    Checking zerovec v0.11.9
+    Checking serde v1.0.229
+    Checking indexmap v2.14.2
+   Compiling serde_json v1.0.154
+    Checking zmij v1.0.23
+    Checking once_cell v1.21.4
+    Checking tinystr v0.8.5
+    Checking writeable v0.6.4
+    Checking litemap v0.8.3
+    Checking icu_locale_core v2.4.0
+    Checking zerotrie v0.2.5
+    Checking potential_utf v0.1.6
+    Checking utf8_iter v1.0.4
+    Checking icu_provider v2.4.0
+    Checking icu_collections v2.4.0
+    Checking bytes v1.12.1
+    Checking icu_normalizer_data v2.4.0
+    Checking icu_properties_data v2.4.0
+    Checking icu_properties v2.4.0
+    Checking icu_normalizer v2.4.0
+    Checking percent-encoding v2.3.2
+    Checking log v0.4.34
+    Checking form_urlencoded v1.2.2
+    Checking signal-hook-registry v1.4.8
+    Checking futures-sink v0.3.34
+    Checking mio v1.2.4
+    Checking idna_adapter v1.2.2
+    Checking idna v1.1.0
+    Checking futures-channel v0.3.34
+    Checking url v2.5.8
+    Checking socket2 v0.6.5
+    Checking tokio v1.54.1
+    Checking slab v0.4.12
+    Checking bitflags v2.13.2
+    Checking futures-io v0.3.34
+    Checking futures-task v0.3.34
+    Checking futures-util v0.3.34
+    Checking scopeguard v1.2.0
+    Checking lock_api v0.4.14
+    Checking aho-corasick v1.1.5
+    Checking regex-syntax v0.8.11
+    Checking parking_lot_core v0.9.12
+    Checking thiserror v2.0.21
+    Checking parking_lot v0.12.5
+    Checking http v1.5.0
+    Checking unicode-ident v1.0.27
+    Checking regex-automata v0.4.18
+    Checking parking v2.2.1
+    Checking event-listener v5.4.2
+    Checking futures-executor v0.3.34
+    Checking either v1.19.0
+    Checking wasm-bindgen-shared v0.2.129
+    Checking wasm-bindgen v0.2.129
+    Checking regex v1.13.1
+    Checking js-sys v0.3.106
+    Checking typenum v1.20.1
+    Checking base64 v0.22.1
+    Checking futures v0.3.34
+    Checking or_poisoned v0.1.0
+    Checking httpdate v1.0.3
+    Checking throw_error v0.3.1
+   Compiling siphasher v1.0.4
+   Compiling phf_shared v0.14.0
+    Checking event-listener-strategy v0.5.4
+    Checking send_wrapper v0.6.0
+   Compiling fastrand v2.5.0
+   Compiling phf_generator v0.14.0
+    Checking async-lock v3.4.2
+    Checking slotmap v1.1.1
+    Checking proc-macro2 v1.0.107
+    Checking rustc-hash v2.1.3
+    Checking guardian v1.3.0
+    Checking quote v1.0.47
+    Checking stackpress-lib v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/lib)
+    Checking itertools v0.14.0
+    Checking wasm-bindgen-futures v0.4.79
+    Checking web-sys v0.3.106
+    Checking any_spawner v0.3.0
+    Checking hydration_context v0.3.2
+    Checking reactive_graph v0.2.16
+    Checking konst_macro_rules v0.2.19
+    Checking winnow v1.0.4
+    Checking toml_parser v1.1.5+spec-1.1.0
+    Checking konst v0.2.20
+    Checking pin-project v1.1.13
+    Checking thiserror v1.0.69
+    Checking reactive_stores v0.4.4
+    Checking syn v3.0.9
+   Compiling string_cache_codegen v0.11.2
+   Compiling phf_codegen v0.14.0
+    Checking either_of v0.1.9
+    Checking generic-array v0.14.7
+    Checking oco_ref v0.2.1
+    Checking html-escape v0.2.15
+    Checking drain_filter_polyfill v0.1.3
+    Checking toml_datetime v1.1.2+spec-1.1.0
+    Checking serde_spanned v1.1.2
+    Checking const_str_slice_concat v0.1.0
+    Checking new_debug_unreachable v1.0.6
+    Checking next_tuple v0.1.0
+    Checking unicode-segmentation v1.13.3
+    Checking erased v0.1.2
+    Checking convert_case v0.6.0
+    Checking toml v1.1.8+spec-1.1.0
+   Compiling web_atoms v0.3.0
+    Checking gloo-utils v0.2.0
+    Checking gloo-net v0.6.0
+    Checking tachys v0.2.19
+    Checking wasm-streams v0.5.0
+    Checking proc-macro2-diagnostics v0.11.0
+    Checking const_format v0.2.37
+    Checking serde_qs v0.15.0
+    Checking const-str v1.1.0
+    Checking same-file v1.0.6
+    Checking precomputed-hash v0.1.1
+    Checking inventory v0.3.25
+    Checking pathdiff v0.2.3
+    Checking xxhash-rust v0.8.19
+    Checking server_fn v0.8.13
+    Checking config v0.15.27
+    Checking string_cache v0.11.0
+    Checking walkdir v2.5.0
+    Checking typed-builder v0.23.2
+    Checking rstml v0.13.1
+    Checking block-buffer v0.10.4
+    Checking crypto-common v0.1.7
+    Checking phf v0.14.0
+    Checking stackpress-server v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/server/server)
+    Checking anyhow v1.0.104
+    Checking camino v1.2.6
+    Checking codee v0.3.5
+    Checking async-once-cell v0.5.4
+    Checking wasm_split_helpers v0.2.3
+    Checking leptos_hot_reload v0.8.7
+    Checking digest v0.10.7
+    Checking leptos_config v0.8.10
+    Checking tendril v0.5.1
+    Checking cpufeatures v0.2.17
+    Checking dtoa v1.0.11
+    Checking dtoa-short v0.3.5
+    Checking sha2 v0.10.9
+    Checking markup5ever v0.40.0
+   Compiling pulldown-cmark v0.13.5
+    Checking html5ever v0.40.1
+    Checking leptos_dom v0.8.8
+    Checking leptos_server v0.8.8
+    Checking cssparser v0.38.0
+    Checking unicase v2.10.0
+    Checking leptos v0.8.22
+    Checking maplit v1.0.2
+    Checking pulldown-cmark-escape v0.11.0
+    Checking leptos_router v0.8.17
+    Checking leptos_meta v0.8.7
+    Checking ammonia v4.2.4
+    Checking rustix v1.1.5
+    Checking rand_core v0.10.1
+   Compiling getrandom v0.4.3
+    Checking stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+    Checking stackpress-framework-language v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-language)
+    Checking tempfile v3.27.0
+    Checking stackpress-idea-parser v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/idea/idea-parser)
+    Checking stackpress-idea-transformer v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/idea/idea-transformer)
+    Checking signal-hook v0.3.18
+    Checking hybrid-array v0.4.15
+    Checking signal-hook-mio v0.2.5
+   Compiling ring v0.17.14
+    Checking stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-view)
+    Checking num-conv v0.2.2
+    Checking cmov v0.5.4
+    Checking powerfmt v0.2.1
+    Checking deranged v0.5.9
+    Checking time-core v0.1.9
+    Checking ctutils v0.4.2
+    Checking time v0.3.55
+    Checking crossterm v0.29.0
+    Checking crypto-common v0.2.2
+    Checking block-buffer v0.12.1
+    Checking unicode-width v0.2.2
+    Checking zeroize v1.9.1
+    Checking rustls-pki-types v1.15.1
+    Checking digest v0.11.3
+    Checking getrandom v0.2.17
+    Checking untrusted v0.9.0
+    Checking stackpress-cli v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/tools/cli)
+    Checking stackpress-framework-schema v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-schema)
+    Checking allocator-api2 v0.2.21
+   Compiling rustls v0.23.46
+    Checking hashbrown v0.16.1
+    Checking rustls-webpki v0.103.16
+    Checking crossbeam-utils v0.8.23
+    Checking tracing-core v0.1.36
+    Checking subtle v2.6.1
+    Checking crc-catalog v2.5.0
+    Checking crc v3.4.0
+    Checking tracing v0.1.44
+    Checking crossbeam-queue v0.3.14
+    Checking hashlink v0.11.1
+    Checking webpki-roots v1.0.10
+    Checking futures-intrusive v0.5.0
+    Checking tokio-stream v0.1.19
+    Checking cpufeatures v0.3.1
+    Checking stackpress-sql v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/sql/sql)
+    Checking num-traits v0.2.19
+    Checking sqlx-core v0.9.0
+    Checking tinyvec v1.13.3
+    Checking unicode-normalization v0.1.25
+    Checking atoi v2.0.0
+    Checking sha2 v0.11.1
+    Checking hmac v0.13.0
+    Checking chacha20 v0.10.2
+    Checking spin v0.9.9
+   Compiling httparse v1.10.1
+    Checking unicode-properties v0.1.4
+    Checking byteorder v1.5.0
+    Checking dotenvy v0.15.7
+    Checking unicode-bidi v0.3.18
+    Checking stringprep v0.1.5
+    Checking flume v0.12.0
+    Checking rand v0.10.3
+    Checking hkdf v0.13.0
+    Checking libsqlite3-sys v0.37.0
+    Checking sha1 v0.11.0
+    Checking md-5 v0.11.0
+    Checking stackpress-example-profile-ui-contracts v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/profile-ui/contracts)
+    Checking http-body v1.1.0
+    Checking whoami v2.1.3
+    Checking hex v0.4.3
+    Checking sqlx-mysql v0.9.0
+    Checking sqlx-postgres v0.9.0
+    Checking sqlx-sqlite v0.9.0
+    Checking atomic-waker v1.1.2
+    Checking hyper v1.10.1
+    Checking sqlx v0.9.0
+    Checking stackpress-example-profile-ui-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/profile-ui/shared)
+    Checking hyper-util v0.1.20
+    Checking http-body-util v0.1.4
+    Checking stackpress-example-generated-profile v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-profile/app)
+    Checking stackpress-framework-sql v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-sql)
+    Checking stackpress-framework-admin v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-admin)
+    Checking stackpress-idea v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/idea/idea)
+    Checking stackpress-example-profile-ui-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/profile-ui/web)
+    Checking stackpress-sql-sqlite v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/sql/sql-sqlite)
+    Checking generated-admin-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-admin/shared)
+    Checking stackpress-example-ui-preferences-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/shared)
+    Checking stackpress-example-ui-gallery-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-gallery/shared)
+    Checking stackpress-example-ui-stream-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-stream/shared)
+   Compiling stackpress-example-profile-ui-native v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/profile-ui/native)
+   Compiling stackpress-example-review-preview v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/review-preview)
+    Checking generated-workspace-tool v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-workspace/tool)
+    Checking stackpress-example-profile-ui-gateway v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/profile-ui/gateway)
+ Documenting stackpress-example-profile-ui-gateway v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/profile-ui/gateway)
+    Checking stackpress-server-http v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/server/http)
+ Documenting stackpress-example-ui-stream-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-stream/web)
+ Documenting stackpress-example-review-preview v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/review-preview)
+ Documenting generated-admin-tool v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-admin/tool)
+ Documenting stackpress-example-profile-ui-native v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/profile-ui/native)
+ Documenting generated-admin-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-admin/web)
+ Documenting generated-admin-client v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-admin/client)
+ Documenting stackpress-example-ui-stream-client v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-stream/client)
+ Documenting stackpress-example-ui-gallery-client v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-gallery/client)
+ Documenting stackpress-example-ui-gallery-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-gallery/web)
+ Documenting stackpress-example-ui-preferences-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/web)
+ Documenting stackpress-example-ui-preferences-client v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/client)
+ Documenting generated-workspace-app v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-workspace/app)
+ Documenting generated-workspace-tool v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-workspace/tool)
+ Documenting stackpress-example-sql-profile v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/sql-profile)
+ Documenting stackpress-example-profile-codegen v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-profile/codegen)
+ Documenting generated-admin-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-admin/shared)
+ Documenting stackpress-server-http v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/server/http)
+ Documenting stackpress-example-profile-ui-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/profile-ui/web)
+ Documenting stackpress-example-profile-ui-client v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/profile-ui/client)
+ Documenting stackpress-sql-sqlite v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/sql/sql-sqlite)
+ Documenting stackpress-sql-mysql v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/sql/sql-mysql)
+ Documenting stackpress-sql-postgres v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/sql/sql-postgres)
+ Documenting stackpress-example-profile-ui-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/profile-ui/shared)
+ Documenting stackpress-framework-sql v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-sql)
+ Documenting data-quickstart v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/data-quickstart)
+ Documenting generated-workspace-contracts v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-workspace/contracts)
+ Documenting stackpress-framework-admin v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-admin)
+ Documenting stackpress-example-capability-host v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/capability-host)
+ Documenting stackpress-example-generated-profile v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-profile/app)
+ Documenting stackpress-cli v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/tools/cli)
+ Documenting stackpress-framework-schema v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-schema)
+ Documenting stackpress-example-ui-gallery-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-gallery/shared)
+ Documenting stackpress-example-ui-preferences-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/shared)
+ Documenting stackpress-example-profile-ui-contracts v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/profile-ui/contracts)
+ Documenting stackpress-example-ui-format v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-format)
+ Documenting stackpress-example-ui-stream-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-stream/shared)
+ Documenting stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-view)
+ Documenting stackpress-idea v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/idea/idea)
+ Documenting stackpress-idea-transformer v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/idea/idea-transformer)
+ Documenting stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+ Documenting stackpress v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17)
+ Documenting stackpress-server v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/server/server)
+ Documenting stackpress-lib v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/lib)
+ Documenting stackpress-idea-parser v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/idea/idea-parser)
+ Documenting stackpress-framework-language v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-language)
+ Documenting stackpress-sql v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/sql/sql)
+    Finished `dev` profile [unoptimized] target(s) in 1m 05s
+   Generated /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/target/issue17/doc/data_quickstart/index.html and 47 other files
+supervisor: child 25180 reaped; peak target 2981552 KiB

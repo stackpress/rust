@@ -1,0 +1,588 @@
+$ cargo fmt --all
+$ cargo clippy --offline --locked -p stackpress-framework-view --features web-preferences --all-targets -- -D warnings
+    Checking stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view)
+    Finished `dev` profile [unoptimized] target(s) in 0.59s
+$ cargo clippy --offline --locked -p stackpress-framework-view --features web-flash --all-targets -- -D warnings
+    Checking stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view)
+    Finished `dev` profile [unoptimized] target(s) in 0.16s
+$ cargo clippy --offline --locked -p stackpress-framework-view --features web-preferences,web-flash --all-targets -- -D warnings
+    Checking stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view)
+    Finished `dev` profile [unoptimized] target(s) in 0.53s
+$ cargo test --offline --locked -p stackpress-framework-view --all-features
+   Compiling stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view)
+    Finished `test` profile [unoptimized] target(s) in 2.37s
+     Running unittests src/lib.rs (target/issue15-m2/debug/deps/stackpress_framework_view-4d4191168182ba0a)
+
+running 18 tests
+test preferences::locale::tests::compiled_prefixes_and_exact_return_context ... ok
+test preferences::locale::tests::precedence_and_routes ... ok
+test preferences::locale::tests::invalid_configuration ... ok
+test presentation_tests::explicit_host_policy_or_fail_closed ... ok
+test preferences::locale::tests::action_admission_and_persistence ... ok
+test presentation_tests::flash_consumption_bounds_and_root_dedupe ... ok
+test presentation_tests::flash_wire_expansion_is_bounded ... ok
+test presentation_tests::confirm_actual_cookie_readback ... ok
+test presentation_tests::scope_and_theme_tokens ... ok
+test presentation_tests::select_and_admit_settings ... ok
+test theme::tests::checked_external_tag_and_nonce ... ok
+test presentation_tests::single_writer_and_failure_preserve_content ... ok
+test presentation_tests::unset_is_absence_and_legacy_readback_only ... ok
+test adapters::native::tests::corrupt_inputs_are_bounded_and_not_rewritten ... ok
+test adapters::native::tests::symlinks_and_non_regular_files_are_not_followed ... ok
+test adapters::native::tests::real_restart_and_invalid_updates ... ok
+test adapters::native::tests::abandoned_staging_is_bounded_and_never_followed ... ok
+test adapters::native::tests::fifo_open_cannot_hang ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/contracts.rs (target/issue15-m2/debug/deps/contracts-5c173e7841c0fdbe)
+
+running 3 tests
+test hostile_seed_and_contract_drift ... ok
+test saved_theme_or_unset ... ok
+test bounds_and_checked_metadata ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+     Running tests/lifecycle.rs (target/issue15-m2/debug/deps/lifecycle-ec373351f4616993)
+
+running 2 tests
+test duplicate_and_invalid_registration ... ok
+test stage_table_and_drop ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/policies.rs (target/issue15-m2/debug/deps/policies-5c0fe697c660bf95)
+
+running 8 tests
+test serialization_preserves_cause_without_disclosure ... ok
+test status_and_lower_limits_roundtrip ... ok
+test compiled_capture_boundaries ... ok
+test catalog_and_exact_parameters ... ok
+test metadata_and_assets_are_checked ... ok
+test asset_logical_byte_boundary_precedes_build_matching ... ok
+test asset_decode_boundaries ... ok
+test escaped_assets_roundtrip ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/presentation_registration.rs (target/issue15-m2/debug/deps/presentation_registration-7eb127419bf76d73)
+
+running 5 tests
+test preferences_only_and_optional_asset ... ok
+test unselected_and_independent_flash ... ok
+test selected_settings_and_assets ... ok
+test rejected_startup ... ok
+test independent_protected_admission_and_lifecycle ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+   Doc-tests stackpress_framework_view
+
+running 2 tests
+test crates/framework/framework-view/src/policy.rs - policy::BasePath::new (line 124) ... ok
+test crates/framework/framework-view/src/lib.rs - PageSnapshot (line 69) ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 1 test
+test crates/framework/framework-view/src/server.rs - server::PageSpec (line 19) - compile fail ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+all doctests ran in 0.79s; merged doctests compilation took 0.28s
+$ cargo test --offline --locked -p stackpress-example-ui-preferences-web -p stackpress-example-review-preview --features review-preview --all-targets
+   Compiling stable_deref_trait v1.2.1
+   Compiling either v1.19.0
+   Compiling zerofrom v0.1.8
+   Compiling yoke v0.8.4
+   Compiling writeable v0.6.4
+   Compiling zerovec v0.11.9
+   Compiling smallvec v1.16.4
+   Compiling litemap v0.8.3
+   Compiling zerotrie v0.2.5
+   Compiling tinystr v0.8.5
+   Compiling icu_locale_core v2.4.0
+   Compiling potential_utf v0.1.6
+   Compiling once_cell v1.21.4
+   Compiling futures-io v0.3.34
+   Compiling futures-util v0.3.34
+   Compiling icu_provider v2.4.0
+   Compiling icu_collections v2.4.0
+   Compiling errno v0.3.14
+   Compiling icu_properties v2.4.0
+   Compiling icu_normalizer v2.4.0
+   Compiling signal-hook-registry v1.4.8
+   Compiling idna_adapter v1.2.2
+   Compiling mio v1.2.4
+   Compiling socket2 v0.6.5
+   Compiling tokio v1.54.1
+   Compiling idna v1.1.0
+   Compiling wasm-bindgen v0.2.129
+   Compiling form_urlencoded v1.2.2
+   Compiling url v2.5.8
+   Compiling js-sys v0.3.106
+   Compiling futures-executor v0.3.34
+   Compiling event-listener v5.4.2
+   Compiling scopeguard v1.2.0
+   Compiling lock_api v0.4.14
+   Compiling parking_lot_core v0.9.12
+   Compiling serde v1.0.229
+   Compiling siphasher v1.0.4
+   Compiling phf_shared v0.14.0
+   Compiling wasm-bindgen-futures v0.4.79
+   Compiling futures v0.3.34
+   Compiling parking_lot v0.12.5
+   Compiling web-sys v0.3.106
+   Compiling event-listener-strategy v0.5.4
+   Compiling fastrand v2.5.0
+   Compiling icu_locale_fallback_data v2.4.0
+   Compiling phf_generator v0.14.0
+   Compiling async-lock v3.4.2
+   Compiling hydration_context v0.3.2
+   Compiling any_spawner v0.3.0
+   Compiling heapless v0.7.17
+   Compiling byteorder v1.5.0
+   Compiling log v0.4.34
+   Compiling reactive_graph v0.2.16
+   Compiling hash32 v0.2.1
+   Compiling itertools v0.14.0
+   Compiling libm v0.2.16
+   Compiling reactive_stores v0.4.4
+   Compiling icu_locale_fallback v2.4.0
+   Compiling string_cache_codegen v0.11.2
+   Compiling phf_codegen v0.14.0
+   Compiling new_debug_unreachable v1.0.6
+   Compiling web_atoms v0.3.0
+   Compiling gloo-utils v0.2.0
+   Compiling gloo-net v0.6.0
+   Compiling tachys v0.2.19
+   Compiling wasm-streams v0.5.0
+   Compiling cobs v0.3.0
+   Compiling precomputed-hash v0.1.1
+   Compiling icu_calendar_data v2.4.0
+   Compiling server_fn v0.8.13
+   Compiling string_cache v0.11.0
+   Compiling leptos_hot_reload v0.8.7
+   Compiling core_maths v0.1.1
+   Compiling stackpress-lib v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/lib)
+   Compiling phf v0.14.0
+   Compiling icu_plurals_data v2.4.0
+   Compiling icu_decimal_data v2.4.0
+   Compiling icu_time_data v2.4.0
+   Compiling leptos_server v0.8.8
+   Compiling leptos_dom v0.8.8
+   Compiling leptos_macro v0.8.19
+   Compiling stackpress-server v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/server/server)
+   Compiling calendrical_calculations v0.2.4
+   Compiling postcard v1.1.3
+   Compiling tendril v0.5.1
+   Compiling fixed_decimal v0.7.3
+   Compiling quick-xml v0.41.0
+   Compiling dtoa v1.0.11
+   Compiling linked-hash-map v0.5.6
+   Compiling heck v0.5.0
+   Compiling icu_datetime_data v2.4.0
+   Compiling bitflags v2.13.2
+   Compiling icu_locale_data v2.4.0
+   Compiling phonenumber v0.3.10+9.0.33
+   Compiling strum_macros v0.27.2
+   Compiling lru-cache v0.1.2
+   Compiling dtoa-short v0.3.5
+   Compiling markup5ever v0.40.0
+   Compiling icu_calendar v2.4.0
+   Compiling leptos v0.8.22
+   Compiling regex-syntax v0.6.29
+   Compiling pulldown-cmark v0.13.5
+   Compiling minimal-lexical v0.2.1
+   Compiling oncemutex v0.1.1
+   Compiling nom v7.1.3
+   Compiling regex-cache v0.2.1
+   Compiling icu_time v2.4.0
+   Compiling icu_decimal v2.4.0
+   Compiling icu_plurals v2.4.0
+   Compiling strum v0.27.2
+   Compiling html5ever v0.40.1
+   Compiling cssparser v0.38.0
+   Compiling icu_pattern v0.5.1
+   Compiling pulldown-cmark-escape v0.11.0
+   Compiling unicase v2.10.0
+   Compiling fnv v1.0.7
+   Compiling maplit v1.0.2
+   Compiling stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view)
+   Compiling ammonia v4.2.4
+   Compiling icu_datetime v2.4.0
+   Compiling leptos_router v0.8.17
+   Compiling icu_locale v2.4.0
+   Compiling leptos_meta v0.8.7
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling cpufeatures v0.2.17
+   Compiling crossbeam-utils v0.8.23
+   Compiling stackpress-framework-ui v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-ui)
+   Compiling shlex v2.0.1
+   Compiling find-msvc-tools v0.1.15
+   Compiling autocfg v1.5.1
+   Compiling num-traits v0.2.19
+   Compiling cc v1.10.0
+   Compiling sha2 v0.10.9
+   Compiling pkg-config v0.3.34
+   Compiling allocator-api2 v0.2.21
+   Compiling vcpkg v0.2.15
+   Compiling libsqlite3-sys v0.37.0
+   Compiling hashbrown v0.16.1
+   Compiling tracing-core v0.1.36
+   Compiling tracing-attributes v0.1.31
+   Compiling deranged v0.5.9
+   Compiling httparse v1.10.1
+   Compiling powerfmt v0.2.1
+   Compiling crc-catalog v2.5.0
+   Compiling num-conv v0.2.2
+   Compiling time-core v0.1.9
+   Compiling time v0.3.55
+   Compiling crc v3.4.0
+   Compiling stackpress-example-ui-preferences-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/shared)
+   Compiling tracing v0.1.44
+   Compiling crossbeam-queue v0.3.14
+   Compiling hashlink v0.11.1
+   Compiling futures-intrusive v0.5.0
+   Compiling spin v0.9.9
+   Compiling http-body v1.1.0
+   Compiling tokio-stream v0.1.19
+   Compiling try-lock v0.2.5
+   Compiling want v0.3.1
+   Compiling sqlx-core v0.9.0
+   Compiling flume v0.12.0
+   Compiling atoi v2.0.0
+   Compiling stackpress-framework-schema v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-schema)
+   Compiling atomic-waker v1.1.2
+   Compiling hyper v1.10.1
+   Compiling sqlx-sqlite v0.9.0
+   Compiling stackpress-example-ui-preferences-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/web)
+   Compiling rustix v1.1.5
+   Compiling stackpress-sql v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/sql/sql)
+   Compiling sqlx v0.9.0
+   Compiling hyper-util v0.1.20
+   Compiling stackpress-framework-admin v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-admin)
+   Compiling http-body-util v0.1.4
+   Compiling stackpress-server-http v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/server/http)
+   Compiling stackpress-sql-sqlite v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/sql/sql-sqlite)
+   Compiling generated-admin-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/generated-admin/shared)
+   Compiling stackpress-framework-sql v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-sql)
+   Compiling stackpress-example-ui-gallery-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-gallery/shared)
+   Compiling stackpress-example-ui-stream-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-stream/shared)
+   Compiling getrandom v0.4.3
+   Compiling stackpress-example-review-preview v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/review-preview)
+   Compiling tempfile v3.27.0
+   Compiling stackpress-example-ui-stream-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-stream/web)
+   Compiling stackpress-example-ui-gallery-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-gallery/web)
+   Compiling generated-admin-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/generated-admin/web)
+   Compiling stackpress-example-ui-format v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-format)
+    Finished `test` profile [unoptimized] target(s) in 1m 12s
+     Running unittests src/lib.rs (target/issue15-m2/debug/deps/stackpress_example_review_preview-cb9a91639e474f09)
+
+running 7 tests
+test tests::launch_and_cookie_boundaries ... ok
+test tests::fresh_setup_and_attachment ... ok
+test tests::filesystem_admission_limits ... ok
+test tests::mounted_csr_and_fail_closed_assets ... ok
+test tests::native_csv_preview_confirm_and_export ... ok
+test tests::composed_host_controls_and_denials ... ok
+test tests::plain_http_preferences_and_stream_cancellation ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.05s
+
+     Running unittests src/main.rs (target/issue15-m2/debug/deps/slice8_review-ba4a5b8bac4dbb1a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/cli.rs (target/issue15-m2/debug/deps/cli-4936f663ec25c3db)
+
+running 1 test
+test cli_setup_and_prebind_refusals ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.15s
+
+     Running unittests src/lib.rs (target/issue15-m2/debug/deps/stackpress_example_ui_preferences_web-36a0f8902bf4b33d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/issue15-m2/debug/deps/stackpress_example_ui_preferences_web-af246ad7d07cbbfe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/finite.rs (target/issue15-m2/debug/deps/finite-024d77cd706e9cd3)
+
+running 5 tests
+test protected_routes_reject_other_mounts ... ok
+test persistence_and_cookie_scope ... ok
+test protected_links_follow_the_configured_mount ... ok
+test host_selected_pages_and_route_denials ... ok
+test protected_exposure_fails_closed ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.86s
+
+$ cargo clippy --offline --locked -p stackpress-example-ui-preferences-web -p stackpress-example-review-preview --features review-preview --all-targets -- -D warnings
+    Checking stable_deref_trait v1.2.1
+    Checking either v1.19.0
+    Checking zerofrom v0.1.8
+    Checking yoke v0.8.4
+    Checking libc v0.2.191
+    Checking zerovec v0.11.9
+    Checking writeable v0.6.4
+    Checking smallvec v1.16.4
+    Checking tinystr v0.8.5
+    Checking litemap v0.8.3
+    Checking potential_utf v0.1.6
+    Checking zerotrie v0.2.5
+    Checking icu_locale_core v2.4.0
+    Checking once_cell v1.21.4
+    Checking futures-io v0.3.34
+    Checking futures-util v0.3.34
+    Checking icu_provider v2.4.0
+    Checking icu_collections v2.4.0
+    Checking errno v0.3.14
+    Checking icu_properties v2.4.0
+    Checking icu_normalizer v2.4.0
+    Checking signal-hook-registry v1.4.8
+    Checking socket2 v0.6.5
+    Checking idna_adapter v1.2.2
+    Checking mio v1.2.4
+    Checking idna v1.1.0
+    Checking tokio v1.54.1
+    Checking wasm-bindgen v0.2.129
+    Checking form_urlencoded v1.2.2
+    Checking url v2.5.8
+    Checking js-sys v0.3.106
+    Checking futures-executor v0.3.34
+    Checking event-listener v5.4.2
+    Checking scopeguard v1.2.0
+    Checking lock_api v0.4.14
+    Checking parking_lot_core v0.9.12
+    Checking futures v0.3.34
+    Checking parking_lot v0.12.5
+    Checking event-listener-strategy v0.5.4
+    Checking async-lock v3.4.2
+    Checking log v0.4.34
+    Checking icu_locale_fallback_data v2.4.0
+    Checking itertools v0.14.0
+    Checking siphasher v1.0.4
+    Checking phf_shared v0.14.0
+    Checking icu_locale_fallback v2.4.0
+    Checking new_debug_unreachable v1.0.6
+    Checking libm v0.2.16
+    Checking wasm-bindgen-futures v0.4.79
+    Checking web-sys v0.3.106
+    Checking any_spawner v0.3.0
+    Checking hydration_context v0.3.2
+    Checking reactive_graph v0.2.16
+    Checking reactive_stores v0.4.4
+    Checking precomputed-hash v0.1.1
+    Checking string_cache v0.11.0
+    Checking core_maths v0.1.1
+    Checking phf v0.14.0
+    Checking stackpress-lib v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/lib)
+    Checking byteorder v1.5.0
+    Checking hash32 v0.2.1
+    Checking stackpress-server v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/server/server)
+    Checking web_atoms v0.3.0
+    Checking calendrical_calculations v0.2.4
+    Checking icu_calendar_data v2.4.0
+    Checking tendril v0.5.1
+    Checking fixed_decimal v0.7.3
+    Checking bitflags v2.13.2
+    Checking dtoa v1.0.11
+    Checking linked-hash-map v0.5.6
+    Checking lru-cache v0.1.2
+    Checking dtoa-short v0.3.5
+    Checking markup5ever v0.40.0
+    Checking icu_calendar v2.4.0
+    Checking icu_time_data v2.4.0
+    Checking icu_plurals_data v2.4.0
+    Checking heapless v0.7.17
+    Checking icu_decimal_data v2.4.0
+    Checking cobs v0.3.0
+    Checking minimal-lexical v0.2.1
+    Checking oncemutex v0.1.1
+    Checking regex-syntax v0.6.29
+    Checking regex-cache v0.2.1
+    Checking nom v7.1.3
+    Checking gloo-utils v0.2.0
+    Checking gloo-net v0.6.0
+    Checking wasm-streams v0.5.0
+    Checking tachys v0.2.19
+    Checking server_fn v0.8.13
+    Checking postcard v1.1.3
+    Checking icu_decimal v2.4.0
+    Checking icu_plurals v2.4.0
+    Checking icu_time v2.4.0
+    Checking html5ever v0.40.1
+    Checking strum v0.27.2
+    Checking cssparser v0.38.0
+    Checking icu_locale_data v2.4.0
+    Checking icu_datetime_data v2.4.0
+    Checking icu_pattern v0.5.1
+    Checking quick-xml v0.41.0
+    Checking unicase v2.10.0
+    Checking fnv v1.0.7
+    Checking maplit v1.0.2
+    Checking pulldown-cmark-escape v0.11.0
+    Checking pulldown-cmark v0.13.5
+    Checking stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view)
+    Checking ammonia v4.2.4
+    Checking phonenumber v0.3.10+9.0.33
+    Checking icu_datetime v2.4.0
+    Checking leptos_server v0.8.8
+    Checking leptos_dom v0.8.8
+    Checking leptos v0.8.22
+    Checking leptos_router v0.8.17
+    Checking leptos_meta v0.8.7
+    Checking icu_locale v2.4.0
+    Checking typenum v1.20.1
+    Checking stackpress-framework-ui v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-ui)
+    Checking generic-array v0.14.7
+    Checking crypto-common v0.1.7
+    Checking block-buffer v0.10.4
+    Checking digest v0.10.7
+    Checking cpufeatures v0.2.17
+    Checking sha2 v0.10.9
+    Checking allocator-api2 v0.2.21
+    Checking hashbrown v0.16.1
+    Checking crossbeam-utils v0.8.23
+    Checking tracing-core v0.1.36
+    Checking time-core v0.1.9
+    Checking deranged v0.5.9
+    Checking powerfmt v0.2.1
+    Checking crc-catalog v2.5.0
+    Checking num-conv v0.2.2
+    Checking time v0.3.55
+    Checking stackpress-example-ui-preferences-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/shared)
+    Checking crc v3.4.0
+    Checking tracing v0.1.44
+    Checking num-traits v0.2.19
+    Checking crossbeam-queue v0.3.14
+    Checking hashlink v0.11.1
+    Checking futures-intrusive v0.5.0
+    Checking spin v0.9.9
+    Checking http-body v1.1.0
+    Checking tokio-stream v0.1.19
+    Checking try-lock v0.2.5
+    Checking want v0.3.1
+    Checking flume v0.12.0
+    Checking sqlx-core v0.9.0
+    Checking atoi v2.0.0
+    Checking libsqlite3-sys v0.37.0
+    Checking httparse v1.10.1
+    Checking stackpress-framework-schema v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-schema)
+    Checking atomic-waker v1.1.2
+    Checking hyper v1.10.1
+    Checking sqlx-sqlite v0.9.0
+    Checking stackpress-example-ui-preferences-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/web)
+    Checking stackpress-sql v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/sql/sql)
+    Checking sqlx v0.9.0
+    Checking hyper-util v0.1.20
+    Checking stackpress-framework-admin v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-admin)
+    Checking http-body-util v0.1.4
+    Checking stackpress-server-http v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/server/http)
+    Checking generated-admin-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/generated-admin/shared)
+    Checking stackpress-framework-sql v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-sql)
+    Checking stackpress-sql-sqlite v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/sql/sql-sqlite)
+    Checking rustix v1.1.5
+    Checking stackpress-example-ui-gallery-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-gallery/shared)
+    Checking stackpress-example-ui-stream-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-stream/shared)
+    Checking getrandom v0.4.3
+   Compiling stackpress-example-review-preview v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/review-preview)
+    Checking fastrand v2.5.0
+    Checking tempfile v3.27.0
+    Checking stackpress-example-ui-gallery-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-gallery/web)
+    Checking stackpress-example-ui-stream-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-stream/web)
+    Checking generated-admin-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/generated-admin/web)
+    Checking stackpress-example-ui-format v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-format)
+    Finished `dev` profile [unoptimized] target(s) in 33.84s
+$ cargo check --offline --locked -p stackpress --features framework-view-web-preferences,framework-view-web-flash
+    Checking stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view)
+    Checking stackpress v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15)
+    Finished `dev` profile [unoptimized] target(s) in 0.73s
+$ cargo doc --offline --locked -p stackpress-framework-view --all-features --no-deps
+ Documenting stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view)
+    Finished `dev` profile [unoptimized] target(s) in 0.72s
+   Generated /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/target/issue15-m2/doc/stackpress_framework_view/index.html
+$ cargo run --offline --locked -p stackpress-example-profile-codegen -- emit generate -c
+   Compiling libc v0.2.191
+   Compiling once_cell v1.21.4
+   Compiling stackpress-idea-parser v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/idea/idea-parser)
+   Compiling tokio v1.54.1
+   Compiling errno v0.3.14
+   Compiling rustix v1.1.5
+   Compiling getrandom v0.4.3
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling tempfile v3.27.0
+   Compiling stackpress-server v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/server/server)
+   Compiling stackpress-idea-transformer v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/idea/idea-transformer)
+   Compiling stackpress-cli v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/tools/cli)
+   Compiling stackpress-idea v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/idea/idea)
+   Compiling stackpress-example-profile-codegen v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/generated-profile/codegen)
+    Finished `dev` profile [unoptimized] target(s) in 3.82s
+     Running `target/issue15-m2/debug/profile-codegen emit generate -c`
+{"code":200,"status":"OK","errors":{},"results":{"differences":[]},"total":1}
+$ cargo run --offline --locked -p generated-admin-tool -- emit generate --check
+   Compiling wasm-bindgen v0.2.129
+   Compiling rustix v1.1.5
+   Compiling js-sys v0.3.106
+   Compiling hydration_context v0.3.2
+   Compiling tachys v0.2.19
+   Compiling server_fn v0.8.13
+   Compiling leptos_macro v0.8.19
+   Compiling tempfile v3.27.0
+   Compiling sha2 v0.10.9
+   Compiling stackpress-idea-parser v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/idea/idea-parser)
+   Compiling wasm-bindgen-futures v0.4.79
+   Compiling web-sys v0.3.106
+   Compiling any_spawner v0.3.0
+   Compiling reactive_graph v0.2.16
+   Compiling reactive_stores v0.4.4
+   Compiling leptos v0.8.22
+   Compiling signal-hook v0.3.18
+   Compiling stackpress-idea-transformer v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/idea/idea-transformer)
+   Compiling mio v1.2.4
+   Compiling parking_lot_core v0.9.12
+   Compiling litrs v1.0.1
+   Compiling document-features v0.2.12
+   Compiling leptos_router v0.8.17
+   Compiling parking_lot v0.12.5
+   Compiling gloo-utils v0.2.0
+   Compiling gloo-net v0.6.0
+   Compiling wasm-streams v0.5.0
+   Compiling signal-hook-mio v0.2.5
+   Compiling stackpress-framework-schema v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-schema)
+   Compiling tokio v1.54.1
+   Compiling crossterm v0.29.0
+   Compiling stackpress-server v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/server/server)
+   Compiling stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view)
+   Compiling stackpress-framework-sql v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-sql)
+   Compiling leptos_server v0.8.8
+   Compiling leptos_dom v0.8.8
+   Compiling stackpress-cli v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/tools/cli)
+   Compiling leptos_meta v0.8.7
+   Compiling stackpress-idea v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/idea/idea)
+   Compiling generated-workspace-tool v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/generated-workspace/tool)
+   Compiling stackpress-framework-ui v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-ui)
+   Compiling stackpress-framework-admin v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-admin)
+   Compiling generated-admin-tool v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/generated-admin/tool)
+    Finished `dev` profile [unoptimized] target(s) in 28.53s
+     Running `target/issue15-m2/debug/generated-admin-tool emit generate --check`
+{"differences":[]}
+$ python3 examples/ui-preferences/proofs/contracts.py
+PASS workspace-only lock update: 616 external versions/sources/checksums unchanged
+PASS pure language, unchanged default view, opt-in native-file and six browser runtime graphs
+PASS immutable one-shot asset: initial-theme-152fe9618311a2eb.js 248 bytes; no persistence/listeners/fetch
+$ cargo fmt --all -- --check
+supervisor: child 66203 reaped; peak target 3193540 KiB

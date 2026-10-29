@@ -1,0 +1,5 @@
+   Compiling stackpress-framework-ui v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-ui)
+    Finished `dev` profile [unoptimized] target(s) in 2.71s
+     Running `target/issue17/debug/examples/issue17_parity`
+baseline public bytes captured
+supervisor: child 2781 reaped; peak target 573548 KiB

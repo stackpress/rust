@@ -1,0 +1,22 @@
+$ python3 examples/ui-preferences/build.py
+PASS preferences-native-build
+PASS preferences-hydrate-build
+PASS preferences-hydrate-bindgen
+PASS preferences-csr-build
+PASS preferences-csr-bindgen
+$ python3 examples/profile-ui/build-client.py hydrate
+   Compiling stackpress-example-profile-ui-contracts v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/contracts)
+   Compiling stackpress-example-profile-ui-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/shared)
+   Compiling stackpress-example-profile-ui-client v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/client)
+    Finished `dev` profile [unoptimized] target(s) in 2.58s
+/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/dist/hydrate
+$ python3 examples/profile-ui/asset_manifest.py check hydrate
+hydrate: profile-ui-m2-2 /assets/2b30403c8726d787a7aeabfab374acae239ccbfc30c9575411041db6b36365e0/start.js
+$ python3 examples/profile-ui/build-client.py csr
+   Compiling stackpress-example-profile-ui-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/shared)
+   Compiling stackpress-example-profile-ui-client v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/client)
+    Finished `dev` profile [unoptimized] target(s) in 1.74s
+/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/dist/csr
+$ python3 examples/profile-ui/asset_manifest.py check csr
+csr: profile-ui-m2-2 /assets/a86a9bc9c96c2babc54087022c53673cbe8c74a8e6f0de42350d3e208243abaf/start.js
+supervisor: child 55181 reaped; peak target 1588956 KiB

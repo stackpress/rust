@@ -1,0 +1,25 @@
+m4-coverage-version: 0
+m4-coverage-tests: 0
+m4-coverage-env: 0
+m4-coverage-hosts: 0
+m4-coverage-gallery: 0
+m4-coverage-collections: 0
+m4-coverage-breadth: 0
+m4-coverage-stream: 0
+m4-coverage-status: 0
+m4-coverage-ordinary-admin: 0
+m4-coverage-review-progressive: 0
+m4-coverage-review-smoke: 0
+coverage-command: 0
+coverage-raw: 0
+coverage-lcov: 0
+stackpress-framework-admin: 1878/2081 (90.25%)
+stackpress-framework-ui: 4922/5207 (94.53%)
+stackpress-example-ui-gallery-shared: 664/740 (89.73%)
+stackpress-example-ui-gallery-web: 244/259 (94.21%)
+stackpress-example-ui-stream-shared: 35/35 (100.00%)
+stackpress-example-ui-stream-web: 272/277 (98.19%)
+generated-admin-shared: 3424/4288 (79.85%)
+generated-admin-web: 5376/6134 (87.64%)
+stackpress-example-review-preview: 780/838 (93.08%)
+m4-llvm-version: 0

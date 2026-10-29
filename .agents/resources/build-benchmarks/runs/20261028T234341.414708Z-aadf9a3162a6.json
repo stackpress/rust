@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "id": "20261028T234341.414708Z-aadf9a3162a6",
+  "started_at": "2026-10-28T23:43:41.414708+00:00",
+  "status": "passed",
+  "label": "issue17 M1 native suites adapter test boundary",
+  "kind": "test",
+  "scope": "selected",
+  "cache": "unknown",
+  "command": [
+    "python3",
+    "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/proofs/supervise.py",
+    "--target",
+    "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/target/issue17",
+    "--seconds",
+    "1800",
+    "--",
+    "python3",
+    "/private/tmp/stackpress-issue17-m1/native.py"
+  ],
+  "cwd": "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17",
+  "commit": "0c07794b7233ddd5df64ade802cff52e29f2a69a",
+  "branch": "trial/3-issue17-leptos-library",
+  "dirty": true,
+  "host": "macOS-26.6.2-arm64-arm-64bit",
+  "machine": "arm64",
+  "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+  "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+  "environment": {
+    "CARGO_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/target/issue17",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_BUILD_JOBS": "2"
+  },
+  "cargo_activity": {
+    "compiling": 5,
+    "checking": 0,
+    "documenting": 0
+  },
+  "cargo_build_stages": [
+    {
+      "profile": "test",
+      "seconds": 3.75
+    },
+    {
+      "profile": "dev",
+      "seconds": 9.71
+    }
+  ],
+  "log": "runs/20261028T234341.414708Z-aadf9a3162a6.log",
+  "ended_at": "2026-10-28T23:44:07.766333+00:00",
+  "command_seconds": 26.088768,
+  "exit_code": 0,
+  "cargo_build_seconds": 13.46
+}

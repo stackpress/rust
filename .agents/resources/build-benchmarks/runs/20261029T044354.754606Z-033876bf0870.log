@@ -1,0 +1,107 @@
+   Compiling stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+   Compiling stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-view)
+    Finished `test` profile [unoptimized] target(s) in 10.95s
+     Running unittests src/lib.rs (/private/tmp/i17-m3-verify/target/debug/deps/stackpress_framework_view-36b3fb239acb34ee)
+
+running 4 tests
+test leptos::stream::tests::child ... ignored, called by stream watchdog
+test leptos::stream::tests::budget_and_replay_contract ... ok
+test theme::tests::checked_external_tag_and_nonce ... ok
+test leptos::stream::tests::watchdog ... ok
+
+test result: ok. 3 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.13s
+
+     Running tests/contracts.rs (/private/tmp/i17-m3-verify/target/debug/deps/contracts-4c756c1213cb2bad)
+
+running 3 tests
+test hostile_seed_and_contract_drift ... ok
+test saved_theme_or_unset ... ok
+test bounds_and_checked_metadata ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running tests/leptos_async_renderer.rs (/private/tmp/i17-m3-verify/target/debug/deps/leptos_async_renderer-322ace7e7a1d4280)
+
+running 3 tests
+test watchdog::exact_completion_marker ... ok
+test owned_async_renderer_exit_matrix ... ok
+test owned_render_migrates_between_threads ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/leptos_cleanup.rs (/private/tmp/i17-m3-verify/target/debug/deps/leptos_cleanup-9e82b692fedc7dcd)
+
+running 5 tests
+test staged_render_releases_owner_state ... ok
+test no_runtime_never_panics ... ok
+test every_render_exit_releases_reactive_state ... ok
+test reactive_title_survives_owner_cleanup ... ok
+test unwind_child_releases_render_state ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/leptos_executor.rs (/private/tmp/i17-m3-verify/target/debug/deps/leptos_executor-f3ff25ec63f5728e)
+
+running 1 test
+test startup_is_explicit_idempotent_and_checked ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/leptos_routing.rs (/private/tmp/i17-m3-verify/target/debug/deps/leptos_routing-9fca31fdbfae2e8a)
+
+running 3 tests
+test compiled_path_uses_leptos_segments ... ok
+test renderer_admission_preserves_error_precedence ... ok
+test head_router_and_limits ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/leptos_safety.rs (/private/tmp/i17-m3-verify/target/debug/deps/leptos_safety-fec2d4ac4babc04b)
+
+running 2 tests
+test script_and_html_escapers_do_not_drift ... ok
+test strict_local_locations_do_not_drift ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/leptos_system_theme.rs (/private/tmp/i17-m3-verify/target/debug/deps/leptos_system_theme-67e95f602df8c3a1)
+
+running 1 test
+test saved_choices_and_unset_head ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lifecycle.rs (/private/tmp/i17-m3-verify/target/debug/deps/lifecycle-8c4c08c4d6b725a3)
+
+running 2 tests
+test duplicate_and_invalid_registration ... ok
+test stage_table_and_drop ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/policies.rs (/private/tmp/i17-m3-verify/target/debug/deps/policies-fa04c2b885336fac)
+
+running 8 tests
+test serialization_preserves_cause_without_disclosure ... ok
+test compiled_capture_boundaries ... ok
+test catalog_and_exact_parameters ... ok
+test status_and_lower_limits_roundtrip ... ok
+test metadata_and_assets_are_checked ... ok
+test asset_logical_byte_boundary_precedes_build_matching ... ok
+test escaped_assets_roundtrip ... ok
+test asset_decode_boundaries ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/presentation_registration.rs (/private/tmp/i17-m3-verify/target/debug/deps/presentation_registration-a981b8619ab51912)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/issue17_parity.rs (/private/tmp/i17-m3-verify/target/debug/examples/issue17_parity-c71b5de5f9005abb)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

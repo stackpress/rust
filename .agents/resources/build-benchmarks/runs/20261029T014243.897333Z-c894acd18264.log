@@ -1,0 +1,2 @@
+PASS isolated offline lock: all external tuples drawn from approved root tuples
+supervisor: child 58076 reaped; peak target 8 KiB

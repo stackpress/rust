@@ -1,0 +1,20 @@
+
+    Finished report saved to /private/tmp/stackpress-issue15-m1-20261028/evidence/framework-coverage.json
+{
+  "framework-language": {
+    "covered": 50,
+    "count": 58,
+    "percent": 86.20689655172414
+  },
+  "framework-view": {
+    "covered": 1140,
+    "count": 1194,
+    "percent": 95.47738693467336
+  },
+  "framework-ui": {
+    "covered": 4216,
+    "count": 4784,
+    "percent": 88.12709030100335
+  }
+}
+supervisor: child 29412 reaped; peak target 4826328 KiB

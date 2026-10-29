@@ -1,0 +1,97 @@
+   Compiling stable_deref_trait v1.2.1
+   Compiling either v1.19.0
+   Compiling zerofrom v0.1.8
+   Compiling litemap v0.8.3
+   Compiling once_cell v1.21.4
+   Compiling yoke v0.8.4
+   Compiling writeable v0.6.4
+   Compiling smallvec v1.16.4
+   Compiling wasm-bindgen v0.2.129
+   Compiling zerovec v0.11.9
+   Compiling zerotrie v0.2.5
+   Compiling serde_core v1.0.229
+   Compiling serde v1.0.229
+   Compiling tinystr v0.8.5
+   Compiling potential_utf v0.1.6
+   Compiling icu_locale_core v2.4.0
+   Compiling icu_collections v2.4.0
+   Compiling js-sys v0.3.106
+   Compiling icu_provider v2.4.0
+   Compiling icu_locale_fallback_data v2.4.0
+   Compiling icu_normalizer v2.4.0
+   Compiling icu_properties v2.4.0
+   Compiling heapless v0.7.17
+   Compiling idna_adapter v1.2.2
+   Compiling byteorder v1.5.0
+   Compiling idna v1.1.0
+   Compiling hash32 v0.2.1
+   Compiling itertools v0.14.0
+   Compiling url v2.5.8
+   Compiling libm v0.2.16
+   Compiling icu_locale_fallback v2.4.0
+   Compiling cobs v0.3.0
+   Compiling icu_calendar_data v2.4.0
+   Compiling tempfile v3.27.0
+   Compiling leptos_hot_reload v0.8.7
+   Compiling core_maths v0.1.1
+   Compiling icu_plurals_data v2.4.0
+   Compiling wasm-bindgen-futures v0.4.79
+   Compiling web-sys v0.3.106
+   Compiling any_spawner v0.3.0
+   Compiling reactive_graph v0.2.16
+   Compiling icu_decimal_data v2.4.0
+   Compiling icu_time_data v2.4.0
+   Compiling reactive_stores v0.4.4
+   Compiling leptos_macro v0.8.19
+   Compiling stackpress-idea-transformer v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/crates/idea/idea-transformer)
+   Compiling calendrical_calculations v0.2.4
+   Compiling postcard v1.1.3
+   Compiling fixed_decimal v0.7.3
+   Compiling quick-xml v0.41.0
+   Compiling icu_locale_data v2.4.0
+   Compiling icu_datetime_data v2.4.0
+   Compiling heck v0.5.0
+   Compiling linked-hash-map v0.5.6
+   Compiling strum_macros v0.27.2
+   Compiling lru-cache v0.1.2
+   Compiling phonenumber v0.3.10+9.0.33
+   Compiling icu_calendar v2.4.0
+   Compiling parking_lot_core v0.9.12
+   Compiling regex-syntax v0.6.29
+   Compiling oncemutex v0.1.1
+   Compiling minimal-lexical v0.2.1
+   Compiling nom v7.1.3
+   Compiling stackpress-lib v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/crates/lib)
+   Compiling regex-cache v0.2.1
+   Compiling icu_time v2.4.0
+   Compiling strum v0.27.2
+   Compiling parking_lot v0.12.5
+   Compiling icu_decimal v2.4.0
+   Compiling icu_plurals v2.4.0
+   Compiling stackpress-framework-schema v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/crates/framework/framework-schema)
+   Compiling icu_pattern v0.5.1
+   Compiling fnv v1.0.7
+   Compiling icu_datetime v2.4.0
+   Compiling gloo-utils v0.2.0
+   Compiling gloo-net v0.6.0
+   Compiling tachys v0.2.19
+   Compiling crossterm v0.29.0
+   Compiling wasm-streams v0.5.0
+   Compiling server_fn v0.8.13
+   Compiling icu_locale v2.4.0
+   Compiling stackpress-server v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/crates/server/server)
+   Compiling stackpress-framework-sql v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/crates/framework/framework-sql)
+   Compiling stackpress-cli v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/tools/cli)
+   Compiling stackpress-idea v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/crates/idea/idea)
+   Compiling generated-workspace-tool v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/examples/generated-workspace/tool)
+   Compiling leptos_dom v0.8.8
+   Compiling leptos_server v0.8.8
+   Compiling leptos v0.8.22
+   Compiling leptos_router v0.8.17
+   Compiling leptos_meta v0.8.7
+   Compiling stackpress-framework-ui v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/crates/framework/framework-ui)
+   Compiling stackpress-framework-admin v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/crates/framework/framework-admin)
+   Compiling generated-admin-tool v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/examples/generated-admin/tool)
+    Finished `dev` profile [unoptimized] target(s) in 34.39s
+     Running `target/debug/generated-admin-tool emit generate --input /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/examples/generated-admin/schema-format.idea --output /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/examples/generated-admin/shared/src/generated-format`
+{"differences":[]}

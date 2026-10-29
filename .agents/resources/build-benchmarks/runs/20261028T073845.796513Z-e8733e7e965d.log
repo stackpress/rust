@@ -1,0 +1,9 @@
+build-shared-clean: 0
+build-web-clean: 0
+build-web: 0
+build-hydrate-clean: 0
+build-hydrate: 0
+build-hydrate-bindgen: 0
+build-csr-clean: 0
+build-csr: 0
+build-csr-bindgen: 0

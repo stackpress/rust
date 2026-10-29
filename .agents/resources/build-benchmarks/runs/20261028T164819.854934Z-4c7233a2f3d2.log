@@ -1,0 +1,23 @@
+PASS proof-wrapper-tests
+PASS manifest-tests
+PASS fmt
+PASS generated-freshness
+PASS native-ssr
+PASS hydrate
+PASS csr
+PASS gateway-build
+PASS native-feature
+PASS facade-hydrate
+PASS runtime-hydrate
+PASS facade-csr
+PASS runtime-csr
+PASS existing-build-hash
+PASS default-facade
+PASS gateway-runtime
+PASS tests
+PASS customized-reuse
+PASS native-ssr-final
+PASS doctests
+PASS clippy
+PASS service-proof
+All checks passed; logs: /private/tmp/i15-m3-verify/profile

@@ -1,0 +1,2 @@
+{"initialModes":["unset","light","dark"],"cases":6,"firstRoot":"host preferences","persistenceBeforePublication":true,"failureKeepsDraftAndRoot":true,"listener":false}
+supervisor: child 30298 reaped; peak target 4769900 KiB

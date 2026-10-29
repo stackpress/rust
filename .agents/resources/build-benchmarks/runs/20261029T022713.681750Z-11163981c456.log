@@ -1,0 +1,21 @@
+{
+  "root_lock_byte_identical": true,
+  "root_external_tuples": 616,
+  "consumer_external_tuples": 255,
+  "consumer_shared_normal_dependencies": [
+    "leptos",
+    "stackpress-leptos"
+  ],
+  "retired_name_hits": [
+    "crates/framework/framework-view/docs/migration-issue17.md:3:G41 removes `stackpress-framework-ui` outright, without a compatibility shim. Add",
+    "crates/framework/framework-view/docs/migration-issue17.md:49:The old `framework-ui*` facade features and `framework_ui` alias are removed."
+  ],
+  "kb": {
+    "exit": 1,
+    "inherited_errors": 146,
+    "new_errors": [],
+    "warnings": 26
+  },
+  "coverage_tool": "cargo-llvm-cov 0.8.6"
+}
+supervisor: child 59592 reaped; peak target 4054436 KiB

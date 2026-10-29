@@ -1,0 +1,17 @@
+fmt: 0
+workspace-clippy: 0
+workspace-suite-no-listener: 0
+format-clippy: 0
+format-suite: 0
+msrv: 0
+rustdoc: 0
+wasm-clippy-hydrate-default: 0
+tree-hydrate-default: 0
+wasm-clippy-hydrate-format: 0
+tree-hydrate-format: 0
+wasm-clippy-csr-default: 0
+tree-csr-default: 0
+wasm-clippy-csr-format: 0
+tree-csr-format: 0
+facade: 0
+tree-tool: 0

@@ -1,0 +1,5 @@
+   Compiling issue15-golden v0.0.0 (/private/tmp/stackpress-issue15-m1-20261028/golden-after)
+    Finished `dev` profile [unoptimized] target(s) in 1.87s
+     Running `target/issue15-m1/debug/issue15-golden`
+{"phase": "after", "golden": "exact match", "legacy_theme": null, "legacy_french_retained": true, "legacy_file_bytes_unchanged": true}
+supervisor: child 39194 reaped; peak target 4826364 KiB

@@ -1,0 +1,30 @@
+   Compiling once_cell v1.21.4
+   Compiling stackpress-framework-language v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-language)
+   Compiling stackpress-lib v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/lib)
+   Compiling wasm-bindgen v0.2.129
+   Compiling stackpress-server v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/server/server)
+   Compiling js-sys v0.3.106
+   Compiling stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view)
+   Compiling wasm-bindgen-futures v0.4.79
+   Compiling web-sys v0.3.106
+   Compiling hydration_context v0.3.2
+   Compiling any_spawner v0.3.0
+   Compiling reactive_graph v0.2.16
+   Compiling reactive_stores v0.4.4
+   Compiling gloo-utils v0.2.0
+   Compiling tachys v0.2.19
+   Compiling gloo-net v0.6.0
+   Compiling wasm-streams v0.5.0
+   Compiling server_fn v0.8.13
+   Compiling leptos_dom v0.8.8
+   Compiling leptos_server v0.8.8
+   Compiling leptos v0.8.22
+   Compiling leptos_router v0.8.17
+   Compiling leptos_meta v0.8.7
+   Compiling stackpress-framework-ui v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-ui)
+   Compiling stackpress-example-ui-preferences-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/shared)
+   Compiling stackpress-example-ui-preferences-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/web)
+   Compiling issue15-golden v0.0.0 (/private/tmp/i15-m3-verify/golden-work)
+    Finished `dev` profile [unoptimized] target(s) in 27.01s
+     Running `/private/tmp/i15-m3-verify/target/debug/issue15-golden`
+{"phase": "after", "golden": "exact match", "legacy_theme": null, "legacy_french_retained": true, "legacy_file_bytes_unchanged": true}

@@ -1,0 +1,97 @@
+    Checking tokio v1.54.1
+    Checking stackpress-lib v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/lib)
+    Checking toml_datetime v1.1.2+spec-1.1.0
+    Checking serde_spanned v1.1.2
+    Checking stackpress-framework-language v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-language)
+    Checking stackpress-idea-parser v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/idea/idea-parser)
+    Checking stackpress-sql v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/sql/sql)
+ Documenting stackpress-example-review-preview v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/review-preview)
+    Checking toml v1.1.8+spec-1.1.0
+    Checking config v0.15.27
+    Checking stackpress-idea-transformer v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/idea/idea-transformer)
+ Documenting stackpress-idea-transformer v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/idea/idea-transformer)
+    Checking stackpress-server v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/server/server)
+ Documenting stackpress-server v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/server/server)
+    Checking leptos_config v0.8.10
+    Checking stackpress-framework-schema v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-schema)
+    Checking stackpress-idea v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/idea/idea)
+ Documenting stackpress-framework-schema v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-schema)
+ Documenting stackpress-idea v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/idea/idea)
+ Documenting stackpress v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17)
+ Documenting stackpress-lib v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/lib)
+ Documenting stackpress-idea-parser v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/idea/idea-parser)
+ Documenting stackpress-framework-language v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-language)
+    Checking stackpress-framework-sql v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-sql)
+ Documenting generated-workspace-contracts v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-workspace/contracts)
+ Documenting data-quickstart v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/data-quickstart)
+ Documenting stackpress-framework-sql v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-sql)
+ Documenting stackpress-sql v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/sql/sql)
+    Checking any_spawner v0.3.0
+    Checking reactive_graph v0.2.16
+    Checking stackpress-cli v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/tools/cli)
+    Checking tokio-stream v0.1.19
+    Checking hyper v1.10.1
+    Checking stackpress-example-generated-profile v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-profile/app)
+    Checking generated-workspace-tool v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-workspace/tool)
+    Checking sqlx-core v0.9.0
+ Documenting generated-workspace-tool v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-workspace/tool)
+ Documenting stackpress-example-profile-codegen v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-profile/codegen)
+ Documenting stackpress-example-capability-host v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/capability-host)
+    Checking hyper-util v0.1.20
+    Checking stackpress-server-http v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/server/http)
+    Checking reactive_stores v0.4.4
+ Documenting stackpress-server-http v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/server/http)
+ Documenting stackpress-example-generated-profile v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-profile/app)
+ Documenting stackpress-cli v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/tools/cli)
+    Checking tachys v0.2.19
+    Checking sqlx-sqlite v0.9.0
+    Checking sqlx-mysql v0.9.0
+    Checking sqlx-postgres v0.9.0
+    Checking sqlx v0.9.0
+    Checking stackpress-sql-sqlite v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/sql/sql-sqlite)
+ Documenting stackpress-sql-postgres v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/sql/sql-postgres)
+ Documenting stackpress-sql-mysql v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/sql/sql-mysql)
+ Documenting stackpress-sql-sqlite v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/sql/sql-sqlite)
+ Documenting stackpress-example-sql-profile v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/sql-profile)
+ Documenting generated-workspace-app v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-workspace/app)
+    Checking leptos_server v0.8.8
+    Checking leptos_dom v0.8.8
+    Checking leptos v0.8.22
+    Checking leptos_router v0.8.17
+    Checking leptos_meta v0.8.7
+    Checking stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+ Documenting stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+    Checking stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-view)
+    Checking stackpress-framework-admin v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-admin)
+    Checking stackpress-example-ui-stream-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-stream/shared)
+ Documenting stackpress-framework-admin v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-admin)
+ Documenting stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-view)
+ Documenting stackpress-example-ui-stream-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-stream/shared)
+ Documenting stackpress-example-ui-format v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-format)
+    Checking stackpress-example-profile-ui-contracts v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/profile-ui/contracts)
+    Checking generated-admin-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-admin/shared)
+    Checking stackpress-example-profile-ui-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/profile-ui/shared)
+    Checking stackpress-example-profile-ui-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/profile-ui/web)
+    Checking stackpress-example-ui-preferences-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/shared)
+    Checking stackpress-example-ui-gallery-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-gallery/shared)
+    Checking stackpress-example-profile-ui-gateway v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/profile-ui/gateway)
+ Documenting stackpress-example-profile-ui-gateway v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/profile-ui/gateway)
+ Documenting stackpress-example-ui-preferences-client v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/client)
+ Documenting stackpress-example-ui-preferences-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/web)
+ Documenting stackpress-example-profile-ui-client v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/profile-ui/client)
+ Documenting stackpress-example-profile-ui-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/profile-ui/web)
+ Documenting stackpress-example-profile-ui-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/profile-ui/shared)
+ Documenting stackpress-example-ui-gallery-client v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-gallery/client)
+ Documenting generated-admin-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-admin/web)
+ Documenting generated-admin-client v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-admin/client)
+ Documenting stackpress-example-ui-gallery-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-gallery/web)
+ Documenting stackpress-example-profile-ui-native v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/profile-ui/native)
+ Documenting generated-admin-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-admin/shared)
+ Documenting generated-admin-tool v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-admin/tool)
+ Documenting stackpress-example-ui-gallery-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-gallery/shared)
+ Documenting stackpress-example-ui-preferences-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/shared)
+ Documenting stackpress-example-ui-stream-client v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-stream/client)
+ Documenting stackpress-example-ui-stream-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-stream/web)
+ Documenting stackpress-example-profile-ui-contracts v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/profile-ui/contracts)
+    Finished `dev` profile [unoptimized] target(s) in 26.36s
+   Generated /private/tmp/i17-m3-verify/target/doc/data_quickstart/index.html and 47 other files

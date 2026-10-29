@@ -1,0 +1,18 @@
+   Compiling any_spawner v0.3.0
+   Compiling stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view)
+   Compiling reactive_graph v0.2.16
+   Compiling stackpress-cli v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/tools/cli)
+   Compiling stackpress-example-profile-ui-contracts v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/contracts)
+   Compiling stackpress-example-generated-profile v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/generated-profile/app)
+   Compiling reactive_stores v0.4.4
+   Compiling tachys v0.2.19
+   Compiling leptos_server v0.8.8
+   Compiling leptos_dom v0.8.8
+   Compiling leptos v0.8.22
+   Compiling leptos_router v0.8.17
+   Compiling leptos_meta v0.8.7
+   Compiling stackpress-framework-ui v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-ui)
+   Compiling stackpress-example-profile-ui-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/shared)
+   Compiling stackpress-example-profile-ui-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/web)
+    Finished `dev` profile [unoptimized] target(s) in 22.50s
+supervisor: child 85252 reaped; peak target 3392400 KiB

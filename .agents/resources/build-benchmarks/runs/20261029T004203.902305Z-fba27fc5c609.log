@@ -1,0 +1,449 @@
+info: cargo-llvm-cov currently setting cfg(coverage); you can opt-out it by passing --no-cfg-coverage
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.27
+   Compiling quote v1.0.47
+   Compiling cfg-if v1.0.5
+   Compiling syn v3.0.9
+   Compiling version_check v0.9.5
+   Compiling memchr v2.8.3
+   Compiling libc v0.2.191
+   Compiling serde_core v1.0.229
+   Compiling pin-project-lite v0.2.17
+   Compiling equivalent v1.0.3
+   Compiling serde_derive v1.0.229
+   Compiling synstructure v0.14.0
+   Compiling hashbrown v0.17.1
+   Compiling smallvec v1.16.4
+   Compiling once_cell v1.21.4
+   Compiling zerofrom-derive v0.1.8
+   Compiling futures-core v0.3.34
+   Compiling serde v1.0.229
+   Compiling zerofrom v0.1.8
+   Compiling yoke-derive v0.8.4
+   Compiling stable_deref_trait v1.2.1
+   Compiling yoke v0.8.4
+   Compiling indexmap v2.14.2
+   Compiling semver v1.0.28
+   Compiling rustc_version v0.4.1
+   Compiling zerovec-derive v0.11.7
+   Compiling syn v2.0.119
+   Compiling futures-sink v0.3.34
+   Compiling zerovec v0.11.9
+   Compiling displaydoc v0.2.7
+   Compiling thiserror v2.0.21
+   Compiling futures-channel v0.3.34
+   Compiling thiserror-impl v2.0.21
+   Compiling futures-macro v0.3.34
+   Compiling slab v0.4.12
+   Compiling futures-io v0.3.34
+   Compiling foldhash v0.2.0
+   Compiling futures-task v0.3.34
+   Compiling futures-util v0.3.34
+   Compiling wasm-bindgen-shared v0.2.129
+   Compiling tinystr v0.8.5
+   Compiling bytes v1.12.1
+   Compiling rustversion v1.0.23
+   Compiling writeable v0.6.4
+   Compiling litemap v0.8.3
+   Compiling icu_locale_core v2.4.0
+   Compiling zerotrie v0.2.5
+   Compiling potential_utf v0.1.6
+   Compiling generic-array v0.14.7
+   Compiling log v0.4.34
+   Compiling icu_properties_data v2.4.0
+   Compiling icu_normalizer_data v2.4.0
+   Compiling utf8_iter v1.0.4
+   Compiling icu_collections v2.4.0
+   Compiling icu_provider v2.4.0
+   Compiling typenum v1.20.1
+   Compiling zmij v1.0.23
+   Compiling bumpalo v3.20.3
+   Compiling wasm-bindgen-macro-support v0.2.129
+   Compiling wasm-bindgen v0.2.129
+   Compiling mio v1.2.4
+   Compiling itoa v1.0.18
+   Compiling serde_json v1.0.154
+   Compiling icu_normalizer v2.4.0
+   Compiling icu_properties v2.4.0
+   Compiling wasm-bindgen-macro v0.2.129
+   Compiling percent-encoding v2.3.2
+   Compiling idna_adapter v1.2.2
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling tokio-macros v2.7.2
+   Compiling socket2 v0.6.5
+   Compiling unicode-segmentation v1.13.3
+   Compiling tokio v1.54.1
+   Compiling js-sys v0.3.106
+   Compiling digest v0.10.7
+   Compiling idna v1.1.0
+   Compiling form_urlencoded v1.2.2
+   Compiling url v2.5.8
+   Compiling futures-executor v0.3.34
+   Compiling parking v2.2.1
+   Compiling event-listener v5.4.2
+   Compiling getrandom v0.4.3
+   Compiling convert_case v0.11.0
+   Compiling or_poisoned v0.1.0
+   Compiling wasm-bindgen-futures v0.4.79
+   Compiling aho-corasick v1.1.5
+   Compiling either v1.19.0
+   Compiling regex-syntax v0.8.11
+   Compiling regex-automata v0.4.18
+   Compiling futures v0.3.34
+   Compiling errno v0.3.14
+   Compiling proc-macro2-diagnostics v0.11.0
+   Compiling paste v1.0.15
+   Compiling regex v1.13.1
+   Compiling web-sys v0.3.106
+   Compiling http v1.5.0
+   Compiling proc-macro-utils v0.10.0
+   Compiling throw_error v0.3.1
+   Compiling slotmap v1.1.1
+   Compiling konst_macro_rules v0.2.19
+   Compiling unicode-xid v0.2.6
+   Compiling const_format_proc_macros v0.2.37
+   Compiling konst v0.2.20
+   Compiling event-listener-strategy v0.5.4
+   Compiling server_fn_macro v0.8.12
+   Compiling reactive_graph v0.2.16
+   Compiling send_wrapper v0.6.0
+   Compiling cpufeatures v0.2.17
+   Compiling rstml v0.13.1
+   Compiling rustix v1.1.5
+   Compiling base64 v0.22.1
+   Compiling sha2 v0.10.9
+   Compiling async-lock v3.4.2
+   Compiling const_format v0.2.37
+   Compiling hydration_context v0.3.2
+   Compiling any_spawner v0.3.0
+   Compiling derive-where v1.7.0
+   Compiling xxhash-rust v0.8.19
+   Compiling guardian v1.3.0
+   Compiling thiserror v1.0.69
+   Compiling anyhow v1.0.104
+   Compiling camino v1.2.6
+   Compiling rustc-hash v2.1.3
+   Compiling bitflags v2.13.2
+   Compiling manyhow-macros v0.14.1
+   Compiling quote-use-macros v0.9.0
+   Compiling itertools v0.14.0
+   Compiling reactive_stores_macro v0.4.4
+   Compiling pin-project-internal v1.1.13
+   Compiling thiserror-impl v1.0.69
+   Compiling tachys v0.2.19
+   Compiling winnow v1.0.4
+   Compiling prettyplease v0.3.0
+   Compiling same-file v1.0.6
+   Compiling html-escape v0.2.15
+   Compiling toml_parser v1.1.5+spec-1.1.0
+   Compiling walkdir v2.5.0
+   Compiling pin-project v1.1.13
+   Compiling reactive_stores v0.4.4
+   Compiling quote-use v0.9.0
+   Compiling manyhow v0.14.1
+   Compiling gloo-utils v0.2.0
+   Compiling either_of v0.1.9
+   Compiling oco_ref v0.2.1
+   Compiling server_fn v0.8.13
+   Compiling async-trait v0.1.92
+   Compiling collection_literals v1.0.3
+   Compiling interpolator v0.5.0
+   Compiling drain_filter_polyfill v0.1.3
+   Compiling serde_spanned v1.1.2
+   Compiling toml_datetime v1.1.2+spec-1.1.0
+   Compiling erased v0.1.2
+   Compiling const_str_slice_concat v0.1.0
+   Compiling next_tuple v0.1.0
+   Compiling toml v1.1.8+spec-1.1.0
+   Compiling attribute-derive-macro v0.11.0
+   Compiling gloo-net v0.6.0
+   Compiling server_fn_macro_default v0.8.6
+   Compiling wasm-streams v0.5.0
+   Compiling convert_case v0.6.0
+   Compiling serde_qs v0.15.0
+   Compiling typed-builder-macro v0.23.2
+   Compiling leptos_macro v0.8.19
+   Compiling fastrand v2.5.0
+   Compiling const-str v1.1.0
+   Compiling base16 v0.2.1
+   Compiling inventory v0.3.25
+   Compiling pathdiff v0.2.3
+   Compiling config v0.15.27
+   Compiling wasm_split_macros v0.2.2
+   Compiling tempfile v3.27.0
+   Compiling leptos_hot_reload v0.8.7
+   Compiling typed-builder v0.23.2
+   Compiling uuid v1.29.0
+   Compiling attribute-derive v0.11.0
+   Compiling convert_case_extras v0.2.0
+   Compiling stackpress-idea-parser v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/idea/idea-parser)
+   Compiling codee v0.3.5
+   Compiling leptos v0.8.22
+   Compiling async-once-cell v0.5.4
+   Compiling wasm_split_helpers v0.2.3
+   Compiling stackpress-idea-transformer v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/idea/idea-transformer)
+   Compiling leptos_server v0.8.8
+   Compiling leptos_config v0.8.10
+   Compiling leptos_dom v0.8.8
+   Compiling deranged v0.5.9
+   Compiling num-conv v0.2.2
+   Compiling powerfmt v0.2.1
+   Compiling time-core v0.1.9
+   Compiling time v0.3.55
+   Compiling leptos_router v0.8.17
+   Compiling stackpress-framework-schema v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-schema)
+   Compiling leptos_router_macro v0.8.7
+   Compiling leptos_meta v0.8.7
+   Compiling scopeguard v1.2.0
+   Compiling lock_api v0.4.14
+   Compiling parking_lot_core v0.9.12
+   Compiling stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+   Compiling parking_lot v0.12.5
+   Compiling httpdate v1.0.3
+   Compiling stackpress-lib v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/lib)
+   Compiling stackpress-server v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/server/server)
+   Compiling stackpress-sql v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/sql/sql)
+   Compiling crossbeam-utils v0.8.23
+   Compiling find-msvc-tools v0.1.15
+   Compiling shlex v2.0.1
+   Compiling autocfg v1.5.1
+   Compiling num-traits v0.2.19
+   Compiling cc v1.10.0
+   Compiling stackpress-framework-sql v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-sql)
+   Compiling stackpress-framework-admin v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-admin)
+   Compiling allocator-api2 v0.2.21
+   Compiling vcpkg v0.2.15
+   Compiling pkg-config v0.3.34
+   Compiling libsqlite3-sys v0.37.0
+   Compiling hashbrown v0.16.1
+   Compiling tracing-attributes v0.1.31
+   Compiling tracing-core v0.1.36
+   Compiling crc-catalog v2.5.0
+   Compiling crc v3.4.0
+   Compiling tracing v0.1.44
+   Compiling hashlink v0.11.1
+   Compiling crossbeam-queue v0.3.14
+   Compiling generated-admin-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-admin/shared)
+   Compiling futures-intrusive v0.5.0
+   Compiling spin v0.9.9
+   Compiling tokio-stream v0.1.19
+   Compiling sqlx-core v0.9.0
+   Compiling flume v0.12.0
+   Compiling atoi v2.0.0
+   Compiling sqlx-sqlite v0.9.0
+   Compiling signal-hook v0.3.18
+   Compiling sqlx v0.9.0
+   Compiling signal-hook-registry v1.4.8
+   Compiling stackpress-sql-sqlite v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/sql/sql-sqlite)
+   Compiling litrs v1.0.1
+   Compiling document-features v0.2.12
+   Compiling signal-hook-mio v0.2.5
+   Compiling generated-admin-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-admin/web)
+   Compiling crossterm v0.29.0
+   Compiling unicode-width v0.2.2
+   Compiling stackpress-cli v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/tools/cli)
+   Compiling stackpress-idea v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/idea/idea)
+   Compiling generated-workspace-tool v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-workspace/tool)
+   Compiling generated-admin-tool v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-admin/tool)
+    Finished `test` profile [unoptimized] target(s) in 1m 45s
+     Running unittests src/lib.rs (target/issue17/coverage/debug/deps/generated_admin_shared-15d322b113e54ce9)
+
+running 5 tests
+test transfer::tests::preview_permission_is_bound_to_the_exact_current_file ... ok
+test write_version::tests::submitted_snapshot_feedback_preserves_later_edits ... ok
+test crud::tests::completion_keeps_public_errors_and_honest_states ... ok
+test write_version::tests::live_versions_never_overwrite_newer_controls ... ok
+test crud::tests::every_editor_write_freezes_its_exact_operation_and_version ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/pages.rs (target/issue17/coverage/debug/deps/pages-f25b6d37785e53c9)
+
+running 1 test
+test typed_page_adapters_preserve_models_and_drafts ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/public_boundary.rs (target/issue17/coverage/debug/deps/public_boundary-97095521b07841ec)
+
+running 4 tests
+test app_component_accepts_the_public_role_interface ... ok
+test app_collection_component_keeps_the_exact_role_interface ... ok
+test normalized_boundary_defaults_and_exact_supplied_values ... ok
+test public_inputs_and_queries_keep_the_same_projection_policy ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/render.rs (target/issue17/coverage/debug/deps/render-ded44df016471252)
+
+running 4 tests
+test generated_fieldsets_and_missing_drafts ... ok
+test generated_public_tables_validate_keys_before_rendering ... ok
+test actual_generated_admin_ssr ... ok
+test generated_contracts_remain_real ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s
+
+     Running tests/transfer.rs (target/issue17/coverage/debug/deps/transfer-fd69c717178cbd9f)
+
+running 1 test
+test import_ssr_preserves_drafts_and_requires_preview_then_confirmation ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/issue17/coverage/debug/deps/generated_admin_tool-bb98e4469bb3d14e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/issue17/coverage/debug/deps/generated_admin_tool-87d30c2325f62c74)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/generation.rs (target/issue17/coverage/debug/deps/generation-419fb523a0704eea)
+
+running 2 tests
+test model_remove_rename_and_failed_regeneration_preserve_writer_contract ... ok
+test actual_three_model_writer_is_stable_and_plugin_is_removable ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.36s
+
+     Running unittests src/lib.rs (target/issue17/coverage/debug/deps/generated_admin_web-2b33ab53a731b54f)
+
+running 2 tests
+test host::origin::tests::accepted_origin_shapes ... ok
+test host::origin::tests::rejected_origin_shapes ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/issue17/coverage/debug/deps/generated_admin_web-2d5f417acb91c9e6)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/crud.rs (target/issue17/coverage/debug/deps/crud-91a8d1bfc28c9a16)
+
+running 2 tests
+test related_scope_and_typed_search_urls ... ok
+test generated_core_crud_policy_and_unknown_outcome ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.61s
+
+     Running tests/document_errors.rs (target/issue17/coverage/debug/deps/document_errors-9e2123866c890162)
+
+running 2 tests
+test error_markup_does_not_allow_attribute_breakout ... ok
+test document_failures_keep_html_and_api_failures_keep_json ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running tests/finite.rs (target/issue17/coverage/debug/deps/finite-ff6ac1a1fc32dfcb)
+
+running 1 test
+test executable_modes_are_finite ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/native_layer.rs (target/issue17/coverage/debug/deps/native_layer-392a2c15e20d05b1)
+
+running 2 tests
+test native_contract_boundaries ... ok
+test native_generated_capabilities ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.17s
+
+     Running tests/transfer.rs (target/issue17/coverage/debug/deps/transfer-ecc367dbec075311)
+
+running 5 tests
+test related_import_and_export_preserve_parent_scope ... ok
+test limits_headers_denials_and_required_omission_refuse_without_writes ... ok
+test preview_is_read_only_and_confirm_is_atomic_create_only ... ok
+test deterministic_public_export_ignores_paging_and_guard_decoding_is_explicit ... ok
+test large_export_refuses_without_truncating_and_can_be_narrowed ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.77s
+
+     Running unittests src/lib.rs (target/issue17/coverage/debug/deps/stackpress_framework_admin-e333147a53b88b6b)
+
+running 2 tests
+test components::catalog_inputs::tests::scalar_admission_boundaries_and_absence ... ok
+test components::collection_inputs::tests::exact_collection_shapes_and_budgets ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/admin_state.rs (target/issue17/coverage/debug/deps/admin_state-3f3123424b2121d4)
+
+running 2 tests
+test layout_identity_and_honest_acknowledgements ... ok
+test exact_state_roundtrip_and_generated_query_shape ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/catalog.rs (target/issue17/coverage/debug/deps/catalog-5d51047004cb68e6)
+
+running 3 tests
+test rating_minimum_reaches_native_controls ... ok
+test new_native_controls_have_escaped_labels_and_exact_seeds ... ok
+test new_catalog_roles_and_invalid_configuration_diagnostics ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/pages.rs (target/issue17/coverage/debug/deps/pages-86797d72ab0dbd20)
+
+running 2 tests
+test invalid_page_selection_cannot_publish ... ok
+test deterministic_pages_keep_native_registration_separate ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/presentation.rs (target/issue17/coverage/debug/deps/presentation-7b0dacafa0b15524)
+
+running 2 tests
+test public_wording_and_labels ... ok
+test presence_is_only_offered_when_meaningful ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/roles.rs (target/issue17/coverage/debug/deps/roles-e5a0d5bd7e5de50c)
+
+running 7 tests
+test generation::incompatible_control_and_json_path_diagnostics ... ok
+test text_view_formats_lists_without_mutating_values ... ok
+test drafts_preserve_missing_null_false_zero_defaults_and_projection ... ok
+test concrete_adapters_render_escaped_semantic_controls ... ok
+test generation::fixed_precedence_and_registry_rejections ... ok
+test generation::unknown_props_components_alias_collision_and_coordinates ... ok
+test generation::deterministic_escaped_public_wrappers_and_import_diagnostics ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/transfer.rs (target/issue17/coverage/debug/deps/transfer-aa970ee3591ff194)
+
+running 5 tests
+test uncertain_or_malformed_acknowledgements_never_claim_imported ... ok
+test strict_parser_and_lowerable_budgets ... ok
+test typed_preview_headers_presence_and_literal_escapes ... ok
+test export_guard_round_trips_are_explicit_and_no_field_is_invented ... ok
+test export_does_not_inherit_import_only_cell_or_column_limits ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+error: --no-report may not be used together with --no-clean
+Traceback (most recent call last):
+  File "/private/tmp/stackpress-issue17-m1/coverage.py", line 16, in <module>
+    subprocess.run(['cargo','llvm-cov','--locked','--offline',*scopes,'--features',features,'--all-targets','--no-clean','--no-report'],env=env,check=True)
+  File "/Users/cblanquera/.pyenv/versions/3.11.4/lib/python3.11/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['cargo', 'llvm-cov', '--locked', '--offline', '-p', 'stackpress', '-p', 'stackpress-example-review-preview', '-p', 'stackpress-leptos', '-p', 'stackpress-framework-view', '-p', 'stackpress-framework-admin', '-p', 'generated-admin-tool', '-p', 'generated-admin-shared', '-p', 'generated-admin-web', '-p', 'stackpress-example-profile-ui-shared', '-p', 'stackpress-example-profile-ui-web', '-p', 'stackpress-example-profile-ui-client', '-p', 'stackpress-example-ui-gallery-shared', '-p', 'stackpress-example-ui-gallery-web', '-p', 'stackpress-example-ui-preferences-client', '-p', 'stackpress-example-ui-preferences-shared', '-p', 'stackpress-example-ui-preferences-web', '-p', 'stackpress-example-ui-stream-shared', '-p', 'stackpress-example-ui-stream-web', '-p', 'stackpress-example-ui-stream-client', '-p', 'stackpress-example-ui-format', '--features', 'stackpress/framework-view-leptos-stream,stackpress/framework-admin-format,stackpress-example-review-preview/review-preview,stackpress-leptos/stream,stackpress-leptos/rich,stackpress-leptos/format,stackpress-framework-view/leptos-stream,stackpress-framework-view/native-file,stackpress-framework-view/web-preferences,stackpress-framework-view/web-flash,stackpress-framework-admin/codegen,stackpress-framework-admin/format,generated-admin-tool/format,generated-admin-web/format', '--all-targets', '--no-clean', '--no-report']' returned non-zero exit status 1.
+supervisor: child 28995 reaped; peak target 1628556 KiB
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/proofs/supervise.py", line 75, in <module>
+    main()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/proofs/supervise.py", line 68, in main
+    raise subprocess.CalledProcessError(child.returncode, command)
+subprocess.CalledProcessError: Command '['python3', '/private/tmp/stackpress-issue17-m1/coverage.py']' returned non-zero exit status 1.

@@ -1,0 +1,58 @@
+$ python3 /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/docs.py
+$ cargo check --locked --offline --manifest-path /private/tmp/stackpress-issue17-m2/evidence/docs/independent-i5qeuexe/Cargo.toml --features ssr,async,rich,format,stream --example doc_000 --example doc_001 --example doc_002 --example doc_003 --example doc_004 --example doc_005 --example doc_006 --example doc_007 --example doc_008 --example doc_009 --example doc_010 --example doc_011 --example doc_012 --example doc_013 --example doc_014 --example doc_015 --example doc_016 --example doc_017 --example doc_018 --example doc_019 --example doc_020 --example doc_021 --example doc_023 --example doc_024 --example doc_025 --example doc_026 --example doc_027
+    Checking leptos-independent v0.0.0 (/private/tmp/stackpress-issue17-m2/evidence/docs/independent-i5qeuexe)
+    Finished `dev` profile [unoptimized] target(s) in 2.50s
+$ cargo check --locked --offline --manifest-path /private/tmp/stackpress-issue17-m2/evidence/docs/independent-i5qeuexe/Cargo.toml --features hydrate,async,rich,format --target wasm32-unknown-unknown --example doc_000 --example doc_001 --example doc_002 --example doc_004 --example doc_005 --example doc_006 --example doc_007 --example doc_008 --example doc_009 --example doc_010 --example doc_011 --example doc_012 --example doc_013 --example doc_014 --example doc_015 --example doc_016 --example doc_017 --example doc_018 --example doc_020 --example doc_021 --example doc_022 --example doc_023 --example doc_026 --example doc_027
+    Checking leptos-independent v0.0.0 (/private/tmp/stackpress-issue17-m2/evidence/docs/independent-i5qeuexe)
+    Finished `dev` profile [unoptimized] target(s) in 1.95s
+$ cargo check --locked --offline --manifest-path /private/tmp/stackpress-issue17-m2/evidence/docs/independent-i5qeuexe/Cargo.toml --features csr,async,rich,format --target wasm32-unknown-unknown --example doc_000 --example doc_001 --example doc_002 --example doc_004 --example doc_005 --example doc_006 --example doc_007 --example doc_008 --example doc_009 --example doc_010 --example doc_011 --example doc_012 --example doc_013 --example doc_014 --example doc_015 --example doc_016 --example doc_017 --example doc_018 --example doc_020 --example doc_021 --example doc_023 --example doc_026 --example doc_027
+    Checking leptos-independent v0.0.0 (/private/tmp/stackpress-issue17-m2/evidence/docs/independent-i5qeuexe)
+    Finished `dev` profile [unoptimized] target(s) in 1.52s
+$ cargo run --locked --offline --manifest-path /private/tmp/stackpress-issue17-m2/evidence/docs/independent-i5qeuexe/Cargo.toml --features ssr,async,rich,format,stream --example doc_019
+   Compiling leptos-independent v0.0.0 (/private/tmp/stackpress-issue17-m2/evidence/docs/independent-i5qeuexe)
+    Finished `dev` profile [unoptimized] target(s) in 3.55s
+     Running `target/issue17/debug/examples/doc_019`
+$ cargo check --locked --offline --manifest-path /private/tmp/stackpress-issue17-m2/evidence/docs/view-40vg5yni/Cargo.toml --features ssr --example doc_028 --example doc_029 --example doc_030 --example doc_031
+    Checking any_spawner v0.3.0
+    Checking stackpress-server v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/server/server)
+    Checking reactive_graph v0.2.16
+    Checking reactive_stores v0.4.4
+    Checking tachys v0.2.19
+    Checking leptos_dom v0.8.8
+    Checking leptos_server v0.8.8
+    Checking leptos v0.8.22
+    Checking leptos_meta v0.8.7
+    Checking leptos_router v0.8.17
+    Checking stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+    Checking stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-view)
+    Checking view-doc-examples v0.0.0 (/private/tmp/stackpress-issue17-m2/evidence/docs/view-40vg5yni)
+    Finished `dev` profile [unoptimized] target(s) in 12.50s
+$ cargo check --locked --offline --manifest-path /private/tmp/stackpress-issue17-m2/evidence/docs/view-40vg5yni/Cargo.toml --features hydrate --target wasm32-unknown-unknown --example doc_031 --example doc_032
+    Checking reactive_graph v0.2.16
+    Checking server_fn v0.8.13
+    Checking reactive_stores v0.4.4
+    Checking tachys v0.2.19
+    Checking leptos_server v0.8.8
+    Checking leptos_dom v0.8.8
+    Checking leptos v0.8.22
+    Checking leptos_meta v0.8.7
+    Checking leptos_router v0.8.17
+    Checking stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+    Checking stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-view)
+    Checking view-doc-examples v0.0.0 (/private/tmp/stackpress-issue17-m2/evidence/docs/view-40vg5yni)
+    Finished `dev` profile [unoptimized] target(s) in 12.21s
+$ cargo check --locked --offline --manifest-path /private/tmp/stackpress-issue17-m2/evidence/docs/view-40vg5yni/Cargo.toml --features csr --target wasm32-unknown-unknown --example doc_031
+    Checking reactive_graph v0.2.16
+    Checking reactive_stores v0.4.4
+    Checking tachys v0.2.19
+    Checking leptos_dom v0.8.8
+    Checking leptos_server v0.8.8
+    Checking leptos v0.8.22
+    Checking leptos_meta v0.8.7
+    Checking leptos_router v0.8.17
+    Checking stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+    Checking stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-view)
+    Checking view-doc-examples v0.0.0 (/private/tmp/stackpress-issue17-m2/evidence/docs/view-40vg5yni)
+    Finished `dev` profile [unoptimized] target(s) in 11.74s
+PASS 33 literal Markdown Rust examples; native quick start executed
+supervisor: child 33934 reaped; peak target 3000988 KiB

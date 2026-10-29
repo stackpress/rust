@@ -1,0 +1,169 @@
+   Compiling hydration_context v0.3.2
+   Compiling any_spawner v0.3.0
+   Compiling reactive_graph v0.2.16
+   Compiling tachys v0.2.19
+   Compiling gloo-utils v0.2.0
+   Compiling server_fn v0.8.13
+   Compiling reactive_stores v0.4.4
+   Compiling gloo-net v0.6.0
+   Compiling leptos_macro v0.8.19
+   Compiling leptos v0.8.22
+   Compiling leptos_router v0.8.17
+   Compiling leptos_dom v0.8.8
+   Compiling leptos_server v0.8.8
+   Compiling leptos_meta v0.8.7
+   Compiling stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+   Compiling stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-view)
+    Finished `test` profile [unoptimized] target(s) in 17.95s
+     Running tests/leptos_safety.rs (target/issue17/debug/deps/leptos_safety-1bf3f374bc7f1e40)
+
+running 2 tests
+test script_and_html_escapers_do_not_drift ... ok
+test strict_local_locations_do_not_drift ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+    Checking stable_deref_trait v1.2.1
+    Checking zerofrom v0.1.8
+    Checking writeable v0.6.4
+    Checking yoke v0.8.4
+    Checking zerovec v0.11.9
+    Checking litemap v0.8.3
+    Checking zerotrie v0.2.5
+    Checking mio v1.2.4
+    Checking tinystr v0.8.5
+    Checking potential_utf v0.1.6
+    Checking icu_locale_core v2.4.0
+    Checking icu_collections v2.4.0
+    Checking tokio v1.54.1
+    Checking icu_provider v2.4.0
+    Checking icu_normalizer v2.4.0
+    Checking icu_properties v2.4.0
+    Checking idna_adapter v1.2.2
+    Checking idna v1.1.0
+    Checking url v2.5.8
+    Checking icu_locale_fallback_data v2.4.0
+    Checking siphasher v1.0.4
+    Checking phf_shared v0.14.0
+    Checking icu_locale_fallback v2.4.0
+    Checking any_spawner v0.3.0
+    Checking new_debug_unreachable v1.0.6
+    Checking libm v0.2.16
+    Checking reactive_graph v0.2.16
+    Checking precomputed-hash v0.1.1
+    Checking string_cache v0.11.0
+    Checking server_fn v0.8.13
+    Checking reactive_stores v0.4.4
+    Checking core_maths v0.1.1
+    Checking phf v0.14.0
+    Checking byteorder v1.5.0
+    Checking hash32 v0.2.1
+    Checking tachys v0.2.19
+    Checking web_atoms v0.3.0
+    Checking calendrical_calculations v0.2.4
+    Checking icu_calendar_data v2.4.0
+    Checking tendril v0.5.1
+    Checking fixed_decimal v0.7.3
+    Checking linked-hash-map v0.5.6
+    Checking dtoa v1.0.11
+    Checking dtoa-short v0.3.5
+    Checking lru-cache v0.1.2
+    Checking markup5ever v0.40.0
+    Checking icu_calendar v2.4.0
+    Checking heapless v0.7.17
+    Checking icu_decimal_data v2.4.0
+    Checking icu_time_data v2.4.0
+    Checking icu_plurals_data v2.4.0
+    Checking cobs v0.3.0
+    Checking minimal-lexical v0.2.1
+    Checking oncemutex v0.1.1
+    Checking regex-syntax v0.6.29
+    Checking regex-cache v0.2.1
+    Checking nom v7.1.3
+    Checking postcard v1.1.3
+    Checking icu_plurals v2.4.0
+    Checking icu_time v2.4.0
+    Checking icu_decimal v2.4.0
+    Checking html5ever v0.40.1
+    Checking icu_datetime_data v2.4.0
+    Checking icu_locale_data v2.4.0
+    Checking strum v0.27.2
+    Checking cssparser v0.38.0
+    Checking icu_pattern v0.5.1
+    Checking quick-xml v0.41.0
+    Checking leptos_dom v0.8.8
+    Checking leptos_server v0.8.8
+    Checking unicase v2.10.0
+    Checking pulldown-cmark-escape v0.11.0
+    Checking maplit v1.0.2
+    Checking fnv v1.0.7
+    Checking phonenumber v0.3.10+9.0.33
+    Checking leptos v0.8.22
+    Checking ammonia v4.2.4
+    Checking leptos_meta v0.8.7
+    Checking leptos_router v0.8.17
+    Checking pulldown-cmark v0.13.5
+    Checking icu_datetime v2.4.0
+    Checking icu_locale v2.4.0
+    Checking stackpress-lib v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/lib)
+    Checking stackpress-server v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/server/server)
+    Checking crypto-common v0.1.7
+    Checking digest v0.10.7
+    Checking sha2 v0.10.9
+    Checking powerfmt v0.2.1
+    Checking num-conv v0.2.2
+    Checking time-core v0.1.9
+    Checking deranged v0.5.9
+    Checking stackpress-framework-language v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-language)
+    Checking time v0.3.55
+    Checking stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+    Checking tokio-stream v0.1.19
+    Checking sqlx-core v0.9.0
+    Checking stackpress-framework-schema v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-schema)
+    Checking hyper v1.10.1
+    Checking sqlx-sqlite v0.9.0
+    Checking stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-view)
+    Checking sqlx v0.9.0
+    Checking stackpress-framework-admin v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-admin)
+    Checking hyper-util v0.1.20
+    Checking stackpress-server-http v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/server/http)
+    Checking generated-admin-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-admin/shared)
+    Checking stackpress-example-ui-gallery-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-gallery/shared)
+    Checking stackpress-example-ui-preferences-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/shared)
+    Checking stackpress-sql-sqlite v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/sql/sql-sqlite)
+    Checking rustix v1.1.5
+    Checking stackpress-framework-sql v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-sql)
+    Checking stackpress-example-ui-stream-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-stream/shared)
+   Compiling stackpress-example-review-preview v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/review-preview)
+    Checking tempfile v3.27.0
+    Checking stackpress-example-ui-stream-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-stream/web)
+    Checking generated-admin-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-admin/web)
+    Checking stackpress-example-ui-preferences-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/web)
+    Checking stackpress-example-ui-gallery-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-gallery/web)
+    Checking stackpress-example-ui-format v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-format)
+    Finished `dev` profile [unoptimized] target(s) in 26.44s
+    Checking stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+    Checking stackpress-lib v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/lib)
+    Checking stackpress-server v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/server/server)
+    Checking stackpress-framework-language v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-language)
+    Checking stackpress-framework-schema v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-schema)
+    Checking stackpress-sql v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/sql/sql)
+    Checking stackpress-server-http v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/server/http)
+    Checking stackpress-sql-sqlite v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/sql/sql-sqlite)
+    Checking stackpress-framework-sql v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-sql)
+   Compiling stackpress-example-review-preview v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/review-preview)
+    Checking stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-view)
+    Checking stackpress-framework-admin v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-admin)
+    Checking stackpress-example-ui-preferences-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/shared)
+    Checking stackpress-example-ui-gallery-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-gallery/shared)
+    Checking generated-admin-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-admin/shared)
+    Checking stackpress-example-ui-stream-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-stream/shared)
+    Checking stackpress-example-ui-stream-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-stream/web)
+    Checking stackpress-example-ui-gallery-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-gallery/web)
+    Checking stackpress-example-ui-preferences-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/web)
+    Checking stackpress-example-ui-format v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-format)
+    Checking generated-admin-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/generated-admin/web)
+ Documenting stackpress-example-review-preview v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/review-preview)
+    Finished `dev` profile [unoptimized] target(s) in 9.68s
+   Generated /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/target/issue17/doc/stackpress_example_review_preview/index.html and 1 other file
+supervisor: child 81137 reaped; peak target 6406104 KiB

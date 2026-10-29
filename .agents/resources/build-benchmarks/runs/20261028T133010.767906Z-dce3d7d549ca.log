@@ -1,0 +1,62 @@
+   Compiling proc-macro2 v1.0.107
+    Checking stable_deref_trait v1.2.1
+    Checking litemap v0.8.3
+    Checking writeable v0.6.4
+    Checking utf8_iter v1.0.4
+    Checking icu_properties_data v2.4.0
+    Checking icu_normalizer_data v2.4.0
+    Checking smallvec v1.16.4
+    Checking serde_core v1.0.229
+   Compiling quote v1.0.47
+   Compiling serde_json v1.0.154
+   Compiling syn v3.0.9
+    Checking percent-encoding v2.3.2
+    Checking form_urlencoded v1.2.2
+    Checking zmij v1.0.23
+    Checking memchr v2.8.3
+    Checking itoa v1.0.18
+    Checking libc v0.2.191
+   Compiling synstructure v0.14.0
+    Checking stackpress-framework-language v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-language)
+    Checking pin-project-lite v0.2.17
+   Compiling zerofrom-derive v0.1.8
+   Compiling yoke-derive v0.8.4
+   Compiling zerovec-derive v0.11.7
+    Checking zerofrom v0.1.8
+   Compiling displaydoc v0.2.7
+    Checking yoke v0.8.4
+   Compiling serde_derive v1.0.229
+    Checking zerovec v0.11.9
+    Checking tinystr v0.8.5
+    Checking icu_locale_core v2.4.0
+    Checking potential_utf v0.1.6
+    Checking zerotrie v0.2.5
+    Checking icu_collections v2.4.0
+    Checking icu_provider v2.4.0
+    Checking serde v1.0.229
+    Checking icu_normalizer v2.4.0
+    Checking icu_properties v2.4.0
+   Compiling tokio-macros v2.7.2
+    Checking idna_adapter v1.2.2
+    Checking idna v1.1.0
+    Checking url v2.5.8
+    Checking tokio v1.54.1
+    Checking stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view)
+error: cannot find attribute `serde` in this scope
+   --> crates/framework/framework-view/src/policy.rs:276:7
+    |
+276 |     #[serde(default)]
+    |       ^^^^^
+    |
+    = note: `serde` is an attribute that can be used by the derive macros `Deserialize` and `Serialize`, you might be missing a `derive` attribute
+    = note: `serde` is in scope, but it is a crate, not an attribute
+
+error: could not compile `stackpress-framework-view` (lib) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+supervisor: child 29736 reaped; peak target 649128 KiB
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/supervise.py", line 60, in <module>
+    main()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/supervise.py", line 53, in main
+    raise subprocess.CalledProcessError(child.returncode, command)
+subprocess.CalledProcessError: Command '['cargo', 'check', '--offline', '--locked', '-p', 'stackpress-framework-view', '--features', 'preferences,flash,native-file', '--all-targets']' returned non-zero exit status 101.

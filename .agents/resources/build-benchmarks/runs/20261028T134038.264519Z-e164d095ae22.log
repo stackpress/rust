@@ -1,0 +1,9 @@
+   Compiling stackpress-framework-language v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-language)
+   Compiling stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view)
+   Compiling stackpress-framework-ui v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-ui)
+   Compiling stackpress-example-profile-ui-contracts v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/contracts)
+   Compiling stackpress-example-profile-ui-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/shared)
+   Compiling stackpress-example-profile-ui-client v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/client)
+    Finished `dev` profile [unoptimized] target(s) in 8.42s
+/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/dist/hydrate
+supervisor: child 57709 reaped; peak target 2070156 KiB

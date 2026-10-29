@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/proofs/contracts.py", line 79, in <module>
+    main()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/proofs/contracts.py", line 49, in main
+    assert retired.encode() not in text and retired.replace('-', '_').encode() not in text, str(path)
+                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/graphs.py

@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "id": "20261028T090914.808789Z-b4ff026cf634",
+  "started_at": "2026-10-28T09:09:14.808789+00:00",
+  "status": "passed",
+  "label": "coordinator 00013 iOS plugin review build",
+  "kind": "build",
+  "scope": "selected",
+  "cache": "warm",
+  "command": [
+    "env",
+    "PROFILE_UI_IOS_LOGS=/private/tmp/s8-review/ios-logs/plugin",
+    "CARGO_NET_OFFLINE=true",
+    "CARGO_BUILD_JOBS=4",
+    "python3",
+    "examples/profile-ui/native/proofs/build-ios.py",
+    "--directory",
+    "/private/tmp/s8-review",
+    "--review-variant",
+    "plugin"
+  ],
+  "cwd": "/Users/cblanquera/server/projects/stackpress/rust",
+  "commit": "9c007c94659c938a360276a4a7bfb2c9b244a275",
+  "branch": "trial/3",
+  "dirty": true,
+  "host": "macOS-26.6.2-arm64-arm-64bit",
+  "machine": "arm64",
+  "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+  "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+  "environment": {},
+  "cargo_activity": {
+    "compiling": 0,
+    "checking": 0,
+    "documenting": 0
+  },
+  "cargo_build_stages": [],
+  "log": "runs/20261028T090914.808789Z-b4ff026cf634.log",
+  "ended_at": "2026-10-28T09:10:34.315368+00:00",
+  "command_seconds": 79.161104,
+  "exit_code": 0,
+  "cargo_build_seconds": null
+}

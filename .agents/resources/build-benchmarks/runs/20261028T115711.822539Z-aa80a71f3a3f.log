@@ -1,0 +1,3 @@
+{"id": "20261028T114935.913259Z-3e10a7b4f405", "exit_code": 1, "seconds": 0.260256, "errors": 146, "warnings": 25}
+{"id": "20261028T115545.340651Z-a20dbfa2d17b", "exit_code": 1, "seconds": 0.265046, "errors": 146, "warnings": 25}
+{"added_diagnostics": 0, "removed_diagnostics": 0, "design_lines": 67, "scope": "only requested design file", "diff_whitespace": "passed", "cargo_builds": 0, "target_created": false}

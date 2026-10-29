@@ -1,0 +1,59 @@
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.27
+   Compiling stable_deref_trait v1.2.1
+   Compiling syn v3.0.9
+   Compiling writeable v0.6.4
+   Compiling litemap v0.8.3
+   Compiling icu_normalizer_data v2.4.0
+   Compiling utf8_iter v1.0.4
+   Compiling icu_properties_data v2.4.0
+   Compiling synstructure v0.14.0
+   Compiling serde_core v1.0.229
+   Compiling zerofrom-derive v0.1.8
+   Compiling yoke-derive v0.8.4
+   Compiling zerofrom v0.1.8
+   Compiling zerovec-derive v0.11.7
+   Compiling yoke v0.8.4
+   Compiling displaydoc v0.2.7
+   Compiling zerovec v0.11.9
+   Compiling zerotrie v0.2.5
+   Compiling tinystr v0.8.5
+   Compiling icu_locale_core v2.4.0
+   Compiling potential_utf v0.1.6
+   Compiling icu_collections v2.4.0
+   Compiling icu_provider v2.4.0
+   Compiling zmij v1.0.23
+   Compiling smallvec v1.16.4
+   Compiling icu_normalizer v2.4.0
+   Compiling icu_properties v2.4.0
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.154
+   Compiling idna_adapter v1.2.2
+   Compiling serde_derive v1.0.229
+   Compiling memchr v2.8.3
+   Compiling itoa v1.0.18
+   Compiling percent-encoding v2.3.2
+   Compiling form_urlencoded v1.2.2
+   Compiling idna v1.1.0
+   Compiling url v2.5.8
+   Compiling stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view)
+   Compiling stackpress-framework-language v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-language)
+    Finished `test` profile [unoptimized] target(s) in 11.93s
+     Running unittests src/lib.rs (target/issue15-m0/debug/deps/stackpress_framework_language-a997df6c548ba6e9)
+
+running 4 tests
+test tests::precedence_and_routes ... ok
+test tests::compiled_prefixes_and_exact_return_context ... ok
+test tests::action_admission_and_persistence ... ok
+test tests::invalid_configuration ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests stackpress_framework_language
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+supervisor: child 30736 reaped; peak target 83180 KiB

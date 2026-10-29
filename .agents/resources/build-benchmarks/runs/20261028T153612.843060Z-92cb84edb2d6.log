@@ -1,0 +1,28 @@
+   Compiling syn v3.0.9
+    Checking stackpress-framework-language v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-language)
+   Compiling synstructure v0.14.0
+   Compiling zerovec-derive v0.11.7
+   Compiling displaydoc v0.2.7
+   Compiling serde_derive v1.0.229
+   Compiling zerofrom-derive v0.1.8
+   Compiling yoke-derive v0.8.4
+    Checking zerofrom v0.1.8
+    Checking yoke v0.8.4
+    Checking serde v1.0.229
+    Checking zerovec v0.11.9
+    Checking zerotrie v0.2.5
+    Checking tinystr v0.8.5
+    Checking potential_utf v0.1.6
+    Checking icu_collections v2.4.0
+    Checking icu_locale_core v2.4.0
+    Checking icu_provider v2.4.0
+    Checking icu_normalizer v2.4.0
+    Checking icu_properties v2.4.0
+    Checking idna_adapter v1.2.2
+    Checking idna v1.1.0
+    Checking url v2.5.8
+    Checking stackpress-lib v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/lib)
+    Checking stackpress-server v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/server/server)
+    Checking stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view)
+    Checking stackpress v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15)
+    Finished `dev` profile [unoptimized] target(s) in 7.04s

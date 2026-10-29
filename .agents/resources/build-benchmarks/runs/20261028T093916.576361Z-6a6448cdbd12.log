@@ -1,0 +1,8 @@
+Manual review: 011 and installed 013. Fixed checks are above Profile UI. Use --control restart to check persistence; --control stop to finish. Deadline: 1800s including setup.
+Traceback (most recent call last):
+  File "/Users/cblanquera/server/projects/stackpress/rust/examples/profile-ui/native/proofs/launch-ios.py", line 331, in <module>
+    manual_ios.main(sys.modules[__name__])
+  File "/Users/cblanquera/server/projects/stackpress/rust/examples/profile-ui/native/proofs/manual_ios.py", line 224, in main
+    if result not in (None,0):raise RuntimeError('Manual review failed; see manual-launch.log')
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Manual review failed; see manual-launch.log

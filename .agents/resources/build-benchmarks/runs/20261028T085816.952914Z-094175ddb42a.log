@@ -1,0 +1,7 @@
+.....................Manual review: 011 and installed 013. Fixed checks are above Profile UI. Use --control restart to check persistence; --control stop to finish. Deadline: 30s including setup.
+Manual session ended; owned device/display cleaned. Owner acceptance remains separate.
+.....
+----------------------------------------------------------------------
+Ran 26 tests in 0.075s
+
+OK

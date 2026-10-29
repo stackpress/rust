@@ -1,0 +1,11 @@
+   Compiling hydration_context v0.3.2
+   Compiling tachys v0.2.19
+   Compiling reactive_graph v0.2.16
+   Compiling leptos_macro v0.8.19
+   Compiling reactive_stores v0.4.4
+   Compiling leptos v0.8.22
+   Compiling leptos_server v0.8.8
+   Compiling leptos_dom v0.8.8
+   Compiling issue15-theme-proof v0.0.0 (/private/tmp/stackpress-issue15-m0-20261028/work/theme)
+    Finished `dev` profile [unoptimized] target(s) in 11.26s
+supervisor: child 45899 reaped; peak target 882556 KiB

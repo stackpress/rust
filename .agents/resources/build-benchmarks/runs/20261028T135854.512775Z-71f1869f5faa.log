@@ -1,0 +1,116 @@
+    Finished `dev` profile [unoptimized] target(s) in 0.71s
+/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/dist/hydrate
+hydrate: profile-ui-m2-2 /assets/639d2608678d5296c114416a112964b96c3b3c51ad62ea98e5dd4ee542b60017/start.js
+    Checking stackpress-example-ui-gallery-client v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-gallery/client)
+    Finished `dev` profile [unoptimized] target(s) in 1.05s
+   Compiling serde_core v1.0.229
+   Compiling serde_json v1.0.154
+    Checking foldhash v0.2.0
+    Checking stackpress-framework-language v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-language)
+    Checking httpdate v1.0.3
+    Checking serde v1.0.229
+    Checking indexmap v2.14.2
+    Checking hydration_context v0.3.2
+    Checking reactive_graph v0.2.16
+    Checking gloo-utils v0.2.0
+    Checking oco_ref v0.2.1
+    Checking gloo-net v0.6.0
+    Checking serde_qs v0.15.0
+    Checking reactive_stores v0.4.4
+    Checking server_fn v0.8.13
+    Checking codee v0.3.5
+    Checking tachys v0.2.19
+    Checking config v0.15.27
+    Checking leptos_config v0.8.10
+    Checking leptos_hot_reload v0.8.7
+    Checking stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view)
+    Checking stackpress-lib v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/lib)
+    Checking leptos_server v0.8.8
+    Checking leptos_dom v0.8.8
+    Checking leptos v0.8.22
+    Checking leptos_router v0.8.17
+    Checking leptos_meta v0.8.7
+    Checking stackpress-framework-ui v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-ui)
+    Checking stackpress v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15)
+    Finished `dev` profile [unoptimized] target(s) in 13.79s
+   Compiling stackpress-framework-ui v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-ui)
+   Compiling stackpress-example-profile-ui-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/shared)
+   Compiling stackpress-example-profile-ui-client v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/client)
+    Finished `dev` profile [unoptimized] target(s) in 7.07s
+/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/dist/csr
+csr: profile-ui-m2-2 /assets/34e29da4d584f43b2a6e94139d72844c814a070748383a254d74b158da8a2e8c/start.js
+    Checking hydration_context v0.3.2
+    Checking reactive_graph v0.2.16
+    Checking reactive_stores v0.4.4
+    Checking tachys v0.2.19
+    Checking leptos_dom v0.8.8
+    Checking leptos_server v0.8.8
+    Checking leptos v0.8.22
+    Checking leptos_router v0.8.17
+    Checking leptos_meta v0.8.7
+    Checking stackpress-framework-ui v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-ui)
+    Checking stackpress-example-ui-gallery-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-gallery/shared)
+    Checking stackpress-example-profile-ui-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/shared)
+    Checking stackpress-example-ui-preferences-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/shared)
+    Checking stackpress-example-ui-preferences-client v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/client)
+    Checking stackpress-example-profile-ui-client v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/client)
+    Checking stackpress-example-ui-gallery-client v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-gallery/client)
+    Finished `dev` profile [unoptimized] target(s) in 12.63s
+    Checking hydration_context v0.3.2
+    Checking reactive_graph v0.2.16
+    Checking reactive_stores v0.4.4
+    Checking tachys v0.2.19
+    Checking leptos_dom v0.8.8
+    Checking leptos_server v0.8.8
+    Checking leptos v0.8.22
+    Checking leptos_meta v0.8.7
+    Checking leptos_router v0.8.17
+    Checking stackpress-framework-ui v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-ui)
+    Checking stackpress v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15)
+    Finished `dev` profile [unoptimized] target(s) in 11.46s
+PASS gallery-native-build
+PASS gallery-hydrate-build
+PASS gallery-hydrate-bindgen
+PASS gallery-csr-build
+PASS gallery-csr-bindgen
+   Compiling syn v3.0.9
+    Checking serde_core v1.0.229
+    Checking indexmap v2.14.2
+   Compiling synstructure v0.14.0
+    Checking aho-corasick v1.1.5
+   Compiling zerofrom-derive v0.1.8
+   Compiling yoke-derive v0.8.4
+    Checking zerofrom v0.1.8
+   Compiling zerovec-derive v0.11.7
+    Checking yoke v0.8.4
+   Compiling displaydoc v0.2.7
+   Compiling serde_derive v1.0.229
+    Checking zerovec v0.11.9
+    Checking tinystr v0.8.5
+    Checking icu_locale_core v2.4.0
+    Checking potential_utf v0.1.6
+    Checking zerotrie v0.2.5
+    Checking icu_collections v2.4.0
+    Checking icu_provider v2.4.0
+    Checking regex-automata v0.4.18
+    Checking icu_properties v2.4.0
+    Checking icu_normalizer v2.4.0
+    Checking idna_adapter v1.2.2
+    Checking idna v1.1.0
+    Checking serde_json v1.0.154
+    Checking url v2.5.8
+    Checking serde v1.0.229
+    Checking regex v1.13.1
+    Checking stackpress-lib v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/lib)
+    Checking stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view)
+    Checking stackpress v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15)
+    Finished `dev` profile [unoptimized] target(s) in 8.02s
+PASS workspace-only lock update: 616 external versions/sources/checksums unchanged
+PASS pure language, unchanged default view, opt-in native-file and six browser runtime graphs
+PASS immutable one-shot asset: initial-theme-152fe9618311a2eb.js 248 bytes; no persistence/listeners/fetch
+...
+----------------------------------------------------------------------
+Ran 3 tests in 2.174s
+
+OK
+supervisor: child 10967 reaped; peak target 4095820 KiB

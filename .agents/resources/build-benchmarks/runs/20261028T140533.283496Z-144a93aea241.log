@@ -1,0 +1,16 @@
+error: invalid option '--features' for subcommand 'report'
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/coverage.py", line 41, in <module>
+    main()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/coverage.py", line 19, in main
+    subprocess.run(['cargo', 'llvm-cov', 'report', *scopes, '--features', features, '--json', '--output-path', str(report)], check=True)
+  File "/Users/cblanquera/.pyenv/versions/3.11.4/lib/python3.11/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['cargo', 'llvm-cov', 'report', '-p', 'stackpress-framework-language', '-p', 'stackpress-framework-view', '-p', 'stackpress-framework-ui', '--features', 'stackpress-framework-view/native-file,stackpress-framework-view/flash,stackpress-framework-ui/stream,stackpress-framework-ui/rich', '--json', '--output-path', '/private/tmp/stackpress-issue15-m1-20261028/evidence/framework-coverage.json']' returned non-zero exit status 1.
+supervisor: child 28845 reaped; peak target 4826328 KiB
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/supervise.py", line 60, in <module>
+    main()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/supervise.py", line 53, in main
+    raise subprocess.CalledProcessError(child.returncode, command)
+subprocess.CalledProcessError: Command '['python3', 'examples/ui-preferences/proofs/coverage.py', '--report-only']' returned non-zero exit status 1.

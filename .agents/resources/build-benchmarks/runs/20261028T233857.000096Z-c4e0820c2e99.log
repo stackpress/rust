@@ -1,0 +1,27 @@
+    Checking stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+    Checking stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-view)
+error: unexpected closing delimiter: `}`
+   --> crates/framework/framework-view/src/leptos/render.rs:155:1
+    |
+137 | fn prepare<T:Serialize,V:IntoView>(snapshot:&PageSnapshot<T>,contract:&PageContract,assets:&PageAssets,component:impl FnOnce()->Result<V,ViewError>)->Result<PreparedPage,ViewError>{
+    |                                                                                                                                                                                     - this delimiter might not be properly closed...
+...
+154 |     }
+    |     - ...as it matches this but it has different indentation
+155 | }
+    | ^ unexpected closing delimiter
+
+error: could not compile `stackpress-framework-view` (lib) due to 1 previous error
+Traceback (most recent call last):
+  File "/private/tmp/stackpress-issue17-m1/check.py", line 2, in <module>
+    subprocess.run(['cargo','check','--offline','-p','stackpress-framework-view','--features','leptos-stream'],check=True)
+  File "/Users/cblanquera/.pyenv/versions/3.11.4/lib/python3.11/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['cargo', 'check', '--offline', '-p', 'stackpress-framework-view', '--features', 'leptos-stream']' returned non-zero exit status 101.
+supervisor: child 23335 reaped; peak target 771640 KiB
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/proofs/supervise.py", line 75, in <module>
+    main()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/proofs/supervise.py", line 68, in main
+    raise subprocess.CalledProcessError(child.returncode, command)
+subprocess.CalledProcessError: Command '['python3', '/private/tmp/stackpress-issue17-m1/check.py']' returned non-zero exit status 1.

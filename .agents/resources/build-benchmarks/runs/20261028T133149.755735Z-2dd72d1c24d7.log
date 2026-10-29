@@ -1,0 +1,268 @@
+    Checking memchr v2.8.3
+    Checking serde_core v1.0.229
+    Checking cfg-if v1.0.5
+    Checking zerofrom v0.1.8
+    Checking yoke v0.8.4
+    Checking zerovec v0.11.9
+    Checking unicode-ident v1.0.27
+    Checking hashbrown v0.17.1
+    Checking serde v1.0.229
+    Checking equivalent v1.0.3
+    Checking tinystr v0.8.5
+    Checking indexmap v2.14.2
+    Checking icu_locale_core v2.4.0
+    Checking zerotrie v0.2.5
+    Checking potential_utf v0.1.6
+    Checking futures-core v0.3.34
+    Checking icu_collections v2.4.0
+    Checking icu_provider v2.4.0
+    Checking futures-sink v0.3.34
+    Checking slab v0.4.12
+    Checking futures-channel v0.3.34
+    Checking futures-task v0.3.34
+    Checking futures-io v0.3.34
+    Checking icu_properties v2.4.0
+    Checking futures-util v0.3.34
+    Checking icu_normalizer v2.4.0
+    Checking percent-encoding v2.3.2
+    Checking once_cell v1.21.4
+    Checking foldhash v0.2.0
+    Checking serde_json v1.0.154
+    Checking idna_adapter v1.2.2
+    Checking wasm-bindgen-shared v0.2.129
+    Checking idna v1.1.0
+    Checking wasm-bindgen v0.2.129
+    Checking form_urlencoded v1.2.2
+    Checking url v2.5.8
+    Checking thiserror v2.0.21
+    Checking aho-corasick v1.1.5
+    Checking js-sys v0.3.106
+    Checking regex-syntax v0.8.11
+    Checking bytes v1.12.1
+    Checking http v1.5.0
+    Checking regex-automata v0.4.18
+    Checking tokio v1.54.1
+    Checking regex v1.13.1
+    Checking wasm-bindgen-futures v0.4.79
+    Checking futures-executor v0.3.34
+    Checking futures v0.3.34
+    Checking parking v2.2.1
+   Compiling parking_lot_core v0.9.12
+    Checking or_poisoned v0.1.0
+    Checking event-listener v5.4.2
+    Checking web-sys v0.3.106
+    Checking throw_error v0.3.1
+    Checking httpdate v1.0.3
+    Checking scopeguard v1.2.0
+   Compiling siphasher v1.0.4
+   Compiling phf_shared v0.14.0
+    Checking lock_api v0.4.14
+    Checking stackpress-lib v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/lib)
+    Checking event-listener-strategy v0.5.4
+    Checking send_wrapper v0.6.0
+   Compiling fastrand v2.5.0
+   Compiling phf_generator v0.14.0
+    Checking async-lock v3.4.2
+    Checking parking_lot v0.12.5
+    Checking slotmap v1.1.1
+    Checking stackpress-server v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/server/server)
+    Checking hydration_context v0.3.2
+    Checking any_spawner v0.3.0
+    Checking proc-macro2 v1.0.107
+    Checking log v0.4.34
+    Checking either v1.19.0
+    Checking guardian v1.3.0
+    Checking rustc-hash v2.1.3
+    Checking reactive_graph v0.2.16
+    Checking itertools v0.14.0
+    Checking quote v1.0.47
+    Checking konst_macro_rules v0.2.19
+    Checking winnow v1.0.4
+    Checking toml_parser v1.1.5+spec-1.1.0
+    Checking konst v0.2.20
+    Checking thiserror v1.0.69
+    Checking pin-project v1.1.13
+    Checking reactive_stores v0.4.4
+    Checking syn v3.0.9
+    Checking gloo-utils v0.2.0
+   Compiling string_cache_codegen v0.11.2
+   Compiling phf_codegen v0.14.0
+    Checking either_of v0.1.9
+    Checking oco_ref v0.2.1
+    Checking next_tuple v0.1.0
+    Checking toml_datetime v1.1.2+spec-1.1.0
+    Checking const_str_slice_concat v0.1.0
+    Checking new_debug_unreachable v1.0.6
+    Checking unicode-segmentation v1.13.3
+    Checking erased v0.1.2
+    Checking html-escape v0.2.15
+    Checking serde_spanned v1.1.2
+    Checking bitflags v2.13.2
+    Checking drain_filter_polyfill v0.1.3
+    Checking toml v1.1.8+spec-1.1.0
+    Checking tachys v0.2.19
+    Checking convert_case v0.6.0
+    Checking proc-macro2-diagnostics v0.11.0
+   Compiling web_atoms v0.3.0
+    Checking gloo-net v0.6.0
+    Checking wasm-streams v0.5.0
+    Checking const_format v0.2.37
+    Checking serde_qs v0.15.0
+    Checking precomputed-hash v0.1.1
+    Checking pathdiff v0.2.3
+    Checking same-file v1.0.6
+    Checking base64 v0.22.1
+    Checking xxhash-rust v0.8.19
+    Checking const-str v1.1.0
+    Checking inventory v0.3.25
+    Checking server_fn v0.8.13
+    Checking walkdir v2.5.0
+    Checking config v0.15.27
+    Checking string_cache v0.11.0
+    Checking typed-builder v0.23.2
+    Checking rstml v0.13.1
+    Checking stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view)
+    Checking phf v0.14.0
+    Checking camino v1.2.6
+    Checking anyhow v1.0.104
+    Checking codee v0.3.5
+    Checking async-once-cell v0.5.4
+    Checking wasm_split_helpers v0.2.3
+    Checking leptos_hot_reload v0.8.7
+    Checking leptos_config v0.8.10
+    Checking tendril v0.5.1
+    Checking dtoa v1.0.11
+    Checking dtoa-short v0.3.5
+    Checking markup5ever v0.40.0
+   Compiling pulldown-cmark v0.13.5
+    Checking leptos_dom v0.8.8
+    Checking leptos_server v0.8.8
+    Checking html5ever v0.40.1
+    Checking leptos v0.8.22
+    Checking cssparser v0.38.0
+    Checking pulldown-cmark-escape v0.11.0
+    Checking maplit v1.0.2
+    Checking unicase v2.10.0
+    Checking leptos_router v0.8.17
+    Checking leptos_meta v0.8.7
+    Checking ammonia v4.2.4
+    Checking errno v0.3.14
+   Compiling rustix v1.1.5
+   Compiling signal-hook v0.3.18
+    Checking stackpress-framework-ui v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-ui)
+    Checking signal-hook-registry v1.4.8
+    Checking mio v1.2.4
+   Compiling litrs v1.0.1
+   Compiling document-features v0.2.12
+    Checking signal-hook-mio v0.2.5
+    Checking crossterm v0.29.0
+    Checking unicode-width v0.2.2
+    Checking stackpress-example-profile-ui-contracts v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/contracts)
+    Checking stackpress-example-profile-ui-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/shared)
+warning: unused variable: `pending`
+   --> examples/profile-ui/shared/src/lib.rs:130:9
+    |
+130 |     let pending = RwSignal::new(initial_theme_pending);
+    |         ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_pending`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: `stackpress-example-profile-ui-shared` (lib) generated 1 warning (run `cargo fix --lib -p stackpress-example-profile-ui-shared` to apply 1 suggestion)
+    Checking getrandom v0.4.3
+    Checking stackpress-cli v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/tools/cli)
+    Checking tempfile v3.27.0
+    Checking stackpress-example-ui-gallery-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-gallery/shared)
+    Checking stackpress-example-generated-profile v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/generated-profile/app)
+    Checking stackpress-example-profile-ui-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/web)
+    Checking stackpress-example-ui-preferences-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/shared)
+warning: unused import: `FlashNotice`
+ --> examples/ui-preferences/shared/src/lib.rs:2:40
+  |
+2 | use stackpress_framework_view::flash::{FlashNotice, FlashRoot};
+  |                                        ^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `AllowedActions`
+ --> examples/ui-preferences/shared/src/lib.rs:3:51
+  |
+3 | use stackpress_framework_view::access::{ActionId, AllowedActions};
+  |                                                   ^^^^^^^^^^^^^^
+
+warning: `stackpress-example-ui-preferences-shared` (lib) generated 2 warnings (run `cargo fix --lib -p stackpress-example-ui-preferences-shared` to apply 2 suggestions)
+    Checking stackpress-example-ui-preferences-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/web)
+warning: unused import: `stackpress_framework_view::preferences::{ }`
+ --> examples/ui-preferences/web/src/policy.rs:3:5
+  |
+3 | use stackpress_framework_view::preferences::{ };
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `stackpress-example-ui-preferences-web` (lib) generated 1 warning (run `cargo fix --lib -p stackpress-example-ui-preferences-web` to apply 1 suggestion)
+    Checking stackpress-example-ui-gallery-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-gallery/web)
+warning: `stackpress-example-ui-preferences-web` (lib test) generated 1 warning (1 duplicate)
+error[E0308]: mismatched types
+  --> crates/framework/framework-view/tests/contracts.rs:80:26
+   |
+80 |         contract.theme = theme.to_owned();
+   |         --------------   ^^^^^^^^^^^^^^^^ expected `Option<String>`, found `String`
+   |         |
+   |         expected due to the type of this binding
+   |
+   = note: expected enum `Option<std::string::String>`
+            found struct `std::string::String`
+help: try wrapping the expression in `Some`
+   |
+80 |         contract.theme = Some(theme.to_owned());
+   |                          +++++                +
+
+error[E0308]: mismatched types
+  --> crates/framework/framework-view/tests/contracts.rs:83:26
+   |
+83 |         snapshot.theme = theme.to_owned();
+   |         --------------   ^^^^^^^^^^^^^^^^ expected `Option<String>`, found `String`
+   |         |
+   |         expected due to the type of this binding
+   |
+   = note: expected enum `Option<std::string::String>`
+            found struct `std::string::String`
+help: try wrapping the expression in `Some`
+   |
+83 |         snapshot.theme = Some(theme.to_owned());
+   |                          +++++                +
+
+error[E0308]: mismatched types
+  --> crates/framework/framework-view/tests/contracts.rs:89:13
+   |
+89 |             theme
+   |             ^^^^^ expected `Option<String>`, found `&str`
+   |
+   = note:   expected enum `Option<std::string::String>`
+           found reference `&str`
+
+error[E0308]: mismatched types
+  --> crates/framework/framework-view/tests/contracts.rs:94:26
+   |
+94 |         contract.theme = theme.to_owned();
+   |         --------------   ^^^^^^^^^^^^^^^^ expected `Option<String>`, found `String`
+   |         |
+   |         expected due to the type of this binding
+   |
+   = note: expected enum `Option<std::string::String>`
+            found struct `std::string::String`
+help: try wrapping the expression in `Some`
+   |
+94 |         contract.theme = Some(theme.to_owned());
+   |                          +++++                +
+
+For more information about this error, try `rustc --explain E0308`.
+error: could not compile `stackpress-framework-view` (test "contracts") due to 4 previous errors
+warning: build failed, waiting for other jobs to finish...
+supervisor: child 30769 reaped; peak target 777064 KiB
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/supervise.py", line 60, in <module>
+    main()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/supervise.py", line 53, in main
+    raise subprocess.CalledProcessError(child.returncode, command)
+subprocess.CalledProcessError: Command '['cargo', 'check', '--offline', '--locked', '-p', 'stackpress-framework-view', '-p', 'stackpress-framework-language', '-p', 'stackpress-example-ui-preferences-web', '-p', 'stackpress-example-profile-ui-web', '-p', 'stackpress-example-ui-gallery-web', '--features', 'stackpress-framework-view/native-file,stackpress-framework-view/flash', '--all-targets']' returned non-zero exit status 101.

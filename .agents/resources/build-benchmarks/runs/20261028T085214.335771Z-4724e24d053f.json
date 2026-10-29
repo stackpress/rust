@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "id": "20261028T085214.335771Z-4724e24d053f",
+  "started_at": "2026-10-28T08:52:14.335771+00:00",
+  "status": "passed",
+  "label": "coordinator Part B verify: workspace clippy",
+  "kind": "clippy",
+  "scope": "workspace",
+  "cache": "cold",
+  "command": [
+    "cargo",
+    "clippy",
+    "--workspace",
+    "--all-targets",
+    "--locked",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "cwd": "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-s8-review",
+  "commit": "1c6755255f219d0687456b1596dd27a48872e808",
+  "branch": "trial/3-s8-review",
+  "dirty": true,
+  "host": "macOS-26.6.2-arm64-arm-64bit",
+  "machine": "arm64",
+  "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+  "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+  "environment": {
+    "CARGO_TARGET_DIR": "/private/tmp/s8-partb-verify/target",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_BUILD_JOBS": "6"
+  },
+  "cargo_activity": {
+    "compiling": 108,
+    "checking": 240,
+    "documenting": 0
+  },
+  "cargo_build_stages": [
+    {
+      "profile": "dev",
+      "seconds": 50.65
+    }
+  ],
+  "log": "runs/20261028T085214.335771Z-4724e24d053f.log",
+  "ended_at": "2026-10-28T08:53:05.337813+00:00",
+  "command_seconds": 50.866033,
+  "exit_code": 0,
+  "cargo_build_seconds": 50.65
+}

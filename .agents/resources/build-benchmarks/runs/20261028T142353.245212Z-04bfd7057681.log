@@ -1,0 +1,2471 @@
+   Compiling memchr v2.8.3
+   Compiling libc v0.2.191
+   Compiling serde_core v1.0.229
+   Compiling itoa v1.0.18
+   Compiling foldhash v0.2.0
+   Compiling zmij v1.0.23
+   Compiling smallvec v1.16.4
+   Compiling zerofrom v0.1.8
+   Compiling stable_deref_trait v1.2.1
+   Compiling writeable v0.6.4
+   Compiling yoke v0.8.4
+   Compiling litemap v0.8.3
+   Compiling utf8_iter v1.0.4
+   Compiling zerovec v0.11.9
+   Compiling zerotrie v0.2.5
+   Compiling icu_properties_data v2.4.0
+   Compiling icu_normalizer_data v2.4.0
+   Compiling percent-encoding v2.3.2
+   Compiling errno v0.3.14
+   Compiling pin-project-lite v0.2.17
+   Compiling form_urlencoded v1.2.2
+   Compiling bytes v1.12.1
+   Compiling futures-core v0.3.34
+   Compiling log v0.4.34
+   Compiling signal-hook-registry v1.4.8
+   Compiling socket2 v0.6.5
+   Compiling tinystr v0.8.5
+   Compiling potential_utf v0.1.6
+   Compiling icu_collections v2.4.0
+   Compiling mio v1.2.4
+   Compiling icu_locale_core v2.4.0
+   Compiling aho-corasick v1.1.5
+   Compiling regex-syntax v0.8.11
+   Compiling tokio v1.54.1
+   Compiling bitflags v2.13.2
+   Compiling once_cell v1.21.4
+   Compiling serde v1.0.229
+   Compiling indexmap v2.14.2
+   Compiling icu_provider v2.4.0
+   Compiling httpdate v1.0.3
+   Compiling icu_normalizer v2.4.0
+   Compiling icu_properties v2.4.0
+   Compiling serde_json v1.0.154
+   Compiling http v1.5.0
+   Compiling regex-automata v0.4.18
+   Compiling scopeguard v1.2.0
+   Compiling idna_adapter v1.2.2
+   Compiling lock_api v0.4.14
+   Compiling idna v1.1.0
+   Compiling parking_lot_core v0.9.12
+   Compiling typenum v1.20.1
+   Compiling futures-sink v0.3.34
+   Compiling futures-channel v0.3.34
+   Compiling url v2.5.8
+   Compiling parking_lot v0.12.5
+   Compiling rustix v1.1.5
+   Compiling futures-io v0.3.34
+   Compiling slab v0.4.12
+   Compiling generic-array v0.14.7
+   Compiling futures-task v0.3.34
+   Compiling cpufeatures v0.2.17
+   Compiling rand_core v0.10.1
+   Compiling regex v1.13.1
+   Compiling futures-util v0.3.34
+   Compiling block-buffer v0.10.4
+   Compiling stackpress-lib v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/lib)
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling getrandom v0.4.3
+   Compiling parking v2.2.1
+   Compiling either v1.19.0
+   Compiling base64 v0.22.1
+   Compiling event-listener v5.4.2
+   Compiling winnow v1.0.4
+   Compiling stackpress-server v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/server/server)
+   Compiling serde_spanned v1.1.2
+   Compiling toml_datetime v1.1.2+spec-1.1.0
+   Compiling toml_writer v1.1.3+spec-1.1.0
+   Compiling fastrand v2.5.0
+   Compiling tempfile v3.27.0
+   Compiling stackpress-idea-parser v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/idea/idea-parser)
+   Compiling wasm-bindgen v0.2.129
+   Compiling stackpress-framework-language v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-language)
+   Compiling futures-executor v0.3.34
+   Compiling toml_parser v1.1.5+spec-1.1.0
+   Compiling stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-view)
+   Compiling throw_error v0.3.1
+   Compiling futures v0.3.34
+   Compiling stackpress-idea-transformer v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/idea/idea-transformer)
+   Compiling event-listener-strategy v0.5.4
+   Compiling toml v1.1.8+spec-1.1.0
+   Compiling send_wrapper v0.6.0
+   Compiling async-lock v3.4.2
+   Compiling js-sys v0.3.106
+   Compiling slotmap v1.1.1
+   Compiling guardian v1.3.0
+   Compiling rustc-hash v2.1.3
+   Compiling itertools v0.14.0
+   Compiling thiserror v1.0.69
+   Compiling pin-project v1.1.13
+   Compiling either_of v0.1.9
+   Compiling oco_ref v0.2.1
+   Compiling syn v3.0.9
+   Compiling deranged v0.5.9
+   Compiling next_tuple v0.1.0
+   Compiling powerfmt v0.2.1
+   Compiling drain_filter_polyfill v0.1.3
+   Compiling num-conv v0.2.2
+   Compiling const_str_slice_concat v0.1.0
+   Compiling stackpress-sql v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/sql/sql)
+   Compiling new_debug_unreachable v1.0.6
+   Compiling erased v0.1.2
+   Compiling time-core v0.1.9
+   Compiling convert_case v0.6.0
+   Compiling time v0.3.55
+   Compiling serde_qs v0.15.0
+   Compiling inventory v0.3.25
+   Compiling precomputed-hash v0.1.1
+   Compiling pathdiff v0.2.3
+   Compiling const-str v1.1.0
+   Compiling config v0.15.27
+   Compiling string_cache v0.11.0
+   Compiling typed-builder v0.23.2
+   Compiling phf v0.14.0
+   Compiling codee v0.3.5
+   Compiling async-once-cell v0.5.4
+   Compiling leptos_config v0.8.10
+   Compiling wasm_split_helpers v0.2.3
+   Compiling web_atoms v0.3.0
+   Compiling tendril v0.5.1
+   Compiling proc-macro2-diagnostics v0.11.0
+   Compiling stackpress-framework-schema v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-schema)
+   Compiling dtoa v1.0.11
+   Compiling rstml v0.13.1
+   Compiling markup5ever v0.40.0
+   Compiling dtoa-short v0.3.5
+   Compiling cssparser v0.38.0
+   Compiling html5ever v0.40.1
+   Compiling leptos_hot_reload v0.8.7
+   Compiling signal-hook v0.3.18
+   Compiling maplit v1.0.2
+   Compiling pulldown-cmark-escape v0.11.0
+   Compiling unicase v2.10.0
+   Compiling ammonia v4.2.4
+   Compiling pulldown-cmark v0.13.5
+   Compiling signal-hook-mio v0.2.5
+   Compiling crossterm v0.29.0
+   Compiling unicode-width v0.2.2
+   Compiling hybrid-array v0.4.15
+   Compiling wasm-bindgen-futures v0.4.79
+   Compiling web-sys v0.3.106
+   Compiling any_spawner v0.3.0
+   Compiling hydration_context v0.3.2
+   Compiling stackpress-cli v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/tools/cli)
+   Compiling cmov v0.5.4
+   Compiling block-buffer v0.12.1
+   Compiling ctutils v0.4.2
+   Compiling reactive_graph v0.2.16
+   Compiling crypto-common v0.2.2
+   Compiling zeroize v1.9.1
+   Compiling getrandom v0.2.17
+   Compiling rustls-pki-types v1.15.1
+   Compiling untrusted v0.9.0
+   Compiling ring v0.17.14
+   Compiling allocator-api2 v0.2.21
+   Compiling crossbeam-utils v0.8.23
+   Compiling digest v0.11.3
+   Compiling hashbrown v0.16.1
+   Compiling tracing-core v0.1.36
+   Compiling subtle v2.6.1
+   Compiling crc-catalog v2.5.0
+   Compiling crc v3.4.0
+   Compiling reactive_stores v0.4.4
+   Compiling hashlink v0.11.1
+   Compiling rustls-webpki v0.103.16
+   Compiling tracing v0.1.44
+   Compiling crossbeam-queue v0.3.14
+   Compiling rustls v0.23.46
+   Compiling webpki-roots v1.0.10
+   Compiling tokio-stream v0.1.19
+   Compiling futures-intrusive v0.5.0
+   Compiling cpufeatures v0.3.1
+   Compiling num-traits v0.2.19
+   Compiling tinyvec v1.13.3
+   Compiling sha2 v0.11.1
+   Compiling hmac v0.13.0
+   Compiling chacha20 v0.10.2
+   Compiling unicode-normalization v0.1.25
+   Compiling spin v0.9.9
+   Compiling atoi v2.0.0
+   Compiling byteorder v1.5.0
+   Compiling unicode-properties v0.1.4
+   Compiling dotenvy v0.15.7
+   Compiling unicode-bidi v0.3.18
+   Compiling flume v0.12.0
+   Compiling rand v0.10.3
+   Compiling hkdf v0.13.0
+   Compiling libsqlite3-sys v0.37.0
+   Compiling sha1 v0.11.0
+   Compiling stringprep v0.1.5
+   Compiling md-5 v0.11.0
+   Compiling whoami v2.1.3
+   Compiling hex v0.4.3
+   Compiling stackpress-framework-sql v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-sql)
+   Compiling target-tuple v1.0.2
+   Compiling glob v0.3.4
+   Compiling termcolor v1.4.1
+   Compiling stackpress-idea v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/idea/idea)
+   Compiling stackpress-example-profile-ui-contracts v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/contracts)
+   Compiling trybuild v1.0.122
+   Compiling http-body v1.1.0
+   Compiling try-lock v0.2.5
+   Compiling want v0.3.1
+   Compiling httparse v1.10.1
+   Compiling atomic-waker v1.1.2
+   Compiling stackpress-example-generated-profile v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/generated-profile/app)
+   Compiling hyper v1.10.1
+   Compiling sqlx-core v0.9.0
+   Compiling hyper-util v0.1.20
+   Compiling http-body-util v0.1.4
+   Compiling stackpress-example-capability-host v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/capability-host)
+   Compiling generated-workspace-tool v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/generated-workspace/tool)
+   Compiling stackpress-server-http v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/server/http)
+   Compiling stackpress-example-profile-codegen v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/generated-profile/codegen)
+   Compiling stackpress-example-review-preview v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/review-preview)
+   Compiling sqlx-postgres v0.9.0
+   Compiling sqlx-mysql v0.9.0
+   Compiling sqlx-sqlite v0.9.0
+   Compiling data-quickstart v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/data-quickstart)
+   Compiling generated-workspace-contracts v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/generated-workspace/contracts)
+   Compiling stackpress v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15)
+   Compiling stackpress-example-profile-ui-native v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/native)
+   Compiling sqlx v0.9.0
+   Compiling stackpress-sql-sqlite v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/sql/sql-sqlite)
+   Compiling stackpress-sql-postgres v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/sql/sql-postgres)
+   Compiling generated-workspace-app v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/generated-workspace/app)
+   Compiling stackpress-example-sql-profile v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/sql-profile)
+   Compiling stackpress-sql-mysql v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/sql/sql-mysql)
+   Compiling gloo-utils v0.2.0
+   Compiling gloo-net v0.6.0
+   Compiling tachys v0.2.19
+   Compiling wasm-streams v0.5.0
+   Compiling server_fn v0.8.13
+   Compiling leptos_dom v0.8.8
+   Compiling leptos_server v0.8.8
+   Compiling leptos v0.8.22
+   Compiling leptos_meta v0.8.7
+   Compiling leptos_router v0.8.17
+   Compiling stackpress-framework-ui v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-ui)
+   Compiling stackpress-framework-admin v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/crates/framework/framework-admin)
+   Compiling stackpress-example-profile-ui-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/shared)
+   Compiling stackpress-example-ui-gallery-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-gallery/shared)
+   Compiling stackpress-example-ui-stream-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-stream/shared)
+   Compiling stackpress-example-ui-preferences-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/shared)
+   Compiling stackpress-example-ui-preferences-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/web)
+   Compiling generated-admin-shared v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/generated-admin/shared)
+   Compiling stackpress-example-profile-ui-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/web)
+   Compiling stackpress-example-ui-gallery-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-gallery/web)
+   Compiling generated-admin-tool v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/generated-admin/tool)
+   Compiling stackpress-example-ui-stream-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-stream/web)
+   Compiling stackpress-example-profile-ui-gateway v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/gateway)
+   Compiling generated-admin-web v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/generated-admin/web)
+   Compiling stackpress-example-profile-ui-client v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/profile-ui/client)
+   Compiling stackpress-example-ui-gallery-client v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-gallery/client)
+   Compiling generated-admin-client v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/generated-admin/client)
+   Compiling stackpress-example-ui-stream-client v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-stream/client)
+   Compiling stackpress-example-ui-preferences-client v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/client)
+   Compiling stackpress-example-ui-format v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-format)
+    Finished `test` profile [unoptimized] target(s) in 1m 16s
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/data_quickstart-af70b4d67a349a5e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/contracts.rs (/private/tmp/i15-m1-verify/target/debug/deps/contracts-71f9a4a4de354399)
+
+running 1 test
+test pure_contracts ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/native.rs (/private/tmp/i15-m1-verify/target/debug/deps/native-682e5617ef92663d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/operations.rs (/private/tmp/i15-m1-verify/target/debug/deps/operations-47e9c7b4b01dbc4c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/generated_admin_client-f597d9721e4c727c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/generated_admin_shared-eb8361267a6c6c93)
+
+running 5 tests
+test write_version::tests::submitted_snapshot_feedback_preserves_later_edits ... ok
+test transfer::tests::preview_permission_is_bound_to_the_exact_current_file ... ok
+test crud::tests::completion_keeps_public_errors_and_honest_states ... ok
+test write_version::tests::live_versions_never_overwrite_newer_controls ... ok
+test crud::tests::every_editor_write_freezes_its_exact_operation_and_version ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/pages.rs (/private/tmp/i15-m1-verify/target/debug/deps/pages-f4f3ef9927fd741d)
+
+running 1 test
+test typed_page_adapters_preserve_models_and_drafts ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/public_boundary.rs (/private/tmp/i15-m1-verify/target/debug/deps/public_boundary-8f03e3725c385246)
+
+running 4 tests
+test app_component_accepts_the_public_role_interface ... ok
+test app_collection_component_keeps_the_exact_role_interface ... ok
+test normalized_boundary_defaults_and_exact_supplied_values ... ok
+test public_inputs_and_queries_keep_the_same_projection_policy ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/render.rs (/private/tmp/i15-m1-verify/target/debug/deps/render-02a181c93f6deab5)
+
+running 4 tests
+test generated_fieldsets_and_missing_drafts ... ok
+test generated_public_tables_validate_keys_before_rendering ... ok
+test actual_generated_admin_ssr ... ok
+test generated_contracts_remain_real ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s
+
+     Running tests/transfer.rs (/private/tmp/i15-m1-verify/target/debug/deps/transfer-b60b6e59406b0a89)
+
+running 1 test
+test import_ssr_preserves_drafts_and_requires_preview_then_confirmation ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/generated_admin_tool-01cb0bb19cb2d4e1)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (/private/tmp/i15-m1-verify/target/debug/deps/generated_admin_tool-3689d7377e0da8eb)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/generation.rs (/private/tmp/i15-m1-verify/target/debug/deps/generation-840f2ecc8a9421c7)
+
+running 2 tests
+test model_remove_rename_and_failed_regeneration_preserve_writer_contract ... ok
+test actual_three_model_writer_is_stable_and_plugin_is_removable ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.57s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/generated_admin_web-c1f4d5fee9221a53)
+
+running 2 tests
+test host::origin::tests::accepted_origin_shapes ... ok
+test host::origin::tests::rejected_origin_shapes ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (/private/tmp/i15-m1-verify/target/debug/deps/generated_admin_web-0a72214a02afa125)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/crud.rs (/private/tmp/i15-m1-verify/target/debug/deps/crud-76770d2ce5fad683)
+
+running 2 tests
+test related_scope_and_typed_search_urls ... ok
+test generated_core_crud_policy_and_unknown_outcome ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.23s
+
+     Running tests/document_errors.rs (/private/tmp/i15-m1-verify/target/debug/deps/document_errors-839e78c4b1c65c32)
+
+running 2 tests
+test error_markup_does_not_allow_attribute_breakout ... ok
+test document_failures_keep_html_and_api_failures_keep_json ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running tests/finite.rs (/private/tmp/i15-m1-verify/target/debug/deps/finite-f3132f9a688af610)
+
+running 1 test
+test executable_modes_are_finite ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/native_layer.rs (/private/tmp/i15-m1-verify/target/debug/deps/native_layer-c299bee0c7931ef7)
+
+running 2 tests
+test native_contract_boundaries ... ok
+test native_generated_capabilities ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.22s
+
+     Running tests/transfer.rs (/private/tmp/i15-m1-verify/target/debug/deps/transfer-1788869ad3c84866)
+
+running 5 tests
+test related_import_and_export_preserve_parent_scope ... ok
+test limits_headers_denials_and_required_omission_refuse_without_writes ... ok
+test preview_is_read_only_and_confirm_is_atomic_create_only ... ok
+test deterministic_public_export_ignores_paging_and_guard_decoding_is_explicit ... ok
+test large_export_refuses_without_truncating_and_can_be_narrowed ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.76s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/generated_workspace_app-95d06739ba37438f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/atomic.rs (/private/tmp/i15-m1-verify/target/debug/deps/atomic-d11c045f3851f735)
+
+running 1 test
+test atomic_batches_and_stores ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/callable.rs (/private/tmp/i15-m1-verify/target/debug/deps/callable-55e542a6534802de)
+
+running 1 test
+test callable_store_api ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+     Running tests/contracts.rs (/private/tmp/i15-m1-verify/target/debug/deps/contracts-db373189d787be8e)
+
+running 1 test
+test native_generated_contracts ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s
+
+     Running tests/m0.rs (/private/tmp/i15-m1-verify/target/debug/deps/m0-8764840da7f6883e)
+
+running 3 tests
+test create_inputs_preserve_omission_and_null ... ok
+test generated_store_contracts ... ok
+test exclusive_session_compile_failures ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 23.42s
+
+     Running tests/matrix.rs (/private/tmp/i15-m1-verify/target/debug/deps/matrix-09a9d27ec74ec5d2)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/matrix_contracts.rs (/private/tmp/i15-m1-verify/target/debug/deps/matrix_contracts-0eebcaf65277518f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/names.rs (/private/tmp/i15-m1-verify/target/debug/deps/names-0b74a644c95e551c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/names_contracts.rs (/private/tmp/i15-m1-verify/target/debug/deps/names_contracts-6694450f79b04bfd)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/operations.rs (/private/tmp/i15-m1-verify/target/debug/deps/operations-dc3234576c552003)
+
+running 1 test
+test generated_operation_parity ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.25s
+
+     Running tests/outcomes.rs (/private/tmp/i15-m1-verify/target/debug/deps/outcomes-ecd4a46e2e7f7c7f)
+
+running 1 test
+test lost_and_cancelled_write_acknowledgements ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/public_preflight.rs (/private/tmp/i15-m1-verify/target/debug/deps/public_preflight-8d25bbc94dfd2065)
+
+running 1 test
+test public_read_preflight ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/reads.rs (/private/tmp/i15-m1-verify/target/debug/deps/reads-ed40c68a1669e716)
+
+running 1 test
+test generated_reads_and_relations ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.19s
+
+     Running tests/writes.rs (/private/tmp/i15-m1-verify/target/debug/deps/writes-d86514445b7f9d48)
+
+running 1 test
+test generated_targeted_writes ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/generated_workspace_contracts-991deaaf339e4868)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/contracts.rs (/private/tmp/i15-m1-verify/target/debug/deps/contracts-711af5876097a578)
+
+running 1 test
+test pure_generated_contracts ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s
+
+     Running tests/m1.rs (/private/tmp/i15-m1-verify/target/debug/deps/m1-9d9a01f8c4e28216)
+
+running 5 tests
+test cases::nested_preparation_is_single_and_bounded ... ok
+test cases::standalone_fieldset_and_host_client_policy ... ok
+test cases::real_matrix_preparation_projection_and_patch ... ok
+test cases::supplied_matrix_values_and_null_policy ... ok
+test cases::public_input_and_typed_query_contracts ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/generated_workspace_tool-d1dbd0acbcf9bcfb)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (/private/tmp/i15-m1-verify/target/debug/deps/generated_workspace_tool-9f800d69b22d3606)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/generation.rs (/private/tmp/i15-m1-verify/target/debug/deps/generation-d97e62764cbd5197)
+
+running 6 tests
+test direct_config_budget_is_global ... ok
+test full_type_corpus_generates ... ok
+test store_diagnostics_preserve_source ... ok
+test remove_rename_and_failure_preserve_output ... ok
+test real_schema_generates_repeatably ... ok
+test cli_generation_and_stale_check ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.33s
+
+     Running tests/m3_review.rs (/private/tmp/i15-m1-verify/target/debug/deps/m3_review-4fb2da3ea14d2830)
+
+running 1 test
+test supervised_review_report ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running tests/maintenance.rs (/private/tmp/i15-m1-verify/target/debug/deps/maintenance-89e98996e26a8994)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/storage_length.rs (/private/tmp/i15-m1-verify/target/debug/deps/storage_length-053d364b0e1f0ab6)
+
+running 1 test
+test supervised_storage_targets ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress-e278c2f08f6f2855)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/foundation.rs (/private/tmp/i15-m1-verify/target/debug/deps/foundation-9bede99fc912d9c1)
+
+running 1 test
+test bootstrap_named_plugin_and_plain_data_resolve_through_facade ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/idea.rs (/private/tmp/i15-m1-verify/target/debug/deps/idea-333889a9de289f6a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_cli-36ee09c3b7ed976a)
+
+running 7 tests
+test diagnostics::tests::diagnostic_layers_child ... ignored, run by diagnostic watchdog
+test tty::tests::close_cancellation_failure_and_repeated_close ... ignored, run by cleanup watchdog
+test tty::tests::dropping_input_transfers_cleanup_without_waiting_for_native_work ... ignored, run by cleanup watchdog
+test tty::tests::restoration_failure_retains_the_terminal_lease ... ok
+test diagnostics::tests::developer_traversal_remains_bounded ... ok
+test diagnostics::tests::diagnostic_layers_are_watchdog_bounded ... ok
+test tty::tests::cleanup_contracts_are_watchdog_bounded ... ok
+
+test result: ok. 4 passed; 0 failed; 3 ignored; 0 measured; 0 filtered out; finished in 0.47s
+
+     Running tests/args_control_contracts.rs (/private/tmp/i15-m1-verify/target/debug/deps/args_control_contracts-0203d0339d3aca32)
+
+running 7 tests
+test levels_color_policy_substitution_and_injection ... ok
+test writer_helpers_and_prompt_forwarding ... ok
+test supported_operator_forms_and_presentation_defaults ... ok
+test non_utf8_is_a_typed_indexed_error ... ok
+test usage_and_budget_failures ... ok
+test operator_boundary_preserves_target_data_and_original_tokens ... ok
+test alias_presence_and_type_errors_are_explicit ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/entry_contracts.rs (/private/tmp/i15-m1-verify/target/debug/deps/entry_contracts-be81a8b8fb75c9d4)
+
+running 2 tests
+test entry_child ... ignored, run by entry watchdog parent
+test entry_contracts_are_watchdog_bounded ... ok
+
+test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/prompt_contracts.rs (/private/tmp/i15-m1-verify/target/debug/deps/prompt_contracts-0a0793c59c8b6560)
+
+running 5 tests
+test blocked_watchdog_child ... ignored, deliberately blocked watchdog self-test
+test prompt_scenarios_child ... ignored, run by external watchdog
+test state_validation_generation_editing_and_bounds ... ok
+test prompt_scenarios_are_watchdog_bounded ... ok
+test watchdog_kills_and_reaps_a_blocked_child ... ok
+
+test result: ok. 3 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 0.25s
+
+     Running tests/render_contracts.rs (/private/tmp/i15-m1-verify/target/debug/deps/render_contracts-bd42a1a7e26a4f69)
+
+running 2 tests
+test render_child ... ignored, run by render watchdog parent
+test wrapped_rendering_is_bounded ... ok
+
+test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/run_contracts.rs (/private/tmp/i15-m1-verify/target/debug/deps/run_contracts-78dd5bda1bd0d626)
+
+running 4 tests
+test native_entry_child ... ignored, run by native-entry watchdog parent
+test run_child ... ignored, run by the external CLI watchdog
+test native_entry_rejects_harness_flags_without_building ... ok
+test cli_execution_is_watchdog_bounded ... ok
+
+test result: ok. 2 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/tty_contracts.rs (/private/tmp/i15-m1-verify/target/debug/deps/tty_contracts-83fe3b23293e9755)
+
+running 3 tests
+test tty_native_child ... ignored, run only by the PTY watchdog parent
+test non_tty_input_is_rejected_without_reading ... ok
+test native_guard_poll_cancel_and_drop_are_bounded ... ok
+
+test result: ok. 2 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.11s
+
+     Running tests/tty_prompt_contracts.rs (/private/tmp/i15-m1-verify/target/debug/deps/tty_prompt_contracts-5bad9d2a17f42d2b)
+
+running 2 tests
+test tty_prompt_child ... ignored, run by PTY parent only
+test production_native_prompt_restores_and_reaps ... ok
+
+test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.19s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_example_capability_host-751aa045932b089e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress-c684378d7093f0d5)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/cli.rs (/private/tmp/i15-m1-verify/target/debug/deps/cli-7dd7ec6a66989c89)
+
+running 11 tests
+test watchdog_blocked_child ... ignored, launched only by the watchdog self-test
+test watchdog_noisy_child ... ignored, launched only by the capture-limit self-test
+test watchdog_rejects_excess_output_and_cleans_up ... ok
+test watchdog_kills_and_reaps_a_blocked_child ... ok
+test binary_excludes_the_disabled_experimental_plugin ... ok
+test binary_http_and_call_return_the_same_public_envelope ... ok
+test unknown_event_exits_one_with_a_public_envelope ... ok
+test invalid_bootstrap_exits_two_without_stdout ... ok
+test bootstrap_before_emit_changes_the_result_limit ... ok
+test bootstrap_after_event_remains_capability_data ... ok
+test usage_errors_exit_two_without_stdout ... ok
+
+test result: ok. 9 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 0.65s
+
+     Running tests/experimental.rs (/private/tmp/i15-m1-verify/target/debug/deps/experimental-33d89d1a32a9a2c2)
+
+running 1 test
+test disabled_plugin_is_excluded_from_the_build ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/http.rs (/private/tmp/i15-m1-verify/target/debug/deps/http-062f58603d37530e)
+
+running 4 tests
+test unknown_http_route_returns_a_public_404_envelope ... ok
+test malformed_http_input_returns_400_without_callbacks ... ok
+test customization_is_visible_through_http ... ok
+test http_and_direct_call_return_the_same_public_envelope ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lifecycle.rs (/private/tmp/i15-m1-verify/target/debug/deps/lifecycle-53ce81898de1aa3b)
+
+running 4 tests
+test malformed_top_level_input_runs_no_lifecycle_hooks ... ok
+test operation_error_reaches_the_error_listener_and_report ... ok
+test request_failure_skips_search_and_is_offered_once ... ok
+test delegation_preserves_one_observable_lifecycle ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/profiles.rs (/private/tmp/i15-m1-verify/target/debug/deps/profiles-643ac127db1bcc03)
+
+running 7 tests
+test customization_requires_the_profiles_prerequisite ... ok
+test invalid_configuration_is_rejected_before_startup ... ok
+test route_exposure_is_explicit ... ok
+test direct_call_and_route_share_the_public_envelope ... ok
+test input_validation_and_empty_matches_are_explicit ... ok
+test customization_changes_behavior_without_editing_profiles ... ok
+test configuration_layers_change_the_service_limit ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_example_generated_profile-02f81bf66d34c293)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (/private/tmp/i15-m1-verify/target/debug/deps/profile_app-14afb66f29337633)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/parity.rs (/private/tmp/i15-m1-verify/target/debug/deps/parity-ca26a37d2744959a)
+
+running 2 tests
+test generated_validation_and_trusted_limit ... ok
+test generated_cli_http_and_direct_match_slice_two ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_example_profile_codegen-c84c69f70def42d3)
+
+running 1 test
+test diagnostic_tests::parser_context_and_disclosure_are_separate ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (/private/tmp/i15-m1-verify/target/debug/deps/profile_codegen-2991ff6343c0d45c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/consumer.rs (/private/tmp/i15-m1-verify/target/debug/deps/consumer-283be385d4b6a60d)
+
+running 1 test
+test independent_consumers_compile_and_remove_stale_runtime_outputs ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 33.03s
+
+     Running tests/disabled.rs (/private/tmp/i15-m1-verify/target/debug/deps/disabled-8b6cbb4e4dbd4b0c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/generation.rs (/private/tmp/i15-m1-verify/target/debug/deps/generation-489488b9968ab1f9)
+
+running 6 tests
+test generation_host_handles_success_check_and_source_failure ... ok
+test generation_is_stable_and_removal_cleans_owned_files ... ok
+test deepest_default_import_reports_the_leaf_diagnostic ... ok
+test malformed_input_has_coordinates_exit_one_and_no_source_excerpt ... ok
+test sibling_schema_import_is_stable_and_reports_child_coordinates ... ok
+test native_codegen_command_has_one_public_envelope ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.89s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_example_profile_ui_client-a7ca1de22ed710fd)
+
+running 6 tests
+test seed::tests::host_rejection_is_not_transport_failure ... ok
+test seed::native_settings_tests::admit_native_preferences_before_mount ... ok
+test seed::tests::checked_language_wire_roundtrip ... ok
+test seed::tests::typed_reply_admission ... ok
+test seed::tests::bounded_asset_admission_and_mount_agreement ... ok
+test seed::tests::public_seed_admission ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_example_profile_ui_contracts-ee95e4e3e122d82a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/page.rs (/private/tmp/i15-m1-verify/target/debug/deps/page-9bb7ed1a0e570eb1)
+
+running 1 test
+test page_identity_and_detail_status_agree ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/reply.rs (/private/tmp/i15-m1-verify/target/debug/deps/reply-9d01e78b717850de)
+
+running 5 tests
+test non_host_failure_identity ... ok
+test safe_native_transport_tokens ... ok
+test success_and_host_error_are_distinct ... ok
+test native_projection_and_empty_message_policy ... ok
+test strict_bounded_reply_shapes ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/routes.rs (/private/tmp/i15-m1-verify/target/debug/deps/routes-f86855974a2994cb)
+
+running 1 test
+test canonical_return_query_and_targets ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/wire.rs (/private/tmp/i15-m1-verify/target/debug/deps/wire-a721cbd266ba8ce3)
+
+running 2 tests
+test strict_input_and_public_projection ... ok
+test replies_reject_ambiguous_row_identity ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_example_profile_ui_gateway-7389e58e392edc9f)
+
+running 10 tests
+test tests::launch_and_policy ... ok
+test assets::tests::asset_failures_keep_distinct_context_and_sources ... ok
+test tests::already_stopped_connection ... ok
+test tests::runner_owns_all_admitted_connections ... ok
+test tests::bounded_headers_and_bodies ... ok
+test tests::page_api_assets_and_errors ... ok
+test tests::disconnect_cancels_entered_handler ... ok
+test tests::acquisition_failure_table ... ok
+test assets::tests::fail_closed_with_asset_path ... ok
+test tests::deadlines_disconnect_and_shutdown ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.14s
+
+     Running unittests src/bin/probe.rs (/private/tmp/i15-m1-verify/target/debug/deps/probe-805d96e6a0bbd803)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_example_profile_ui_gateway-d395f6e70ffcd874)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_example_profile_ui_native-aa160def26a6cd3d)
+
+running 2 tests
+
+running 1 test
+test preferences::tests::command_fields_and_restart ... ok
+
+thread '<unnamed>' (114126077) panicked at examples/profile-ui/native/src/tests.rs:295:13:
+controlled registry poison
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test tests::native_cases ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.04s
+
+test tests::native_cases ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_example_profile_ui_shared-5824aaf9f9376398)
+
+running 15 tests
+test preferences::tests::omitted_hook_is_immediate ... ok
+test tests::controller_retains_host_rejection_identity ... ok
+test preferences::tests::invalid_acknowledgement_and_disposed_root_are_inert ... ok
+test tests::controller_rejects_ambiguous_rows_without_publishing ... ok
+test preferences::tests::publish_only_after_a_successful_acknowledgement ... ok
+test tests::controller_preserves_newest_result_and_disposal ... ok
+test tests::exact_detail_and_not_found ... ok
+test tests::invalidation_cancellation_and_retry_preserve_useful_rows ... ok
+test tests::reply_validation_and_generation_exhaustion ... ok
+test tests::catalog_navigation_and_retained_history ... ok
+test tests::mounted_form_action ... ok
+test tests::recovery_notice_survives_initial_search ... ok
+test tests::concurrent_locales_remain_isolated ... ok
+test tests::shared_views_and_explicit_bootstrap ... ok
+test tests::counted_profile_phrases ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_example_profile_ui_web-c5a02184041520a7)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_example_profile_ui_web-02e09892b2af4aca)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/codec.rs (/private/tmp/i15-m1-verify/target/debug/deps/codec-467db8121b0695b0)
+
+running 8 tests
+test route_component_edge_table ... ok
+test foreign_delivery_and_conversion_failure ... ok
+test public_error_envelope_contract ... ok
+test strict_fixed_codec ... ok
+test reactive_head_failure_does_not_escape_the_request ... ok
+test encoded_route_contract ... ok
+test mounted_route_head_and_seed_agreement ... ok
+test initial_settings_and_detail_projection ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/config.rs (/private/tmp/i15-m1-verify/target/debug/deps/config-320508cfa0637cb6)
+
+running 1 test
+test explicit_file_and_input_failures ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/pages.rs (/private/tmp/i15-m1-verify/target/debug/deps/pages-138d46afa146a7b3)
+
+running 2 tests
+test child_abort_never_renders ... ok
+test generated_html_and_safe_seed ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/reuse.rs (/private/tmp/i15-m1-verify/target/debug/deps/reuse-55cc11f072603f73)
+
+running 1 test
+test one_operation_one_compiled_customization ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/sqlite.rs (/private/tmp/i15-m1-verify/target/debug/deps/sqlite-196ef5a211036cb8)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_example_review_preview-511a64d4cfb3544c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/cli.rs (/private/tmp/i15-m1-verify/target/debug/deps/cli-4f3a1f1e6e440f65)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_example_sql_profile-c524d62550e32552)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (/private/tmp/i15-m1-verify/target/debug/deps/sql_profile-a932c6fe5b5a8e73)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/setup.rs (/private/tmp/i15-m1-verify/target/debug/deps/sql_profile_setup-fd65fee697cb90f1)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/executables.rs (/private/tmp/i15-m1-verify/target/debug/deps/executables-5b96ef57c475fe57)
+
+running 2 tests
+test invalid_executable_input_and_missing_install_fail_without_effects ... ok
+test setup_and_cli_are_explicit_and_match_reference_bytes ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.43s
+
+     Running tests/proof.rs (/private/tmp/i15-m1-verify/target/debug/deps/proof-225aa287da9cc01b)
+
+running 4 tests
+test native_child ... ignored, launched by native_contract_under_watchdog
+test stuck_child ... ignored, watchdog negative control
+test watchdog_catches_synchronous_stall ... ok
+test native_contract_under_watchdog ... ok
+
+test result: ok. 2 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 0.21s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_example_ui_format-fee52099eac1289f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_example_ui_gallery_client-c2b414385072b588)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_example_ui_gallery_shared-e1ae80fafb5d9420)
+
+running 8 tests
+test collection_proof::tests::presence_codec_boundaries ... ok
+test tests::local_form_validation ... ok
+test seed::tests::acknowledged_location_is_same_app ... ok
+test breadth::tests::early_draft_boundaries ... ok
+test suggestion_loader::tests::explicit_acquisition_results ... ok
+test seed::tests::seed_and_replay_admission ... ok
+test breadth::tests::rich_people_fixture_and_layout ... ok
+test tests::shared_gallery_renders_independent_async_roots ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_example_ui_gallery_web-e8b39476297dd327)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_example_ui_gallery_web-0487d3b52d2c2a18)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/finite.rs (/private/tmp/i15-m1-verify/target/debug/deps/finite-519534d8ac1d4d2c)
+
+running 2 tests
+test preference_action_edges ... ok
+test locale_pages_and_csr_seed ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.82s
+
+     Running unittests examples/collections.rs (/private/tmp/i15-m1-verify/target/debug/examples/collections-c19c2aa6f787fcfa)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_example_ui_preferences_client-6d52fb29020c27ca)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_example_ui_preferences_shared-ca217102473a3a78)
+
+running 1 test
+test tests::seed_phrases_and_ssr ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_example_ui_preferences_web-b68b526e628bf4d5)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_example_ui_preferences_web-1ff0aa9e06cf6d16)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/finite.rs (/private/tmp/i15-m1-verify/target/debug/deps/finite-9be79d16de3dcb35)
+
+running 5 tests
+test protected_routes_reject_other_mounts ... ok
+test protected_links_follow_the_configured_mount ... ok
+test persistence_and_cookie_scope ... ok
+test host_selected_pages_and_route_denials ... ok
+test protected_exposure_fails_closed ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.86s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_example_ui_stream_client-bdda7c96a7abb35e)
+
+running 1 test
+test tests::admission ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_example_ui_stream_shared-400cf74e8643aa92)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_example_ui_stream_web-666fb58fedb87d52)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_example_ui_stream_web-81f5605b8aa4356a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/finite.rs (/private/tmp/i15-m1-verify/target/debug/deps/finite-fb8eaa7cb9538685)
+
+running 3 tests
+test child ... ignored, launched by parent watchdog
+test cli_protocol ... ok
+test watchdog ... ok
+
+test result: ok. 2 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 5.90s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_framework_admin-75287270d4627dd1)
+
+running 2 tests
+test components::catalog_inputs::tests::scalar_admission_boundaries_and_absence ... ok
+test components::collection_inputs::tests::exact_collection_shapes_and_budgets ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/admin_state.rs (/private/tmp/i15-m1-verify/target/debug/deps/admin_state-04f3f0ed63ee16d2)
+
+running 2 tests
+test layout_identity_and_honest_acknowledgements ... ok
+test exact_state_roundtrip_and_generated_query_shape ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/catalog.rs (/private/tmp/i15-m1-verify/target/debug/deps/catalog-f6339069334bbfa7)
+
+running 3 tests
+test rating_minimum_reaches_native_controls ... ok
+test new_native_controls_have_escaped_labels_and_exact_seeds ... ok
+test new_catalog_roles_and_invalid_configuration_diagnostics ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+     Running tests/pages.rs (/private/tmp/i15-m1-verify/target/debug/deps/pages-30cbc75c64c118f3)
+
+running 2 tests
+test invalid_page_selection_cannot_publish ... ok
+test deterministic_pages_keep_native_registration_separate ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/presentation.rs (/private/tmp/i15-m1-verify/target/debug/deps/presentation-deeacc721fa91279)
+
+running 2 tests
+test public_wording_and_labels ... ok
+test presence_is_only_offered_when_meaningful ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/roles.rs (/private/tmp/i15-m1-verify/target/debug/deps/roles-619ce21995609474)
+
+running 7 tests
+test generation::incompatible_control_and_json_path_diagnostics ... ok
+test text_view_formats_lists_without_mutating_values ... ok
+test drafts_preserve_missing_null_false_zero_defaults_and_projection ... ok
+test concrete_adapters_render_escaped_semantic_controls ... ok
+test generation::fixed_precedence_and_registry_rejections ... ok
+test generation::unknown_props_components_alias_collision_and_coordinates ... ok
+test generation::deterministic_escaped_public_wrappers_and_import_diagnostics ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/transfer.rs (/private/tmp/i15-m1-verify/target/debug/deps/transfer-fca817fd05dcf604)
+
+running 5 tests
+test uncertain_or_malformed_acknowledgements_never_claim_imported ... ok
+test strict_parser_and_lowerable_budgets ... ok
+test typed_preview_headers_presence_and_literal_escapes ... ok
+test export_guard_round_trips_are_explicit_and_no_field_is_invented ... ok
+test export_does_not_inherit_import_only_cell_or_column_limits ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_framework_language-ffe160b6346e8140)
+
+running 2 tests
+test tests::invalid_registry_configuration ... ok
+test tests::registry_aliases_and_borrowed_enumeration ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_framework_schema-114f0353912d8316)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/m0.rs (/private/tmp/i15-m1-verify/target/debug/deps/m0-79fd2cd39641ddc9)
+
+running 6 tests
+test pure_input_and_errors ... ok
+test normalization::diagnostic_map_keeps_imported_winning_attribute ... ok
+test normalization::checked_names_and_registry ... ok
+test normalization::unavailable_providers_do_not_fall_back_to_literals ... ok
+test normalization::relation_contracts ... ok
+test normalization::supported_and_unsupported_semantics ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/m1.rs (/private/tmp/i15-m1-verify/target/debug/deps/m1-0df5a3820037e1f5)
+
+running 10 tests
+test generation::public_literals_and_explicit_model_names ... ok
+test patch_and_bounded_issues ... ok
+test canonical_value_matrix ... ok
+test generation::semantic_diagnostics_use_winning_source ... ok
+test generation::clock_providers_and_host_validation ... ok
+test generation::diagnostic_categories ... ok
+test generation::supported_types_defaults_and_keys ... ok
+test generation::final_semantic_edges ... ok
+test generation::assertions_execute_and_reject_incompatible_arguments ... ok
+test generation::roles_props_aliases_projection_and_private_catalog ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/storage_length.rs (/private/tmp/i15-m1-verify/target/debug/deps/storage_length-a28289de61241b42)
+
+running 4 tests
+test sensitive_rule_projection ... ok
+test json_and_fingerprint ... ok
+test rules_defaults_and_characters ... ok
+test declarations_and_diagnostics ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_framework_sql-1b3713f33e55be4e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/codecs.rs (/private/tmp/i15-m1-verify/target/debug/deps/codecs-9d85811ea804d0ec)
+
+running 4 tests
+test error_context_and_cleanup_are_separate ... ok
+test patch_encoding_is_partial_and_ordered ... ok
+test scalar_codecs_are_strict ... ok
+test record_byte_budget_precedes_later_codec_work ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/conflict.rs (/private/tmp/i15-m1-verify/target/debug/deps/conflict-981cc0c02b1c94ca)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/executor_budgets.rs (/private/tmp/i15-m1-verify/target/debug/deps/executor_budgets-e6c92ab458d9c9c6)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/m3.rs (/private/tmp/i15-m1-verify/target/debug/deps/m3-0d5da3f3dfde819b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/m3_review.rs (/private/tmp/i15-m1-verify/target/debug/deps/m3_review-314bb538adf78b33)
+
+running 2 tests
+test checked_rename_artifact_is_unchanged ... ok
+test aggregates_before_precondition_refusal ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/m3_seeds.rs (/private/tmp/i15-m1-verify/target/debug/deps/m3_seeds-6413ad614a699298)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/migrations.rs (/private/tmp/i15-m1-verify/target/debug/deps/migrations-c982b3b3b240e18f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/storage_codegen.rs (/private/tmp/i15-m1-verify/target/debug/deps/storage_codegen-ee0a2e31f8d0615d)
+
+running 3 tests
+test complete_catalog_fk_widths ... ok
+test explicit_storage_and_target_signatures ... ok
+test no_inference_or_unstable_scan ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/storage_length.rs (/private/tmp/i15-m1-verify/target/debug/deps/storage_length-4866fd60a55be16d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_framework_ui-0c2d20c7b39117a8)
+
+running 43 tests
+test components::breadth_tests::css_zoom_admission ... ok
+test components::breadth_tests::paging_and_geometry ... ok
+test components::breadth_tests::foreign_suggestion_completion_is_rejected ... ok
+test components::breadth_tests::disclosure_and_choice_admission ... ok
+test components::breadth_tests::bounded_input_policies ... ok
+test components::core_tests::checked_display_boundaries ... ok
+test components::breadth_tests::typed_collections ... ok
+test components::core_tests::select_admission_and_state ... ok
+test components::breadth_tests::searchable_choice_boundaries ... ok
+test components::breadth_tests::local_table_controller ... ok
+test components::core_tests::text_and_collection_boundaries ... ok
+test components::breadth_tests::native_dialog_mode_policies ... ok
+test components::tag_list::tests::exact_append_and_neighbour_removal ... ok
+test components::tests::safe_navigation_targets ... ok
+test components::core_tests::pinned_leptos_raw_text_characterization ... ok
+test components::breadth_tests::table_selection_is_native_before_javascript ... ok
+test components::tests::advanced_components_are_native_and_inert_before_javascript ... ok
+test components::tests::controls_render_native_accessible_markup ... ok
+test language::tests::checked_language_bounds ... ok
+test language::tests::phrase_and_text_policy ... ok
+test language::tests::scoped_replacement_and_disposal ... ok
+test language::tests::integer_plural_categories_and_text ... ok
+test language::tests::translated_nodes_render_as_safe_views ... ok
+test language::tests::counted_node_translation ... ok
+test render::escaping_tests::escaping_borrows_text ... ok
+test components::tests::list_layout_and_notifications ... ok
+test components::core_tests::ordinary_semantic_markup ... ok
+test resources::tests::cancellation_before_poll_and_after_completion ... ok
+test replay::tests::replay_roundtrip_and_limits ... ok
+test components::breadth_tests::collection_rows_and_plain_chips_are_accessible_before_javascript ... ok
+test components::breadth_tests::table_layout_and_rating_minimum_markup ... ok
+test components::breadth_tests::breadth_semantic_markup_and_hostile_text ... ok
+test state::tests::configurable_notification_budgets ... ok
+test state::tests::providers_are_explicit_isolated_and_disposed ... ok
+test state::tests::notification_limits_duplicates_and_dismissal ... ok
+test stream::tests::child ... ignored, called by stream watchdog
+test stream::tests::budget_and_replay_contract ... ok
+test stream::tests::explicit_completion_protocol ... ok
+test rich::tests::explicit_http_authorities_only ... ok
+test rich::tests::closed_policy_and_budgets ... ok
+test rich::tests::markdown_and_exact_budget_edges ... ok
+test rich::tests::mutation_corpus_is_stable ... ok
+test stream::tests::watchdog ... ok
+
+test result: ok. 42 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.18s
+
+     Running tests/async_feasibility.rs (/private/tmp/i15-m1-verify/target/debug/deps/async_feasibility-7189b91da32ebaf4)
+
+running 8 tests
+test watchdog::exact_completion_marker ... ok
+test cooperative_unwind_releases_loader ... ok
+test resource_unwind_counterexample ... ok
+test cooperative_cancel_releases_loader ... ok
+test unmatched_child_filter_is_rejected - should panic ... ok
+test resource_success_control ... ok
+test cooperative_success_releases_loader ... ok
+test resource_cancellation_counterexample ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/async_renderer.rs (/private/tmp/i15-m1-verify/target/debug/deps/async_renderer-9c276c925c2a229f)
+
+running 3 tests
+test watchdog::exact_completion_marker ... ok
+test owned_async_renderer_exit_matrix ... ok
+test owned_render_migrates_between_threads ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/cleanup.rs (/private/tmp/i15-m1-verify/target/debug/deps/cleanup-e23ad03d9581474f)
+
+running 5 tests
+test staged_render_releases_owner_state ... ok
+test no_runtime_never_panics ... ok
+test every_render_exit_releases_reactive_state ... ok
+test reactive_title_survives_owner_cleanup ... ok
+test unwind_child_releases_render_state ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/executor.rs (/private/tmp/i15-m1-verify/target/debug/deps/executor-b3099867a84743a0)
+
+running 1 test
+test startup_is_explicit_idempotent_and_checked ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/routing.rs (/private/tmp/i15-m1-verify/target/debug/deps/routing-1f606c6a7d369a80)
+
+running 2 tests
+test compiled_path_uses_leptos_segments ... ok
+test head_router_and_limits ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/suggestions.rs (/private/tmp/i15-m1-verify/target/debug/deps/suggestions-d0ec6f1377423649)
+
+running 2 tests
+test watchdog::exact_completion_marker ... ok
+test yielding_suggestion_lifetime ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/system_theme.rs (/private/tmp/i15-m1-verify/target/debug/deps/system_theme-73912c393bc60d70)
+
+running 1 test
+test saved_choices_and_unset_head ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_framework_view-5304568b774a04fc)
+
+running 18 tests
+test preferences::locale::tests::compiled_prefixes_and_exact_return_context ... ok
+test preferences::locale::tests::precedence_and_routes ... ok
+test preferences::locale::tests::action_admission_and_persistence ... ok
+test preferences::locale::tests::invalid_configuration ... ok
+test presentation_tests::confirm_actual_cookie_readback ... ok
+test presentation_tests::explicit_host_policy_or_fail_closed ... ok
+test presentation_tests::flash_wire_expansion_is_bounded ... ok
+test presentation_tests::scope_and_theme_tokens ... ok
+test presentation_tests::flash_consumption_bounds_and_root_dedupe ... ok
+test theme::tests::checked_external_tag_and_nonce ... ok
+test presentation_tests::single_writer_and_failure_preserve_content ... ok
+test presentation_tests::unset_is_absence_and_legacy_readback_only ... ok
+test presentation_tests::select_and_admit_settings ... ok
+test adapters::native::tests::symlinks_and_non_regular_files_are_not_followed ... ok
+test adapters::native::tests::corrupt_inputs_are_bounded_and_not_rewritten ... ok
+test adapters::native::tests::real_restart_and_invalid_updates ... ok
+test adapters::native::tests::abandoned_staging_is_bounded_and_never_followed ... ok
+test adapters::native::tests::fifo_open_cannot_hang ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/contracts.rs (/private/tmp/i15-m1-verify/target/debug/deps/contracts-035cdb231df3bfb6)
+
+running 3 tests
+test hostile_seed_and_contract_drift ... ok
+test saved_theme_or_unset ... ok
+test bounds_and_checked_metadata ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+     Running tests/lifecycle.rs (/private/tmp/i15-m1-verify/target/debug/deps/lifecycle-156a53c39b0ebafc)
+
+running 2 tests
+test duplicate_and_invalid_registration ... ok
+test stage_table_and_drop ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/policies.rs (/private/tmp/i15-m1-verify/target/debug/deps/policies-0201f4cd6dd8b1f9)
+
+running 8 tests
+test serialization_preserves_cause_without_disclosure ... ok
+test compiled_capture_boundaries ... ok
+test catalog_and_exact_parameters ... ok
+test status_and_lower_limits_roundtrip ... ok
+test metadata_and_assets_are_checked ... ok
+test asset_logical_byte_boundary_precedes_build_matching ... ok
+test escaped_assets_roundtrip ... ok
+test asset_decode_boundaries ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_idea-64d2ea8ffa02ca1d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/generation.rs (/private/tmp/i15-m1-verify/target/debug/deps/generation-c002874921a72a24)
+
+running 4 tests
+test source_and_finalization_failures_preserve_output ... ok
+test imports_references_auxiliary_inputs_and_check_mode ... ok
+test planning_and_install_failures_preserve_owned_output ... ok
+test per_run_environment_and_limits_remain_explicit ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_idea_parser-87ad5430486da5b4)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/contracts.rs (/private/tmp/i15-m1-verify/target/debug/deps/contracts-15d13bcf81cf704d)
+
+running 8 tests
+test deep_child ... ignored
+test finite_limits_and_reference_amplification ... ignored
+test plugins_and_members_keep_source_order ... ok
+test source_coordinates_are_valid_and_actionable ... ok
+test corrected_grammar_table ... ok
+test environment_and_reference_resolution ... ok
+test upstream_compiled_fixtures_and_final_references ... ok
+test deep_input_returns_a_diagnostic_under_process_watchdog ... ok
+
+test result: ok. 6 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 0.12s
+
+     Running tests/m1.rs (/private/tmp/i15-m1-verify/target/debug/deps/m1-ef81b3e2edb24c2b)
+
+running 14 tests
+test resource_child ... ignored
+test eof_unicode_and_trivia_boundaries ... ok
+test source_span_serialization_and_invalid_config ... ok
+test all_syntax_ranges_are_valid_utf8 ... ok
+test corrected_grammar_codes_and_spans ... ok
+test shared_tokenizer_scanner_contract ... ok
+test normalized_json_validation_and_order ... ok
+test normalized_field_and_reference_mutation_rejections ... ok
+test reference_errors_and_composed_targets ... ok
+test strict_import_boundary_and_legacy_compatibility ... ok
+test syntax_environment_and_clone_independence ... ok
+test typed_references_leave_literal_lookalikes_untouched ... ok
+test full_pinned_current_compiled_fixture_matrix ... ok
+test resource_limits_under_watchdog ... ok
+
+test result: ok. 13 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.10s
+
+     Running tests/rounds.rs (/private/tmp/i15-m1-verify/target/debug/deps/rounds-640f308a28e842cc)
+
+running 5 tests
+test round_limits_child ... ignored
+test exported_json_shapes_and_reference_order_remain_frozen ... ok
+test scanner_lookahead_and_error_precedence ... ok
+test invalid_reference_site_decision_table ... ok
+test reference_copy_and_span_limits_under_watchdog ... ok
+
+test result: ok. 4 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_idea_transformer-abacd8561bc16964)
+
+running 48 tests
+test output::format::tests::formatter_child ... ignored, run by formatter watchdog
+test compose::merge::tests::reference_sites_follow_mutable_winners ... ok
+test compose::merge::tests::reference_sites_follow_replacement_and_adoption ... ok
+test output::tests::duplicate_manifest_paths_and_unknown_fields_are_rejected ... ok
+test output::tests::empty_plans_require_and_install_the_marker ... ok
+test output::tests::imported_child_replaces_immutable_local_without_mutating_child ... ok
+test output::tests::clean_repeat_check_and_removed_files ... ok
+test output::tests::interrupted_install_child ... ignored
+test output::tests::check_and_install_share_the_same_differences ... ok
+test output::tests::empty_selection_removes_partitions_and_reports_are_deterministic ... ok
+test output::tests::lock_child ... ignored
+test output::tests::dangling_recovery_links_and_unrelated_temps_are_preserved ... ok
+test output::tests::manual_drift_and_invalid_state_block_writes ... ok
+test output::tests::all_output_symlink_surfaces_are_rejected ... ok
+test output::tests::initially_empty_root_recovers_across_install_boundaries ... ok
+test output::tests::interruption_requires_explicit_recovery ... ok
+test output::tests::fifo_inspection_is_watchdog_bounded ... ok
+test output::tests::panicking_transform_child ... ignored
+test output::tests::native_writer_lock_is_exclusive ... ok
+test output::tests::orphan_and_invalid_recovery_states_require_inspection ... ok
+test output::tests::native_delete_permission_failure_is_recoverable ... ok
+test output::tests::special_file_child ... ignored
+test output::tests::symlinks_and_unmarked_roots_are_rejected ... ok
+test output::tests::cleanup_keeps_marker_until_last_entry_and_recovers_each_failure ... ok
+test output::tests::non_utf8_names_and_owned_text_preserve_the_tree ... ok
+test plan::tests::ancestor_directory_case_aliases_are_collisions ... ok
+test plan::tests::claims_respect_ownership_reserved_aggregates_and_duplicate_paths ... ok
+test plan::tests::contribution_targets_and_aggregate_conflicts ... ok
+test output::tests::transform_panic_leaves_prior_output_intact_under_watchdog ... ok
+test registry::tests::complete_preflight_missing_disabled_self_cycle_order_and_contract ... ok
+test output::tests::manifest_validation_and_legacy_length_compatibility ... ok
+test registry::tests::context_snapshots_and_aggregate_modules ... ok
+test registry::tests::contextual_errors_preserve_cause_without_disclosing_values ... ok
+test registry::tests::execution_order_and_preflight_errors ... ok
+test registry::tests::later_transform_observes_prior_contributions_and_typed_config ... ok
+test registry::tests::legacy_partition_module_files_remain_supported ... ok
+test registry::tests::metadata_conflicts_are_atomic_and_case_portable ... ok
+test registry::tests::path_partition_and_budget_failures ... ok
+test registry::tests::selection_defaults_empty_and_exact_match ... ok
+test registry::tests::contract_metadata_and_auxiliary_budget_boundaries ... ok
+test output::tests::recovery_resumes_partial_cleanup_without_accepting_manual_files ... ok
+test output::tests::recovery_validates_all_trees_before_mutation ... ok
+test output::tests::tampered_manifest_cannot_claim_external_paths ... ok
+test plan::tests::output_budget_boundaries ... ok
+test output::tests::killed_install_barriers_are_recoverable_after_explicit_lock_inspection ... ok
+test output::tests::complete_install_failure_matrix ... ok
+test output::tests::rust_formatting_and_failure_are_before_installation ... ok
+test output::format::tests::formatter_contracts_are_watchdog_bounded ... ok
+
+test result: ok. 43 passed; 0 failed; 5 ignored; 0 measured; 0 filtered out; finished in 0.42s
+
+     Running tests/compose_json.rs (/private/tmp/i15-m1-verify/target/debug/deps/compose_json-adc5964b4bd9495e)
+
+running 8 tests
+test deep_json_child ... ok
+test json_lowered_budgets ... ok
+test exact_numbers_and_literal_strings ... ok
+test json_root_transitive_uses_and_plugin_order ... ok
+test malformed_json_and_duplicate_keys_are_errors ... ok
+test normalized_columns_are_validated ... ok
+test normalized_json_and_idea_imports_are_equivalent ... ok
+test deep_json_fails_without_stack_abort ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/compose_references.rs (/private/tmp/i15-m1-verify/target/debug/deps/compose_references-14b4c9b72772b30b)
+
+running 11 tests
+test cross_source_reference_cycles_are_not_import_cycles ... ok
+test g19_replacement_discards_losing_reference_sites ... ok
+test reference_metadata_is_charged_before_snapshot_copy ... ok
+test imported_literal_lookalikes_remain_literal ... ok
+test imported_forward_reference_keeps_its_restriction ... ok
+test reference_target_uses_later_g19_replacement ... ok
+test only_winning_attributes_and_columns_are_finalized ... ok
+test invalid_typed_json_sites_fail_before_composition ... ok
+test finalization_expansion_limit_retains_imported_site ... ok
+test unresolved_reference_reports_referencing_coordinates ... ok
+test typed_json_imports_preserve_actual_reference_metadata ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/compose_rules.rs (/private/tmp/i15-m1-verify/target/debug/deps/compose_rules-3f5b755cb94b1126)
+
+running 14 tests
+test canonical_cycles_are_active_stack_errors ... ok
+test failure_causes_and_importer_chain_survive ... ok
+test composition_budgets_have_meaningful_boundaries ... ok
+test explicit_inputs_and_unresolved_imported_props ... ok
+test changed_canonical_snapshots_are_rejected ... ok
+test absent_sections_and_inert_child_plugins ... ok
+test declaration_order_is_local_then_imported ... ok
+test diamond_snapshots_and_result_clones_are_independent ... ok
+test multiple_imports_recheck_accumulated_mutability ... ok
+test native_symlink_cycle ... ok
+test native_refresh_and_concurrent_memory_runs ... ok
+test props_enums_and_multiple_import_order ... ok
+test full_type_and_model_merge_table ... ok
+test hard_import_depth_and_bounded_diamond_expansion ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/contextual_cause.rs (/private/tmp/i15-m1-verify/target/debug/deps/contextual_cause-1b26a77a2fd0be26)
+
+running 1 test
+test contextual_source_is_checked_and_downcastable ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/error_kinds.rs (/private/tmp/i15-m1-verify/target/debug/deps/error_kinds-f3d54a3244439034)
+
+running 5 tests
+test output_lock_recovery_and_ownership_have_distinct_kinds ... ignored, run by kind watchdog
+test parser_and_json_visitor_budgets_are_machine_readable ... ok
+test direct_parser_conversion_retains_one_concrete_cause ... ok
+test categories_do_not_depend_on_display_text ... ok
+test output_kind_contracts_are_watchdog_bounded ... ok
+
+test result: ok. 4 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/read_source_policy.rs (/private/tmp/i15-m1-verify/target/debug/deps/read_source_policy-09c5b762d061a546)
+
+running 2 tests
+test source_policy_child ... ignored, run under source watchdog
+test source_policy_is_watchdog_bounded ... ok
+
+test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/source_loaders.rs (/private/tmp/i15-m1-verify/target/debug/deps/source_loaders-822c3cdf29e1ea42)
+
+running 8 tests
+test memory_aliases_and_clones_are_independent ... ok
+test roots_are_explicit_and_checked ... ok
+test native_directory_failures_are_not_missing_files ... ok
+test unsupported_extensions_do_not_fall_through ... ok
+test byte_limits_and_encoding_causes ... ok
+test native_symlinks_permissions_and_special_files ... ok
+test resolution_is_relative_to_importer ... ok
+test native_and_memory_candidate_order ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_lib-25d719aea00a35c2)
+
+running 2 tests
+test queue::tests::sequence_exhaustion_preserves_pending_entries_and_watermarks ... ok
+test error::tests::contextual_layers_retain_invocation_metadata_and_disclosure ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/context_contracts.rs (/private/tmp/i15-m1-verify/target/debug/deps/context_contracts-802726a149229959)
+
+running 2 tests
+test context_child ... ignored, run by the context watchdog parent
+test borrowed_context_and_existing_external_wrappers ... ok
+
+test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/data_contracts.rs (/private/tmp/i15-m1-verify/target/debug/deps/data_contracts-27845afadd833b7c)
+
+running 15 tests
+test errors_preserve_origins_spans_and_public_disclosure ... ok
+test nested_crud_preserves_presence_shapes_and_atomic_failure ... ok
+test explicit_serialization_rejects_non_json_variants_and_invalid_numbers ... ok
+test args_and_small_quoted_tokenizer_preserve_literal_values ... ok
+test multipart_binary_empty_files_nested_fields_and_media_parameters ... ok
+test clone_shares_only_named_native_variant_and_redacts_payload ... ok
+test finite_limits_cover_bytes_depth_entries_and_part_headers ... ok
+test overlays_collections_and_explicit_shape_helpers ... ok
+test numeric_normalization_append_and_twelve_element_order ... ok
+test native_drop_unwind_cannot_stale_mutation_totals ... ok
+test query_parsing_preserves_falsy_values_nested_arrays_and_decoding ... ok
+test visitors_are_sequential_and_can_abort ... ok
+test mutation_does_not_clone_unrelated_large_payloads ... ok
+test incremental_budgets_match_full_validation_and_fail_atomically ... ok
+test selected_json_budgets_and_nested_error_context_are_preserved ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/error_contracts.rs (/private/tmp/i15-m1-verify/target/debug/deps/error_contracts-75e01fde158e5bbd)
+
+running 3 tests
+test generic_source_context_preserves_private_cause_and_origin ... ok
+test concrete_conversions_and_multiple_layers_do_not_repeat_causes ... ok
+test lib_wrappers_keep_context_and_concrete_sources ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/event_contracts.rs (/private/tmp/i15-m1-verify/target/debug/deps/event_contracts-b69d148018b982ef)
+
+running 8 tests
+test tasks_are_sequential_consume_once_and_honor_hooks ... ok
+test registration_metadata_rejects_controls_atomically ... ok
+test stable_item_queue_ties_extremes_and_drain ... ok
+test phase_abort_error_and_async_diagnostics ... ok
+test handles_and_replacement_are_explicit_not_duplicate_order ... ok
+test queue_mixed_insertions_keep_the_complete_slice_in_execution_order ... ok
+test all_match_order_composition_and_captures_stay_explicit ... ok
+test express_regex_and_route_grammar_are_deliberate ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/handler_signature.rs (/private/tmp/i15-m1-verify/target/debug/deps/handler_signature-113b5d428b72a0bf)
+
+running 6 tests
+test compiler_rejections_child ... ignored, invoked by the compiler watchdog test
+test deliberately_stuck_child ... ignored, invoked only by the watchdog self-test
+test signature_scenarios_child ... ignored, invoked by the external watchdog test
+test send_and_nested_handlers_finish_under_watchdog ... ok
+test watchdog_kills_and_reaps_a_stuck_child ... ok
+test handler_ownership_and_send_contracts_are_compiler_enforced ... ok
+
+test result: ok. 3 passed; 0 failed; 3 ignored; 0 measured; 0 filtered out; finished in 5.67s
+
+     Running tests/request_response_contracts.rs (/private/tmp/i15-m1-verify/target/debug/deps/request_response_contracts-c97d0b5b1faef916)
+
+running 16 tests
+test cookies_parse_serialize_options_and_reject_injection ... ok
+test headers_validate_case_repeat_values_and_atomic_rejection ... ok
+test response_delivery_success_failure_stop_and_borrowed_writer ... ok
+test envelope_presence_error_roundtrip_and_shared_results ... ok
+test request_source_clones_and_resolve_preserve_only_explicit_shared_identity ... ok
+test response_json_retains_limits_after_public_store_replacement ... ok
+test envelope_json_limits_preserve_paths_presence_and_tighter_budgets ... ok
+test response_error_disclosure_and_owned_cause_are_preserved ... ok
+test request_load_success_failure_and_borrowed_native_reader ... ok
+test request_defaults_sources_headers_session_and_redaction ... ok
+test session_values_revisions_scope_and_explicit_list_codec ... ok
+test resolve_plain_data_owned_request_and_isolated_children ... ok
+test resolved_envelope_json_accepts_an_explicit_large_budget ... ok
+test standalone_envelope_json_uses_explicit_limits_for_each_value ... ok
+test response_envelope_json_respects_selected_limits ... ok
+test typed_response_helpers_and_serialization_are_atomic ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/serialization_contracts.rs (/private/tmp/i15-m1-verify/target/debug/deps/serialization_contracts-d8492b9e883a901e)
+
+running 7 tests
+test json_adapter_performance_receipt ... ignored, focused performance receipt; run explicitly with --nocapture
+test typed_prevalidation_runs_before_target_visitors ... ok
+test wire_output_matches_explicit_json_conversion ... ok
+test unsupported_paths_preserve_empty_literal_key_components ... ok
+test typed_selection_preserves_json_deserialization_contracts ... ok
+test prevalidation_precedes_output_and_retains_error_precedence ... ok
+test typed_nodes_and_coerced_keys_match_owned_json ... ok
+
+test result: ok. 6 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_server-863018254e93a35b)
+
+running 10 tests
+test core_tests::host_child ... ignored, run by the M0 host watchdog parent
+test core_tests::output_failure_and_suppression_do_not_retry ... ok
+test core_tests::response_replacement_cannot_repeat_native_output ... ok
+test core_tests::startup_and_registry_missing_values_are_explicit ... ok
+test core_tests::failed_startup_never_publishes_and_cancel_releases ... ok
+test core_tests::delegation_and_missing_host_are_explicit ... ok
+test lifecycle::tests::checked_correlation_exhaustion_and_host_scope ... ok
+test lifecycle::tests::common_adapter_input_boundary ... ok
+test core_tests::host_context_and_wrapper_proof_under_watchdog ... ok
+test core_tests::explicit_config_layers_validate_before_append ... ok
+
+test result: ok. 9 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+     Running tests/concurrency.rs (/private/tmp/i15-m1-verify/target/debug/deps/concurrency-618a11967c14cac1)
+
+running 2 tests
+test concurrency_child ... ignored, launched only by external watchdog parent
+test concurrent_nested_cancel_and_panic_under_watchdog ... ok
+
+test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/construction.rs (/private/tmp/i15-m1-verify/target/debug/deps/construction-616841c0a74fb750)
+
+running 10 tests
+test dependency_preflight ... ok
+test stable_phase_priorities_and_failure_stops ... ok
+test composed_builder_preserves_handles ... ok
+test typed_configuration ... ok
+test services_and_phase_gates ... ok
+test route_handles_and_capture_policy ... ok
+test configuration_exact_boundaries ... ok
+test merged_configuration_budgets_cover_defaults_and_layers ... ok
+test bounded_configuration_is_atomic ... ok
+test rejected_composed_config_keeps_accepted_layers ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.17s
+
+     Running tests/error_causes.rs (/private/tmp/i15-m1-verify/target/debug/deps/error_causes-aeb0c2e7c975c6b2)
+
+running 2 tests
+test configuration_retains_private_parse_cause ... ok
+test configuration_retains_private_serialization_cause ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/http_immutable.rs (/private/tmp/i15-m1-verify/target/debug/deps/http_immutable-89e6647e1dd915e6)
+
+running 3 tests
+test immutable_policy_is_checked_before_installation ... ok
+test known_length_and_one_shot_views ... ok
+test disposition_and_buffered_rejection ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/http_input.rs (/private/tmp/i15-m1-verify/target/debug/deps/http_input-f1ddb021218554e2)
+
+running 12 tests
+test multipart_binary_file_input ... ok
+test invalid_headers_and_method_are_no_request_failures ... ok
+test method_and_event_selection ... ok
+test malformed_targets_have_only_input_and_output ... ok
+test input_limit_boundaries ... ok
+test trusted_base_validation ... ok
+test strict_parse_failure_is_atomic_and_recoverable ... ok
+test parsed_and_merged_limits_use_the_shared_input_stage ... ok
+test repeated_headers_cookies_and_raw_mime ... ok
+test call_and_http_public_envelope_parity ... ok
+test exact_path_and_trusted_authority ... ok
+test structured_body_loading ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/http_output.rs (/private/tmp/i15-m1-verify/target/debug/deps/http_output-c1cc5849e17ecc0e)
+
+running 13 tests
+test forbidden_body_statuses_skip_rich_value_conversion ... ok
+test cancelled_http_call_leaves_adapter_and_host_usable ... ok
+test exact_text_and_binary_representations ... ok
+test finalized_states_are_not_retried ... ok
+test body_forbidden_statuses_and_completed_status_range ... ok
+test head_failure_paths_preserve_output_suppression ... ok
+test handling_futures_are_send_and_independent ... ok
+test conversion_failure_is_one_sanitized_empty_500 ... ok
+test cookies_and_multivalue_headers_are_never_folded ... ok
+test application_errors_keep_private_diagnostics_off_wire ... ok
+test head_never_falls_back_to_get ... ok
+test public_envelopes_keep_scalar_presence_and_zero_total ... ok
+test structured_conversion_retains_response_limits ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/http_stream.rs (/private/tmp/i15-m1-verify/target/debug/deps/http_stream-8776fcb06d8f583a)
+
+running 9 tests
+test normalization_and_loader_failures_preserve_g12_g17 ... ok
+test trusted_options_reach_both_entrypoints ... ok
+test producer_errors_fuse_and_byte_limits_are_exact ... ok
+test cloned_views_share_only_one_shot_identity ... ok
+test buffered_adapter_rejects_stream_without_polling ... ok
+test replacement_and_error_detach_success_stream ... ok
+test stream_byte_boundaries_and_drop_release ... ok
+test head_and_bodyless_are_unpolled_and_framed ... ok
+test preflight_headers_failures_suppression_and_foreign_output ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/lifecycle.rs (/private/tmp/i15-m1-verify/target/debug/deps/lifecycle-81ec6755f4876734)
+
+running 11 tests
+test conversion_and_existing_load_failure_are_distinct ... ok
+test adapter_context_is_inherited_separately ... ok
+test prebuffered_output_and_abort_status_defaults ... ok
+test aborts_preserve_response_and_stop_hooks ... ok
+test bodies_status_only_missing_and_response_clear ... ok
+test invalid_public_error_setup_is_nonrecursive ... ok
+test two_stage_failures_have_exactly_two_offers ... ok
+test raw_and_handled_entry_points ... ok
+test delivery_states_are_authoritative ... ok
+test failures_and_error_offers_follow_decision_table ... ok
+test capture_collisions_literal_names_and_budget_failure ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/ownership.rs (/private/tmp/i15-m1-verify/target/debug/deps/ownership-67bfe8c215109fe0)
+
+running 2 tests
+test compiler_rejections_child ... ignored, invoked by the compiler watchdog test
+test host_ownership_and_send_contracts_are_compiler_enforced ... ok
+
+test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 1.23s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_server_http-58ec853f0b13a014)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/duplex.rs (/private/tmp/i15-m1-verify/target/debug/deps/duplex-10a64d11f5681f70)
+
+running 2 tests
+test duplex_child ... ignored, run only by parent watchdog
+
+running 1 test
+test duplex_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.18s
+
+test duplex_watchdog ... ok
+
+test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.20s
+
+     Running tests/m1.rs (/private/tmp/i15-m1-verify/target/debug/deps/m1-37941bcf57d77d83)
+
+running 2 tests
+test scenario_child ... ignored, run only by external M1 watchdog
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.05s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.05s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.27s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.10s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.40s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.17s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.06s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+running 1 test
+
+thread 'tokio-rt-worker' (114139968) panicked at crates/server/http/tests/m1.rs:113:13:
+intentional M1 task panic
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.06s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.04s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.20s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+test m1_watchdog ... ok
+
+test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 1.61s
+
+     Running tests/m2.rs (/private/tmp/i15-m1-verify/target/debug/deps/m2-7de2fac00c938566)
+
+running 2 tests
+test scenario_child ... ignored, run only by M2 external watchdog
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.01s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.01s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.01s
+
+
+running 1 test
+
+thread 'tokio-rt-worker' (114140041) panicked at crates/server/http/tests/m2.rs:55:13:
+private handler panic
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+running 1 test
+
+thread 'tokio-rt-worker' (114140045) panicked at crates/server/http/tests/m2.rs:690:13:
+intentional observer panic
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.05s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.05s
+
+
+running 1 test
+test scenario_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+test m2_watchdog ... ok
+
+test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.26s
+
+     Running tests/tcp.rs (/private/tmp/i15-m1-verify/target/debug/deps/tcp-a53fd27d6268ac0f)
+
+running 2 tests
+test tcp_child ... ignored, run only by the TCP parent watchdog
+
+running 1 test
+test tcp_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+test tcp_watchdog ... ok
+
+test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests examples/deployment.rs (/private/tmp/i15-m1-verify/target/debug/examples/deployment-e340963d220ac34a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_sql-b9504c62cba80cbe)
+
+running 3 tests
+test ddl::tests::empty_plan_is_not_executable ... ok
+test ddl::tests::mixed_plan_rejected_before_acquisition ... ok
+test ddl::tests::mysql_atomic_plan_rejected_before_acquisition ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/contracts.rs (/private/tmp/i15-m1-verify/target/debug/deps/contracts-ae8653988a9b9a38)
+
+running 5 tests
+test ordered_owned_rows_do_not_coerce_or_overwrite ... ok
+test errors_preserve_sources_without_implicit_disclosure ... ok
+test finite_input_budgets_and_real_values ... ok
+test lexical_gate_distinguishes_code_from_quoted_text ... ok
+test detached_builder_separates_identifiers_and_values ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/ddl.rs (/private/tmp/i15-m1-verify/target/debug/deps/ddl-8bc78ea28ef63496)
+
+running 14 tests
+test alter_native_plan_and_inspection ... ok
+test create_validates_keys_and_foreign_constraints ... ok
+test create_full_definition_and_ordered_plan ... ok
+test fields_validate_types_lengths_and_auto_increment ... ok
+test create_and_alter_unique_precedence_and_conflicts ... ok
+test alter_direct_rename_and_reconciliation ... ok
+test default_and_attribute_errors_are_typed ... ok
+test alter_rejects_ambiguous_or_incomplete_renames ... ok
+test foreign_set_null_cannot_target_primary_columns ... ok
+test sqlite_alter_rejects_unsupported_operations_as_a_whole ... ok
+test table_drop_rename_truncate_and_invalid_names ... ok
+test explicit_trusted_ddl_syntax ... ok
+test ddl_hostile_input_dialect_and_clone_independence ... ok
+test typed_defaults_preserve_false_zero_empty_and_quotes ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/dialects.rs (/private/tmp/i15-m1-verify/target/debug/deps/dialects-c296d916eaf2acdc)
+
+running 12 tests
+test explicit_capability_matrix ... ok
+test commands_and_offset_only ... ok
+test network_raw_lexical_gate_and_identifier_bounds ... ok
+test alter_case_insensitive_metadata_follows_rename_and_removal ... ok
+test postgres_alter_source_names_preserve_quoted_case ... ok
+test fields_foreign_actions_and_invalid_lengths ... ok
+test unsupported_returning_full_join_and_invalid_shapes ... ok
+test native_key_and_changed_attribute_validation ... ok
+test json_native_rendering_types_and_unsupported_nul ... ok
+test all_dml_families_native_snapshots ... ok
+test create_types_defaults_and_idempotent_indexes ... ok
+test alter_full_native_plan ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/diff.rs (/private/tmp/i15-m1-verify/target/debug/deps/diff-617faf9a5c35907f)
+
+running 9 tests
+test physical_field_reordering_is_explicitly_unsupported ... ok
+test no_changes_invalid_inputs_and_same_table_contract ... ok
+test field_properties_are_structural_not_identity ... ok
+test reconciled_rename_preserves_middle_field_ordinal ... ok
+test diff_rejects_unrealizable_new_field_ordinals ... ok
+test foreign_key_add_remove_change_and_case ... ok
+test rename_orders_dependencies_and_added_foreign_fields ... ok
+test compound_keys_add_remove_change_and_order ... ok
+test diff_rename_same_changed_and_missing_halves ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/dml.rs (/private/tmp/i15-m1-verify/target/debug/deps/dml-b71e703b61129f66)
+
+running 20 tests
+test detached_data_and_dialect_selection ... ok
+test expressions_cover_comparisons_groups_null_in_and_like ... ok
+test explicit_trusted_expression_boundary ... ok
+test conflict_shape_and_dialect_guards ... ok
+test insert_defaults_are_explicit_and_never_inferred ... ok
+test insert_rejects_empty_arity_duplicate_and_conflicting_input ... ok
+test hostile_identifiers_and_values_stay_data ... ok
+test insert_bulk_returning_and_inspection ... ok
+test joins_and_operand_validation ... ok
+test nested_comparison_tree_preserves_parentheses ... ok
+test select_defaults_and_selector_boundaries ... ok
+test select_where_eq_appends_in_call_order ... ok
+test select_sort_and_pagination ... ok
+test mutation_scope_never_silently_widens ... ok
+test select_build_and_complete_sql ... ok
+test targeted_conflict_rendering_and_inspection ... ok
+test update_and_delete_build_and_returning ... ok
+test where_eq_is_consistent_across_dml_builders ... ok
+test conflict_values_identifiers_and_budgets ... ok
+test dml_resource_limits ... ok
+
+test result: ok. 20 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/engine.rs (/private/tmp/i15-m1-verify/target/debug/deps/engine-1072395c467292b2)
+
+running 9 tests
+test limits_are_copied_frozen_and_require_no_driver_call ... ok
+test driver_failure_is_not_swallowed ... ok
+test transaction_forwarding_completion_and_error_preservation ... ok
+test engine_validates_before_driver_and_forwards_owned_results ... ok
+test engine_plan_success_and_caller_owned_transaction ... ok
+test engine_plan_failure_preserves_original_and_cleanup_errors ... ok
+test caller_owned_plan_retains_guard_after_failure_or_cancellation ... ok
+test engine_conveniences_never_attach_or_execute ... ok
+test engine_plan_validation_and_cancelled_owner ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/json_values.rs (/private/tmp/i15-m1-verify/target/debug/deps/json_values-a69a41bbc30995bc)
+
+running 8 tests
+test value_conversions_are_exact_and_fallible ... ok
+test explicit_canonical_dates_validate_calendar_and_timezone ... ok
+test ordered_rows_metadata_decode_and_byte_accounting ... ok
+test json_equality_preserves_scalar_types_and_null ... ok
+test json_membership_and_dml_share_one_expression_contract ... ok
+test json_paths_are_bound_structural_data ... ok
+test checked_json_path_options_and_limits ... ok
+test bounded_explicit_json_encoding ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/network.rs (/private/tmp/i15-m1-verify/target/debug/deps/network-a4659c79ccefa190)
+test network::postgres::create_types_defaults ... ignored (STACKPRESS_TEST_POSTGRES_URL unset)
+test network::postgres::crud_returning ... ignored (STACKPRESS_TEST_POSTGRES_URL unset)
+test network::postgres::joins ... ignored (STACKPRESS_TEST_POSTGRES_URL unset)
+test network::postgres::expressions_pagination ... ignored (STACKPRESS_TEST_POSTGRES_URL unset)
+test network::postgres::json_paths_membership ... ignored (STACKPRESS_TEST_POSTGRES_URL unset)
+test network::postgres::alter_fields_constraints ... ignored (STACKPRESS_TEST_POSTGRES_URL unset)
+test network::postgres::schema_diff_rename ... ignored (STACKPRESS_TEST_POSTGRES_URL unset)
+test network::postgres::table_commands ... ignored (STACKPRESS_TEST_POSTGRES_URL unset)
+test network::mysql::create_types_defaults ... ignored (STACKPRESS_TEST_MYSQL_URL unset)
+test network::mysql::crud_returning ... ignored (STACKPRESS_TEST_MYSQL_URL unset)
+test network::mysql::joins ... ignored (STACKPRESS_TEST_MYSQL_URL unset)
+test network::mysql::expressions_pagination ... ignored (STACKPRESS_TEST_MYSQL_URL unset)
+test network::mysql::json_paths_membership ... ignored (STACKPRESS_TEST_MYSQL_URL unset)
+test network::mysql::alter_fields_constraints ... ignored (STACKPRESS_TEST_MYSQL_URL unset)
+test network::mysql::schema_diff_rename ... ignored (STACKPRESS_TEST_MYSQL_URL unset)
+test network::mysql::table_commands ... ignored (STACKPRESS_TEST_MYSQL_URL unset)
+test result: ok. 0 passed; 0 failed; 16 ignored; 0 measured; 0 filtered out
+     Running tests/safety.rs (/private/tmp/i15-m1-verify/target/debug/deps/safety-a766a1de2749c81c)
+
+running 11 tests
+test public_auto_traits_match_ownership_contracts ... ok
+test raw_dialect_error_precedes_nonfinite_bind_error ... ok
+test raw_postgres_text_nul_is_rejected_during_rendering ... ok
+test numeric_edges_preserve_exact_owned_values ... ok
+test hostile_utf8_boundaries_do_not_panic ... ok
+test alter_primary_rejects_set_null_relationships ... ok
+test primary_removal_requires_explicit_nullable_change_for_set_null ... ok
+test plan_and_bind_cardinality_boundaries ... ok
+test sql_budget_stops_later_clause_expansion ... ok
+test expression_and_json_exact_depth_and_node_limits ... ok
+test exact_sql_and_json_byte_budgets ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running tests/storage_policy.rs (/private/tmp/i15-m1-verify/target/debug/deps/storage_policy-f309e4138f4ce810)
+
+running 2 tests
+test explicit_facts_and_layouts ... ok
+test whole_key_budgets ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/build_inspect.rs (/private/tmp/i15-m1-verify/target/debug/examples/build_inspect-03f0c225c3400ff6)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/capabilities.rs (/private/tmp/i15-m1-verify/target/debug/examples/capabilities-3d9e710051800e8e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/execute_plan.rs (/private/tmp/i15-m1-verify/target/debug/examples/execute_plan-6a6dbdc118ce3eed)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/schema_diff.rs (/private/tmp/i15-m1-verify/target/debug/examples/schema_diff-d5eb03558f4852e5)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_sql_mysql-2ca53fad47368581)
+
+running 14 tests
+test tests::output_budget_boundaries ... ok
+test tests::error_causes_are_preserved ... ok
+test tests::mysql_reuse_policy_is_conservative ... ok
+test tests::core_refuses_other_parameter_fragments ... ok
+test tests::process::checks::watchdog_child ... ignored, invoked only by the watchdog controls
+test tests::options_are_finite_and_redacted ... ok
+test tests::serialized_defaults_are_finite ... ok
+test tests::json_is_bounded_and_lossless ... ok
+test tests::duplicate_json_keys_are_rejected ... ok
+test tests::transaction_gate_respects_lexical_boundaries ... ok
+test tests::reuse_matches_whole_function_tokens ... ok
+test tests::json_raw_token_and_depth_boundaries ... ok
+test tests::process::checks::acknowledged_exit_is_successful ... ok
+test tests::process::checks::timeout_is_a_failure ... ok
+
+test result: ok. 13 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/m0.rs (/private/tmp/i15-m1-verify/target/debug/deps/m0-685db965d3fc7f5a)
+test m0::native_lifecycle ... ignored (STACKPRESS_TEST_MYSQL_URL unset)
+test result: ok. 0 passed; 0 failed; 1 ignored
+     Running src/m1.rs (/private/tmp/i15-m1-verify/target/debug/deps/m1-2c141e99bdc4c78a)
+test m1::native_cases ... ignored (STACKPRESS_TEST_MYSQL_URL unset)
+test result: ok. 0 passed; 0 failed; 4 ignored
+     Running src/m2.rs (/private/tmp/i15-m1-verify/target/debug/deps/m2-0aa2fe95ead6cfc8)
+test m2::native_cases ... ignored (STACKPRESS_TEST_MYSQL_URL unset)
+test result: ok. 0 passed; 0 failed; 2 ignored
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_sql_postgres-7017bf95bf12e489)
+
+running 12 tests
+test tests::output_budget_boundaries ... ok
+test tests::postgres_type_identity_is_not_guessed_from_names ... ok
+test tests::error_causes_are_preserved ... ok
+test tests::process::checks::watchdog_child ... ignored, invoked only by the watchdog controls
+test tests::json_is_bounded_and_lossless ... ok
+test tests::duplicate_json_keys_are_rejected ... ok
+test tests::options_are_finite_and_redacted ... ok
+test tests::serialized_defaults_are_finite ... ok
+test tests::json_raw_token_and_depth_boundaries ... ok
+test tests::process::checks::acknowledged_exit_is_successful ... ok
+test tests::process::checks::timeout_is_a_failure ... ok
+test tests::environment::ambient_configuration_is_rejected_in_isolated_processes ... ok
+
+test result: ok. 11 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.12s
+
+     Running tests/m0.rs (/private/tmp/i15-m1-verify/target/debug/deps/m0-d4d36f1a7b9c9461)
+test m0::native_lifecycle ... ignored (STACKPRESS_TEST_POSTGRES_URL unset)
+test result: ok. 0 passed; 0 failed; 1 ignored
+     Running src/m1.rs (/private/tmp/i15-m1-verify/target/debug/deps/m1-be4819e998192002)
+test m1::native_cases ... ignored (STACKPRESS_TEST_POSTGRES_URL unset)
+test result: ok. 0 passed; 0 failed; 4 ignored
+     Running src/m2.rs (/private/tmp/i15-m1-verify/target/debug/deps/m2-a70bb3514d5a3c61)
+created owned SQLite file /var/folders/w2/g12vs0ts64g_3k6kjf_dd_bc0000gn/T/stackpress_s7_m2_sqlite_2d2b_18e2b7d40932c658.sqlite
+generated atomic preflight: all model/dialect/failing-BEGIN cases have zero entries
+generated stores Sqlite: starting
+generated stores Sqlite: seeded
+generated stores Sqlite: reads complete
+generated stores Sqlite: CRUD/conflicts/batches/active passed
+contract Sqlite scalar case 0
+contract Sqlite scalar case 1
+contract Sqlite scalar case 2
+contract Sqlite scalar case 3
+contract Sqlite scalar case 4
+contract Sqlite scalar case 5
+contract Sqlite scalar case 6
+contract Sqlite scalar case 7
+contract Sqlite scalar case 8
+contract Sqlite scalar case 9
+shared contract Sqlite: values/outcomes/transactions/errors/cancellation/close passed in 215.059334ms
+removed owned SQLite file and sidecars /var/folders/w2/g12vs0ts64g_3k6kjf_dd_bc0000gn/T/stackpress_s7_m2_sqlite_2d2b_18e2b7d40932c658.sqlite
+test m2::sqlite_reference ... ok
+test m2::native_cases ... ignored (STACKPRESS_TEST_POSTGRES_URL unset)
+test result: ok. 1 passed; 0 failed; 2 ignored
+     Running unittests src/lib.rs (/private/tmp/i15-m1-verify/target/debug/deps/stackpress_sql_sqlite-f772c349b3ee57c2)
+
+running 23 tests
+test tests::compile_child ... ignored, launched only by external watchdog parent
+test tests::m0_child ... ignored, launched only by external watchdog parent
+test tests::m1::native_child ... ignored, launched only by M1 watchdog parent
+test tests::m2::native_child ... ignored, launched only by M2 watchdog parent
+test tests::noisy_child ... ignored, output-limit negative control
+test tests::rounds::native_child ... ignored, launched only by safety watchdog parent
+test tests::rounds::public_thread_contracts ... ok
+test tests::rounds::shutdown_child ... ignored, launched only by shutdown watchdog parent
+test tests::m1::values::rejected_reservations_preserve_remaining_budget ... ok
+test tests::runtime_child ... ignored, launched only by external watchdog parent
+test tests::file_options_reject_native_uri_escape_hatches ... ok
+test tests::stuck_child ... ignored, deliberately stuck watchdog negative control
+test tests::m1::pool::native_error_categories_keep_sources ... ok
+test tests::m1::pool::option_bounds_and_serialized_compatibility ... ok
+test tests::watchdog_rejects_output_overrun ... ok
+test tests::runtime_teardown_under_process_watchdog ... ok
+test tests::rounds::shutdown_under_watchdog ... ok
+test tests::watchdog_kills_negative_control ... ok
+test tests::m1::native_execution_under_watchdog ... ok
+test tests::m0_under_process_watchdog ... ok
+test tests::m2::native_execution_under_watchdog ... ok
+test tests::rounds::safety_under_watchdog ... ok
+test tests::ownership_under_process_watchdog ... ok
+
+test result: ok. 14 passed; 0 failed; 9 ignored; 0 measured; 0 filtered out; finished in 10.35s
+
+     Running unittests examples/m0-host.rs (/private/tmp/i15-m1-verify/target/debug/examples/m0_host-d8edd9a79b67f00e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

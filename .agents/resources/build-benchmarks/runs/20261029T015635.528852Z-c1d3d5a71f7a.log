@@ -1,0 +1,23 @@
+$ node /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/browser.cjs
+page.waitForFunction: Timeout 10000ms exceeded.
+    at /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/browser.cjs:48:33 {
+  log: [],
+  name: 'TimeoutError'
+}
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/proof.py", line 111, in <module>
+    main()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/proof.py", line 105, in main
+    globals()[action]()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/proof.py", line 95, in browser
+    run(['node', HERE / 'browser.cjs'], timeout=180)
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/proof.py", line 45, in run
+    raise subprocess.CalledProcessError(child.returncode, args)
+subprocess.CalledProcessError: Command '['node', PosixPath('/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/browser.cjs')]' returned non-zero exit status 1.
+supervisor: child 88986 reaped; peak target 2344572 KiB
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/proofs/supervise.py", line 75, in <module>
+    main()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/proofs/supervise.py", line 68, in main
+    raise subprocess.CalledProcessError(child.returncode, command)
+subprocess.CalledProcessError: Command '['env', 'INDEPENDENT_OUTPUT_DIR=/private/tmp/stackpress-issue17-m2/evidence', 'INDEPENDENT_PLAYWRIGHT=/Users/cblanquera/.npm/_npx/e41f203b7505f1fb/node_modules/playwright', 'python3', 'examples/leptos-independent/proof.py', 'browser']' returned non-zero exit status 1.

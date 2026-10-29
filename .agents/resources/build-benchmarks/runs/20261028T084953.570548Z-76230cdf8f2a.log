@@ -1,0 +1,11 @@
+{
+  "scope_files": 17,
+  "variants_verified": [
+    "plugin",
+    "disabled"
+  ],
+  "target_absent": true,
+  "kb_errors": 146,
+  "kb_warnings": 25,
+  "changed_framework_generated_lock_config_acl_files": false
+}

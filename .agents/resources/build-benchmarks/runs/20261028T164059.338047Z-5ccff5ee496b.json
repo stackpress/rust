@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "id": "20261028T164059.338047Z-5ccff5ee496b",
+  "started_at": "2026-10-28T16:40:59.338047+00:00",
+  "status": "passed",
+  "label": "i15-m3-verify view-features",
+  "kind": "test",
+  "scope": "selected",
+  "cache": "cold",
+  "command": [
+    "cargo",
+    "test",
+    "-p",
+    "stackpress-framework-view",
+    "--all-features",
+    "--locked"
+  ],
+  "cwd": "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15",
+  "commit": "ce8a3776db76618b03bb59dd1ef97c51703149fc",
+  "branch": "trial/3-issue15-view-presentation",
+  "dirty": true,
+  "host": "macOS-26.6.2-arm64-arm-64bit",
+  "machine": "arm64",
+  "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+  "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+  "environment": {
+    "CARGO_TARGET_DIR": "/private/tmp/i15-m3-verify/target",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_BUILD_JOBS": "6"
+  },
+  "cargo_activity": {
+    "compiling": 37,
+    "checking": 0,
+    "documenting": 0
+  },
+  "cargo_build_stages": [
+    {
+      "profile": "test",
+      "seconds": 10.06
+    }
+  ],
+  "log": "runs/20261028T164059.338047Z-5ccff5ee496b.log",
+  "ended_at": "2026-10-28T16:41:12.861648+00:00",
+  "command_seconds": 13.400109,
+  "exit_code": 0,
+  "cargo_build_seconds": 10.06
+}

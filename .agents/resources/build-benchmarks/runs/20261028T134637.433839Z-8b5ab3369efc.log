@@ -1,0 +1,91 @@
+initial DOM difference {"offset":12217,"before":".75rem}.sp-rating-input .sp-rating-choice{min-width:2.75rem;min-height:2.75rem}}\n</style><main data-initial-theme-pending=\"\" data-theme=\"light\" class=\"sp-root\"><div class=\"sp-blank\"><header class=\"sp-head\"><h1>UI gallery</h1><nav aria-label=\"Language\" class=\"sp-actions\"><button id=\"english\" type=\"button\">English</button><button id=\"french\" type=\"button\">Français</button></nav></header><p id=\"prefe","after":".75rem}.sp-rating-input .sp-rating-choice{min-width:2.75rem;min-height:2.75rem}}\n</style><main data-theme=\"light\" class=\"sp-root\" data-initial-theme-pending=\"\"><div class=\"sp-blank\"><header class=\"sp-head\"><h1>UI gallery</h1><nav aria-label=\"Language\" class=\"sp-actions\"><button id=\"english\" type=\"button\">English</button><button id=\"french\" type=\"button\">Français</button></nav></header><p id=\"prefe"}
+AssertionError [ERR_ASSERTION]: identical adopted initial DOM with no exception
+
+... Skipped lines
+'<style>.sp-root{--sp-bg:#fff;--sp-fg:#202124;--sp-muted:#555;--sp-line:#c9cdd1;--sp-soft:#f3f4f5;background:var(--sp-bg);color:var(--sp-fg);font:1rem/1.6 system-ui,-apple-system,sans-serif;min-height:100vh;color-scheme:light}\n' +
+  '.sp-root[data-theme=dark]{--sp-bg:#202124;--sp-fg:#f4f4f4;--sp-muted:#c9cdd1;--sp-line:#73777c;--sp-soft:#303236;color-scheme:dark}\n' +
+  '.sp-root *{box-sizing:border-box}.sp-root a{color:inherit;text-underline-offset:.2em}.sp-root :focus-visible{outline:3px solid currentColor;outline-offset:4px}\n' +
+  '.sp-blank{max-width:72rem;margin:auto;padding:clamp(1rem,4vw,3rem)}.sp-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1rem;border-bottom:1px solid var(--sp-line);padding-bottom:1rem;margin-bottom:2rem}\n' +
+  '.sp-panel{display:grid;grid-template-columns:minmax(0,1fr);gap:2rem}.sp-panel>*{min-width:0}.sp-main{overflow-wrap:anywhere}.sp-menu{display:flex;flex-wrap:wrap;gap:1rem}.sp-left,.sp-right{font-size:.95rem}.sp-root h1{font-size:clamp(1.7rem,4vw,2.4rem);line-height:1.2;letter-spacing:-.03em;margin:.2rem 0 1rem}.sp-root h2{line-height:1.3}.sp-root p{overflow-wrap:anywhere}\n' +
+  '.sp-field{flex:1 1 16rem;min-width:0}.sp-field label{display:block;font-weight:600}.sp-input{display:block;width:100%;max-width:100%;min-width:0;font:inherit;padding:.6rem .8rem;border:1px solid var(--sp-line);border-radius:.3rem;background:var(--sp-bg);color:inherit}.sp-input[aria-invalid=true]{border:2px solid currentColor}.sp-help{font-size:.875rem;color:var(--sp-muted);margin:.4rem 0}.sp-error{font-weight:600;margin:.4rem 0}.sp-error:empty{display:none}\n' +
+  '.sp-button,.sp-root button{font:inherit;cursor:pointer;border:1px solid var(--sp-fg);border-radius:.3rem;background:var(--sp-bg);color:inherit;padding:.55rem 1rem;text-align:center;white-space:normal;overflow-wrap:anywhere;max-width:100%}.sp-button{display:inline-block;text-decoration:none}.sp-root button:disabled,.sp-root [aria-disabled=true]{cursor:default;opacity:.55}.sp-root form{display:flex;align-items:flex-start;flex-wrap:wrap;gap:1rem}.sp-root form>.sp-button{margin-top:1.6rem}\n' +
+  '.sp-list{list-style:none;padding:0;margin:1rem 0}.sp-list li{padding:1rem 0;border-top:1px solid var(--sp-line);overflow-wrap:anywhere}.sp-list a{display:block;font-size:1.1rem}.sp-empty{padding:1rem;background:var(--sp-soft)}.sp-empty[hidden]{display:none}.sp-results{min-height:5rem}.sp-loader{font-weight:600}.sp-alert{padding:.7rem;border-inline-start:3px solid currentColor}.sp-notices{margin-top:1rem}.sp-notice{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;padding:.75rem;background:var(--sp-soft);border:1px solid var(--sp-line)}\n' +
+  '@media(min-width:56rem){.sp-panel{grid-template-columns:minmax(9rem,1fr) minmax(0,3fr) minmax(9rem,1fr)}}\n' +
+  '@media(max-width:35rem){.sp-root form>.sp-button{width:100%;margin-top:0}.sp-head{align-items:flex-start}.sp-head .sp-menu{width:100%}}\n' +
+  '@media(prefers-reduced-motion:reduce){.sp-root *{scroll-behavior:auto;animation:none;transition:none}}\n' +
+  '\n' +
+  'html[data-theme=dark] .sp-root[data-initial-theme-pending]{--sp-bg:#202124;--sp-fg:#f4f4f4;--sp-muted:#c9cdd1;--sp-line:#73777c;--sp-soft:#303236;color-scheme:dark}\n' +
+  '.sp-table-scroll{max-width:100%;overflow:auto;border:1px solid #aaa;margin:1rem 0}.sp-table-scroll table{border-collapse:collapse;min-width:30rem;width:100%}.sp-table-scroll caption{text-align:left;padding:.7rem;font-weight:600}.sp-table-scroll th,.sp-table-scroll td{padding:.7rem;border-top:1px solid #bbb;text-align:left}.sp-dialog{background:Canvas;color:CanvasText;border:1px solid #888;border-radius:.4rem;max-width:min(36rem,92vw);max-height:85vh;overflow:auto;padding:1.5rem}.sp-dialog::backdrop{background:#0008}.sp-form-errors:empty{display:none}.sp-form-errors p{font-weight:600}.sp-rich pre{white-space:pre-wrap;overflow-wrap:anywhere}.sp-root form{display:block}.sp-root form button{margin:.6rem .6rem .6rem 0}\n' +
+  '\n' +
+  '.sp-rich{overflow-wrap:anywhere;max-width:100%}\n' +
+  '/* The native top layer covers the viewport; fullPage captures can extend beyond it. */\n' +
+  '.sp-dialog::backdrop { position: fixed; inset: 0; }\n' +
+  '/* A modal blocks background user scrolling; nested dialogs keep the same lock. */\n' +
+  ':root:has(.sp-dialog:modal), body:has(.sp-dialog:modal) { overflow: hidden; overscroll-behavior: none; }\n' +
+  '/* Ordinary semantic groups opt in without changing the accepted base stylesheet. */\n' +
+  '.sp-actions {\n' +
+  '  display: flex;\n' +
+  '  flex-wrap: wrap;\n' +
+  '  align-items: center;\n' +
+  '  gap: .75rem;\n' +
+  '  margin-block: .75rem;\n' +
+  '}\n' +
+  '.sp-root form.sp-core-form {\n' +
+  '  display: grid;\n' +
+  '  grid-template-columns: minmax(0, 1fr);\n' +
+  '  gap: 1rem;\n' +
+  '}\n' +
+  '.sp-core-form fieldset { min-width: 0; border: 1px solid var(--sp-line); }\n' +
+  '.sp-core-state { display: block; overflow-wrap: anywhere; white-space: pre-wrap; }\n' +
+  '.sp-check { width: 1.2rem; height: 1.2rem; accent-color: var(--sp-fg); }\n' +
+  '.sp-password { display: flex; flex-wrap: wrap; gap: .75rem; }\n' +
+  '.sp-password .sp-input { flex: 1 1 14rem; width: auto; }\n' +
+  '.sp-badge { display: inline-block; padding: .15rem .55rem; border: 1px solid currentColor; border-radius: .3rem; }\n' +
+  '.sp-card { min-width: 0; margin-block: 1.5rem; border: 1px solid var(--sp-line); border-radius: .4rem; }\n' +
+  '.sp-card-head, .sp-card-body, .sp-card-foot { padding: 1rem; }\n' +
+  '.sp-card-foot { border-top: 1px solid var(--sp-line); }\n' +
+  '.sp-card-title { margin-top: 0; }\n' +
+  '.sp-card-description { color: var(--sp-muted); }\n' +
+  '.sp-card-body a { overflow-wrap: anywhere; }\n' +
+  '.sp-card-body > * { margin-block: .65rem; }\n' +
+  '.sp-progress label { display: block; }\n' +
+  '.sp-progress progress { width: min(100%, 24rem); accent-color: var(--sp-fg); }\n' +
+  '.sp-image { display: block; max-width: 100%; object-fit: contain; }\n' +
+  '.sp-color, .sp-rating { display: inline-flex; flex-wrap: wrap; align-items: center; gap: .5rem; }\n' +
+...}
+
+    at /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-gallery/breadth-browser.cjs:301:18 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: '<style>.sp-root{--sp-bg:#fff;--sp-fg:#202124;--sp-muted:#555;--sp-line:#c9cdd1;--sp-soft:#f3f4f5;background:var(--sp-bg);color:var(--sp-fg);font:1rem/1.6 system-ui,-apple-system,sans-serif;min-height:100vh;color-scheme:light}\n' +
+    '.sp-root[data-theme=dark]{--sp-bg:#202124;--sp-fg:#f4f4f4;--sp-muted:#c9cdd1;--sp-line:#73777c;--sp-soft:#303236;color-scheme:dark}\n' +
+    '.sp-root *{box-sizing:border-box}.sp-root a{color:inherit;text-underline-offset:.2em}.sp-root :focus-visible{outline:3px solid currentColor;outline-offset:4px}\n' +
+    '.sp-blank{max-width:72rem;margin:auto;padding:clamp(1rem,4vw,3rem)}.sp-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1rem;border-bottom:1px solid var(--sp-line);padding-bottom:1rem;margin-bottom:2rem}\n' +
+    '.sp-panel{display:grid;grid-template-columns:minmax(0,1fr);gap:2rem}.sp-panel>*{min-width:0}.sp-main{overflow-wrap:anywhere}.sp-menu{display:flex;flex-wrap:wrap;gap:1rem}.sp-left,.sp-right{font-size:.95rem}.sp-root h1{font-size:clamp(1.7rem,4vw,2.4rem);line-height:1.2;letter-spacing:-.03em;margin:.2rem 0 1rem}.sp-root h2{line-height:1.3}.sp-root p{overflow-wrap:anywhere}\n' +
+    '.sp-field{flex:1 1 16rem;min-width:0}.sp-field label{display:block;font-weight:600}.sp-input{display:block;width:100%;max-width:100%;min-width:0;font:inherit;padding:.6rem .8rem;border:1px solid var(--sp-line);border-radius:.3rem;background:var(--sp-bg);color:inherit}.sp-input[aria-invalid=true]{border:2px solid currentColor}.sp-help{font-size:.875rem;color:var(--sp-muted);margin:.4rem 0}.sp-error{font-weight:600;margin:.4rem 0}.sp-error:empty{display:none}\n' +
+    '.sp-button,.sp-root button{font:inherit;cursor:pointer;border:1px solid var(--sp-fg);border-radius:.3rem;background:var(--sp-bg);color:inherit;padding:.55rem 1rem;text-align:center;white-space:normal;overflow-wrap:anywhere;max-width:100%}.sp-button{display:inline-block;text-decoration:none}.sp-root button:disabled,.sp-root [aria-disabled=true]{cursor:default;opacity:.55}.sp-root form{display:flex;align-items:flex-start;flex-wrap:wrap;gap:1rem}.sp-root form>.sp-button{margin-top:1.6rem}\n' +
+    '.sp-list{list-style:none;padding:0;margin:1rem 0}.sp-list li{padding:1rem 0;border-top:1px solid var(--sp-line);overflow-wrap:anywhere}.sp-list a{display:block;font-size:1.1rem}.sp-empty{padding:1rem;background:var(--sp-soft)}.sp-empty[hidden]{display:none}.sp-results{min-height:5rem}.sp-loader{font-weight:600}.sp-alert{padding:.7rem;border-inline-start:3px solid currentColor}.sp-notices{margin-top:1rem}.sp-notice{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;padding:.75rem;background:var(--sp-soft);border:1px solid var(--sp-line)}\n' +
+    '@media(min-width:56rem){.sp-panel{grid-template-columns:minmax(9rem,1fr) minmax(0,3fr) minmax(9rem,1fr)}}\n' +
+    '@media(max-width:35rem){.sp-root form>.sp-button{width:100%;margin-top:0}.sp-head{align-items:flex-start}.sp-head .sp-menu{width:100%}}\n' +
+    '...',
+  expected: '<style>.sp-root{--sp-bg:#fff;--sp-fg:#202124;--sp-muted:#555;--sp-line:#c9cdd1;--sp-soft:#f3f4f5;background:var(--sp-bg);color:var(--sp-fg);font:1rem/1.6 system-ui,-apple-system,sans-serif;min-height:100vh;color-scheme:light}\n' +
+    '.sp-root[data-theme=dark]{--sp-bg:#202124;--sp-fg:#f4f4f4;--sp-muted:#c9cdd1;--sp-line:#73777c;--sp-soft:#303236;color-scheme:dark}\n' +
+    '.sp-root *{box-sizing:border-box}.sp-root a{color:inherit;text-underline-offset:.2em}.sp-root :focus-visible{outline:3px solid currentColor;outline-offset:4px}\n' +
+    '.sp-blank{max-width:72rem;margin:auto;padding:clamp(1rem,4vw,3rem)}.sp-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1rem;border-bottom:1px solid var(--sp-line);padding-bottom:1rem;margin-bottom:2rem}\n' +
+    '.sp-panel{display:grid;grid-template-columns:minmax(0,1fr);gap:2rem}.sp-panel>*{min-width:0}.sp-main{overflow-wrap:anywhere}.sp-menu{display:flex;flex-wrap:wrap;gap:1rem}.sp-left,.sp-right{font-size:.95rem}.sp-root h1{font-size:clamp(1.7rem,4vw,2.4rem);line-height:1.2;letter-spacing:-.03em;margin:.2rem 0 1rem}.sp-root h2{line-height:1.3}.sp-root p{overflow-wrap:anywhere}\n' +
+    '.sp-field{flex:1 1 16rem;min-width:0}.sp-field label{display:block;font-weight:600}.sp-input{display:block;width:100%;max-width:100%;min-width:0;font:inherit;padding:.6rem .8rem;border:1px solid var(--sp-line);border-radius:.3rem;background:var(--sp-bg);color:inherit}.sp-input[aria-invalid=true]{border:2px solid currentColor}.sp-help{font-size:.875rem;color:var(--sp-muted);margin:.4rem 0}.sp-error{font-weight:600;margin:.4rem 0}.sp-error:empty{display:none}\n' +
+    '.sp-button,.sp-root button{font:inherit;cursor:pointer;border:1px solid var(--sp-fg);border-radius:.3rem;background:var(--sp-bg);color:inherit;padding:.55rem 1rem;text-align:center;white-space:normal;overflow-wrap:anywhere;max-width:100%}.sp-button{display:inline-block;text-decoration:none}.sp-root button:disabled,.sp-root [aria-disabled=true]{cursor:default;opacity:.55}.sp-root form{display:flex;align-items:flex-start;flex-wrap:wrap;gap:1rem}.sp-root form>.sp-button{margin-top:1.6rem}\n' +
+    '.sp-list{list-style:none;padding:0;margin:1rem 0}.sp-list li{padding:1rem 0;border-top:1px solid var(--sp-line);overflow-wrap:anywhere}.sp-list a{display:block;font-size:1.1rem}.sp-empty{padding:1rem;background:var(--sp-soft)}.sp-empty[hidden]{display:none}.sp-results{min-height:5rem}.sp-loader{font-weight:600}.sp-alert{padding:.7rem;border-inline-start:3px solid currentColor}.sp-notices{margin-top:1rem}.sp-notice{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;padding:.75rem;background:var(--sp-soft);border:1px solid var(--sp-line)}\n' +
+    '@media(min-width:56rem){.sp-panel{grid-template-columns:minmax(9rem,1fr) minmax(0,3fr) minmax(9rem,1fr)}}\n' +
+    '@media(max-width:35rem){.sp-root form>.sp-button{width:100%;margin-top:0}.sp-head{align-items:flex-start}.sp-head .sp-menu{width:100%}}\n' +
+    '...',
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+supervisor: child 71807 reaped; peak target 2926756 KiB
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/supervise.py", line 60, in <module>
+    main()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/supervise.py", line 53, in main
+    raise subprocess.CalledProcessError(child.returncode, command)
+subprocess.CalledProcessError: Command '['node', 'examples/ui-gallery/breadth-browser.cjs']' returned non-zero exit status 1.

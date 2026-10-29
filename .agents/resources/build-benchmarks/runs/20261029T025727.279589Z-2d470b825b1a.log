@@ -1,0 +1,36 @@
+   Compiling stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+   Compiling stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-view)
+error[E0599]: no variant, associated function, or constant named `InvalidLocation` found for enum `ViewError` in the current scope
+   --> crates/framework/framework-view/tests/leptos_routing.rs:158:45
+    |
+158 |         ("test", "unsafe", "fr", ViewError::InvalidLocation),
+    |                                             ^^^^^^^^^^^^^^^ variant, associated function, or constant not found in `ViewError`
+
+error[E0599]: no method named `clone` found for struct `PageSnapshot<T>` in the current scope
+   --> crates/framework/framework-view/tests/leptos_routing.rs:182:41
+    |
+182 |         assert_eq!(sync.render(snapshot.clone()).await.err().unwrap(), expected);
+    |                                         ^^^^^ method not found in `PageSnapshot<()>`
+
+error[E0599]: no method named `clone` found for struct `PageSnapshot<T>` in the current scope
+   --> crates/framework/framework-view/tests/leptos_routing.rs:187:44
+    |
+187 |             buffered.render_async(snapshot.clone()).await.err().unwrap(),
+    |                                            ^^^^^ method not found in `PageSnapshot<()>`
+
+For more information about this error, try `rustc --explain E0599`.
+error: could not compile `stackpress-framework-view` (test "leptos_routing") due to 3 previous errors
+warning: build failed, waiting for other jobs to finish...
+Traceback (most recent call last):
+  File "/private/tmp/stackpress-issue17-m3/native.py", line 14, in <module>
+    subprocess.run(['cargo','test','--locked','--offline','-p','stackpress-leptos','-p','stackpress-framework-view',
+  File "/Users/cblanquera/.pyenv/versions/3.11.4/lib/python3.11/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['cargo', 'test', '--locked', '--offline', '-p', 'stackpress-leptos', '-p', 'stackpress-framework-view', '--features', 'stackpress-leptos/stream,stackpress-leptos/rich,stackpress-leptos/format,stackpress-framework-view/leptos-stream,stackpress-framework-view/native-file,stackpress-framework-view/web-preferences,stackpress-framework-view/web-flash', '--all-targets']' returned non-zero exit status 101.
+supervisor: child 73396 reaped; peak target 1187592 KiB
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/proofs/supervise.py", line 75, in <module>
+    main()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/proofs/supervise.py", line 68, in main
+    raise subprocess.CalledProcessError(child.returncode, command)
+subprocess.CalledProcessError: Command '['python3', '/private/tmp/stackpress-issue17-m3/native.py', 'round2']' returned non-zero exit status 1.

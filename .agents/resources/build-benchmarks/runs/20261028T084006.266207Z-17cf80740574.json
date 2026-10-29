@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "id": "20261028T084006.266207Z-17cf80740574",
+  "started_at": "2026-10-28T08:40:06.266207+00:00",
+  "status": "passed",
+  "label": "00013 Part B final coverage with exact native denial and cancellation",
+  "kind": "coverage",
+  "scope": "selected",
+  "cache": "warm",
+  "command": [
+    "python3",
+    "examples/review-preview/installed.py",
+    "coverage",
+    "--directory",
+    "/private/tmp/s8-review"
+  ],
+  "cwd": "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-s8-review",
+  "commit": "1c6755255f219d0687456b1596dd27a48872e808",
+  "branch": "trial/3-s8-review",
+  "dirty": true,
+  "host": "macOS-26.6.2-arm64-arm-64bit",
+  "machine": "arm64",
+  "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+  "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+  "environment": {},
+  "cargo_activity": {
+    "compiling": 0,
+    "checking": 0,
+    "documenting": 0
+  },
+  "cargo_build_stages": [],
+  "log": "runs/20261028T084006.266207Z-17cf80740574.log",
+  "ended_at": "2026-10-28T08:40:10.876269+00:00",
+  "command_seconds": 4.347183,
+  "exit_code": 0,
+  "cargo_build_seconds": null
+}

@@ -1,0 +1,11 @@
+{
+  "target_absent": true,
+  "matching_task_processes": [],
+  "root_lock_byte_identical": true,
+  "consumer_lock_byte_identical": true,
+  "independent_screenshots": 16,
+  "retained_admin_success_records": 109,
+  "admin_browser_cases": 88,
+  "evidence_retained": "/private/tmp/stackpress-issue17-m3/evidence"
+}
+supervisor: child 35338 reaped; peak target 0 KiB

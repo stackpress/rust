@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "id": "20261029T051452.531875Z-3f0901a4c79c",
+  "started_at": "2026-10-29T05:14:52.531875+00:00",
+  "status": "passed",
+  "label": "i17-m3-verify admin-browser-roles",
+  "kind": "test",
+  "scope": "consumer",
+  "cache": "cold",
+  "command": [
+    "python3",
+    "examples/generated-admin/proof.py",
+    "browser",
+    "--suite",
+    "roles"
+  ],
+  "cwd": "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17",
+  "commit": "dcca20a6d9d66da4475bd295dcea79ae082a0f56",
+  "branch": "trial/3-issue17-leptos-library",
+  "dirty": true,
+  "host": "macOS-26.6.2-arm64-arm-64bit",
+  "machine": "arm64",
+  "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+  "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+  "environment": {
+    "CARGO_TARGET_DIR": "/private/tmp/i17-m3-verify/target",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_BUILD_JOBS": "6"
+  },
+  "cargo_activity": {
+    "compiling": 0,
+    "checking": 0,
+    "documenting": 0
+  },
+  "cargo_build_stages": [],
+  "log": "runs/20261029T051452.531875Z-3f0901a4c79c.log",
+  "ended_at": "2026-10-29T05:15:54.542394+00:00",
+  "command_seconds": 61.874583,
+  "exit_code": 0,
+  "cargo_build_seconds": null
+}

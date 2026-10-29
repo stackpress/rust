@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "id": "20261028T053122.709924Z-11a4dd07669c",
+  "started_at": "2026-10-28T05:31:22.709924+00:00",
+  "status": "passed",
+  "label": "coordinator M3 verify: gallery browser.py",
+  "kind": "test",
+  "scope": "selected",
+  "cache": "warm",
+  "command": [
+    "python3",
+    "examples/ui-gallery/browser.py"
+  ],
+  "cwd": "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-s8-polish",
+  "commit": "75756970ef9f7e6c35d9a354b3806261a83f5a20",
+  "branch": "trial/3-s8-polish",
+  "dirty": true,
+  "host": "macOS-26.6.2-arm64-arm-64bit",
+  "machine": "arm64",
+  "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+  "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+  "environment": {
+    "CARGO_TARGET_DIR": "/private/tmp/s8-m3-verify/target",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_BUILD_JOBS": "6"
+  },
+  "cargo_activity": {
+    "compiling": 0,
+    "checking": 0,
+    "documenting": 0
+  },
+  "cargo_build_stages": [],
+  "log": "runs/20261028T053122.709924Z-11a4dd07669c.log",
+  "ended_at": "2026-10-28T05:31:42.211430+00:00",
+  "command_seconds": 19.369236,
+  "exit_code": 0,
+  "cargo_build_seconds": null
+}

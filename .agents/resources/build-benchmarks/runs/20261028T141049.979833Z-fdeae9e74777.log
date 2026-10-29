@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/audit.py", line 46, in <module>
+    main()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/audit.py", line 24, in main
+    assert all(file.startswith(allowed) for file in files), [file for file in files if not file.startswith(allowed)]
+AssertionError: ['crates/framework/framework-preferences/Cargo.toml', 'crates/framework/framework-preferences/src/action.rs', 'crates/framework/framework-preferences/src/cookie.rs', 'crates/framework/framework-preferences/src/flash.rs', 'crates/framework/framework-preferences/src/lib.rs', 'crates/framework/framework-preferences/src/native_file.rs', 'crates/framework/framework-preferences/src/native_file_tests.rs', 'crates/framework/framework-preferences/src/native_settings.rs', 'crates/framework/framework-preferences/src/policy.rs', 'crates/framework/framework-preferences/src/state.rs', 'crates/framework/framework-preferences/src/tests.rs']
+supervisor: child 40851 reaped; peak target 4826360 KiB
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/supervise.py", line 60, in <module>
+    main()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/supervise.py", line 53, in main
+    raise subprocess.CalledProcessError(child.returncode, command)
+subprocess.CalledProcessError: Command '['python3', 'examples/ui-preferences/proofs/audit.py', '/private/tmp/stackpress-issue15-m1-20261028/evidence/audit.json']' returned non-zero exit status 1.

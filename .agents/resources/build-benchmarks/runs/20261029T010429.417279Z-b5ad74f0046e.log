@@ -1,0 +1,20 @@
+    Checking serde_json v1.0.154
+    Checking any_spawner v0.3.0
+    Checking hydration_context v0.3.2
+    Checking reactive_graph v0.2.16
+    Checking gloo-utils v0.2.0
+    Checking codee v0.3.5
+    Checking stackpress-lib v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/lib)
+    Checking gloo-net v0.6.0
+    Checking server_fn v0.8.13
+    Checking reactive_stores v0.4.4
+    Checking stackpress-server v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/server/server)
+    Checking tachys v0.2.19
+    Checking leptos_dom v0.8.8
+    Checking leptos_server v0.8.8
+    Checking leptos v0.8.22
+    Checking leptos_meta v0.8.7
+    Checking leptos_router v0.8.17
+    Checking stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+    Checking stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-view)
+    Finished `dev` profile [unoptimized] target(s) in 12.55s

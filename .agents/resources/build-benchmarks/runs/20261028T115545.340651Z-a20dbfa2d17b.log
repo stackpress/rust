@@ -1,0 +1,171 @@
+ERROR: context/source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/lib/src/index.ts
+ERROR: context/source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/lib/src/Exception.ts
+ERROR: context/source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/lib/src/emitter
+ERROR: context/source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/lib/src/router
+ERROR: context/source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/idea/packages/idea-parser/src
+ERROR: context/source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/idea/packages/idea-transformer/src/Transformer.ts
+ERROR: context/source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/idea/language/server/src/server.ts
+ERROR: context/source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/ingest/ingest/src/Server.ts
+ERROR: context/source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/ingest/ingest/src/Router.ts
+ERROR: context/source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/ingest/ingest/src/Route.ts
+ERROR: context/source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/ingest/ingest/src/Loader.ts
+ERROR: context/source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/inquire/packages/inquire/src/Engine.ts
+ERROR: context/source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/inquire/packages/inquire/src/builder
+ERROR: context/source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/inquire/packages
+ERROR: context/source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/reactus/reactus/src/DocumentRender.ts
+ERROR: context/source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/reactus/reactus/src/helpers.ts
+ERROR: context/source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/reactus/reactus/src/Builder.ts
+ERROR: context/source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/frui/package.json
+ERROR: context/source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/frui/src
+ERROR: context/source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/r22n/package.json
+ERROR: context/source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/r22n/src
+ERROR: context/source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/packages
+ERROR: context/source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/templates/blog
+ERROR: context/source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/templates/store
+ERROR: context/source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/templates/website
+ERROR: references/00005-discussion-feature-feasibility.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/lib/src/index.ts
+ERROR: references/00005-discussion-feature-feasibility.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/lib/src/emitter/EventEmitter.ts
+ERROR: references/00005-discussion-feature-feasibility.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/lib/src/emitter/ExpressEmitter.ts
+ERROR: references/00005-discussion-feature-feasibility.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/lib/src/emitter/RouteEmitter.ts
+ERROR: references/00005-discussion-feature-feasibility.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/lib/src/queue/TaskQueue.ts
+ERROR: references/00005-discussion-feature-feasibility.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/idea/packages/idea-parser/src/index.ts
+ERROR: references/00005-discussion-feature-feasibility.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/idea/packages/idea-transformer/src/Transformer.ts
+ERROR: references/00005-discussion-feature-feasibility.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/idea/language/server/src/server.ts
+ERROR: references/00005-discussion-feature-feasibility.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/ingest/ingest/src/Server.ts
+ERROR: references/00005-discussion-feature-feasibility.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/ingest/ingest/src/Router.ts
+ERROR: references/00005-discussion-feature-feasibility.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/ingest/ingest/src/Route.ts
+ERROR: references/00005-discussion-feature-feasibility.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/ingest/ingest/src/plugin/ActionRouter.ts
+ERROR: references/00005-discussion-feature-feasibility.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/inquire/packages/inquire/src/Engine.ts
+ERROR: references/00005-discussion-feature-feasibility.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/inquire/packages/inquire/src/builder
+ERROR: references/00005-discussion-feature-feasibility.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/inquire/packages/inquire/src/dialect
+ERROR: references/00005-discussion-feature-feasibility.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/reactus/reactus/src/DocumentRender.ts
+ERROR: references/00005-discussion-feature-feasibility.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/reactus/reactus/src/helpers.ts
+ERROR: references/00005-discussion-feature-feasibility.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/reactus/reactus/src/Builder.ts
+ERROR: references/00005-discussion-feature-feasibility.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/reactus/reactus/src/plugins.ts
+ERROR: references/00006-discussion-crate-plugin-proposals.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/packages/stackpress/src/plugin.ts
+ERROR: references/00006-discussion-crate-plugin-proposals.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/packages/stackpress-schema/src/plugin.ts
+ERROR: references/00008-discussion-diagnostics-existing-parser.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/lib/src/Exception.ts
+ERROR: references/00008-discussion-diagnostics-existing-parser.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/ingest/ingest/src/Route.ts
+ERROR: references/00018-upstream-compatibility-and-maintenance.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/.agents/workflows/stackpress-github-release.md
+ERROR: references/00018-upstream-compatibility-and-maintenance.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/.agents/resources/2026-07-14-coordinated-github-release-policy.md
+ERROR: references/00018-upstream-compatibility-and-maintenance.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/.agents/workflows/stackpress-kb-maintenance.md
+ERROR: references/00034-foundation-source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/lib/src/index.ts
+ERROR: references/00034-foundation-source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/lib/tests
+ERROR: references/00034-foundation-source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/idea/packages/idea-parser/src
+ERROR: references/00034-foundation-source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/idea/packages/idea-transformer/src/Transformer.ts
+ERROR: references/00034-foundation-source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/idea/packages/idea-parser/tests
+ERROR: references/00034-foundation-source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/idea/packages/idea-transformer/tests
+ERROR: references/00034-foundation-source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/idea/language/server/src
+ERROR: references/00034-foundation-source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/ingest/ingest/src
+ERROR: references/00034-foundation-source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/ingest/ingest/tests
+ERROR: references/00034-foundation-source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/inquire/packages/inquire/src/Engine.ts
+ERROR: references/00034-foundation-source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/inquire/packages/inquire/src/builder
+ERROR: references/00034-foundation-source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/inquire/packages/inquire/src/dialect
+ERROR: references/00034-foundation-source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/inquire/examples
+ERROR: references/00034-foundation-source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/reactus/reactus/src
+ERROR: references/00034-foundation-source-map.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/reactus/reactus/tests
+ERROR: references/00035-upstream-package-source-inventory.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/lib/package.json
+ERROR: references/00035-upstream-package-source-inventory.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/idea/package.json
+ERROR: references/00035-upstream-package-source-inventory.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/idea/packages/idea/package.json
+ERROR: references/00035-upstream-package-source-inventory.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/idea/packages/idea-parser/package.json
+ERROR: references/00035-upstream-package-source-inventory.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/idea/packages/idea-transformer/package.json
+ERROR: references/00035-upstream-package-source-inventory.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/ingest/ingest/package.json
+ERROR: references/00035-upstream-package-source-inventory.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/ingest/package.json
+ERROR: references/00035-upstream-package-source-inventory.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/inquire/package.json
+ERROR: references/00035-upstream-package-source-inventory.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/inquire/packages/inquire/package.json
+ERROR: references/00035-upstream-package-source-inventory.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/inquire/packages/inquire-mysql2/package.json
+ERROR: references/00035-upstream-package-source-inventory.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/inquire/packages/inquire-pg/package.json
+ERROR: references/00035-upstream-package-source-inventory.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/inquire/packages/inquire-pglite/package.json
+ERROR: references/00035-upstream-package-source-inventory.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/inquire/packages/inquire-sqlite3/package.json
+ERROR: references/00035-upstream-package-source-inventory.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/reactus/package.json
+ERROR: references/00035-upstream-package-source-inventory.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/reactus/reactus/package.json
+ERROR: references/00035-upstream-package-source-inventory.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/package.json
+ERROR: references/00035-upstream-package-source-inventory.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/packages/stackpress/package.json
+ERROR: references/00035-upstream-package-source-inventory.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/packages/stackpress-admin/package.json
+ERROR: references/00035-upstream-package-source-inventory.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/packages/stackpress-ai/package.json
+ERROR: references/00035-upstream-package-source-inventory.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/packages/stackpress-api/package.json
+ERROR: references/00035-upstream-package-source-inventory.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/packages/stackpress-csrf/package.json
+ERROR: references/00035-upstream-package-source-inventory.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/packages/stackpress-desktop/package.json
+ERROR: references/00035-upstream-package-source-inventory.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/packages/stackpress-email/package.json
+ERROR: references/00035-upstream-package-source-inventory.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/packages/stackpress-language/package.json
+ERROR: references/00035-upstream-package-source-inventory.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/packages/stackpress-schema/package.json
+ERROR: references/00035-upstream-package-source-inventory.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/packages/stackpress-server/package.json
+ERROR: references/00035-upstream-package-source-inventory.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/packages/stackpress-session/package.json
+ERROR: references/00035-upstream-package-source-inventory.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/packages/stackpress-sql/package.json
+ERROR: references/00035-upstream-package-source-inventory.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/packages/stackpress-view/package.json
+ERROR: references/00035-upstream-package-source-inventory.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/frui/package.json
+ERROR: references/00035-upstream-package-source-inventory.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/r22n/package.json
+ERROR: references/00041-framework-package-supplements.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/packages/stackpress/src/plugin.ts
+ERROR: references/00041-framework-package-supplements.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/packages/stackpress-server/src
+ERROR: references/00041-framework-package-supplements.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/packages/stackpress-schema/src
+ERROR: references/00041-framework-package-supplements.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/packages/stackpress-sql/src
+ERROR: references/00041-framework-package-supplements.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/packages/stackpress-view/src
+ERROR: references/00041-framework-package-supplements.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/packages/stackpress-admin/src
+ERROR: references/00041-framework-package-supplements.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/packages/stackpress-session/src/plugin.ts
+ERROR: references/00041-framework-package-supplements.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/packages/stackpress-api/src/plugin.ts
+ERROR: references/00041-framework-package-supplements.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/packages/stackpress-csrf/src/plugin.ts
+ERROR: references/00041-framework-package-supplements.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/packages/stackpress-email/src
+ERROR: references/00041-framework-package-supplements.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/packages/stackpress-language/src
+ERROR: references/00041-framework-package-supplements.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/packages/stackpress-ai/src/plugin.ts
+ERROR: references/00041-framework-package-supplements.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/packages/stackpress-desktop/README.md
+ERROR: specs/00001-stackpress-rust-foundation/design-upstream-inventory.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/lib/src/index.ts
+ERROR: specs/00001-stackpress-rust-foundation/slice-2-design-upstream-adapters.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/ingest/ingest/src/http/index.ts
+ERROR: specs/00001-stackpress-rust-foundation/slice-2-design-upstream-adapters.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/ingest/ingest/src/http/Adapter.ts
+ERROR: specs/00001-stackpress-rust-foundation/slice-2-design-upstream-adapters.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/ingest/ingest/src/http/helpers.ts
+ERROR: specs/00001-stackpress-rust-foundation/slice-2-design-upstream-adapters.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/ingest/ingest/src/whatwg/index.ts
+ERROR: specs/00001-stackpress-rust-foundation/slice-2-design-upstream-adapters.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/ingest/ingest/src/whatwg/Adapter.ts
+ERROR: specs/00001-stackpress-rust-foundation/slice-2-design-upstream-adapters.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/ingest/ingest/src/whatwg/helpers.ts
+ERROR: specs/00001-stackpress-rust-foundation/slice-2-design-upstream-adapters.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/packages/stackpress-server/src/index.ts
+ERROR: specs/00001-stackpress-rust-foundation/slice-2-design-upstream-adapters.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/packages/stackpress-server/src/Terminal.ts
+ERROR: specs/00001-stackpress-rust-foundation/slice-2-design-upstream-adapters.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/packages/stackpress-server/src/plugin.ts
+ERROR: specs/00001-stackpress-rust-foundation/slice-2-design-upstream-adapters.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/packages/stackpress-server/src/events/index.ts
+ERROR: specs/00001-stackpress-rust-foundation/slice-2-design-upstream-adapters.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/packages/stackpress-server/src/scripts/index.ts
+ERROR: specs/00001-stackpress-rust-foundation/slice-2-design-upstream-adapters.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/packages/stackpress-server/src/types.ts
+ERROR: specs/00001-stackpress-rust-foundation/slice-2-design-upstream-adapters.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/packages/stackpress-server/src/http.ts
+ERROR: specs/00001-stackpress-rust-foundation/slice-2-design-upstream-adapters.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/stackpress/packages/stackpress-server/src/whatwg.ts
+ERROR: specs/00001-stackpress-rust-foundation/slice-2-design-upstream-adapters.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/lib/src/terminal/Terminal.ts
+ERROR: specs/00001-stackpress-rust-foundation/slice-2-design-upstream-adapters.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/lib/src/terminal/control.ts
+ERROR: specs/00001-stackpress-rust-foundation/slice-2-design-upstream-adapters.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/lib/src/terminal/input.ts
+ERROR: specs/00001-stackpress-rust-foundation/slice-2-design-upstream-adapters.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/lib/src/types.ts
+ERROR: specs/00001-stackpress-rust-foundation/slice-2-design-upstream-host.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/ingest/ingest/src/index.ts
+ERROR: specs/00001-stackpress-rust-foundation/slice-2-design-upstream-host.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/ingest/ingest/src/Server.ts
+ERROR: specs/00001-stackpress-rust-foundation/slice-2-design-upstream-host.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/ingest/ingest/src/Router.ts
+ERROR: specs/00001-stackpress-rust-foundation/slice-2-design-upstream-host.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/ingest/ingest/src/Route.ts
+ERROR: specs/00001-stackpress-rust-foundation/slice-2-design-upstream-host.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/ingest/ingest/src/Loader.ts
+ERROR: specs/00001-stackpress-rust-foundation/slice-2-design-upstream-host.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/ingest/ingest/src/types.ts
+ERROR: specs/00001-stackpress-rust-foundation/slice-2-design-upstream-host.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/ingest/ingest/src/plugin/ActionRouter.ts
+ERROR: specs/00001-stackpress-rust-foundation/slice-2-design-upstream-host.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/ingest/ingest/src/plugin/EntryRouter.ts
+ERROR: specs/00001-stackpress-rust-foundation/slice-2-design-upstream-host.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/ingest/ingest/src/plugin/ImportRouter.ts
+ERROR: specs/00001-stackpress-rust-foundation/slice-2-design-upstream-host.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/ingest/ingest/src/plugin/ViewRouter.ts
+ERROR: specs/00001-stackpress-rust-foundation/slice-2-design-upstream-host.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/ingest/ingest/src/decorators.ts
+ERROR: specs/00001-stackpress-rust-foundation/slice-2-design-upstream-host.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/ingest/ingest/tests/Route.test.ts
+ERROR: specs/00001-stackpress-rust-foundation/slice-3-design-inventory.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/idea/packages/idea-parser/src/index.ts
+ERROR: specs/00001-stackpress-rust-foundation/slice-3-design-inventory.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/idea/packages/idea-transformer/src/Transformer.ts
+ERROR: specs/00001-stackpress-rust-foundation/slice-3-design-inventory.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/lib/src/system/FileLoader.ts
+ERROR: specs/00001-stackpress-rust-foundation/slice-3-design-inventory.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/lib/src/system/NodeFS.ts
+ERROR: specs/00001-stackpress-rust-foundation/slice-3-design-inventory.md links to missing file /Users/cblanquera/.paseo/worktrees/342ftjlj/lib/src/Template.ts
+WARN: references/00005-discussion-feature-feasibility.md has 219 lines; preferred target is 200 lines or fewer. Keep a coherent file at 201-500 lines, or split losslessly when that improves routing; do not shorten content merely to clear this warning
+WARN: references/00006-discussion-crate-plugin-proposals.md has 314 lines; preferred target is 200 lines or fewer. Keep a coherent file at 201-500 lines, or split losslessly when that improves routing; do not shorten content merely to clear this warning
+WARN: references/00021-upstream-schema-api-contracts.md has 204 lines; preferred target is 200 lines or fewer. Keep a coherent file at 201-500 lines, or split losslessly when that improves routing; do not shorten content merely to clear this warning
+WARN: references/00023-upstream-configuration-catalog.md has 204 lines; preferred target is 200 lines or fewer. Keep a coherent file at 201-500 lines, or split losslessly when that improves routing; do not shorten content merely to clear this warning
+WARN: references/00025-upstream-sql-api-contracts.md has 213 lines; preferred target is 200 lines or fewer. Keep a coherent file at 201-500 lines, or split losslessly when that improves routing; do not shorten content merely to clear this warning
+WARN: references/00029-upstream-exports-types-generated-contracts.md has 210 lines; preferred target is 200 lines or fewer. Keep a coherent file at 201-500 lines, or split losslessly when that improves routing; do not shorten content merely to clear this warning
+WARN: specs/00001-stackpress-rust-foundation/design-api-contract.md has 263 lines; preferred target is 200 lines or fewer. Keep a coherent file at 201-500 lines, or split losslessly when that improves routing; do not shorten content merely to clear this warning
+WARN: specs/00001-stackpress-rust-foundation/slice-2-receipt-lane-b-cli.md has 393 lines; preferred target is 200 lines or fewer. Keep a coherent file at 201-500 lines, or split losslessly when that improves routing; do not shorten content merely to clear this warning
+WARN: specs/00001-stackpress-rust-foundation/slice-2-receipt-lane-b-run.md has 216 lines; preferred target is 200 lines or fewer. Keep a coherent file at 201-500 lines, or split losslessly when that improves routing; do not shorten content merely to clear this warning
+WARN: specs/00001-stackpress-rust-foundation/slice-2-receipt-lane-c-http.md has 299 lines; preferred target is 200 lines or fewer. Keep a coherent file at 201-500 lines, or split losslessly when that improves routing; do not shorten content merely to clear this warning
+WARN: specs/00001-stackpress-rust-foundation/slice-2-receipt-lane-d-app.md has 320 lines; preferred target is 200 lines or fewer. Keep a coherent file at 201-500 lines, or split losslessly when that improves routing; do not shorten content merely to clear this warning
+WARN: specs/00001-stackpress-rust-foundation/slice-3-receipt-lane-b-compose.md has 207 lines; preferred target is 200 lines or fewer. Keep a coherent file at 201-500 lines, or split losslessly when that improves routing; do not shorten content merely to clear this warning
+WARN: specs/00001-stackpress-rust-foundation/slice-3-receipt-lane-c-writer.md has 207 lines; preferred target is 200 lines or fewer. Keep a coherent file at 201-500 lines, or split losslessly when that improves routing; do not shorten content merely to clear this warning
+WARN: specs/00001-stackpress-rust-foundation/slice-4-design-tests-core.md has 232 lines; preferred target is 200 lines or fewer. Keep a coherent file at 201-500 lines, or split losslessly when that improves routing; do not shorten content merely to clear this warning
+WARN: specs/00001-stackpress-rust-foundation/slice-4-receipt-lane-a-m3.md has 237 lines; preferred target is 200 lines or fewer. Keep a coherent file at 201-500 lines, or split losslessly when that improves routing; do not shorten content merely to clear this warning
+WARN: specs/00001-stackpress-rust-foundation/tasks/00003-review-rounds-and-closeout.md has 294 lines; preferred target is 200 lines or fewer. Keep a coherent file at 201-500 lines, or split losslessly when that improves routing; do not shorten content merely to clear this warning
+WARN: specs/00001-stackpress-rust-foundation/tasks/00005-slice-2-server-and-cli.md has 374 lines; preferred target is 200 lines or fewer. Keep a coherent file at 201-500 lines, or split losslessly when that improves routing; do not shorten content merely to clear this warning
+WARN: specs/00001-stackpress-rust-foundation/tasks/00006-slice-3-idea.md has 281 lines; preferred target is 200 lines or fewer. Keep a coherent file at 201-500 lines, or split losslessly when that improves routing; do not shorten content merely to clear this warning
+WARN: specs/00001-stackpress-rust-foundation/tasks/00011-receipt-closeout.md has 390 lines; preferred target is 200 lines or fewer. Keep a coherent file at 201-500 lines, or split losslessly when that improves routing; do not shorten content merely to clear this warning
+WARN: specs/00001-stackpress-rust-foundation/tasks/00012-receipt-http-m0.md has 205 lines; preferred target is 200 lines or fewer. Keep a coherent file at 201-500 lines, or split losslessly when that improves routing; do not shorten content merely to clear this warning
+WARN: specs/00001-stackpress-rust-foundation/tasks/00012-receipt-sql-closeout.md has 229 lines; preferred target is 200 lines or fewer. Keep a coherent file at 201-500 lines, or split losslessly when that improves routing; do not shorten content merely to clear this warning
+WARN: specs/00001-stackpress-rust-foundation/tasks/00012-receipt-sql-store-integration.md has 217 lines; preferred target is 200 lines or fewer. Keep a coherent file at 201-500 lines, or split losslessly when that improves routing; do not shorten content merely to clear this warning
+WARN: workflows/spec-user-journeys.md has 228 lines; preferred target is 200 lines or fewer. Keep a coherent file at 201-500 lines, or split losslessly when that improves routing; do not shorten content merely to clear this warning
+WARN: references/00005-discussion-feature-feasibility.md link text for references/00008-discussion-diagnostics-existing-parser.md looks like a path, not a description
+WARN: references/00005-discussion-feature-feasibility.md link text for references/00013-upstream-modeling-and-generation.md looks like a path, not a description

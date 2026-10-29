@@ -1,0 +1,303 @@
+   Compiling stackpress-leptos v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/leptos)
+   Compiling stackpress-framework-view v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/crates/framework/framework-view)
+error[E0599]: no method named `next` found for struct `leptos::stream::StreamBody` in the current scope
+   --> crates/framework/framework-view/src/leptos/stream_tests.rs:128:50
+    |
+128 |         let prefix = String::from_utf8(page.body.next().await.unwrap().unwrap()).unwrap();
+    |                                                  ^^^^
+    |
+   ::: crates/framework/framework-view/src/leptos/stream.rs:161:1
+    |
+161 | pub struct StreamBody {
+    | --------------------- method `next` not found for this struct
+    |
+   ::: /Users/cblanquera/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/futures-util-0.3.34/src/stream/stream/mod.rs:273:8
+    |
+273 |     fn next(&mut self) -> Next<'_, Self>
+    |        ---- the method is available for `leptos::stream::StreamBody` here
+    |
+    = help: items from traits can only be used if the trait is in scope
+help: trait `StreamExt` which provides `next` is implemented but not in scope; perhaps you want to import it
+    |
+  2 + use futures::StreamExt;
+    |
+help: there is a method `try_next` with a similar name
+    |
+128 |         let prefix = String::from_utf8(page.body.try_next().await.unwrap().unwrap()).unwrap();
+    |                                                  ++++
+
+error[E0599]: no method named `next` found for struct `leptos::stream::StreamBody` in the current scope
+   --> crates/framework/framework-view/src/leptos/stream_tests.rs:132:49
+    |
+132 |         let shell = String::from_utf8(page.body.next().await.unwrap().unwrap()).unwrap();
+    |                                                 ^^^^
+    |
+   ::: crates/framework/framework-view/src/leptos/stream.rs:161:1
+    |
+161 | pub struct StreamBody {
+    | --------------------- method `next` not found for this struct
+    |
+   ::: /Users/cblanquera/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/futures-util-0.3.34/src/stream/stream/mod.rs:273:8
+    |
+273 |     fn next(&mut self) -> Next<'_, Self>
+    |        ---- the method is available for `leptos::stream::StreamBody` here
+    |
+    = help: items from traits can only be used if the trait is in scope
+help: trait `StreamExt` which provides `next` is implemented but not in scope; perhaps you want to import it
+    |
+  2 + use futures::StreamExt;
+    |
+help: there is a method `try_next` with a similar name
+    |
+132 |         let shell = String::from_utf8(page.body.try_next().await.unwrap().unwrap()).unwrap();
+    |                                                 ++++
+
+error[E0599]: no method named `next` found for struct `leptos::stream::StreamBody` in the current scope
+   --> crates/framework/framework-view/src/leptos/stream_tests.rs:144:47
+    |
+144 |             while let Some(chunk) = page.body.next().await {
+    |                                               ^^^^
+    |
+   ::: crates/framework/framework-view/src/leptos/stream.rs:161:1
+    |
+161 | pub struct StreamBody {
+    | --------------------- method `next` not found for this struct
+    |
+   ::: /Users/cblanquera/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/futures-util-0.3.34/src/stream/stream/mod.rs:273:8
+    |
+273 |     fn next(&mut self) -> Next<'_, Self>
+    |        ---- the method is available for `leptos::stream::StreamBody` here
+    |
+    = help: items from traits can only be used if the trait is in scope
+help: trait `StreamExt` which provides `next` is implemented but not in scope; perhaps you want to import it
+    |
+  2 + use futures::StreamExt;
+    |
+help: there is a method `try_next` with a similar name
+    |
+144 |             while let Some(chunk) = page.body.try_next().await {
+    |                                               ++++
+
+error[E0599]: no method named `next` found for struct `leptos::stream::StreamBody` in the current scope
+   --> crates/framework/framework-view/src/leptos/stream_tests.rs:215:15
+    |
+215 |     page.body.next().await.unwrap().unwrap();
+    |               ^^^^
+    |
+   ::: crates/framework/framework-view/src/leptos/stream.rs:161:1
+    |
+161 | pub struct StreamBody {
+    | --------------------- method `next` not found for this struct
+    |
+   ::: /Users/cblanquera/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/futures-util-0.3.34/src/stream/stream/mod.rs:273:8
+    |
+273 |     fn next(&mut self) -> Next<'_, Self>
+    |        ---- the method is available for `leptos::stream::StreamBody` here
+    |
+    = help: items from traits can only be used if the trait is in scope
+help: trait `StreamExt` which provides `next` is implemented but not in scope; perhaps you want to import it
+    |
+  2 + use futures::StreamExt;
+    |
+help: there is a method `try_next` with a similar name
+    |
+215 |     page.body.try_next().await.unwrap().unwrap();
+    |               ++++
+
+error[E0609]: no field `receive` on type `leptos::stream::StreamBody`
+   --> crates/framework/framework-view/src/leptos/stream_tests.rs:218:21
+    |
+218 |     while page.body.receive.len() < 2 {
+    |                     ^^^^^^^ unknown field
+    |
+    = note: available field is: `inner`
+
+error[E0599]: no method named `next` found for struct `leptos::stream::StreamBody` in the current scope
+   --> crates/framework/framework-view/src/leptos/stream_tests.rs:230:39
+    |
+230 |     while let Some(chunk) = page.body.next().await {
+    |                                       ^^^^
+    |
+   ::: crates/framework/framework-view/src/leptos/stream.rs:161:1
+    |
+161 | pub struct StreamBody {
+    | --------------------- method `next` not found for this struct
+    |
+   ::: /Users/cblanquera/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/futures-util-0.3.34/src/stream/stream/mod.rs:273:8
+    |
+273 |     fn next(&mut self) -> Next<'_, Self>
+    |        ---- the method is available for `leptos::stream::StreamBody` here
+    |
+    = help: items from traits can only be used if the trait is in scope
+help: trait `StreamExt` which provides `next` is implemented but not in scope; perhaps you want to import it
+    |
+  2 + use futures::StreamExt;
+    |
+help: there is a method `try_next` with a similar name
+    |
+230 |     while let Some(chunk) = page.body.try_next().await {
+    |                                       ++++
+
+error[E0599]: no method named `next` found for struct `leptos::stream::StreamBody` in the current scope
+   --> crates/framework/framework-view/src/leptos/stream_tests.rs:250:15
+    |
+250 |     page.body.next().await.unwrap().unwrap();
+    |               ^^^^
+    |
+   ::: crates/framework/framework-view/src/leptos/stream.rs:161:1
+    |
+161 | pub struct StreamBody {
+    | --------------------- method `next` not found for this struct
+    |
+   ::: /Users/cblanquera/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/futures-util-0.3.34/src/stream/stream/mod.rs:273:8
+    |
+273 |     fn next(&mut self) -> Next<'_, Self>
+    |        ---- the method is available for `leptos::stream::StreamBody` here
+    |
+    = help: items from traits can only be used if the trait is in scope
+help: trait `StreamExt` which provides `next` is implemented but not in scope; perhaps you want to import it
+    |
+  2 + use futures::StreamExt;
+    |
+help: there is a method `try_next` with a similar name
+    |
+250 |     page.body.try_next().await.unwrap().unwrap();
+    |               ++++
+
+error[E0599]: no method named `next` found for struct `leptos::stream::StreamBody` in the current scope
+   --> crates/framework/framework-view/src/leptos/stream_tests.rs:251:15
+    |
+251 |     page.body.next().await.unwrap().unwrap();
+    |               ^^^^
+    |
+   ::: crates/framework/framework-view/src/leptos/stream.rs:161:1
+    |
+161 | pub struct StreamBody {
+    | --------------------- method `next` not found for this struct
+    |
+   ::: /Users/cblanquera/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/futures-util-0.3.34/src/stream/stream/mod.rs:273:8
+    |
+273 |     fn next(&mut self) -> Next<'_, Self>
+    |        ---- the method is available for `leptos::stream::StreamBody` here
+    |
+    = help: items from traits can only be used if the trait is in scope
+help: trait `StreamExt` which provides `next` is implemented but not in scope; perhaps you want to import it
+    |
+  2 + use futures::StreamExt;
+    |
+help: there is a method `try_next` with a similar name
+    |
+251 |     page.body.try_next().await.unwrap().unwrap();
+    |               ++++
+
+error[E0599]: no method named `next` found for struct `leptos::stream::StreamBody` in the current scope
+   --> crates/framework/framework-view/src/leptos/stream_tests.rs:257:19
+    |
+257 |         page.body.next().now_or_never().is_none(),
+    |                   ^^^^
+    |
+   ::: crates/framework/framework-view/src/leptos/stream.rs:161:1
+    |
+161 | pub struct StreamBody {
+    | --------------------- method `next` not found for this struct
+    |
+   ::: /Users/cblanquera/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/futures-util-0.3.34/src/stream/stream/mod.rs:273:8
+    |
+273 |     fn next(&mut self) -> Next<'_, Self>
+    |        ---- the method is available for `leptos::stream::StreamBody` here
+    |
+    = help: items from traits can only be used if the trait is in scope
+help: trait `StreamExt` which provides `next` is implemented but not in scope; perhaps you want to import it
+    |
+  2 + use futures::StreamExt;
+    |
+help: there is a method `try_next` with a similar name
+    |
+257 |         page.body.try_next().now_or_never().is_none(),
+    |                   ++++
+
+error[E0599]: no method named `next` found for struct `leptos::stream::StreamBody` in the current scope
+   --> crates/framework/framework-view/src/leptos/stream_tests.rs:262:39
+    |
+262 |     while let Some(chunk) = page.body.next().await {
+    |                                       ^^^^
+    |
+   ::: crates/framework/framework-view/src/leptos/stream.rs:161:1
+    |
+161 | pub struct StreamBody {
+    | --------------------- method `next` not found for this struct
+    |
+   ::: /Users/cblanquera/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/futures-util-0.3.34/src/stream/stream/mod.rs:273:8
+    |
+273 |     fn next(&mut self) -> Next<'_, Self>
+    |        ---- the method is available for `leptos::stream::StreamBody` here
+    |
+    = help: items from traits can only be used if the trait is in scope
+help: trait `StreamExt` which provides `next` is implemented but not in scope; perhaps you want to import it
+    |
+  2 + use futures::StreamExt;
+    |
+help: there is a method `try_next` with a similar name
+    |
+262 |     while let Some(chunk) = page.body.try_next().await {
+    |                                       ++++
+
+error[E0599]: no method named `now_or_never` found for struct `Pin<&mut impl futures::Future<Output = std::result::Result<StreamPage, ViewError>>>` in the current scope
+   --> crates/framework/framework-view/src/leptos/stream_tests.rs:296:30
+    |
+296 |     assert!(staging.as_mut().now_or_never().is_none());
+    |                              ^^^^^^^^^^^^ method not found in `Pin<&mut impl futures::Future<Output = std::result::Result<StreamPage, ViewError>>>`
+    |
+   ::: /Users/cblanquera/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/futures-util-0.3.34/src/future/future/mod.rs:590:8
+    |
+590 |     fn now_or_never(self) -> Option<Self::Output>
+    |        ------------ the method is available for `Pin<&mut impl futures::Future<Output = std::result::Result<StreamPage, ViewError>>>` here
+    |
+    = help: items from traits can only be used if the trait is in scope
+help: trait `FutureExt` which provides `now_or_never` is implemented but not in scope; perhaps you want to import it
+    |
+  2 + use futures::FutureExt;
+    |
+
+error[E0599]: no method named `next` found for struct `leptos::stream::StreamBody` in the current scope
+   --> crates/framework/framework-view/src/leptos/stream_tests.rs:426:43
+    |
+426 |         while let Some(chunk) = page.body.next().await {
+    |                                           ^^^^
+    |
+   ::: crates/framework/framework-view/src/leptos/stream.rs:161:1
+    |
+161 | pub struct StreamBody {
+    | --------------------- method `next` not found for this struct
+    |
+   ::: /Users/cblanquera/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/futures-util-0.3.34/src/stream/stream/mod.rs:273:8
+    |
+273 |     fn next(&mut self) -> Next<'_, Self>
+    |        ---- the method is available for `leptos::stream::StreamBody` here
+    |
+    = help: items from traits can only be used if the trait is in scope
+help: trait `StreamExt` which provides `next` is implemented but not in scope; perhaps you want to import it
+    |
+  2 + use futures::StreamExt;
+    |
+help: there is a method `try_next` with a similar name
+    |
+426 |         while let Some(chunk) = page.body.try_next().await {
+    |                                           ++++
+
+Some errors have detailed explanations: E0599, E0609.
+For more information about an error, try `rustc --explain E0599`.
+error: could not compile `stackpress-framework-view` (lib test) due to 12 previous errors
+Traceback (most recent call last):
+  File "/private/tmp/stackpress-issue17-m1/native.py", line 3, in <module>
+    subprocess.run(['cargo','test','--locked','--offline','-p','stackpress-leptos','-p','stackpress-framework-view','--features','stackpress-leptos/stream,stackpress-leptos/rich,stackpress-leptos/format,stackpress-framework-view/leptos-stream,stackpress-framework-view/native-file,stackpress-framework-view/web-preferences,stackpress-framework-view/web-flash','--all-targets'],check=True)
+  File "/Users/cblanquera/.pyenv/versions/3.11.4/lib/python3.11/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['cargo', 'test', '--locked', '--offline', '-p', 'stackpress-leptos', '-p', 'stackpress-framework-view', '--features', 'stackpress-leptos/stream,stackpress-leptos/rich,stackpress-leptos/format,stackpress-framework-view/leptos-stream,stackpress-framework-view/native-file,stackpress-framework-view/web-preferences,stackpress-framework-view/web-flash', '--all-targets']' returned non-zero exit status 101.
+supervisor: child 27053 reaped; peak target 1325248 KiB
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/proofs/supervise.py", line 75, in <module>
+    main()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/proofs/supervise.py", line 68, in main
+    raise subprocess.CalledProcessError(child.returncode, command)
+subprocess.CalledProcessError: Command '['python3', '/private/tmp/stackpress-issue17-m1/native.py']' returned non-zero exit status 1.

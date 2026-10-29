@@ -1,0 +1,32 @@
+   Compiling leptos-independent v0.0.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent)
+    Finished `dev` profile [unoptimized] target(s) in 2.56s
+$ node /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/browser.cjs
+browser boot diagnostics {"tag":"base-hydrate-light-en-1280","errors":["panicked at /Users/cblanquera/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/leptos_meta-0.8.7/src/lib.rs:137:22:\nno leptos_meta HEAD marker comment found. Did you include the <MetaTags/> component in the <head> of your server-rendered app?","unreachable"],"unexpected":[]}
+page.waitForFunction: Timeout 10000ms exceeded.
+    at /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/browser.cjs:48:33 {
+  log: [],
+  name: 'TimeoutError'
+}
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/proof.py", line 111, in <module>
+    main()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/proof.py", line 105, in main
+    globals()[action]()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/proof.py", line 95, in browser
+    run(['node', HERE / 'browser.cjs'], timeout=180)
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/proof.py", line 45, in run
+    raise subprocess.CalledProcessError(child.returncode, args)
+subprocess.CalledProcessError: Command '['node', PosixPath('/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/leptos-independent/browser.cjs')]' returned non-zero exit status 1.
+Traceback (most recent call last):
+  File "/private/tmp/stackpress-issue17-m2/boot.py", line 5, in <module>
+    subprocess.run(['python3','examples/leptos-independent/proof.py','browser'],env=dict(os.environ,INDEPENDENT_OUTPUT_DIR=str(out),INDEPENDENT_PLAYWRIGHT='/Users/cblanquera/.npm/_npx/e41f203b7505f1fb/node_modules/playwright'),check=True)
+  File "/Users/cblanquera/.pyenv/versions/3.11.4/lib/python3.11/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['python3', 'examples/leptos-independent/proof.py', 'browser']' returned non-zero exit status 1.
+supervisor: child 98773 reaped; peak target 2344572 KiB
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/proofs/supervise.py", line 75, in <module>
+    main()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/proofs/supervise.py", line 68, in main
+    raise subprocess.CalledProcessError(child.returncode, command)
+subprocess.CalledProcessError: Command '['python3', '/private/tmp/stackpress-issue17-m2/boot.py']' returned non-zero exit status 1.

@@ -1,0 +1,5 @@
+PASS preferences-native-build
+PASS preferences-hydrate-build
+PASS preferences-hydrate-bindgen
+PASS preferences-csr-build
+PASS preferences-csr-bindgen

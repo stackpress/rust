@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "id": "20261028T155248.347942Z-43a82f1b780c",
+  "started_at": "2026-10-28T15:52:48.347942+00:00",
+  "status": "passed",
+  "label": "issue15 M3 round 1 complexity verification",
+  "kind": "test",
+  "scope": "selected",
+  "cache": "cold",
+  "command": [
+    "python3",
+    "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/supervise.py",
+    "--target",
+    "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/target/issue15-m3",
+    "--seconds",
+    "900",
+    "--",
+    "python3",
+    "/private/tmp/stackpress-issue15-m3-20261028/round-test.py"
+  ],
+  "cwd": "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15",
+  "commit": "ce8a3776db76618b03bb59dd1ef97c51703149fc",
+  "branch": "trial/3-issue15-view-presentation",
+  "dirty": true,
+  "host": "macOS-26.6.2-arm64-arm-64bit",
+  "machine": "arm64",
+  "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+  "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+  "environment": {
+    "CARGO_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/target/issue15-m3",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_BUILD_JOBS": "2"
+  },
+  "cargo_activity": {
+    "compiling": 234,
+    "checking": 0,
+    "documenting": 0
+  },
+  "cargo_build_stages": [
+    {
+      "profile": "test",
+      "seconds": 96.0
+    }
+  ],
+  "log": "runs/20261028T155248.347942Z-43a82f1b780c.log",
+  "ended_at": "2026-10-28T15:54:46.244863+00:00",
+  "command_seconds": 117.613243,
+  "exit_code": 0,
+  "cargo_build_seconds": 96.0
+}

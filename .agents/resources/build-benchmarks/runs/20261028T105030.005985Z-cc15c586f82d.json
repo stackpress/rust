@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "id": "20261028T105030.005985Z-cc15c586f82d",
+  "started_at": "2026-10-28T10:50:30.005985+00:00",
+  "status": "passed",
+  "label": "issue16 workspace-check-names",
+  "kind": "other",
+  "scope": "selected",
+  "cache": "warm",
+  "command": [
+    "python3",
+    "/private/tmp/issue16-watch.py",
+    "cargo",
+    "run",
+    "--locked",
+    "-p",
+    "generated-workspace-tool",
+    "--",
+    "emit",
+    "generate",
+    "--input",
+    "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/examples/generated-workspace/app/names.idea",
+    "--output",
+    "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/examples/generated-workspace/app/src/names_generated",
+    "--check",
+    "true"
+  ],
+  "cwd": "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16",
+  "commit": "c8d52c0490d0cf5fabc80cd8fdc7f00b8bcd56f8",
+  "branch": "trial/3-issue16-server-layout",
+  "dirty": true,
+  "host": "macOS-26.6.2-arm64-arm-64bit",
+  "machine": "arm64",
+  "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+  "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+  "environment": {
+    "CARGO_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/target",
+    "CARGO_LLVM_COV_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/target",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_BUILD_JOBS": "4"
+  },
+  "cargo_activity": {
+    "compiling": 0,
+    "checking": 0,
+    "documenting": 0
+  },
+  "cargo_build_stages": [
+    {
+      "profile": "dev",
+      "seconds": 0.16
+    }
+  ],
+  "log": "runs/20261028T105030.005985Z-cc15c586f82d.log",
+  "ended_at": "2026-10-28T10:50:31.754708+00:00",
+  "command_seconds": 1.592558,
+  "exit_code": 0,
+  "cargo_build_seconds": 0.16
+}

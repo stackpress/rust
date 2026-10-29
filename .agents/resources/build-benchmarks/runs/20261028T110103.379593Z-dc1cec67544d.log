@@ -1,0 +1,37 @@
+    Checking zerofrom v0.1.8
+    Checking memchr v2.8.3
+    Checking serde_core v1.0.229
+    Checking percent-encoding v2.3.2
+    Checking yoke v0.8.4
+    Checking form_urlencoded v1.2.2
+    Checking tokio v1.54.1
+    Checking zerovec v0.11.9
+    Checking zerotrie v0.2.5
+    Checking aho-corasick v1.1.5
+    Checking tinystr v0.8.5
+    Checking icu_locale_core v2.4.0
+    Checking potential_utf v0.1.6
+    Checking icu_collections v2.4.0
+    Checking icu_provider v2.4.0
+    Checking indexmap v2.14.2
+    Checking regex-automata v0.4.18
+    Checking icu_normalizer v2.4.0
+    Checking icu_properties v2.4.0
+    Checking serde_json v1.0.154
+    Checking serde v1.0.229
+    Checking futures-channel v0.3.34
+    Checking idna_adapter v1.2.2
+    Checking idna v1.1.0
+    Checking regex v1.13.1
+    Checking once_cell v1.21.4
+    Checking hyper v1.10.1
+    Checking url v2.5.8
+    Checking rustls v0.23.46
+    Checking stackpress-lib v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/crates/lib)
+    Checking hyper-util v0.1.20
+    Checking stackpress-server v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/crates/server/server)
+ Documenting stackpress-server v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/crates/server/server)
+    Checking tokio-rustls v0.26.6
+ Documenting stackpress-server-http v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/crates/server/http)
+    Finished `dev` profile [unoptimized] target(s) in 4.80s
+   Generated /Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/target/doc/stackpress_server/index.html and 1 other file

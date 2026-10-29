@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "id": "20261028T150947.917865Z-b7e2471c441e",
+  "started_at": "2026-10-28T15:09:47.917865+00:00",
+  "status": "passed",
+  "label": "issue15 M2 final native checks with composed host",
+  "kind": "test",
+  "scope": "selected",
+  "cache": "warm",
+  "command": [
+    "python3",
+    "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/supervise.py",
+    "--target",
+    "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/target/issue15-m2",
+    "--seconds",
+    "900",
+    "--",
+    "python3",
+    "/private/tmp/stackpress-issue15-m2-20261028/check-m2.py"
+  ],
+  "cwd": "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15",
+  "commit": "415062ad53ab67cd9cef788d3ef807b556d1d1be",
+  "branch": "trial/3-issue15-view-presentation",
+  "dirty": true,
+  "host": "macOS-26.6.2-arm64-arm-64bit",
+  "machine": "arm64",
+  "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+  "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+  "environment": {
+    "CARGO_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/target/issue15-m2",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_BUILD_JOBS": "2"
+  },
+  "cargo_activity": {
+    "compiling": 246,
+    "checking": 179,
+    "documenting": 1
+  },
+  "cargo_build_stages": [
+    {
+      "profile": "dev",
+      "seconds": 0.59
+    },
+    {
+      "profile": "dev",
+      "seconds": 0.16
+    },
+    {
+      "profile": "dev",
+      "seconds": 0.53
+    },
+    {
+      "profile": "test",
+      "seconds": 2.37
+    },
+    {
+      "profile": "test",
+      "seconds": 72.0
+    },
+    {
+      "profile": "dev",
+      "seconds": 33.84
+    },
+    {
+      "profile": "dev",
+      "seconds": 0.73
+    },
+    {
+      "profile": "dev",
+      "seconds": 0.72
+    },
+    {
+      "profile": "dev",
+      "seconds": 3.82
+    },
+    {
+      "profile": "dev",
+      "seconds": 28.53
+    }
+  ],
+  "log": "runs/20261028T150947.917865Z-b7e2471c441e.log",
+  "ended_at": "2026-10-28T15:12:36.394950+00:00",
+  "command_seconds": 168.202352,
+  "exit_code": 0,
+  "cargo_build_seconds": 143.29000000000002
+}

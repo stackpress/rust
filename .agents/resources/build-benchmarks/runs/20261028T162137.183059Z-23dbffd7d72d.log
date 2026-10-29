@@ -1,0 +1,30 @@
+$ python3 examples/ui-preferences/browser.py
+PASS preferences-browser
+$ python3 examples/profile-ui/proofs/browser.py
+PASS selected-backend-build
+PASS browser-root
+PASS browser-m2-root
+PASS browser-navigation-root
+PASS browser-gateway-root
+PASS browser-mounted
+PASS browser-m2-mounted
+PASS browser-navigation-mounted
+PASS browser-gateway-mounted
+PASS initial-theme
+$ node examples/profile-ui/native/proofs/browser-preferences.cjs
+{"initialModes":["unset","light","dark"],"cases":6,"firstRoot":"host preferences","persistenceBeforePublication":true,"failureKeepsDraftAndRoot":true,"listener":false}
+$ python3 examples/profile-ui/proofs/browser.py --sqlite
+PASS selected-backend-build
+PASS setup-build
+PASS startup-errors-without-setup
+PASS explicit-setup
+PASS browser-root
+PASS browser-m2-root
+PASS browser-navigation-root
+PASS browser-gateway-root
+PASS browser-mounted
+PASS browser-m2-mounted
+PASS browser-navigation-mounted
+PASS browser-gateway-mounted
+PASS initial-theme
+supervisor: child 15861 reaped; peak target 3158840 KiB

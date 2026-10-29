@@ -1,0 +1,24 @@
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-gallery/browser.py", line 27, in <module>
+    if __name__=='__main__': main()
+                             ^^^^^^
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-gallery/browser.py", line 20, in main
+    if code: raise RuntimeError(f'gallery browser failed ({code}); see {LOGS / "gallery-browser.log"}')
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: gallery browser failed (1); see /private/tmp/stackpress-issue17-m1/evidence/gallery/gallery-browser.log
+Traceback (most recent call last):
+  File "/private/tmp/stackpress-issue17-m1/browser_tests.py", line 4, in <module>
+    run('python3','examples/ui-gallery/browser.py')
+  File "/private/tmp/stackpress-issue17-m1/browser_tests.py", line 3, in <lambda>
+    run=lambda *args,**kw:subprocess.run(args,cwd=ROOT,env=kw.pop('env',environment()),check=True,**kw)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cblanquera/.pyenv/versions/3.11.4/lib/python3.11/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '('python3', 'examples/ui-gallery/browser.py')' returned non-zero exit status 1.
+supervisor: child 68215 reaped; peak target 5727620 KiB
+Traceback (most recent call last):
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/proofs/supervise.py", line 75, in <module>
+    main()
+  File "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue17/examples/ui-preferences/proofs/supervise.py", line 68, in main
+    raise subprocess.CalledProcessError(child.returncode, command)
+subprocess.CalledProcessError: Command '['python3', '/private/tmp/stackpress-issue17-m1/browser_tests.py']' returned non-zero exit status 1.

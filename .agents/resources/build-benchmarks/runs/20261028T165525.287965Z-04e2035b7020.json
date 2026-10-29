@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "id": "20261028T165525.287965Z-04e2035b7020",
+  "started_at": "2026-10-28T16:55:25.287965+00:00",
+  "status": "passed",
+  "label": "i15 owner review preview build",
+  "kind": "build",
+  "scope": "selected",
+  "cache": "cold",
+  "command": [
+    "python3",
+    "examples/review-preview/review.py",
+    "build",
+    "--directory",
+    "/private/tmp/i15-review"
+  ],
+  "cwd": "/Users/cblanquera/server/projects/stackpress/rust",
+  "commit": "25572e34ba56d5cf5337739079d588e8be71c2af",
+  "branch": "trial/3",
+  "dirty": true,
+  "host": "macOS-26.6.2-arm64-arm-64bit",
+  "machine": "arm64",
+  "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+  "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+  "environment": {},
+  "cargo_activity": {
+    "compiling": 0,
+    "checking": 0,
+    "documenting": 0
+  },
+  "cargo_build_stages": [],
+  "log": "runs/20261028T165525.287965Z-04e2035b7020.log",
+  "ended_at": "2026-10-28T17:04:30.477081+00:00",
+  "command_seconds": 544.927217,
+  "exit_code": 0,
+  "cargo_build_seconds": null
+}

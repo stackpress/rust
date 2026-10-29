@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "id": "20261028T135613.223410Z-c5c1faa70737",
+  "started_at": "2026-10-28T13:56:13.223410+00:00",
+  "status": "failed",
+  "label": "issue15 M1 minimal native lock edge and final checks",
+  "kind": "check",
+  "scope": "selected",
+  "cache": "warm",
+  "command": [
+    "python3",
+    "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/examples/ui-preferences/proofs/supervise.py",
+    "--target",
+    "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/target/issue15-m1",
+    "--seconds",
+    "1200",
+    "--",
+    "python3",
+    "examples/ui-preferences/proofs/finish.py"
+  ],
+  "cwd": "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15",
+  "commit": "b2174bfb0cf50f70214e3c5f45d9f159f76058ef",
+  "branch": "trial/3-issue15-view-presentation",
+  "dirty": true,
+  "host": "macOS-26.6.2-arm64-arm-64bit",
+  "machine": "arm64",
+  "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+  "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+  "environment": {
+    "CARGO_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue15/target/issue15-m1",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_BUILD_JOBS": "2"
+  },
+  "cargo_activity": {
+    "compiling": 17,
+    "checking": 233,
+    "documenting": 3
+  },
+  "cargo_build_stages": [
+    {
+      "profile": "test",
+      "seconds": 16.29
+    },
+    {
+      "profile": "dev",
+      "seconds": 4.63
+    },
+    {
+      "profile": "dev",
+      "seconds": 25.76
+    },
+    {
+      "profile": "dev",
+      "seconds": 20.47
+    },
+    {
+      "profile": "dev",
+      "seconds": 11.66
+    },
+    {
+      "profile": "dev",
+      "seconds": 7.93
+    }
+  ],
+  "log": "runs/20261028T135613.223410Z-c5c1faa70737.log",
+  "ended_at": "2026-10-28T13:58:22.103886+00:00",
+  "command_seconds": 128.612651,
+  "exit_code": 1,
+  "cargo_build_seconds": 86.74000000000001
+}

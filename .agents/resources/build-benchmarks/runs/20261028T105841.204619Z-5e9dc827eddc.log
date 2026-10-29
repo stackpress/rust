@@ -1,0 +1,8 @@
+   Compiling rustix v1.1.5
+   Compiling stackpress-server v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/crates/server/server)
+   Compiling crossterm v0.29.0
+   Compiling stackpress-cli v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/tools/cli)
+   Compiling stackpress-example-capability-host v0.1.0 (/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-issue16/examples/capability-host)
+    Finished `dev` profile [unoptimized] target(s) in 2.46s
+     Running `target/debug/stackpress --help`
+expected operator options followed by emit

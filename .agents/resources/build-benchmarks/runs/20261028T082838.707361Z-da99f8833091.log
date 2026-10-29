@@ -1,0 +1,6 @@
+native-tests: 0
+coverage-command: 0
+coverage-raw: 0
+coverage-lcov: 0
+stackpress-example-profile-ui-native: 239/272 (87.87%)
+installed-python-coverage: 0
