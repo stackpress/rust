@@ -138,3 +138,20 @@ Six retained failed attempts are fully accounted for: duplicate formatter editio
 ## Acceptance criteria, verification notes and stop
 
 Acceptance criteria: none for this library/composition milestone; unchanged M3 views have fresh supplemental browser evidence. Independent coordinator verification is pending. No context promotion or new Reference File was needed; this complete receipt stays below 200 lines. No commit/push/install/GitHub write, listener, other-agent message or unreleased phase occurred. Stop at M4.
+
+## Coordinator verification
+
+Verified 2026-10-30 by the coordinator on worktree commit `5b87873` merged with trial/3 `9642281` (API M5 and rounds 1–4) as `de0dcef`, fresh target, gate tier, script `/private/tmp/s9am4-verify/run.sh`, eight-feature selection (`api/sql,codegen,ui-ssr`, `session/leptos-ssr,auth-server`, `csrf/server`, `email/server`, `schema/providers`):
+
+- Locks: original external tuples kept, 0 added/removed; all 12 standalone consumer locks (session ×5, email ×3, api-checkpoint ×3, plus root) are registry subsets of the workspace lock and pass `cargo tree --locked --offline` after the merge without refresh.
+- Root manifest diff vs trial/3: exactly the optional `stackpress-framework-session` dependency, ten `framework-session*` opt-in features and the `framework_session` re-export; `cargo tree -p stackpress` default graph excludes the session crate.
+- `cargo fmt --all --check`, workspace Clippy `-D warnings`: pass.
+- nextest default: 928 passed, 85 skipped, including `tcp_watchdog`. nextest eight-feature (2 threads): 993 passed, 88 skipped, including `tcp_watchdog`.
+- Doctests 966 passed, 0 failed; Rustdoc `-D warnings`: pass.
+- Facade checks: `framework-session`, `-native`, `-auth-server`, `-leptos-ssr` native; `-leptos-hydrate`, `-leptos-csr` on wasm32. Session per-feature checks (native, sql, server, leptos, auth-server, leptos-ssr) and wasm32 hydrate/CSR: pass.
+- `consumers/graphs.py --check`: pass. `consumers/run.py`: direct (121 packages), facade (122), plugin (327), disabled (51) graphs and runs passed. Browser consumer hydrate and CSR builds with native-secret graph exclusion: pass.
+- api-checkpoint tool `--check` fresh, web Clippy, client Clippy hydrate/CSR; email direct/disabled/event consumers: pass. API nextest (`sql,codegen,ui-ssr`): 92 passed.
+- `cargo llvm-cov` session (`leptos-ssr`): 91.48% lines (fail-under 70).
+- `composite::register` order (auth, email, identity) matches upstream `stackpress-session/src/plugin.ts`. Tracked tree clean after the gate.
+
+Merged into trial/3 as `cc4b175`.
