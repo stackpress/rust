@@ -111,3 +111,16 @@ Attributable M2 recorder delta: **27 attempts** (24 passed, 3 failed), **12 comm
 | `20261030T062724.580186Z-8632b1b825d6` | gate optional feature and dependent graphs; passed (0) | 4.979431 | none |
 | `20261030T062736.177109Z-7e1447d22d9d` | gate event ownership proofs absolute 15 second bound; passed (0) | 6.160835 | 3.86 |
 | `20261030T062831.058774Z-0bb27e7f45bd` | gate final source lock scope KB and size audit; passed (0) | 1.083400 | none |
+
+## Coordinator verification
+
+Branch base was trial/3 `d740f5c` (no newer trial/3 commits), committed as `981b2cc`. Reran at gate tier (`sccache`, non-incremental, empty target), recorded as `s9bm2-verify gate *`:
+- Lock: no external tuple added, changed or removed; the only edges are the email package's optional `stackpress-lib`/`stackpress-server`.
+- fmt; workspace Clippy `-D warnings` with `stackpress-framework-email/server`; workspace Rustdoc `-D warnings` with the same feature.
+- `cargo nextest run --workspace --all-targets --locked --no-fail-fast` with default features and no exclusions: 853 passed, including `tcp_watchdog`.
+- The same with `stackpress-framework-email/server`: 848 of 866 passed, including `tcp_watchdog`. The 18 failures were all example executable fixtures (generated-admin-web, example-profile-codegen, example-sql-profile, ui-gallery/ui-preferences/ui-stream web) that hit their internal 10-second process deadline while the machine ran three other gates (load average about 15 on 10 cores). Rerunning exactly those six packages with the feature at `--test-threads 2` passed 42 of 42. No email or CSRF test failed.
+- Email with `--no-default-features`: 31 passed.
+- Workspace doctests with the feature: 955 passed.
+- Coverage: framework-csrf 96.30% lines; framework-email with `server` 87.73% lines (new `events.rs` 100%, `events/native.rs` 91.89%).
+
+Review: the lettre capability rulings from M1 still hold; source signup hook names (`email-email-send`, `auth-phone-verify`) are kept as in the original, without aliasing. No owner question is open. Merged into trial/3 on 2026-10-30; Lane B M3 may be released.
