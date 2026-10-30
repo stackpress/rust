@@ -1,21 +1,14 @@
-# Explicit CSRF mechanism
+# CSRF for explicit handlers
 
-`Service::default()` works directly with `stackpress_lib::Request` and `Response`.
-Generate stages a fresh outgoing cookie and `{name, token}` form projection. Validate
-compares the independent incoming cookie and aggregate form input, accepting arbitrary
-equal nonempty UTF-8 strings. Failure sets source 419/Page Expired. Clear removes
-submitted aggregate input and outgoing cookie/form state, retaining the incoming cookie.
+Generate a cookie/form token, compare the next request's incoming values, and clear outgoing state after a successful process. The crate supplies the mechanism; each route or event chooses when to call it.
 
-With `server`, `plugin::register(&mut ServerBuilder)` publishes the same default or
-configured service, even with missing/null/falsy CSRF config. `csrf.name` and
-`csrf.error` are optional typed string overrides. Typed Rust configuration errors and
-existing cookie-name errors propagate. Select it independently; each process chooses
-whether to call `valid`. Registration installs no global guard or routes.
+Start with [getting started](docs/getting-started.md) for a complete local round trip. Read [concepts](docs/concepts.md) to understand incoming versus outgoing state, then [protect a process](docs/guides/protect-a-process.md) to compose it with server events.
 
-The [email consumers](../framework-email/consumers/) exercise direct use, public
-registrars and complete compile-time omission in separate standalone workspaces.
-Real Lane A auth integration and the finite Leptos SSR projection are covered by
-email's integration suite. OS entropy failure and invalid typed startup configuration
-remain mechanical error paths; no browser, installed host or timing certification
-is inferred from native tests. Full guides/API documentation follow the released
-milestones rather than changing these source behaviors.
+| Need | Read |
+| --- | --- |
+| Configure a selected plugin | [Registration and configuration](docs/guides/register-and-configure.md) |
+| Look up a method or error | [API reference](docs/api/README.md) |
+| Compare with original Stackpress | [Source behavior](docs/source-behavior.md) |
+| Check examples and dependency graphs | [Documentation verification](docs/verification.md) |
+
+The default feature graph exposes the direct library. Optional `server` adds the ordinary registrar. The CSRF registrar adds no global guard; routes call the service themselves. Selecting this crate does not select identity sessions or an application access policy.
