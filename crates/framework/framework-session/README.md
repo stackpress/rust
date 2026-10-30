@@ -1,8 +1,9 @@
-# Session identity and Auth/Profile primitives (M1)
+# Session identity, Auth/Profile primitives and auth processes (M2)
 
 This milestone implements the original JWT Session mechanism and complete direct
-Auth/Profile data primitives. Source account event/route composition and Leptos pages
-remain behind their later coordinator release gates. Nothing opens a database, starts a
+Auth/Profile data primitives. `auth-server` adds reusable auth events and native
+signup/signin/password/OTP/link/2FA processes. Account presentation and Leptos views
+remain behind M3; the full source composite is integrated at M4. Nothing opens a database, starts a
 listener or installs tables automatically.
 
 Default features expose configuration and permission types. `native` enables the owned
@@ -10,6 +11,8 @@ Default features expose configuration and permission types. `native` enables the
 `plugin::register`. Selecting it with no session config contributes no service/listeners.
 Missing `session.access` omits the request guard; `{}` installs a permissive guard.
 Each route/event remains responsible for its own configured process under G42/G43.
+See [auth events and native processes](docs/auth.md) for config gates, direct handlers,
+source flags/errors/redirects and the explicit owned hook lifecycle.
 
 ```rust
 use stackpress_framework_session::{Service, SessionData};
