@@ -1,0 +1,12 @@
+error[E0597]: `client` does not live long enough
+ --> tests/ui/catalog_borrow.rs:7:29
+  |
+6 |     let client = CompiledClient { build: "local", models: &[], describe: Vec::new };
+  |         ------ binding `client` declared here
+7 |     register_with(&mut app, &client).unwrap();
+  |     ------------------------^^^^^^^-
+  |     |                       |
+  |     |                       borrowed value does not live long enough
+  |     argument requires that `client` is borrowed for `'static`
+8 | }
+  | - `client` dropped here while still borrowed

@@ -690,6 +690,21 @@
     ]
   },
   {
+    "id": "account-listen-registration",
+    "page": "crates/framework/framework-session/docs/api/storage.md",
+    "statement": "queues the same inventory for Listen",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/src/account/events.rs",
+        "contains": ["macro_rules! account_events", "pub fn register_listen", "app.on_listen(listen)"]
+      },
+      {
+        "path": "crates/framework/framework-session/tests/main/account_registration.rs",
+        "contains": ["immediate_and_listen_entry_points_share_exactly_seven_events", "earlier-listen", "later-listen"]
+      }
+    ]
+  },
+  {
     "id": "question-moment",
     "page": "crates/framework/framework-session/docs/source-behavior.md",
     "statement": "Moment admin dates",

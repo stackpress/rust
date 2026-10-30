@@ -1,0 +1,38 @@
+[package]
+name = "stackpress-framework"
+description = "Compile-time composition of the source Stackpress framework"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[features]
+default = []
+native = ["dep:stackpress-lib", "dep:stackpress-server", "dep:stackpress-framework-schema", "dep:serde", "dep:serde_json"]
+server-commands = ["native"]
+schema-client = ["native"]
+language = ["native"]
+csrf = ["native", "dep:stackpress-framework-csrf", "stackpress-framework-csrf/server"]
+sql = ["native"]
+view = ["native"]
+session = ["native", "dep:stackpress-framework-session", "stackpress-framework-session/auth-server"]
+api = ["native", "dep:stackpress-framework-api", "stackpress-framework-api/sql"]
+admin = ["native"]
+full = ["server-commands", "schema-client", "language", "csrf", "sql", "view", "session", "api", "admin"]
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+stackpress-lib = { path = "../../lib", default-features = false, optional = true }
+stackpress-server = { path = "../../server/server", default-features = false, optional = true }
+stackpress-framework-schema = { path = "../framework-schema", default-features = false, optional = true }
+stackpress-framework-csrf = { path = "../framework-csrf", default-features = false, optional = true }
+stackpress-framework-session = { path = "../framework-session", default-features = false, optional = true }
+stackpress-framework-api = { path = "../framework-api", default-features = false, optional = true }
+serde = { version = "=1.0.229", features = ["derive"], optional = true }
+serde_json = { version = "=1.0.154", features = ["preserve_order"], optional = true }
+
+[dev-dependencies]
+tokio = { version = "=1.54.1", features = ["macros", "rt-multi-thread", "sync", "time"] }
+trybuild = "1"
+
+[lints]
+workspace = true

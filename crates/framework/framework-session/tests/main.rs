@@ -1,4 +1,7 @@
 //! M0 source parity and ownership proofs, one integration binary.
+#[cfg(feature = "auth-server")]
+#[path = "main/account_registration.rs"]
+mod account_registration;
 #[cfg(feature = "server")]
 #[path = "main/host.rs"]
 mod host;

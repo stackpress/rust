@@ -6119,6 +6119,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "stackpress-framework"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "stackpress-framework-api",
+ "stackpress-framework-csrf",
+ "stackpress-framework-schema",
+ "stackpress-framework-session",
+ "stackpress-lib",
+ "stackpress-server",
+ "tokio",
+ "trybuild",
+]
+
+[[package]]
 name = "stackpress-framework-admin"
 version = "0.1.0"
 dependencies = [
