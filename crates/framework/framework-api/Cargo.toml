@@ -1,0 +1,26 @@
+[package]
+name = "stackpress-framework-api"
+description = "Source-compatible API configuration and invocation mechanics"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+autotests = false
+
+[[test]]
+name = "main"
+path = "tests/main.rs"
+
+[dependencies]
+stackpress-lib = { path = "../../lib" }
+stackpress-server = { path = "../../server/server" }
+stackpress-framework-schema = { path = "../framework-schema" }
+serde = { version = "=1.0.229", features = ["derive"] }
+serde_json = "=1.0.154"
+reqwest = { version = "=0.13.4", default-features = false, features = ["rustls"] }
+
+[dev-dependencies]
+tokio = { version = "=1.54.1", features = ["macros", "rt-multi-thread", "sync", "time"] }
+
+[lints]
+workspace = true

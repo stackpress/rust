@@ -1,0 +1,210 @@
+{
+  "now": 1700000000,
+  "jose": "6.2.0",
+  "vectors": [
+    {
+      "name": "empty",
+      "claims": {},
+      "alg": "HS256",
+      "token": "eyJhbGciOiJIUzI1NiJ9.e30.C3t1TEHk2YOFbcPPsAyM7Zh7s3yywpUh0xDiXL7iNr0",
+      "valid": true
+    },
+    {
+      "name": "no-exp",
+      "claims": {
+        "id": "u1",
+        "name": "Fixture",
+        "roles": [
+          "USER"
+        ],
+        "iat": 1700000000
+      },
+      "alg": "HS256",
+      "token": "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6InUxIiwibmFtZSI6IkZpeHR1cmUiLCJyb2xlcyI6WyJVU0VSIl0sImlhdCI6MTcwMDAwMDAwMH0.owCFQGXTWPjJldVEzLaBCZ3bcxrLMI9TgiWpKRqJRUY",
+      "valid": true
+    },
+    {
+      "name": "exp-equal",
+      "claims": {
+        "exp": 1700000000
+      },
+      "alg": "HS256",
+      "token": "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MDAwMDAwMDB9.6osVjVlnlWhPkHVN10PROGcLc8pcwRh5303W2fTaRyk",
+      "valid": false
+    },
+    {
+      "name": "exp-fraction",
+      "claims": {
+        "exp": 1700000000.5
+      },
+      "alg": "HS256",
+      "token": "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MDAwMDAwMDAuNX0.kkqnOyMDYbXQAlaS5-VC-0cemFEEAX05qE5gMtoE0W0",
+      "valid": true
+    },
+    {
+      "name": "nbf-equal",
+      "claims": {
+        "nbf": 1700000000
+      },
+      "alg": "HS256",
+      "token": "eyJhbGciOiJIUzI1NiJ9.eyJuYmYiOjE3MDAwMDAwMDB9.BFue7mnj8J2duYQpQP2XKSfdJF8U-QQbp2zH52RDgy0",
+      "valid": true
+    },
+    {
+      "name": "nbf-future",
+      "claims": {
+        "nbf": 1700000000.5
+      },
+      "alg": "HS256",
+      "token": "eyJhbGciOiJIUzI1NiJ9.eyJuYmYiOjE3MDAwMDAwMDAuNX0.EqEwNWbnIWCZgv-FY5qVfHjedTo6gfzynM1kY0LEhZ0",
+      "valid": false
+    },
+    {
+      "name": "iat-wrong",
+      "claims": {
+        "iat": "wrong"
+      },
+      "alg": "HS256",
+      "token": "eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOiJ3cm9uZyJ9.PZBv2jX6ph0rvC0uXklcnZvJYcbHitxSlMVAatf1ag8",
+      "valid": false
+    },
+    {
+      "name": "aud-iss",
+      "claims": {
+        "aud": "any",
+        "iss": "any",
+        "iat": 1700010000
+      },
+      "alg": "HS256",
+      "token": "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhbnkiLCJpc3MiOiJhbnkiLCJpYXQiOjE3MDAwMTAwMDB9.Uzr7Xn8myHpwJ5SQMiYtit2XUyd-QzaSOKr3So9x460",
+      "valid": true
+    },
+    {
+      "name": "roles-empty",
+      "claims": {
+        "roles": []
+      },
+      "alg": "HS384",
+      "token": "eyJhbGciOiJIUzM4NCJ9.eyJyb2xlcyI6W119.GoX7rm5-ebBmbf0BXgZD4_4b-7lEgmgHJ-uqkz1biLQNxqKTbpnkucuXfSLDnxQh",
+      "valid": true
+    },
+    {
+      "name": "custom",
+      "claims": {
+        "extra": {
+          "x": true
+        }
+      },
+      "alg": "HS512",
+      "token": "eyJhbGciOiJIUzUxMiJ9.eyJleHRyYSI6eyJ4Ijp0cnVlfX0.GkS2Cz8S53N4p3bequ-K6CDrrs8MFnoq_M-Czt0M55H6xRqnHufiE4fq53m9uDRvNFObOWhTq-yrMETk6y3oLw",
+      "valid": true
+    },
+    {
+      "name": "exp-null",
+      "claims": {
+        "exp": null
+      },
+      "alg": "HS256",
+      "token": "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOm51bGx9.V9IaKRGoI2Voc1zuNZVy6mGWPFuaIvbIeay-lXXXHko",
+      "valid": false
+    },
+    {
+      "name": "roles-null",
+      "claims": {
+        "roles": null
+      },
+      "alg": "HS256",
+      "token": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6bnVsbH0.7b-ePEUFl2cR3mTaS6dLQmWXAlziwl0RwiQjZbGr4zw",
+      "valid": true
+    },
+    {
+      "name": "array-payload",
+      "token": "eyJhbGciOiJIUzI1NiJ9.W10.GfNTdCHJYyZJhCkOuYAoGS_NxM5G0yPmx8c2YwyzrYs",
+      "valid": false
+    },
+    {
+      "name": "typ-number",
+      "claims": {},
+      "header": {
+        "alg": "HS256",
+        "typ": 123
+      },
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6MTIzfQ.e30.sxla4kkFACdcvTPW1jaWGdmYiSXoPV1kHl_RB7d0HME",
+      "valid": true
+    },
+    {
+      "name": "b64-ignored",
+      "claims": {},
+      "header": {
+        "alg": "HS256",
+        "b64": false
+      },
+      "token": "eyJhbGciOiJIUzI1NiIsImI2NCI6ZmFsc2V9.e30.JZP1iTbhDMdsgnhWYG_IPtuVBEms47z5Bo6FGW1EC-8",
+      "valid": true
+    },
+    {
+      "name": "b64-critical-true",
+      "claims": {},
+      "header": {
+        "alg": "HS256",
+        "b64": true,
+        "crit": [
+          "b64"
+        ]
+      },
+      "token": "eyJhbGciOiJIUzI1NiIsImI2NCI6dHJ1ZSwiY3JpdCI6WyJiNjQiXX0.e30.d8gbAXry7jFa5BxodISeGuaQuuLC7cUTDP2iyadga_8",
+      "valid": true
+    },
+    {
+      "name": "crit-empty",
+      "claims": {},
+      "header": {
+        "alg": "HS256",
+        "crit": []
+      },
+      "token": "eyJhbGciOiJIUzI1NiIsImNyaXQiOltdfQ.e30.XsTelUoSI-H73P3n3a3o39oQ4sqaQqhhdnA7i26nmPY",
+      "valid": false
+    },
+    {
+      "name": "crit-unknown",
+      "claims": {},
+      "header": {
+        "alg": "HS256",
+        "crit": [
+          "x"
+        ],
+        "x": true
+      },
+      "token": "eyJhbGciOiJIUzI1NiIsImNyaXQiOlsieCJdLCJ4Ijp0cnVlfQ.e30.9Nb1rHYgcC8s1NJiGJWxVLdiMkovoMbhe3AS0m8t4Jk",
+      "valid": false
+    },
+    {
+      "name": "crit-missing",
+      "claims": {},
+      "header": {
+        "alg": "HS256",
+        "crit": [
+          "b64"
+        ]
+      },
+      "token": "eyJhbGciOiJIUzI1NiIsImNyaXQiOlsiYjY0Il19.e30.opdhT1RiBln8Y9aedgnWoYGkjvvhtsbs1oIQUtD_rpU",
+      "valid": false
+    },
+    {
+      "name": "source-base64-padding",
+      "claims": {
+        "id": "padding"
+      },
+      "token": "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6InBhZGRpbmcifQ==.hoc/YJyvuy1mGmFhI0QX0YpqDs4Teyd3RgAbycZSUdM=",
+      "valid": false
+    },
+    {
+      "name": "source-base64url-padding",
+      "claims": {
+        "id": "padding-url"
+      },
+      "token": "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6InBhZGRpbmctdXJsIn0=.d6OqMhrNCRujLZSyHrNGzl1N2kDVjCEYt2ZMISZduOQ=",
+      "valid": true
+    }
+  ]
+}
