@@ -1,7 +1,7 @@
 //! Source-compatible API mechanics over existing Stackpress request/event contracts.
 //!
 //! Configured public/application/API-session endpoints and source CORS callbacks run over
-//! existing raw dispatch. OAuth, management pages, SQL and webhook integration retain their
+//! existing raw dispatch, with late inline webhook/fetch integration. OAuth, management and SQL retain their
 //! later milestones. G42/G43 source behavior governs each selected process.
 //! Nothing here binds a listener, opens a database or starts a background task.
 //!
@@ -35,6 +35,7 @@ pub mod endpoints;
 pub mod helpers;
 pub mod plugin;
 pub mod routes;
+pub mod webhooks;
 
 pub use config::{ApiConfig, ApiEndpoint, ApiScope, ApiType, ApiWebhook, Cors};
 pub use plugin::register;
