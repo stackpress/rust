@@ -2,7 +2,7 @@
 //!
 //! Direct SMTP, JSON, stream, sendmail and SES adapters use owned native providers.
 //! Pool and SDK/compiler capabilities outside lettre are explicitly provider-bound.
-//! Server event/plugin registration belongs to the next milestone.
+//! The optional `server` feature exposes the source `email-send` event and registrar.
 //! Factories receive all configured options and transports return unfiltered provider info.
 //!
 //! ```
@@ -23,9 +23,13 @@ pub mod backend;
 pub mod compose;
 mod config;
 pub mod content;
+#[cfg(feature = "server")]
+pub mod events;
 mod message;
 mod native;
 pub mod options;
+#[cfg(feature = "server")]
+pub mod plugin;
 mod service;
 mod smtp_error;
 pub mod tasks;

@@ -84,3 +84,43 @@ process and SES boundaries; its checked-in fixture includes source file hashes.
 `tests/source-options.cjs` retains the Stackpress event option/default oracle from
 M0. Event/plugin registration and signup-hook integration belong to M2 and later
 milestones; the direct factory and task-supervisor contracts are already available.
+
+## Reusable event and non-awaited hooks (`server` feature)
+
+`plugin::register(&mut app)` selects the email constituent alone;
+`plugin::register_with_factory(&mut app, factory)` selects an application provider
+or fake. Listen installs `email-send` only for truthy email config. Missing, null,
+false, zero and empty string are inactive; an empty object is active. No request,
+route, authentication, CSRF, method, sender or recipient guard is added.
+
+`events::EmailSend::new(config, factory).handle(&mut request, &mut response)` is
+the same reusable process without plugin selection. It skips a truthy existing
+body or a truthy non-200 status before checking config/input; normal returns
+continue dispatch. Each send constructs a new transport, awaits it and sets all
+provider info as results. Thrown errors retain their concrete native cause and
+leave response mutation to the existing caller/lifecycle. A direct nested emit
+uses its caller's response; resolve owns fresh request/response state. Priorities,
+FIFO ties and explicit abort remain the event runtime's rules.
+
+Native input uses rich `Value::Bytes` or `SharedNative::new(events::NativeReader::new(reader))`
+at the original body/raw/attachment/alternative content field. A returned stream
+stays at `results.message` as a `NativeReader`; `take()` transfers it once. JSON
+conversion rejects a live reader instead of draining it. Serializable result
+fields and the existing Node Buffer JSON representation remain unchanged.
+
+`tasks::TaskSupervisor::resolve_on(runtime, Arc<Server>, name, owned_input)`
+submits a raw child resolve without awaiting it or borrowing parent state. Keep
+the signup hook name **`email-email-send`** (distinct from `email-send`) followed
+by `auth-phone-verify`; application handlers may delegate explicitly. A missing
+hook resolves normally. Child responses are discarded as in the source; thrown
+errors remain available through `join_next`. Own the supervisor for the runtime
+lifetime, drain it or call `shutdown()` to abort and reap jobs. Drop requests
+abort without detaching. Submission order and each event's handler order are
+preserved; separate tasks may complete in either order.
+
+Rust mechanics: immutable typed startup config has no registration-time raw
+`config.has` view, so missing and null share the inactive section default and the
+source selection/Listen gates become a Listen inventory check. Native readers
+use synchronized one-shot transfer because Rust readers cannot be cloned. Owned
+child inputs snapshot submission-time data instead of borrowing source JavaScript
+object aliases. These adaptations add no global policy or delivery guarantee.
