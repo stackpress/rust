@@ -10,7 +10,7 @@ use std::sync::Arc;
 /// Missing auth config still installs the three source events. No Engine, email,
 /// session or CSRF service is required during startup; each process reads its actual
 /// dependencies at the source access point. Select the CSRF/identity constituents
-/// independently. M3 supplies views; M4 wires the reviewed source composite.
+/// independently, or select `composite::register` for the original auth/email/identity group.
 ///
 /// ```
 /// use std::sync::Arc;

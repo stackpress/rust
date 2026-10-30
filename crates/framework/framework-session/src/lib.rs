@@ -36,6 +36,10 @@ pub mod storage;
 #[cfg(all(feature = "auth-server", not(target_arch = "wasm32")))]
 pub mod account;
 
+/// Original auth → email → identity grouping; constituent registrars remain independent.
+#[cfg(all(feature = "auth-server", not(target_arch = "wasm32")))]
+pub mod composite;
+
 /// Portable source-shaped page data and Leptos forms; no native resources cross this boundary.
 #[cfg(feature = "leptos")]
 pub mod views;

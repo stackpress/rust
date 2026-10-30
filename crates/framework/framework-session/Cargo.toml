@@ -16,7 +16,7 @@ leptos-ssr = ["leptos", "auth-server", "stackpress-leptos/ssr", "stackpress-fram
 browser = ["dep:web-sys", "dep:wasm-bindgen-futures"]
 leptos-hydrate = ["leptos", "browser", "stackpress-leptos/hydrate"]
 leptos-csr = ["leptos", "browser", "stackpress-leptos/csr"]
-auth-server = ["server", "sql", "dep:stackpress-framework-csrf", "dep:stackpress-framework-email", "dep:tokio", "dep:ring", "dep:qrcode", "dep:png"]
+auth-server = ["server", "sql", "dep:stackpress-framework-csrf", "dep:stackpress-framework-email", "stackpress-framework-email/server", "dep:tokio", "dep:ring", "dep:qrcode", "dep:png"]
 
 [dependencies]
 leptos = { version = "=0.8.22", default-features = false, optional = true }

@@ -5761,6 +5761,7 @@ dependencies = [
  "stackpress-framework-admin",
  "stackpress-framework-language",
  "stackpress-framework-schema",
+ "stackpress-framework-session",
  "stackpress-framework-sql",
  "stackpress-framework-view",
  "stackpress-idea",

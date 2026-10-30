@@ -63,6 +63,7 @@ stackpress-framework-language = { path = "crates/framework/framework-language", 
 stackpress-framework-schema = { path = "crates/framework/framework-schema", optional = true }
 stackpress-framework-sql = { path = "crates/framework/framework-sql", optional = true }
 stackpress-framework-admin = { path = "crates/framework/framework-admin", optional = true }
+stackpress-framework-session = { path = "crates/framework/framework-session", optional = true, default-features = false }
 
 [features]
 default = []
@@ -70,6 +71,16 @@ framework-schema = ["dep:stackpress-framework-schema"]
 framework-sql = ["dep:stackpress-framework-sql"]
 framework-admin = ["dep:stackpress-framework-admin"]
 framework-admin-format = ["framework-admin", "stackpress-framework-admin/format"]
+framework-session = ["dep:stackpress-framework-session"]
+framework-session-native = ["framework-session", "stackpress-framework-session/native"]
+framework-session-sql = ["framework-session", "stackpress-framework-session/sql"]
+framework-session-server = ["framework-session", "stackpress-framework-session/server"]
+framework-session-auth-server = ["framework-session", "stackpress-framework-session/auth-server"]
+framework-session-leptos = ["framework-session", "stackpress-framework-session/leptos"]
+framework-session-leptos-ssr = ["framework-session", "stackpress-framework-session/leptos-ssr"]
+framework-session-browser = ["framework-session", "stackpress-framework-session/browser"]
+framework-session-leptos-hydrate = ["framework-session", "stackpress-framework-session/leptos-hydrate"]
+framework-session-leptos-csr = ["framework-session", "stackpress-framework-session/leptos-csr"]
 server = ["dep:stackpress-server"]
 server-http = ["server", "stackpress-server/http"]
 server-http-host = ["server-http", "dep:stackpress-server-http"]

@@ -1,10 +1,11 @@
-# Session identity, Auth/Profile primitives and account processes and views (M3)
+# Session identity, Auth/Profile primitives and account processes and views (M4)
 
 This milestone implements the original JWT Session mechanism and complete direct
 Auth/Profile data primitives. `auth-server` adds reusable auth events and native
 signup/signin/password/OTP/link/2FA and account processes. Select `leptos-ssr`,
-`leptos-hydrate` or `leptos-csr` separately for the shared views. The full source
-composite is integrated at M4. Nothing opens a database, starts a
+`leptos-hydrate` or `leptos-csr` separately for the shared views. With `auth-server`,
+`composite::register` registers auth, email and identity in the source order.
+The constituent registrars remain usable on their own. Nothing opens a database, starts a
 listener or installs tables automatically.
 
 Default features expose configuration and permission types. `native` enables the owned
@@ -84,3 +85,24 @@ See [direct storage reference](docs/storage.md) for examples and observable sour
 
 See [account processes and shared views](docs/account.md) for all account routes,
 ordered records, source write behavior and the listener-free finite SQLite host.
+
+The root facade exposes the same crate as `stackpress::framework_session` with the
+opt-in `framework-session` feature. Forwarding features such as
+`framework-session-native`, `framework-session-auth-server` and
+`framework-session-leptos-ssr` select the corresponding crate features. Default
+facade builds retain only `stackpress-lib`. Register the session composite after
+views and before API and application admin registration; register CSRF earlier
+when the application's source processes require it. Registration does not select
+or open a database, install schemas, bind hooks or start a listener.
+
+The standalone [consumers](consumers/run.py) exercise direct imports, facade
+imports, the SQL-backed plugin composition and the disabled facade. Their locks
+contain only workspace registry tuples and their targets are separate. The
+browser consumer builds hydrate and CSR independently through the facade.
+
+These checks cover native SQLite and headless Chromium with requests fulfilled
+in memory. They do not establish live SMTP, SES, sendmail, PostgreSQL or MySQL
+acceptance, or installed Tauri desktop/mobile behavior. SQL engines, hook binding
+and shutdown, challenge clock/zone information, email provider configuration and
+route/event access rules remain application responsibilities. No global gate is
+added when `session.access` is missing.

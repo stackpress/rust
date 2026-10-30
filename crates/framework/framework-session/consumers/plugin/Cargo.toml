@@ -1,0 +1,21 @@
+[package]
+name = "slice9a-consumer"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+[workspace]
+
+[dependencies]
+stackpress-framework-session = { path = "../..", default-features = false, features = ["auth-server"] }
+stackpress-framework-csrf = { path = "../../../framework-csrf", default-features = false, features = ["server"] }
+stackpress-framework-view = { path = "../../../framework-view", default-features = false, features = ["presentation"] }
+stackpress-framework-admin = { path = "../../../framework-admin", default-features = false }
+stackpress-framework-api = { path = "../../../framework-api", default-features = false, features = ["sql"] }
+stackpress-lib = { path = "../../../../lib" }
+stackpress-server = { path = "../../../../server/server" }
+stackpress-sql = { path = "../../../../sql/sql" }
+stackpress-sql-sqlite = { path = "../../../../sql/sql-sqlite" }
+serde_json = "1"
+tokio = { version = "1", features = ["macros", "rt", "sync"] }
+tempfile = "3"

@@ -38,3 +38,7 @@ mod account_flows;
 #[cfg(feature = "leptos-ssr")]
 #[path = "main/account_ui.rs"]
 mod account_ui;
+
+#[cfg(all(feature = "auth-server", not(target_arch = "wasm32")))]
+#[path = "main/composite.rs"]
+mod composite;

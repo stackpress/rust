@@ -1,0 +1,14 @@
+[package]
+name = "slice9a-consumer"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+[workspace]
+
+[dependencies]
+stackpress = { path = "../../../../..", default-features = false }
+
+[features]
+default = []
+session = ["stackpress/framework-session"]
