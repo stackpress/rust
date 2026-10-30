@@ -69,6 +69,8 @@ fn child() {
         .build()
         .unwrap();
     runtime.block_on(async {
+        #[cfg(feature = "sql")]
+        super::actions::transaction_child().await;
         use stackpress_framework_session::Service;
         use std::sync::Arc;
         // Reentrant host code must run after settings locks have been released.
