@@ -249,16 +249,42 @@ fn first(res: &mut Response, rows: Vec<Record>) -> Result<()> {
     )
 }
 
-/// Select SQL events only; schemas, resources, routes and permission policy remain explicit.
+// One inventory expands over both host registration surfaces. A macro avoids allocating
+// erased adapter handlers or changing the immediate API's callback/error order.
+macro_rules! account_events {
+    ($target:expr) => {
+        $target.on("auth-search", auth_search)?;
+        $target.on("auth-update", auth_update)?;
+        $target.on("auth-create", auth_create)?;
+        $target.on("auth-remove", auth_remove)?;
+        $target.on("profile-detail", profile_detail)?;
+        $target.on("profile-update", profile_update)?;
+        $target.on("profile-remove", profile_remove)?;
+    };
+}
+
+/// Select SQL events immediately for direct composition; all resources and policy stay explicit.
+/// Aggregates needing source Listen-phase order use [`register_listen`] instead.
 /// # Errors
 /// Preserves normal registration errors and multiple-handler cooperation.
 pub fn register(app: &mut stackpress_server::ServerBuilder) -> Result<()> {
-    app.on("auth-search", auth_search)?;
-    app.on("auth-update", auth_update)?;
-    app.on("auth-create", auth_create)?;
-    app.on("auth-remove", auth_remove)?;
-    app.on("profile-detail", profile_detail)?;
-    app.on("profile-update", profile_update)?;
-    app.on("profile-remove", profile_remove)?;
+    account_events!(app);
     Ok(())
+}
+
+/// Queue the same seven SQL events for source-order aggregate composition.
+///
+/// Use [`register`] for immediate direct composition. This function contributes during Listen,
+/// after earlier Listen callbacks and before later ones, matching the upstream SQL plugin's
+/// model traversal. It selects no schema/Engine, performs no IO and adds no permission gate.
+/// # Errors
+/// Preserves startup registration errors; handler-registration failures surface during build.
+pub fn register_listen(app: &mut stackpress_server::ServerBuilder) -> Result<()> {
+    app.on_listen(listen)
+}
+
+/// Expand the shared inventory only when the existing host reaches Listen.
+async fn listen(start: &mut stackpress_server::StartupContext) -> Result<Flow> {
+    account_events!(start);
+    Ok(Flow::Continue)
 }

@@ -2,6 +2,16 @@
 
 `native` exposes columns, source codecs, `auth::AuthSchema` and `profile::ProfileSchema`. `sql` adds detached Store builders and Engine-backed Actions. Use [direct storage](../storage.md) for source coercion/query/return details and [account processes](../account.md) for server events.
 
+## Account event registration
+
+With `auth-server`, `account::events::register(&mut ServerBuilder) -> stackpress_lib::Result<()>` registers its seven SQL events immediately for direct composition. `account::events::register_listen(&mut ServerBuilder) -> stackpress_lib::Result<()>` queues the same inventory for Listen, after earlier Listen callbacks, for source-order aggregate composition. Both keep resources/policy explicit and perform no startup IO. [Registration proof](../../tests/main/account_registration.rs) pins both inventories, timing, no duplication and no-Engine pass-through; [implementation](../../src/account/events.rs) shares one handler list.
+
+| Parameter | Meaning |
+| --- | --- |
+| `app: &mut ServerBuilder` | Application construction state; either call prepares that same host without opening a database. |
+
+**Returns** `stackpress_lib::Result<()>`: immediate registration propagates handler-registration errors now; queued registration propagates queue-insertion errors now and handler-registration errors during `app.build().await`. The linked proof contains compiled usage of both forms.
+
 ## Schemas and values
 
 The stable API composition path is `stackpress_framework_session::profile::ProfileSchema`. Auth/Profile schemas dereference to RecordSchema; `model()` returns an owned seed-free shared Model, including Profile's Auth/Application/Session metadata. It does not add reverse eager joins to ProfileStore. [Descriptor and column tests](../../tests/main/records.rs) anchor these contracts.

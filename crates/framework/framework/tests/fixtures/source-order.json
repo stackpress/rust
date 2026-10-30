@@ -1,0 +1,43 @@
+{
+  "method": "Executed actual aggregate body with import spies; constituent phase anchors statically derived, no installed modules loaded",
+  "registration": [
+    "server",
+    "schema",
+    "language",
+    "csrf",
+    "sql",
+    "view",
+    "session",
+    "api",
+    "admin"
+  ],
+  "schema_config_priority": 10,
+  "command_order": [
+    "develop",
+    "emit",
+    "serve",
+    "generate",
+    "install",
+    "migrate",
+    "purge",
+    "push",
+    "query",
+    "populate",
+    "uninstall",
+    "upgrade"
+  ],
+  "model_listen_phase": "Listen",
+  "admin_phase": "Route",
+  "source_sha256": {
+    "stackpress/src/plugin.ts": "0c3da5b8a8a6ac91c737fb9fad7d81da03d3e2d46ffb9dd57a9ebcc7736d3ee8",
+    "stackpress-server/src/plugin.ts": "3aac2dfccfd09fffa371e116b938b13146c311dccada1703d206a133d22ced09",
+    "stackpress-schema/src/plugin.ts": "45cf5d46aacccd5e3ae2bd7511e562237b969b550b4ab9f3ffd35d1c897a9295",
+    "stackpress-language/src/plugin.ts": "16566a81683f11b147ca309fe8815b89bbee820b84be0998865651b780e2429c",
+    "stackpress-csrf/src/plugin.ts": "55f589f6d9d9c63d37e751ca1e550b932c4b893de3f65f263a2590286e5792e2",
+    "stackpress-sql/src/plugin.ts": "23f3840d73e011004e53bef77ccc2ab21459db2af1ed3afb3a88fbce5851538d",
+    "stackpress-view/src/plugin.ts": "df8cebe141cfba65efbd98292e77ffb5c09d4d45d8a7bdcca019872450255d70",
+    "stackpress-session/src/plugin.ts": "aade8d295a5910f7ccc4f9ac56a7c7a6ac7a8da44bd8b544c8259859bbc4a84f",
+    "stackpress-api/src/plugin.ts": "a63a25af8cd1288420fc9bb7451230573acaa60b99e9103f6720a3c5d353e600",
+    "stackpress-admin/src/plugin.ts": "44ae117596e526e9715eb644924bcc34f96460347fe26592f7f311c5bb410fab"
+  }
+}

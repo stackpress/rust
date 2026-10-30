@@ -21,6 +21,7 @@ members = [
     "crates/framework/framework-admin", "crates/framework/framework-api",
     "crates/framework/framework-csrf", "crates/framework/framework-email",
     "crates/framework/framework-session",
+    "crates/framework/framework",
     "examples/generated-admin/tool", "examples/generated-admin/shared",
     "examples/generated-admin/client", "examples/generated-admin/web",
 ]
