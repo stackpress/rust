@@ -6,11 +6,21 @@ edition.workspace = true
 rust-version.workspace = true
 publish.workspace = true
 
+[features]
+default = []
+server = ["dep:stackpress-lib", "dep:stackpress-server"]
+
 [dependencies]
+stackpress-lib = { path = "../../lib", optional = true }
+stackpress-server = { path = "../../server/server", optional = true }
 serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1", features = ["preserve_order"] }
-tokio = { version = "1", features = ["rt", "sync"] }
-lettre = { version = "=0.11.23", default-features = false, features = ["builder", "smtp-transport", "tokio1-rustls-tls"] }
+tokio = { version = "1", features = ["rt", "sync", "time", "fs", "io-util", "process", "macros"] }
+lettre = { version = "=0.11.23", default-features = false, features = ["builder", "smtp-transport", "tokio1-rustls-tls", "hostname"] }
+url = "=2.5.8"
+base64 = "=0.22.1"
+ring = { version = "=0.17.14", default-features = false, features = ["std"] }
+reqwest = { version = "=0.13.4", default-features = false, features = ["rustls-no-provider", "gzip", "deflate", "cookies"] }
 
 [dev-dependencies]
 tokio = { version = "1", features = ["macros", "rt-multi-thread", "sync"] }

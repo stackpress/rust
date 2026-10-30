@@ -50,6 +50,42 @@ impl TaskSupervisor {
         self.jobs.spawn_on(job, runtime);
     }
 
+    /// Submit a non-awaited raw event resolve using an explicitly owned host/input.
+    ///
+    /// Use the original hook name, such as `email-email-send` or `auth-phone-verify`.
+    /// A fresh child response is discarded as in the source non-awaited call; thrown
+    /// errors remain available through [`Self::join_next`]. No top-level lifecycle,
+    /// parent response merge, missing-listener error or implicit event rename is added.
+    /// Submission order is preserved; independent tasks may complete in either order.
+    ///
+    /// ```compile_fail
+    /// use std::sync::Arc;
+    /// use stackpress_framework_email::tasks::TaskSupervisor;
+    /// use stackpress_lib::Request;
+    /// use stackpress_server::Server;
+    /// fn borrowed(runtime: &tokio::runtime::Handle, server: Arc<Server>) {
+    ///     let mut parent = Request::new();
+    ///     TaskSupervisor::new().resolve_on(runtime, server, "email-email-send", &mut parent);
+    /// }
+    /// ```
+    #[cfg(feature = "server")]
+    pub fn resolve_on<I>(
+        &mut self,
+        runtime: &Handle,
+        server: std::sync::Arc<stackpress_server::Server>,
+        event: impl Into<String>,
+        input: I,
+    ) where
+        I: stackpress_lib::IntoRequest + 'static,
+    {
+        // Move only owned host/input/event into the job; no Invocation or parent borrow escapes.
+        let event = event.into();
+        self.spawn_on(runtime, async move {
+            server.resolve(&event, input).await?;
+            Ok(())
+        });
+    }
+
     /// Inspect whether every retained task has been joined.
     pub fn is_empty(&self) -> bool {
         // Finished-but-unjoined jobs remain supervised and therefore count as nonempty.

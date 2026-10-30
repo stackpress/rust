@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run M0 concurrency proofs with an absolute process-group kill/reap deadline."""
+"""Run Lane B concurrency proofs with an absolute process-group kill/reap deadline."""
 
 import argparse
 import os
@@ -34,7 +34,7 @@ def main():
         except ProcessLookupError:
             pass
         child.wait()
-        print("M0 proof watchdog killed and reaped command", file=sys.stderr)
+        print("Lane B proof watchdog killed and reaped command", file=sys.stderr)
         return 124
 
 
