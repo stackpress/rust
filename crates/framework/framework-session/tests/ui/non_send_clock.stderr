@@ -1,0 +1,35 @@
+error[E0277]: `Rc<()>` cannot be shared between threads safely
+ --> tests/ui/non_send_clock.rs:4:16
+  |
+4 | impl Clock for Local { fn now(&self)->f64 { 0.0 } }
+  |                ^^^^^ `Rc<()>` cannot be shared between threads safely
+  |
+  = help: within `Local`, the trait `Sync` is not implemented for `Rc<()>`
+note: required because it appears within the type `Local`
+ --> tests/ui/non_send_clock.rs:3:8
+  |
+3 | struct Local(Rc<()>);
+  |        ^^^^^
+note: required by a bound in `Clock`
+ --> src/session.rs
+  |
+  | pub trait Clock: Send + Sync {
+  |                         ^^^^ required by this bound in `Clock`
+
+error[E0277]: `Rc<()>` cannot be sent between threads safely
+ --> tests/ui/non_send_clock.rs:4:16
+  |
+4 | impl Clock for Local { fn now(&self)->f64 { 0.0 } }
+  |                ^^^^^ `Rc<()>` cannot be sent between threads safely
+  |
+  = help: within `Local`, the trait `Send` is not implemented for `Rc<()>`
+note: required because it appears within the type `Local`
+ --> tests/ui/non_send_clock.rs:3:8
+  |
+3 | struct Local(Rc<()>);
+  |        ^^^^^
+note: required by a bound in `Clock`
+ --> src/session.rs
+  |
+  | pub trait Clock: Send + Sync {
+  |                  ^^^^ required by this bound in `Clock`

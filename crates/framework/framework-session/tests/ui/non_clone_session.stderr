@@ -1,0 +1,5 @@
+error[E0599]: no method named `clone` found for struct `Session` in the current scope
+ --> tests/ui/non_clone_session.rs:4:36
+  |
+4 |     let duplicate:Session=original.clone();
+  |                                    ^^^^^ method not found in `Session`

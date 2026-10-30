@@ -1,0 +1,5 @@
+error[E0616]: field `token` of struct `Session` is private
+ --> tests/ui/readonly_token.rs:4:13
+  |
+4 |     session.token="after".into();
+  |             ^^^^^ private field

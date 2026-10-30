@@ -15,6 +15,10 @@ pub mod codegen;
 /// Generated schema contract, including explicit optional string storage length (G38).
 pub const CONTRACT_REVISION: u32 = 3;
 
+/// Native built-in value providers; requires the explicit `providers` feature.
+#[cfg(all(feature = "providers", not(target_arch = "wasm32")))]
+pub mod providers;
+
 mod query;
 pub use query::{NullOrder, Predicate, Sort, SortDirection, check_include, query_budget};
 mod input;
