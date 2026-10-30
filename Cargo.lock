@@ -4433,6 +4433,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "007d8adb5ddab6f8e3f491ac63566a7d5002cc7ed73901f72057943fa71ae1ae"
 
 [[package]]
+name = "qrcode"
+version = "0.14.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d68782463e408eb1e668cf6152704bd856c78c5b6417adaee3203d8f4c1fc9ec"
+
+[[package]]
 name = "quick-xml"
 version = "0.41.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -6157,7 +6163,9 @@ dependencies = [
  "serde",
  "serde_json",
  "stackpress-lib",
+ "stackpress-server",
  "subtle",
+ "tokio",
 ]
 
 [[package]]
@@ -6171,10 +6179,13 @@ dependencies = [
  "serde",
  "serde_json",
  "stackpress-framework-csrf",
+ "stackpress-framework-session",
  "stackpress-framework-view",
  "stackpress-leptos",
  "stackpress-lib",
  "stackpress-server",
+ "stackpress-sql",
+ "stackpress-sql-sqlite",
  "tokio",
  "url",
 ]
@@ -6208,6 +6219,11 @@ version = "0.1.0"
 dependencies = [
  "base64 0.22.1",
  "jsonwebtoken",
+ "leptos",
+ "leptos_meta",
+ "phonenumber",
+ "png",
+ "qrcode",
  "regex",
  "ring",
  "serde",
@@ -6216,6 +6232,8 @@ dependencies = [
  "stackpress-framework-email",
  "stackpress-framework-schema",
  "stackpress-framework-sql",
+ "stackpress-framework-view",
+ "stackpress-leptos",
  "stackpress-lib",
  "stackpress-server",
  "stackpress-sql",
@@ -6224,6 +6242,8 @@ dependencies = [
  "time",
  "tokio",
  "trybuild",
+ "wasm-bindgen-futures",
+ "web-sys",
 ]
 
 [[package]]

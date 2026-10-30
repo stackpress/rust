@@ -62,3 +62,18 @@ pub fn verify_at(token: &str, secret: &str, seconds: u64, window: i64) -> Result
     }
     Ok(false)
 }
+
+/// Generate the source base32 secret from random bytes modulo its 32-character alphabet.
+/// # Errors
+/// Propagates OS entropy failures; length is literal, including zero.
+pub fn generate_secret(length: usize) -> Result<String> {
+    use ring::rand::{SecureRandom, SystemRandom};
+    let mut bytes = vec![0; length];
+    SystemRandom::new()
+        .fill(&mut bytes)
+        .map_err(|_| Error::new("secret generation failed"))?;
+    Ok(bytes
+        .into_iter()
+        .map(|byte| char::from(b"ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"[usize::from(byte % 32)]))
+        .collect())
+}

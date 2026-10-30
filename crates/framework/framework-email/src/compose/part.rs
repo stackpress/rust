@@ -131,7 +131,9 @@ impl Header for SourceDisposition {
 
 /// Native MIME tree node, preserving source mixed/alternative/related ownership.
 pub(super) enum MimeBody {
+    /// One encoded leaf with no synthetic multipart wrapper.
     Single(SinglePart),
+    /// An owned mixed, alternative or related subtree.
     Multi(MultiPart),
 }
 impl MimeBody {

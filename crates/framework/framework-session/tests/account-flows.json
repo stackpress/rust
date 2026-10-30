@@ -1,0 +1,3339 @@
+{
+  "me": {
+    "id": "p1",
+    "name": "Ada Lovelace"
+  },
+  "profile": {
+    "id": "p1",
+    "name": "Ada Lovelace",
+    "image": null,
+    "roles": [
+      "USER"
+    ],
+    "tags": [],
+    "active": true
+  },
+  "auths": [
+    {
+      "id": "a1",
+      "profileId": "p1",
+      "type": "username",
+      "token": "ada",
+      "secret": "05a3121e68743ac73a7d8a5bb770ff202033ef65c2f1fcbcb54b4eacbfdcc217",
+      "verified": false
+    },
+    {
+      "id": "a2",
+      "profileId": "p1",
+      "type": "email",
+      "token": "ada@example.test",
+      "secret": "05a3121e68743ac73a7d8a5bb770ff202033ef65c2f1fcbcb54b4eacbfdcc217",
+      "verified": true
+    }
+  ],
+  "cases": [
+    {
+      "scenario": {
+        "name": "account-get",
+        "target": "account",
+        "data": {}
+      },
+      "expected": {
+        "code": 200,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": {
+          "id": "p1",
+          "name": "Ada Lovelace",
+          "image": null,
+          "roles": [
+            "USER"
+          ],
+          "tags": [],
+          "active": true,
+          "auth": {
+            "username": {
+              "id": "a1",
+              "type": "username",
+              "token": "ada",
+              "verified": false
+            },
+            "email": {
+              "id": "a2",
+              "type": "email",
+              "token": "ada@example.test",
+              "verified": true
+            }
+          }
+        },
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "account-guest",
+        "target": "account",
+        "guest": true
+      },
+      "expected": {
+        "code": 401,
+        "error": "Unauthorized",
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": null,
+        "qr": null,
+        "trace": [],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "account-missing-profile",
+        "target": "account",
+        "missingProfile": true
+      },
+      "expected": {
+        "code": 401,
+        "error": "Unauthorized",
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": null,
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "account-earlier-body",
+        "target": "account",
+        "body": "earlier"
+      },
+      "expected": {
+        "code": 200,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": "earlier",
+        "qr": null,
+        "trace": [],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "account-earlier-error",
+        "target": "account",
+        "earlyError": true
+      },
+      "expected": {
+        "code": 409,
+        "error": "early",
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": null,
+        "qr": null,
+        "trace": [],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "update-get",
+        "target": "update",
+        "data": {}
+      },
+      "expected": {
+        "code": 200,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": {
+          "id": "p1",
+          "name": "Ada Lovelace",
+          "image": null,
+          "roles": [
+            "USER"
+          ],
+          "tags": [],
+          "active": true,
+          "auth": {
+            "username": {
+              "id": "a1",
+              "type": "username",
+              "token": "ada",
+              "verified": false
+            },
+            "email": {
+              "id": "a2",
+              "type": "email",
+              "token": "ada@example.test",
+              "verified": true
+            }
+          }
+        },
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "update-guest",
+        "target": "update",
+        "guest": true
+      },
+      "expected": {
+        "code": 401,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": null,
+        "qr": null,
+        "trace": [],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "update-missing-profile",
+        "target": "update",
+        "missingProfile": true
+      },
+      "expected": {
+        "code": 401,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": null,
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "update-earlier-body",
+        "target": "update",
+        "body": "earlier"
+      },
+      "expected": {
+        "code": 200,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": "earlier",
+        "qr": null,
+        "trace": [],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "update-earlier-error",
+        "target": "update",
+        "earlyError": true
+      },
+      "expected": {
+        "code": 409,
+        "error": "early",
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": null,
+        "qr": null,
+        "trace": [],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "password-get",
+        "target": "password",
+        "data": {}
+      },
+      "expected": {
+        "code": 200,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": {
+          "id": "p1",
+          "name": "Ada Lovelace",
+          "image": null,
+          "roles": [
+            "USER"
+          ],
+          "tags": [],
+          "active": true
+        },
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "password-guest",
+        "target": "password",
+        "guest": true
+      },
+      "expected": {
+        "code": 401,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": null,
+        "qr": null,
+        "trace": [],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "password-missing-profile",
+        "target": "password",
+        "missingProfile": true
+      },
+      "expected": {
+        "code": 401,
+        "error": "missing",
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": null,
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "password-earlier-body",
+        "target": "password",
+        "body": "earlier"
+      },
+      "expected": {
+        "code": 200,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": "earlier",
+        "qr": null,
+        "trace": [],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "password-earlier-error",
+        "target": "password",
+        "earlyError": true
+      },
+      "expected": {
+        "code": 409,
+        "error": "early",
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": null,
+        "qr": null,
+        "trace": [],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "remove-get",
+        "target": "remove",
+        "data": {}
+      },
+      "expected": {
+        "code": 200,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": {
+          "id": "p1",
+          "name": "Ada Lovelace",
+          "image": null,
+          "roles": [
+            "USER"
+          ],
+          "tags": [],
+          "active": true
+        },
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "remove-guest",
+        "target": "remove",
+        "guest": true
+      },
+      "expected": {
+        "code": 401,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": null,
+        "qr": null,
+        "trace": [],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "remove-missing-profile",
+        "target": "remove",
+        "missingProfile": true
+      },
+      "expected": {
+        "code": 401,
+        "error": "missing",
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": null,
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "remove-earlier-body",
+        "target": "remove",
+        "body": "earlier"
+      },
+      "expected": {
+        "code": 200,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": "earlier",
+        "qr": null,
+        "trace": [],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "remove-earlier-error",
+        "target": "remove",
+        "earlyError": true
+      },
+      "expected": {
+        "code": 409,
+        "error": "early",
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": null,
+        "qr": null,
+        "trace": [],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "export-get",
+        "target": "export",
+        "data": {}
+      },
+      "expected": {
+        "code": 0,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": null,
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "export-guest",
+        "target": "export",
+        "guest": true
+      },
+      "expected": {
+        "code": 401,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": null,
+        "qr": null,
+        "trace": [],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "export-missing-profile",
+        "target": "export",
+        "missingProfile": true
+      },
+      "expected": {
+        "code": 401,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": null,
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "export-earlier-body",
+        "target": "export",
+        "body": "earlier"
+      },
+      "expected": {
+        "code": 200,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": "earlier",
+        "qr": null,
+        "trace": [],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "export-earlier-error",
+        "target": "export",
+        "earlyError": true
+      },
+      "expected": {
+        "code": 409,
+        "error": "early",
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": null,
+        "qr": null,
+        "trace": [],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "2fa/detail-get",
+        "target": "2fa/detail",
+        "data": {
+          "secret": "JBSWY3DPEHPK3PXP"
+        }
+      },
+      "expected": {
+        "code": 200,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": {
+          "url": "PNG",
+          "secret": "JBSWY3DPEHPK3PXP",
+          "profile": {
+            "id": "p1",
+            "name": "Ada Lovelace",
+            "image": null,
+            "roles": [
+              "USER"
+            ],
+            "tags": [],
+            "active": true
+          }
+        },
+        "qr": {
+          "width": 196,
+          "height": 196
+        },
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "type": "2fa",
+                "profileId": "p1"
+              }
+            }
+          ],
+          [
+            "csrf.generate"
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "2fa/detail-guest",
+        "target": "2fa/detail",
+        "guest": true
+      },
+      "expected": {
+        "code": 401,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": null,
+        "qr": null,
+        "trace": [],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "2fa/detail-missing-profile",
+        "target": "2fa/detail",
+        "missingProfile": true
+      },
+      "expected": {
+        "code": 401,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": null,
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "2fa/detail-earlier-body",
+        "target": "2fa/detail",
+        "body": "earlier"
+      },
+      "expected": {
+        "code": 200,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": "earlier",
+        "qr": null,
+        "trace": [],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "2fa/detail-earlier-error",
+        "target": "2fa/detail",
+        "earlyError": true
+      },
+      "expected": {
+        "code": 409,
+        "error": "early",
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": null,
+        "qr": null,
+        "trace": [],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "2fa/remove-get",
+        "target": "2fa/remove",
+        "data": {}
+      },
+      "expected": {
+        "code": 200,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": {
+          "id": "p1",
+          "name": "Ada Lovelace",
+          "image": null,
+          "roles": [
+            "USER"
+          ],
+          "tags": [],
+          "active": true
+        },
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "csrf.generate"
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "2fa/remove-guest",
+        "target": "2fa/remove",
+        "guest": true
+      },
+      "expected": {
+        "code": 401,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": null,
+        "qr": null,
+        "trace": [],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "2fa/remove-missing-profile",
+        "target": "2fa/remove",
+        "missingProfile": true
+      },
+      "expected": {
+        "code": 401,
+        "error": "missing",
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": null,
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "2fa/remove-earlier-body",
+        "target": "2fa/remove",
+        "body": "earlier"
+      },
+      "expected": {
+        "code": 200,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": "earlier",
+        "qr": null,
+        "trace": [],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "2fa/remove-earlier-error",
+        "target": "2fa/remove",
+        "earlyError": true
+      },
+      "expected": {
+        "code": 409,
+        "error": "early",
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": null,
+        "qr": null,
+        "trace": [],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "update-existing-identifier-no-password",
+        "target": "update",
+        "method": "POST",
+        "data": {
+          "name": "Changed",
+          "image": "",
+          "username": "ada2",
+          "phone": ""
+        }
+      },
+      "expected": {
+        "code": 302,
+        "error": null,
+        "errors": {},
+        "location": "/auth/account",
+        "attachment": null,
+        "result": {
+          "id": "p1",
+          "name": "Changed",
+          "image": ""
+        },
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ],
+          [
+            "resolve",
+            "profile-update",
+            {
+              "id": "p1",
+              "name": "Changed",
+              "image": ""
+            }
+          ],
+          [
+            "resolve",
+            "auth-update",
+            {
+              "id": "a1",
+              "token": "ada2"
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "update-add-email-needs-password",
+        "target": "update",
+        "method": "POST",
+        "data": {
+          "name": "Changed",
+          "username": "ada",
+          "email": "new@example.test",
+          "phone": ""
+        },
+        "auths": [
+          {
+            "id": "a1",
+            "profileId": "p1",
+            "type": "username",
+            "token": "ada",
+            "secret": "05a3121e68743ac73a7d8a5bb770ff202033ef65c2f1fcbcb54b4eacbfdcc217",
+            "verified": false
+          }
+        ]
+      },
+      "expected": {
+        "code": 400,
+        "error": "Invalid Parameters",
+        "errors": {
+          "current": "Current password is required to add a sign-in method"
+        },
+        "location": null,
+        "attachment": null,
+        "result": null,
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "update-add-email-wrong-password",
+        "target": "update",
+        "method": "POST",
+        "data": {
+          "name": "Changed",
+          "username": "ada",
+          "email": "new@example.test",
+          "current": "wrong",
+          "phone": ""
+        },
+        "auths": [
+          {
+            "id": "a1",
+            "profileId": "p1",
+            "type": "username",
+            "token": "ada",
+            "secret": "05a3121e68743ac73a7d8a5bb770ff202033ef65c2f1fcbcb54b4eacbfdcc217",
+            "verified": false
+          }
+        ]
+      },
+      "expected": {
+        "code": 400,
+        "error": "Invalid Parameters",
+        "errors": {
+          "current": "Current password is incorrect"
+        },
+        "location": null,
+        "attachment": null,
+        "result": null,
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "update-add-email-correct",
+        "target": "update",
+        "method": "POST",
+        "data": {
+          "name": "Changed",
+          "username": "ada",
+          "email": "new@example.test",
+          "current": "correct",
+          "phone": ""
+        },
+        "auths": [
+          {
+            "id": "a1",
+            "profileId": "p1",
+            "type": "username",
+            "token": "ada",
+            "secret": "05a3121e68743ac73a7d8a5bb770ff202033ef65c2f1fcbcb54b4eacbfdcc217",
+            "verified": false
+          }
+        ]
+      },
+      "expected": {
+        "code": 302,
+        "error": null,
+        "errors": {},
+        "location": "/auth/account",
+        "attachment": null,
+        "result": {
+          "id": "p1",
+          "name": "Changed"
+        },
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ],
+          [
+            "resolve",
+            "profile-update",
+            {
+              "id": "p1",
+              "name": "Changed"
+            }
+          ],
+          [
+            "resolve",
+            "auth-update",
+            {
+              "id": "a1",
+              "token": "ada"
+            }
+          ],
+          [
+            "resolve",
+            "auth-create",
+            {
+              "profileId": "p1",
+              "type": "email",
+              "token": "new@example.test",
+              "secret": "correct"
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "update-empty-tokens-are-not-deletes",
+        "target": "update",
+        "method": "POST",
+        "data": {
+          "name": "Changed",
+          "image": "",
+          "username": " ",
+          "email": "",
+          "phone": ""
+        }
+      },
+      "expected": {
+        "code": 302,
+        "error": null,
+        "errors": {},
+        "location": "/auth/account",
+        "attachment": null,
+        "result": {
+          "id": "p1",
+          "name": "Changed",
+          "image": ""
+        },
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ],
+          [
+            "resolve",
+            "profile-update",
+            {
+              "id": "p1",
+              "name": "Changed",
+              "image": ""
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "update-profile-update-failure",
+        "target": "update",
+        "method": "POST",
+        "data": {
+          "name": "Changed",
+          "phone": ""
+        },
+        "failEvent": "profile-update"
+      },
+      "expected": {
+        "code": 503,
+        "error": "child failure",
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": {
+          "id": "p1",
+          "name": "Changed"
+        },
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ],
+          [
+            "resolve",
+            "profile-update",
+            {
+              "id": "p1",
+              "name": "Changed"
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "update-identifier-first-failure",
+        "target": "update",
+        "method": "POST",
+        "data": {
+          "name": "Changed",
+          "username": "new",
+          "email": "changed@example.test",
+          "phone": ""
+        },
+        "failEvent": "auth-update"
+      },
+      "expected": {
+        "code": 503,
+        "error": "child failure",
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": {
+          "id": "a1",
+          "token": "new"
+        },
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ],
+          [
+            "resolve",
+            "profile-update",
+            {
+              "id": "p1",
+              "name": "Changed"
+            }
+          ],
+          [
+            "resolve",
+            "auth-update",
+            {
+              "id": "a1",
+              "token": "new"
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "update-source-missing-phone",
+        "target": "update",
+        "method": "POST",
+        "data": {
+          "name": "Changed"
+        }
+      },
+      "expected": {
+        "code": 0,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": null,
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": "Cannot read properties of undefined (reading 'trim')"
+      }
+    },
+    {
+      "scenario": {
+        "name": "update-normalized-phone",
+        "target": "update",
+        "method": "POST",
+        "data": {
+          "name": "Changed",
+          "phone": "+63 (917) 123-4567",
+          "current": "correct"
+        }
+      },
+      "expected": {
+        "code": 302,
+        "error": null,
+        "errors": {},
+        "location": "/auth/account",
+        "attachment": null,
+        "result": {
+          "id": "p1",
+          "name": "Changed"
+        },
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ],
+          [
+            "resolve",
+            "profile-update",
+            {
+              "id": "p1",
+              "name": "Changed"
+            }
+          ],
+          [
+            "resolve",
+            "auth-create",
+            {
+              "profileId": "p1",
+              "type": "phone",
+              "token": "+639171234567",
+              "secret": "correct"
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "password-required",
+        "target": "password",
+        "method": "POST",
+        "data": {}
+      },
+      "expected": {
+        "code": 400,
+        "error": "Invalid Parameters: Password is required, Current password is required",
+        "errors": {
+          "secret": "Password is required",
+          "current": "Current password is required"
+        },
+        "location": null,
+        "attachment": null,
+        "result": {
+          "id": "p1",
+          "name": "Ada Lovelace",
+          "image": null,
+          "roles": [
+            "USER"
+          ],
+          "tags": [],
+          "active": true
+        },
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "password-same",
+        "target": "password",
+        "method": "POST",
+        "data": {
+          "secret": "correct",
+          "current": "correct"
+        }
+      },
+      "expected": {
+        "code": 400,
+        "error": "Invalid Parameters: Current password must be different from new password",
+        "errors": {
+          "current": "Current password must be different from new password"
+        },
+        "location": null,
+        "attachment": null,
+        "result": {
+          "id": "p1",
+          "name": "Ada Lovelace",
+          "image": null,
+          "roles": [
+            "USER"
+          ],
+          "tags": [],
+          "active": true
+        },
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "password-wrong-current",
+        "target": "password",
+        "method": "POST",
+        "data": {
+          "secret": "new",
+          "current": "wrong"
+        }
+      },
+      "expected": {
+        "code": 400,
+        "error": "Invalid Parameters",
+        "errors": {
+          "current": "Current password is incorrect"
+        },
+        "location": null,
+        "attachment": null,
+        "result": {
+          "id": "p1",
+          "name": "Ada Lovelace",
+          "image": null,
+          "roles": [
+            "USER"
+          ],
+          "tags": [],
+          "active": true
+        },
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "password-success-no-csrf",
+        "target": "password",
+        "method": "POST",
+        "data": {
+          "secret": "new",
+          "current": "correct"
+        }
+      },
+      "expected": {
+        "code": 302,
+        "error": null,
+        "errors": {},
+        "location": "/auth/account",
+        "attachment": null,
+        "result": {
+          "id": "p1",
+          "name": "Ada Lovelace",
+          "image": null,
+          "roles": [
+            "USER"
+          ],
+          "tags": [],
+          "active": true
+        },
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ],
+          [
+            "resolve",
+            "auth-update",
+            {
+              "id": "a1",
+              "secret": "new"
+            }
+          ],
+          [
+            "resolve",
+            "auth-update",
+            {
+              "id": "a2",
+              "secret": "new"
+            }
+          ]
+        ],
+        "flash": {
+          "type": "success",
+          "message": "Your password has been updated."
+        },
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "password-ignores-update-failure",
+        "target": "password",
+        "method": "POST",
+        "data": {
+          "secret": "new",
+          "current": "correct"
+        },
+        "failEvent": "auth-update"
+      },
+      "expected": {
+        "code": 302,
+        "error": null,
+        "errors": {},
+        "location": "/auth/account",
+        "attachment": null,
+        "result": {
+          "id": "p1",
+          "name": "Ada Lovelace",
+          "image": null,
+          "roles": [
+            "USER"
+          ],
+          "tags": [],
+          "active": true
+        },
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ],
+          [
+            "resolve",
+            "auth-update",
+            {
+              "id": "a1",
+              "secret": "new"
+            }
+          ],
+          [
+            "resolve",
+            "auth-update",
+            {
+              "id": "a2",
+              "secret": "new"
+            }
+          ]
+        ],
+        "flash": {
+          "type": "success",
+          "message": "Your password has been updated."
+        },
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "password-all-auth-types",
+        "target": "password",
+        "method": "POST",
+        "data": {
+          "secret": "new",
+          "current": "factor"
+        },
+        "auths": [
+          {
+            "id": "factor",
+            "type": "2fa",
+            "secret": "92621b1fcf97d36c76cc1629596278a2676ba41177ba10e96210eddcd6902613"
+          }
+        ]
+      },
+      "expected": {
+        "code": 302,
+        "error": null,
+        "errors": {},
+        "location": "/auth/account",
+        "attachment": null,
+        "result": {
+          "id": "p1",
+          "name": "Ada Lovelace",
+          "image": null,
+          "roles": [
+            "USER"
+          ],
+          "tags": [],
+          "active": true
+        },
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ],
+          [
+            "resolve",
+            "auth-update",
+            {
+              "id": "factor",
+              "secret": "new"
+            }
+          ]
+        ],
+        "flash": {
+          "type": "success",
+          "message": "Your password has been updated."
+        },
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "password-no-auth",
+        "target": "password",
+        "method": "POST",
+        "data": {
+          "secret": "new",
+          "current": "correct"
+        },
+        "auths": []
+      },
+      "expected": {
+        "code": 400,
+        "error": "No authentication found.",
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": {
+          "id": "p1",
+          "name": "Ada Lovelace",
+          "image": null,
+          "roles": [
+            "USER"
+          ],
+          "tags": [],
+          "active": true
+        },
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "password-search-failure",
+        "target": "password",
+        "method": "POST",
+        "data": {
+          "secret": "new",
+          "current": "correct"
+        },
+        "failEvent": "auth-search"
+      },
+      "expected": {
+        "code": 302,
+        "error": null,
+        "errors": {},
+        "location": "/auth/account",
+        "attachment": null,
+        "result": {
+          "id": "p1",
+          "name": "Ada Lovelace",
+          "image": null,
+          "roles": [
+            "USER"
+          ],
+          "tags": [],
+          "active": true
+        },
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ],
+          [
+            "resolve",
+            "auth-update",
+            {
+              "id": "a1",
+              "secret": "new"
+            }
+          ],
+          [
+            "resolve",
+            "auth-update",
+            {
+              "id": "a2",
+              "secret": "new"
+            }
+          ]
+        ],
+        "flash": {
+          "type": "success",
+          "message": "Your password has been updated."
+        },
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "password-rules",
+        "target": "password",
+        "method": "POST",
+        "data": {
+          "secret": "new",
+          "current": "correct"
+        },
+        "password": {
+          "min": 8,
+          "upper": true
+        }
+      },
+      "expected": {
+        "code": 400,
+        "error": "Invalid Parameters: Password must be at least 8 characters",
+        "errors": {
+          "secret": "Password must be at least 8 characters"
+        },
+        "location": null,
+        "attachment": null,
+        "result": {
+          "id": "p1",
+          "name": "Ada Lovelace",
+          "image": null,
+          "roles": [
+            "USER"
+          ],
+          "tags": [],
+          "active": true
+        },
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "remove-without-confirmation",
+        "target": "remove",
+        "method": "POST",
+        "data": {}
+      },
+      "expected": {
+        "code": 200,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": {
+          "id": "p1",
+          "name": "Ada Lovelace",
+          "image": null,
+          "roles": [
+            "USER"
+          ],
+          "tags": [],
+          "active": true
+        },
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "remove-missing-password",
+        "target": "remove",
+        "method": "POST",
+        "data": {
+          "confirmed": true
+        }
+      },
+      "expected": {
+        "code": 400,
+        "error": "Invalid Parameters",
+        "errors": {
+          "secret": "Password is required"
+        },
+        "location": null,
+        "attachment": null,
+        "result": {
+          "id": "p1",
+          "name": "Ada Lovelace",
+          "image": null,
+          "roles": [
+            "USER"
+          ],
+          "tags": [],
+          "active": true
+        },
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "remove-wrong-password",
+        "target": "remove",
+        "method": "POST",
+        "data": {
+          "confirmed": true,
+          "secret": "wrong"
+        }
+      },
+      "expected": {
+        "code": 400,
+        "error": "Invalid Parameters",
+        "errors": {
+          "secret": "Password is incorrect"
+        },
+        "location": null,
+        "attachment": null,
+        "result": {
+          "id": "p1",
+          "name": "Ada Lovelace",
+          "image": null,
+          "roles": [
+            "USER"
+          ],
+          "tags": [],
+          "active": true
+        },
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "remove-success-no-csrf",
+        "target": "remove",
+        "method": "POST",
+        "data": {
+          "confirmed": true,
+          "secret": "correct"
+        }
+      },
+      "expected": {
+        "code": 302,
+        "error": null,
+        "errors": {},
+        "location": "/auth/signout",
+        "attachment": null,
+        "result": {
+          "id": "p1"
+        },
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ],
+          [
+            "resolve",
+            "auth-remove",
+            {
+              "id": "a1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-remove",
+            {
+              "id": "a2"
+            }
+          ],
+          [
+            "resolve",
+            "profile-remove",
+            {
+              "id": "p1"
+            }
+          ]
+        ],
+        "flash": {
+          "type": "success",
+          "message": "Your account has been scheduled for removal."
+        },
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "remove-first-remove-fails",
+        "target": "remove",
+        "method": "POST",
+        "data": {
+          "confirmed": true,
+          "secret": "correct"
+        },
+        "failEvent": "auth-remove"
+      },
+      "expected": {
+        "code": 503,
+        "error": "child failure",
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": {
+          "id": "a1"
+        },
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ],
+          [
+            "resolve",
+            "auth-remove",
+            {
+              "id": "a1"
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "remove-profile-remove-fails",
+        "target": "remove",
+        "method": "POST",
+        "data": {
+          "confirmed": true,
+          "secret": "correct"
+        },
+        "failEvent": "profile-remove"
+      },
+      "expected": {
+        "code": 503,
+        "error": "child failure",
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": {
+          "id": "p1"
+        },
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ],
+          [
+            "resolve",
+            "auth-remove",
+            {
+              "id": "a1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-remove",
+            {
+              "id": "a2"
+            }
+          ],
+          [
+            "resolve",
+            "profile-remove",
+            {
+              "id": "p1"
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "remove-search-fails",
+        "target": "remove",
+        "method": "POST",
+        "data": {
+          "confirmed": true,
+          "secret": "correct"
+        },
+        "failEvent": "auth-search"
+      },
+      "expected": {
+        "code": 503,
+        "error": "child failure",
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": [
+          {
+            "id": "a1",
+            "profileId": "p1",
+            "type": "username",
+            "token": "ada",
+            "secret": "05a3121e68743ac73a7d8a5bb770ff202033ef65c2f1fcbcb54b4eacbfdcc217",
+            "verified": false
+          },
+          {
+            "id": "a2",
+            "profileId": "p1",
+            "type": "email",
+            "token": "ada@example.test",
+            "secret": "05a3121e68743ac73a7d8a5bb770ff202033ef65c2f1fcbcb54b4eacbfdcc217",
+            "verified": true
+          }
+        ],
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "remove-no-auth",
+        "target": "remove",
+        "method": "POST",
+        "data": {
+          "confirmed": true,
+          "secret": "correct"
+        },
+        "auths": []
+      },
+      "expected": {
+        "code": 400,
+        "error": "No authentication found.",
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": {
+          "id": "p1",
+          "name": "Ada Lovelace",
+          "image": null,
+          "roles": [
+            "USER"
+          ],
+          "tags": [],
+          "active": true
+        },
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "export-download",
+        "target": "export",
+        "data": {
+          "download": true
+        }
+      },
+      "expected": {
+        "code": 200,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "attachment": "attachment; filename=account-1700000000000.csv",
+        "result": "id,\"p1\"\nname,\"Ada Lovelace\"\nimage,\"\"\nroles,\"USER\"\ntags,\"\"\nactive,\"true\"",
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "export-formula-cells",
+        "target": "export",
+        "data": {
+          "download": true
+        },
+        "profile": {
+          "name": "=1+1",
+          "image": null,
+          "tags": [
+            "+thing",
+            "@other"
+          ],
+          "references": {
+            "note": "<tag>"
+          }
+        }
+      },
+      "expected": {
+        "code": 200,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "attachment": "attachment; filename=account-1700000000000.csv",
+        "result": "name,\"'=1+1\"\nimage,\"\"\ntags,\"'+thing, @other\"\nreferences,\"note: <tag>\"",
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "enroll-request-secret",
+        "target": "2fa/detail",
+        "data": {
+          "secret": "JBSWY3DPEHPK3PXP"
+        }
+      },
+      "expected": {
+        "code": 200,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": {
+          "url": "PNG",
+          "secret": "JBSWY3DPEHPK3PXP",
+          "profile": {
+            "id": "p1",
+            "name": "Ada Lovelace",
+            "image": null,
+            "roles": [
+              "USER"
+            ],
+            "tags": [],
+            "active": true
+          }
+        },
+        "qr": {
+          "width": 196,
+          "height": 196
+        },
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "type": "2fa",
+                "profileId": "p1"
+              }
+            }
+          ],
+          [
+            "csrf.generate"
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "enroll-invalid-code",
+        "target": "2fa/detail",
+        "data": {
+          "secret": "JBSWY3DPEHPK3PXP",
+          "code": "000000"
+        },
+        "method": "POST"
+      },
+      "expected": {
+        "code": 200,
+        "error": "Invalid code",
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": {
+          "url": "PNG",
+          "secret": "JBSWY3DPEHPK3PXP"
+        },
+        "qr": {
+          "width": 196,
+          "height": 196
+        },
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "type": "2fa",
+                "profileId": "p1"
+              }
+            }
+          ],
+          [
+            "csrf.valid"
+          ],
+          [
+            "csrf.generate"
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "enroll-valid-create",
+        "target": "2fa/detail",
+        "data": {
+          "secret": "JBSWY3DPEHPK3PXP",
+          "code": "324550"
+        },
+        "method": "POST"
+      },
+      "expected": {
+        "code": 302,
+        "error": null,
+        "errors": {},
+        "location": "/auth/account/security/2fa",
+        "attachment": null,
+        "result": {
+          "id": "created",
+          "profileId": "p1",
+          "type": "2fa",
+          "token": "JBSWY3DPEHPK3PXP",
+          "secret": "JBSWY3DPEHPK3PXP"
+        },
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "type": "2fa",
+                "profileId": "p1"
+              }
+            }
+          ],
+          [
+            "csrf.valid"
+          ],
+          [
+            "resolve",
+            "auth-create",
+            {
+              "profileId": "p1",
+              "type": "2fa",
+              "token": "JBSWY3DPEHPK3PXP",
+              "secret": "JBSWY3DPEHPK3PXP"
+            }
+          ]
+        ],
+        "flash": {
+          "type": "success",
+          "message": "Two-Factor Authentication has been updated successfully.",
+          "close": 5000
+        },
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "enroll-invalid-csrf",
+        "target": "2fa/detail",
+        "data": {
+          "secret": "JBSWY3DPEHPK3PXP",
+          "code": "123456"
+        },
+        "method": "POST",
+        "csrf": false
+      },
+      "expected": {
+        "code": 419,
+        "error": "csrf",
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": null,
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "type": "2fa",
+                "profileId": "p1"
+              }
+            }
+          ],
+          [
+            "csrf.valid"
+          ],
+          [
+            "csrf.generate"
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "enroll-stored-secret",
+        "target": "2fa/detail",
+        "data": {},
+        "auths": [
+          {
+            "id": "factor",
+            "type": "2fa",
+            "token": "JBSWY3DPEHPK3PXP"
+          }
+        ]
+      },
+      "expected": {
+        "code": 200,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": {
+          "url": "PNG",
+          "secret": "JBSWY3DPEHPK3PXP",
+          "profile": {
+            "id": "p1",
+            "name": "Ada Lovelace",
+            "image": null,
+            "roles": [
+              "USER"
+            ],
+            "tags": [],
+            "active": true
+          },
+          "authId": "factor"
+        },
+        "qr": {
+          "width": 196,
+          "height": 196
+        },
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "type": "2fa",
+                "profileId": "p1"
+              }
+            }
+          ],
+          [
+            "csrf.generate"
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "enroll-valid-update",
+        "target": "2fa/detail",
+        "data": {
+          "secret": "JBSWY3DPEHPK3PXP",
+          "code": "324550"
+        },
+        "method": "POST",
+        "auths": [
+          {
+            "id": "factor",
+            "type": "2fa",
+            "token": "JBSWY3DPEHPK3PXP"
+          }
+        ]
+      },
+      "expected": {
+        "code": 302,
+        "error": null,
+        "errors": {},
+        "location": "/auth/account/security/2fa",
+        "attachment": null,
+        "result": {
+          "id": "factor",
+          "token": "JBSWY3DPEHPK3PXP",
+          "secret": "JBSWY3DPEHPK3PXP"
+        },
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "type": "2fa",
+                "profileId": "p1"
+              }
+            }
+          ],
+          [
+            "csrf.valid"
+          ],
+          [
+            "resolve",
+            "auth-update",
+            {
+              "id": "factor",
+              "token": "JBSWY3DPEHPK3PXP",
+              "secret": "JBSWY3DPEHPK3PXP"
+            }
+          ]
+        ],
+        "flash": {
+          "type": "success",
+          "message": "Two-Factor Authentication has been updated successfully.",
+          "close": 5000
+        },
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "enroll-write-error-still-redirects",
+        "target": "2fa/detail",
+        "data": {
+          "secret": "JBSWY3DPEHPK3PXP",
+          "code": "324550"
+        },
+        "method": "POST",
+        "failEvent": "auth-create"
+      },
+      "expected": {
+        "code": 302,
+        "error": "child failure",
+        "errors": {},
+        "location": "/auth/account/security/2fa",
+        "attachment": null,
+        "result": {
+          "id": "created",
+          "profileId": "p1",
+          "type": "2fa",
+          "token": "JBSWY3DPEHPK3PXP",
+          "secret": "JBSWY3DPEHPK3PXP"
+        },
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "type": "2fa",
+                "profileId": "p1"
+              }
+            }
+          ],
+          [
+            "csrf.valid"
+          ],
+          [
+            "resolve",
+            "auth-create",
+            {
+              "profileId": "p1",
+              "type": "2fa",
+              "token": "JBSWY3DPEHPK3PXP",
+              "secret": "JBSWY3DPEHPK3PXP"
+            }
+          ]
+        ],
+        "flash": {
+          "type": "success",
+          "message": "Two-Factor Authentication has been updated successfully.",
+          "close": 5000
+        },
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "enroll-search-fails",
+        "target": "2fa/detail",
+        "data": {
+          "secret": "JBSWY3DPEHPK3PXP"
+        },
+        "failEvent": "auth-search"
+      },
+      "expected": {
+        "code": 503,
+        "error": "child failure",
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": [],
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "type": "2fa",
+                "profileId": "p1"
+              }
+            }
+          ],
+          [
+            "csrf.generate"
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "remove-factor-confirmed-get-no-csrf",
+        "target": "2fa/remove",
+        "data": {
+          "confirmed": true,
+          "authId": "factor"
+        }
+      },
+      "expected": {
+        "code": 302,
+        "error": null,
+        "errors": {},
+        "location": "/auth/account/security/2fa",
+        "attachment": null,
+        "result": {
+          "id": "p1",
+          "name": "Ada Lovelace",
+          "image": null,
+          "roles": [
+            "USER"
+          ],
+          "tags": [],
+          "active": true
+        },
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "id": "factor",
+                "profileId": "p1",
+                "type": "2fa"
+              }
+            }
+          ],
+          [
+            "resolve",
+            "auth-remove",
+            {
+              "id": "factor",
+              "profileId": "p1",
+              "type": "2fa"
+            }
+          ]
+        ],
+        "flash": {
+          "type": "success",
+          "message": "Two-Factor Authentication has been removed successfully.",
+          "close": 3000
+        },
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "remove-factor-confirmed-post",
+        "target": "2fa/remove",
+        "data": {
+          "confirmed": true,
+          "authId": "factor"
+        },
+        "method": "POST",
+        "csrf": false
+      },
+      "expected": {
+        "code": 302,
+        "error": null,
+        "errors": {},
+        "location": "/auth/account/security/2fa",
+        "attachment": null,
+        "result": {
+          "id": "p1",
+          "name": "Ada Lovelace",
+          "image": null,
+          "roles": [
+            "USER"
+          ],
+          "tags": [],
+          "active": true
+        },
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "id": "factor",
+                "profileId": "p1",
+                "type": "2fa"
+              }
+            }
+          ],
+          [
+            "resolve",
+            "auth-remove",
+            {
+              "id": "factor",
+              "profileId": "p1",
+              "type": "2fa"
+            }
+          ]
+        ],
+        "flash": {
+          "type": "success",
+          "message": "Two-Factor Authentication has been removed successfully.",
+          "close": 3000
+        },
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "remove-factor-empty-auth-id",
+        "target": "2fa/remove",
+        "data": {
+          "confirmed": true,
+          "authId": ""
+        }
+      },
+      "expected": {
+        "code": 302,
+        "error": "Invalid authentication.",
+        "errors": {},
+        "location": "/auth/account/security/2fa",
+        "attachment": null,
+        "result": {
+          "id": "p1",
+          "name": "Ada Lovelace",
+          "image": null,
+          "roles": [
+            "USER"
+          ],
+          "tags": [],
+          "active": true
+        },
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "csrf.generate"
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "remove-factor-missing-auth-id-string-undefined",
+        "target": "2fa/remove",
+        "data": {
+          "confirmed": true
+        }
+      },
+      "expected": {
+        "code": 302,
+        "error": null,
+        "errors": {},
+        "location": "/auth/account/security/2fa",
+        "attachment": null,
+        "result": {
+          "id": "p1",
+          "name": "Ada Lovelace",
+          "image": null,
+          "roles": [
+            "USER"
+          ],
+          "tags": [],
+          "active": true
+        },
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "id": "undefined",
+                "profileId": "p1",
+                "type": "2fa"
+              }
+            }
+          ],
+          [
+            "resolve",
+            "auth-remove",
+            {
+              "id": "undefined",
+              "profileId": "p1",
+              "type": "2fa"
+            }
+          ]
+        ],
+        "flash": {
+          "type": "success",
+          "message": "Two-Factor Authentication has been removed successfully.",
+          "close": 3000
+        },
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "remove-factor-search-fails",
+        "target": "2fa/remove",
+        "data": {
+          "confirmed": true,
+          "authId": "factor"
+        },
+        "failEvent": "auth-search"
+      },
+      "expected": {
+        "code": 503,
+        "error": "child failure",
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": [],
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "id": "factor",
+                "profileId": "p1",
+                "type": "2fa"
+              }
+            }
+          ],
+          [
+            "csrf.generate"
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "remove-factor-remove-fails",
+        "target": "2fa/remove",
+        "data": {
+          "confirmed": true,
+          "authId": "factor"
+        },
+        "failEvent": "auth-remove"
+      },
+      "expected": {
+        "code": 503,
+        "error": "child failure",
+        "errors": {},
+        "location": null,
+        "attachment": null,
+        "result": {
+          "id": "factor",
+          "profileId": "p1",
+          "type": "2fa"
+        },
+        "qr": null,
+        "trace": [
+          [
+            "resolve",
+            "profile-detail",
+            {
+              "id": "p1"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "id": "factor",
+                "profileId": "p1",
+                "type": "2fa"
+              }
+            }
+          ],
+          [
+            "resolve",
+            "auth-remove",
+            {
+              "id": "factor",
+              "profileId": "p1",
+              "type": "2fa"
+            }
+          ],
+          [
+            "csrf.generate"
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    }
+  ]
+}

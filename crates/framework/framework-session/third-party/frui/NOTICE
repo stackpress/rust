@@ -1,0 +1,2 @@
+Country/dial menu derived from read-only frui/src/data/countries.ts.
+Retains source order, ISO2, names and telephone codes. UI rendering uses native Leptos controls.

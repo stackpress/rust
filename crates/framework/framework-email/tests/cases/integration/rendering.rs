@@ -1,7 +1,8 @@
-//! Real Leptos SSR consumes an explicit public form projection, never the native fixture state.
+//! Check either the finite public form or the real session view selected by feature unification.
 
 use super::{Fixture, Result};
 use serde::{Deserialize, Serialize};
+use serde_json::Value as Json;
 use stackpress_framework_view::{
     BasePath, PageAssets, PageContract, PageId, PageRenderer, PageSnapshot, PublicLocation,
     PublicStatus, ViewError,
@@ -9,7 +10,7 @@ use stackpress_framework_view::{
 };
 use stackpress_leptos::leptos::{self, prelude::*};
 use stackpress_lib::{Body, Flow, Invocation, Request, Response};
-use stackpress_server::ServerInvocationExt;
+use stackpress_server::{Server, ServerInvocationExt};
 
 /// Only source-intended CSRF/form/error data crosses into the SSR/hydration seed.
 #[derive(Clone, Serialize, Deserialize)]
@@ -22,6 +23,12 @@ struct Form {
 /// Initialize through the existing renderer adapter; no web endpoint is involved.
 pub(super) fn initialize() {
     initialize_ssr().unwrap();
+}
+/// Dependency features are unified by Cargo, so inspect the source view contribution at runtime.
+pub(super) fn native_view(server: &Server) -> bool {
+    server
+        .listeners()
+        .any(|listener| listener.pattern == "GET /auth/signin/email" && listener.priority == -100)
 }
 /// Trusted component structure uses ordinary escaped Leptos text/attribute binding.
 fn component(page: &PageSnapshot<Form>) -> std::result::Result<AnyView, ViewError> {
@@ -81,7 +88,7 @@ pub(super) async fn response(
     let code = res.status().map_or(200, |status| status.code);
     let snapshot = PageSnapshot {
         revision: 1,
-        build: "slice9b-m3".into(),
+        build: "slice9b-m4".into(),
         page: PageId::try_from("signin-email".to_owned()).unwrap(),
         location: "/auth/signin/email".into(),
         locale: "en".into(),
@@ -89,13 +96,13 @@ pub(super) async fn response(
         status: PublicStatus::new(code, res.error().map(str::to_owned)).unwrap(),
         data,
     };
-    let mut contract = PageContract::new(1, "slice9b-m3").unwrap();
+    let mut contract = PageContract::new(1, "slice9b-m4").unwrap();
     contract.theme = Some("light".into());
     let renderer = LeptosRenderer::new(
         contract,
         PageAssets {
             theme_bootstrap: None,
-            build: "slice9b-m3".into(),
+            build: "slice9b-m4".into(),
             base: BasePath::default(),
             module: PublicLocation::new("/assets/fixture.js").unwrap(),
             stylesheet: None,
@@ -111,17 +118,15 @@ pub(super) async fn response(
     res.status_code(code, None)?;
     Ok(Flow::Continue)
 }
-/// Read the actual inert hydration seed and correlate its CSRF value to HTML and outgoing cookie.
-pub(super) fn assert_form(res: &Response, token: &str) {
+/// Both renderer contracts keep injected markup inert and native fixture resources private.
+fn document(res: &Response) -> (&str, &str) {
     let Body::Text(html) = res.body() else {
         panic!("rendered HTML")
     };
-    assert!(html.contains("name=\"csrf\""));
-    assert!(html.contains(&format!("value=\"{token}\"")));
-    assert!(html.contains("for=\"email\""));
-    assert!(html.contains("role=\"alert\""));
+    assert!(!html.contains("<script>untrusted()"));
     assert!(!html.contains("SMTP_PRIVATE_SENTINEL"));
     assert!(!html.contains("provider fixture failure"));
+    assert!(!html.contains("database-seed"));
     let seed = html
         .split("id=\"stackpress-page\">")
         .nth(1)
@@ -129,39 +134,80 @@ pub(super) fn assert_form(res: &Response, token: &str) {
         .split("</script>")
         .next()
         .unwrap();
-    let page: PageSnapshot<Form> = serde_json::from_str(seed).unwrap();
-    assert_eq!(page.data.token, token);
-    assert_eq!(page.data.name, "csrf");
-    assert_eq!(page.status.code(), res.status().unwrap().code);
-    assert_eq!(page.data.error, res.error().unwrap_or_default());
+    assert!(!seed.contains('<'));
+    (html, seed)
 }
-/// Untrusted form text remains intentionally visible as data, escaped in HTML and inert JSON.
+/// Correlate HTML/seed CSRF and status for the selected renderer, including the source sent page.
+pub(super) fn assert_page(res: &Response, token: &str, case: &Json, native: bool) {
+    let (html, seed) = document(res);
+    let page: PageSnapshot<Json> = serde_json::from_str(seed).unwrap();
+    assert_eq!(page.status.code(), res.status().unwrap().code);
+    if native {
+        // This public tuple exists only when session/leptos-ssr contributes its real view.
+        assert_eq!(page.page.as_str(), "session-email");
+        let (kind, props): (String, Json) = serde_json::from_value(page.data).unwrap();
+        assert_eq!(kind, "email");
+        assert_eq!(props["config"]["csrf_token"], token);
+        assert_eq!(props["config"]["csrf_name"], "csrf");
+        assert_eq!(props["code"], page.status.code());
+        assert_eq!(props["error"], res.error().unwrap_or_default());
+        // Upstream email.tsx renders a confirmation, without a form, for this exact branch.
+        let sent = page.status.code() == 200 && case["method"] == "POST" && case["mode"] == "magic";
+        assert_eq!(html.contains("<form"), !sent);
+        assert_eq!(
+            html.contains("A magic link has been sent to your email address."),
+            sent
+        );
+        if sent {
+            assert!(!html.contains("name=\"csrf\""));
+            return;
+        }
+        assert!(html.contains("for=\"session-email\""));
+    } else {
+        // Retain the original fixture projection assertions when no native view is selected.
+        assert_eq!(page.page.as_str(), "signin-email");
+        let form: Form = serde_json::from_value(page.data).unwrap();
+        assert_eq!(form.token, token);
+        assert_eq!(form.name, "csrf");
+        assert_eq!(form.error, res.error().unwrap_or_default());
+        assert!(html.contains("for=\"email\""));
+    }
+    assert!(html.contains("name=\"csrf\""));
+    assert!(html.contains(&format!("value=\"{token}\"")));
+    assert!(html.contains("role=\"alert\""));
+}
+/// Untrusted input stays escaped in bound fixture HTML or inert native request data.
 #[tokio::test]
 async fn public_form_projection_escapes_input_and_excludes_native_provider_resources() {
     let case = super::vectors()["cases"][0].clone();
-    let (server,_)=super::host(case.clone(),Some(serde_json::json!({"host":"relay.example.test","auth":{"pass":"SMTP_PRIVATE_SENTINEL"}}))).await;
+    let (server,state)=super::host(case.clone(),Some(serde_json::json!({"host":"relay.example.test","auth":{"pass":"SMTP_PRIVATE_SENTINEL"}}))).await;
     let mut req = super::request(&case);
     let input = "\"><script>untrusted()</script>&";
     req.data.set("email", input).unwrap();
     let mut res = Response::new();
     server
-        .handle("finite-page", &mut req, &mut res)
+        .handle("GET /auth/signin/email", &mut req, &mut res)
         .await
         .unwrap();
-    let Body::Text(html) = res.body() else {
-        panic!("HTML")
-    };
-    assert!(!html.contains("<script>untrusted()"));
-    assert!(html.contains("&lt;script&gt;"));
-    assert!(!html.contains("SMTP_PRIVATE_SENTINEL"));
-    let seed = html
-        .split("id=\"stackpress-page\">")
-        .nth(1)
-        .unwrap()
-        .split("</script>")
-        .next()
-        .unwrap();
-    let decoded: PageSnapshot<Form> = serde_json::from_str(seed).unwrap();
-    assert_eq!(decoded.data.email, input);
-    assert!(!seed.contains('<'));
+    let native = native_view(&server);
+    let token = res.data().path_as::<String>("csrf.token").unwrap().unwrap();
+    assert_page(&res, &token, &case, native);
+    let (html, seed) = document(&res);
+    let decoded: PageSnapshot<Json> = serde_json::from_str(seed).unwrap();
+    if native {
+        // Source email.tsx:57–62 never binds request email into the input's value.
+        assert_eq!(decoded.data[1]["input"]["email"], input);
+        let email = html
+            .split("<input")
+            .filter_map(|fragment| fragment.split_once('>'))
+            .find_map(|(attributes, _)| attributes.contains("name=\"email\"").then_some(attributes))
+            .unwrap();
+        assert!(email.contains("value=\"\""));
+    } else {
+        // The finite fixture deliberately binds email; keep its original escaping proof.
+        assert!(html.contains("&lt;script&gt;"));
+        let form: Form = serde_json::from_value(decoded.data).unwrap();
+        assert_eq!(form.email, input);
+    }
+    state.engine.close().await.unwrap();
 }

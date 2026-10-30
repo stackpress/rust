@@ -1,0 +1,369 @@
+[
+  {
+    "id": "csrf-defaults",
+    "page": "crates/framework/framework-csrf/docs/api/service.md",
+    "statement": "`csrf` and `DEFAULT_ERROR`",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-csrf/src/lib.rs",
+        "contains": [
+          "unwrap_or(\"csrf\")",
+          "pub const DEFAULT_ERROR"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "csrf-explicit",
+    "page": "crates/framework/framework-csrf/docs/source-behavior.md",
+    "statement": "The CSRF registrar adds no global guard; routes call the service themselves.",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-csrf/src/plugin.rs",
+        "contains": [
+          "app.on_config(configure)?",
+          "start.register(Arc::new(Service::new(config)))?"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-csrf/tests/main.rs",
+        "contains": [
+          "explicit_registrar_defaults_overrides_and_duplicate_mechanics"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "csrf-byte-compare",
+    "page": "crates/framework/framework-csrf/docs/source-behavior.md",
+    "statement": "arbitrary equal nonempty strings",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-csrf/src/lib.rs",
+        "contains": [
+          "session.len() == input.len()",
+          "ct_eq(input.as_bytes())",
+          "code: 419"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-csrf/tests/main.rs",
+        "contains": [
+          "arbitrary_strings_and_utf8_byte_lengths_follow_source"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "csrf-state",
+    "page": "crates/framework/framework-csrf/docs/concepts.md",
+    "statement": "retains incoming cookie and query/post snapshots",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-csrf/src/lib.rs",
+        "contains": [
+          "req.data.remove(self.name())?",
+          "res.session_mut()?.remove(self.name())?"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-csrf/tests/main.rs",
+        "contains": [
+          "clear_retains_incoming_cookie_and_unrelated_fields"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "email-call-ownership",
+    "page": "crates/framework/framework-email/docs/concepts.md",
+    "statement": "each transport needs only Send",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-email/src/service.rs",
+        "contains": [
+          "pub trait Transport: Send",
+          "let mut transport = self.factory.create(&self.config)?"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-email/tests/cases/factory.rs",
+        "contains": [
+          "Cell makes the transport non-Sync",
+          "concurrent_calls_get_distinct_owned_transports_and_unfiltered_results"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "email-activation",
+    "page": "crates/framework/framework-email/docs/api/service.md",
+    "statement": "Empty object or other object",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-email/src/config.rs",
+        "contains": [
+          "None | Some(Value::Null | Value::Bool(false))",
+          "Some(Value::String(text)) if text.is_empty()"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-email/tests/cases/events.rs",
+        "contains": [
+          "original_registration_missing_config_modes_and_no_global_guard"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "email-source-skip",
+    "page": "crates/framework/framework-email/docs/concepts.md",
+    "statement": "A truthy existing body causes email-send to skip before config or input conversion.",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-email/src/events.rs",
+        "contains": [
+          "if body_truthy(response.body())",
+          "s.code != 0 && s.code != 200",
+          "Body::Bytes(_) => true"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-email/tests/cases/events.rs",
+        "contains": [
+          "original_email_invocation_traces"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "email-shared-auth",
+    "page": "crates/framework/framework-email/docs/source-behavior.md",
+    "statement": "the auth-update results body causes email-send to skip transport construction",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/src/auth/pages/email.rs",
+        "contains": [
+          "inv.emit(\"auth-update\", &mut rotate, res)",
+          "inv.emit(\"email-send\", &mut send, res)"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-email/tests/cases/integration/mod.rs",
+        "contains": [
+          "source_page_csrf_email_render_and_error_boundaries"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "email-selection",
+    "page": "crates/framework/framework-email/docs/guides/configuration.md",
+    "statement": "pool, sendmail, stream, JSON, SES, then SMTP",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-email/src/options.rs",
+        "contains": [
+          "if flag(&fields, \"pool\")",
+          "flag(&fields, \"sendmail\")",
+          "flag(&fields, \"streamTransport\")",
+          "flag(&fields, \"jsonTransport\")",
+          "fields.extend(settings)"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-email/tests/cases/native.rs",
+        "contains": [
+          "source_constructor_option_vectors"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "email-pool",
+    "page": "crates/framework/framework-email/docs/guides/transports.md",
+    "statement": "including when maxMessages uses its source default",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-email/src/native/capabilities.rs",
+        "contains": [
+          "SMTP pool/maxMessages native binding"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-email/tests/cases/native.rs",
+        "contains": [
+          "complete_provider_config_and_option_routing"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "email-unsupported",
+    "page": "crates/framework/framework-email/docs/api/adapters.md",
+    "statement": "Unsupported source options are routed to the configured provider or return a named error",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-email/src/native.rs",
+        "contains": [
+          "Some(provider) => provider.create(config)",
+          "None => Err(unsupported(reason))",
+          "provider.create(&self.config)?.send_native(mail)"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "email-native-stream",
+    "page": "crates/framework/framework-email/docs/api/messages.md",
+    "statement": "Stream serialization errors without consuming the reader",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-email/src/message.rs",
+        "contains": [
+          "native email message stream requires explicit consumption",
+          "native email outputs require an object result"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-email/tests/cases/native.rs",
+        "contains": [
+          "deferred_stream_errors_and_native_slot_ownership"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "email-mime-access",
+    "page": "crates/framework/framework-email/docs/guides/configuration.md",
+    "statement": "Source JSON normalization bypasses those flags and does not use httpHeaders.",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-email/src/compose/json.rs",
+        "contains": [
+          "resolve(&mut mail, key, &value, resolver, false)"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-email/src/content.rs",
+        "contains": [
+          "http_headers: enforce_access",
+          "danger_accept_invalid_certs(true)"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-email/tests/cases/native.rs",
+        "contains": [
+          "content_locations_access_flags_and_transport_precedence"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "email-ses",
+    "page": "crates/framework/framework-email/docs/api/adapters.md",
+    "statement": "failed/missing/empty region as us-east-1",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-email/src/native/ses.rs",
+        "contains": [
+          "fields.extend(overrides)",
+          "filter(|v| !v.is_empty())",
+          "\"us-east-1\".into()"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-email/tests/cases/native.rs",
+        "contains": [
+          "source_ses_fake_sdk_vectors"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "email-sendmail",
+    "page": "crates/framework/framework-email/docs/api/adapters.md",
+    "statement": "None/0 success, named 127",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-email/src/native/sendmail.rs",
+        "contains": [
+          "None|Some(0)",
+          "Some(127)"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-email/tests/cases/native.rs",
+        "contains": [
+          "source_sendmail_fake_process_vectors"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "email-native-reader",
+    "page": "crates/framework/framework-email/docs/api/events.md",
+    "statement": "transfers once",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-email/src/events/native.rs",
+        "contains": [
+          "pub struct NativeReader(Mutex<Option<MailReader>>)",
+          "email reader already consumed"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-email/tests/cases/event_native.rs",
+        "contains": [
+          "native_reader_and_buffer_fields_survive_event_results"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "email-hook-name",
+    "page": "crates/framework/framework-email/docs/guides/events-and-hooks.md",
+    "statement": "`email-email-send`, distinct from `email-send`",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-email/src/events.rs",
+        "contains": [
+          "pub const EMAIL_SEND: &str = \"email-send\""
+        ]
+      },
+      {
+        "path": "crates/framework/framework-session/src/auth/hooks.rs",
+        "contains": [
+          "email-email-send"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-email/tests/cases/event_supervision.rs",
+        "contains": [
+          "source_signup_hooks_are_owned_nonawaited_and_keep_registration_order"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "email-shutdown",
+    "page": "crates/framework/framework-email/docs/api/tasks.md",
+    "statement": "explicit shutdown is the destruction/reap barrier",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-email/src/tasks.rs",
+        "contains": [
+          "F: Future<Output = EmailResult<()>> + Send + 'static",
+          "self.jobs.shutdown().await"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-email/tests/cases/supervision.rs",
+        "contains": [
+          "shutdown_reaps_started_and_unpolled_jobs",
+          "drop_aborts_and_releases_owned_future"
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,17 @@
+[package]
+name = "slice9b-consumer"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+# Separate workspaces and target directories prevent root feature unification and binary reuse.
+[workspace]
+
+[dependencies]
+stackpress = { path = "../../../../..", default-features = false }
+stackpress-framework-csrf = { path = "../../../framework-csrf", optional = true, default-features = false }
+stackpress-framework-email = { path = "../..", optional = true, default-features = false }
+
+[features]
+default = []
+plugins = ["dep:stackpress-framework-csrf", "dep:stackpress-framework-email"]

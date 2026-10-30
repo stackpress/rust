@@ -30,3 +30,11 @@ mod records;
 #[cfg(feature = "auth-server")]
 #[path = "main/auth_flows.rs"]
 mod auth_flows;
+
+#[cfg(feature = "auth-server")]
+#[path = "main/account_flows.rs"]
+mod account_flows;
+
+#[cfg(feature = "leptos-ssr")]
+#[path = "main/account_ui.rs"]
+mod account_ui;

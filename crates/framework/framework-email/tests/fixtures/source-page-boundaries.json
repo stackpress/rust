@@ -7,6 +7,14 @@
     {
       "file": "stackpress-csrf/src/plugin.ts",
       "sha256": "55f589f6d9d9c63d37e751ca1e550b932c4b893de3f65f263a2590286e5792e2"
+    },
+    {
+      "file": "stackpress-session/src/auth/templates.ts",
+      "sha256": "ed85cb2306886f00616aadd488d6b46f8b0fd41418a76b1b2478c02987dbc871"
+    },
+    {
+      "file": "stackpress-email/src/events.ts",
+      "sha256": "4061c0714fc3fff61e65cd05d916332629bcede7f39df0fd55aac8cf7dddc65d"
     }
   ],
   "cases": [
@@ -25,6 +33,7 @@
       ],
       "mail": null,
       "error": null,
+      "factories": 0,
       "code": 200,
       "publicError": null,
       "redirect": null,
@@ -50,6 +59,7 @@
       ],
       "mail": null,
       "error": null,
+      "factories": 0,
       "code": 302,
       "publicError": null,
       "redirect": "/after",
@@ -74,6 +84,7 @@
       ],
       "mail": null,
       "error": null,
+      "factories": 0,
       "code": 419,
       "publicError": "This page may have been requested from an external source. We corrected the issue. Please try again.",
       "redirect": null,
@@ -95,6 +106,9 @@
       "trace": [
         "csrf.generate",
         "csrf.valid",
+        "auth-search",
+        "auth-update",
+        "auth-search",
         "email-send",
         "csrf.clear",
         "redirect"
@@ -105,14 +119,15 @@
           "address": "sender@example.test"
         },
         "to": "recipient@example.test",
-        "subject": "fixture sign-in",
-        "text": "https://fixture.example.test/auth/signin/otp/auth-id/429fe4ac9d7bca32ca6f07172ffa37a91db9dc353cc25e5fb86b8b7c8bdef675?redirect_uri=%2Fafter 123456",
-        "html": "<p>https://fixture.example.test/auth/signin/otp/auth-id/429fe4ac9d7bca32ca6f07172ffa37a91db9dc353cc25e5fb86b8b7c8bdef675?redirect_uri=%2Fafter</p>"
+        "subject": "Stackpress Sign In OTP",
+        "text": "Hello Recipient,\n\nYou requested a one-time password to sign in to Fixture.\n\n----\n\nYour OTP is: 123456\nOpen https://fixture.example.test/auth/signin/otp/auth-id/f435bd268bc7039c8cf0682a1ba2235a7f67370a3e4724e9d2f96f4843fa25cd?redirect_uri=%2Fafter to continue signing in.\n\n----\n\nIf you did not request this sign-in, please ignore this email.",
+        "html": "<p>Hello Recipient,</p>\n<p>You requested a one-time password to sign in to Fixture.</p>\n<hr />\n<p>Your OTP is: <strong>123456</strong></p>\n<p>Open <a href=\"https://fixture.example.test/auth/signin/otp/auth-id/f435bd268bc7039c8cf0682a1ba2235a7f67370a3e4724e9d2f96f4843fa25cd?redirect_uri=%2Fafter\">this sign-in page</a> to continue.</p>\n<hr />\n<p>If you did not request this sign-in, please ignore this email.</p>"
       },
       "error": null,
+      "factories": 0,
       "code": 302,
       "publicError": null,
-      "redirect": "/auth/signin/otp/auth-id/429fe4ac9d7bca32ca6f07172ffa37a91db9dc353cc25e5fb86b8b7c8bdef675?redirect_uri=%2Fafter",
+      "redirect": "/auth/signin/otp/auth-id/f435bd268bc7039c8cf0682a1ba2235a7f67370a3e4724e9d2f96f4843fa25cd?redirect_uri=%2Fafter",
       "retainedCsrf": false,
       "incomingCsrf": "incoming",
       "password": null,
@@ -131,6 +146,9 @@
       "trace": [
         "csrf.generate",
         "csrf.valid",
+        "auth-search",
+        "auth-update",
+        "auth-search",
         "email-send"
       ],
       "mail": {
@@ -139,11 +157,12 @@
           "address": "sender@example.test"
         },
         "to": "recipient@example.test",
-        "subject": "fixture sign-in",
-        "text": "https://fixture.example.test/auth/signin/link/auth-id/9c11540775c218305bf545ac031bd24e5ce527e64d7e404f1edea7d981f88bf2?redirect_uri=%2Fafter ",
-        "html": "<p>https://fixture.example.test/auth/signin/link/auth-id/9c11540775c218305bf545ac031bd24e5ce527e64d7e404f1edea7d981f88bf2?redirect_uri=%2Fafter</p>"
+        "subject": "Stackpress Magic Sign In Link",
+        "text": "Hello Recipient,\n\nYou requested a magic link to sign in to Fixture.\n\n----\n\nOpen https://fixture.example.test/auth/signin/link/auth-id/d87160dabb1a642e203807394671acba7ab6d08ce696e21d73f39f2553b0129a?redirect_uri=%2Fafter to continue signing in.\n\n----\n\nIf you did not request this sign-in, please ignore this email.",
+        "html": "<p>Hello Recipient,</p>\n<p>You requested a magic link to sign in to Fixture.</p>\n<hr />\n<p><a href=\"https://fixture.example.test/auth/signin/link/auth-id/d87160dabb1a642e203807394671acba7ab6d08ce696e21d73f39f2553b0129a?redirect_uri=%2Fafter\">Click here to sign in</a></p>\n<hr />\n<p>If you did not request this sign-in, please ignore this email.</p>"
       },
       "error": null,
+      "factories": 0,
       "code": 200,
       "publicError": null,
       "redirect": null,
@@ -165,6 +184,9 @@
       "trace": [
         "csrf.generate",
         "csrf.valid",
+        "auth-search",
+        "auth-update",
+        "auth-search",
         "email-send",
         "propagate"
       ],
@@ -174,11 +196,12 @@
           "address": "sender@example.test"
         },
         "to": "recipient@example.test",
-        "subject": "fixture sign-in",
-        "text": "https://fixture.example.test/auth/signin/otp/auth-id/429fe4ac9d7bca32ca6f07172ffa37a91db9dc353cc25e5fb86b8b7c8bdef675?redirect_uri=%2Fafter 123456",
-        "html": "<p>https://fixture.example.test/auth/signin/otp/auth-id/429fe4ac9d7bca32ca6f07172ffa37a91db9dc353cc25e5fb86b8b7c8bdef675?redirect_uri=%2Fafter</p>"
+        "subject": "Stackpress Sign In OTP",
+        "text": "Hello Recipient,\n\nYou requested a one-time password to sign in to Fixture.\n\n----\n\nYour OTP is: 123456\nOpen https://fixture.example.test/auth/signin/otp/auth-id/f435bd268bc7039c8cf0682a1ba2235a7f67370a3e4724e9d2f96f4843fa25cd?redirect_uri=%2Fafter to continue signing in.\n\n----\n\nIf you did not request this sign-in, please ignore this email.",
+        "html": "<p>Hello Recipient,</p>\n<p>You requested a one-time password to sign in to Fixture.</p>\n<hr />\n<p>Your OTP is: <strong>123456</strong></p>\n<p>Open <a href=\"https://fixture.example.test/auth/signin/otp/auth-id/f435bd268bc7039c8cf0682a1ba2235a7f67370a3e4724e9d2f96f4843fa25cd?redirect_uri=%2Fafter\">this sign-in page</a> to continue.</p>\n<hr />\n<p>If you did not request this sign-in, please ignore this email.</p>"
       },
       "error": null,
+      "factories": 0,
       "code": 419,
       "publicError": "provider public failure",
       "redirect": null,
@@ -196,11 +219,14 @@
       "sender": true,
       "sendStatus": 200,
       "signinStatus": 200,
-      "name": "magic-throw",
+      "name": "magic-body-skips-factory-error",
       "throws": true,
       "trace": [
         "csrf.generate",
         "csrf.valid",
+        "auth-search",
+        "auth-update",
+        "auth-search",
         "email-send"
       ],
       "mail": {
@@ -209,11 +235,12 @@
           "address": "sender@example.test"
         },
         "to": "recipient@example.test",
-        "subject": "fixture sign-in",
-        "text": "https://fixture.example.test/auth/signin/link/auth-id/9c11540775c218305bf545ac031bd24e5ce527e64d7e404f1edea7d981f88bf2?redirect_uri=%2Fafter ",
-        "html": "<p>https://fixture.example.test/auth/signin/link/auth-id/9c11540775c218305bf545ac031bd24e5ce527e64d7e404f1edea7d981f88bf2?redirect_uri=%2Fafter</p>"
+        "subject": "Stackpress Magic Sign In Link",
+        "text": "Hello Recipient,\n\nYou requested a magic link to sign in to Fixture.\n\n----\n\nOpen https://fixture.example.test/auth/signin/link/auth-id/d87160dabb1a642e203807394671acba7ab6d08ce696e21d73f39f2553b0129a?redirect_uri=%2Fafter to continue signing in.\n\n----\n\nIf you did not request this sign-in, please ignore this email.",
+        "html": "<p>Hello Recipient,</p>\n<p>You requested a magic link to sign in to Fixture.</p>\n<hr />\n<p><a href=\"https://fixture.example.test/auth/signin/link/auth-id/d87160dabb1a642e203807394671acba7ab6d08ce696e21d73f39f2553b0129a?redirect_uri=%2Fafter\">Click here to sign in</a></p>\n<hr />\n<p>If you did not request this sign-in, please ignore this email.</p>"
       },
-      "error": "provider fixture failure",
+      "error": null,
+      "factories": 0,
       "code": 200,
       "publicError": null,
       "redirect": null,
@@ -234,10 +261,14 @@
       "name": "otp-no-email-config",
       "trace": [
         "csrf.generate",
-        "csrf.valid"
+        "csrf.valid",
+        "auth-search",
+        "auth-update",
+        "auth-search"
       ],
       "mail": null,
       "error": null,
+      "factories": 0,
       "code": 200,
       "publicError": null,
       "redirect": null,
@@ -258,10 +289,14 @@
       "name": "magic-no-sender",
       "trace": [
         "csrf.generate",
-        "csrf.valid"
+        "csrf.valid",
+        "auth-search",
+        "auth-update",
+        "auth-search"
       ],
       "mail": null,
       "error": null,
+      "factories": 0,
       "code": 200,
       "publicError": null,
       "redirect": null,
@@ -289,6 +324,7 @@
       ],
       "mail": null,
       "error": null,
+      "factories": 0,
       "code": 302,
       "publicError": null,
       "redirect": "/after",
@@ -314,6 +350,7 @@
       ],
       "mail": null,
       "error": null,
+      "factories": 0,
       "code": 401,
       "publicError": null,
       "redirect": null,

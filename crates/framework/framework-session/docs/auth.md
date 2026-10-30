@@ -8,8 +8,8 @@ without SQL, cryptography, transport or runtime services.
 `plugin::register` remains the independent identity constituent. The full source
 composite is coordinated at M4 in auth → email → identity order. Lane B owns email
 registration and `email-send`; session never implements a second email transport.
-M3 supplies shared presentation props, forms and Leptos views. These M2 routes run
-native auth processes and do not claim rendered pages.
+M3 adds [shared presentation props, forms and Leptos views](account.md).
+The optional `leptos-ssr` feature contributes their ordinary -100 view handlers.
 
 ## Registration and direct handlers
 
@@ -44,7 +44,7 @@ magic_link_signin}` take `&Invocation` and deliberately do not run the calling p
 method/session/CSRF checks. Applications choose their own event exposure and policies.
 
 Optional adapters `events::{search, update}` implement the source `auth-search` and
-`auth-update` data calls using the existing direct SQL Actions. Register them explicitly
+`auth-update` data calls using the generated-style SQL events described in [account](account.md). Register them explicitly
 or provide the application's existing handlers for those events. The auth registrar
 neither selects a global SQL operation policy nor silently registers those extensions.
 `search` accepts `storage::StoreQuery`; `update` uses `id` plus patch fields, returning the
@@ -58,7 +58,7 @@ installation remains explicit. `auth::Environment` maps keys belonging to other 
 
 | Field | Source key / default |
 | --- | --- |
-| database_seed | database.seed, missing → abc123; explicit empty is literal |
+| database_seed | database.seed for signup/signin Actions.make, missing → abc123; explicit empty is literal |
 | email_configured | truthy email config; missing → false |
 | host / port | host, otherwise http://localhost:<server.port>, port defaults 3000 |
 | brand | brand.name, default Stackpress |

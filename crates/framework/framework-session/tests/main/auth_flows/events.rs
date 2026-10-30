@@ -462,6 +462,8 @@ async fn capture_mail(req: &mut Request, res: &mut Response, inv: Invocation<'_>
 }
 /// Drive actual registered routes with owned request/cookie state; no socket is involved.
 async fn route(host: &Server, method: &str, url: &str, data: Json, csrf: Option<&str>) -> Response {
+    #[cfg(feature = "leptos-ssr")]
+    stackpress_framework_view::leptos::render::initialize_ssr().unwrap();
     let mut request = Request::builder()
         .method(method)
         .url(url)

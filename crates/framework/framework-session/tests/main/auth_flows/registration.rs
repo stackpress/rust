@@ -67,6 +67,7 @@ async fn source_registration_modes_priority_fifo_and_any_handler_abort() {
     let host = app.build().await.unwrap();
     let patterns: Vec<_> = host
         .listeners()
+        .filter(|listener| listener.priority == 0)
         .map(|listener| listener.pattern.clone())
         .collect();
     let expected = [
