@@ -13,8 +13,9 @@ server-commands = ["native"]
 schema-client = ["native"]
 language = ["native"]
 csrf = ["native", "dep:stackpress-framework-csrf", "stackpress-framework-csrf/server"]
-sql = ["native"]
-view = ["native"]
+sql = ["native", "dep:stackpress-sql"]
+view = ["native", "dep:stackpress-framework-view", "dep:tokio"]
+codegen = ["schema-client", "dep:stackpress-idea", "dep:stackpress-framework-sql", "stackpress-framework-schema/codegen", "stackpress-framework-sql/codegen"]
 session = ["native", "dep:stackpress-framework-session", "stackpress-framework-session/auth-server"]
 api = ["native", "dep:stackpress-framework-api", "stackpress-framework-api/sql"]
 admin = ["native"]
@@ -27,12 +28,18 @@ stackpress-framework-schema = { path = "../framework-schema", default-features =
 stackpress-framework-csrf = { path = "../framework-csrf", default-features = false, optional = true }
 stackpress-framework-session = { path = "../framework-session", default-features = false, optional = true }
 stackpress-framework-api = { path = "../framework-api", default-features = false, optional = true }
+stackpress-sql = { path = "../../sql/sql", default-features = false, optional = true }
+stackpress-framework-view = { path = "../framework-view", default-features = false, optional = true }
+stackpress-framework-sql = { path = "../framework-sql", default-features = false, optional = true }
+stackpress-idea = { path = "../../idea/idea", default-features = false, optional = true }
 serde = { version = "=1.0.229", features = ["derive"], optional = true }
 serde_json = { version = "=1.0.154", features = ["preserve_order"], optional = true }
+tokio = { version = "=1.54.1", default-features = false, features = ["rt", "sync"], optional = true }
 
 [dev-dependencies]
 tokio = { version = "=1.54.1", features = ["macros", "rt-multi-thread", "sync", "time"] }
 trybuild = "1"
+stackpress-sql-sqlite = { path = "../../sql/sql-sqlite", default-features = false }
 
 [lints]
 workspace = true

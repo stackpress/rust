@@ -13,9 +13,15 @@ use std::sync::Arc;
 pub struct Client {
     /// Missing generated client remains absent; an empty catalog is still present.
     catalog: Option<&'static CompiledClient>,
+    /// Configured source module identity; executable code remains statically selected.
+    module: String,
 }
 
 impl Client {
+    /// Inspect client.module (default stackpress-client), without importing executable code.
+    pub fn module(&self) -> &str {
+        &self.module
+    }
     /// Return a nullable catalog, or fail a required lookup as the source import would.
     /// # Errors
     /// Returns a native missing-client error only when `nullable` is false and no catalog exists.
@@ -30,10 +36,7 @@ impl Client {
 
 /// Publish the static client before default-priority constituent configuration.
 #[cfg(feature = "schema-client")]
-pub(crate) fn register(
-    app: &mut ServerBuilder,
-    catalog: Option<&'static CompiledClient>,
-) -> Result<()> {
+pub fn register(app: &mut ServerBuilder, catalog: Option<&'static CompiledClient>) -> Result<()> {
     // Keep source priority 10; service construction owns no IO or model-descriptor evaluation.
     app.startup(
         StartupSpec::new(StartupStage::Config)
@@ -41,7 +44,14 @@ pub(crate) fn register(
             .label("schema-client"),
         task(move |start: &mut StartupContext| {
             Box::pin(async move {
-                start.register(Arc::new(Client { catalog }))?;
+                let module = super::config::string(
+                    super::config::path(
+                        &start.config::<super::config::ClientOptions>()?.0,
+                        "module",
+                    ),
+                    "stackpress-client",
+                )?;
+                start.register(Arc::new(Client { catalog, module }))?;
                 Ok(Flow::Continue)
             })
         }),

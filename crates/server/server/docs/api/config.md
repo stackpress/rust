@@ -12,7 +12,7 @@ Each following Rust snippet is independent, using this setup inside an async fun
 `std::result::Result<(), Box<dyn std::error::Error>>`. Named helpers remain ordinary functions.
 
 Contents: [1. Layer operations](#1-layer-operations) · [2. Budgets and
-decoding](#2-budgets-and-decoding)
+decoding](#2-budgets-and-decoding) · [3. ConfigPresence](#3-configpresence)
 
 ## 1. Layer operations
 
@@ -94,3 +94,14 @@ errors retain section/type/plugin/site and last contributing layer metadata wher
 config payload is automatically logged. See [Lib parsing limits](../../../../lib/docs/api/parsers.md).
 
 Related: [typed config guide](../guides/typed-config.md), [builder](builder.md).
+
+## 3. ConfigPresence
+
+`ConfigPresence::contains(&self, key: &str) -> bool` answers whether an accepted explicit
+layer supplied a literal top-level section key. Obtain it with the existing
+`config::<stackpress_server::ConfigPresence>()` accessor on startup, host or invocation.
+Defaults alone are absent; null, false and empty objects are present. Recursive merging
+and later scalar/null replacement retain key presence; nested paths are not section keys.
+This matches source `config.has`, independently of the decoded value.
+
+Claim anchor: [explicit_presence_survives_value_replacement](../../tests/config_presence.rs).

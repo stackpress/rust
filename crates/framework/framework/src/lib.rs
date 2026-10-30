@@ -3,8 +3,9 @@
 //! The default feature set selects no plugin or native host. `full` selects the nine
 //! source stages; each constituent remains independently usable. Selection performs no
 //! listener, database or network IO. Command execution needs an application binding.
-//! M0 provides the compiled-client and buffered locale-dispatch proof; complete command,
-//! rendering and generation integrations are later milestones, not implied by `full`.
+//! Native bridges preserve source input/skip/order rules over explicit application-owned
+//! execution, revision and rendering providers. `codegen` additionally exposes the real
+//! existing Rust build-host APIs; it is independent from selecting browser renderers.
 
 #[cfg(all(feature = "native", not(target_arch = "wasm32")))]
 mod native;
@@ -13,7 +14,7 @@ pub use native::language;
 #[cfg(all(feature = "view", not(target_arch = "wasm32")))]
 pub use native::view;
 #[cfg(all(feature = "native", not(target_arch = "wasm32")))]
-pub use native::{CompiledClient, CompiledModel, Register, client, commands};
+pub use native::{CompiledClient, CompiledModel, Register, client, commands, config};
 #[cfg(all(
     not(target_arch = "wasm32"),
     any(

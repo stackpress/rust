@@ -1,7 +1,14 @@
 # Listener and route API
 
-ServerBuilder and StartupContext expose the same listener/route registration signatures. Builder
-methods forward to StartupContext and retain the original caller site. Sources:
+`StartupContext::on_request(handler) -> Result<ListenerId>` contributes only the literal
+`request` hook during Registration, Listen or Route, for source route-phase middleware
+parity. Config rejects it. Its label records the actual startup phase, alongside
+normal plugin/caller provenance. Equal-priority Route hooks follow Listen hooks; priority
+and any-handler Abort keep their ordinary meanings. General `on` retains its existing
+Route rejection. Anchor: [route_request_hook_preserves_phase_order_and_abort](../../tests/on_request.rs).
+
+Except for StartupContext::on_request above, ServerBuilder and StartupContext expose the same
+listener/route signatures. Builder methods forward and retain the original caller site. Sources:
 [registration.rs](../../src/registration.rs), [router.rs](../../src/router.rs).
 
 ```rust
