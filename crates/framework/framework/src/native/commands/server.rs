@@ -70,7 +70,21 @@ pub async fn develop(_: &mut Request, res: &mut Response, inv: Invocation<'_>) -
             .cloned()
             .unwrap_or(default)
     };
-    let flow = invoke("develop",json!({"argv":env.argv,"cwd":env.cwd,"debounce":option("debounce",json!(100)),"extensions":option("extensions",json!([".ts"])),"ignore":option("ignore",json!([])),"timeout":option("timeout",json!(10000)),"watch":option("watch",json!(["."]))}),res,inv).await?;
+    let flow = invoke(
+        "develop",
+        json!({
+            "argv": env.argv,
+            "cwd": env.cwd,
+            "debounce": option("debounce", json!(100)),
+            "extensions": option("extensions", json!([".ts"])),
+            "ignore": option("ignore", json!([])),
+            "timeout": option("timeout", json!(10000)),
+            "watch": option("watch", json!(["."]))
+        }),
+        res,
+        inv,
+    )
+    .await?;
     res.status_code(200, None)?;
     Ok(flow)
 }

@@ -35,6 +35,8 @@ impl Client {
 }
 
 /// Publish the static client before default-priority constituent configuration.
+/// # Errors
+/// Retains startup/Listen registration failures; module and service errors surface during build.
 #[cfg(feature = "schema-client")]
 pub fn register(app: &mut ServerBuilder, catalog: Option<&'static CompiledClient>) -> Result<()> {
     // Keep source priority 10; service construction owns no IO or model-descriptor evaluation.

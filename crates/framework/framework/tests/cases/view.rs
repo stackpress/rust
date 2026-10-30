@@ -226,6 +226,55 @@ async fn build_stages_and_empty_catalog() {
     );
 }
 
+/// Source falsy paths skip individual stages even with entries; empty arrays/objects stay truthy.
+#[tokio::test]
+async fn build_path_truthiness_selects_only_source_stages() {
+    for (paths, expected) in [
+        (
+            json!({"clientPath":null,"assetPath":false,"pagePath":0}),
+            json!([]),
+        ),
+        (
+            json!({"clientPath":[],"assetPath":{},"pagePath":""}),
+            json!([[], {}]),
+        ),
+        (
+            json!({"clientPath":"client","assetPath":false,"pagePath":"page"}),
+            json!(["client", "page"]),
+        ),
+    ] {
+        let mut app = application(json!({"view":{"engine":paths}}));
+        // A real nonempty catalog distinguishes path selection from the earlier empty-engine skip.
+        app.on_config(task(|start: &mut StartupContext| {
+            Box::pin(async move {
+                start.register(Arc::new(view::Catalog {
+                    entries: vec!["account".into()],
+                }))?;
+                start.register(Arc::new(view::BuildProvider {
+                    create: Arc::new(compiler),
+                }))?;
+                Ok(Flow::Continue)
+            })
+        }))
+        .unwrap();
+        app.on("inspect-build", build).unwrap();
+        let host = app.build().await.unwrap();
+        let response = host
+            .resolve("inspect-build", json!({}))
+            .await
+            .unwrap()
+            .response;
+        let results = response.results.unwrap().to_json().unwrap();
+        let destinations: Vec<_> = results
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|result| result["destination"].clone())
+            .collect();
+        assert_eq!(json!(destinations), expected);
+    }
+}
+
 /// Install the same finite compiler with an optional retained packaging lifecycle handle.
 async fn packaging_host(
     packaging: Option<Arc<view::Packaging>>,

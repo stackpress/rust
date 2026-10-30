@@ -87,6 +87,8 @@ pub struct BuildProvider {
 }
 
 /// Queue only the present-view service and command; do not select a renderer or open assets.
+/// # Errors
+/// Retains typed-section and startup registration failures; configuration errors surface at build.
 pub fn register(app: &mut ServerBuilder) -> Result<()> {
     app.config_section("view", Section::default(), |_| Ok(()))?;
     app.on_config(configure)?;
@@ -193,7 +195,33 @@ pub async fn render(
             )
         })
         .collect();
-    let props = serde_json::json!({"data":data,"session":identity.result().map(|v| v.to_json()).transpose()?,"request":{"url":{"hash":url.fragment().map(|v|format!("#{v}")).unwrap_or_default(),"host":url.host_str().map(|host|url.port().map_or_else(||host.to_owned(),|port|format!("{host}:{port}"))).unwrap_or_default(),"hostname":url.host_str(),"href":url.as_str(),"origin":url.origin().ascii_serialization(),"pathname":url.path(),"port":url.port().map(|v|v.to_string()).unwrap_or_default(),"protocol":format!("{}:",url.scheme()),"search":url.query().map(|v|format!("?{v}")).unwrap_or_default()},"headers":headers,"session":session,"method":view.method.as_str(),"mime":view.mimetype,"data":view.data.to_json()?},"response":res.try_to_json()?});
+    // Keep source field/insertion order and conversions explicit; no native service enters props.
+    let props = serde_json::json!({
+        "data": data,
+        "session": identity.result().map(|v| v.to_json()).transpose()?,
+        "request": {
+            "url": {
+                "hash": url.fragment().map(|v| format!("#{v}")).unwrap_or_default(),
+                "host": url.host_str().map(|host| url.port().map_or_else(
+                    || host.to_owned(),
+                    |port| format!("{host}:{port}")
+                )).unwrap_or_default(),
+                "hostname": url.host_str(),
+                "href": url.as_str(),
+                "origin": url.origin().ascii_serialization(),
+                "pathname": url.path(),
+                "port": url.port().map(|v| v.to_string()).unwrap_or_default(),
+                "protocol": format!("{}:", url.scheme()),
+                "search": url.query().map(|v| format!("?{v}")).unwrap_or_default()
+            },
+            "headers": headers,
+            "session": session,
+            "method": view.method.as_str(),
+            "mime": view.mimetype,
+            "data": view.data.to_json()?
+        },
+        "response": res.try_to_json()?
+    });
     let provider = inv.shared_service::<Provider>()?;
     if let Some(html) = (provider.render)(action.into(), props).await? {
         res.html(html.into_html())?;
@@ -208,7 +236,12 @@ pub async fn render(
 pub async fn build(inv: &Invocation<'_>) -> Result<Vec<Value>> {
     let settings = inv.service::<Settings>()?;
     let provider = inv.service::<BuildProvider>()?;
-    let engine = (provider.create)(serde_json::json!({"cwd":settings.cwd,"engine":path(&settings.config,"engine").cloned().unwrap_or(serde_json::json!({}))})).await?;
+    // The factory receives owned source options before catalog loading or output-path decisions.
+    let engine = (provider.create)(serde_json::json!({
+        "cwd": settings.cwd,
+        "engine": path(&settings.config, "engine").cloned().unwrap_or(serde_json::json!({}))
+    }))
+    .await?;
     if let Ok(catalog) = inv.service::<Catalog>() {
         for entry in &catalog.entries {
             (engine.set)(entry.clone()).await?;
@@ -218,26 +251,24 @@ pub async fn build(inv: &Invocation<'_>) -> Result<Vec<Value>> {
         return Ok(Vec::new());
     }
     let mut results = Vec::new();
-    for (stage, key) in [
-        ("clients", "clientPath"),
-        ("assets", "assetPath"),
-        ("pages", "pagePath"),
+    // Pair each source output-path key with its actual compiler; ordering is part of the result.
+    for (key, compiler) in [
+        ("clientPath", &engine.clients),
+        ("assetPath", &engine.assets),
+        ("pagePath", &engine.pages),
     ] {
-        if path(&settings.config, &format!("engine.{key}")).is_some_and(super::config::truthy) {
-            let compiler = match stage {
-                "clients" => &engine.clients,
-                "assets" => &engine.assets,
-                _ => &engine.pages,
-            };
-            let mut result = compiler().await?;
-            if let Some(contents) = result.get("contents").and_then(Value::as_str) {
-                // Source substring counts UTF-16 code units. Rust replaces an isolated
-                // cut surrogate with U+FFFD because Rust strings cannot contain it.
-                let units: Vec<_> = contents.encode_utf16().take(100).collect();
-                result["contents"] = format!("{} ...", String::from_utf16_lossy(&units)).into();
-            }
-            results.push(result);
+        // Source skips only an absent/falsy path, after every catalog entry was loaded above.
+        if !path(&settings.config, &format!("engine.{key}")).is_some_and(super::config::truthy) {
+            continue;
         }
+        let mut result = compiler().await?;
+        if let Some(contents) = result.get("contents").and_then(Value::as_str) {
+            // Source substring counts UTF-16 code units. Rust replaces an isolated
+            // cut surrogate with U+FFFD because Rust strings cannot contain it.
+            let units: Vec<_> = contents.encode_utf16().take(100).collect();
+            result["contents"] = format!("{} ...", String::from_utf16_lossy(&units)).into();
+        }
+        results.push(result);
     }
     Ok(results)
 }

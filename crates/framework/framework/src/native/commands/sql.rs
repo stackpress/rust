@@ -276,31 +276,7 @@ async fn execute(
     inv: Invocation<'_>,
 ) -> Result<()> {
     if event == "query" {
-        let env = inv.service::<Environment>().cloned().unwrap_or_default();
-        if let Some(query) = env
-            .argv
-            .get(2..)
-            .unwrap_or_default()
-            .last()
-            .filter(|v| !v.is_empty())
-        {
-            let query = Sql::trusted(
-                engine.dialect(),
-                stackpress_sql::TrustedSql::audited(query.replace('\\', "'")),
-            );
-            let result = engine.execute(&query).await.map_err(Error::from_source)?;
-            // Console ownership receives the real owned result, without choosing a Debug/JSON
-            // representation or making native result resources serializable into browser data.
-            let mut output = Request::new();
-            output.data.set(
-                "result",
-                stackpress_lib::Value::Shared(stackpress_lib::SharedNative::new(result)),
-            )?;
-            inv.shared_service::<super::Bindings>()?
-                .invoke("output", &mut output, res, inv)
-                .await?;
-        }
-        return Ok(());
+        return query(engine, res, inv).await;
     }
     let client = &inv.config::<ClientOptions>()?.0;
     let root = path(client, "revisions")
@@ -367,4 +343,33 @@ async fn execute(
         "uninstall" => uninstall(engine, &scripts).await,
         _ => Err(Error::new("unknown source SQL command")),
     }
+}
+
+/// Run the event-only native query and output binding without acquiring revision/client resources.
+async fn query(engine: &Engine, res: &mut Response, inv: Invocation<'_>) -> Result<()> {
+    let env = inv.service::<Environment>().cloned().unwrap_or_default();
+    if let Some(query) = env
+        .argv
+        .get(2..)
+        .unwrap_or_default()
+        .last()
+        .filter(|v| !v.is_empty())
+    {
+        let query = Sql::trusted(
+            engine.dialect(),
+            stackpress_sql::TrustedSql::audited(query.replace('\\', "'")),
+        );
+        let result = engine.execute(&query).await.map_err(Error::from_source)?;
+        // Console ownership receives the real owned result, without choosing a Debug/JSON
+        // representation or making native result resources serializable into browser data.
+        let mut output = Request::new();
+        output.data.set(
+            "result",
+            stackpress_lib::Value::Shared(stackpress_lib::SharedNative::new(result)),
+        )?;
+        inv.shared_service::<super::Bindings>()?
+            .invoke("output", &mut output, res, inv)
+            .await?;
+    }
+    Ok(())
 }

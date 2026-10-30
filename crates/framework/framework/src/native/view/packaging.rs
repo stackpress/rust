@@ -101,6 +101,8 @@ impl Packaging {
     /// Concurrent submissions remain owned; shutdown can abort a suspended callback even while
     /// drain is waiting. Cancelling drain leaves unfinished jobs in this supervision group.
     pub async fn drain(&self) -> Vec<PackageOutcome> {
+        // This asynchronous gate serializes completion waiters, not task-state access.
+        // State is unlocked before Pending; shutdown can still acquire it and abort the jobs.
         let _joining = self.joining.lock().await;
         self.completions().await
     }
