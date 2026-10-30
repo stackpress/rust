@@ -1,0 +1,17 @@
+[package]
+name = "stackpress-framework-csrf"
+description = "Source-compatible CSRF token generation and explicit validation"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[dependencies]
+stackpress-lib = { path = "../../lib" }
+ring = { version = "=0.17.14", default-features = false, features = ["std"] }
+subtle = { version = "=2.6.1", default-features = false }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[lints]
+workspace = true
