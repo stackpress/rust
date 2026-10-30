@@ -1,0 +1,326 @@
+{
+  "sources": [
+    {
+      "file": "stackpress-session/src/auth/pages/signin/email.ts",
+      "sha256": "147c76378a43fddf8ccdcc05352909bbd7a68f4fcb039a16a066f401d222efbc"
+    },
+    {
+      "file": "stackpress-csrf/src/plugin.ts",
+      "sha256": "55f589f6d9d9c63d37e751ca1e550b932c4b893de3f65f263a2590286e5792e2"
+    }
+  ],
+  "cases": [
+    {
+      "method": "GET",
+      "mode": "otp",
+      "valid": true,
+      "guest": true,
+      "configured": true,
+      "sender": true,
+      "sendStatus": 200,
+      "signinStatus": 200,
+      "name": "guest-get",
+      "trace": [
+        "csrf.generate"
+      ],
+      "mail": null,
+      "error": null,
+      "code": 200,
+      "publicError": null,
+      "redirect": null,
+      "retainedCsrf": true,
+      "incomingCsrf": "incoming",
+      "password": null,
+      "type": null
+    },
+    {
+      "method": "GET",
+      "mode": "otp",
+      "valid": true,
+      "guest": false,
+      "configured": true,
+      "sender": true,
+      "sendStatus": 200,
+      "signinStatus": 200,
+      "name": "signed-in-get",
+      "trace": [
+        "csrf.generate",
+        "csrf.clear",
+        "redirect"
+      ],
+      "mail": null,
+      "error": null,
+      "code": 302,
+      "publicError": null,
+      "redirect": "/after",
+      "retainedCsrf": false,
+      "incomingCsrf": "incoming",
+      "password": null,
+      "type": null
+    },
+    {
+      "method": "POST",
+      "mode": "otp",
+      "valid": false,
+      "guest": true,
+      "configured": true,
+      "sender": true,
+      "sendStatus": 200,
+      "signinStatus": 200,
+      "name": "invalid-csrf",
+      "trace": [
+        "csrf.generate",
+        "csrf.valid"
+      ],
+      "mail": null,
+      "error": null,
+      "code": 419,
+      "publicError": "This page may have been requested from an external source. We corrected the issue. Please try again.",
+      "redirect": null,
+      "retainedCsrf": true,
+      "incomingCsrf": "incoming",
+      "password": null,
+      "type": null
+    },
+    {
+      "method": "POST",
+      "mode": "otp",
+      "valid": true,
+      "guest": true,
+      "configured": true,
+      "sender": true,
+      "sendStatus": 200,
+      "signinStatus": 200,
+      "name": "otp-success",
+      "trace": [
+        "csrf.generate",
+        "csrf.valid",
+        "email-send",
+        "csrf.clear",
+        "redirect"
+      ],
+      "mail": {
+        "from": {
+          "name": "Sender",
+          "address": "sender@example.test"
+        },
+        "to": "recipient@example.test",
+        "subject": "fixture sign-in",
+        "text": "https://fixture.example.test/auth/signin/otp/auth-id/429fe4ac9d7bca32ca6f07172ffa37a91db9dc353cc25e5fb86b8b7c8bdef675?redirect_uri=%2Fafter 123456",
+        "html": "<p>https://fixture.example.test/auth/signin/otp/auth-id/429fe4ac9d7bca32ca6f07172ffa37a91db9dc353cc25e5fb86b8b7c8bdef675?redirect_uri=%2Fafter</p>"
+      },
+      "error": null,
+      "code": 302,
+      "publicError": null,
+      "redirect": "/auth/signin/otp/auth-id/429fe4ac9d7bca32ca6f07172ffa37a91db9dc353cc25e5fb86b8b7c8bdef675?redirect_uri=%2Fafter",
+      "retainedCsrf": false,
+      "incomingCsrf": "incoming",
+      "password": null,
+      "type": null
+    },
+    {
+      "method": "POST",
+      "mode": "magic",
+      "valid": true,
+      "guest": true,
+      "configured": true,
+      "sender": true,
+      "sendStatus": 200,
+      "signinStatus": 200,
+      "name": "magic-success",
+      "trace": [
+        "csrf.generate",
+        "csrf.valid",
+        "email-send"
+      ],
+      "mail": {
+        "from": {
+          "name": "Sender",
+          "address": "sender@example.test"
+        },
+        "to": "recipient@example.test",
+        "subject": "fixture sign-in",
+        "text": "https://fixture.example.test/auth/signin/link/auth-id/9c11540775c218305bf545ac031bd24e5ce527e64d7e404f1edea7d981f88bf2?redirect_uri=%2Fafter ",
+        "html": "<p>https://fixture.example.test/auth/signin/link/auth-id/9c11540775c218305bf545ac031bd24e5ce527e64d7e404f1edea7d981f88bf2?redirect_uri=%2Fafter</p>"
+      },
+      "error": null,
+      "code": 200,
+      "publicError": null,
+      "redirect": null,
+      "retainedCsrf": true,
+      "incomingCsrf": "incoming",
+      "password": null,
+      "type": null
+    },
+    {
+      "method": "POST",
+      "mode": "otp",
+      "valid": true,
+      "guest": true,
+      "configured": true,
+      "sender": true,
+      "sendStatus": 419,
+      "signinStatus": 200,
+      "name": "otp-child-status",
+      "trace": [
+        "csrf.generate",
+        "csrf.valid",
+        "email-send",
+        "propagate"
+      ],
+      "mail": {
+        "from": {
+          "name": "Sender",
+          "address": "sender@example.test"
+        },
+        "to": "recipient@example.test",
+        "subject": "fixture sign-in",
+        "text": "https://fixture.example.test/auth/signin/otp/auth-id/429fe4ac9d7bca32ca6f07172ffa37a91db9dc353cc25e5fb86b8b7c8bdef675?redirect_uri=%2Fafter 123456",
+        "html": "<p>https://fixture.example.test/auth/signin/otp/auth-id/429fe4ac9d7bca32ca6f07172ffa37a91db9dc353cc25e5fb86b8b7c8bdef675?redirect_uri=%2Fafter</p>"
+      },
+      "error": null,
+      "code": 419,
+      "publicError": "provider public failure",
+      "redirect": null,
+      "retainedCsrf": true,
+      "incomingCsrf": "incoming",
+      "password": null,
+      "type": null
+    },
+    {
+      "method": "POST",
+      "mode": "magic",
+      "valid": true,
+      "guest": true,
+      "configured": true,
+      "sender": true,
+      "sendStatus": 200,
+      "signinStatus": 200,
+      "name": "magic-throw",
+      "throws": true,
+      "trace": [
+        "csrf.generate",
+        "csrf.valid",
+        "email-send"
+      ],
+      "mail": {
+        "from": {
+          "name": "Sender",
+          "address": "sender@example.test"
+        },
+        "to": "recipient@example.test",
+        "subject": "fixture sign-in",
+        "text": "https://fixture.example.test/auth/signin/link/auth-id/9c11540775c218305bf545ac031bd24e5ce527e64d7e404f1edea7d981f88bf2?redirect_uri=%2Fafter ",
+        "html": "<p>https://fixture.example.test/auth/signin/link/auth-id/9c11540775c218305bf545ac031bd24e5ce527e64d7e404f1edea7d981f88bf2?redirect_uri=%2Fafter</p>"
+      },
+      "error": "provider fixture failure",
+      "code": 200,
+      "publicError": null,
+      "redirect": null,
+      "retainedCsrf": true,
+      "incomingCsrf": "incoming",
+      "password": null,
+      "type": null
+    },
+    {
+      "method": "POST",
+      "mode": "otp",
+      "valid": true,
+      "guest": true,
+      "configured": false,
+      "sender": true,
+      "sendStatus": 200,
+      "signinStatus": 200,
+      "name": "otp-no-email-config",
+      "trace": [
+        "csrf.generate",
+        "csrf.valid"
+      ],
+      "mail": null,
+      "error": null,
+      "code": 200,
+      "publicError": null,
+      "redirect": null,
+      "retainedCsrf": true,
+      "incomingCsrf": "incoming",
+      "password": null,
+      "type": null
+    },
+    {
+      "method": "POST",
+      "mode": "magic",
+      "valid": true,
+      "guest": true,
+      "configured": true,
+      "sender": false,
+      "sendStatus": 200,
+      "signinStatus": 200,
+      "name": "magic-no-sender",
+      "trace": [
+        "csrf.generate",
+        "csrf.valid"
+      ],
+      "mail": null,
+      "error": null,
+      "code": 200,
+      "publicError": null,
+      "redirect": null,
+      "retainedCsrf": true,
+      "incomingCsrf": "incoming",
+      "password": null,
+      "type": null
+    },
+    {
+      "method": "POST",
+      "mode": "pass",
+      "valid": true,
+      "guest": true,
+      "configured": true,
+      "sender": true,
+      "sendStatus": 200,
+      "signinStatus": 200,
+      "name": "password-success",
+      "trace": [
+        "csrf.generate",
+        "csrf.valid",
+        "auth-signin",
+        "csrf.clear",
+        "redirect"
+      ],
+      "mail": null,
+      "error": null,
+      "code": 302,
+      "publicError": null,
+      "redirect": "/after",
+      "retainedCsrf": false,
+      "incomingCsrf": "incoming",
+      "password": true,
+      "type": "email"
+    },
+    {
+      "method": "POST",
+      "mode": "pass",
+      "valid": true,
+      "guest": true,
+      "configured": true,
+      "sender": true,
+      "sendStatus": 200,
+      "signinStatus": 401,
+      "name": "password-status",
+      "trace": [
+        "csrf.generate",
+        "csrf.valid",
+        "auth-signin"
+      ],
+      "mail": null,
+      "error": null,
+      "code": 401,
+      "publicError": null,
+      "redirect": null,
+      "retainedCsrf": true,
+      "incomingCsrf": "incoming",
+      "password": true,
+      "type": "email"
+    }
+  ]
+}
