@@ -64,19 +64,26 @@ pub async fn oauth(req: &mut Request, res: &mut Response, inv: Invocation<'_>) -
     Ok(Flow::Continue)
 }
 /// Synchronous owner cleanup precedes returning owned bytes to the Send server future.
+/// # Errors
+/// Propagate seed serialization and shared theme-bootstrap asset errors.
 pub fn document(page: Consent) -> Result<String> {
-    let owner = Owner::new();
-    let result=owner.with(|| {
-        let head=view!{<ApiOauthHead page=page.clone()/>}.to_html();
-        let body=view!{<ApiOauthPage page=page.clone()/>}.to_html();
-        let seed=super::seed(&page)?;
-        let theme=page.theme.map(|theme|theme.as_str()).unwrap_or("light");
-        let marker=if page.theme.is_none(){" data-theme-unset"}else{""};
-        let bootstrap=if page.theme.is_none(){stackpress_framework_view::theme::bootstrap_tag(&Default::default(),Some(&stackpress_framework_view::theme::bootstrap_location().map_err(stackpress_lib::Error::from_source)?),None).map_err(stackpress_lib::Error::from_source)?}else{String::new()};
-        Ok(format!("<!doctype html><html lang=\"{}\" data-theme=\"{}\"{marker}><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">{bootstrap}{head}</head><body><div id=\"app\">{body}</div><script type=\"application/json\" id=\"api-consent-seed\">{seed}</script><script type=\"module\" src=\"/assets/api-checkpoint.js\"></script></body></html>",page.language.locale(),theme))
-    });
-    owner.cleanup();
-    result
+    super::document::render(|| {
+        let head = view! {<ApiOauthHead page=page.clone()/>}.to_html();
+        let body = view! {<ApiOauthPage page=page.clone()/>}.to_html();
+        let seed = super::seed(&page)?;
+        let theme = page.theme.map(|theme| theme.as_str()).unwrap_or("light");
+        let marker = if page.theme.is_none() {
+            " data-theme-unset"
+        } else {
+            ""
+        };
+        let bootstrap = super::document::bootstrap(page.theme)?;
+        Ok(format!(
+            "<!doctype html><html lang=\"{}\" data-theme=\"{}\"{marker}><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">{bootstrap}{head}</head><body><div id=\"app\">{body}</div><script type=\"application/json\" id=\"api-consent-seed\">{seed}</script><script type=\"module\" src=\"/assets/api-checkpoint.js\"></script></body></html>",
+            page.language.locale(),
+            theme
+        ))
+    })
 }
 
 /// Consume the existing app-selected settings mechanism; API owns no preference state.

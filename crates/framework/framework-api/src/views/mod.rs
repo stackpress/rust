@@ -3,6 +3,8 @@
 #[cfg(all(feature = "ui-ssr", feature = "sql", not(target_arch = "wasm32")))]
 pub mod admin;
 mod consent;
+#[cfg(all(feature = "ui-ssr", not(target_arch = "wasm32")))]
+mod document;
 mod icons;
 pub mod management;
 pub mod roles;

@@ -501,6 +501,70 @@ async fn delete_cascade_maintenance_and_explicit_transaction_affinity() {
     assert!(f.app.find(&StoreQuery::default()).await.is_err());
     f.close().await;
 }
+/// Retained relation paths are source selectors even when the child segment is unknown.
+#[test]
+fn source_forward_relation_fallbacks_preserve_the_last_edge() {
+    let session = SessionStore::new("");
+    for (path, model, table, column, joins) in [
+        ("application", "Session", "session", "application", 1),
+        (
+            "application.unknown",
+            "Session",
+            "session",
+            "application",
+            1,
+        ),
+        (
+            "application.session.*",
+            "Session",
+            "session",
+            "application",
+            1,
+        ),
+        ("profile.unknown", "Session", "session", "profile", 1),
+        (
+            "application.profile.unknown",
+            "Application",
+            "session__application",
+            "profile",
+            2,
+        ),
+        (
+            "application.profile.name",
+            "Profile",
+            "session__application__profile",
+            "name",
+            2,
+        ),
+    ] {
+        let selector = session.paths(path).into_iter().next().unwrap();
+        assert_eq!(
+            (
+                selector.model,
+                selector.table.as_str(),
+                selector.column.as_str()
+            ),
+            (model, table, column),
+            "{path}"
+        );
+        let query = StoreQuery {
+            columns: vec![path.into()],
+            ..Default::default()
+        };
+        assert_eq!(session.joins(&query).len(), joins, "{path}");
+    }
+    let app = ApplicationStore::new("");
+    assert_eq!(app.paths("profile.unknown")[0].column, "profile");
+    assert!(
+        app.paths("session.*").is_empty(),
+        "reverse arrays do not become joins"
+    );
+    assert!(
+        session.paths("unknown.profile").is_empty(),
+        "no valid leading edge"
+    );
+}
+
 #[test]
 fn source_backend_rendering_and_selected_paths() {
     let store = SessionStore::new("");

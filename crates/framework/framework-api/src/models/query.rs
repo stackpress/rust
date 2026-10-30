@@ -12,6 +12,12 @@ use stackpress_sql::{
 };
 
 /// Source select/filter envelope. Empty and missing maps have the same source defaults.
+///
+/// This API-owned carrier deliberately differs from
+/// [`stackpress_framework_session::storage::StoreQuery`]: `q` retains arbitrary source
+/// values, including truthy empty arrays and objects, before Application interpolation.
+/// The session carrier accepts only strings and searches Profile instead. Reusing it
+/// would change the public input contract; common codecs and ordered records remain shared.
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(default)]
 pub struct StoreQuery {
@@ -111,6 +117,8 @@ impl StoreSelector {
 impl<M: ModelKind> Store<M> {
     /// Resolve one source expression, ignoring unknown paths as the generated store does.
     /// Profile has no reverse store relations even though Idea declares reverse metadata.
+    /// A valid relation followed by an unknown child retains its last relation selector;
+    /// the database reports that non-column path rather than silently dropping the filter.
     pub fn paths(&self, expression: &str) -> Vec<StoreSelector> {
         self.selectors(&[expression.into()])
     }
@@ -132,32 +140,17 @@ impl<M: ModelKind> Store<M> {
             if let Some(column) = columns.iter().find(|column| column.name == part) {
                 return (vec![column.clone()], model, table, edges);
             }
-            let target = match (model, part) {
-                ("Application" | "Session", "profile") => {
-                    Some(("Profile", "profile", "profile_id"))
-                }
-                ("Session", "application") => {
-                    Some(("Application", "application", "application_id"))
-                }
-                _ => None,
-            };
-            let Some((next, target, local)) = target else {
+            let Some((next, target, local)) = forward_relation(model, part) else {
                 break;
             };
             // Source paths retain the last valid relation even if the next segment
             // is unknown. Its non-column selector reaches SQL and fails there.
             last_relation = Some((
                 Column {
-                    name: if part == "profile" {
-                        "profile"
-                    } else {
-                        "application"
-                    },
-                    sql: if part == "profile" {
-                        "profile"
-                    } else {
-                        "application"
-                    },
+                    // All three source relation names equal their target table. Reuse the
+                    // resolved edge rather than guessing a fallback from the input segment.
+                    name: target,
+                    sql: target,
                     kind: super::Kind::String,
                     nullable: false,
                     required_message: None,
@@ -413,12 +406,25 @@ impl<M: ModelKind> Store<M> {
             else {
                 continue;
             };
-            // Source selects the column's SQL conversion even for extracted JSON values.
-            // Source uses the base store's toSqlValue, even for a relation field.
+            // Source uses the base store's toSqlValue even for related/extracted values;
+            // switching to the joined model codec here would change coercion semantics.
             let scalar = self.to_sql_value(&selector.field, &value)?;
             filters.push(selector.operand()?.compare(compare, Expr::value(scalar)));
         }
         Ok((!filters.is_empty()).then(|| Expr::any(filters)))
+    }
+}
+
+/// The three generated forward edges; reverse Idea arrays are metadata, not store joins.
+/// Return target model/table/local key together so traversal and its source fallback agree.
+fn forward_relation(
+    model: &str,
+    field: &str,
+) -> Option<(&'static str, &'static str, &'static str)> {
+    match (model, field) {
+        ("Application" | "Session", "profile") => Some(("Profile", "profile", "profile_id")),
+        ("Session", "application") => Some(("Application", "application", "application_id")),
+        _ => None,
     }
 }
 

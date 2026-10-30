@@ -39,7 +39,7 @@ impl Default for Environment {
 /// Register both ALL-method process routes directly, without installing their collaborators.
 ///
 /// The API plugin calls this inventory only for nonempty endpoints. Hosts select the session
-/// registrar and API SQL registrar separately; consent rendering is a later view contribution.
+/// registrar and API SQL registrar separately; consent rendering is a lower-priority view.
 /// # Errors
 /// Returns ordinary host route errors. No resources are acquired during registration.
 pub fn register(app: &mut ServerBuilder) -> Result<()> {
