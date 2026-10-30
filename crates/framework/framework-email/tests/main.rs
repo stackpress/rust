@@ -19,6 +19,10 @@ mod event_supervision;
 #[path = "cases/events.rs"]
 mod events;
 
+#[cfg(feature = "server")]
+#[path = "cases/integration/mod.rs"]
+mod integration;
+
 use serde_json::{Value, json};
 use stackpress_framework_email::EmailConfig;
 
