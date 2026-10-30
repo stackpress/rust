@@ -45,6 +45,15 @@ pub fn register(app: &mut ServerBuilder) -> Result<()> {
             Ok(Flow::Continue)
         })
     }))?;
+    #[cfg(feature = "auth-server")]
+    app.on_route(task(|start: &mut StartupContext| {
+        Box::pin(async move {
+            if start.config::<Option<SessionConfig>>()?.is_some() {
+                crate::account::routes(start).await?;
+            }
+            Ok(Flow::Continue)
+        })
+    }))?;
     Ok(())
 }
 impl Service {

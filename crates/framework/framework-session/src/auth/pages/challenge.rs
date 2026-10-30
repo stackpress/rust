@@ -126,7 +126,7 @@ pub async fn otp(req: &mut Request, res: &mut Response, inv: Invocation<'_>) -> 
         return Ok(Flow::Continue);
     };
     // Strip the stored secret before exposing the GET form payload, before POST validation.
-    found.remove("secret");
+    found.shift_remove("secret");
     b::results(res, Value::Object(found.clone()))?;
     // A GET deliberately stops with the auth payload; only a POST checks the submitted code.
     if req.method.as_str() != "POST" {

@@ -4,7 +4,7 @@ use super::{Hooks, bridge as b};
 use crate::{
     Service,
     columns::{self, Record, Value},
-    storage::{AuthActions, StoreQuery},
+    storage::AuthActions,
 };
 use serde_json::json;
 use stackpress_lib::{Flow, Invocation, Request, Response, Result};
@@ -63,7 +63,7 @@ pub async fn signup(req: &mut Request, res: &mut Response, inv: Invocation<'_>) 
             ));
         }
     };
-    input.remove("phone");
+    input.shift_remove("phone");
     if let Some(phone) = phone {
         input.insert("phone".into(), phone.into());
     }
@@ -90,7 +90,7 @@ pub async fn signup(req: &mut Request, res: &mut Response, inv: Invocation<'_>) 
     if let Some(auth) = result.get_mut("auth").and_then(Value::as_object_mut) {
         for kind in ["email", "phone", "username"] {
             if let Some(record) = auth.get_mut(kind).and_then(Value::as_object_mut) {
-                record.remove("secret");
+                record.shift_remove("secret");
             }
         }
     }
@@ -160,7 +160,7 @@ pub async fn signin(req: &mut Request, res: &mut Response, inv: Invocation<'_>) 
         }
     }
     // No second factor was required (or the request skipped it); source now removes the secret.
-    result.remove("secret");
+    result.shift_remove("secret");
     b::results(res, Value::Object(result.clone()))?;
     // Results are already set if the later session service or JWT creation fails upstream.
     let profile = result
@@ -218,36 +218,14 @@ pub async fn signout(_: &mut Request, res: &mut Response, _: Invocation<'_>) -> 
 /// # Errors
 /// Native input/host failures propagate; source SQL/action errors become public failures.
 pub async fn search(req: &mut Request, res: &mut Response, inv: Invocation<'_>) -> Result<Flow> {
-    let query: StoreQuery = serde_json::from_value(serde_json::to_value(b::input(req)?)?)?;
-    match actions(&inv)?.find_all(&query).await {
-        Ok(rows) => b::results(
-            res,
-            Value::Array(rows.into_iter().map(Value::Object).collect()),
-        )?,
-        Err(error) => b::action_error(res, error)?,
-    }
-    Ok(Flow::Continue)
+    // One generated-SQL adapter owns source seed/skip/filter mechanics; retain this public path.
+    crate::account::events::auth_search(req, res, inv).await
 }
-/// Optional auth-update adapter: source id is a query key; consumed stays a native Date.
+/// Direct auth-update path reuses the same generated source SQL adapter as account pages.
 /// # Errors
-/// Preserves native host/input failures and source public action errors.
+/// Preserves source action and native response errors, with missing-engine pass-through.
 pub async fn update(req: &mut Request, res: &mut Response, inv: Invocation<'_>) -> Result<Flow> {
-    let mut input = b::input(req)?;
-    let id = input.remove("id").unwrap_or(Value::Null);
-    match actions(&inv)?
-        .update(&StoreQuery::eq("id", id), &mut input)
-        .await
-    {
-        Ok(rows) => b::results(
-            res,
-            rows.into_iter()
-                .next()
-                .map(Value::Object)
-                .unwrap_or(Value::Null),
-        )?,
-        Err(error) => b::action_error(res, error)?,
-    }
-    Ok(Flow::Continue)
+    crate::account::events::auth_update(req, res, inv).await
 }
 /// Explicit JSON projection for wire/SSR adapters; rich Dates become canonical ISO values.
 /// # Errors

@@ -87,36 +87,10 @@ impl AuthActions {
         let message = if !secret.is_some_and(columns::truthy) {
             Some("Password is required".into())
         } else {
-            let secret = secret.map(columns::string).unwrap_or_default();
-            let length = secret.encode_utf16().count();
-            let config = &self.password;
-            if let Some(min) = config.min.filter(|min| *min != 0 && length < *min) {
-                Some(format!("Password must be at least {min} characters"))
-            } else if let Some(max) = config.max.filter(|max| *max != 0 && length > *max) {
-                Some(format!("Password must be less than {max} characters"))
-            } else if config.upper
-                && !secret
-                    .chars()
-                    .any(|character| character.is_ascii_uppercase())
-            {
-                Some("Password must contain at least one uppercase letter".into())
-            } else if config.lower
-                && !secret
-                    .chars()
-                    .any(|character| character.is_ascii_lowercase())
-            {
-                Some("Password must contain at least one lowercase letter".into())
-            } else if config.number && !secret.chars().any(|character| character.is_ascii_digit()) {
-                Some("Password must contain at least one number".into())
-            } else if config.special
-                && !secret.chars().any(|character| {
-                    "!@#$%^&*(),.?\":{}|<>".contains(character) || space(character)
-                })
-            {
-                Some("Password must contain at least one special character".into())
-            } else {
-                None
-            }
+            password_error(
+                &secret.map(columns::string).unwrap_or_default(),
+                &self.password,
+            )
         };
         if let Some(message) = message {
             errors.insert("secret".into(), message.into());
@@ -288,4 +262,40 @@ pub fn is_email(value: &str) -> bool {
         return false;
     }
     regex::Regex::new(domain_pattern).is_ok_and(|regex| regex.is_match(domain))
+}
+
+/// Ordered source password assertion, shared by signup and account password change.
+/// JavaScript UTF-16 lengths and the source punctuation/whitespace class are intentional.
+pub(crate) fn password_error(secret: &str, config: &PasswordConfig) -> Option<String> {
+    if secret.is_empty() {
+        return Some("Password is required".into());
+    }
+    let length = secret.encode_utf16().count();
+    if let Some(min) = config.min.filter(|min| *min != 0 && length < *min) {
+        Some(format!("Password must be at least {min} characters"))
+    } else if let Some(max) = config.max.filter(|max| *max != 0 && length > *max) {
+        Some(format!("Password must be less than {max} characters"))
+    } else if config.upper
+        && !secret
+            .chars()
+            .any(|character| character.is_ascii_uppercase())
+    {
+        Some("Password must contain at least one uppercase letter".into())
+    } else if config.lower
+        && !secret
+            .chars()
+            .any(|character| character.is_ascii_lowercase())
+    {
+        Some("Password must contain at least one lowercase letter".into())
+    } else if config.number && !secret.chars().any(|character| character.is_ascii_digit()) {
+        Some("Password must contain at least one number".into())
+    } else if config.special
+        && !secret
+            .chars()
+            .any(|character| "!@#$%^&*(),.?\":{}|<>".contains(character) || space(character))
+    {
+        Some("Password must contain at least one special character".into())
+    } else {
+        None
+    }
 }

@@ -4,8 +4,8 @@ use super::{Column, Kind};
 use crate::columns::Value;
 use stackpress_framework_schema::SchemaResult;
 
-/// Dynamic source record; missing keys remain distinct from explicit null.
-pub type Record = std::collections::BTreeMap<String, Value>;
+/// Insertion-ordered source record; missing/null and observable JSON/CSV order are retained.
+pub type Record = stackpress_lib::DataMap<String, Value>;
 
 /// Immutable model columns and source seed; defaults are generated per access.
 #[derive(Clone, Debug)]
