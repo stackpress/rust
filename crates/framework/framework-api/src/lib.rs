@@ -1,8 +1,10 @@
 //! Source-compatible API mechanics over existing Stackpress request/event contracts.
 //!
 //! Configured public/application/API-session endpoints and source CORS callbacks run over
-//! existing raw dispatch, with late inline webhook/fetch integration. OAuth and presentation retain their later milestones. Native models and SQL actions
-//! are explicitly selected through features and a separate SQL registrar. G42/G43 source behavior governs each selected process.
+//! existing raw dispatch, with late inline webhook/fetch integration. Nonempty endpoints also
+//! mount the OAuth/token processes; consent rendering remains a later contribution. Native
+//! models and SQL actions are selected through features and a separate SQL registrar.
+//! G42/G43 source behavior governs each selected process.
 //! Nothing here binds a listener, opens a database or starts a background task.
 //!
 //! Select the registration function through the host's normal plugin mechanism:
@@ -33,6 +35,7 @@ pub mod config;
 pub mod cors;
 pub mod endpoints;
 pub mod helpers;
+pub mod pages;
 pub mod plugin;
 pub mod routes;
 pub mod webhooks;

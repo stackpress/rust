@@ -32,6 +32,7 @@ stackpress-sql = { path = "../../sql/sql", optional = true }
 stackpress-idea-parser = { path = "../../idea/idea-parser", optional = true }
 
 [dev-dependencies]
+stackpress-framework-session = { path = "../framework-session", features = ["server"] }
 stackpress-sql-sqlite = { path = "../../sql/sql-sqlite" }
 tokio = { version = "=1.54.1", features = ["macros", "rt-multi-thread", "sync", "time"] }
 

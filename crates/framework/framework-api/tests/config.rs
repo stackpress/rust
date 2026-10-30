@@ -36,8 +36,8 @@ async fn all_config_keys_survive_selected_registration() -> Result<()> {
     assert_eq!(actual.endpoints[0].priority, -9);
     assert_eq!(
         server.listeners().count(),
-        4,
-        "CORS pair, endpoint and M4 webhook"
+        6,
+        "M3 process pair, CORS pair, endpoint and M4 webhook"
     );
     Ok(())
 }
