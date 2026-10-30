@@ -83,3 +83,11 @@ Store: /Users/cblanquera/server/projects/stackpress/rust/.agents/resources/build
 | `20261030T102221.006707Z-d829c4d9a325` | gate final target size; passed (0) | 4.263991 | none |
 | `20261030T102243.769894Z-3143aaeb5202` | gate final scope source lock KB audit; failed (1) | 6.648844 | none |
 | `20261030T102400.887271Z-f31b754855d6` | gate final keyed scope source lock KB audit; passed (0) | 4.114668 | none |
+
+## Coordinator verification
+
+Committed as `ba6ba46` on top of `595b89b` (trial/3 unchanged since, so no merge was needed). The commit changes only the two READMEs and the new `docs/` trees; no source, test, manifest or lock file changed, and no crate includes the README into Rustdoc. Reran independently:
+- `docs/check.py`: 27 pages, 21 Rust fences, 18 claim anchors, all local links and anchors resolve.
+- `docs/check.py --compile` in a fresh empty target (`s9bdocs-verify gate docs examples compile`): all 21 fences compiled in the external direct and server consumers; finite examples executed.
+
+The two G43 source behaviours are stated plainly: the CSRF registrar adds no global guard, and the shared auth-update results body makes email-send skip. Merged into trial/3 on 2026-10-30. Lane B (CSRF and email) is complete.
