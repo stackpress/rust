@@ -66,6 +66,11 @@ stackpress-framework-sql = { path = "crates/framework/framework-sql", optional =
 stackpress-framework-admin = { path = "crates/framework/framework-admin", optional = true }
 stackpress-framework-session = { path = "crates/framework/framework-session", optional = true, default-features = false }
 
+stackpress-framework = { path = "crates/framework/framework", optional = true, default-features = false }
+stackpress-framework-api = { path = "crates/framework/framework-api", optional = true, default-features = false }
+stackpress-framework-csrf = { path = "crates/framework/framework-csrf", optional = true, default-features = false }
+stackpress-framework-email = { path = "crates/framework/framework-email", optional = true, default-features = false }
+
 [features]
 default = []
 framework-schema = ["dep:stackpress-framework-schema"]
@@ -115,6 +120,39 @@ framework-view-leptos-csr = ["framework-view", "leptos", "stackpress-framework-v
 framework-view-leptos-async = ["framework-view", "leptos", "stackpress-framework-view/leptos-async"]
 framework-view-leptos-stream = ["framework-view", "leptos", "stackpress-framework-view/leptos-stream"]
 framework-language = ["dep:stackpress-framework-language"]
+
+framework = ["dep:stackpress-framework"]
+framework-aggregate-native = ["framework", "stackpress-framework/native"]
+framework-aggregate-server-commands = ["framework", "stackpress-framework/server-commands"]
+framework-aggregate-schema-client = ["framework", "stackpress-framework/schema-client"]
+framework-aggregate-language = ["framework", "stackpress-framework/language"]
+framework-aggregate-csrf = ["framework", "stackpress-framework/csrf"]
+framework-aggregate-sql = ["framework", "stackpress-framework/sql"]
+framework-aggregate-view = ["framework", "stackpress-framework/view"]
+framework-aggregate-session = ["framework", "stackpress-framework/session"]
+framework-aggregate-api = ["framework", "stackpress-framework/api"]
+framework-aggregate-admin = ["framework", "stackpress-framework/admin"]
+framework-aggregate-full = ["framework", "stackpress-framework/full"]
+framework-aggregate-codegen = ["framework", "stackpress-framework/codegen"]
+framework-api = ["dep:stackpress-framework-api"]
+framework-api-native = ["framework-api", "stackpress-framework-api/native"]
+framework-api-sql = ["framework-api", "stackpress-framework-api/sql"]
+framework-api-codegen = ["framework-api", "stackpress-framework-api/codegen"]
+framework-api-ui = ["framework-api", "stackpress-framework-api/ui"]
+framework-api-ui-ssr = ["framework-api", "stackpress-framework-api/ui-ssr"]
+framework-api-ui-hydrate = ["framework-api", "stackpress-framework-api/ui-hydrate"]
+framework-api-ui-csr = ["framework-api", "stackpress-framework-api/ui-csr"]
+framework-csrf = ["dep:stackpress-framework-csrf"]
+framework-csrf-server = ["framework-csrf", "stackpress-framework-csrf/server"]
+framework-email = ["dep:stackpress-framework-email"]
+framework-email-server = ["framework-email", "stackpress-framework-email/server"]
+framework-aggregate-ui-session = ["framework", "framework-session-leptos"]
+framework-aggregate-ui-api = ["framework", "framework-api-ui"]
+framework-aggregate-ui-view = ["framework", "framework-view-leptos"]
+framework-aggregate-ui-admin = ["framework", "framework-admin"]
+framework-aggregate-ssr = ["framework", "stackpress-framework-session?/leptos-ssr", "stackpress-framework-api?/ui-ssr", "stackpress-framework-view?/leptos-ssr", "stackpress-framework-admin?/ssr"]
+framework-aggregate-hydrate = ["framework", "stackpress-framework-session?/leptos-hydrate", "stackpress-framework-api?/ui-hydrate", "stackpress-framework-view?/leptos-hydrate", "stackpress-framework-admin?/hydrate"]
+framework-aggregate-csr = ["framework", "stackpress-framework-session?/leptos-csr", "stackpress-framework-api?/ui-csr", "stackpress-framework-view?/leptos-csr", "stackpress-framework-admin?/csr"]
 
 [dev-dependencies]
 serde = { version = "1", features = ["derive"] }

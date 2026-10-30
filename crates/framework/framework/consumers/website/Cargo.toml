@@ -1,0 +1,49 @@
+[package]
+name = "slice11-website"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+[workspace]
+
+[lib]
+crate-type = ["cdylib"]
+
+[[bin]]
+name = "slice11-website"
+path = "src/main.rs"
+required-features = ["ssr"]
+
+[features]
+default = []
+api = ["dep:stackpress-framework-api"]
+ssr = ["api", "stackpress/framework-aggregate-full", "stackpress/framework-aggregate-ui-session", "stackpress/framework-aggregate-ui-api", "stackpress/framework-aggregate-ui-admin", "stackpress/framework-aggregate-ui-view", "stackpress/framework-aggregate-ssr", "leptos/ssr"]
+hydrate = ["stackpress/framework-aggregate-ui-session", "stackpress/framework-aggregate-ui-api", "stackpress/framework-aggregate-ui-admin", "stackpress/framework-aggregate-ui-view", "stackpress/framework-aggregate-hydrate", "leptos/hydrate"]
+csr = ["stackpress/framework-aggregate-ui-session", "stackpress/framework-aggregate-ui-api", "stackpress/framework-aggregate-ui-admin", "stackpress/framework-aggregate-ui-view", "stackpress/framework-aggregate-csr", "leptos/csr"]
+
+[dependencies]
+stackpress = { path = "../../../../..", default-features = false }
+leptos = { version = "=0.8.22", default-features = false }
+leptos_meta = { version = "=0.8.7", default-features = false }
+serde_json = "=1.0.154"
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+stackpress-framework-admin = { path = "../../../framework-admin", default-features = false }
+stackpress-framework-schema = { path = "../../../framework-schema", default-features = false }
+stackpress-framework-sql = { path = "../../../framework-sql", default-features = false, features = ["server"] }
+stackpress-framework-session = { path = "../../../framework-session", default-features = false, features = ["auth-server"] }
+stackpress-framework-csrf = { path = "../../../framework-csrf", default-features = false, features = ["server"] }
+stackpress-framework-email = { path = "../../../framework-email", default-features = false, features = ["server"] }
+stackpress-lib = { path = "../../../../lib", default-features = false }
+stackpress-server = { path = "../../../../server/server", default-features = false }
+stackpress-sql = { path = "../../../../sql/sql", default-features = false }
+stackpress-sql-sqlite = { path = "../../../../sql/sql-sqlite", default-features = false }
+tokio = { version = "=1.54.1", default-features = false, features = ["macros", "rt", "sync"] }
+tempfile = "=3.27.0"
+stackpress-framework-api = { path = "../../../framework-api", default-features = false, features = ["sql"], optional = true }
+serde = { version = "=1.0.229", features = ["derive"] }
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = "=0.2.129"
+js-sys = "=0.3.106"
+web-sys = { version = "=0.3.106", default-features = false, features = ["Window", "Document", "HtmlElement"] }

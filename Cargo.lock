@@ -5758,7 +5758,11 @@ version = "0.1.0"
 dependencies = [
  "serde",
  "serde_json",
+ "stackpress-framework",
  "stackpress-framework-admin",
+ "stackpress-framework-api",
+ "stackpress-framework-csrf",
+ "stackpress-framework-email",
  "stackpress-framework-language",
  "stackpress-framework-schema",
  "stackpress-framework-session",

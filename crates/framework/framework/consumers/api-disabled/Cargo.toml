@@ -1,0 +1,30 @@
+[package]
+name = "slice11-api-disabled"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+[workspace]
+
+[features]
+default = []
+api = ["dep:stackpress-framework-api"]
+
+[dependencies]
+stackpress-framework-admin = { path = "../../../framework-admin", default-features = false }
+stackpress-framework-schema = { path = "../../../framework-schema", default-features = false }
+stackpress-framework-sql = { path = "../../../framework-sql", default-features = false, features = ["server"] }
+stackpress-framework-session = { path = "../../../framework-session", default-features = false, features = ["auth-server"] }
+stackpress-framework-csrf = { path = "../../../framework-csrf", default-features = false, features = ["server"] }
+stackpress-framework-email = { path = "../../../framework-email", default-features = false, features = ["server"] }
+stackpress-lib = { path = "../../../../lib", default-features = false }
+stackpress-server = { path = "../../../../server/server", default-features = false }
+stackpress-sql = { path = "../../../../sql/sql", default-features = false }
+stackpress-sql-sqlite = { path = "../../../../sql/sql-sqlite", default-features = false }
+leptos = { version = "=0.8.22", default-features = false }
+serde = { version = "=1.0.229", features = ["derive"] }
+serde_json = { version = "=1.0.154", features = ["preserve_order"] }
+tokio = { version = "=1.54.1", default-features = false, features = ["macros", "rt", "sync"] }
+tempfile = "=3.27.0"
+stackpress-framework-api = { path = "../../../framework-api", default-features = false, features = ["sql"], optional = true }
+stackpress-framework = { path = "../..", default-features = false, features = ["server-commands", "schema-client", "language", "csrf", "sql", "view", "session", "admin"] }
