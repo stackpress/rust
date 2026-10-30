@@ -1,6 +1,7 @@
 //! Source parity, resource ownership and registration boundaries of the aggregate.
 
 mod catalog;
+mod closeout;
 #[cfg(feature = "codegen")]
 mod codegen;
 mod commands;

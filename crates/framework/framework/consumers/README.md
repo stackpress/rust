@@ -59,3 +59,16 @@ The website/browser proof covers shared source signin, email and account views a
 and mobile widths, hydration errors, an interactive email/password form and disposal.
 It does not establish live backend, SMTP, production bundler/HMR, or installed Tauri support.
 G42 multiple handlers/Abort and G43 per-process/configured security remain unchanged.
+
+For the closing session matrix, the website's optional `AGGREGATE_MATRIX_PAGE_OUT`
+destination runs the same full aggregate registrar over a separate real account database.
+It emits all 16 source account/auth pages, explicit Light/Dark and long-text variants.
+`../proofs/session-browser.cjs` reuses the existing session matrix assertions with this
+website's WASM artifact: 176 cases per renderer plus no-JavaScript Light fallback.
+The approved Playwright path is checked before launch, as in the smaller smoke proof.
+The native matrix also runs through the consumer runner's external runtime deadline.
+
+`../proofs/check.py` validates the complete inventory/export-family/R01–R20 mapping in
+`../proofs/coverage-map.json`, source anchors and the 43 upstream package hashes.
+Named limitations distinguish intentional JS mechanics from live-provider and installed
+acceptance, full API management browser replay, and API build-host regeneration gaps.
