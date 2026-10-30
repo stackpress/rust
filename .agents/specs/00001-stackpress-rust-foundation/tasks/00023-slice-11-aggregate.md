@@ -37,3 +37,9 @@ Coordinator-owned; pending checkpoint review. Implementer mechanical/source-scop
 ## Acceptance notes
 
 None: library work, no new visual artifact or delegated product acceptance.
+
+## Coordinator checkpoint review
+
+Reviewed 2026-10-31 and merged into trial/3 as `6b52f58` (design commit `96e9830`). Location `crates/framework/framework` / `stackpress-framework` / `stackpress::framework` matches the accepted [source structure](../../../context/source-structure.md). Accepted coordinator recommendations: static compiled-client seam (`register` / `register_with`), new native source adapters live in the aggregate (schema/language stay plugin-free), `default = []`, `framework-aggregate-*` facade prefix that leaves existing root feature meanings unchanged, generated admin stays application-owned and last. Source order, G42 and G43 framing are correct; missing command/client/locale bridges are explicit, not placeholders.
+
+Owner questions carried (non-blocking for M0): PGlite embedded runtime (default: separate later follow-up S11-PGLITE, no dummy feature) and the upstream MIT/Apache metadata conflict (default: copy no source assets until decided). M0 released with the grants recorded in the release message: new crate under `crates/framework/framework/**`, one root `Cargo.toml` workspace-member line and the resulting `Cargo.lock` workspace-edge entry only (no new external tuples), fresh `target/slice11` with a 24 GiB cap (guard 23.4).
