@@ -51,16 +51,17 @@ impl Service {
         self.config.languages.keys().map(String::as_str).collect()
     }
 
-    /// Copy one source language's label/translations; missing/falsy entries return null.
+    /// Copy source label/translations; missing or falsy entries return `None`.
     pub fn language(&self, name: &str) -> Option<Value> {
         let value = self
             .config
             .languages
             .get(name)
             .filter(|v| super::config::truthy(v))?;
-        Some(
-            serde_json::json!({"label":value.get("label"),"translations":value.get("translations").and_then(Value::as_object).cloned().unwrap_or_default()}),
-        )
+        Some(serde_json::json!({
+            "label": value.get("label"),
+            "translations": value.get("translations").and_then(Value::as_object).cloned().unwrap_or_default()
+        }))
     }
 
     /// Load the request cookie, retaining unknown locale names and the caller's fallback.
@@ -176,7 +177,7 @@ impl Language<'_> {
             .cloned()
             .unwrap_or_else(|| self.locale.clone().into())
     }
-    /// Borrow source translations; absent locales retain an empty map.
+    /// Borrow source translations; absent locales or nonobject translations return `None`.
     pub fn translations(&self) -> Option<&Map<String, Value>> {
         self.service
             .config
@@ -217,6 +218,8 @@ impl Language<'_> {
 }
 
 /// Configure source language only when its optional section exists.
+/// # Errors
+/// Retains typed-section and startup registration failures; configuration errors surface at build.
 pub fn register(app: &mut ServerBuilder) -> Result<()> {
     app.config_section("language", Section::default(), |_| Ok(()))?;
     app.on_config(configure)?;

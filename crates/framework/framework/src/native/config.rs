@@ -89,7 +89,7 @@ pub(crate) fn truthy(value: &Value) -> bool {
     }
 }
 
-/// Resolve a source dotted path; only absence uses the supplied fallback.
+/// Resolve a source dotted path, retaining explicit null separately from absence.
 pub(crate) fn path<'a>(value: &'a Value, key: &str) -> Option<&'a Value> {
     key.split('.').try_fold(value, |value, key| value.get(key))
 }
