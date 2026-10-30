@@ -1,4 +1,4 @@
-//! Native auth process handlers. M3 adds generic presentation props and Leptos views.
+//! Native auth process handlers and source-selected public presentation props.
 //!
 //! Every process is independently reusable with the ordinary handler signature. Normal
 //! returns are Continue; a source conditional return never reserves a route or aborts
@@ -18,9 +18,18 @@ use stackpress_framework_csrf::Service as Csrf;
 use stackpress_lib::{Flow, Invocation, Request, Response, Result};
 use stackpress_server::ServerInvocationExt;
 
-/// Minimal source auth projection; full shared view props belong to the released M3 row.
+/// Project only the source auth fields; full page projection belongs to presentation.
 pub(crate) fn props(res: &mut Response, config: &AuthConfig) -> Result<()> {
-    res.data_mut()?.set("auth",stackpress_lib::Value::try_from(json!({"base":config.base(),"roles":config.roles,"menu":config.menu,"password":config.password}))?)?;
+    // Preserve response admission before converting the selected public configuration fields.
+    res.data_mut()?.set(
+        "auth",
+        stackpress_lib::Value::try_from(json!({
+            "base": config.base(),
+            "roles": config.roles,
+            "menu": config.menu,
+            "password": config.password,
+        }))?,
+    )?;
     Ok(())
 }
 /// Ask the exact cookie-backed Session whether this request is a guest.

@@ -285,7 +285,9 @@ impl<M: ModelKind> Store<M> {
             (&query.le, Compare::Le, false),
         ] {
             for (expression, value) in flatten(map) {
-                if std::ptr::eq(map, &query.eq) && expression == "active" && value == -1 {
+                // Only equality owns the source active=-1 escape; other operators still
+                // serialize that number through the active column's Boolean codec.
+                if compare == Compare::Eq && expression == "active" && value == -1 {
                     continue;
                 }
                 if let Some(filter) = self.where_values(&expression, &value, compare, like)? {
