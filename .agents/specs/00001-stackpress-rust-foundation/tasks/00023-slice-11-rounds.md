@@ -93,3 +93,9 @@ Cap 24 GiB / guard 23.4 retained; sampled peak 18.15 GiB, final 16.42 GiB. Only 
 Final scope/link/KB/receipt assertion: 20261030T224751.201043Z-062332bba03c (outcome in recorder). 13 prior completed attempts (0 failed), plus this final assertion. Prior completed command total 1006.75 s; observed Cargo-stage subtotal 394.41 s. These overlap and are reported separately. End-to-end elapsed 1586.66 s includes edits/review/waits. No test failure was hidden; generated snapshots were never overwritten in these rounds.
 
 Stop after rounds 1–4 for coordinator verification. No commits, pushes, installs, GitHub writes, listeners, other-agent messages, lock changes, historical-record edits or later-stage work.
+
+## Coordinator verification
+
+Verified 2026-10-31 by the coordinator on worktree commit `dfc253f` (trial/3 `5c129d1` already contained), fresh target, same gate as M3 (`/private/tmp/s11rounds-verify/run.sh`): 699 external tuples identical; fmt and both workspace Clippy runs `-D warnings`; nextest default 932 and ten-feature 1033, both incl. `tcp_watchdog`; doctests 967; Rustdoc `-D warnings`; facade/isolation/graphs; ledger checker; api leaf; all eight consumers; 352 session browser cases + two no-JS + 12 smoke with the cached Playwright Chromium; aggregate 36, session 54, server 61 tests; coverage aggregate 96.75%, session 91.43%, server 92.13%. Diff review: nine aggregate files only; the SQL `query` helper is a verbatim extraction of the former inline branch; no public declaration, manifest, lock, server or facade change.
+
+Merged into trial/3 as `3249039`.
