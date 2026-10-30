@@ -1,0 +1,75 @@
+{
+  "version": 1,
+  "files": {
+    "contracts/application.rs": {
+      "owner": "framework-schema",
+      "sha256": "e9b0e0c7097e4c61881ca8fcd191bdd5c8a20f3051b8f4565939b1cd4f6b0c00",
+      "bytes": 34465
+    },
+    "contracts/mod.rs": {
+      "owner": "aggregate",
+      "sha256": "2eff8abf3915c7b3ba3405ba093ce97de87f818d2e4c0cf36101d6fe6d2e72cb",
+      "bytes": 71
+    },
+    "contracts/profile.rs": {
+      "owner": "framework-schema",
+      "sha256": "fa6cc28bbdc3168bd4efb4f12ad5eaf9493d52ad87973ad5a4c698e07651f288",
+      "bytes": 32484
+    },
+    "contracts/public.rs": {
+      "owner": "framework-schema",
+      "sha256": "4f525db51eda3a858fda2ac0ead028263432bfe72b5e023ba28ec49c096fd37c",
+      "bytes": 224861
+    },
+    "contracts/session.rs": {
+      "owner": "framework-schema",
+      "sha256": "1c91f05f5dc7b5bb3d352259b0437cfc6081904d6c5cfc709ee043ebeee478de",
+      "bytes": 31701
+    },
+    "metadata/mod.rs": {
+      "owner": "aggregate",
+      "sha256": "67d195b8df4a18d49f3a5893c5e46e4fabd6d4cf4d77422599a989a4daee5d0d",
+      "bytes": 28
+    },
+    "metadata/schema.rs": {
+      "owner": "framework-schema",
+      "sha256": "ff2680660b77c6651cd01f94867092e17b02c658c31561d8f477a16e518d3395",
+      "bytes": 366
+    },
+    "metadata/ui.rs": {
+      "owner": "framework-schema",
+      "sha256": "78f94a17387a77afbe6c66b1d1c64a860f5d9bdff9416bd4b4aa70d914218c66",
+      "bytes": 25473
+    },
+    "mod.rs": {
+      "owner": "aggregate",
+      "sha256": "e28ad39736c02dc2a3f6066d46e974719478e36d67ddcd25fd45a90034381d79",
+      "bytes": 53
+    },
+    "stores/application.rs": {
+      "owner": "framework-sql",
+      "sha256": "68d58045119a9d2bf07d0fc09d39f0f764243c5ed22562075e14f2cc821d2711",
+      "bytes": 59846
+    },
+    "stores/mod.rs": {
+      "owner": "aggregate",
+      "sha256": "b6cafbc536475377916da3db432219ade1a86590e3234582450dceb991878fa5",
+      "bytes": 71
+    },
+    "stores/profile.rs": {
+      "owner": "framework-sql",
+      "sha256": "7758b1e2a0229259af1567924fa7b22acf9fb8021d8e8e278b2e6e66d7521916",
+      "bytes": 49714
+    },
+    "stores/schema.rs": {
+      "owner": "framework-sql",
+      "sha256": "12e5af11f9d36d8ed0dd3ed4a43b7f0b8c86afddeed6d88e57a900f5917d8921",
+      "bytes": 1042
+    },
+    "stores/session.rs": {
+      "owner": "framework-sql",
+      "sha256": "9892d47d8dc5e53eb7ed0d25f9844934dff8450ae27295f4debfbfa27ee4cdda",
+      "bytes": 58161
+    }
+  }
+}

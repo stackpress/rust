@@ -11,6 +11,12 @@ autotests = false
 name = "main"
 path = "tests/main.rs"
 
+[features]
+default = []
+native = ["dep:stackpress-framework-session", "stackpress-framework-schema/providers"]
+sql = ["native", "stackpress-framework-session/sql", "dep:stackpress-framework-sql", "dep:stackpress-sql"]
+codegen = ["native", "stackpress-framework-schema/codegen", "dep:stackpress-idea-parser"]
+
 [dependencies]
 stackpress-lib = { path = "../../lib" }
 stackpress-server = { path = "../../server/server" }
@@ -19,7 +25,14 @@ serde = { version = "=1.0.229", features = ["derive"] }
 serde_json = "=1.0.154"
 reqwest = { version = "=0.13.4", default-features = false, features = ["rustls"] }
 
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+stackpress-framework-session = { path = "../framework-session", features = ["native"], optional = true }
+stackpress-framework-sql = { path = "../framework-sql", optional = true }
+stackpress-sql = { path = "../../sql/sql", optional = true }
+stackpress-idea-parser = { path = "../../idea/idea-parser", optional = true }
+
 [dev-dependencies]
+stackpress-sql-sqlite = { path = "../../sql/sql-sqlite" }
 tokio = { version = "=1.54.1", features = ["macros", "rt-multi-thread", "sync", "time"] }
 
 [lints]

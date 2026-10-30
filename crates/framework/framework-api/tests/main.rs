@@ -6,3 +6,6 @@ mod plugins;
 #[path = "proof.rs"]
 mod proof;
 mod webhooks;
+
+#[cfg(feature = "sql")]
+mod sql;
