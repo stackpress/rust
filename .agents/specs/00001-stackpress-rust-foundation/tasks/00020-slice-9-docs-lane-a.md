@@ -121,3 +121,11 @@ Store: /Users/cblanquera/server/projects/stackpress/rust/.agents/resources/build
 | 20261030T155748.497598Z-6984254f3136 | final audit receipt corrected path rendering | passed | 0.899646 | — |
 
 Final audit checks exact fence hashes, unchanged implementation/locks/tuple subsets, links/claims, diff whitespace, receipt line cap and KB diagnostic equality. Coordinator verification is next; work stops at docs.
+
+## Coordinator verification
+
+Committed as `22afc64` on top of `1ae9129` (trial/3 unchanged since, so no integration merge was needed). The commit changes only `crates/framework/framework-session/README.md`, the `docs/` tree and this receipt; no source, test, consumer, manifest or lock file changed, and no session source includes the README into Rustdoc (the only `include_str!` is `views/styles.css`). Reran independently on 2026-10-31:
+- `docs/check.py`: 20 pages, 17 Rust fences, 36 claim anchors, 4 negative controls, all local links and anchors resolve.
+- `docs/check.py --compile` in a fresh empty target (`s9adocs-verify gate docs examples compile`): all 17 fences compiled in external direct, server, facade and browser (hydrate and CSR, wasm32) consumers; 11 finite examples executed (4 direct, 6 server, 1 facade). Tracked tree unchanged afterwards.
+
+Spot review: source defaults (key `session`, seed `abc123`, no expiry) are described as source defaults, not a protection policy; no hardening advice is framed as a framework default (G43). `source-behavior.md` records all seven owner questions as "open question — current behaviour follows upstream". Merged into trial/3 as `ce80fa1`. Lane A (session) is complete; Slice 9 is complete.
