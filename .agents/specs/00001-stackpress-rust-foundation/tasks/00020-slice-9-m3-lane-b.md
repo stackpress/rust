@@ -107,3 +107,14 @@ Attributable M3 delta: **24 attempts** (20 passed, 4 failed); **11 emitted compi
 | `20261030T071824.621092Z-7eed6fbc3a77` | gate feature and dependent graphs; passed (0) | 1.540941 | none |
 | `20261030T071855.236308Z-6aa620a1de0d` | gate finite integration absolute 15 second bound; passed (0) | 8.122139 | 5.48 |
 | `20261030T072054.068137Z-7ce9118a8028` | gate final source lock scope KB size audit; passed (0) | 2.274168 | none |
+
+## Coordinator verification
+
+Committed as `0ba3c43`. trial/3 (Lane A M2, then API M1) was merged into the branch twice; both merges were clean, and the final one is `46b6e80`. The lock kept every existing external tuple and added none; the only new edges are the email package's test links to csrf, view and leptos. Reran on the combined tree at gate tier (`sccache`, non-incremental, empty target), recorded as `s9bm3-verify gate *`. All passed:
+- fmt; workspace Clippy `-D warnings` and Rustdoc `-D warnings` with email/server, session/auth-server, schema/providers, api/sql and api/codegen.
+- `cargo nextest run --workspace --all-targets --locked --no-fail-fast` with no exclusions: 926 passed with those five features and 853 with defaults. Both include `tcp_watchdog`.
+- framework-email with `--no-default-features`: 31 passed.
+- Workspace doctests with the five features: 961 passed.
+- Coverage: framework-csrf 96.30% lines; framework-email with `server` 88.24% lines.
+
+Review: the five finite proofs use real CSRF, email adapters, server lifecycle and Leptos SSR, with fake auth pages at the frozen `auth-signin`/`email-send` boundaries. Lane A M2 is now on trial/3, so swapping those fakes for the real auth pages and account lookup, challenge and templates is the recorded integration point for M4. No owner question is open. Merged into trial/3 on 2026-10-30; Lane B M4 may be released.
