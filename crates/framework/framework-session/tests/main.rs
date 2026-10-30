@@ -16,4 +16,13 @@ mod supervision;
 fn compile_contracts() {
     let tests = trybuild::TestCases::new();
     tests.compile_fail("tests/ui/*.rs");
+    #[cfg(feature = "sql")]
+    tests.compile_fail("tests/ui-sql/*.rs");
 }
+
+#[cfg(feature = "sql")]
+#[path = "main/actions.rs"]
+mod actions;
+#[cfg(feature = "native")]
+#[path = "main/records.rs"]
+mod records;

@@ -1,11 +1,12 @@
-# Native identity mechanisms (M0)
+# Session identity and Auth/Profile primitives (M1)
 
-This milestone implements the original JWT Session mechanism. It does not yet implement
-Auth/Profile stores, auth/email composition, account routes or Leptos pages. Those remain
-in the accepted full Slice 9 scope, behind their coordinator release gates.
+This milestone implements the original JWT Session mechanism and complete direct
+Auth/Profile data primitives. Source account event/route composition and Leptos pages
+remain behind their later coordinator release gates. Nothing opens a database, starts a
+listener or installs tables automatically.
 
 Default features expose configuration and permission types. `native` enables the owned
-`Service` and per-token `Session`; `server` enables the identity constituent's ordinary
+`Service`, per-token `Session` and source schemas; `sql` adds direct Stores/Actions. `server` enables the identity constituent's ordinary
 `plugin::register`. Selecting it with no session config contributes no service/listeners.
 Missing `session.access` omits the request guard; `{}` installs a permissive guard.
 Each route/event remains responsible for its own configured process under G42/G43.
@@ -56,3 +57,23 @@ counter. Schema codecs preserve SHAKE256(32-byte hex) and deterministic AES-256-
 key=first32 chars of base64 SHA256(seed), IV=first16 chars of that key, ciphertext=hex.
 They do not add an integrity envelope or Argon2 format migration. Source golden vectors
 and bounded concurrency/SQL proofs live in the crate tests; no listeners are required.
+
+
+Auth/Profile schemas and SQL
+---------------------------
+
+Stable API composition path: `stackpress_framework_session::profile::ProfileSchema`.
+`ProfileSchema::model()` returns an owned `stackpress_framework_schema::Model`, including
+Auth/Application/Session relation metadata. `AuthSchema` lives under `auth`. Both dereference
+to `columns::RecordSchema`, exposing source-order `columns`, `column`, `defaults`,
+`defaults_at`, `assert`, `filter`, `populate`, `serialize` and `unserialize`.
+Descriptors describe data shape; the native source schema's codecs/assertions remain
+responsible for source coercion and UTF-16 string bounds. Presentation roles follow in M3.
+
+Select `sql` for `profile::{ProfileStore, ProfileActions}` and
+`auth::{AuthStore, AuthActions}`. These also live under `storage`. Constructors retain an
+`Arc<stackpress_sql::Engine>` supplied by the application. SQL is rendered/executed by the
+existing SQL crates; a session crate does not create another pool or ORM. Direct Auth
+options use seed `""`; `AuthActions::make` applies the source `database.seed` fallback `abc123` after the host
+resolves its engine/config at invocation time.
+See [direct storage reference](docs/storage.md) for examples and observable source edges.
