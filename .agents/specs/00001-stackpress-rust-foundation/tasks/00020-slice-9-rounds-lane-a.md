@@ -104,3 +104,18 @@ Shared store: `/Users/cblanquera/server/projects/stackpress/rust/.agents/resourc
 ## Acceptance criteria, verification notes and stop
 
 Acceptance criteria: none for behavior-preserving library refactoring; unchanged UI has fresh supplemental browser evidence. Coordinator verification is pending. No Context File promotion or Reference File was needed. The Agent Workspace validator retains the exact inherited **146 errors / 28 warnings**, with no new diagnostic; this is not a clean-KB claim. No historical record was edited, no other agent was messaged, and no commit/push/listener/install/GitHub action occurred. Stop after rounds 1–4 for coordinator verification.
+
+## Coordinator verification
+
+Verified 2026-10-30 by the coordinator on worktree commit `14f1511` (trial/3 `566746a` already contained), fresh target, gate tier, script `/private/tmp/s9arounds-verify/run.sh` (same steps as the M4 gate), eight-feature selection:
+
+- Locks: external tuples unchanged; all 12 standalone consumer locks are workspace subsets. Root manifest/facade unchanged from M4.
+- `cargo fmt --all --check`, workspace Clippy `-D warnings`: pass.
+- nextest default 929 passed and eight-feature (2 threads) 994 passed, both including `tcp_watchdog`.
+- Doctests 966 passed; Rustdoc `-D warnings`: pass.
+- Facade native and wasm32 checks, session per-feature and wasm32 checks, `consumers/graphs.py --check`, all four native consumers (direct 121, facade 122, plugin 327, disabled 51 packages), browser consumer hydrate/CSR builds: pass.
+- api-checkpoint tool `--check`, web and client hydrate/CSR Clippy, email direct/disabled/event consumers, API nextest 92 passed.
+- Session coverage (`leptos-ssr`): 91.43% lines.
+- Diff review: the `active=-1` skip now keys on `Compare::Eq`, which only the `eq` map uses, so it is equivalent to the former pointer check; the request bridge keeps hook conversion inside the supervised job. No public signature changes. Tracked tree clean after the gate.
+
+Merged into trial/3 as `68bc49b`.
