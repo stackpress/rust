@@ -70,7 +70,8 @@ export CARGO_INCREMENTAL=0 CARGO_PROFILE_DEV_DEBUG=0
   `cargo run` can then execute that stale binary instead of the one you meant.
 - When the shared target nears its cap, first delete only its `debug/incremental`
   directory; that frees space while keeping the cached dependency builds.
-- Watch disk. Keep each target under the size cap in the brief (default 8 GiB) and
+- Watch disk. Keep each target under the size cap in the brief (default 12 GiB, raised
+  from 8 GiB on 2026-10-30 once a full workspace test build alone reached about 7.6 GiB) and
   report the peak. Clear a target mid-effort only when it approaches the cap.
 
 ## 4. Two test tiers
