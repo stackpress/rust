@@ -133,3 +133,14 @@ Coordinator-owned; independent rerun and M0 release decision pending. No milesto
 ## Acceptance notes
 
 Acceptance criteria: none. No UI, browser target, installed platform or live-provider acceptance is claimed.
+
+## Coordinator verification
+
+Independently reran on the committed tree at gate tier (`sccache`, non-incremental, empty target), recorded as `s9b-verify gate *`. All passed:
+- Lock: every original external package tuple kept; 5 new external packages for lettre; none removed.
+- fmt; workspace Clippy `-D warnings`; Rustdoc `-D warnings` for both crates.
+- `cargo nextest run --workspace --all-targets --locked --no-fail-fast` with no exclusions: 774 passed, including `tcp_watchdog`.
+- Workspace doctests: 946, including the three Lane B compile-fail contracts.
+- Coverage: framework-csrf 96.30% lines, framework-email 100% lines.
+
+Source review: CSRF generate/clear/valid match `stackpress-csrf/src/plugin.ts` line for line (32 random bytes as hex, cookie then SSR data, nonempty equal-length timing-safe comparison, 419 "Page Expired" with the original message), and add no automatic route guard (G43). Email builds a transport per call as the source does; option/default parity is pinned by 13 fixtures from the original handler with an inert transport. Four empty stray `target/` folders the gate created were removed by the coordinator. Merged into trial/3 on 2026-10-30; M1 released.
