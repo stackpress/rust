@@ -1,0 +1,712 @@
+[
+  {
+    "id": "feature-surface",
+    "page": "crates/framework/framework-session/README.md",
+    "statement": "`default = []`",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/Cargo.toml",
+        "contains": [
+          "default = []",
+          "leptos-ssr =",
+          "auth-server ="
+        ]
+      },
+      {
+        "path": "crates/framework/framework-session/src/lib.rs",
+        "contains": [
+          "not(target_arch = \"wasm32\")",
+          "pub mod views;"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "facade-selection",
+    "page": "crates/framework/framework-session/docs/guides/consumers.md",
+    "statement": "All are opt-in",
+    "evidence": [
+      {
+        "path": "Cargo.toml",
+        "contains": [
+          "framework-session-native =",
+          "framework-session-leptos-ssr ="
+        ]
+      },
+      {
+        "path": "src/lib.rs",
+        "contains": [
+          "pub use stackpress_framework_session as framework_session;"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-session/consumers/graphs.py",
+        "contains": [
+          "graph('stackpress')",
+          "'stackpress-lib'"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "first-session",
+    "page": "crates/framework/framework-session/docs/getting-started.md",
+    "statement": "caches either its claims or null",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/src/session.rs",
+        "contains": [
+          "OnceLock<Option<SessionData>>",
+          "self.data().await.is_none()"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-session/tests/main/native.rs",
+        "contains": [
+          "memoization_is_per_instance_including_null_and_expiry",
+          "source_defaults_expiry_seed_and_guest"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "no-lookup",
+    "page": "crates/framework/framework-session/docs/concepts.md",
+    "statement": "There is no SQL lookup, refresh or revocation generation",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/src/session.rs",
+        "contains": [
+          "runtime: Arc<Runtime>",
+          "data: OnceLock<Option<SessionData>>"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "can",
+    "page": "crates/framework/framework-session/docs/api/identity.md",
+    "statement": "empty request true before roles parsing",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/src/session.rs",
+        "contains": [
+          "if permits.is_empty()",
+          "return Ok(true);"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-session/tests/main/native.rs",
+        "contains": [
+          "all_of_empty_guest_empty_roles_and_route_identity"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "permission-matching",
+    "page": "crates/framework/framework-session/docs/api/identity.md",
+    "statement": "Unsupported Rust-regex lookaround/backreferences",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/src/permissions.rs",
+        "contains": [
+          "pub fn match_event",
+          "pub fn match_route",
+          "pub fn match_any"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-session/tests/main/native.rs",
+        "contains": [
+          "matching_source_language_and_mechanical_syntax_errors"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "jwt-vectors",
+    "page": "crates/framework/framework-session/docs/api/identity.md",
+    "statement": "including padded base64url cases",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/tests/main/native.rs",
+        "contains": [
+          "original_jose_tokens_and_temporal_boundaries"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-session/tests/jwt-vectors.json",
+        "contains": [
+          "HS256"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "activation",
+    "page": "crates/framework/framework-session/docs/guides/configuration.md",
+    "statement": "No global session request guard",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/src/plugin.rs",
+        "contains": [
+          "let guarded = config.access.is_some();",
+          "if guarded {"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-session/tests/main/host.rs",
+        "contains": [
+          "missing_empty_and_absent_access_have_distinct_contributions"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "zero-status",
+    "page": "crates/framework/framework-session/docs/guides/configuration.md",
+    "statement": "offers that zero-status response to `error`",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/tests/main/auth_flows/registration.rs",
+        "contains": [
+          "source_empty_access_guard_offers_zero_status_and_falsy_bodies_do_not_skip"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-session/src/plugin.rs",
+        "contains": [
+          "invocation.emit(\"error\", request, response).await?;"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "composite",
+    "page": "crates/framework/framework-session/docs/guides/registration.md",
+    "statement": "auth \u2192 email \u2192 identity",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/src/composite.rs",
+        "contains": [
+          "crate::auth::register(app)?;",
+          "stackpress_framework_email::plugin::register(app)?;",
+          "crate::plugin::register(app)?;"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-session/tests/main/composite.rs",
+        "contains": [
+          "source_composite_listen_order_and_real_json_email",
+          "composite_events_still_allow_multiple_handlers_and_abort"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "caller-interface",
+    "page": "crates/framework/framework-session/docs/api/identity.md",
+    "statement": "There is no separate universal caller type or request-local slot",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/src/plugin.rs",
+        "contains": [
+          "pub fn load_request",
+          "pub async fn me"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-session/consumers/plugin/src/main.rs",
+        "contains": [
+          "(\"me\".into(), true)",
+          "(\"application-detail\".into(), false)",
+          "(\"session-create\".into(), false)"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "caller-api",
+    "page": "crates/framework/framework-session/docs/api/identity.md",
+    "statement": "original mutable request and a fresh response",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-api/src/pages/oauth.rs",
+        "contains": [
+          "\"me\""
+        ]
+      },
+      {
+        "path": "crates/framework/framework-session/consumers/plugin/src/main.rs",
+        "contains": [
+          "A bearer JWT cannot replace that cookie"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "auth-direct",
+    "page": "crates/framework/framework-session/docs/guides/authentication.md",
+    "statement": "direct reuse does not run a calling page",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/tests/main/auth_flows/oracle.rs",
+        "contains": [
+          "direct_helper_without_session_csrf_or_transport_still_rotates_before_skip"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-session/tests/main/auth_flows/events.rs",
+        "contains": [
+          "missing_config_modes_and_direct_events_need_no_global_guard"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "auth-signin",
+    "page": "crates/framework/framework-session/docs/guides/authentication.md",
+    "statement": "only literal false skips its 2FA search",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/tests/main/auth_flows/events.rs",
+        "contains": [
+          "real_signin_flags_2fa_search_inactive_profile_and_literal_signout"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-session/src/auth/events.rs",
+        "contains": [
+          "!= Value::Bool(false)"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "auth-flows",
+    "page": "crates/framework/framework-session/docs/auth.md",
+    "statement": "no code/hash/TTL check",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/tests/main/auth_flows/oracle.rs",
+        "contains": [
+          "source_process_invocation_traces",
+          "source_templates_totp_and_phone_vectors"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-session/tests/auth-flows.json",
+        "contains": [
+          "otp"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "auth-resources",
+    "page": "crates/framework/framework-session/docs/auth.md",
+    "statement": "actual local offset/zone",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/src/auth/config.rs",
+        "contains": [
+          "pub struct Environment",
+          "pub database_seed: Option<String>",
+          "pub offset_minutes: i32"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-session/tests/main/auth_flows/events.rs",
+        "contains": [
+          "source_timezone_column_sql_and_profile_collaborator_vectors"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "hooks",
+    "page": "crates/framework/framework-session/docs/guides/hooks.md",
+    "statement": "Completion order belongs to the runtime.",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/src/auth/hooks.rs",
+        "contains": [
+          "Weak<Server>",
+          "pub async fn drain",
+          "pub async fn shutdown"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "hook-names",
+    "page": "crates/framework/framework-session/docs/guides/hooks.md",
+    "statement": "`email-email-send` and then `auth-phone-verify`",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/src/auth/events.rs",
+        "contains": [
+          "email-email-send",
+          "auth-phone-verify"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-email/tests/cases/event_supervision.rs",
+        "contains": [
+          "source_signup_hooks_are_owned_nonawaited_and_keep_registration_order"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "schemas",
+    "page": "crates/framework/framework-session/docs/api/storage.md",
+    "statement": "owned seed-free shared Model",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/tests/main/records.rs",
+        "contains": [
+          "model_descriptor_is_seed_free_and_contains_api_profile_edges"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-session/src/columns/model.rs",
+        "contains": [
+          "pub fn model"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "ordered-records",
+    "page": "crates/framework/framework-session/docs/api/storage.md",
+    "statement": "insertion-ordered `stackpress_lib::DataMap`",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/src/columns/schema.rs",
+        "contains": [
+          "pub type Record = stackpress_lib::DataMap<String, Value>;"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-session/tests/main/account_flows/sql.rs",
+        "contains": [
+          "sql_account_update_password_and_ordered_nested_export"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "storage-return",
+    "page": "crates/framework/framework-session/docs/storage.md",
+    "statement": "returned rows retain the pre-read timestamp",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/src/storage/actions.rs",
+        "contains": [
+          "pub async fn update_in"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-session/tests/main/actions.rs",
+        "contains": [
+          "profile_crud_projection_active_and_original_update_return"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "storage-batch",
+    "page": "crates/framework/framework-session/docs/source-behavior.md",
+    "statement": "caught item statuses even after rollback/commit failure",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/src/storage/batch.rs",
+        "contains": [
+          "let _ = transaction.rollback().await;",
+          "let _ = transaction.commit().await;"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-session/tests/main/actions.rs",
+        "contains": [
+          "source_batch_rolls_back_item_errors_but_retains_status_rows"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "storage-signup",
+    "page": "crates/framework/framework-session/docs/api/storage.md",
+    "statement": "Signup writes sequentially; missing phone succeeds under G44",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/tests/main/actions.rs",
+        "contains": [
+          "signup_optional_phone_and_sequential_partial_side_effects",
+          "token_global_uniqueness_preflight_sql_constraint_and_inactive"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "storage-codecs",
+    "page": "crates/framework/framework-session/docs/api/storage.md",
+    "statement": "key=first32 characters of base64 SHA256(seed)",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-schema/src/providers/crypto.rs",
+        "contains": [
+          "STANDARD.encode",
+          "Aes256",
+          "Shake256"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-session/tests/main/storage.rs",
+        "contains": [
+          "sql_codec_roundtrip_equality_uniqueness_and_consumed_hash"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "cuid",
+    "page": "crates/framework/framework-session/docs/api/storage.md",
+    "statement": "SHA3-512, ring randomness",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-schema/src/providers/cuid.rs",
+        "contains": [
+          "Sha3_512",
+          "SystemRandom"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-schema/src/providers/tests.rs",
+        "contains": [
+          "cuid"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "account-actions",
+    "page": "crates/framework/framework-session/docs/account.md",
+    "statement": "optional phone on update retains the missing-input trim error",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/src/account/profile.rs",
+        "contains": [
+          "phone.trim"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-session/tests/main/account_flows.rs",
+        "contains": [
+          "source_account_invocation_traces"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "account-export",
+    "page": "crates/framework/framework-session/docs/api/account.md",
+    "statement": "No sorting step is inserted",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/src/account/export.rs",
+        "contains": [
+          "for (key, value) in profile"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-session/tests/main/account_flows/sql.rs",
+        "contains": [
+          "sql_account_update_password_and_ordered_nested_export"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "account-totp",
+    "page": "crates/framework/framework-session/docs/api/account.md",
+    "statement": "truthy confirmed branch can run on GET or POST",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/src/account/totp.rs",
+        "contains": [
+          "pub async fn remove_factor",
+          "pub fn qr_data_url"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-session/tests/main/account_flows/sql.rs",
+        "contains": [
+          "sql_totp_enroll_regenerate_remove_get_and_account_soft_removal"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "presentation",
+    "page": "crates/framework/framework-session/docs/guides/shared-ui.md",
+    "statement": "enrollment intentionally displays its secret and QR",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/src/views/types.rs",
+        "contains": [
+          "pub struct PageProps",
+          "pub csrf_token: String"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-session/tests/main/account_ui.rs",
+        "contains": [
+          "every_source_page_head_and_intentional_public_payload"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "views-routes",
+    "page": "crates/framework/framework-session/docs/api/views.md",
+    "statement": "Contributions use priority -100",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/src/presentation.rs",
+        "contains": [
+          "RouteSpec::new(method, path).priority(-100)",
+          "req.data.has(\"json\")"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-session/tests/main/account_ui/registration.rs",
+        "contains": [
+          "rendered_route_augmentation_fifo_and_abort",
+          "source_view_only_signin_fallback_and_concrete_view_precedence"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "views-browser",
+    "page": "crates/framework/framework-session/docs/guides/shared-ui.md",
+    "statement": "hydration starts with matching Light/pending attributes",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/src/views/mod.rs",
+        "contains": [
+          "SSR/hydration begin with identical Light/pending attributes"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-session/proofs/browser.cjs",
+        "contains": [
+          "mode==='csr'",
+          "window.sessionCopied",
+          "375,2,'long'"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "question-removal",
+    "page": "crates/framework/framework-session/docs/source-behavior.md",
+    "statement": "Account delete keeps profile",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/tests/account-removal-join.json",
+        "contains": [
+          "profile"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-session/tests/main/account_flows/sql.rs",
+        "contains": [
+          "sql_totp_enroll_regenerate_remove_get_and_account_soft_removal"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "question-sql",
+    "page": "crates/framework/framework-session/docs/source-behavior.md",
+    "statement": "SQLite ILIKE",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/src/storage/query.rs",
+        "contains": [
+          "for map in [&query.has, &query.hasnt]"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-session/tests/main/actions.rs",
+        "contains": [
+          "source_scalar_goldens_and_auth_returning_branch",
+          "predicates_sort_projection_join_and_maintenance"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "question-phone",
+    "page": "crates/framework/framework-session/docs/source-behavior.md",
+    "statement": "Optional phone on update",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/src/account/profile.rs",
+        "contains": [
+          "phone.trim"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-session/tests/account-flows.json",
+        "contains": [
+          "phone"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "question-email",
+    "page": "crates/framework/framework-session/docs/source-behavior.md",
+    "statement": "Email sign-in skips send",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/src/auth/pages/email.rs",
+        "contains": [
+          "inv.emit(\"auth-update\", &mut rotate, res)",
+          "inv.emit(\"email-send\", &mut send, res)"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-email/tests/cases/integration/mod.rs",
+        "contains": [
+          "source_page_csrf_email_render_and_error_boundaries"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "question-moment",
+    "page": "crates/framework/framework-session/docs/source-behavior.md",
+    "statement": "Moment admin dates",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-api/src/views/roles.rs",
+        "contains": [
+          "fn source_date",
+          "literal `i`"
+        ]
+      },
+      {
+        "path": ".agents/specs/00001-stackpress-rust-foundation/tasks/00021-slice-10-m5.md",
+        "contains": [
+          "0 5, 2100 12:iAM"
+        ]
+      }
+    ]
+  }
+]
