@@ -156,3 +156,15 @@ Attributable M1 records: **59** (44 passed, 15 failed). Recorded command wall to
 | `20261030T053555.045952Z-3277b1216542` | final scope lock KB and 12 GiB resource audit; passed (0) | 1.576409 | none |
 
 All records above match this cwd and the slice9b M1 prefix; no shared global count delta is attributed to this lane. Command wall time and observed Cargo-stage subtotal are separate overlapping measures; none means no observed Finished-stage timing. One formatting invocation used an invalid recorder kind before Cargo ran; it produced no record and is excluded from the recorded-command count.
+
+## Coordinator verification
+
+Coordinator brought trial/3 (Slice 10 M2/M4) into the branch at `b84326b`. `Cargo.lock` was taken from trial/3 with Cargo adding Lane B's packages offline; the result is exactly the union of both sides' external tuples (7 added, none changed or removed). Then reran on that tree at gate tier (`sccache`, non-incremental, empty target), recorded as `s9bm1-verify gate *`. All passed:
+- fmt; workspace Clippy `-D warnings`; workspace Rustdoc `-D warnings`.
+- `cargo nextest run --workspace --all-targets --locked --no-fail-fast` with no exclusions: 853 passed, including `tcp_watchdog`.
+- Workspace doctests: 953 passed.
+- Coverage: framework-csrf 96.30% lines; framework-email 87.14% lines.
+
+Lane A M1 reached trial/3 during that run, so the coordinator merged trial/3 again (`9339e9e`; a clean merge touching only session files and internal lock edges) and reran fmt, Clippy, the full workspace nextest (853 passed including `tcp_watchdog`) and doctests (953) on the combined tree, recorded as `s9bm1b-verify gate (post lane A M1 merge) *`. All passed.
+
+Source review: unsupported lettre capabilities route to the full application transport binding or a named capability error, per the coordinator ruling; none is silently dropped. Merged into trial/3 on 2026-10-30; Lane B M2 released.
