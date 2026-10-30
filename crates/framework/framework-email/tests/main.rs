@@ -9,6 +9,16 @@ mod source_options;
 #[path = "cases/supervision.rs"]
 mod supervision;
 
+#[cfg(feature = "server")]
+#[path = "cases/event_native.rs"]
+mod event_native;
+#[cfg(feature = "server")]
+#[path = "cases/event_supervision.rs"]
+mod event_supervision;
+#[cfg(feature = "server")]
+#[path = "cases/events.rs"]
+mod events;
+
 use serde_json::{Value, json};
 use stackpress_framework_email::EmailConfig;
 

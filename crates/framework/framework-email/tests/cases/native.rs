@@ -782,3 +782,93 @@ async fn native_metadata_and_output_error_boundaries() {
     .unwrap();
     assert!(meta.message_id.ends_with("@custom.test>"));
 }
+
+/// Invoke through the production event, normalizing only an explicitly consumed native stream.
+#[cfg(feature = "server")]
+async fn event_info(config: Value, options: Value, factory: NativeFactory) -> EmailResult<Value> {
+    use stackpress_framework_email::events::{EmailSend, NativeReader};
+    use stackpress_lib::{Request, Response, Value as Rich};
+    let event = EmailSend::new(Some(config), Arc::new(factory));
+    let mut request = Request::builder().data(options).build()?;
+    let mut response = Response::new();
+    event.handle(&mut request, &mut response).await?;
+    let mut result = response.result().unwrap().clone();
+    if let Rich::Object(fields) = &mut result
+        && let Some(Rich::Shared(shared)) = fields.get("message")
+    {
+        let mut reader = shared.downcast_ref::<NativeReader>().unwrap().take()?;
+        let mut bytes = Vec::new();
+        reader.read_to_end(&mut bytes).await?;
+        fields.insert(
+            "message".into(),
+            Rich::try_from(json!({"type":"Buffer","data":bytes}))?,
+        );
+    }
+    Ok(result.to_json()?)
+}
+
+/// Every original transport remains reachable through the same email-send process.
+#[cfg(feature = "server")]
+#[tokio::test]
+async fn event_reuses_all_source_transport_option_and_result_vectors() {
+    for key in [
+        "jsonCases",
+        "streamCases",
+        "smtpCases",
+        "sendmailCases",
+        "sesCases",
+    ] {
+        for case in vectors()[key].as_array().unwrap() {
+            let smtp = Arc::new(FakeSmtp {
+                requests: Mutex::new(vec![]),
+                info: json!({"accepted":["recipient@example.test"],"rejected":[],"response":"250 fixture","envelopeTime":1,"messageTime":2,"messageSize":3}),
+            });
+            let code = if case["error"].is_null() {
+                0
+            } else if case["error"].as_str().unwrap().contains("127") {
+                127
+            } else {
+                3
+            };
+            let process = Arc::new(FakeProcess {
+                requests: Mutex::new(vec![]),
+                code,
+            });
+            let ses = Arc::new(FakeSes {
+                requests: Mutex::new(vec![]),
+                region: case["region"].as_str().map(str::to_owned),
+                id: case["id"].as_str().unwrap_or("fixture").into(),
+            });
+            let factory = NativeFactory::default()
+                .with_smtp(smtp)
+                .with_process(process)
+                .with_ses(ses);
+            let config = if key == "sesCases" {
+                json!({"SES":{}})
+            } else {
+                case["config"].clone()
+            };
+            let result = event_info(config, case["options"].clone(), factory).await;
+            if case["error"].is_null() {
+                assert_eq!(result.unwrap(), case["result"], "{key}: {}", case["config"]);
+            } else {
+                assert!(result.is_err(), "{key}");
+            }
+        }
+    }
+    // Pool/string selection and unsupported SDK settings must reach the full provider.
+    for config in [
+        json!({"pool":true,"maxMessages":3}),
+        json!("smtp://fixture/?pool=true"),
+        json!({"lmtp":true}),
+    ] {
+        let result = event_info(
+            config.clone(),
+            json!({"text":"fixture"}),
+            NativeFactory::default().with_provider(Arc::new(FullProvider)),
+        )
+        .await
+        .unwrap();
+        assert_eq!(result["config"], config);
+    }
+}

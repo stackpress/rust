@@ -1,0 +1,2601 @@
+{
+  "sources": [
+    {
+      "file": "stackpress-email/src/events.ts",
+      "sha256": "4061c0714fc3fff61e65cd05d916332629bcede7f39df0fd55aac8cf7dddc65d"
+    },
+    {
+      "file": "stackpress-email/src/plugin.ts",
+      "sha256": "4ce2b3cc8a1ad5348309415ab715d278cb1d4882c1b9cf956cb5ace527410759"
+    },
+    {
+      "file": "stackpress-session/src/plugin.ts",
+      "sha256": "aade8d295a5910f7ccc4f9ac56a7c7a6ac7a8da44bd8b544c8259859bbc4a84f"
+    },
+    {
+      "file": "stackpress-session/src/auth/events/signup.ts",
+      "sha256": "db7be4e9174a25f0ac090c9f20ceffb43726ce50e2030ad007393d931682557f"
+    }
+  ],
+  "cases": [
+    {
+      "body": null,
+      "code": null,
+      "config": {
+        "jsonTransport": true
+      },
+      "info": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "name": "body null",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "extension": {
+          "empty": [],
+          "flag": false
+        },
+        "headers": {
+          "X-Fixture": "yes"
+        }
+      },
+      "trace": [
+        [
+          "config",
+          "email"
+        ],
+        [
+          "data"
+        ],
+        [
+          "create",
+          {
+            "jsonTransport": true
+          }
+        ],
+        [
+          "send",
+          {
+            "from": "sender@example.test",
+            "to": [
+              "recipient@example.test"
+            ],
+            "text": "fixture",
+            "extension": {
+              "empty": [],
+              "flag": false
+            },
+            "headers": {
+              "X-Fixture": "yes"
+            }
+          }
+        ],
+        [
+          "results",
+          {
+            "messageId": "provider-id",
+            "accepted": [
+              "recipient@example.test"
+            ],
+            "rejected": [],
+            "extension": {
+              "raw": true
+            }
+          }
+        ]
+      ],
+      "result": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "error": null
+    },
+    {
+      "body": false,
+      "code": null,
+      "config": {
+        "jsonTransport": true
+      },
+      "info": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "name": "body false",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "extension": {
+          "empty": [],
+          "flag": false
+        },
+        "headers": {
+          "X-Fixture": "yes"
+        }
+      },
+      "trace": [
+        [
+          "config",
+          "email"
+        ],
+        [
+          "data"
+        ],
+        [
+          "create",
+          {
+            "jsonTransport": true
+          }
+        ],
+        [
+          "send",
+          {
+            "from": "sender@example.test",
+            "to": [
+              "recipient@example.test"
+            ],
+            "text": "fixture",
+            "extension": {
+              "empty": [],
+              "flag": false
+            },
+            "headers": {
+              "X-Fixture": "yes"
+            }
+          }
+        ],
+        [
+          "results",
+          {
+            "messageId": "provider-id",
+            "accepted": [
+              "recipient@example.test"
+            ],
+            "rejected": [],
+            "extension": {
+              "raw": true
+            }
+          }
+        ]
+      ],
+      "result": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "error": null
+    },
+    {
+      "body": 0,
+      "code": null,
+      "config": {
+        "jsonTransport": true
+      },
+      "info": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "name": "body 0",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "extension": {
+          "empty": [],
+          "flag": false
+        },
+        "headers": {
+          "X-Fixture": "yes"
+        }
+      },
+      "trace": [
+        [
+          "config",
+          "email"
+        ],
+        [
+          "data"
+        ],
+        [
+          "create",
+          {
+            "jsonTransport": true
+          }
+        ],
+        [
+          "send",
+          {
+            "from": "sender@example.test",
+            "to": [
+              "recipient@example.test"
+            ],
+            "text": "fixture",
+            "extension": {
+              "empty": [],
+              "flag": false
+            },
+            "headers": {
+              "X-Fixture": "yes"
+            }
+          }
+        ],
+        [
+          "results",
+          {
+            "messageId": "provider-id",
+            "accepted": [
+              "recipient@example.test"
+            ],
+            "rejected": [],
+            "extension": {
+              "raw": true
+            }
+          }
+        ]
+      ],
+      "result": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "error": null
+    },
+    {
+      "body": "",
+      "code": null,
+      "config": {
+        "jsonTransport": true
+      },
+      "info": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "name": "body \"\"",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "extension": {
+          "empty": [],
+          "flag": false
+        },
+        "headers": {
+          "X-Fixture": "yes"
+        }
+      },
+      "trace": [
+        [
+          "config",
+          "email"
+        ],
+        [
+          "data"
+        ],
+        [
+          "create",
+          {
+            "jsonTransport": true
+          }
+        ],
+        [
+          "send",
+          {
+            "from": "sender@example.test",
+            "to": [
+              "recipient@example.test"
+            ],
+            "text": "fixture",
+            "extension": {
+              "empty": [],
+              "flag": false
+            },
+            "headers": {
+              "X-Fixture": "yes"
+            }
+          }
+        ],
+        [
+          "results",
+          {
+            "messageId": "provider-id",
+            "accepted": [
+              "recipient@example.test"
+            ],
+            "rejected": [],
+            "extension": {
+              "raw": true
+            }
+          }
+        ]
+      ],
+      "result": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "error": null
+    },
+    {
+      "body": {},
+      "code": null,
+      "config": {
+        "jsonTransport": true
+      },
+      "info": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "name": "body {}",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "extension": {
+          "empty": [],
+          "flag": false
+        },
+        "headers": {
+          "X-Fixture": "yes"
+        }
+      },
+      "trace": [],
+      "result": null,
+      "error": null
+    },
+    {
+      "body": [],
+      "code": null,
+      "config": {
+        "jsonTransport": true
+      },
+      "info": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "name": "body []",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "extension": {
+          "empty": [],
+          "flag": false
+        },
+        "headers": {
+          "X-Fixture": "yes"
+        }
+      },
+      "trace": [],
+      "result": null,
+      "error": null
+    },
+    {
+      "body": "body",
+      "code": null,
+      "config": {
+        "jsonTransport": true
+      },
+      "info": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "name": "body \"body\"",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "extension": {
+          "empty": [],
+          "flag": false
+        },
+        "headers": {
+          "X-Fixture": "yes"
+        }
+      },
+      "trace": [],
+      "result": null,
+      "error": null
+    },
+    {
+      "body": true,
+      "code": null,
+      "config": {
+        "jsonTransport": true
+      },
+      "info": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "name": "body true",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "extension": {
+          "empty": [],
+          "flag": false
+        },
+        "headers": {
+          "X-Fixture": "yes"
+        }
+      },
+      "trace": [],
+      "result": null,
+      "error": null
+    },
+    {
+      "body": 1,
+      "code": null,
+      "config": {
+        "jsonTransport": true
+      },
+      "info": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "name": "body 1",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "extension": {
+          "empty": [],
+          "flag": false
+        },
+        "headers": {
+          "X-Fixture": "yes"
+        }
+      },
+      "trace": [],
+      "result": null,
+      "error": null
+    },
+    {
+      "body": null,
+      "code": 0,
+      "config": {
+        "jsonTransport": true
+      },
+      "info": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "name": "code 0",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "extension": {
+          "empty": [],
+          "flag": false
+        },
+        "headers": {
+          "X-Fixture": "yes"
+        }
+      },
+      "trace": [
+        [
+          "config",
+          "email"
+        ],
+        [
+          "data"
+        ],
+        [
+          "create",
+          {
+            "jsonTransport": true
+          }
+        ],
+        [
+          "send",
+          {
+            "from": "sender@example.test",
+            "to": [
+              "recipient@example.test"
+            ],
+            "text": "fixture",
+            "extension": {
+              "empty": [],
+              "flag": false
+            },
+            "headers": {
+              "X-Fixture": "yes"
+            }
+          }
+        ],
+        [
+          "results",
+          {
+            "messageId": "provider-id",
+            "accepted": [
+              "recipient@example.test"
+            ],
+            "rejected": [],
+            "extension": {
+              "raw": true
+            }
+          }
+        ]
+      ],
+      "result": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "error": null
+    },
+    {
+      "body": null,
+      "code": 200,
+      "config": {
+        "jsonTransport": true
+      },
+      "info": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "name": "code 200",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "extension": {
+          "empty": [],
+          "flag": false
+        },
+        "headers": {
+          "X-Fixture": "yes"
+        }
+      },
+      "trace": [
+        [
+          "config",
+          "email"
+        ],
+        [
+          "data"
+        ],
+        [
+          "create",
+          {
+            "jsonTransport": true
+          }
+        ],
+        [
+          "send",
+          {
+            "from": "sender@example.test",
+            "to": [
+              "recipient@example.test"
+            ],
+            "text": "fixture",
+            "extension": {
+              "empty": [],
+              "flag": false
+            },
+            "headers": {
+              "X-Fixture": "yes"
+            }
+          }
+        ],
+        [
+          "results",
+          {
+            "messageId": "provider-id",
+            "accepted": [
+              "recipient@example.test"
+            ],
+            "rejected": [],
+            "extension": {
+              "raw": true
+            }
+          }
+        ]
+      ],
+      "result": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "error": null
+    },
+    {
+      "body": null,
+      "code": 201,
+      "config": {
+        "jsonTransport": true
+      },
+      "info": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "name": "code 201",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "extension": {
+          "empty": [],
+          "flag": false
+        },
+        "headers": {
+          "X-Fixture": "yes"
+        }
+      },
+      "trace": [],
+      "result": null,
+      "error": null
+    },
+    {
+      "body": null,
+      "code": 302,
+      "config": {
+        "jsonTransport": true
+      },
+      "info": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "name": "code 302",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "extension": {
+          "empty": [],
+          "flag": false
+        },
+        "headers": {
+          "X-Fixture": "yes"
+        }
+      },
+      "trace": [],
+      "result": null,
+      "error": null
+    },
+    {
+      "body": null,
+      "code": 419,
+      "config": {
+        "jsonTransport": true
+      },
+      "info": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "name": "code 419",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "extension": {
+          "empty": [],
+          "flag": false
+        },
+        "headers": {
+          "X-Fixture": "yes"
+        }
+      },
+      "trace": [],
+      "result": null,
+      "error": null
+    },
+    {
+      "body": null,
+      "code": 500,
+      "config": {
+        "jsonTransport": true
+      },
+      "info": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "name": "code 500",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "extension": {
+          "empty": [],
+          "flag": false
+        },
+        "headers": {
+          "X-Fixture": "yes"
+        }
+      },
+      "trace": [],
+      "result": null,
+      "error": null
+    },
+    {
+      "body": null,
+      "code": null,
+      "config": null,
+      "info": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "name": "config null",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "extension": {
+          "empty": [],
+          "flag": false
+        },
+        "headers": {
+          "X-Fixture": "yes"
+        }
+      },
+      "trace": [
+        [
+          "config",
+          "email"
+        ]
+      ],
+      "result": null,
+      "error": null
+    },
+    {
+      "body": null,
+      "code": null,
+      "config": false,
+      "info": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "name": "config false",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "extension": {
+          "empty": [],
+          "flag": false
+        },
+        "headers": {
+          "X-Fixture": "yes"
+        }
+      },
+      "trace": [
+        [
+          "config",
+          "email"
+        ]
+      ],
+      "result": null,
+      "error": null
+    },
+    {
+      "body": null,
+      "code": null,
+      "config": 0,
+      "info": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "name": "config 0",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "extension": {
+          "empty": [],
+          "flag": false
+        },
+        "headers": {
+          "X-Fixture": "yes"
+        }
+      },
+      "trace": [
+        [
+          "config",
+          "email"
+        ]
+      ],
+      "result": null,
+      "error": null
+    },
+    {
+      "body": null,
+      "code": null,
+      "config": "",
+      "info": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "name": "config \"\"",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "extension": {
+          "empty": [],
+          "flag": false
+        },
+        "headers": {
+          "X-Fixture": "yes"
+        }
+      },
+      "trace": [
+        [
+          "config",
+          "email"
+        ]
+      ],
+      "result": null,
+      "error": null
+    },
+    {
+      "body": null,
+      "code": null,
+      "config": {},
+      "info": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "name": "config {}",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "extension": {
+          "empty": [],
+          "flag": false
+        },
+        "headers": {
+          "X-Fixture": "yes"
+        }
+      },
+      "trace": [
+        [
+          "config",
+          "email"
+        ],
+        [
+          "data"
+        ],
+        [
+          "create",
+          {}
+        ],
+        [
+          "send",
+          {
+            "from": "sender@example.test",
+            "to": [
+              "recipient@example.test"
+            ],
+            "text": "fixture",
+            "extension": {
+              "empty": [],
+              "flag": false
+            },
+            "headers": {
+              "X-Fixture": "yes"
+            }
+          }
+        ],
+        [
+          "results",
+          {
+            "messageId": "provider-id",
+            "accepted": [
+              "recipient@example.test"
+            ],
+            "rejected": [],
+            "extension": {
+              "raw": true
+            }
+          }
+        ]
+      ],
+      "result": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "error": null
+    },
+    {
+      "body": null,
+      "code": null,
+      "config": {
+        "pool": true
+      },
+      "info": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "name": "config {\"pool\":true}",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "extension": {
+          "empty": [],
+          "flag": false
+        },
+        "headers": {
+          "X-Fixture": "yes"
+        }
+      },
+      "trace": [
+        [
+          "config",
+          "email"
+        ],
+        [
+          "data"
+        ],
+        [
+          "create",
+          {
+            "pool": true
+          }
+        ],
+        [
+          "send",
+          {
+            "from": "sender@example.test",
+            "to": [
+              "recipient@example.test"
+            ],
+            "text": "fixture",
+            "extension": {
+              "empty": [],
+              "flag": false
+            },
+            "headers": {
+              "X-Fixture": "yes"
+            }
+          }
+        ],
+        [
+          "results",
+          {
+            "messageId": "provider-id",
+            "accepted": [
+              "recipient@example.test"
+            ],
+            "rejected": [],
+            "extension": {
+              "raw": true
+            }
+          }
+        ]
+      ],
+      "result": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "error": null
+    },
+    {
+      "body": null,
+      "code": null,
+      "config": {
+        "streamTransport": true
+      },
+      "info": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "name": "config {\"streamTransport\":true}",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "extension": {
+          "empty": [],
+          "flag": false
+        },
+        "headers": {
+          "X-Fixture": "yes"
+        }
+      },
+      "trace": [
+        [
+          "config",
+          "email"
+        ],
+        [
+          "data"
+        ],
+        [
+          "create",
+          {
+            "streamTransport": true
+          }
+        ],
+        [
+          "send",
+          {
+            "from": "sender@example.test",
+            "to": [
+              "recipient@example.test"
+            ],
+            "text": "fixture",
+            "extension": {
+              "empty": [],
+              "flag": false
+            },
+            "headers": {
+              "X-Fixture": "yes"
+            }
+          }
+        ],
+        [
+          "results",
+          {
+            "messageId": "provider-id",
+            "accepted": [
+              "recipient@example.test"
+            ],
+            "rejected": [],
+            "extension": {
+              "raw": true
+            }
+          }
+        ]
+      ],
+      "result": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "error": null
+    },
+    {
+      "body": null,
+      "code": null,
+      "config": {
+        "sendmail": true
+      },
+      "info": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "name": "config {\"sendmail\":true}",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "extension": {
+          "empty": [],
+          "flag": false
+        },
+        "headers": {
+          "X-Fixture": "yes"
+        }
+      },
+      "trace": [
+        [
+          "config",
+          "email"
+        ],
+        [
+          "data"
+        ],
+        [
+          "create",
+          {
+            "sendmail": true
+          }
+        ],
+        [
+          "send",
+          {
+            "from": "sender@example.test",
+            "to": [
+              "recipient@example.test"
+            ],
+            "text": "fixture",
+            "extension": {
+              "empty": [],
+              "flag": false
+            },
+            "headers": {
+              "X-Fixture": "yes"
+            }
+          }
+        ],
+        [
+          "results",
+          {
+            "messageId": "provider-id",
+            "accepted": [
+              "recipient@example.test"
+            ],
+            "rejected": [],
+            "extension": {
+              "raw": true
+            }
+          }
+        ]
+      ],
+      "result": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "error": null
+    },
+    {
+      "body": null,
+      "code": null,
+      "config": {
+        "SES": {}
+      },
+      "info": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "name": "config {\"SES\":{}}",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "extension": {
+          "empty": [],
+          "flag": false
+        },
+        "headers": {
+          "X-Fixture": "yes"
+        }
+      },
+      "trace": [
+        [
+          "config",
+          "email"
+        ],
+        [
+          "data"
+        ],
+        [
+          "create",
+          {
+            "SES": {}
+          }
+        ],
+        [
+          "send",
+          {
+            "from": "sender@example.test",
+            "to": [
+              "recipient@example.test"
+            ],
+            "text": "fixture",
+            "extension": {
+              "empty": [],
+              "flag": false
+            },
+            "headers": {
+              "X-Fixture": "yes"
+            }
+          }
+        ],
+        [
+          "results",
+          {
+            "messageId": "provider-id",
+            "accepted": [
+              "recipient@example.test"
+            ],
+            "rejected": [],
+            "extension": {
+              "raw": true
+            }
+          }
+        ]
+      ],
+      "result": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "error": null
+    },
+    {
+      "body": null,
+      "code": null,
+      "config": "smtp://fixture",
+      "info": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "name": "config \"smtp://fixture\"",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "extension": {
+          "empty": [],
+          "flag": false
+        },
+        "headers": {
+          "X-Fixture": "yes"
+        }
+      },
+      "trace": [
+        [
+          "config",
+          "email"
+        ],
+        [
+          "data"
+        ],
+        [
+          "create",
+          "smtp://fixture"
+        ],
+        [
+          "send",
+          {
+            "from": "sender@example.test",
+            "to": [
+              "recipient@example.test"
+            ],
+            "text": "fixture",
+            "extension": {
+              "empty": [],
+              "flag": false
+            },
+            "headers": {
+              "X-Fixture": "yes"
+            }
+          }
+        ],
+        [
+          "results",
+          {
+            "messageId": "provider-id",
+            "accepted": [
+              "recipient@example.test"
+            ],
+            "rejected": [],
+            "extension": {
+              "raw": true
+            }
+          }
+        ]
+      ],
+      "result": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "error": null
+    },
+    {
+      "body": null,
+      "code": null,
+      "config": {
+        "customProvider": {
+          "extension": false
+        }
+      },
+      "info": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "name": "config {\"customProvider\":{\"extension\":false}}",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "extension": {
+          "empty": [],
+          "flag": false
+        },
+        "headers": {
+          "X-Fixture": "yes"
+        }
+      },
+      "trace": [
+        [
+          "config",
+          "email"
+        ],
+        [
+          "data"
+        ],
+        [
+          "create",
+          {
+            "customProvider": {
+              "extension": false
+            }
+          }
+        ],
+        [
+          "send",
+          {
+            "from": "sender@example.test",
+            "to": [
+              "recipient@example.test"
+            ],
+            "text": "fixture",
+            "extension": {
+              "empty": [],
+              "flag": false
+            },
+            "headers": {
+              "X-Fixture": "yes"
+            }
+          }
+        ],
+        [
+          "results",
+          {
+            "messageId": "provider-id",
+            "accepted": [
+              "recipient@example.test"
+            ],
+            "rejected": [],
+            "extension": {
+              "raw": true
+            }
+          }
+        ]
+      ],
+      "result": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "error": null
+    },
+    {
+      "body": null,
+      "code": null,
+      "config": {
+        "jsonTransport": true
+      },
+      "info": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "name": "missing config",
+      "missing": true,
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "extension": {
+          "empty": [],
+          "flag": false
+        },
+        "headers": {
+          "X-Fixture": "yes"
+        }
+      },
+      "trace": [
+        [
+          "config",
+          "email"
+        ]
+      ],
+      "result": null,
+      "error": null
+    },
+    {
+      "body": null,
+      "code": null,
+      "config": {
+        "jsonTransport": true
+      },
+      "info": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "name": "create throw",
+      "failure": "create",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "extension": {
+          "empty": [],
+          "flag": false
+        },
+        "headers": {
+          "X-Fixture": "yes"
+        }
+      },
+      "trace": [
+        [
+          "config",
+          "email"
+        ],
+        [
+          "data"
+        ],
+        [
+          "create",
+          {
+            "jsonTransport": true
+          }
+        ]
+      ],
+      "result": null,
+      "error": {
+        "message": "create failed",
+        "code": "EPROVIDER",
+        "extension": {
+          "raw": true
+        }
+      }
+    },
+    {
+      "body": null,
+      "code": null,
+      "config": {
+        "jsonTransport": true
+      },
+      "info": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "name": "send callback error",
+      "failure": "send",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "extension": {
+          "empty": [],
+          "flag": false
+        },
+        "headers": {
+          "X-Fixture": "yes"
+        }
+      },
+      "trace": [
+        [
+          "config",
+          "email"
+        ],
+        [
+          "data"
+        ],
+        [
+          "create",
+          {
+            "jsonTransport": true
+          }
+        ],
+        [
+          "send",
+          {
+            "from": "sender@example.test",
+            "to": [
+              "recipient@example.test"
+            ],
+            "text": "fixture",
+            "extension": {
+              "empty": [],
+              "flag": false
+            },
+            "headers": {
+              "X-Fixture": "yes"
+            }
+          }
+        ]
+      ],
+      "result": null,
+      "error": {
+        "message": "send failed",
+        "code": "EPROVIDER",
+        "extension": {
+          "raw": true
+        }
+      }
+    },
+    {
+      "body": null,
+      "code": null,
+      "config": {
+        "jsonTransport": true
+      },
+      "info": null,
+      "name": "info null",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "extension": {
+          "empty": [],
+          "flag": false
+        },
+        "headers": {
+          "X-Fixture": "yes"
+        }
+      },
+      "trace": [
+        [
+          "config",
+          "email"
+        ],
+        [
+          "data"
+        ],
+        [
+          "create",
+          {
+            "jsonTransport": true
+          }
+        ],
+        [
+          "send",
+          {
+            "from": "sender@example.test",
+            "to": [
+              "recipient@example.test"
+            ],
+            "text": "fixture",
+            "extension": {
+              "empty": [],
+              "flag": false
+            },
+            "headers": {
+              "X-Fixture": "yes"
+            }
+          }
+        ],
+        [
+          "results",
+          null
+        ]
+      ],
+      "result": null,
+      "error": null
+    },
+    {
+      "body": null,
+      "code": null,
+      "config": {
+        "jsonTransport": true
+      },
+      "info": false,
+      "name": "info false",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "extension": {
+          "empty": [],
+          "flag": false
+        },
+        "headers": {
+          "X-Fixture": "yes"
+        }
+      },
+      "trace": [
+        [
+          "config",
+          "email"
+        ],
+        [
+          "data"
+        ],
+        [
+          "create",
+          {
+            "jsonTransport": true
+          }
+        ],
+        [
+          "send",
+          {
+            "from": "sender@example.test",
+            "to": [
+              "recipient@example.test"
+            ],
+            "text": "fixture",
+            "extension": {
+              "empty": [],
+              "flag": false
+            },
+            "headers": {
+              "X-Fixture": "yes"
+            }
+          }
+        ],
+        [
+          "results",
+          false
+        ]
+      ],
+      "result": false,
+      "error": null
+    },
+    {
+      "body": null,
+      "code": null,
+      "config": {
+        "jsonTransport": true
+      },
+      "info": 0,
+      "name": "info 0",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "extension": {
+          "empty": [],
+          "flag": false
+        },
+        "headers": {
+          "X-Fixture": "yes"
+        }
+      },
+      "trace": [
+        [
+          "config",
+          "email"
+        ],
+        [
+          "data"
+        ],
+        [
+          "create",
+          {
+            "jsonTransport": true
+          }
+        ],
+        [
+          "send",
+          {
+            "from": "sender@example.test",
+            "to": [
+              "recipient@example.test"
+            ],
+            "text": "fixture",
+            "extension": {
+              "empty": [],
+              "flag": false
+            },
+            "headers": {
+              "X-Fixture": "yes"
+            }
+          }
+        ],
+        [
+          "results",
+          0
+        ]
+      ],
+      "result": 0,
+      "error": null
+    },
+    {
+      "body": null,
+      "code": null,
+      "config": {
+        "jsonTransport": true
+      },
+      "info": "",
+      "name": "info \"\"",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "extension": {
+          "empty": [],
+          "flag": false
+        },
+        "headers": {
+          "X-Fixture": "yes"
+        }
+      },
+      "trace": [
+        [
+          "config",
+          "email"
+        ],
+        [
+          "data"
+        ],
+        [
+          "create",
+          {
+            "jsonTransport": true
+          }
+        ],
+        [
+          "send",
+          {
+            "from": "sender@example.test",
+            "to": [
+              "recipient@example.test"
+            ],
+            "text": "fixture",
+            "extension": {
+              "empty": [],
+              "flag": false
+            },
+            "headers": {
+              "X-Fixture": "yes"
+            }
+          }
+        ],
+        [
+          "results",
+          ""
+        ]
+      ],
+      "result": "",
+      "error": null
+    },
+    {
+      "body": null,
+      "code": null,
+      "config": {
+        "jsonTransport": true
+      },
+      "info": [],
+      "name": "info []",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "extension": {
+          "empty": [],
+          "flag": false
+        },
+        "headers": {
+          "X-Fixture": "yes"
+        }
+      },
+      "trace": [
+        [
+          "config",
+          "email"
+        ],
+        [
+          "data"
+        ],
+        [
+          "create",
+          {
+            "jsonTransport": true
+          }
+        ],
+        [
+          "send",
+          {
+            "from": "sender@example.test",
+            "to": [
+              "recipient@example.test"
+            ],
+            "text": "fixture",
+            "extension": {
+              "empty": [],
+              "flag": false
+            },
+            "headers": {
+              "X-Fixture": "yes"
+            }
+          }
+        ],
+        [
+          "results",
+          []
+        ]
+      ],
+      "result": [],
+      "error": null
+    },
+    {
+      "body": null,
+      "code": null,
+      "config": {
+        "jsonTransport": true
+      },
+      "info": {},
+      "name": "info {}",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "extension": {
+          "empty": [],
+          "flag": false
+        },
+        "headers": {
+          "X-Fixture": "yes"
+        }
+      },
+      "trace": [
+        [
+          "config",
+          "email"
+        ],
+        [
+          "data"
+        ],
+        [
+          "create",
+          {
+            "jsonTransport": true
+          }
+        ],
+        [
+          "send",
+          {
+            "from": "sender@example.test",
+            "to": [
+              "recipient@example.test"
+            ],
+            "text": "fixture",
+            "extension": {
+              "empty": [],
+              "flag": false
+            },
+            "headers": {
+              "X-Fixture": "yes"
+            }
+          }
+        ],
+        [
+          "results",
+          {}
+        ]
+      ],
+      "result": {},
+      "error": null
+    },
+    {
+      "body": "already answered",
+      "code": null,
+      "config": true,
+      "info": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "name": "skip before invalid config",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "extension": {
+          "empty": [],
+          "flag": false
+        },
+        "headers": {
+          "X-Fixture": "yes"
+        }
+      },
+      "trace": [],
+      "result": null,
+      "error": null
+    },
+    {
+      "body": null,
+      "code": 419,
+      "config": {
+        "jsonTransport": true
+      },
+      "info": {
+        "messageId": "provider-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "extension": {
+          "raw": true
+        }
+      },
+      "name": "skip before provider failure",
+      "failure": "create",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "extension": {
+          "empty": [],
+          "flag": false
+        },
+        "headers": {
+          "X-Fixture": "yes"
+        }
+      },
+      "trace": [],
+      "result": null,
+      "error": null
+    }
+  ],
+  "registrations": [
+    {
+      "missing": true,
+      "config": null,
+      "trace": [
+        [
+          "has",
+          "email"
+        ]
+      ]
+    },
+    {
+      "missing": false,
+      "config": null,
+      "trace": [
+        [
+          "has",
+          "email"
+        ],
+        [
+          "on",
+          "listen"
+        ],
+        [
+          "get",
+          "email"
+        ]
+      ]
+    },
+    {
+      "missing": false,
+      "config": false,
+      "trace": [
+        [
+          "has",
+          "email"
+        ],
+        [
+          "on",
+          "listen"
+        ],
+        [
+          "get",
+          "email"
+        ]
+      ]
+    },
+    {
+      "missing": false,
+      "config": 0,
+      "trace": [
+        [
+          "has",
+          "email"
+        ],
+        [
+          "on",
+          "listen"
+        ],
+        [
+          "get",
+          "email"
+        ]
+      ]
+    },
+    {
+      "missing": false,
+      "config": "",
+      "trace": [
+        [
+          "has",
+          "email"
+        ],
+        [
+          "on",
+          "listen"
+        ],
+        [
+          "get",
+          "email"
+        ]
+      ]
+    },
+    {
+      "missing": false,
+      "config": {},
+      "trace": [
+        [
+          "has",
+          "email"
+        ],
+        [
+          "on",
+          "listen"
+        ],
+        [
+          "get",
+          "email"
+        ],
+        [
+          "use",
+          "email-send"
+        ]
+      ]
+    },
+    {
+      "missing": false,
+      "config": {
+        "jsonTransport": true
+      },
+      "trace": [
+        [
+          "has",
+          "email"
+        ],
+        [
+          "on",
+          "listen"
+        ],
+        [
+          "get",
+          "email"
+        ],
+        [
+          "use",
+          "email-send"
+        ]
+      ]
+    },
+    {
+      "missing": false,
+      "config": "smtp://fixture",
+      "trace": [
+        [
+          "has",
+          "email"
+        ],
+        [
+          "on",
+          "listen"
+        ],
+        [
+          "get",
+          "email"
+        ],
+        [
+          "use",
+          "email-send"
+        ]
+      ]
+    }
+  ],
+  "signup": [
+    {
+      "input": {
+        "email": "user@example.test",
+        "phone": "+15555550123"
+      },
+      "trace": [
+        [
+          "roles",
+          "auth.roles"
+        ],
+        [
+          "actions"
+        ],
+        [
+          "data"
+        ],
+        [
+          "signup",
+          {
+            "roles": [
+              "USER"
+            ],
+            "email": "user@example.test",
+            "phone": "+15555550123"
+          }
+        ],
+        [
+          "resolve",
+          "email-email-send",
+          {
+            "email": "user@example.test",
+            "id": "profile",
+            "auth": {
+              "email": {
+                "secret": "email-secret"
+              },
+              "phone": {
+                "secret": "phone-secret"
+              },
+              "username": {
+                "secret": "name-secret"
+              }
+            }
+          }
+        ],
+        [
+          "resolve",
+          "auth-phone-verify",
+          {
+            "phone": "+15555550123",
+            "id": "profile",
+            "auth": {
+              "email": {
+                "secret": "email-secret"
+              },
+              "phone": {
+                "secret": "phone-secret"
+              },
+              "username": {
+                "secret": "name-secret"
+              }
+            }
+          }
+        ],
+        [
+          "results",
+          {
+            "id": "profile",
+            "auth": {
+              "email": {},
+              "phone": {},
+              "username": {}
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "input": {
+        "email": "user@example.test"
+      },
+      "trace": [
+        [
+          "roles",
+          "auth.roles"
+        ],
+        [
+          "actions"
+        ],
+        [
+          "data"
+        ],
+        [
+          "signup",
+          {
+            "roles": [
+              "USER"
+            ],
+            "email": "user@example.test"
+          }
+        ],
+        [
+          "resolve",
+          "email-email-send",
+          {
+            "email": "user@example.test",
+            "id": "profile",
+            "auth": {
+              "email": {
+                "secret": "email-secret"
+              },
+              "phone": {
+                "secret": "phone-secret"
+              },
+              "username": {
+                "secret": "name-secret"
+              }
+            }
+          }
+        ],
+        [
+          "results",
+          {
+            "id": "profile",
+            "auth": {
+              "email": {},
+              "phone": {},
+              "username": {}
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "input": {},
+      "trace": [
+        [
+          "roles",
+          "auth.roles"
+        ],
+        [
+          "actions"
+        ],
+        [
+          "data"
+        ],
+        [
+          "signup",
+          {
+            "roles": [
+              "USER"
+            ]
+          }
+        ],
+        [
+          "results",
+          {
+            "id": "profile",
+            "auth": {
+              "email": {},
+              "phone": {},
+              "username": {}
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "input": {
+        "email": "",
+        "phone": "",
+        "roles": [
+          "OVERRIDE"
+        ]
+      },
+      "trace": [
+        [
+          "roles",
+          "auth.roles"
+        ],
+        [
+          "actions"
+        ],
+        [
+          "data"
+        ],
+        [
+          "signup",
+          {
+            "roles": [
+              "OVERRIDE"
+            ],
+            "email": ""
+          }
+        ],
+        [
+          "results",
+          {
+            "id": "profile",
+            "auth": {
+              "email": {},
+              "phone": {},
+              "username": {}
+            }
+          }
+        ]
+      ]
+    }
+  ],
+  "composite": [
+    "auth",
+    "email",
+    "session"
+  ]
+}

@@ -6159,6 +6159,8 @@ dependencies = [
  "ring",
  "serde",
  "serde_json",
+ "stackpress-lib",
+ "stackpress-server",
  "tokio",
  "url",
 ]
