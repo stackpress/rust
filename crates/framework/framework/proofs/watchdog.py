@@ -14,12 +14,19 @@ spec.loader.exec_module(consumer)
 child = subprocess.Popen([sys.executable, '-u', '-c',
     'import signal;signal.signal(signal.SIGTERM,signal.SIG_IGN);print("ready",flush=True);signal.pause()'],
     text=True, stdout=subprocess.PIPE, start_new_session=True)
-assert select.select([child.stdout], [], [], 5)[0]
-assert child.stdout.readline().strip() == 'ready'
 try:
-    consumer.bounded(child, .2)
-except consumer.WatchdogTimeout as failure:
-    assert failure.forced and child.returncode == -signal.SIGKILL
-else:
-    raise AssertionError('negative control completed without forced kill')
+    assert select.select([child.stdout], [], [], 5)[0]
+    assert child.stdout.readline().strip() == 'ready'
+    try:
+        consumer.bounded(child, .2)
+    except consumer.WatchdogTimeout as failure:
+        assert failure.forced and child.returncode == -signal.SIGKILL
+    else:
+        raise AssertionError('negative control completed without forced kill')
+finally:
+    # Even a failed readiness assertion must not leave the intentionally unresponsive child alive.
+    if child.poll() is None:
+        import os
+        os.killpg(child.pid, signal.SIGKILL)
+        child.wait(timeout=2)
 print('External consumer watchdog negative control: SIGKILL and reap passed.')

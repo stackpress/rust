@@ -1,0 +1,682 @@
+{
+  "inventory": [
+    {
+      "source": "src/plugin.ts:14\u201325",
+      "evidence": [
+        "crates/framework/framework/tests/cases/mod.rs#schema_priority_and_phase_publication_are_real",
+        "crates/framework/framework/tests/cases/catalog.rs#compiled_catalog_and_api_sql_prepare_real_ordered_phases_once",
+        "crates/framework/framework/consumers/support/native.rs"
+      ],
+      "limitations": []
+    },
+    {
+      "source": "src/index.ts",
+      "evidence": [
+        "src/lib.rs",
+        "crates/framework/framework/consumers/graphs.py"
+      ],
+      "limitations": [
+        "JS-MECHANICS"
+      ]
+    },
+    {
+      "source": "src/types.ts",
+      "evidence": [
+        "src/lib.rs",
+        "crates/framework/framework/consumers/graphs.py"
+      ],
+      "limitations": [
+        "JS-MECHANICS"
+      ]
+    },
+    {
+      "source": "src/client/index.ts; src/client/types.ts",
+      "evidence": [
+        "crates/framework/framework/tests/cases/catalog.rs#compiled_catalog_and_api_sql_prepare_real_ordered_phases_once",
+        "crates/framework/framework/tests/cases/mod.rs#schema_priority_and_phase_publication_are_real"
+      ],
+      "limitations": [
+        "JS-MECHANICS"
+      ]
+    },
+    {
+      "source": "src/api/{index,types}.ts",
+      "evidence": [
+        "crates/framework/framework/consumers/support/native.rs",
+        "crates/framework/framework-api/tests/oauth.rs",
+        "crates/framework/framework-api/tests/management.rs"
+      ],
+      "limitations": [
+        "JS-MECHANICS"
+      ]
+    },
+    {
+      "source": "src/language/{index,types}.ts",
+      "evidence": [
+        "crates/framework/framework/tests/cases/language.rs#locale_data_only_unknown_prefix_and_missing_section_modes",
+        "crates/framework/framework/tests/cases/language.rs#language_direct_helpers_and_falsy_configuration"
+      ],
+      "limitations": [
+        "JS-MECHANICS"
+      ]
+    },
+    {
+      "source": "src/lib/{index,types}.ts",
+      "evidence": [
+        "crates/lib/src/lib.rs",
+        "crates/lib/src/request.rs",
+        "crates/framework/framework/consumers/support/native.rs"
+      ],
+      "limitations": [
+        "JS-MECHANICS"
+      ]
+    },
+    {
+      "source": "src/schema/{index,types}.ts",
+      "evidence": [
+        "crates/framework/framework/tests/cases/codegen.rs#real_generation_and_provider_errors",
+        "crates/framework/framework/consumers/build-host/src/main.rs",
+        "crates/framework/framework-schema/src/lib.rs"
+      ],
+      "limitations": [
+        "JS-MECHANICS"
+      ]
+    },
+    {
+      "source": "src/server/{index,types}.ts",
+      "evidence": [
+        "crates/framework/framework/tests/cases/commands.rs#source_prior_status_modes_and_public_errors",
+        "crates/server/server/src/config.rs",
+        "crates/server/server/src/registration.rs"
+      ],
+      "limitations": [
+        "JS-MECHANICS"
+      ]
+    },
+    {
+      "source": "src/server/http.ts (export ./http)",
+      "evidence": [
+        "crates/server/server/tests/http_input.rs",
+        "crates/server/server/tests/http_output.rs",
+        "crates/server/http/tests/duplex.rs"
+      ],
+      "limitations": [
+        "JS-MECHANICS",
+        "LIVE-PROVIDERS"
+      ]
+    },
+    {
+      "source": "src/server/whatwg.ts (./whatwg)",
+      "evidence": [
+        "crates/framework/framework/tests/cases/commands.rs#source_prior_status_modes_and_public_errors",
+        "crates/server/server/src/config.rs",
+        "crates/server/server/src/registration.rs"
+      ],
+      "limitations": [
+        "JS-MECHANICS",
+        "S11-WHATWG"
+      ]
+    },
+    {
+      "source": "src/session/{index,types}.ts",
+      "evidence": [
+        "crates/framework/framework/consumers/support/native.rs",
+        "crates/framework/framework/proofs/session-browser.cjs",
+        "crates/framework/framework-session/tests/main.rs"
+      ],
+      "limitations": [
+        "JS-MECHANICS"
+      ]
+    },
+    {
+      "source": "src/sql/{index,types}.ts",
+      "evidence": [
+        "crates/framework/framework/tests/cases/sql.rs#real_sqlite_command_lifecycle_and_query",
+        "crates/sql/sql/src/table.rs",
+        "crates/framework/framework-api/tests/sql.rs"
+      ],
+      "limitations": [
+        "JS-MECHANICS"
+      ]
+    },
+    {
+      "source": "src/sql/{mysql,pgsql,sqlite}.ts",
+      "evidence": [
+        "crates/framework/framework/tests/cases/sql.rs#real_sqlite_command_lifecycle_and_query",
+        "crates/sql/sql-mysql/src/tests.rs",
+        "crates/sql/sql-postgres/src/lib.rs",
+        "crates/sql/sql-sqlite/src/tests/m2/ddl.rs"
+      ],
+      "limitations": [
+        "JS-MECHANICS",
+        "LIVE-PROVIDERS"
+      ]
+    },
+    {
+      "source": "src/sql/pglite.ts",
+      "evidence": [
+        "crates/framework/framework/tests/cases/sql.rs#real_sqlite_command_lifecycle_and_query",
+        "crates/sql/sql/src/table.rs",
+        "crates/framework/framework-api/tests/sql.rs"
+      ],
+      "limitations": [
+        "JS-MECHANICS",
+        "S11-PGLITE"
+      ]
+    },
+    {
+      "source": "src/view/{index,types}.ts",
+      "evidence": [
+        "crates/framework/framework/tests/cases/view.rs#source_render_props_status_and_skips",
+        "crates/framework/framework/proofs/session-browser.cjs",
+        "crates/framework/framework-api/tests/consent.rs"
+      ],
+      "limitations": [
+        "JS-MECHANICS"
+      ]
+    },
+    {
+      "source": "src/view/client.ts (./view/client)",
+      "evidence": [
+        "crates/framework/framework/tests/cases/view.rs#source_render_props_status_and_skips",
+        "crates/framework/framework/proofs/session-browser.cjs",
+        "crates/framework/framework-api/tests/consent.rs"
+      ],
+      "limitations": [
+        "JS-MECHANICS"
+      ]
+    },
+    {
+      "source": "src/events.ts; src/scripts.ts",
+      "evidence": [
+        "crates/framework/framework/tests/cases/commands.rs#source_prior_status_modes_and_public_errors",
+        "crates/framework/framework/tests/cases/sql.rs#real_sqlite_command_lifecycle_and_query",
+        "crates/framework/framework/tests/cases/codegen.rs#real_generation_and_provider_errors",
+        "crates/framework/framework/tests/fixtures/source-commands.json",
+        "crates/framework/framework/tests/fixtures/source-scripts.json"
+      ],
+      "limitations": [
+        "JS-MECHANICS"
+      ]
+    },
+    {
+      "source": "src/unocss.ts (./unocss)",
+      "evidence": [
+        "crates/framework/framework/consumers/graphs.py"
+      ],
+      "limitations": [
+        "JS-MECHANICS"
+      ]
+    },
+    {
+      "source": "reset.css; stackpress.css",
+      "evidence": [
+        "crates/framework/framework/consumers/graphs.py"
+      ],
+      "limitations": [
+        "JS-MECHANICS"
+      ]
+    },
+    {
+      "source": "stackpress.idea",
+      "evidence": [
+        "crates/framework/framework/tests/cases/codegen.rs#real_generation_and_provider_errors",
+        "examples/api-checkpoint/tool/src/main.rs",
+        "crates/framework/framework-api/schema.idea"
+      ],
+      "limitations": [
+        "API-BUILD-HOST"
+      ]
+    },
+    {
+      "source": "package.json",
+      "evidence": [
+        "Cargo.toml",
+        "crates/framework/framework/consumers/graphs.py"
+      ],
+      "limitations": [
+        "NODE-PACKAGING",
+        "JS-MECHANICS"
+      ]
+    },
+    {
+      "source": "tsconfig.json, tsconfig.{cjs,esm}.json; tsconfig/{cjs,esm}.json; tsconfig/assets.d.ts",
+      "evidence": [
+        "crates/framework/framework/consumers/graphs.py"
+      ],
+      "limitations": [
+        "JS-MECHANICS"
+      ]
+    },
+    {
+      "source": "README.md; LICENSE",
+      "evidence": [
+        "crates/framework/framework/proofs/coverage-map.json"
+      ],
+      "limitations": [
+        "SOURCE-LICENSE"
+      ]
+    }
+  ],
+  "commands": [
+    {
+      "source": "develop, serve",
+      "evidence": [
+        "crates/framework/framework/tests/cases/commands.rs#source_prior_status_modes_and_public_errors"
+      ],
+      "limitations": [
+        "NODE-PACKAGING"
+      ]
+    },
+    {
+      "source": "emit",
+      "evidence": [
+        "crates/framework/framework/tests/cases/commands.rs#emit_reuses_direct_events_and_surfaces_provider_errors"
+      ],
+      "limitations": []
+    },
+    {
+      "source": "generate",
+      "evidence": [
+        "crates/framework/framework/tests/cases/codegen.rs#real_generation_and_provider_errors"
+      ],
+      "limitations": [
+        "NODE-PACKAGING"
+      ]
+    },
+    {
+      "source": "install, migrate, purge, push, populate, uninstall, upgrade",
+      "evidence": [
+        "crates/framework/framework/tests/cases/commands.rs#source_prior_status_modes_and_public_errors",
+        "crates/framework/framework/tests/cases/sql.rs#real_sqlite_command_lifecycle_and_query",
+        "crates/framework/framework/tests/cases/codegen.rs#real_generation_and_provider_errors"
+      ],
+      "limitations": [
+        "LIVE-PROVIDERS",
+        "SQLITE-TRUNCATE"
+      ]
+    },
+    {
+      "source": "query",
+      "evidence": [
+        "crates/framework/framework/tests/cases/sql.rs#real_sqlite_command_lifecycle_and_query",
+        "crates/framework/framework/tests/fixtures/source-scripts.json"
+      ],
+      "limitations": []
+    }
+  ],
+  "export_families": [
+    {
+      "family": "api",
+      "evidence": [
+        "crates/framework/framework/consumers/support/native.rs",
+        "crates/framework/framework-api/tests/oauth.rs",
+        "crates/framework/framework-api/tests/management.rs"
+      ],
+      "limitations": [
+        "JS-MECHANICS"
+      ]
+    },
+    {
+      "family": "client",
+      "evidence": [
+        "crates/framework/framework/tests/cases/catalog.rs#compiled_catalog_and_api_sql_prepare_real_ordered_phases_once",
+        "crates/framework/framework/tests/cases/mod.rs#schema_priority_and_phase_publication_are_real"
+      ],
+      "limitations": [
+        "JS-MECHANICS"
+      ]
+    },
+    {
+      "family": "language",
+      "evidence": [
+        "crates/framework/framework/tests/cases/language.rs#locale_data_only_unknown_prefix_and_missing_section_modes",
+        "crates/framework/framework/tests/cases/language.rs#language_direct_helpers_and_falsy_configuration"
+      ],
+      "limitations": [
+        "JS-MECHANICS"
+      ]
+    },
+    {
+      "family": "lib",
+      "evidence": [
+        "crates/lib/src/lib.rs",
+        "crates/lib/src/request.rs",
+        "crates/framework/framework/consumers/support/native.rs"
+      ],
+      "limitations": [
+        "JS-MECHANICS"
+      ]
+    },
+    {
+      "family": "schema",
+      "evidence": [
+        "crates/framework/framework/tests/cases/codegen.rs#real_generation_and_provider_errors",
+        "crates/framework/framework/consumers/build-host/src/main.rs",
+        "crates/framework/framework-schema/src/lib.rs"
+      ],
+      "limitations": [
+        "JS-MECHANICS"
+      ]
+    },
+    {
+      "family": "server",
+      "evidence": [
+        "crates/framework/framework/tests/cases/commands.rs#source_prior_status_modes_and_public_errors",
+        "crates/server/server/src/config.rs",
+        "crates/server/server/src/registration.rs"
+      ],
+      "limitations": [
+        "JS-MECHANICS"
+      ]
+    },
+    {
+      "family": "session",
+      "evidence": [
+        "crates/framework/framework/consumers/support/native.rs",
+        "crates/framework/framework/proofs/session-browser.cjs",
+        "crates/framework/framework-session/tests/main.rs"
+      ],
+      "limitations": [
+        "JS-MECHANICS"
+      ]
+    },
+    {
+      "family": "sql",
+      "evidence": [
+        "crates/framework/framework/tests/cases/sql.rs#real_sqlite_command_lifecycle_and_query",
+        "crates/sql/sql/src/table.rs",
+        "crates/framework/framework-api/tests/sql.rs"
+      ],
+      "limitations": [
+        "JS-MECHANICS"
+      ]
+    },
+    {
+      "family": "view",
+      "evidence": [
+        "crates/framework/framework/tests/cases/view.rs#source_render_props_status_and_skips",
+        "crates/framework/framework/proofs/session-browser.cjs",
+        "crates/framework/framework-api/tests/consent.rs"
+      ],
+      "limitations": [
+        "JS-MECHANICS"
+      ]
+    },
+    {
+      "family": "events / scripts",
+      "evidence": [
+        "crates/framework/framework/tests/cases/commands.rs#source_prior_status_modes_and_public_errors",
+        "crates/framework/framework/tests/cases/sql.rs#real_sqlite_command_lifecycle_and_query",
+        "crates/framework/framework/tests/cases/codegen.rs#real_generation_and_provider_errors",
+        "crates/framework/framework/tests/fixtures/source-commands.json",
+        "crates/framework/framework/tests/fixtures/source-scripts.json"
+      ],
+      "limitations": [
+        "JS-MECHANICS"
+      ]
+    },
+    {
+      "family": "index / types",
+      "evidence": [
+        "src/lib.rs",
+        "crates/framework/framework/consumers/graphs.py"
+      ],
+      "limitations": [
+        "JS-MECHANICS"
+      ]
+    },
+    {
+      "family": "plugin",
+      "evidence": [
+        "crates/framework/framework/tests/cases/mod.rs#schema_priority_and_phase_publication_are_real",
+        "crates/framework/framework/tests/cases/catalog.rs#compiled_catalog_and_api_sql_prepare_real_ordered_phases_once",
+        "crates/framework/framework/consumers/support/native.rs"
+      ],
+      "limitations": []
+    },
+    {
+      "family": "unocss",
+      "evidence": [
+        "crates/framework/framework/consumers/graphs.py"
+      ],
+      "limitations": [
+        "JS-MECHANICS"
+      ]
+    }
+  ],
+  "risks": [
+    {
+      "id": "R01",
+      "evidence": [
+        "crates/framework/framework/tests/cases/mod.rs#schema_priority_and_phase_publication_are_real",
+        "crates/framework/framework/consumers/support/native.rs",
+        "crates/framework/framework/tests/fixtures/source-order.json"
+      ],
+      "limitations": []
+    },
+    {
+      "id": "R02",
+      "evidence": [
+        "crates/framework/framework/tests/cases/mod.rs#schema_priority_and_phase_publication_are_real",
+        "crates/framework/framework/tests/cases/catalog.rs#compiled_catalog_and_api_sql_prepare_real_ordered_phases_once",
+        "crates/framework/framework/tests/cases/catalog.rs#queued_account_registration_matches_source_listen_order",
+        "crates/framework/framework/consumers/support/native.rs"
+      ],
+      "limitations": []
+    },
+    {
+      "id": "R03",
+      "evidence": [
+        "crates/framework/framework/tests/cases/mod.rs#g42_all_matching_handlers_keep_priority_ties_and_abort",
+        "crates/framework/framework/tests/cases/closeout.rs#first_middle_last_abort_preserves_route_and_event_ties"
+      ],
+      "limitations": []
+    },
+    {
+      "id": "R04",
+      "evidence": [
+        "crates/framework/framework/tests/cases/catalog.rs#compiled_catalog_and_api_sql_prepare_real_ordered_phases_once",
+        "crates/framework/framework/tests/cases/catalog.rs#empty_catalog_is_present_and_repeated_registration_preserves_native_error",
+        "crates/framework/framework/tests/cases/closeout.rs#aggregate_plus_constituent_preserves_duplicate_error",
+        "crates/framework/framework/consumers/support/native.rs"
+      ],
+      "limitations": []
+    },
+    {
+      "id": "R05",
+      "evidence": [
+        "crates/framework/framework/tests/cases/mod.rs#absent_client_and_config_need_no_engine_or_startup_io",
+        "crates/framework/framework/tests/cases/mod.rs#no_global_guard_and_missing_versus_empty_access",
+        "crates/framework/framework/tests/cases/language.rs#locale_data_only_unknown_prefix_and_missing_section_modes",
+        "crates/framework/framework/tests/cases/view.rs#view_presence_and_development_route_hook",
+        "crates/framework/framework/consumers/headless/src/main.rs"
+      ],
+      "limitations": []
+    },
+    {
+      "id": "R06",
+      "evidence": [
+        "crates/framework/framework/tests/cases/mod.rs#no_global_guard_and_missing_versus_empty_access",
+        "crates/framework/framework/consumers/support/native.rs",
+        "crates/framework/framework-email/tests/cases/integration/mod.rs"
+      ],
+      "limitations": [
+        "EDGE-REPLAY"
+      ]
+    },
+    {
+      "id": "R07",
+      "evidence": [
+        "crates/framework/framework/tests/cases/mod.rs#schema_priority_and_phase_publication_are_real",
+        "crates/framework/framework/consumers/support/native.rs",
+        "crates/framework/framework-session/tests/main.rs"
+      ],
+      "limitations": [
+        "EDGE-REPLAY"
+      ]
+    },
+    {
+      "id": "R08",
+      "evidence": [
+        "crates/framework/framework/proofs/session-browser.cjs",
+        "crates/framework/framework-session/tests/main.rs",
+        "crates/framework/framework-api/tests/sql.rs",
+        "crates/framework/framework-api/tests/management.rs"
+      ],
+      "limitations": [
+        "EDGE-REPLAY",
+        "API-MATRIX"
+      ]
+    },
+    {
+      "id": "R09",
+      "evidence": [
+        "crates/framework/framework/tests/cases/catalog.rs#compiled_catalog_and_api_sql_prepare_real_ordered_phases_once",
+        "crates/framework/framework/tests/cases/catalog.rs#empty_catalog_is_present_and_repeated_registration_preserves_native_error",
+        "crates/framework/framework/tests/cases/mod.rs#absent_client_and_config_need_no_engine_or_startup_io",
+        "crates/framework/framework/tests/ui/catalog_borrow.rs"
+      ],
+      "limitations": [
+        "JS-MECHANICS"
+      ]
+    },
+    {
+      "id": "R10",
+      "evidence": [
+        "crates/framework/framework/consumers/graphs.py",
+        "crates/framework/framework/tests/ui/no_serialize.rs",
+        "crates/framework/framework/consumers/support/native.rs",
+        "crates/framework/framework/proofs/session-browser.cjs",
+        "crates/framework/framework/consumers/website/build.py"
+      ],
+      "limitations": []
+    },
+    {
+      "id": "R11",
+      "evidence": [
+        "crates/framework/framework/consumers/graphs.py",
+        "crates/framework/framework/tests/leaves.rs",
+        "crates/framework/framework/consumers/api-disabled/Cargo.toml",
+        "crates/framework/framework/consumers/disabled/Cargo.toml"
+      ],
+      "limitations": []
+    },
+    {
+      "id": "R12",
+      "evidence": [
+        "crates/framework/framework/consumers/support/native.rs",
+        "crates/framework/framework/tests/cases/catalog.rs#compiled_catalog_and_api_sql_prepare_real_ordered_phases_once",
+        "crates/framework/framework-admin/tests/pages.rs",
+        "crates/framework/framework-api/tests/management.rs"
+      ],
+      "limitations": [
+        "API-MATRIX"
+      ]
+    },
+    {
+      "id": "R13",
+      "evidence": [
+        "crates/framework/framework/tests/cases/mod.rs#command_provider_is_lazy_and_errors_are_not_success",
+        "crates/framework/framework/tests/cases/sql.rs#revision_operations_stay_lazy_and_direct_scripts_remain_independent",
+        "crates/framework/framework/tests/cases/sql.rs#real_sqlite_command_lifecycle_and_query",
+        "crates/framework/framework/consumers/support/native.rs"
+      ],
+      "limitations": []
+    },
+    {
+      "id": "R14",
+      "evidence": [
+        "crates/framework/framework/tests/cases/language.rs#locale_prefix_nested_dispatch_keeps_owned_reader_and_source_no_abort",
+        "crates/framework/framework/tests/cases/closeout.rs#concurrent_locale_dispatches_keep_request_and_response_state",
+        "crates/framework/framework/tests/cases/language.rs#locale_data_only_unknown_prefix_and_missing_section_modes",
+        "crates/framework/framework/tests/ui/request_clone.rs"
+      ],
+      "limitations": []
+    },
+    {
+      "id": "R15",
+      "evidence": [
+        "crates/framework/framework/tests/cases/commands.rs#source_prior_status_modes_and_public_errors",
+        "crates/framework/framework/tests/cases/sql.rs#real_sqlite_command_lifecycle_and_query",
+        "crates/framework/framework/tests/cases/commands.rs#native_options_and_generation_precedence",
+        "crates/framework/framework/tests/cases/commands.rs#emit_reuses_direct_events_and_surfaces_provider_errors",
+        "crates/framework/framework/tests/fixtures/source-scripts.json"
+      ],
+      "limitations": [
+        "NODE-PACKAGING",
+        "LIVE-PROVIDERS",
+        "SQLITE-TRUNCATE"
+      ]
+    },
+    {
+      "id": "R16",
+      "evidence": [
+        "crates/framework/framework/tests/cases/ownership.rs#suspended_provider_cancellation_reentrant_config_and_nested_dispatch",
+        "crates/framework/framework/tests/cases/view.rs#packaging_shutdown_reaps_suspended_task_and_live_drain",
+        "crates/framework/framework/tests/ui/non_send_command.rs",
+        "crates/framework/framework/proofs/watchdog.py"
+      ],
+      "limitations": []
+    },
+    {
+      "id": "R17",
+      "evidence": [
+        "crates/framework/framework/tests/cases/codegen.rs#real_generation_and_provider_errors",
+        "crates/framework/framework/consumers/build-host/src/main.rs",
+        "crates/framework/framework/consumers/run.py",
+        "crates/framework/framework/consumers/graphs.py"
+      ],
+      "limitations": [
+        "API-BUILD-HOST"
+      ]
+    },
+    {
+      "id": "R18",
+      "evidence": [
+        "crates/framework/framework/consumers/graphs.py",
+        "crates/framework/framework/consumers/headless/src/main.rs",
+        "crates/framework/framework/consumers/support/native.rs"
+      ],
+      "limitations": []
+    },
+    {
+      "id": "R19",
+      "evidence": [
+        "crates/framework/framework/proofs/session-browser.cjs",
+        "crates/framework/framework/proofs/browser.cjs",
+        "crates/framework/framework/consumers/graphs.py",
+        "crates/framework/framework-api/tests/consent.rs"
+      ],
+      "limitations": [
+        "API-MATRIX"
+      ]
+    },
+    {
+      "id": "R20",
+      "evidence": [
+        "crates/framework/framework/proofs/coverage-map.json"
+      ],
+      "limitations": [
+        "S11-PGLITE",
+        "S11-WHATWG",
+        "LIVE-PROVIDERS",
+        "NODE-PACKAGING",
+        "INSTALLED-TAURI"
+      ]
+    }
+  ],
+  "limitations": {
+    "S11-PGLITE": "No PGlite runtime/connector/dummy feature. PostgreSQL SQL vocabulary does not establish an embedded JS execution host.",
+    "S11-WHATWG": "No JS/serverless Request/Response/ReadableStream host bridge. Native Request/Response and adapters are the accepted replacement.",
+    "JS-MECHANICS": "Flat JS aliases, dynamic imports/classes/callable objects, Node streams/reflection, TS compiler/CJS/ESM/React/Vite/UnoCSS/reset APIs are intentionally not duplicated. Qualified Rust owners and explicit app bindings are used.",
+    "NODE-PACKAGING": "No npm package.json writer. Optional supervised non-awaited app callback preserves build.ts:21 timing; bundler/watch/TTY/listener/FS integration is application-owned.",
+    "LIVE-PROVIDERS": "No live SMTP/SES/sendmail/network, MySQL/PostgreSQL connection, remote acknowledgement or listener proof. SQLite and JSON mail are real finite boundaries.",
+    "INSTALLED-TAURI": "No installed desktop/mobile/Tauri acceptance. Native/WASM compile and Chromium execution are separate evidence.",
+    "API-MATRIX": "The existing 13-case/mode API checkpoint matrix includes generated Application/Profile/Session management, native-form navigation, persisted consent/token exchange and cancellable relation fetch through its separate stdio host. Its host hard-codes direct registrars and has no injected aggregate seam; the aggregate website has generated Note admin plus a static session seed. Full replay would require a second app transport/generated-management fixture. Current API native/SSR suites run in the compatible workspace; API browser features compile, but those 26 end-to-end cases are not claimed through aggregate.",
+    "API-BUILD-HOST": "Aggregate generation/freshness is executed with Note; the existing API checkpoint tool demonstrates real built-in API/session schema composition. Complete API client regeneration through the new aggregate build-host consumer is not replayed here.",
+    "EDGE-REPLAY": "Seven accepted source questions remain pinned by owning-crate tests/source. Not every such edge is reinvoked under aggregate registration; aggregate adds no replacement implementation. Session matrix does replay actual account loaders/exports and real email event.",
+    "SOURCE-LICENSE": "MIT package metadata vs Apache LICENSE/README remains an owner question. No original source asset is copied/distributed by this effort.",
+    "SQLITE-TRUNCATE": "Upstream Sqlite.js:404\u2013408 emits rejected TRUNCATE \u2026 CASCADE; Rust aggregate reuses the accepted stackpress-sql SQLite DELETE mapping. This is an accepted lower-crate divergence, pending owner direction."
+  }
+}
