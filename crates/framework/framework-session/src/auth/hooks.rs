@@ -102,10 +102,8 @@ impl State {
             && let Some(server) = host.upgrade()
         {
             self.tasks.spawn_on(runtime, async move {
-                let mut req = stackpress_lib::Request::new();
-                for (key, value) in data {
-                    super::bridge::set(&mut req, &key, value)?;
-                }
+                // Convert inside the owned job, preserving asynchronous failure reporting.
+                let mut req = super::bridge::request(data)?;
                 let mut res = stackpress_lib::Response::new();
                 server.emit(event, &mut req, &mut res).await?;
                 Ok(()) as EmailResult<()>

@@ -49,10 +49,7 @@ async fn resolve_into(
     data: Record,
     res: &mut Response,
 ) -> Result<()> {
-    let mut req = Request::new();
-    for (key, value) in data {
-        b::set(&mut req, &key, value)?;
-    }
+    let mut req = b::request(data)?;
     inv.emit(event, &mut req, res).await?;
     Ok(())
 }

@@ -17,7 +17,20 @@ pub fn account_back_header(title: &str, back: Option<String>, glyph: Option<&str
 /// Root-local theme action reuses the shared theme context; no implicit cookie/storage policy.
 pub(super) fn theme_toggle() -> AnyView {
     let theme = stackpress_leptos::state::use_theme().ok();
-    view!{<button type="button" class="session-icon-button" aria-label="Toggle theme" on:click=move |_|{if let Some(theme)=theme {theme.toggle();}}>{move || icon(if theme.is_some_and(|theme|theme.get()==stackpress_leptos::state::Theme::Dark){"moon"}else{"sun"})}</button>}.into_any()
+    // A direct form may have no theme provider; its button remains a harmless local control.
+    view! {
+        <button type="button" class="session-icon-button" aria-label="Toggle theme"
+            on:click=move |_| {
+                if let Some(theme) = theme {
+                    theme.toggle();
+                }
+            }>
+            {move || icon(if theme.is_some_and(|theme| {
+                theme.get() == stackpress_leptos::state::Theme::Dark
+            }) { "moon" } else { "sun" })}
+        </button>
+    }
+    .into_any()
 }
 /// Source field binding with explicit label/help/error associations.
 pub(super) fn field(
@@ -59,13 +72,33 @@ pub(super) fn input_field(
     let kind = kind.to_owned();
     let target = id.clone();
     let invalid = !error.is_empty();
-    view!{<div class="session-field"><label for=id.clone()>{super::view_phrase(label)}</label><div class="session-input-row">
-        <input id=id name=name.to_owned() type=move ||if password&&shown.get(){"text".to_owned()}else{kind.clone()}
-            required=required readonly=readonly value=move ||value.get() prop:value=move ||value.get()
-            autocomplete=if password{"off"}else{"on"} aria-invalid=invalid.to_string() aria-describedby=error_id.clone()
-            maxlength=if name=="code"{Some(6)}else{None} on:input=move |event|value.set(event_target_value(&event))/>
-        {password.then(||view!{<button type="button" class="session-icon-button" aria-controls=target aria-label=move ||if shown.get(){"Hide password"}else{"Show password"} aria-pressed=move ||shown.get().to_string() on:click=move |_|shown.update(|shown| *shown = !*shown)>{move ||icon(if shown.get(){"eye-off"}else{"eye"})}</button>})}
-        </div><p class="session-field-error" id=error_id role="alert">{error}</p></div>}.into_any()
+    // The same signal supplies the SSR value attribute and the live DOM property.
+    // Revealing a password changes its type without replacing its submitted value.
+    view! {
+        <div class="session-field">
+            <label for=id.clone()>{super::view_phrase(label)}</label>
+            <div class="session-input-row">
+                <input id=id name=name.to_owned()
+                    type=move || if password && shown.get() { "text".to_owned() } else { kind.clone() }
+                    required=required readonly=readonly
+                    value=move || value.get() prop:value=move || value.get()
+                    autocomplete=if password { "off" } else { "on" }
+                    aria-invalid=invalid.to_string() aria-describedby=error_id.clone()
+                    maxlength=if name == "code" { Some(6) } else { None }
+                    on:input=move |event| value.set(event_target_value(&event))/>
+                {password.then(|| view! {
+                    <button type="button" class="session-icon-button" aria-controls=target
+                        aria-label=move || if shown.get() { "Hide password" } else { "Show password" }
+                        aria-pressed=move || shown.get().to_string()
+                        on:click=move |_| shown.update(|shown| *shown = !*shown)>
+                        {move || icon(if shown.get() { "eye-off" } else { "eye" })}
+                    </button>
+                })}
+            </div>
+            <p class="session-field-error" id=error_id role="alert">{error}</p>
+        </div>
+    }
+    .into_any()
 }
 /// Submit control keeps source text and native keyboard activation.
 pub(super) fn submit(label: &str, danger: bool) -> AnyView {
@@ -74,10 +107,20 @@ pub(super) fn submit(label: &str, danger: bool) -> AnyView {
 /// Source weighted strength feedback, updated from the same password signal as the input.
 pub fn password_strength(secret: RwSignal<String>, rules: PasswordRules) -> AnyView {
     let checks = password_checklist(&rules);
-    view!{<div class="session-strength" aria-live="polite">{move ||{
-        let value=secret.get();let result=evaluate_password(&value,&checks);
-        (!value.is_empty()).then(||view!{<progress max="100" value=result.score aria-label="Password strength"></progress><ul>{result.failed.into_iter().map(|(_,label)|view!{<li>{icon("x")}{super::view_phrase(&label)}</li>}).collect_view()}</ul>})
-    }}</div>}.into_any()
+    // Re-evaluate the existing checklist on input; an empty password keeps feedback hidden.
+    view! {
+        <div class="session-strength" aria-live="polite">{move || {
+            let value = secret.get();
+            let result = evaluate_password(&value, &checks);
+            (!value.is_empty()).then(|| view! {
+                <progress max="100" value=result.score aria-label="Password strength"></progress>
+                <ul>{result.failed.into_iter().map(|(_, label)| view! {
+                    <li>{icon("x")}{super::view_phrase(&label)}</li>
+                }).collect_view()}</ul>
+            })
+        }}</div>
+    }
+    .into_any()
 }
 
 /// Source copy-on-click secret field plus a named keyboard-operable copy button.

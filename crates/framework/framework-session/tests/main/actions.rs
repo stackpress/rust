@@ -32,6 +32,30 @@ fn record(value: JsonValue) -> Record {
     serde_json::from_value(value).unwrap()
 }
 
+/// Only equality's literal -1 bypasses active filtering; other operators keep their codec.
+#[tokio::test]
+async fn active_override_keeps_non_equality_predicates() {
+    let (_dir, engine, profile, _) = database().await;
+    for (id, active) in [("enabled", true), ("disabled", false)] {
+        profile
+            .create(&record(json!({"id":id,"name":id,"active":active})))
+            .await
+            .unwrap();
+    }
+    // Missing eq.active supplies active=true; equality's -1 removes that default.
+    assert_eq!(profile.count(&StoreQuery::default()).await.unwrap(), 1);
+    let mut query = StoreQuery::default().all();
+    assert_eq!(profile.count(&query).await.unwrap(), 2);
+    // ne.active=-1 still means active != true after source Boolean serialization.
+    query.ne.insert("active".into(), (-1).into());
+    let rows = profile.find_all(&query).await.unwrap();
+    assert_eq!(rows.len(), 1);
+    assert_eq!(rows[0]["id"], "disabled");
+    query.eq.clear();
+    assert_eq!(profile.count(&query).await.unwrap(), 0);
+    engine.close().await.unwrap();
+}
+
 #[tokio::test]
 async fn profile_crud_projection_active_and_original_update_return() {
     let (_dir, engine, profile, _) = database().await;
