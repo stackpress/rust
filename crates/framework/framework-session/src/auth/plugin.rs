@@ -84,5 +84,7 @@ async fn routes(start: &mut StartupContext) -> Result<Flow> {
     start.post(&format!("{base}/signin/otp/:auth/:challenge"), pages::otp)?;
     start.post(&format!("{base}/signin/phone"), pages::phone)?;
     start.post(&format!("{base}/signin/username"), pages::username)?;
+    #[cfg(feature = "leptos-ssr")]
+    crate::presentation::auth_routes(start, &base)?;
     Ok(Flow::Continue)
 }

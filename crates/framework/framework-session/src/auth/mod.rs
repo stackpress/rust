@@ -10,7 +10,7 @@ pub use config::{
     AuthConfig, AuthEmailConfig, AuthMenuConfig, AuthSection, Environment, RandomFraction,
 };
 #[cfg(feature = "auth-server")]
-mod bridge;
+pub(crate) mod bridge;
 #[cfg(feature = "auth-server")]
 pub mod events;
 #[cfg(feature = "auth-server")]

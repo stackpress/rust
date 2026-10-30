@@ -31,3 +31,15 @@ pub mod plugin;
 pub mod profile;
 #[cfg(all(feature = "sql", not(target_arch = "wasm32")))]
 pub mod storage;
+
+/// Source account processes and explicit SQL event adapters; no implicit global policy.
+#[cfg(all(feature = "auth-server", not(target_arch = "wasm32")))]
+pub mod account;
+
+/// Portable source-shaped page data and Leptos forms; no native resources cross this boundary.
+#[cfg(feature = "leptos")]
+pub mod views;
+
+/// Optional native view registration/projection, separate from browser-only forms.
+#[cfg(all(feature = "leptos-ssr", not(target_arch = "wasm32")))]
+pub mod presentation;

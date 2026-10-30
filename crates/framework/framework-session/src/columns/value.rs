@@ -1,6 +1,7 @@
 //! Source native values distinguish Date from arbitrary JSON without reserving object keys.
 use serde::{Deserialize, Serialize, Serializer};
-use std::{collections::BTreeMap, fmt, ops::Index};
+use stackpress_lib::DataMap;
+use std::{fmt, ops::Index};
 
 /// A finite source value. JSON decoding never guesses that a string/object is a Date.
 #[derive(Clone, Debug, PartialEq, Deserialize)]
@@ -25,7 +26,7 @@ pub enum Value {
     /// Source list, which may contain native Dates.
     Array(Vec<Value>),
     /// Arbitrary object; no key spelling has a hidden native meaning.
-    Object(BTreeMap<String, Value>),
+    Object(DataMap<String, Value>),
 }
 impl Serialize for Value {
     /// Match JSON.stringify: native Dates become UTC ISO text; ordinary objects stay objects.
@@ -61,7 +62,7 @@ impl Value {
         }
     }
     /// Borrow an ordinary object, without treating a native Date as a plain object.
-    pub fn as_object(&self) -> Option<&BTreeMap<String, Self>> {
+    pub fn as_object(&self) -> Option<&DataMap<String, Self>> {
         if let Self::Object(value) = self {
             Some(value)
         } else {
@@ -69,7 +70,7 @@ impl Value {
         }
     }
     /// Exclusively borrow an ordinary object for source projection nesting.
-    pub fn as_object_mut(&mut self) -> Option<&mut BTreeMap<String, Self>> {
+    pub fn as_object_mut(&mut self) -> Option<&mut DataMap<String, Self>> {
         if let Self::Object(value) = self {
             Some(value)
         } else {

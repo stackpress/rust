@@ -1,5 +1,5 @@
-//! Real Lane A M2 registrars, SQL actions and auth processes join CSRF/email/SSR.
-//! Account views remain Lane A M3; only this test's explicit public projection renders.
+//! Real session registrars, SQL actions and auth processes join CSRF/email/SSR.
+//! Cargo may select native session views; otherwise this test's public projection renders.
 
 mod rendering;
 mod signup;
@@ -298,7 +298,13 @@ async fn source_page_csrf_email_render_and_error_boundaries() {
                 .load(std::sync::atomic::Ordering::SeqCst),
             0
         );
-        let rendered = state
+        // The native -100 route view renders before the response-only fixture callback.
+        let native = rendering::native_view(&server);
+        let rendered = matches!(
+            res.body(),
+            stackpress_lib::Body::Text(html) if html.contains("id=\"stackpress-page\">")
+        );
+        let fixture_rendered = state
             .trace
             .lock()
             .unwrap()
@@ -306,13 +312,18 @@ async fn source_page_csrf_email_render_and_error_boundaries() {
             .any(|step| step == "render");
         assert_eq!(
             rendered,
-            matches!(
-                case["name"].as_str(),
-                Some("guest-get" | "invalid-csrf" | "password-status")
-            ),
+            if native {
+                case["redirect"].is_null()
+            } else {
+                matches!(
+                    case["name"].as_str(),
+                    Some("guest-get" | "invalid-csrf" | "password-status")
+                )
+            },
             "{}",
             case["name"]
         );
+        assert_eq!(fixture_rendered, rendered && !native, "{}", case["name"]);
         if res.data().has("csrf") {
             let token = res.data().path_as::<String>("csrf.token").unwrap().unwrap();
             assert_eq!(token.len(), 64);
@@ -322,7 +333,7 @@ async fn source_page_csrf_email_render_and_error_boundaries() {
                 Some(token.as_str())
             );
             if matches!(res.body(), stackpress_lib::Body::Text(_)) {
-                rendering::assert_form(&res, &token);
+                rendering::assert_page(&res, &token, case, native);
             }
         }
         if case["mode"] == "pass" && case["valid"] != false {

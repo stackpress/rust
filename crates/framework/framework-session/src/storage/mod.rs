@@ -94,3 +94,6 @@ impl From<stackpress_framework_schema::SchemaError> for ActionError {
         Self::native(cause)
     }
 }
+
+#[cfg(feature = "auth-server")]
+pub(crate) use account::password_error;

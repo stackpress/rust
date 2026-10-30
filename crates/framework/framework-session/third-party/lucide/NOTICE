@@ -1,0 +1,22 @@
+Pinned Lucide 1.62.0, commit 03f11e2d6adc319ea21e9a1d5820a99cd3767257.
+Source: https://raw.githubusercontent.com/lucide-icons/lucide/03f11e2d6adc319ea21e9a1d5820a99cd3767257/icons/
+Unmodified masters; 16px inline controls and 24px headers.
+Decorative geometry; accessible names belong to controls.
+{
+  "user": "eae3b3b2400031ddd5ec869327d127a96014e5f63aa6e06658dd5d4e90661aa8",
+  "lock": "d2cfe60cac8deaef36442b5c8218c1e61abe18222784b2a370ea090d13fca840",
+  "mail": "3236a51d5b8ce9b0528cf2e6ad07e527bd636dded6f5a9d656072052b99caea8",
+  "phone": "bd59dd10667cbe410a69e2fbbf4d9645d08abe862c8d89082bd4f533957859a8",
+  "key-round": "f8cdea843754ed360e36b04bf6aa2c2b3610935dd39ffc685a36c4d0a05be248",
+  "link": "4f3237183dcaabfac92f4e94c776a9a9e45c3c5e77a921061a6b34b61eb5413f",
+  "chevron-left": "83b0681aa38bf55e9d52a1e4b4cced624abe1fe7678ecafda133a574f1161d93",
+  "chevron-right": "2758143d7b2434e4aa7307dfd34405c87909ff4052f21b5f3f40d45224b4f19b",
+  "sun": "a3955c8b0425fcc5c9ba12d2bdd77fe53b2cd5dd05e7742a56f342e996fb2ef8",
+  "moon": "205b959e940d5841f0ce1d09c933153da9d9c94130a54d5cc0c68c2af1d403da",
+  "eye": "5bf90197dd7629cad64a2e48d1186a71559deb6121207d10e3dc5b19ebaffdcf",
+  "eye-off": "774bcd975c5de781a4ee778c76e5591bcdeb409955f7054847e7e6003da0a520",
+  "download": "3daeee13ded5a3afa2198b1bb4e2262d163922f97d96ac6ff9953e8ed4fe039d",
+  "triangle-alert": "4866f38b8560d410f21e3226413e0b77997b6dfbb6931fadfe0a0d5aef9ffeb4",
+  "pencil": "7e1ca7a6f5c1eb949671df762f2baadd32f5bd841d43153c3a15279af7d78d0c",
+  "x": "4a9cdab38fbb96162e7dace28e33f4ca0e49d8963a6162abc3d4691b7d675117"
+}

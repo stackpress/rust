@@ -1,9 +1,10 @@
-# Session identity, Auth/Profile primitives and auth processes (M2)
+# Session identity, Auth/Profile primitives and account processes and views (M3)
 
 This milestone implements the original JWT Session mechanism and complete direct
 Auth/Profile data primitives. `auth-server` adds reusable auth events and native
-signup/signin/password/OTP/link/2FA processes. Account presentation and Leptos views
-remain behind M3; the full source composite is integrated at M4. Nothing opens a database, starts a
+signup/signin/password/OTP/link/2FA and account processes. Select `leptos-ssr`,
+`leptos-hydrate` or `leptos-csr` separately for the shared views. The full source
+composite is integrated at M4. Nothing opens a database, starts a
 listener or installs tables automatically.
 
 Default features expose configuration and permission types. `native` enables the owned
@@ -71,7 +72,7 @@ Auth/Application/Session relation metadata. `AuthSchema` lives under `auth`. Bot
 to `columns::RecordSchema`, exposing source-order `columns`, `column`, `defaults`,
 `defaults_at`, `assert`, `filter`, `populate`, `serialize` and `unserialize`.
 Descriptors describe data shape; the native source schema's codecs/assertions remain
-responsible for source coercion and UTF-16 string bounds. Presentation roles follow in M3.
+responsible for source coercion and UTF-16 string bounds. Shared presentation now lives under `views`, with native projection under `presentation`.
 
 Select `sql` for `profile::{ProfileStore, ProfileActions}` and
 `auth::{AuthStore, AuthActions}`. These also live under `storage`. Constructors retain an
@@ -80,3 +81,6 @@ existing SQL crates; a session crate does not create another pool or ORM. Direct
 options use seed `""`; `AuthActions::make` applies the source `database.seed` fallback `abc123` after the host
 resolves its engine/config at invocation time.
 See [direct storage reference](docs/storage.md) for examples and observable source edges.
+
+See [account processes and shared views](docs/account.md) for all account routes,
+ordered records, source write behavior and the listener-free finite SQLite host.
