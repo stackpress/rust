@@ -81,7 +81,7 @@ pub(super) async fn response(
     let code = res.status().map_or(200, |status| status.code);
     let snapshot = PageSnapshot {
         revision: 1,
-        build: "slice9b-m3".into(),
+        build: "slice9b-m4".into(),
         page: PageId::try_from("signin-email".to_owned()).unwrap(),
         location: "/auth/signin/email".into(),
         locale: "en".into(),
@@ -89,13 +89,13 @@ pub(super) async fn response(
         status: PublicStatus::new(code, res.error().map(str::to_owned)).unwrap(),
         data,
     };
-    let mut contract = PageContract::new(1, "slice9b-m3").unwrap();
+    let mut contract = PageContract::new(1, "slice9b-m4").unwrap();
     contract.theme = Some("light".into());
     let renderer = LeptosRenderer::new(
         contract,
         PageAssets {
             theme_bootstrap: None,
-            build: "slice9b-m3".into(),
+            build: "slice9b-m4".into(),
             base: BasePath::default(),
             module: PublicLocation::new("/assets/fixture.js").unwrap(),
             stylesheet: None,
@@ -139,13 +139,13 @@ pub(super) fn assert_form(res: &Response, token: &str) {
 #[tokio::test]
 async fn public_form_projection_escapes_input_and_excludes_native_provider_resources() {
     let case = super::vectors()["cases"][0].clone();
-    let (server,_)=super::host(case.clone(),Some(serde_json::json!({"host":"relay.example.test","auth":{"pass":"SMTP_PRIVATE_SENTINEL"}}))).await;
+    let (server,state)=super::host(case.clone(),Some(serde_json::json!({"host":"relay.example.test","auth":{"pass":"SMTP_PRIVATE_SENTINEL"}}))).await;
     let mut req = super::request(&case);
     let input = "\"><script>untrusted()</script>&";
     req.data.set("email", input).unwrap();
     let mut res = Response::new();
     server
-        .handle("finite-page", &mut req, &mut res)
+        .handle("GET /auth/signin/email", &mut req, &mut res)
         .await
         .unwrap();
     let Body::Text(html) = res.body() else {
@@ -164,4 +164,5 @@ async fn public_form_projection_escapes_input_and_excludes_native_provider_resou
     let decoded: PageSnapshot<Form> = serde_json::from_str(seed).unwrap();
     assert_eq!(decoded.data.email, input);
     assert!(!seed.contains('<'));
+    state.engine.close().await.unwrap();
 }
