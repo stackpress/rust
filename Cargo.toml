@@ -19,6 +19,7 @@ members = [
     "examples/data-quickstart",
     "examples/ui-format",
     "crates/framework/framework-admin",
+    "crates/framework/framework-session",
     "examples/generated-admin/tool", "examples/generated-admin/shared",
     "examples/generated-admin/client", "examples/generated-admin/web",
 ]
