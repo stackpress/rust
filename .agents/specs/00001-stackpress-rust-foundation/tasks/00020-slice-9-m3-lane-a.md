@@ -185,3 +185,23 @@ Three review rounds covered branch/escaping logic (package tests), responsibilit
 All workspace nextest commands exclude tcp_watchdog; the six-feature run selects all email tests in the workspace graph. The initial default-parallelism failure was the existing 80–300 ms elapsed-time assertion at `crates/server/http/tests/m1.rs:492`; no HTTP source/test was edited. The final full run retains every selected test, with `--test-threads 2` limiting interference. Full features are session/leptos-ssr, csrf/server, email/server, api/sql, api/codegen, session/auth-server and schema/providers (full Cargo package prefixes in recorded commands).
 
 Warm `target/slice9a`, sccache, two build jobs and nonincremental compilation were retained for headroom. Incremental-only cleanup freed zero bytes (`20261030T101639.875385Z-57b079cdc60b`); owned session/email package cleanup freed 627.4 MiB while retaining dependencies (`20261030T101719.359067Z-dd8cda64f2a7`). The first six-feature build hit the old 15.4 GiB guard (`20261030T102227.435826Z-3b9875295dd6`; size inventory `20261030T102506.071966Z-84e3ddd5f938`). Coordinator then raised the cap from **16 to 20 GiB**, guard **15.4 to 19.4 GiB**, updated in `/private/tmp/slice9a/run.py`. Resumed checks peaked at **16.503 GiB**; no further cleanup or dependency-artifact removal occurred. Cargo.lock/external tuples remain unchanged. No commits or listeners; stop for coordinator verification.
+
+## Coordinator verification
+
+Committed as `2aea10d`; trial/3 was merged into the branch at `085fea5` and `7b4995b` (Lane B rounds, API M3), then again at `e95bd0d` (Lane B docs), all clean. The only external tuple added is the approved `qrcode 0.14.1`; every other existing external tuple is unchanged, and all email-consumer and API-checkpoint locks are subsets of the workspace lock.
+
+The first combined-tree gate exposed two cross-crate integration points, both fixed by the implementer at my direction and committed as `177cf12`:
+- Record→DataMap: three deprecated `IndexMap::remove` calls in framework-api/tests/sql.rs became `shift_remove`. A workspace search found no others.
+- Two framework-email integration tests assumed the fixture renderer. With session/leptos-ssr unified, the real source view renders first. Diagnosis confirmed the source behaviour: the email input is unbound upstream and the guest GET renders before the fixture. The tests now check both renderer contracts and keep the escaping, private-sentinel and source-process assertions; the seed is additionally asserted to contain no `<`.
+
+Final gate on the combined tree (`sccache`, non-incremental, empty target), recorded as `s9am3-verify2 gate *`. All passed:
+- fmt; workspace Clippy `-D warnings` and Rustdoc `-D warnings` with session/leptos-ssr, csrf/server, email/server, api/sql, api/codegen, session/auth-server and schema/providers.
+- `cargo nextest run --workspace --all-targets` with no exclusions: default 925 passed; with the seven features (two test threads) 952 passed. Both include `tcp_watchdog`.
+- Workspace doctests with the seven features: 963 passed.
+- API compatibility: framework-api `sql,codegen` check, Clippy `-D warnings` and 81 tests passed.
+- framework-session `--no-default-features` checks for native, sql, server, leptos and auth-server, plus sql-only Clippy `-D warnings`.
+- wasm32 checks for leptos-hydrate and leptos-csr. The hydrate normal graph contains none of ring, jsonwebtoken, aes, cbc, sha3, server, SQL, CSRF, email, lettre, qrcode or png.
+- Coverage: framework-session with `leptos-ssr` 91.47% lines.
+- No tracked file was left dirty by the gate.
+
+An earlier implementer full-feature run saw one `m1_watchdog` 80–300 ms timing failure under concurrent load; it passed in isolation and in every later full run. Merged into trial/3 on 2026-10-30; Lane A M4 may be released.
