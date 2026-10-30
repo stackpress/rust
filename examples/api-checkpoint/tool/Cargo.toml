@@ -10,10 +10,15 @@ publish = false
 [dependencies]
 stackpress-lib = { path = "../../../crates/lib" }
 stackpress-server = { path = "../../../crates/server/server" }
-stackpress-framework-api = { path = "../../../crates/framework/framework-api", features = ["sql", "codegen"] }
+stackpress-framework-api = { path = "../../../crates/framework/framework-api", features = ["sql", "codegen", "ui"] }
 stackpress-framework-schema = { path = "../../../crates/framework/framework-schema", features = ["codegen", "providers"] }
-stackpress-framework-sql = { path = "../../../crates/framework/framework-sql", features = ["codegen"] }
+stackpress-framework-sql = { path = "../../../crates/framework/framework-sql", features = ["codegen", "server"] }
 stackpress-idea-transformer = { path = "../../../crates/idea/idea-transformer" }
 stackpress-sql = { path = "../../../crates/sql/sql" }
 serde = { version = "=1.0.229", features = ["derive"] }
 serde_json = "=1.0.154"
+
+stackpress-framework-admin = { path = "../../../crates/framework/framework-admin", features = ["codegen", "format"] }
+leptos = { version = "=0.8.22", default-features = false }
+
+stackpress-leptos = { path = "../../../crates/leptos", features = ["format"] }

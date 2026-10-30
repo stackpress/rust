@@ -9,7 +9,18 @@ publish = false
 
 [dependencies]
 stackpress-lib = { path = "../../../crates/lib" }
-stackpress-server = { path = "../../../crates/server/server" }
-stackpress-framework-api = { path = "../../../crates/framework/framework-api", features = ["sql"] }
+stackpress-server = { path = "../../../crates/server/server", features = ["http"] }
+stackpress-framework-api = { path = "../../../crates/framework/framework-api", features = ["sql", "ui-ssr"] }
 stackpress-framework-session = { path = "../../../crates/framework/framework-session", features = ["server"] }
 stackpress-sql = { path = "../../../crates/sql/sql" }
+
+stackpress-framework-admin = { path = "../../../crates/framework/framework-admin", features = ["ssr", "format"] }
+stackpress-framework-schema = { path = "../../../crates/framework/framework-schema" }
+stackpress-framework-view = { path = "../../../crates/framework/framework-view", features = ["preferences"] }
+stackpress-leptos = { path = "../../../crates/leptos", features = ["ssr", "format"] }
+stackpress-sql-sqlite = { path = "../../../crates/sql/sql-sqlite" }
+leptos = { version = "=0.8.22", default-features = false, features = ["ssr"] }
+serde = { version = "=1.0.229", features = ["derive"] }
+serde_json = "=1.0.154"
+http = "=1.5.0"
+tokio = { version = "=1.54.1", features = ["macros", "rt-multi-thread"] }
