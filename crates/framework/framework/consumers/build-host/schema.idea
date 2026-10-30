@@ -1,0 +1,8 @@
+plugin "framework-schema" {}
+plugin "framework-sql" {}
+plugin "framework-admin" {}
+
+model Note @query("id" "title") {
+  id String @id @field.input
+  title String @field.input @list.text @view.text
+}
