@@ -9,7 +9,7 @@ use tokio::io::AsyncReadExt;
 
 /// Each source transport variant crosses CSRF validation and the same frozen email event.
 #[tokio::test]
-async fn every_transport_option_fixture_crosses_the_finite_form_and_direct_event() {
+async fn every_transport_option_fixture_crosses_real_auth_and_fresh_direct_events() {
     let case = vectors()["cases"]
         .as_array()
         .unwrap()
@@ -56,13 +56,17 @@ async fn every_transport_option_fixture_crosses_the_finite_form_and_direct_event
         let (server, state) = host(case.clone(), Some(config.clone())).await;
         let mut req = request(&case);
         let mut res = Response::new();
-        server
-            .handle("finite-page", &mut req, &mut res)
-            .await
-            .unwrap();
+        super::handle(&server, &mut req, &mut res).await.unwrap();
         assert_eq!(res.status().unwrap().code, 302, "{kind}");
         assert!(!res.data().has("csrf"));
-        assert_eq!(state.factory.created.load(Ordering::SeqCst), 1, "{kind}");
+        assert_eq!(state.factory.created.load(Ordering::SeqCst), 0, "{kind}");
+        assert_eq!(state.offered.lock().unwrap()[0], case["mail"]);
+        let first = server
+            .resolve(EMAIL_SEND, case["mail"].clone())
+            .await
+            .unwrap();
+        assert_eq!(first.response.code, Some(200));
+        assert_eq!(state.factory.created.load(Ordering::SeqCst), 1);
         assert_eq!(
             serde_json::to_value(&state.factory.configs.lock().unwrap()[0]).unwrap(),
             config
@@ -88,7 +92,7 @@ async fn every_transport_option_fixture_crosses_the_finite_form_and_direct_event
             let mut bytes = vec![];
             reader.read_to_end(&mut bytes).await.unwrap();
             let mime = String::from_utf8(bytes).unwrap();
-            assert!(mime.contains("fixture sign-in"));
+            assert!(mime.contains("Stackpress Sign In OTP"));
             assert!(mime.contains("recipient@example.test"));
         } else if kind == "pool" {
             assert_eq!(fields["sourceConfig"].to_json().unwrap(), config);
@@ -101,36 +105,39 @@ async fn every_transport_option_fixture_crosses_the_finite_form_and_direct_event
                 assert_eq!(decoded["html"], case["mail"]["html"]);
             }
         }
-        let calls = state.factory.seams.calls.lock().unwrap();
-        match kind {
-            "smtp" | "string" => {
-                assert_eq!(calls[0]["kind"], "smtp");
-                assert_eq!(calls[0]["options"]["auth"]["pass"], "SMTP_PRIVATE_SENTINEL");
-                assert!(
-                    calls[0]["message"]
-                        .as_str()
-                        .unwrap()
-                        .contains("fixture sign-in")
-                );
+        {
+            let calls = state.factory.seams.calls.lock().unwrap();
+            match kind {
+                "smtp" | "string" => {
+                    assert_eq!(calls[0]["kind"], "smtp");
+                    assert_eq!(calls[0]["options"]["auth"]["pass"], "SMTP_PRIVATE_SENTINEL");
+                    assert!(
+                        calls[0]["message"]
+                            .as_str()
+                            .unwrap()
+                            .contains("Stackpress Sign In OTP")
+                    );
+                }
+                "pool" => {
+                    assert_eq!(calls[0]["kind"], "provider");
+                    assert_eq!(calls[0]["config"], config);
+                }
+                "sendmail" => {
+                    assert_eq!(calls[0]["path"], "/fixture/sendmail");
+                    assert_eq!(calls[0]["args"][0], "-i");
+                    assert_eq!(calls[0]["args"][1], "fixture-argument");
+                }
+                "ses" => {
+                    assert_eq!(calls[0]["kind"], "ses");
+                    assert_eq!(
+                        calls[0]["input"]["Destination"]["ToAddresses"],
+                        json!(["recipient@example.test"])
+                    );
+                }
+                _ => assert!(calls.is_empty()),
             }
-            "pool" => {
-                assert_eq!(calls[0]["kind"], "provider");
-                assert_eq!(calls[0]["config"], config);
-            }
-            "sendmail" => {
-                assert_eq!(calls[0]["path"], "/fixture/sendmail");
-                assert_eq!(calls[0]["args"][0], "-i");
-                assert_eq!(calls[0]["args"][1], "fixture-argument");
-            }
-            "ses" => {
-                assert_eq!(calls[0]["kind"], "ses");
-                assert_eq!(
-                    calls[0]["input"]["Destination"]["ToAddresses"],
-                    json!(["recipient@example.test"])
-                );
-            }
-            _ => assert!(calls.is_empty()),
         }
+        state.engine.close().await.unwrap();
     }
 }
 
@@ -152,21 +159,19 @@ async fn invalid_csrf_and_child_error_skip_transports_and_preserve_prior_respons
         .await;
         let mut req = request(&case);
         let mut res = Response::new();
-        server
-            .handle("finite-page", &mut req, &mut res)
-            .await
-            .unwrap();
+        super::handle(&server, &mut req, &mut res).await.unwrap();
         assert_eq!(res.status().unwrap().code, 419);
         assert_eq!(state.factory.created.load(Ordering::SeqCst), 0);
         assert!(state.factory.seams.calls.lock().unwrap().is_empty());
         // The direct event with an already failed response is a normal Continue skip as well.
         let mut direct = Request::new();
-        let before = res.to_envelope().try_to_json().unwrap();
+        let before = format!("{:?}", res.to_envelope());
         server
             .emit(EMAIL_SEND, &mut direct, &mut res)
             .await
             .unwrap();
-        assert_eq!(res.to_envelope().try_to_json().unwrap(), before);
+        assert_eq!(format!("{:?}", res.to_envelope()), before);
         assert_eq!(state.factory.created.load(Ordering::SeqCst), 0);
+        state.engine.close().await.unwrap();
     }
 }

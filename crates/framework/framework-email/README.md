@@ -82,8 +82,9 @@ No stronger cancellation-reaping claim is made for runtime shutdown.
 `tests/source-transports.cjs` runs the original local package with inert SMTP,
 process and SES boundaries; its checked-in fixture includes source file hashes.
 `tests/source-options.cjs` retains the Stackpress event option/default oracle from
-M0. Event/plugin registration and signup-hook integration belong to M2 and later
-milestones; the direct factory and task-supervisor contracts are already available.
+M0. Event/plugin registration and supervised signup-hook integration are available with
+the `server` feature. The standalone [consumers](consumers/) prove direct, event
+and compile-time disabled application graphs without a listener.
 
 ## Reusable event and non-awaited hooks (`server` feature)
 
@@ -124,3 +125,35 @@ source selection/Listen gates become a Listen inventory check. Native readers
 use synchronized one-shot transfer because Rust readers cannot be cloned. Owned
 child inputs snapshot submission-time data instead of borrowing source JavaScript
 object aliases. These adaptations add no global policy or delivery guarantee.
+
+
+## M4 integration observations
+
+Both crates default to direct-library use. The optional `server` feature adds ordinary
+registrars; `stackpress_framework_csrf::plugin::register` always publishes the default/configured
+CSRF service and adds no request listener. Email's registrar remains config-gated.
+SMTP/pool/JSON/stream/sendmail/SES/string are compiled native adapter paths in either
+email feature graph; there are no individual transport feature switches.
+
+The real Lane A M2 email process shares its response with `auth-update` and then
+`email-send`. The public SQL update adapter sets a truthy result body, so the source
+email handler skips transport construction in that composition. OTP still clears
+CSRF/redirects after status 200; magic retains the update result and outgoing CSRF.
+The updated source oracle proves this shared-response behavior. Fresh `email-send`
+resolves still send; the framework adds no automatic response clearing or global gate.
+Applications choose extension handlers explicitly, as in the source.
+
+Real `auth-signup` submits **email-email-send**, not **email-send**. Bind the public
+`auth::Hooks` owner to the built host/runtime, register an application delegation
+handler if desired, and drain/shut down its jobs. Integration tests use real SQLite
+lookup/update/reload, native Date/hash challenges, templates, sign-in and signup;
+external SMTP/SES/sendmail seams remain fake. Account views and installed/browser
+acceptance remain Lane A integration points. This crate's finite SSR projection is
+an independent test renderer, not an implementation of those pending views.
+
+Each [consumer](consumers/) is its own workspace with a checked-in lock and a separate
+`target/slice9b/consumer-<kind>` directory. Run `consumers/run.py` through the project's
+benchmark recorder with an absolute `CARGO_TARGET_DIR`; it checks graphs, formatting,
+Clippy and executable behavior offline. At the 19.4 GiB headroom guard, it trims only idle consumer incremental output;
+dependency artifacts remain within the coordinator's raised 20 GiB effort cap. Default email is native IO code;
+these proofs target aarch64-apple-darwin and do not establish WASM/installed support.
