@@ -2,6 +2,7 @@
 
 pub mod client;
 pub mod commands;
+pub mod config;
 #[cfg(feature = "language")]
 pub mod language;
 #[cfg(feature = "view")]
@@ -90,6 +91,8 @@ pub fn register_with(app: &mut ServerBuilder, client: &'static CompiledClient) -
     feature = "admin"
 ))]
 fn select(app: &mut ServerBuilder, catalog: Option<&'static CompiledClient>) -> Result<()> {
+    // Typed source roots are claimed before phase scheduling, with no provider IO.
+    config::register(app)?;
     // Source server precedes schema; neither registration runs command IO.
     #[cfg(feature = "server-commands")]
     {

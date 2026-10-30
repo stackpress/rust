@@ -1,0 +1,785 @@
+{
+  "provenance": "Original event bodies transpiled with existing TypeScript; scripts replaced by finite spies. Script responsibilities separately source-inspected.",
+  "files": {
+    "stackpress-server/src/scripts/develop.ts": "17a885a408ca2c52fec40392c71ac2d54c46ae5ae7b6736adef2f5543feda256",
+    "stackpress-server/src/events/develop.ts": "05db45c7aa2d7a3886930d265dfe6974f5e9ad1f9f04f0c52e7fdfffd4cdf8ca",
+    "stackpress-server/src/scripts/emit.ts": "8fadeb91f1d7242c52d5e5a1039e76e1e0a41eb5353b8bb5787535e6c0942a9a",
+    "stackpress-server/src/events/emit.ts": "530478d784c9e5388313098731111e4ade1c5e967fed34d35c1a1f43bf8ccd54",
+    "stackpress-server/src/scripts/serve.ts": "e649a30d98f7dc7fcd021817022ba82d18f718f3ca120a6b75a09f096f02c789",
+    "stackpress-server/src/events/serve.ts": "0a4dc2d21f6a5c2373c0014a7275b6c2f6cde7410178a0bcfd7c595f3d8c2c25",
+    "stackpress-schema/src/scripts/generate.ts": "2f9ed04749b537b795458cf962bb405f6a40b229eca72feee6a2f4d29ed8a4bd",
+    "stackpress-schema/src/events/generate.ts": "90fc04266ba7035f735a63ecd334604f3c2cacf62ee8a7fed60612743adf3c0e",
+    "stackpress-sql/src/scripts/install.ts": "08107650187a19d28746590c3d95c75b9fcbe6ea9a836fa86957e6709f92683a",
+    "stackpress-sql/src/events/install.ts": "6543f083248b88369f40820643d42015dbfdc40843bbcf58f21346d27f2ae666",
+    "stackpress-sql/src/scripts/migrate.ts": "c2042d598f86537a0671a1ae92c2567203fbe13af9f99a34171c2748234184be",
+    "stackpress-sql/src/events/migrate.ts": "d2c857663786bdce56458793411546349ec9c1b43f0c4aaa3f980021373652c7",
+    "stackpress-sql/src/scripts/purge.ts": "f4d3c7c221503ee226c4e03ae5ba7dc366d55ed239b720f8a8b211be4ab48ea6",
+    "stackpress-sql/src/events/purge.ts": "252033487d8e8c72a148987ccdb9d9d86fec2684d30f47fd7cbdc01d87e59687",
+    "stackpress-sql/src/scripts/push.ts": "995cdcf4cf669179d8d83b900b840857f971d59951883bf88e337bb19826a197",
+    "stackpress-sql/src/events/push.ts": "0605fceb8f3e2a99919967655d5c2cb43818090a2f152e7aee535473fcc081e7",
+    "stackpress-sql/src/events/query.ts": "d6bc015c83b560c296b5012bee3453e30d31e1356539b54507170dc6cd3d8772",
+    "stackpress-sql/src/scripts/populate.ts": "9c6ff02f5faa3867fd68aa5b1d23280ea37a4417d7451dfc576a97fdb44c8ea9",
+    "stackpress-sql/src/events/populate.ts": "8b41624eefd0aba933b06cdd6c8a6fbe6cf30c82e0fa07e27ae58e5fab44c2a3",
+    "stackpress-sql/src/scripts/uninstall.ts": "577c158c69fd474105546cda4c40a10dd15a37420fc9f1319f82b59a1def512a",
+    "stackpress-sql/src/events/uninstall.ts": "da147b585c4f9717b8eeb32643d08cb935d2b5aa145601a5eedf6e1214439cfa",
+    "stackpress-sql/src/scripts/upgrade.ts": "b56ca916c5a02a7fe676256a37a0c15ff0bd5ca93f2eceb56fd6301015a9b2da",
+    "stackpress-sql/src/events/upgrade.ts": "568aff60a8248b521e5b4c32b26a456c6514f1550d07c561c466d289a925689f",
+    "stackpress-view/src/scripts/build.ts": "fb821705d18b4480ab30288f01e78e789c033d35e982a9cd27e42bced731ee9a",
+    "stackpress-view/src/events/build.ts": "c79ee8d3df3f00e1d66d59e80f76353facf843d06a8a1cfac83a5769dcc184f4"
+  },
+  "cases": [
+    {
+      "family": "server",
+      "command": "develop",
+      "variant": "default",
+      "trace": [
+        [
+          "script",
+          "develop"
+        ],
+        [
+          "status",
+          200
+        ]
+      ],
+      "code": 200
+    },
+    {
+      "family": "server",
+      "command": "develop",
+      "variant": "prior-error",
+      "trace": [
+        [
+          "script",
+          "develop"
+        ],
+        [
+          "status",
+          200
+        ]
+      ],
+      "code": 200
+    },
+    {
+      "family": "server",
+      "command": "develop",
+      "variant": "missing-database",
+      "trace": [
+        [
+          "script",
+          "develop"
+        ],
+        [
+          "status",
+          200
+        ]
+      ],
+      "code": 200
+    },
+    {
+      "family": "server",
+      "command": "develop",
+      "variant": "configured",
+      "trace": [
+        [
+          "script",
+          "develop"
+        ],
+        [
+          "status",
+          200
+        ]
+      ],
+      "code": 200
+    },
+    {
+      "family": "server",
+      "command": "emit",
+      "variant": "default",
+      "trace": [
+        [
+          "error",
+          "Missing event name"
+        ]
+      ],
+      "code": 500
+    },
+    {
+      "family": "server",
+      "command": "emit",
+      "variant": "prior-error",
+      "trace": [],
+      "code": 409
+    },
+    {
+      "family": "server",
+      "command": "emit",
+      "variant": "missing-database",
+      "trace": [
+        [
+          "error",
+          "Missing event name"
+        ]
+      ],
+      "code": 500
+    },
+    {
+      "family": "server",
+      "command": "emit",
+      "variant": "configured",
+      "trace": [
+        [
+          "script",
+          "emit"
+        ],
+        [
+          "status",
+          200
+        ]
+      ],
+      "code": 200
+    },
+    {
+      "family": "server",
+      "command": "serve",
+      "variant": "default",
+      "trace": [
+        [
+          "script",
+          "serve",
+          "127.0.0.1",
+          3000
+        ],
+        [
+          "status",
+          200
+        ]
+      ],
+      "code": 200
+    },
+    {
+      "family": "server",
+      "command": "serve",
+      "variant": "prior-error",
+      "trace": [],
+      "code": 409
+    },
+    {
+      "family": "server",
+      "command": "serve",
+      "variant": "missing-database",
+      "trace": [
+        [
+          "script",
+          "serve",
+          "127.0.0.1",
+          3000
+        ],
+        [
+          "status",
+          200
+        ]
+      ],
+      "code": 200
+    },
+    {
+      "family": "server",
+      "command": "serve",
+      "variant": "configured",
+      "trace": [
+        [
+          "script",
+          "serve",
+          "source.test",
+          4100
+        ],
+        [
+          "status",
+          200
+        ]
+      ],
+      "code": 200
+    },
+    {
+      "family": "schema",
+      "command": "generate",
+      "variant": "default",
+      "trace": [],
+      "code": 0
+    },
+    {
+      "family": "schema",
+      "command": "generate",
+      "variant": "prior-error",
+      "trace": [],
+      "code": 409
+    },
+    {
+      "family": "schema",
+      "command": "generate",
+      "variant": "missing-database",
+      "trace": [],
+      "code": 0
+    },
+    {
+      "family": "schema",
+      "command": "generate",
+      "variant": "configured",
+      "trace": [
+        [
+          "script",
+          "generate",
+          "short.idea",
+          "project.json"
+        ],
+        [
+          "status",
+          200
+        ]
+      ],
+      "code": 200
+    },
+    {
+      "family": "sql",
+      "command": "install",
+      "variant": "default",
+      "trace": [
+        [
+          "script",
+          "install"
+        ],
+        [
+          "status",
+          200
+        ]
+      ],
+      "code": 200
+    },
+    {
+      "family": "sql",
+      "command": "install",
+      "variant": "prior-error",
+      "trace": [],
+      "code": 409
+    },
+    {
+      "family": "sql",
+      "command": "install",
+      "variant": "missing-database",
+      "trace": [
+        [
+          "error",
+          "No database found"
+        ]
+      ],
+      "code": 500
+    },
+    {
+      "family": "sql",
+      "command": "install",
+      "variant": "configured",
+      "trace": [
+        [
+          "script",
+          "install"
+        ],
+        [
+          "status",
+          200
+        ]
+      ],
+      "code": 200
+    },
+    {
+      "family": "sql",
+      "command": "migrate",
+      "variant": "default",
+      "trace": [
+        [
+          "script",
+          "migrate"
+        ],
+        [
+          "status",
+          200
+        ]
+      ],
+      "code": 200
+    },
+    {
+      "family": "sql",
+      "command": "migrate",
+      "variant": "prior-error",
+      "trace": [],
+      "code": 409
+    },
+    {
+      "family": "sql",
+      "command": "migrate",
+      "variant": "missing-database",
+      "trace": [
+        [
+          "error",
+          "No database found"
+        ]
+      ],
+      "code": 500
+    },
+    {
+      "family": "sql",
+      "command": "migrate",
+      "variant": "configured",
+      "trace": [
+        [
+          "script",
+          "migrate"
+        ],
+        [
+          "status",
+          200
+        ]
+      ],
+      "code": 200
+    },
+    {
+      "family": "sql",
+      "command": "purge",
+      "variant": "default",
+      "trace": [
+        [
+          "script",
+          "purge"
+        ],
+        [
+          "status",
+          200
+        ]
+      ],
+      "code": 200
+    },
+    {
+      "family": "sql",
+      "command": "purge",
+      "variant": "prior-error",
+      "trace": [],
+      "code": 409
+    },
+    {
+      "family": "sql",
+      "command": "purge",
+      "variant": "missing-database",
+      "trace": [
+        [
+          "error",
+          "No database found"
+        ]
+      ],
+      "code": 500
+    },
+    {
+      "family": "sql",
+      "command": "purge",
+      "variant": "configured",
+      "trace": [
+        [
+          "script",
+          "purge"
+        ],
+        [
+          "status",
+          200
+        ]
+      ],
+      "code": 200
+    },
+    {
+      "family": "sql",
+      "command": "push",
+      "variant": "default",
+      "trace": [
+        [
+          "script",
+          "push"
+        ],
+        [
+          "status",
+          200
+        ]
+      ],
+      "code": 200
+    },
+    {
+      "family": "sql",
+      "command": "push",
+      "variant": "prior-error",
+      "trace": [],
+      "code": 409
+    },
+    {
+      "family": "sql",
+      "command": "push",
+      "variant": "missing-database",
+      "trace": [
+        [
+          "error",
+          "No database found"
+        ]
+      ],
+      "code": 500
+    },
+    {
+      "family": "sql",
+      "command": "push",
+      "variant": "configured",
+      "trace": [
+        [
+          "script",
+          "push"
+        ],
+        [
+          "status",
+          200
+        ]
+      ],
+      "code": 200
+    },
+    {
+      "family": "sql",
+      "command": "query",
+      "variant": "default",
+      "trace": [
+        [
+          "query",
+          "query"
+        ],
+        [
+          "console",
+          []
+        ],
+        [
+          "status",
+          200
+        ]
+      ],
+      "code": 200
+    },
+    {
+      "family": "sql",
+      "command": "query",
+      "variant": "prior-error",
+      "trace": [],
+      "code": 409
+    },
+    {
+      "family": "sql",
+      "command": "query",
+      "variant": "missing-database",
+      "trace": [
+        [
+          "error",
+          "No database found"
+        ]
+      ],
+      "code": 500
+    },
+    {
+      "family": "sql",
+      "command": "query",
+      "variant": "configured",
+      "trace": [
+        [
+          "query",
+          "SELECT 'value'"
+        ],
+        [
+          "console",
+          []
+        ],
+        [
+          "status",
+          200
+        ]
+      ],
+      "code": 200
+    },
+    {
+      "family": "sql",
+      "command": "populate",
+      "variant": "default",
+      "trace": [
+        [
+          "script",
+          "populate",
+          []
+        ],
+        [
+          "status",
+          200
+        ]
+      ],
+      "code": 200
+    },
+    {
+      "family": "sql",
+      "command": "populate",
+      "variant": "prior-error",
+      "trace": [],
+      "code": 409
+    },
+    {
+      "family": "sql",
+      "command": "populate",
+      "variant": "missing-database",
+      "trace": [
+        [
+          "script",
+          "populate",
+          []
+        ],
+        [
+          "status",
+          200
+        ]
+      ],
+      "code": 200
+    },
+    {
+      "family": "sql",
+      "command": "populate",
+      "variant": "configured",
+      "trace": [
+        [
+          "script",
+          "populate",
+          [
+            {
+              "event": "seed",
+              "data": {
+                "id": 1
+              }
+            }
+          ]
+        ],
+        [
+          "status",
+          200
+        ]
+      ],
+      "code": 200
+    },
+    {
+      "family": "sql",
+      "command": "uninstall",
+      "variant": "default",
+      "trace": [
+        [
+          "script",
+          "uninstall"
+        ],
+        [
+          "status",
+          200
+        ]
+      ],
+      "code": 200
+    },
+    {
+      "family": "sql",
+      "command": "uninstall",
+      "variant": "prior-error",
+      "trace": [],
+      "code": 409
+    },
+    {
+      "family": "sql",
+      "command": "uninstall",
+      "variant": "missing-database",
+      "trace": [
+        [
+          "error",
+          "No database found"
+        ]
+      ],
+      "code": 500
+    },
+    {
+      "family": "sql",
+      "command": "uninstall",
+      "variant": "configured",
+      "trace": [
+        [
+          "script",
+          "uninstall"
+        ],
+        [
+          "status",
+          200
+        ]
+      ],
+      "code": 200
+    },
+    {
+      "family": "sql",
+      "command": "upgrade",
+      "variant": "default",
+      "trace": [
+        [
+          "script",
+          "upgrade"
+        ],
+        [
+          "status",
+          200
+        ]
+      ],
+      "code": 200
+    },
+    {
+      "family": "sql",
+      "command": "upgrade",
+      "variant": "prior-error",
+      "trace": [],
+      "code": 409
+    },
+    {
+      "family": "sql",
+      "command": "upgrade",
+      "variant": "missing-database",
+      "trace": [
+        [
+          "error",
+          "No database found"
+        ]
+      ],
+      "code": 500
+    },
+    {
+      "family": "sql",
+      "command": "upgrade",
+      "variant": "configured",
+      "trace": [
+        [
+          "script",
+          "upgrade"
+        ],
+        [
+          "status",
+          200
+        ]
+      ],
+      "code": 200
+    },
+    {
+      "family": "view",
+      "command": "build",
+      "variant": "default",
+      "trace": [
+        [
+          "script",
+          "build"
+        ],
+        [
+          "status",
+          200
+        ],
+        [
+          "write",
+          "/app/.build/package.json",
+          {
+            "name": "app",
+            "scripts": {
+              "generate": "node scripts/generate.js",
+              "start": "node scripts/serve.js",
+              "postinstall": "node scripts/generate.js"
+            }
+          }
+        ]
+      ],
+      "code": 200
+    },
+    {
+      "family": "view",
+      "command": "build",
+      "variant": "prior-error",
+      "trace": [
+        [
+          "script",
+          "build"
+        ],
+        [
+          "status",
+          200
+        ],
+        [
+          "write",
+          "/app/.build/package.json",
+          {
+            "name": "app",
+            "scripts": {
+              "generate": "node scripts/generate.js",
+              "start": "node scripts/serve.js",
+              "postinstall": "node scripts/generate.js"
+            }
+          }
+        ]
+      ],
+      "code": 200
+    },
+    {
+      "family": "view",
+      "command": "build",
+      "variant": "missing-database",
+      "trace": [
+        [
+          "script",
+          "build"
+        ],
+        [
+          "status",
+          200
+        ],
+        [
+          "write",
+          "/app/.build/package.json",
+          {
+            "name": "app",
+            "scripts": {
+              "generate": "node scripts/generate.js",
+              "start": "node scripts/serve.js",
+              "postinstall": "node scripts/generate.js"
+            }
+          }
+        ]
+      ],
+      "code": 200
+    },
+    {
+      "family": "view",
+      "command": "build",
+      "variant": "configured",
+      "trace": [
+        [
+          "script",
+          "build"
+        ],
+        [
+          "status",
+          200
+        ],
+        [
+          "write",
+          "/app/.build/package.json",
+          {
+            "name": "app",
+            "scripts": {
+              "generate": "node scripts/generate.js",
+              "start": "node scripts/serve.js",
+              "postinstall": "node scripts/generate.js"
+            }
+          }
+        ]
+      ],
+      "code": 200
+    }
+  ]
+}

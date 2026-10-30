@@ -1,0 +1,796 @@
+{
+  "provenance": "Original delegated script bodies; explicit inert IO providers. No listeners, network, watchers or TTY.",
+  "files": {
+    "stackpress-sql/src/scripts/install.ts": "08107650187a19d28746590c3d95c75b9fcbe6ea9a836fa86957e6709f92683a",
+    "stackpress-sql/src/scripts/purge.ts": "f4d3c7c221503ee226c4e03ae5ba7dc366d55ed239b720f8a8b211be4ab48ea6",
+    "stackpress-sql/src/scripts/uninstall.ts": "577c158c69fd474105546cda4c40a10dd15a37420fc9f1319f82b59a1def512a",
+    "stackpress-sql/src/scripts/push.ts": "995cdcf4cf669179d8d83b900b840857f971d59951883bf88e337bb19826a197",
+    "stackpress-sql/src/scripts/upgrade.ts": "b56ca916c5a02a7fe676256a37a0c15ff0bd5ca93f2eceb56fd6301015a9b2da",
+    "stackpress-sql/src/scripts/migrate.ts": "c2042d598f86537a0671a1ae92c2567203fbe13af9f99a34171c2748234184be",
+    "stackpress-sql/src/scripts/populate.ts": "9c6ff02f5faa3867fd68aa5b1d23280ea37a4417d7451dfc576a97fdb44c8ea9",
+    "stackpress-view/src/scripts/build.ts": "fb821705d18b4480ab30288f01e78e789c033d35e982a9cd27e42bced731ee9a",
+    "stackpress-schema/src/Revisions.ts": "2d5c9c46e5d0d45c37a69f206853fc9ed5082683e4344e127d0225edc6b9466e",
+    "stackpress-sql/src/Migrations.ts": "0654c08569095948deb4aa74ce462485c72bd080b9f379ae1da2d13a6adcc10e",
+    "stackpress-sql/src/transform/scripts.ts": "311c7ac9436b8881675825c6afd983c7dedd6af038469e3efe377c72e0174e2c",
+    "stackpress-sql/src/transform/helpers.ts": "39b0c5dc78933f4b13060f5ce8993303a5733e3aaceb165a59cff773fa663bb4",
+    "stackpress-language/src/Language.ts": "75584c67c0fb7ac2ba3da69378ef0f5b865cd433aaf3b63b98a645433c03e2b9",
+    "stackpress-language/src/plugin.ts": "16566a81683f11b147ca309fe8815b89bbee820b84be0998865651b780e2429c",
+    "stackpress-view/src/config/production.ts": "f03096f259e3442f708d066e9cc22a52e6b690ff796a954bfb7c35a9ee472058",
+    "stackpress-view/src/config/development.ts": "0b5c4969c856f27aa4f6ed79e7e9d3f3a8ce1b9bed950f73b4273cbd92407bff"
+  },
+  "cases": [
+    {
+      "family": "sql",
+      "command": "install",
+      "variant": "missing",
+      "trace": [
+        [
+          "begin"
+        ],
+        [
+          "script",
+          "uninstall"
+        ],
+        [
+          "script",
+          "install"
+        ],
+        [
+          "commit"
+        ]
+      ],
+      "error": null
+    },
+    {
+      "family": "sql",
+      "command": "install",
+      "variant": "one",
+      "trace": [
+        [
+          "begin"
+        ],
+        [
+          "script",
+          "uninstall"
+        ],
+        [
+          "script",
+          "install"
+        ],
+        [
+          "commit"
+        ],
+        [
+          "revisions",
+          "/history"
+        ],
+        [
+          "insert",
+          {
+            "source": "schema"
+          }
+        ]
+      ],
+      "error": null
+    },
+    {
+      "family": "sql",
+      "command": "install",
+      "variant": "warned",
+      "trace": [
+        [
+          "begin"
+        ],
+        [
+          "script",
+          "uninstall"
+        ],
+        [
+          "script",
+          "install"
+        ],
+        [
+          "commit"
+        ],
+        [
+          "revisions",
+          "/history"
+        ],
+        [
+          "insert",
+          {
+            "source": "schema"
+          }
+        ]
+      ],
+      "error": null
+    },
+    {
+      "family": "sql",
+      "command": "install",
+      "variant": "forced",
+      "trace": [
+        [
+          "begin"
+        ],
+        [
+          "script",
+          "uninstall"
+        ],
+        [
+          "script",
+          "install"
+        ],
+        [
+          "commit"
+        ],
+        [
+          "revisions",
+          "/history"
+        ],
+        [
+          "insert",
+          {
+            "source": "schema"
+          }
+        ]
+      ],
+      "error": null
+    },
+    {
+      "family": "sql",
+      "command": "install",
+      "variant": "empty",
+      "trace": [
+        [
+          "begin"
+        ],
+        [
+          "script",
+          "uninstall"
+        ],
+        [
+          "script",
+          "install"
+        ],
+        [
+          "commit"
+        ],
+        [
+          "revisions",
+          "/history"
+        ],
+        [
+          "insert",
+          {
+            "source": "schema"
+          }
+        ]
+      ],
+      "error": null
+    },
+    {
+      "family": "sql",
+      "command": "purge",
+      "variant": "missing",
+      "trace": [
+        [
+          "begin"
+        ],
+        [
+          "script",
+          "purge"
+        ],
+        [
+          "commit"
+        ]
+      ],
+      "error": null
+    },
+    {
+      "family": "sql",
+      "command": "purge",
+      "variant": "one",
+      "trace": [
+        [
+          "begin"
+        ],
+        [
+          "script",
+          "purge"
+        ],
+        [
+          "commit"
+        ]
+      ],
+      "error": null
+    },
+    {
+      "family": "sql",
+      "command": "purge",
+      "variant": "warned",
+      "trace": [
+        [
+          "begin"
+        ],
+        [
+          "script",
+          "purge"
+        ],
+        [
+          "commit"
+        ]
+      ],
+      "error": null
+    },
+    {
+      "family": "sql",
+      "command": "purge",
+      "variant": "forced",
+      "trace": [
+        [
+          "begin"
+        ],
+        [
+          "script",
+          "purge"
+        ],
+        [
+          "commit"
+        ]
+      ],
+      "error": null
+    },
+    {
+      "family": "sql",
+      "command": "purge",
+      "variant": "empty",
+      "trace": [
+        [
+          "begin"
+        ],
+        [
+          "script",
+          "purge"
+        ],
+        [
+          "commit"
+        ]
+      ],
+      "error": null
+    },
+    {
+      "family": "sql",
+      "command": "uninstall",
+      "variant": "missing",
+      "trace": [
+        [
+          "begin"
+        ],
+        [
+          "script",
+          "uninstall"
+        ],
+        [
+          "commit"
+        ]
+      ],
+      "error": null
+    },
+    {
+      "family": "sql",
+      "command": "uninstall",
+      "variant": "one",
+      "trace": [
+        [
+          "begin"
+        ],
+        [
+          "script",
+          "uninstall"
+        ],
+        [
+          "commit"
+        ]
+      ],
+      "error": null
+    },
+    {
+      "family": "sql",
+      "command": "uninstall",
+      "variant": "warned",
+      "trace": [
+        [
+          "begin"
+        ],
+        [
+          "script",
+          "uninstall"
+        ],
+        [
+          "commit"
+        ]
+      ],
+      "error": null
+    },
+    {
+      "family": "sql",
+      "command": "uninstall",
+      "variant": "forced",
+      "trace": [
+        [
+          "begin"
+        ],
+        [
+          "script",
+          "uninstall"
+        ],
+        [
+          "commit"
+        ]
+      ],
+      "error": null
+    },
+    {
+      "family": "sql",
+      "command": "uninstall",
+      "variant": "empty",
+      "trace": [
+        [
+          "begin"
+        ],
+        [
+          "script",
+          "uninstall"
+        ],
+        [
+          "commit"
+        ]
+      ],
+      "error": null
+    },
+    {
+      "family": "sql",
+      "command": "push",
+      "variant": "missing",
+      "trace": [],
+      "error": null
+    },
+    {
+      "family": "sql",
+      "command": "push",
+      "variant": "one",
+      "trace": [
+        [
+          "revisions",
+          "/history"
+        ],
+        [
+          "delegate",
+          "./install.js"
+        ]
+      ],
+      "error": null
+    },
+    {
+      "family": "sql",
+      "command": "push",
+      "variant": "warned",
+      "trace": [
+        [
+          "revisions",
+          "/history"
+        ],
+        [
+          "delegate",
+          "./upgrade.js"
+        ]
+      ],
+      "error": null
+    },
+    {
+      "family": "sql",
+      "command": "push",
+      "variant": "forced",
+      "trace": [
+        [
+          "revisions",
+          "/history"
+        ],
+        [
+          "delegate",
+          "./upgrade.js"
+        ]
+      ],
+      "error": null
+    },
+    {
+      "family": "sql",
+      "command": "push",
+      "variant": "empty",
+      "trace": [
+        [
+          "revisions",
+          "/history"
+        ],
+        [
+          "delegate",
+          "./upgrade.js"
+        ]
+      ],
+      "error": null
+    },
+    {
+      "family": "sql",
+      "command": "upgrade",
+      "variant": "missing",
+      "trace": [],
+      "error": null
+    },
+    {
+      "family": "sql",
+      "command": "upgrade",
+      "variant": "one",
+      "trace": [
+        [
+          "revisions",
+          "/history"
+        ],
+        [
+          "latest"
+        ]
+      ],
+      "error": null
+    },
+    {
+      "family": "sql",
+      "command": "upgrade",
+      "variant": "warned",
+      "trace": [
+        [
+          "revisions",
+          "/history"
+        ],
+        [
+          "latest"
+        ]
+      ],
+      "error": "Cannot read properties of undefined (reading 'error')"
+    },
+    {
+      "family": "sql",
+      "command": "upgrade",
+      "variant": "forced",
+      "trace": [
+        [
+          "revisions",
+          "/history"
+        ],
+        [
+          "latest"
+        ],
+        [
+          "begin"
+        ],
+        [
+          "query",
+          "INSERT INTO audit VALUES (7)"
+        ],
+        [
+          "commit"
+        ]
+      ],
+      "error": null
+    },
+    {
+      "family": "sql",
+      "command": "upgrade",
+      "variant": "empty",
+      "trace": [
+        [
+          "revisions",
+          "/history"
+        ],
+        [
+          "latest"
+        ]
+      ],
+      "error": null
+    },
+    {
+      "family": "sql",
+      "command": "migrate",
+      "variant": "missing",
+      "trace": [],
+      "error": null
+    },
+    {
+      "family": "sql",
+      "command": "migrate",
+      "variant": "one",
+      "trace": [
+        [
+          "revisions",
+          "/history"
+        ],
+        [
+          "plans"
+        ],
+        [
+          "mkdir",
+          "/migrations"
+        ],
+        [
+          "write",
+          "/migrations/10.sql",
+          "CREATE TABLE audit (id INTEGER)"
+        ]
+      ],
+      "error": null
+    },
+    {
+      "family": "sql",
+      "command": "migrate",
+      "variant": "warned",
+      "trace": [
+        [
+          "revisions",
+          "/history"
+        ],
+        [
+          "plans"
+        ],
+        [
+          "mkdir",
+          "/migrations"
+        ],
+        [
+          "write",
+          "/migrations/10.sql",
+          "CREATE TABLE audit (id INTEGER)"
+        ],
+        [
+          "mkdir",
+          "/migrations"
+        ],
+        [
+          "write",
+          "/migrations/20.sql",
+          "INSERT INTO audit VALUES (7)"
+        ]
+      ],
+      "error": null
+    },
+    {
+      "family": "sql",
+      "command": "migrate",
+      "variant": "forced",
+      "trace": [
+        [
+          "revisions",
+          "/history"
+        ],
+        [
+          "plans"
+        ],
+        [
+          "mkdir",
+          "/migrations"
+        ],
+        [
+          "write",
+          "/migrations/10.sql",
+          "CREATE TABLE audit (id INTEGER)"
+        ],
+        [
+          "mkdir",
+          "/migrations"
+        ],
+        [
+          "write",
+          "/migrations/20.sql",
+          "INSERT INTO audit VALUES (7)"
+        ]
+      ],
+      "error": null
+    },
+    {
+      "family": "sql",
+      "command": "migrate",
+      "variant": "empty",
+      "trace": [
+        [
+          "revisions",
+          "/history"
+        ],
+        [
+          "plans"
+        ]
+      ],
+      "error": null
+    },
+    {
+      "family": "sql",
+      "command": "populate",
+      "variant": "missing",
+      "trace": [
+        [
+          "event",
+          "first",
+          {
+            "id": 1
+          }
+        ],
+        [
+          "event",
+          "second",
+          {
+            "id": 2
+          }
+        ]
+      ],
+      "error": null
+    },
+    {
+      "family": "sql",
+      "command": "populate",
+      "variant": "one",
+      "trace": [
+        [
+          "event",
+          "first",
+          {
+            "id": 1
+          }
+        ],
+        [
+          "event",
+          "second",
+          {
+            "id": 2
+          }
+        ]
+      ],
+      "error": null
+    },
+    {
+      "family": "sql",
+      "command": "populate",
+      "variant": "warned",
+      "trace": [
+        [
+          "event",
+          "first",
+          {
+            "id": 1
+          }
+        ],
+        [
+          "event",
+          "second",
+          {
+            "id": 2
+          }
+        ]
+      ],
+      "error": null
+    },
+    {
+      "family": "sql",
+      "command": "populate",
+      "variant": "forced",
+      "trace": [
+        [
+          "event",
+          "first",
+          {
+            "id": 1
+          }
+        ],
+        [
+          "event",
+          "second",
+          {
+            "id": 2
+          }
+        ]
+      ],
+      "error": null
+    },
+    {
+      "family": "sql",
+      "command": "populate",
+      "variant": "empty",
+      "trace": [
+        [
+          "event",
+          "first",
+          {
+            "id": 1
+          }
+        ],
+        [
+          "event",
+          "second",
+          {
+            "id": 2
+          }
+        ]
+      ],
+      "error": null
+    },
+    {
+      "family": "view",
+      "command": "build",
+      "variant": "empty",
+      "trace": [],
+      "results": []
+    },
+    {
+      "family": "view",
+      "command": "build",
+      "variant": "all",
+      "trace": [
+        [
+          "set",
+          "signin"
+        ],
+        [
+          "set",
+          "account"
+        ],
+        [
+          "build",
+          "Clients"
+        ],
+        [
+          "build",
+          "Assets"
+        ],
+        [
+          "build",
+          "Pages"
+        ]
+      ],
+      "results": [
+        {
+          "stage": "Clients",
+          "contents": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx ..."
+        },
+        {
+          "stage": "Assets",
+          "contents": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx ..."
+        },
+        {
+          "stage": "Pages",
+          "contents": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx ..."
+        }
+      ]
+    },
+    {
+      "family": "view",
+      "command": "build",
+      "variant": "assets-only",
+      "trace": [
+        [
+          "set",
+          "signin"
+        ],
+        [
+          "set",
+          "account"
+        ],
+        [
+          "build",
+          "Assets"
+        ]
+      ],
+      "results": [
+        {
+          "stage": "Assets",
+          "contents": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx ..."
+        }
+      ]
+    }
+  ]
+}

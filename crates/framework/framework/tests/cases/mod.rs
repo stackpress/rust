@@ -1,7 +1,13 @@
 //! Source parity, resource ownership and registration boundaries of the aggregate.
 
 mod catalog;
+#[cfg(feature = "codegen")]
+mod codegen;
+mod commands;
 mod language;
+mod ownership;
+mod sql;
+mod view;
 
 use serde_json::{Value, json};
 use stackpress_framework::{client::Client, commands::Bindings, register};
