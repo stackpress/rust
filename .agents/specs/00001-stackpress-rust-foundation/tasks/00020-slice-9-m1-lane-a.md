@@ -96,3 +96,13 @@ One retained warm target `target/slice9a`; edit loops unset incremental, gates s
 Failed attempts remain recorded: source type-import/dialect loader fixes, SQL type/syntax adaptation, intentional golden failures exposing V8 date/nested Date behavior, Clippy findings, checked selector rendering, and native Date enum integration. Every relevant correction has passing final evidence. No failed receipt/source verification is represented as passed.
 
 No repository/provider/facade changes outside the Lane A grant, historical Agent File edits, commits, pushes, installs, GitHub writes, upstream edits, or development listeners occurred. The only root change is the session package's internal framework-sql dependency edge in Cargo.lock; all external package blocks are byte-identical and no packages were added or removed. Shared helpers did not need extension. Warm artifacts remain for verification; test database engines close and externally supervised children are reaped. Stop at M1; coordinator verifies and commits.
+
+## Coordinator verification
+
+Coordinator brought trial/3 (Lane B M0 and Slice 10 M0/M2/M4) into the branch at `fab749c`. The lock is the union of both sides: no external tuple changed or was removed. Then reran on the merged tree at gate tier (`sccache`, non-incremental, empty target), recorded as `s9am1-verify gate *`. All passed:
+- fmt; workspace Clippy `-D warnings`; workspace Rustdoc `-D warnings`.
+- `cargo nextest run --workspace --all-targets --locked --no-fail-fast` with no exclusions: 822 passed, including `tcp_watchdog`.
+- Workspace doctests: 951 passed.
+- Coverage: framework-session with `sql,server` 89.35% lines. framework-schema with `providers,codegen` 70.25% lines; the provider files stay at 96–100%.
+
+The three source questions above remain open with the owner; source parity is retained until they decide. Merged into trial/3 on 2026-10-30 (`bae2c26`); Lane A M2 released.
