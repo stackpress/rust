@@ -72,15 +72,19 @@ pub fn unauthorized(response: &mut Response) -> Result<()> {
     Ok(())
 }
 
-/// Apply the source Nest.set(object) operation one literal top-level key at a time.
+/// Apply source Nest.set(object) one top-level key at a time, including empty-key append.
 ///
 /// # Errors
 /// Preserves foundation mutation limits/errors and earlier completed keys, as source set does.
-/// Nested objects/arrays replace whole values; no authority-key filtering or deep merge occurs.
+/// Nested objects/arrays replace whole values. An empty key uses the current member count as
+/// its key, including intentional collisions; other names remain literal. No authority-key
+/// filtering or deep merge occurs.
 pub fn overlay(target: &mut Nest, fixed: &Nest) -> Result<()> {
     for (key, value) in fixed.entries() {
-        // Literal set keeps dotted key names literal and preserves declaration-order mutation.
-        target.set(key, value.clone())?;
+        // Source Nest.set('', value) uses Object.keys(pointer).length, even if that key exists.
+        let append_key = key.is_empty().then(|| target.entries().len().to_string());
+        // Other names, including dots, remain one literal segment in the source call.
+        target.set(append_key.as_deref().unwrap_or(key), value.clone())?;
     }
     Ok(())
 }
