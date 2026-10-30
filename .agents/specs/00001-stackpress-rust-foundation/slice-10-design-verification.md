@@ -1,0 +1,67 @@
+# Slice 10 behavior, implementation risks and milestones
+
+Draft / Not Frozen; [G43 checkpoint](slice-10-design-decisions.md). Accepted developer responsibilities are documented source behavior, not vulnerabilities the port silently fixes. Test IDs retained from the earlier draft now pin G43 behavior where that recommendation was reversed.
+
+## Documented behavior and source-parity tests
+
+| ID / developer responsibility | Source contract | Parity test |
+| --- | --- | --- |
+| R01 public exposure | Configured public events run without an API allowlist/global can check; missing api disables all contributions | Config-selected event invoked; unknown target produces raw no-listener behavior; absent config zero callbacks/services/routes. |
+| R02 scope selection | Any-match, registry is display-only, empty protected permits denies 401 | Two endpoint scopes with one held succeeds; missing overlap/empty arrays denies; unknown registry ID can still overlap actual row scopes. |
+| R03 credential method distinction | GET ID-only, other methods presence/equality branches, scheme ignored | GET/HEAD/POST/OPTIONS plus extra spaces/colon/case table matches source split/trim/status exactly. |
+| R04 row state/time | API endpoint adds no active/expiry checks; token page alone checks present expiry strictly before now; selected detail event has its own behavior | Custom detail returns inactive/expired row then endpoint proceeds; token equal-now/past; real default SQL active behavior separately pinned. |
+| R05 caller/data forwarding | API Session writes profileId; no JWT Caller conversion or mandatory permission bridge | Forged input profileId overwritten on session route, app/public not rewritten; same request reaches target, ordinary data fields remain; browser JWT unchanged. |
+| R06 per-process permissions | Each chosen event/route owns checks; API does not force new can/default-deny | Target custom handler denies/aborts when installed, allows when configured to do so; API scope success does not alter that handler. Existing unrelated SQL policy regression remains. |
+| R07 data precedence/input flags | Top-level fixed set then session profileId; OAuth spreads model fields before its three overrides | Nested object replaced whole; supplied id/secret/scopes/active survive to model handler; only app/profile/expiry overwritten; model filters unrelated fields. |
+| R08 CORS | Exact URL-origin/headers/method advertisement/200/Continue | Native Request origin differs from Origin header; capture all source headers incl Access-Control-Request-Method; ALL OPTIONS can continue into endpoint. |
+| R09 CORS is not admission | Unmatched CORS origin only omits headers; it does not reject request | Target still runs subject to own checks for no/unlisted Origin; no new 403 or policy merge. |
+| R10 OAuth redirect/state | Caller redirect split, optional truthy state echo, source denial link and signin continuation | HTTP/external/query-containing redirect accepted as source; state special characters roundtrip; split with multiple ? matches source, not URL normalization. |
+| R11 session-as-code | Code is persisted Session.id, reusable; no PKCE/consumption state | Exchange twice returns same access_token/access_secret; no new code row/atomic consume or verifier is required. |
+| R12 consent model input | API adds no explicit CSRF/role/scope-maximum rule beyond source, source process checks may apply | Request-supplied active/secret/scopes reaches selected session-create; developer-installed request/event guard can stop it separately. |
+| R13 intentional outputs | Stored/displayed Application/Session secrets and token access_secret are source contracts | SQL detail/admin/form/consent selected application and token results preserve exact fields; no automatic mask/hash/no-store policy. No extra unsolicited logging introduced. |
+| R16 webhook egress | Configured URI/method and fetch semantics; no API SSRF rules | Fake transport receives HTTP/private URI unchanged, method/body/headers exactly; redirect/proxy behavior compared to chosen source runtime. No actual private network calls in tests. |
+| R17 webhook payload/signing | Exact data/params/results, no projection/signature | Canary input/result fields intentionally present; only Content-Type added by API; no signature header/id field. |
+| R18 retries/idempotency | One awaited fetch, resolved error statuses ignored, rejection propagates; no dedup | 500 result resolves once without retry; throw propagates; repeated event sends again; no delivery record/worker. |
+| R20 operation/delivery ordering | Priority -200/status exactly200 observes event state, not commit acknowledgment | 201/error skip, prior and later listeners trace ordering; later failure does not roll back already awaited send. |
+| R22 G42 | Shared routes/events priority/FIFO, any handler may stop its own chain; API wrappers ignore nested return value | Duplicate route setup succeeds; early outer Abort stops chain; child Abort stops child chain while endpoint wrapper Continue permits next route handler. |
+| R25 consent/admin UI | Source labels/config/key display preserved through Leptos; project presentation unchanged | 00021-001..006: no-JS Grant/Deny, keyboard, wrapping, original title/body wording, menus, secret/dates/relations and head assets. |
+
+## Port implementation risks requiring prevention
+
+| ID / mechanics risk | Prevention | Proving test |
+| --- | --- | --- |
+| R14 changed ID/random/Date semantics | Source-compatible CUID provider, ring shared randomness, explicit millisecond Date representation | Deterministic provider fixtures, cuid shape/default override, zero/negative/fractional expiry and InvalidDate mechanics branches; no silent UUID/TTL replacement. |
+| R15 SQL filter/default/join drift | API-owned compatibility extraction and source model defaults, existing real Engine/adapters | Real SQLite create/detail/get/search/update/batch/upsert/remove/restore/purge with exact selected columns and profile/application joins; negative DB/validation cases. |
+| R19 concurrent mutable state | Per-request data and short-scoped database/provider ownership, no global mutable caller | Parallel browser users/API sessions retain own request data; same reusable code can be read concurrently without invented consume semantics; transaction tests preserve actual model effects. |
+| R21 deadlock/reentrancy | No synchronization guard across await/fetch/nested emit; no self-owned global service cycle | Reentrant fake lookup/fetch behind explicit barrier and separate process watchdog; no sleeping assertions. |
+| R23 representation/cancellation | Preserve inherited foundation/host constraints and resource ownership without new API hard caps | Existing limits fail explicitly; pending fetch/lookup cancellation drops future, no detached worker; no claim of remote rollback. |
+| R24 feature/target coupling | Native SQL/fetch/session resources separate from shared/browser DTO/UI | Selected native/full API and pure/WASM dependency checks; no inbound HTTP host/driver follows browser imports; complete full-feature registrar includes pages. |
+| R26 activation/startup/mechanics | Optional config short-circuits before resources; static imports and ordinary plugin callbacks | Selected plugin + absent api builds inert; present config gets phase order, webhook-only empty endpoints has no OAuth; no startup database/install/listener/send. |
+
+## Full-scope milestone ownership
+
+This plan is proposed, not a release to code. API implementer owns only the new API crate, API example/codegen inputs and new Slice 10 spec receipts after release. Coordinator owns shared files; Slice 9 owns JWT/Profile/CSRF/account/email.
+
+| Gate | API implementer exclusive proposed files | Required proof / stop |
+| --- | --- | --- |
+| Design (current) | Existing nine slice-10-design-*.md only; `/private/tmp/slice10-g43-probes` | G43 source inventory/intent, probes, remaining mechanics questions and baseline-preserving validation. Stop. |
+| M0 source-mechanics proof | New `crates/framework/framework-api/{Cargo.toml,src/lib.rs,src/config.rs,src/helpers.rs,tests/main.rs,tests/proof.rs}`; external consumers | Optional config, header/parser/source Nest overlay, raw emit return isolation, Send nested request helpers, SQL schema/provider/profile boundary and inline Fetch signature. Resolve Q10-CUID/Q10-REF mechanics before claiming them. Stop. |
+| M1 SQL models/storage/management data | API `schema.idea`, `src/models/**`, `src/sql/{mod,adapter,events,defaults}.rs`, `src/codegen.rs`, `tests/sql.rs`; API example/tool generated selection inputs | Full Application/API Session fields/defaults/relations/plaintext secrets, source event vocabulary and create/filter/update/remove/restore/admin data. SQLite real integration, backend lanes/scoped limitations, codegen freshness. No SQL deferral. Stop. |
+| M2 routes/config/source CORS | API `src/{plugin,endpoints,routes,cors}.rs`, `tests/{config,endpoints,plugins,cors}.rs` | All config keys/methods/scopes, missing config, fixed data, current lookup actions, original status/return/priority behavior and G42. Stop. |
+| M3 OAuth and token handlers | API `src/pages/{mod,oauth,token}.rs`, `tests/oauth.rs`; example web host event composition | Actual Slice 9 me JWT event, app detail/shared response, session-create SQL persistence, original code/token/secret/expiry/state/redirect/results branches. No fabricated caller slot. Stop. |
+| M4 inline webhook/fetch | API `src/webhooks/{mod,predicate,fetch,reqwest}.rs`, `tests/webhooks.rs` | Original source envelope/predicate/status/priority; Send/cancel, normal fetch redirect/method/body mechanics, one attempt/status ignored/error propagated. No listener; any later transport test requiring one needs explicit release/devmetrics. Stop. |
+| M5 complete UI/management integration | API `src/views/**`, selected styles/admin glue, new `examples/api-checkpoint/{tool,shared,client,web}/**` and owned generated outputs, `tests/{consent,management}.rs` | Consent form/head/layout/token path plus Application/Session generated admin CRUD/keys/relations/population now. 00021-001..006 and finite no-listener integration before any separately managed preview. Stop before rounds. |
+| Rounds 1–4 / closeout | Only released API/example/tests/docs and new Slice 10 receipts | Logic/complexity, responsibility/ownership, consistency/Rustdoc, safety/soundness without hardening source semantics; test each justified edit/no-change review. Stop for coordinator verification. |
+| Docs follow-up | `crates/framework/framework-api/docs/**` and new receipt | Source-compatible migration/defaults, direct/plugin/full SQL/management examples, intentional developer responsibilities and target limits. External compile checks after APIs exist. Stop. |
+
+Root Cargo.toml/Cargo.lock/src/lib.rs remain coordinator-owned. Profile schema and JWT service are Slice 9-owned. Needed shared framework-schema/admin generator changes require a named exact-file grant from coordinator before edits; generated output is regenerated, never manually patched. No ownership of existing generated-admin fixture, lib/request or server/context/lifecycle is inferred. Full API scope is retained even if shared-file sequencing must be reconciled.
+
+## Verification and fail-fast plan
+
+After M0 release, use one fresh isolated effort target, required initial cleanup/recorder, sccache, bounded jobs and warm target thereafter; cap target at 8 GiB. Edit loop uses targeted nextest for changed crates/features/dependents. Milestone/round gate remains full applicable workspace nextest all targets, doctests, fmt, Clippy/Rustdoc with warnings denied, affected generators/feature/browser modes and per-crate coverage; no blind all-features across incompatible targets. Record every Cargo/proof/clean command at the shared benchmark store.
+
+Example gate commands once code exists: `cargo nextest run --workspace --all-targets --locked --no-fail-fast`; `cargo test --workspace --doc --locked`; `cargo fmt --all -- --check`; workspace Clippy with `-D warnings`; `RUSTDOCFLAGS='-D warnings' cargo doc --workspace --no-deps --locked`; per-crate `cargo llvm-cov` with measured valid features and --fail-under-lines 70. Development at least 70%, publication 90%, every changed crate separately. Report line numerator/denominator, target/features/exclusions and branch-risk coverage; source parity tests are mandatory independently of percentage.
+
+Deadlock-class tests run in child processes with outer process-tree watchdog, not only executor timers. Use readiness/entered/release barriers. Parent waits at most 5 seconds readiness, 10 seconds case, 3 seconds cooperative shutdown, then kills the group and reaps captured children; timeout is a named nonzero failure. Prove watchdog itself with an intentionally blocked child. No sleeps to establish ordering, no lock across await, no detached fetch/worker. A whole-command deadline covers compiler/nested consumer hangs; each external consumer has its own target to avoid same-binary reuse.
+
+Finite Request/Response/fetch fakes and in-memory I/O establish semantics without listeners; real DB tests prove persistence and joins. Native source oracle/primitive evidence is not browser/installed/HTTP/TLS/remote-ack evidence. Owner visual acceptance and coordinator re-verification remain separate gates. No production code/tests/coverage are run at this design stage.
