@@ -9,6 +9,7 @@ publish.workspace = true
 [features]
 default = []
 native = ["dep:base64", "dep:jsonwebtoken", "dep:stackpress-framework-schema", "dep:time"]
+sql = ["native", "dep:stackpress-sql", "dep:stackpress-framework-sql"]
 server = ["native", "dep:stackpress-lib", "dep:stackpress-server"]
 
 [dependencies]
@@ -20,7 +21,9 @@ regex = "=1.13.1"
 stackpress-framework-schema = { path = "../framework-schema", features = ["providers"], optional = true }
 base64 = { version = "=0.22.1", default-features = false, features = ["alloc"], optional = true }
 jsonwebtoken = { version = "=11.1.0", default-features = false, features = ["rust_crypto"], optional = true }
-time = { version = "=0.3.55", default-features = false, features = ["formatting"], optional = true }
+time = { version = "=0.3.55", default-features = false, features = ["formatting", "parsing"], optional = true }
+stackpress-sql = { path = "../../sql/sql", optional = true }
+stackpress-framework-sql = { path = "../framework-sql", optional = true }
 stackpress-lib = { path = "../../lib", optional = true }
 stackpress-server = { path = "../../server/server", optional = true }
 

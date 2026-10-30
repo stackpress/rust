@@ -6196,6 +6196,7 @@ dependencies = [
  "serde",
  "serde_json",
  "stackpress-framework-schema",
+ "stackpress-framework-sql",
  "stackpress-lib",
  "stackpress-server",
  "stackpress-sql",

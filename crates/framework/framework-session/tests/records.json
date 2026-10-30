@@ -1,0 +1,5617 @@
+{
+  "columns": [
+    {
+      "model": "Profile",
+      "name": "id",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "undefined": true
+      },
+      "unserialize": {
+        "undefined": true
+      },
+      "assert": "Invalid input: expected string, received undefined"
+    },
+    {
+      "model": "Profile",
+      "name": "id",
+      "input": "2023-11-14T22:13:20.123Z",
+      "nativeDate": true,
+      "nestedDate": false,
+      "serialize": {
+        "value": "2023-11-14 22:13:20"
+      },
+      "unserialize": {
+        "value": "2023-11-14 22:13:20"
+      },
+      "assert": "Invalid input: expected string, received Date"
+    },
+    {
+      "model": "Profile",
+      "name": "id",
+      "input": [
+        "1970-01-01T00:00:00.000Z",
+        null,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": true,
+      "serialize": {
+        "value": "Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time),,[object Object]"
+      },
+      "unserialize": {
+        "value": "Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time),,[object Object]"
+      },
+      "assert": "Invalid input: expected string, received array"
+    },
+    {
+      "model": "Profile",
+      "name": "id",
+      "input": null,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "null"
+      },
+      "unserialize": {
+        "value": "null"
+      },
+      "assert": "Invalid input: expected string, received null"
+    },
+    {
+      "model": "Profile",
+      "name": "id",
+      "input": false,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "false"
+      },
+      "unserialize": {
+        "value": "false"
+      },
+      "assert": "Invalid input: expected string, received boolean"
+    },
+    {
+      "model": "Profile",
+      "name": "id",
+      "input": true,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "true"
+      },
+      "unserialize": {
+        "value": "true"
+      },
+      "assert": "Invalid input: expected string, received boolean"
+    },
+    {
+      "model": "Profile",
+      "name": "id",
+      "input": 0,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "0"
+      },
+      "unserialize": {
+        "value": "0"
+      },
+      "assert": "Invalid input: expected string, received number"
+    },
+    {
+      "model": "Profile",
+      "name": "id",
+      "input": 1,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1"
+      },
+      "unserialize": {
+        "value": "1"
+      },
+      "assert": "Invalid input: expected string, received number"
+    },
+    {
+      "model": "Profile",
+      "name": "id",
+      "input": "",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": ""
+      },
+      "unserialize": {
+        "value": ""
+      },
+      "assert": "Value is required."
+    },
+    {
+      "model": "Profile",
+      "name": "id",
+      "input": "false",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "false"
+      },
+      "unserialize": {
+        "value": "false"
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "id",
+      "input": "true",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "true"
+      },
+      "unserialize": {
+        "value": "true"
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "id",
+      "input": "0",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "0"
+      },
+      "unserialize": {
+        "value": "0"
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "id",
+      "input": "1",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1"
+      },
+      "unserialize": {
+        "value": "1"
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "id",
+      "input": [],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": ""
+      },
+      "unserialize": {
+        "value": ""
+      },
+      "assert": "Invalid input: expected string, received array"
+    },
+    {
+      "model": "Profile",
+      "name": "id",
+      "input": [
+        null,
+        3,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": ",3,[object Object]"
+      },
+      "unserialize": {
+        "value": ",3,[object Object]"
+      },
+      "assert": "Invalid input: expected string, received array"
+    },
+    {
+      "model": "Profile",
+      "name": "id",
+      "input": {},
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "{}"
+      },
+      "unserialize": {
+        "value": "{}"
+      },
+      "assert": "Invalid input: expected string, received object"
+    },
+    {
+      "model": "Profile",
+      "name": "id",
+      "input": "{\"a\":1}",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "{\"a\":1}"
+      },
+      "unserialize": {
+        "value": "{\"a\":1}"
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "id",
+      "input": "[1]",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[1]"
+      },
+      "unserialize": {
+        "value": "[1]"
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "id",
+      "input": "bad",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "bad"
+      },
+      "unserialize": {
+        "value": "bad"
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "image",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "undefined": true
+      },
+      "unserialize": {
+        "undefined": true
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "image",
+      "input": "2023-11-14T22:13:20.123Z",
+      "nativeDate": true,
+      "nestedDate": false,
+      "serialize": {
+        "value": "2023-11-14 22:13:20"
+      },
+      "unserialize": {
+        "value": "2023-11-14 22:13:20"
+      },
+      "assert": "Invalid input: expected string, received Date"
+    },
+    {
+      "model": "Profile",
+      "name": "image",
+      "input": [
+        "1970-01-01T00:00:00.000Z",
+        null,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": true,
+      "serialize": {
+        "value": "Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time),,[object Object]"
+      },
+      "unserialize": {
+        "value": "Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time),,[object Object]"
+      },
+      "assert": "Invalid input: expected string, received array"
+    },
+    {
+      "model": "Profile",
+      "name": "image",
+      "input": null,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": null
+      },
+      "unserialize": {
+        "value": null
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "image",
+      "input": false,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "false"
+      },
+      "unserialize": {
+        "value": "false"
+      },
+      "assert": "Invalid input: expected string, received boolean"
+    },
+    {
+      "model": "Profile",
+      "name": "image",
+      "input": true,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "true"
+      },
+      "unserialize": {
+        "value": "true"
+      },
+      "assert": "Invalid input: expected string, received boolean"
+    },
+    {
+      "model": "Profile",
+      "name": "image",
+      "input": 0,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "0"
+      },
+      "unserialize": {
+        "value": "0"
+      },
+      "assert": "Invalid input: expected string, received number"
+    },
+    {
+      "model": "Profile",
+      "name": "image",
+      "input": 1,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1"
+      },
+      "unserialize": {
+        "value": "1"
+      },
+      "assert": "Invalid input: expected string, received number"
+    },
+    {
+      "model": "Profile",
+      "name": "image",
+      "input": "",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": ""
+      },
+      "unserialize": {
+        "value": ""
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "image",
+      "input": "false",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "false"
+      },
+      "unserialize": {
+        "value": "false"
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "image",
+      "input": "true",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "true"
+      },
+      "unserialize": {
+        "value": "true"
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "image",
+      "input": "0",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "0"
+      },
+      "unserialize": {
+        "value": "0"
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "image",
+      "input": "1",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1"
+      },
+      "unserialize": {
+        "value": "1"
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "image",
+      "input": [],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": ""
+      },
+      "unserialize": {
+        "value": ""
+      },
+      "assert": "Invalid input: expected string, received array"
+    },
+    {
+      "model": "Profile",
+      "name": "image",
+      "input": [
+        null,
+        3,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": ",3,[object Object]"
+      },
+      "unserialize": {
+        "value": ",3,[object Object]"
+      },
+      "assert": "Invalid input: expected string, received array"
+    },
+    {
+      "model": "Profile",
+      "name": "image",
+      "input": {},
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "{}"
+      },
+      "unserialize": {
+        "value": "{}"
+      },
+      "assert": "Invalid input: expected string, received object"
+    },
+    {
+      "model": "Profile",
+      "name": "image",
+      "input": "{\"a\":1}",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "{\"a\":1}"
+      },
+      "unserialize": {
+        "value": "{\"a\":1}"
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "image",
+      "input": "[1]",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[1]"
+      },
+      "unserialize": {
+        "value": "[1]"
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "image",
+      "input": "bad",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "bad"
+      },
+      "unserialize": {
+        "value": "bad"
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "name",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "undefined": true
+      },
+      "unserialize": {
+        "undefined": true
+      },
+      "assert": "Invalid input: expected string, received undefined"
+    },
+    {
+      "model": "Profile",
+      "name": "name",
+      "input": "2023-11-14T22:13:20.123Z",
+      "nativeDate": true,
+      "nestedDate": false,
+      "serialize": {
+        "value": "2023-11-14 22:13:20"
+      },
+      "unserialize": {
+        "value": "2023-11-14 22:13:20"
+      },
+      "assert": "Invalid input: expected string, received Date"
+    },
+    {
+      "model": "Profile",
+      "name": "name",
+      "input": [
+        "1970-01-01T00:00:00.000Z",
+        null,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": true,
+      "serialize": {
+        "value": "Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time),,[object Object]"
+      },
+      "unserialize": {
+        "value": "Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time),,[object Object]"
+      },
+      "assert": "Invalid input: expected string, received array"
+    },
+    {
+      "model": "Profile",
+      "name": "name",
+      "input": null,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "null"
+      },
+      "unserialize": {
+        "value": "null"
+      },
+      "assert": "Invalid input: expected string, received null"
+    },
+    {
+      "model": "Profile",
+      "name": "name",
+      "input": false,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "false"
+      },
+      "unserialize": {
+        "value": "false"
+      },
+      "assert": "Invalid input: expected string, received boolean"
+    },
+    {
+      "model": "Profile",
+      "name": "name",
+      "input": true,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "true"
+      },
+      "unserialize": {
+        "value": "true"
+      },
+      "assert": "Invalid input: expected string, received boolean"
+    },
+    {
+      "model": "Profile",
+      "name": "name",
+      "input": 0,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "0"
+      },
+      "unserialize": {
+        "value": "0"
+      },
+      "assert": "Invalid input: expected string, received number"
+    },
+    {
+      "model": "Profile",
+      "name": "name",
+      "input": 1,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1"
+      },
+      "unserialize": {
+        "value": "1"
+      },
+      "assert": "Invalid input: expected string, received number"
+    },
+    {
+      "model": "Profile",
+      "name": "name",
+      "input": "",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": ""
+      },
+      "unserialize": {
+        "value": ""
+      },
+      "assert": "Name is required"
+    },
+    {
+      "model": "Profile",
+      "name": "name",
+      "input": "false",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "false"
+      },
+      "unserialize": {
+        "value": "false"
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "name",
+      "input": "true",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "true"
+      },
+      "unserialize": {
+        "value": "true"
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "name",
+      "input": "0",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "0"
+      },
+      "unserialize": {
+        "value": "0"
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "name",
+      "input": "1",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1"
+      },
+      "unserialize": {
+        "value": "1"
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "name",
+      "input": [],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": ""
+      },
+      "unserialize": {
+        "value": ""
+      },
+      "assert": "Invalid input: expected string, received array"
+    },
+    {
+      "model": "Profile",
+      "name": "name",
+      "input": [
+        null,
+        3,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": ",3,[object Object]"
+      },
+      "unserialize": {
+        "value": ",3,[object Object]"
+      },
+      "assert": "Invalid input: expected string, received array"
+    },
+    {
+      "model": "Profile",
+      "name": "name",
+      "input": {},
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "{}"
+      },
+      "unserialize": {
+        "value": "{}"
+      },
+      "assert": "Invalid input: expected string, received object"
+    },
+    {
+      "model": "Profile",
+      "name": "name",
+      "input": "{\"a\":1}",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "{\"a\":1}"
+      },
+      "unserialize": {
+        "value": "{\"a\":1}"
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "name",
+      "input": "[1]",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[1]"
+      },
+      "unserialize": {
+        "value": "[1]"
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "name",
+      "input": "bad",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "bad"
+      },
+      "unserialize": {
+        "value": "bad"
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "type",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "undefined": true
+      },
+      "unserialize": {
+        "undefined": true
+      },
+      "assert": "Invalid input: expected string, received undefined"
+    },
+    {
+      "model": "Profile",
+      "name": "type",
+      "input": "2023-11-14T22:13:20.123Z",
+      "nativeDate": true,
+      "nestedDate": false,
+      "serialize": {
+        "value": "2023-11-14 22:13:20"
+      },
+      "unserialize": {
+        "value": "2023-11-14 22:13:20"
+      },
+      "assert": "Invalid input: expected string, received Date"
+    },
+    {
+      "model": "Profile",
+      "name": "type",
+      "input": [
+        "1970-01-01T00:00:00.000Z",
+        null,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": true,
+      "serialize": {
+        "value": "Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time),,[object Object]"
+      },
+      "unserialize": {
+        "value": "Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time),,[object Object]"
+      },
+      "assert": "Invalid input: expected string, received array"
+    },
+    {
+      "model": "Profile",
+      "name": "type",
+      "input": null,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "null"
+      },
+      "unserialize": {
+        "value": "null"
+      },
+      "assert": "Invalid input: expected string, received null"
+    },
+    {
+      "model": "Profile",
+      "name": "type",
+      "input": false,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "false"
+      },
+      "unserialize": {
+        "value": "false"
+      },
+      "assert": "Invalid input: expected string, received boolean"
+    },
+    {
+      "model": "Profile",
+      "name": "type",
+      "input": true,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "true"
+      },
+      "unserialize": {
+        "value": "true"
+      },
+      "assert": "Invalid input: expected string, received boolean"
+    },
+    {
+      "model": "Profile",
+      "name": "type",
+      "input": 0,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "0"
+      },
+      "unserialize": {
+        "value": "0"
+      },
+      "assert": "Invalid input: expected string, received number"
+    },
+    {
+      "model": "Profile",
+      "name": "type",
+      "input": 1,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1"
+      },
+      "unserialize": {
+        "value": "1"
+      },
+      "assert": "Invalid input: expected string, received number"
+    },
+    {
+      "model": "Profile",
+      "name": "type",
+      "input": "",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": ""
+      },
+      "unserialize": {
+        "value": ""
+      },
+      "assert": "Type is required"
+    },
+    {
+      "model": "Profile",
+      "name": "type",
+      "input": "false",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "false"
+      },
+      "unserialize": {
+        "value": "false"
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "type",
+      "input": "true",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "true"
+      },
+      "unserialize": {
+        "value": "true"
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "type",
+      "input": "0",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "0"
+      },
+      "unserialize": {
+        "value": "0"
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "type",
+      "input": "1",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1"
+      },
+      "unserialize": {
+        "value": "1"
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "type",
+      "input": [],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": ""
+      },
+      "unserialize": {
+        "value": ""
+      },
+      "assert": "Invalid input: expected string, received array"
+    },
+    {
+      "model": "Profile",
+      "name": "type",
+      "input": [
+        null,
+        3,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": ",3,[object Object]"
+      },
+      "unserialize": {
+        "value": ",3,[object Object]"
+      },
+      "assert": "Invalid input: expected string, received array"
+    },
+    {
+      "model": "Profile",
+      "name": "type",
+      "input": {},
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "{}"
+      },
+      "unserialize": {
+        "value": "{}"
+      },
+      "assert": "Invalid input: expected string, received object"
+    },
+    {
+      "model": "Profile",
+      "name": "type",
+      "input": "{\"a\":1}",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "{\"a\":1}"
+      },
+      "unserialize": {
+        "value": "{\"a\":1}"
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "type",
+      "input": "[1]",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[1]"
+      },
+      "unserialize": {
+        "value": "[1]"
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "type",
+      "input": "bad",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "bad"
+      },
+      "unserialize": {
+        "value": "bad"
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "roles",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[]"
+      },
+      "unserialize": {
+        "value": []
+      },
+      "assert": "Invalid input: expected array, received undefined"
+    },
+    {
+      "model": "Profile",
+      "name": "roles",
+      "input": "2023-11-14T22:13:20.123Z",
+      "nativeDate": true,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[]"
+      },
+      "unserialize": {
+        "value": []
+      },
+      "assert": "Invalid input: expected array, received Date"
+    },
+    {
+      "model": "Profile",
+      "name": "roles",
+      "input": [
+        "1970-01-01T00:00:00.000Z",
+        null,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": true,
+      "serialize": {
+        "value": "[\"1970-01-01 00:00:00\",\"null\",\"{}\"]"
+      },
+      "unserialize": {
+        "value": [
+          "1970-01-01 00:00:00",
+          "null",
+          "{}"
+        ]
+      },
+      "assert": "Invalid input: expected string, received Date"
+    },
+    {
+      "model": "Profile",
+      "name": "roles",
+      "input": null,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[]"
+      },
+      "unserialize": {
+        "value": []
+      },
+      "assert": "Invalid input: expected array, received null"
+    },
+    {
+      "model": "Profile",
+      "name": "roles",
+      "input": false,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[]"
+      },
+      "unserialize": {
+        "value": []
+      },
+      "assert": "Invalid input: expected array, received boolean"
+    },
+    {
+      "model": "Profile",
+      "name": "roles",
+      "input": true,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[]"
+      },
+      "unserialize": {
+        "value": []
+      },
+      "assert": "Invalid input: expected array, received boolean"
+    },
+    {
+      "model": "Profile",
+      "name": "roles",
+      "input": 0,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[]"
+      },
+      "unserialize": {
+        "value": []
+      },
+      "assert": "Invalid input: expected array, received number"
+    },
+    {
+      "model": "Profile",
+      "name": "roles",
+      "input": 1,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[]"
+      },
+      "unserialize": {
+        "value": []
+      },
+      "assert": "Invalid input: expected array, received number"
+    },
+    {
+      "model": "Profile",
+      "name": "roles",
+      "input": "",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[]"
+      },
+      "unserialize": {
+        "value": []
+      },
+      "assert": "Invalid input: expected array, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "roles",
+      "input": "false",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[]"
+      },
+      "unserialize": {
+        "value": []
+      },
+      "assert": "Invalid input: expected array, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "roles",
+      "input": "true",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[]"
+      },
+      "unserialize": {
+        "value": []
+      },
+      "assert": "Invalid input: expected array, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "roles",
+      "input": "0",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[]"
+      },
+      "unserialize": {
+        "value": []
+      },
+      "assert": "Invalid input: expected array, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "roles",
+      "input": "1",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[]"
+      },
+      "unserialize": {
+        "value": []
+      },
+      "assert": "Invalid input: expected array, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "roles",
+      "input": [],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[]"
+      },
+      "unserialize": {
+        "value": []
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "roles",
+      "input": [
+        null,
+        3,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[\"null\",\"3\",\"{}\"]"
+      },
+      "unserialize": {
+        "value": [
+          "null",
+          "3",
+          "{}"
+        ]
+      },
+      "assert": "Invalid input: expected string, received null"
+    },
+    {
+      "model": "Profile",
+      "name": "roles",
+      "input": {},
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[]"
+      },
+      "unserialize": {
+        "value": []
+      },
+      "assert": "Invalid input: expected array, received object"
+    },
+    {
+      "model": "Profile",
+      "name": "roles",
+      "input": "{\"a\":1}",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[]"
+      },
+      "unserialize": {
+        "value": []
+      },
+      "assert": "Invalid input: expected array, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "roles",
+      "input": "[1]",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[]"
+      },
+      "unserialize": {
+        "value": [
+          "1"
+        ]
+      },
+      "assert": "Invalid input: expected array, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "roles",
+      "input": "bad",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[]"
+      },
+      "unserialize": {
+        "value": []
+      },
+      "assert": "Invalid input: expected array, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "tags",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[]"
+      },
+      "unserialize": {
+        "value": []
+      },
+      "assert": "Invalid input: expected array, received undefined"
+    },
+    {
+      "model": "Profile",
+      "name": "tags",
+      "input": "2023-11-14T22:13:20.123Z",
+      "nativeDate": true,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[]"
+      },
+      "unserialize": {
+        "value": []
+      },
+      "assert": "Invalid input: expected array, received Date"
+    },
+    {
+      "model": "Profile",
+      "name": "tags",
+      "input": [
+        "1970-01-01T00:00:00.000Z",
+        null,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": true,
+      "serialize": {
+        "value": "[\"1970-01-01 00:00:00\",\"null\",\"{}\"]"
+      },
+      "unserialize": {
+        "value": [
+          "1970-01-01 00:00:00",
+          "null",
+          "{}"
+        ]
+      },
+      "assert": "Invalid input: expected string, received Date"
+    },
+    {
+      "model": "Profile",
+      "name": "tags",
+      "input": null,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[]"
+      },
+      "unserialize": {
+        "value": []
+      },
+      "assert": "Invalid input: expected array, received null"
+    },
+    {
+      "model": "Profile",
+      "name": "tags",
+      "input": false,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[]"
+      },
+      "unserialize": {
+        "value": []
+      },
+      "assert": "Invalid input: expected array, received boolean"
+    },
+    {
+      "model": "Profile",
+      "name": "tags",
+      "input": true,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[]"
+      },
+      "unserialize": {
+        "value": []
+      },
+      "assert": "Invalid input: expected array, received boolean"
+    },
+    {
+      "model": "Profile",
+      "name": "tags",
+      "input": 0,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[]"
+      },
+      "unserialize": {
+        "value": []
+      },
+      "assert": "Invalid input: expected array, received number"
+    },
+    {
+      "model": "Profile",
+      "name": "tags",
+      "input": 1,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[]"
+      },
+      "unserialize": {
+        "value": []
+      },
+      "assert": "Invalid input: expected array, received number"
+    },
+    {
+      "model": "Profile",
+      "name": "tags",
+      "input": "",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[]"
+      },
+      "unserialize": {
+        "value": []
+      },
+      "assert": "Invalid input: expected array, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "tags",
+      "input": "false",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[]"
+      },
+      "unserialize": {
+        "value": []
+      },
+      "assert": "Invalid input: expected array, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "tags",
+      "input": "true",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[]"
+      },
+      "unserialize": {
+        "value": []
+      },
+      "assert": "Invalid input: expected array, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "tags",
+      "input": "0",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[]"
+      },
+      "unserialize": {
+        "value": []
+      },
+      "assert": "Invalid input: expected array, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "tags",
+      "input": "1",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[]"
+      },
+      "unserialize": {
+        "value": []
+      },
+      "assert": "Invalid input: expected array, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "tags",
+      "input": [],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[]"
+      },
+      "unserialize": {
+        "value": []
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "tags",
+      "input": [
+        null,
+        3,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[\"null\",\"3\",\"{}\"]"
+      },
+      "unserialize": {
+        "value": [
+          "null",
+          "3",
+          "{}"
+        ]
+      },
+      "assert": "Invalid input: expected string, received null"
+    },
+    {
+      "model": "Profile",
+      "name": "tags",
+      "input": {},
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[]"
+      },
+      "unserialize": {
+        "value": []
+      },
+      "assert": "Invalid input: expected array, received object"
+    },
+    {
+      "model": "Profile",
+      "name": "tags",
+      "input": "{\"a\":1}",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[]"
+      },
+      "unserialize": {
+        "value": []
+      },
+      "assert": "Invalid input: expected array, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "tags",
+      "input": "[1]",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[]"
+      },
+      "unserialize": {
+        "value": [
+          "1"
+        ]
+      },
+      "assert": "Invalid input: expected array, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "tags",
+      "input": "bad",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[]"
+      },
+      "unserialize": {
+        "value": []
+      },
+      "assert": "Invalid input: expected array, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "references",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "undefined": true
+      },
+      "unserialize": {
+        "undefined": true
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "references",
+      "input": "2023-11-14T22:13:20.123Z",
+      "nativeDate": true,
+      "nestedDate": false,
+      "serialize": {
+        "value": "\"2023-11-14T22:13:20.123Z\""
+      },
+      "unserialize": {
+        "value": {}
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "references",
+      "input": [
+        "1970-01-01T00:00:00.000Z",
+        null,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": true,
+      "serialize": {
+        "value": "[\"1970-01-01T00:00:00.000Z\",null,{}]"
+      },
+      "unserialize": {
+        "value": {}
+      },
+      "assert": "Invalid input: expected object, received array"
+    },
+    {
+      "model": "Profile",
+      "name": "references",
+      "input": null,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": null
+      },
+      "unserialize": {
+        "value": null
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "references",
+      "input": false,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "false"
+      },
+      "unserialize": {
+        "value": {}
+      },
+      "assert": "Invalid input: expected object, received boolean"
+    },
+    {
+      "model": "Profile",
+      "name": "references",
+      "input": true,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "true"
+      },
+      "unserialize": {
+        "value": {}
+      },
+      "assert": "Invalid input: expected object, received boolean"
+    },
+    {
+      "model": "Profile",
+      "name": "references",
+      "input": 0,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "0"
+      },
+      "unserialize": {
+        "value": {}
+      },
+      "assert": "Invalid input: expected object, received number"
+    },
+    {
+      "model": "Profile",
+      "name": "references",
+      "input": 1,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1"
+      },
+      "unserialize": {
+        "value": {}
+      },
+      "assert": "Invalid input: expected object, received number"
+    },
+    {
+      "model": "Profile",
+      "name": "references",
+      "input": "",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "{}"
+      },
+      "unserialize": {
+        "value": {}
+      },
+      "assert": "Invalid input: expected object, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "references",
+      "input": "false",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "{}"
+      },
+      "unserialize": {
+        "value": {}
+      },
+      "assert": "Invalid input: expected object, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "references",
+      "input": "true",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "{}"
+      },
+      "unserialize": {
+        "value": {}
+      },
+      "assert": "Invalid input: expected object, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "references",
+      "input": "0",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "{}"
+      },
+      "unserialize": {
+        "value": {}
+      },
+      "assert": "Invalid input: expected object, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "references",
+      "input": "1",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "{}"
+      },
+      "unserialize": {
+        "value": {}
+      },
+      "assert": "Invalid input: expected object, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "references",
+      "input": [],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[]"
+      },
+      "unserialize": {
+        "value": {}
+      },
+      "assert": "Invalid input: expected object, received array"
+    },
+    {
+      "model": "Profile",
+      "name": "references",
+      "input": [
+        null,
+        3,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[null,3,{}]"
+      },
+      "unserialize": {
+        "value": {}
+      },
+      "assert": "Invalid input: expected object, received array"
+    },
+    {
+      "model": "Profile",
+      "name": "references",
+      "input": {},
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "{}"
+      },
+      "unserialize": {
+        "value": {}
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "references",
+      "input": "{\"a\":1}",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "{\"a\":1}"
+      },
+      "unserialize": {
+        "value": {
+          "a": 1
+        }
+      },
+      "assert": "Invalid input: expected object, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "references",
+      "input": "[1]",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "{}"
+      },
+      "unserialize": {
+        "value": {}
+      },
+      "assert": "Invalid input: expected object, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "references",
+      "input": "bad",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "{}"
+      },
+      "unserialize": {
+        "value": {}
+      },
+      "assert": "Invalid input: expected object, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "active",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "undefined": true
+      },
+      "unserialize": {
+        "undefined": true
+      },
+      "assert": "Invalid input: expected boolean, received undefined"
+    },
+    {
+      "model": "Profile",
+      "name": "active",
+      "input": "2023-11-14T22:13:20.123Z",
+      "nativeDate": true,
+      "nestedDate": false,
+      "serialize": {
+        "value": true
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received Date"
+    },
+    {
+      "model": "Profile",
+      "name": "active",
+      "input": [
+        "1970-01-01T00:00:00.000Z",
+        null,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": true,
+      "serialize": {
+        "value": true
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received array"
+    },
+    {
+      "model": "Profile",
+      "name": "active",
+      "input": null,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": false
+      },
+      "unserialize": {
+        "value": false
+      },
+      "assert": "Invalid input: expected boolean, received null"
+    },
+    {
+      "model": "Profile",
+      "name": "active",
+      "input": false,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": false
+      },
+      "unserialize": {
+        "value": false
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "active",
+      "input": true,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": true
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "active",
+      "input": 0,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": false
+      },
+      "unserialize": {
+        "value": false
+      },
+      "assert": "Invalid input: expected boolean, received number"
+    },
+    {
+      "model": "Profile",
+      "name": "active",
+      "input": 1,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": true
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received number"
+    },
+    {
+      "model": "Profile",
+      "name": "active",
+      "input": "",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": false
+      },
+      "unserialize": {
+        "value": false
+      },
+      "assert": "Invalid input: expected boolean, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "active",
+      "input": "false",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": false
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "active",
+      "input": "true",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": true
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "active",
+      "input": "0",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": false
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "active",
+      "input": "1",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": true
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "active",
+      "input": [],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": true
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received array"
+    },
+    {
+      "model": "Profile",
+      "name": "active",
+      "input": [
+        null,
+        3,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": true
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received array"
+    },
+    {
+      "model": "Profile",
+      "name": "active",
+      "input": {},
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": true
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received object"
+    },
+    {
+      "model": "Profile",
+      "name": "active",
+      "input": "{\"a\":1}",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": true
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "active",
+      "input": "[1]",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": true
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "active",
+      "input": "bad",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": true
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "created",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "undefined": true
+      },
+      "unserialize": {
+        "undefined": true
+      },
+      "assert": "Invalid input: expected date, received undefined"
+    },
+    {
+      "model": "Profile",
+      "name": "created",
+      "input": "2023-11-14T22:13:20.123Z",
+      "nativeDate": true,
+      "nestedDate": false,
+      "serialize": {
+        "value": "2023-11-14 22:13:20"
+      },
+      "unserialize": {
+        "value": "2023-11-14T22:13:20.123Z"
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "created",
+      "input": [
+        "1970-01-01T00:00:00.000Z",
+        null,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": true,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received array"
+    },
+    {
+      "model": "Profile",
+      "name": "created",
+      "input": null,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received null"
+    },
+    {
+      "model": "Profile",
+      "name": "created",
+      "input": false,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received boolean"
+    },
+    {
+      "model": "Profile",
+      "name": "created",
+      "input": true,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received boolean"
+    },
+    {
+      "model": "Profile",
+      "name": "created",
+      "input": 0,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received number"
+    },
+    {
+      "model": "Profile",
+      "name": "created",
+      "input": 1,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.001Z"
+      },
+      "assert": "Invalid input: expected date, received number"
+    },
+    {
+      "model": "Profile",
+      "name": "created",
+      "input": "",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "created",
+      "input": "false",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "created",
+      "input": "true",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "created",
+      "input": "0",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "2000-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "2000-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "created",
+      "input": "1",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "2001-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "2001-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "created",
+      "input": [],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received array"
+    },
+    {
+      "model": "Profile",
+      "name": "created",
+      "input": [
+        null,
+        3,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received array"
+    },
+    {
+      "model": "Profile",
+      "name": "created",
+      "input": {},
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received object"
+    },
+    {
+      "model": "Profile",
+      "name": "created",
+      "input": "{\"a\":1}",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "created",
+      "input": "[1]",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "created",
+      "input": "bad",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "updated",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "undefined": true
+      },
+      "unserialize": {
+        "undefined": true
+      },
+      "assert": "Invalid input: expected date, received undefined"
+    },
+    {
+      "model": "Profile",
+      "name": "updated",
+      "input": "2023-11-14T22:13:20.123Z",
+      "nativeDate": true,
+      "nestedDate": false,
+      "serialize": {
+        "value": "2023-11-14 22:13:20"
+      },
+      "unserialize": {
+        "value": "2023-11-14T22:13:20.123Z"
+      },
+      "assert": null
+    },
+    {
+      "model": "Profile",
+      "name": "updated",
+      "input": [
+        "1970-01-01T00:00:00.000Z",
+        null,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": true,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received array"
+    },
+    {
+      "model": "Profile",
+      "name": "updated",
+      "input": null,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received null"
+    },
+    {
+      "model": "Profile",
+      "name": "updated",
+      "input": false,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received boolean"
+    },
+    {
+      "model": "Profile",
+      "name": "updated",
+      "input": true,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received boolean"
+    },
+    {
+      "model": "Profile",
+      "name": "updated",
+      "input": 0,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received number"
+    },
+    {
+      "model": "Profile",
+      "name": "updated",
+      "input": 1,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.001Z"
+      },
+      "assert": "Invalid input: expected date, received number"
+    },
+    {
+      "model": "Profile",
+      "name": "updated",
+      "input": "",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "updated",
+      "input": "false",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "updated",
+      "input": "true",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "updated",
+      "input": "0",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "2000-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "2000-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "updated",
+      "input": "1",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "2001-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "2001-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "updated",
+      "input": [],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received array"
+    },
+    {
+      "model": "Profile",
+      "name": "updated",
+      "input": [
+        null,
+        3,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received array"
+    },
+    {
+      "model": "Profile",
+      "name": "updated",
+      "input": {},
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received object"
+    },
+    {
+      "model": "Profile",
+      "name": "updated",
+      "input": "{\"a\":1}",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "updated",
+      "input": "[1]",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Profile",
+      "name": "updated",
+      "input": "bad",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "id",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "undefined": true
+      },
+      "unserialize": {
+        "undefined": true
+      },
+      "assert": "Invalid input: expected string, received undefined"
+    },
+    {
+      "model": "Auth",
+      "name": "id",
+      "input": "2023-11-14T22:13:20.123Z",
+      "nativeDate": true,
+      "nestedDate": false,
+      "serialize": {
+        "value": "2023-11-14 22:13:20"
+      },
+      "unserialize": {
+        "value": "2023-11-14 22:13:20"
+      },
+      "assert": "Invalid input: expected string, received Date"
+    },
+    {
+      "model": "Auth",
+      "name": "id",
+      "input": [
+        "1970-01-01T00:00:00.000Z",
+        null,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": true,
+      "serialize": {
+        "value": "Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time),,[object Object]"
+      },
+      "unserialize": {
+        "value": "Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time),,[object Object]"
+      },
+      "assert": "Invalid input: expected string, received array"
+    },
+    {
+      "model": "Auth",
+      "name": "id",
+      "input": null,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "null"
+      },
+      "unserialize": {
+        "value": "null"
+      },
+      "assert": "Invalid input: expected string, received null"
+    },
+    {
+      "model": "Auth",
+      "name": "id",
+      "input": false,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "false"
+      },
+      "unserialize": {
+        "value": "false"
+      },
+      "assert": "Invalid input: expected string, received boolean"
+    },
+    {
+      "model": "Auth",
+      "name": "id",
+      "input": true,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "true"
+      },
+      "unserialize": {
+        "value": "true"
+      },
+      "assert": "Invalid input: expected string, received boolean"
+    },
+    {
+      "model": "Auth",
+      "name": "id",
+      "input": 0,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "0"
+      },
+      "unserialize": {
+        "value": "0"
+      },
+      "assert": "Invalid input: expected string, received number"
+    },
+    {
+      "model": "Auth",
+      "name": "id",
+      "input": 1,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1"
+      },
+      "unserialize": {
+        "value": "1"
+      },
+      "assert": "Invalid input: expected string, received number"
+    },
+    {
+      "model": "Auth",
+      "name": "id",
+      "input": "",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": ""
+      },
+      "unserialize": {
+        "value": ""
+      },
+      "assert": "Value is required."
+    },
+    {
+      "model": "Auth",
+      "name": "id",
+      "input": "false",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "false"
+      },
+      "unserialize": {
+        "value": "false"
+      },
+      "assert": null
+    },
+    {
+      "model": "Auth",
+      "name": "id",
+      "input": "true",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "true"
+      },
+      "unserialize": {
+        "value": "true"
+      },
+      "assert": null
+    },
+    {
+      "model": "Auth",
+      "name": "id",
+      "input": "0",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "0"
+      },
+      "unserialize": {
+        "value": "0"
+      },
+      "assert": null
+    },
+    {
+      "model": "Auth",
+      "name": "id",
+      "input": "1",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1"
+      },
+      "unserialize": {
+        "value": "1"
+      },
+      "assert": null
+    },
+    {
+      "model": "Auth",
+      "name": "id",
+      "input": [],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": ""
+      },
+      "unserialize": {
+        "value": ""
+      },
+      "assert": "Invalid input: expected string, received array"
+    },
+    {
+      "model": "Auth",
+      "name": "id",
+      "input": [
+        null,
+        3,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": ",3,[object Object]"
+      },
+      "unserialize": {
+        "value": ",3,[object Object]"
+      },
+      "assert": "Invalid input: expected string, received array"
+    },
+    {
+      "model": "Auth",
+      "name": "id",
+      "input": {},
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "{}"
+      },
+      "unserialize": {
+        "value": "{}"
+      },
+      "assert": "Invalid input: expected string, received object"
+    },
+    {
+      "model": "Auth",
+      "name": "id",
+      "input": "{\"a\":1}",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "{\"a\":1}"
+      },
+      "unserialize": {
+        "value": "{\"a\":1}"
+      },
+      "assert": null
+    },
+    {
+      "model": "Auth",
+      "name": "id",
+      "input": "[1]",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[1]"
+      },
+      "unserialize": {
+        "value": "[1]"
+      },
+      "assert": null
+    },
+    {
+      "model": "Auth",
+      "name": "id",
+      "input": "bad",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "bad"
+      },
+      "unserialize": {
+        "value": "bad"
+      },
+      "assert": null
+    },
+    {
+      "model": "Auth",
+      "name": "profileId",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "undefined": true
+      },
+      "unserialize": {
+        "undefined": true
+      },
+      "assert": "Invalid input: expected string, received undefined"
+    },
+    {
+      "model": "Auth",
+      "name": "profileId",
+      "input": "2023-11-14T22:13:20.123Z",
+      "nativeDate": true,
+      "nestedDate": false,
+      "serialize": {
+        "value": "2023-11-14 22:13:20"
+      },
+      "unserialize": {
+        "value": "2023-11-14 22:13:20"
+      },
+      "assert": "Invalid input: expected string, received Date"
+    },
+    {
+      "model": "Auth",
+      "name": "profileId",
+      "input": [
+        "1970-01-01T00:00:00.000Z",
+        null,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": true,
+      "serialize": {
+        "value": "Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time),,[object Object]"
+      },
+      "unserialize": {
+        "value": "Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time),,[object Object]"
+      },
+      "assert": "Invalid input: expected string, received array"
+    },
+    {
+      "model": "Auth",
+      "name": "profileId",
+      "input": null,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "null"
+      },
+      "unserialize": {
+        "value": "null"
+      },
+      "assert": "Invalid input: expected string, received null"
+    },
+    {
+      "model": "Auth",
+      "name": "profileId",
+      "input": false,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "false"
+      },
+      "unserialize": {
+        "value": "false"
+      },
+      "assert": "Invalid input: expected string, received boolean"
+    },
+    {
+      "model": "Auth",
+      "name": "profileId",
+      "input": true,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "true"
+      },
+      "unserialize": {
+        "value": "true"
+      },
+      "assert": "Invalid input: expected string, received boolean"
+    },
+    {
+      "model": "Auth",
+      "name": "profileId",
+      "input": 0,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "0"
+      },
+      "unserialize": {
+        "value": "0"
+      },
+      "assert": "Invalid input: expected string, received number"
+    },
+    {
+      "model": "Auth",
+      "name": "profileId",
+      "input": 1,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1"
+      },
+      "unserialize": {
+        "value": "1"
+      },
+      "assert": "Invalid input: expected string, received number"
+    },
+    {
+      "model": "Auth",
+      "name": "profileId",
+      "input": "",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": ""
+      },
+      "unserialize": {
+        "value": ""
+      },
+      "assert": "Profile is required"
+    },
+    {
+      "model": "Auth",
+      "name": "profileId",
+      "input": "false",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "false"
+      },
+      "unserialize": {
+        "value": "false"
+      },
+      "assert": null
+    },
+    {
+      "model": "Auth",
+      "name": "profileId",
+      "input": "true",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "true"
+      },
+      "unserialize": {
+        "value": "true"
+      },
+      "assert": null
+    },
+    {
+      "model": "Auth",
+      "name": "profileId",
+      "input": "0",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "0"
+      },
+      "unserialize": {
+        "value": "0"
+      },
+      "assert": null
+    },
+    {
+      "model": "Auth",
+      "name": "profileId",
+      "input": "1",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1"
+      },
+      "unserialize": {
+        "value": "1"
+      },
+      "assert": null
+    },
+    {
+      "model": "Auth",
+      "name": "profileId",
+      "input": [],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": ""
+      },
+      "unserialize": {
+        "value": ""
+      },
+      "assert": "Invalid input: expected string, received array"
+    },
+    {
+      "model": "Auth",
+      "name": "profileId",
+      "input": [
+        null,
+        3,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": ",3,[object Object]"
+      },
+      "unserialize": {
+        "value": ",3,[object Object]"
+      },
+      "assert": "Invalid input: expected string, received array"
+    },
+    {
+      "model": "Auth",
+      "name": "profileId",
+      "input": {},
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "{}"
+      },
+      "unserialize": {
+        "value": "{}"
+      },
+      "assert": "Invalid input: expected string, received object"
+    },
+    {
+      "model": "Auth",
+      "name": "profileId",
+      "input": "{\"a\":1}",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "{\"a\":1}"
+      },
+      "unserialize": {
+        "value": "{\"a\":1}"
+      },
+      "assert": null
+    },
+    {
+      "model": "Auth",
+      "name": "profileId",
+      "input": "[1]",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[1]"
+      },
+      "unserialize": {
+        "value": "[1]"
+      },
+      "assert": null
+    },
+    {
+      "model": "Auth",
+      "name": "profileId",
+      "input": "bad",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "bad"
+      },
+      "unserialize": {
+        "value": "bad"
+      },
+      "assert": null
+    },
+    {
+      "model": "Auth",
+      "name": "type",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "undefined": true
+      },
+      "unserialize": {
+        "undefined": true
+      },
+      "assert": "Invalid input: expected string, received undefined"
+    },
+    {
+      "model": "Auth",
+      "name": "type",
+      "input": "2023-11-14T22:13:20.123Z",
+      "nativeDate": true,
+      "nestedDate": false,
+      "serialize": {
+        "value": "2023-11-14 22:13:20"
+      },
+      "unserialize": {
+        "value": "2023-11-14 22:13:20"
+      },
+      "assert": "Invalid input: expected string, received Date"
+    },
+    {
+      "model": "Auth",
+      "name": "type",
+      "input": [
+        "1970-01-01T00:00:00.000Z",
+        null,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": true,
+      "serialize": {
+        "value": "Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time),,[object Object]"
+      },
+      "unserialize": {
+        "value": "Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time),,[object Object]"
+      },
+      "assert": "Invalid input: expected string, received array"
+    },
+    {
+      "model": "Auth",
+      "name": "type",
+      "input": null,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "null"
+      },
+      "unserialize": {
+        "value": "null"
+      },
+      "assert": "Invalid input: expected string, received null"
+    },
+    {
+      "model": "Auth",
+      "name": "type",
+      "input": false,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "false"
+      },
+      "unserialize": {
+        "value": "false"
+      },
+      "assert": "Invalid input: expected string, received boolean"
+    },
+    {
+      "model": "Auth",
+      "name": "type",
+      "input": true,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "true"
+      },
+      "unserialize": {
+        "value": "true"
+      },
+      "assert": "Invalid input: expected string, received boolean"
+    },
+    {
+      "model": "Auth",
+      "name": "type",
+      "input": 0,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "0"
+      },
+      "unserialize": {
+        "value": "0"
+      },
+      "assert": "Invalid input: expected string, received number"
+    },
+    {
+      "model": "Auth",
+      "name": "type",
+      "input": 1,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1"
+      },
+      "unserialize": {
+        "value": "1"
+      },
+      "assert": "Invalid input: expected string, received number"
+    },
+    {
+      "model": "Auth",
+      "name": "type",
+      "input": "",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": ""
+      },
+      "unserialize": {
+        "value": ""
+      },
+      "assert": "Type is required"
+    },
+    {
+      "model": "Auth",
+      "name": "type",
+      "input": "false",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "false"
+      },
+      "unserialize": {
+        "value": "false"
+      },
+      "assert": null
+    },
+    {
+      "model": "Auth",
+      "name": "type",
+      "input": "true",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "true"
+      },
+      "unserialize": {
+        "value": "true"
+      },
+      "assert": null
+    },
+    {
+      "model": "Auth",
+      "name": "type",
+      "input": "0",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "0"
+      },
+      "unserialize": {
+        "value": "0"
+      },
+      "assert": null
+    },
+    {
+      "model": "Auth",
+      "name": "type",
+      "input": "1",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1"
+      },
+      "unserialize": {
+        "value": "1"
+      },
+      "assert": null
+    },
+    {
+      "model": "Auth",
+      "name": "type",
+      "input": [],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": ""
+      },
+      "unserialize": {
+        "value": ""
+      },
+      "assert": "Invalid input: expected string, received array"
+    },
+    {
+      "model": "Auth",
+      "name": "type",
+      "input": [
+        null,
+        3,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": ",3,[object Object]"
+      },
+      "unserialize": {
+        "value": ",3,[object Object]"
+      },
+      "assert": "Invalid input: expected string, received array"
+    },
+    {
+      "model": "Auth",
+      "name": "type",
+      "input": {},
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "{}"
+      },
+      "unserialize": {
+        "value": "{}"
+      },
+      "assert": "Invalid input: expected string, received object"
+    },
+    {
+      "model": "Auth",
+      "name": "type",
+      "input": "{\"a\":1}",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "{\"a\":1}"
+      },
+      "unserialize": {
+        "value": "{\"a\":1}"
+      },
+      "assert": null
+    },
+    {
+      "model": "Auth",
+      "name": "type",
+      "input": "[1]",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[1]"
+      },
+      "unserialize": {
+        "value": "[1]"
+      },
+      "assert": null
+    },
+    {
+      "model": "Auth",
+      "name": "type",
+      "input": "bad",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "bad"
+      },
+      "unserialize": {
+        "value": "bad"
+      },
+      "assert": null
+    },
+    {
+      "model": "Auth",
+      "name": "token",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "undefined": true
+      },
+      "unserialize": {
+        "undefined": true
+      },
+      "assert": "Invalid input: expected string, received undefined"
+    },
+    {
+      "model": "Auth",
+      "name": "token",
+      "input": "2023-11-14T22:13:20.123Z",
+      "nativeDate": true,
+      "nestedDate": false,
+      "serialize": {
+        "value": "2023-11-14 22:13:20"
+      },
+      "unserialize": {
+        "value": "2023-11-14 22:13:20"
+      },
+      "assert": "Invalid input: expected string, received Date"
+    },
+    {
+      "model": "Auth",
+      "name": "token",
+      "input": [
+        "1970-01-01T00:00:00.000Z",
+        null,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": true,
+      "serialize": {
+        "value": "Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time),,[object Object]"
+      },
+      "unserialize": {
+        "value": "Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time),,[object Object]"
+      },
+      "assert": "Invalid input: expected string, received array"
+    },
+    {
+      "model": "Auth",
+      "name": "token",
+      "input": null,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "null"
+      },
+      "unserialize": {
+        "value": "null"
+      },
+      "assert": "Invalid input: expected string, received null"
+    },
+    {
+      "model": "Auth",
+      "name": "token",
+      "input": false,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "false"
+      },
+      "unserialize": {
+        "value": "false"
+      },
+      "assert": "Invalid input: expected string, received boolean"
+    },
+    {
+      "model": "Auth",
+      "name": "token",
+      "input": true,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "true"
+      },
+      "unserialize": {
+        "value": "true"
+      },
+      "assert": "Invalid input: expected string, received boolean"
+    },
+    {
+      "model": "Auth",
+      "name": "token",
+      "input": 0,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "0"
+      },
+      "unserialize": {
+        "value": "0"
+      },
+      "assert": "Invalid input: expected string, received number"
+    },
+    {
+      "model": "Auth",
+      "name": "token",
+      "input": 1,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1"
+      },
+      "unserialize": {
+        "value": "1"
+      },
+      "assert": "Invalid input: expected string, received number"
+    },
+    {
+      "model": "Auth",
+      "name": "token",
+      "input": "",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": ""
+      },
+      "unserialize": {
+        "value": ""
+      },
+      "assert": "Token is required"
+    },
+    {
+      "model": "Auth",
+      "name": "token",
+      "input": "false",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "false"
+      },
+      "unserialize": {
+        "value": "false"
+      },
+      "assert": null
+    },
+    {
+      "model": "Auth",
+      "name": "token",
+      "input": "true",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "true"
+      },
+      "unserialize": {
+        "value": "true"
+      },
+      "assert": "Must be at least 5 characters"
+    },
+    {
+      "model": "Auth",
+      "name": "token",
+      "input": "0",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "0"
+      },
+      "unserialize": {
+        "value": "0"
+      },
+      "assert": "Must be at least 5 characters"
+    },
+    {
+      "model": "Auth",
+      "name": "token",
+      "input": "1",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1"
+      },
+      "unserialize": {
+        "value": "1"
+      },
+      "assert": "Must be at least 5 characters"
+    },
+    {
+      "model": "Auth",
+      "name": "token",
+      "input": [],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": ""
+      },
+      "unserialize": {
+        "value": ""
+      },
+      "assert": "Invalid input: expected string, received array"
+    },
+    {
+      "model": "Auth",
+      "name": "token",
+      "input": [
+        null,
+        3,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": ",3,[object Object]"
+      },
+      "unserialize": {
+        "value": ",3,[object Object]"
+      },
+      "assert": "Invalid input: expected string, received array"
+    },
+    {
+      "model": "Auth",
+      "name": "token",
+      "input": {},
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "{}"
+      },
+      "unserialize": {
+        "value": "{}"
+      },
+      "assert": "Invalid input: expected string, received object"
+    },
+    {
+      "model": "Auth",
+      "name": "token",
+      "input": "{\"a\":1}",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "{\"a\":1}"
+      },
+      "unserialize": {
+        "value": "{\"a\":1}"
+      },
+      "assert": null
+    },
+    {
+      "model": "Auth",
+      "name": "token",
+      "input": "[1]",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[1]"
+      },
+      "unserialize": {
+        "value": "[1]"
+      },
+      "assert": "Must be at least 5 characters"
+    },
+    {
+      "model": "Auth",
+      "name": "token",
+      "input": "bad",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "bad"
+      },
+      "unserialize": {
+        "value": "bad"
+      },
+      "assert": "Must be at least 5 characters"
+    },
+    {
+      "model": "Auth",
+      "name": "secret",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "undefined": true
+      },
+      "unserialize": {
+        "undefined": true
+      },
+      "assert": "Invalid input: expected string, received undefined"
+    },
+    {
+      "model": "Auth",
+      "name": "secret",
+      "input": "2023-11-14T22:13:20.123Z",
+      "nativeDate": true,
+      "nestedDate": false,
+      "serialize": {
+        "value": "2023-11-14 22:13:20"
+      },
+      "unserialize": {
+        "value": "2023-11-14 22:13:20"
+      },
+      "assert": "Invalid input: expected string, received Date"
+    },
+    {
+      "model": "Auth",
+      "name": "secret",
+      "input": [
+        "1970-01-01T00:00:00.000Z",
+        null,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": true,
+      "serialize": {
+        "value": "Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time),,[object Object]"
+      },
+      "unserialize": {
+        "value": "Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time),,[object Object]"
+      },
+      "assert": "Invalid input: expected string, received array"
+    },
+    {
+      "model": "Auth",
+      "name": "secret",
+      "input": null,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "null"
+      },
+      "unserialize": {
+        "value": "null"
+      },
+      "assert": "Invalid input: expected string, received null"
+    },
+    {
+      "model": "Auth",
+      "name": "secret",
+      "input": false,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "false"
+      },
+      "unserialize": {
+        "value": "false"
+      },
+      "assert": "Invalid input: expected string, received boolean"
+    },
+    {
+      "model": "Auth",
+      "name": "secret",
+      "input": true,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "true"
+      },
+      "unserialize": {
+        "value": "true"
+      },
+      "assert": "Invalid input: expected string, received boolean"
+    },
+    {
+      "model": "Auth",
+      "name": "secret",
+      "input": 0,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "0"
+      },
+      "unserialize": {
+        "value": "0"
+      },
+      "assert": "Invalid input: expected string, received number"
+    },
+    {
+      "model": "Auth",
+      "name": "secret",
+      "input": 1,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1"
+      },
+      "unserialize": {
+        "value": "1"
+      },
+      "assert": "Invalid input: expected string, received number"
+    },
+    {
+      "model": "Auth",
+      "name": "secret",
+      "input": "",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": ""
+      },
+      "unserialize": {
+        "value": ""
+      },
+      "assert": "Secret is required"
+    },
+    {
+      "model": "Auth",
+      "name": "secret",
+      "input": "false",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "false"
+      },
+      "unserialize": {
+        "value": "false"
+      },
+      "assert": null
+    },
+    {
+      "model": "Auth",
+      "name": "secret",
+      "input": "true",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "true"
+      },
+      "unserialize": {
+        "value": "true"
+      },
+      "assert": null
+    },
+    {
+      "model": "Auth",
+      "name": "secret",
+      "input": "0",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "0"
+      },
+      "unserialize": {
+        "value": "0"
+      },
+      "assert": null
+    },
+    {
+      "model": "Auth",
+      "name": "secret",
+      "input": "1",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1"
+      },
+      "unserialize": {
+        "value": "1"
+      },
+      "assert": null
+    },
+    {
+      "model": "Auth",
+      "name": "secret",
+      "input": [],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": ""
+      },
+      "unserialize": {
+        "value": ""
+      },
+      "assert": "Invalid input: expected string, received array"
+    },
+    {
+      "model": "Auth",
+      "name": "secret",
+      "input": [
+        null,
+        3,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": ",3,[object Object]"
+      },
+      "unserialize": {
+        "value": ",3,[object Object]"
+      },
+      "assert": "Invalid input: expected string, received array"
+    },
+    {
+      "model": "Auth",
+      "name": "secret",
+      "input": {},
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "{}"
+      },
+      "unserialize": {
+        "value": "{}"
+      },
+      "assert": "Invalid input: expected string, received object"
+    },
+    {
+      "model": "Auth",
+      "name": "secret",
+      "input": "{\"a\":1}",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "{\"a\":1}"
+      },
+      "unserialize": {
+        "value": "{\"a\":1}"
+      },
+      "assert": null
+    },
+    {
+      "model": "Auth",
+      "name": "secret",
+      "input": "[1]",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "[1]"
+      },
+      "unserialize": {
+        "value": "[1]"
+      },
+      "assert": null
+    },
+    {
+      "model": "Auth",
+      "name": "secret",
+      "input": "bad",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "bad"
+      },
+      "unserialize": {
+        "value": "bad"
+      },
+      "assert": null
+    },
+    {
+      "model": "Auth",
+      "name": "verified",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "undefined": true
+      },
+      "unserialize": {
+        "undefined": true
+      },
+      "assert": "Invalid input: expected boolean, received undefined"
+    },
+    {
+      "model": "Auth",
+      "name": "verified",
+      "input": "2023-11-14T22:13:20.123Z",
+      "nativeDate": true,
+      "nestedDate": false,
+      "serialize": {
+        "value": true
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received Date"
+    },
+    {
+      "model": "Auth",
+      "name": "verified",
+      "input": [
+        "1970-01-01T00:00:00.000Z",
+        null,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": true,
+      "serialize": {
+        "value": true
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received array"
+    },
+    {
+      "model": "Auth",
+      "name": "verified",
+      "input": null,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": false
+      },
+      "unserialize": {
+        "value": false
+      },
+      "assert": "Invalid input: expected boolean, received null"
+    },
+    {
+      "model": "Auth",
+      "name": "verified",
+      "input": false,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": false
+      },
+      "unserialize": {
+        "value": false
+      },
+      "assert": null
+    },
+    {
+      "model": "Auth",
+      "name": "verified",
+      "input": true,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": true
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": null
+    },
+    {
+      "model": "Auth",
+      "name": "verified",
+      "input": 0,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": false
+      },
+      "unserialize": {
+        "value": false
+      },
+      "assert": "Invalid input: expected boolean, received number"
+    },
+    {
+      "model": "Auth",
+      "name": "verified",
+      "input": 1,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": true
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received number"
+    },
+    {
+      "model": "Auth",
+      "name": "verified",
+      "input": "",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": false
+      },
+      "unserialize": {
+        "value": false
+      },
+      "assert": "Invalid input: expected boolean, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "verified",
+      "input": "false",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": false
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "verified",
+      "input": "true",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": true
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "verified",
+      "input": "0",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": false
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "verified",
+      "input": "1",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": true
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "verified",
+      "input": [],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": true
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received array"
+    },
+    {
+      "model": "Auth",
+      "name": "verified",
+      "input": [
+        null,
+        3,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": true
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received array"
+    },
+    {
+      "model": "Auth",
+      "name": "verified",
+      "input": {},
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": true
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received object"
+    },
+    {
+      "model": "Auth",
+      "name": "verified",
+      "input": "{\"a\":1}",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": true
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "verified",
+      "input": "[1]",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": true
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "verified",
+      "input": "bad",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": true
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "consumed",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "undefined": true
+      },
+      "unserialize": {
+        "undefined": true
+      },
+      "assert": "Invalid input: expected date, received undefined"
+    },
+    {
+      "model": "Auth",
+      "name": "consumed",
+      "input": "2023-11-14T22:13:20.123Z",
+      "nativeDate": true,
+      "nestedDate": false,
+      "serialize": {
+        "value": "2023-11-14 22:13:20"
+      },
+      "unserialize": {
+        "value": "2023-11-14T22:13:20.123Z"
+      },
+      "assert": null
+    },
+    {
+      "model": "Auth",
+      "name": "consumed",
+      "input": [
+        "1970-01-01T00:00:00.000Z",
+        null,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": true,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received array"
+    },
+    {
+      "model": "Auth",
+      "name": "consumed",
+      "input": null,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received null"
+    },
+    {
+      "model": "Auth",
+      "name": "consumed",
+      "input": false,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received boolean"
+    },
+    {
+      "model": "Auth",
+      "name": "consumed",
+      "input": true,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received boolean"
+    },
+    {
+      "model": "Auth",
+      "name": "consumed",
+      "input": 0,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received number"
+    },
+    {
+      "model": "Auth",
+      "name": "consumed",
+      "input": 1,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.001Z"
+      },
+      "assert": "Invalid input: expected date, received number"
+    },
+    {
+      "model": "Auth",
+      "name": "consumed",
+      "input": "",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "consumed",
+      "input": "false",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "consumed",
+      "input": "true",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "consumed",
+      "input": "0",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "2000-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "2000-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "consumed",
+      "input": "1",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "2001-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "2001-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "consumed",
+      "input": [],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received array"
+    },
+    {
+      "model": "Auth",
+      "name": "consumed",
+      "input": [
+        null,
+        3,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received array"
+    },
+    {
+      "model": "Auth",
+      "name": "consumed",
+      "input": {},
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received object"
+    },
+    {
+      "model": "Auth",
+      "name": "consumed",
+      "input": "{\"a\":1}",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "consumed",
+      "input": "[1]",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "consumed",
+      "input": "bad",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "active",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "undefined": true
+      },
+      "unserialize": {
+        "undefined": true
+      },
+      "assert": "Invalid input: expected boolean, received undefined"
+    },
+    {
+      "model": "Auth",
+      "name": "active",
+      "input": "2023-11-14T22:13:20.123Z",
+      "nativeDate": true,
+      "nestedDate": false,
+      "serialize": {
+        "value": true
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received Date"
+    },
+    {
+      "model": "Auth",
+      "name": "active",
+      "input": [
+        "1970-01-01T00:00:00.000Z",
+        null,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": true,
+      "serialize": {
+        "value": true
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received array"
+    },
+    {
+      "model": "Auth",
+      "name": "active",
+      "input": null,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": false
+      },
+      "unserialize": {
+        "value": false
+      },
+      "assert": "Invalid input: expected boolean, received null"
+    },
+    {
+      "model": "Auth",
+      "name": "active",
+      "input": false,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": false
+      },
+      "unserialize": {
+        "value": false
+      },
+      "assert": null
+    },
+    {
+      "model": "Auth",
+      "name": "active",
+      "input": true,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": true
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": null
+    },
+    {
+      "model": "Auth",
+      "name": "active",
+      "input": 0,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": false
+      },
+      "unserialize": {
+        "value": false
+      },
+      "assert": "Invalid input: expected boolean, received number"
+    },
+    {
+      "model": "Auth",
+      "name": "active",
+      "input": 1,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": true
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received number"
+    },
+    {
+      "model": "Auth",
+      "name": "active",
+      "input": "",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": false
+      },
+      "unserialize": {
+        "value": false
+      },
+      "assert": "Invalid input: expected boolean, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "active",
+      "input": "false",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": false
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "active",
+      "input": "true",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": true
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "active",
+      "input": "0",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": false
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "active",
+      "input": "1",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": true
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "active",
+      "input": [],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": true
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received array"
+    },
+    {
+      "model": "Auth",
+      "name": "active",
+      "input": [
+        null,
+        3,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": true
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received array"
+    },
+    {
+      "model": "Auth",
+      "name": "active",
+      "input": {},
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": true
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received object"
+    },
+    {
+      "model": "Auth",
+      "name": "active",
+      "input": "{\"a\":1}",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": true
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "active",
+      "input": "[1]",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": true
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "active",
+      "input": "bad",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": true
+      },
+      "unserialize": {
+        "value": true
+      },
+      "assert": "Invalid input: expected boolean, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "created",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "undefined": true
+      },
+      "unserialize": {
+        "undefined": true
+      },
+      "assert": "Invalid input: expected date, received undefined"
+    },
+    {
+      "model": "Auth",
+      "name": "created",
+      "input": "2023-11-14T22:13:20.123Z",
+      "nativeDate": true,
+      "nestedDate": false,
+      "serialize": {
+        "value": "2023-11-14 22:13:20"
+      },
+      "unserialize": {
+        "value": "2023-11-14T22:13:20.123Z"
+      },
+      "assert": null
+    },
+    {
+      "model": "Auth",
+      "name": "created",
+      "input": [
+        "1970-01-01T00:00:00.000Z",
+        null,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": true,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received array"
+    },
+    {
+      "model": "Auth",
+      "name": "created",
+      "input": null,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received null"
+    },
+    {
+      "model": "Auth",
+      "name": "created",
+      "input": false,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received boolean"
+    },
+    {
+      "model": "Auth",
+      "name": "created",
+      "input": true,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received boolean"
+    },
+    {
+      "model": "Auth",
+      "name": "created",
+      "input": 0,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received number"
+    },
+    {
+      "model": "Auth",
+      "name": "created",
+      "input": 1,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.001Z"
+      },
+      "assert": "Invalid input: expected date, received number"
+    },
+    {
+      "model": "Auth",
+      "name": "created",
+      "input": "",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "created",
+      "input": "false",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "created",
+      "input": "true",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "created",
+      "input": "0",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "2000-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "2000-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "created",
+      "input": "1",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "2001-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "2001-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "created",
+      "input": [],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received array"
+    },
+    {
+      "model": "Auth",
+      "name": "created",
+      "input": [
+        null,
+        3,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received array"
+    },
+    {
+      "model": "Auth",
+      "name": "created",
+      "input": {},
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received object"
+    },
+    {
+      "model": "Auth",
+      "name": "created",
+      "input": "{\"a\":1}",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "created",
+      "input": "[1]",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "created",
+      "input": "bad",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "updated",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "undefined": true
+      },
+      "unserialize": {
+        "undefined": true
+      },
+      "assert": "Invalid input: expected date, received undefined"
+    },
+    {
+      "model": "Auth",
+      "name": "updated",
+      "input": "2023-11-14T22:13:20.123Z",
+      "nativeDate": true,
+      "nestedDate": false,
+      "serialize": {
+        "value": "2023-11-14 22:13:20"
+      },
+      "unserialize": {
+        "value": "2023-11-14T22:13:20.123Z"
+      },
+      "assert": null
+    },
+    {
+      "model": "Auth",
+      "name": "updated",
+      "input": [
+        "1970-01-01T00:00:00.000Z",
+        null,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": true,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received array"
+    },
+    {
+      "model": "Auth",
+      "name": "updated",
+      "input": null,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received null"
+    },
+    {
+      "model": "Auth",
+      "name": "updated",
+      "input": false,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received boolean"
+    },
+    {
+      "model": "Auth",
+      "name": "updated",
+      "input": true,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received boolean"
+    },
+    {
+      "model": "Auth",
+      "name": "updated",
+      "input": 0,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received number"
+    },
+    {
+      "model": "Auth",
+      "name": "updated",
+      "input": 1,
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.001Z"
+      },
+      "assert": "Invalid input: expected date, received number"
+    },
+    {
+      "model": "Auth",
+      "name": "updated",
+      "input": "",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "updated",
+      "input": "false",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "updated",
+      "input": "true",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "updated",
+      "input": "0",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "2000-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "2000-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "updated",
+      "input": "1",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "2001-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "2001-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "updated",
+      "input": [],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received array"
+    },
+    {
+      "model": "Auth",
+      "name": "updated",
+      "input": [
+        null,
+        3,
+        {}
+      ],
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received array"
+    },
+    {
+      "model": "Auth",
+      "name": "updated",
+      "input": {},
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received object"
+    },
+    {
+      "model": "Auth",
+      "name": "updated",
+      "input": "{\"a\":1}",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "updated",
+      "input": "[1]",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    },
+    {
+      "model": "Auth",
+      "name": "updated",
+      "input": "bad",
+      "nativeDate": false,
+      "nestedDate": false,
+      "serialize": {
+        "value": "1970-01-01 00:00:00"
+      },
+      "unserialize": {
+        "value": "1970-01-01T00:00:00.000Z"
+      },
+      "assert": "Invalid input: expected date, received string"
+    }
+  ],
+  "emails": [
+    {
+      "input": "a@b.co",
+      "valid": true
+    },
+    {
+      "input": "a@[١.١.١.١]",
+      "valid": false
+    },
+    {
+      "input": "a@b.co\n",
+      "valid": false
+    },
+    {
+      "input": "ab@foo.com",
+      "valid": true
+    },
+    {
+      "input": "a..b@example.com",
+      "valid": false
+    },
+    {
+      "input": "a.b@example.com",
+      "valid": true
+    },
+    {
+      "input": "\"a@b\"@example.com",
+      "valid": true
+    },
+    {
+      "input": "\"a\\\"b\"@example.com",
+      "valid": true
+    },
+    {
+      "input": "é@example.com",
+      "valid": false
+    },
+    {
+      "input": "中@example.com",
+      "valid": true
+    },
+    {
+      "input": "a@[255.0.1.3]",
+      "valid": true
+    },
+    {
+      "input": "a@bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.test",
+      "valid": true
+    },
+    {
+      "input": "a@bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.test",
+      "valid": false
+    },
+    {
+      "input": "a@xn--foo.test",
+      "valid": true
+    },
+    {
+      "input": "a@foo.technology",
+      "valid": false
+    },
+    {
+      "input": "a@-foo.test",
+      "valid": false
+    },
+    {
+      "input": "a\\@b@example.com",
+      "valid": true
+    }
+  ],
+  "scalar": {
+    "Profile": {
+      "id": "record-1",
+      "name": "Ada",
+      "type": "email",
+      "roles": "[\"USER\"]",
+      "tags": "[\"tag\"]",
+      "references": "{\"fbid\":\"abc\"}",
+      "active": true,
+      "created": "2023-11-14T22:13:20.000Z",
+      "updated": "2023-11-14T22:13:20.000Z"
+    },
+    "Auth": {
+      "id": "record-1",
+      "profile_id": "profile-1",
+      "token": "5dd687dad4a14580ec8d46fd439ee9b3cee6fe648c0851b8d642161392107ea8",
+      "secret": "1234075ae4a1e77316cf2d8000974581a343b9ebbca7e3d1db83394c30f22162",
+      "type": "email",
+      "verified": true,
+      "active": true,
+      "created": "2023-11-14T22:13:20.000Z",
+      "updated": "2023-11-14T22:13:20.000Z",
+      "consumed": "2023-11-14T22:13:20.000Z"
+    }
+  },
+  "authReturned": {
+    "id": "auth-1",
+    "type": "email",
+    "token": "5dd687dad4a14580ec8d46fd439ee9b3cee6fe648c0851b8d642161392107ea8",
+    "secret": "1234075ae4a1e77316cf2d8000974581a343b9ebbca7e3d1db83394c30f22162",
+    "verified": false,
+    "consumed": "2023-11-14T22:13:20.000Z",
+    "active": true,
+    "created": "2023-11-14T22:13:20.000Z",
+    "updated": "2023-11-14T22:13:20.000Z"
+  },
+  "sourceQueries": {
+    "search": {
+      "query": "SELECT `profile`.`id`, `profile`.`image`, `profile`.`name`, `profile`.`type`, `profile`.`roles`, `profile`.`tags`, `profile`.`references`, `profile`.`active`, `profile`.`created`, `profile`.`updated` FROM `profile` WHERE \"profile\".\"active\" = ? AND (\"profile\".\"name\" ILIKE ?) LIMIT 50",
+      "values": [
+        true,
+        "%ad%"
+      ]
+    },
+    "has": {
+      "query": "SELECT `profile`.`id`, `profile`.`image`, `profile`.`name`, `profile`.`type`, `profile`.`roles`, `profile`.`tags`, `profile`.`references`, `profile`.`active`, `profile`.`created`, `profile`.`updated` FROM `profile` WHERE \"profile\".\"active\" = ? AND (EXISTS (SELECT 1 FROM json_each(`tags`.`0`, '$') WHERE value = ?)) AND (EXISTS (SELECT 1 FROM json_each(`tags`.`1`, '$') WHERE value = ?)) LIMIT 50",
+      "values": [
+        true,
+        "red",
+        "blue"
+      ]
+    },
+    "hasnt": {
+      "query": "SELECT `profile`.`id`, `profile`.`image`, `profile`.`name`, `profile`.`type`, `profile`.`roles`, `profile`.`tags`, `profile`.`references`, `profile`.`active`, `profile`.`created`, `profile`.`updated` FROM `profile` WHERE \"profile\".\"active\" = ? AND (EXISTS (SELECT 1 FROM json_each(`tags`.`0`, '$') WHERE value = ?)) AND (EXISTS (SELECT 1 FROM json_each(`tags`.`1`, '$') WHERE value = ?)) LIMIT 50",
+      "values": [
+        true,
+        "red",
+        "blue"
+      ]
+    }
+  }
+}
