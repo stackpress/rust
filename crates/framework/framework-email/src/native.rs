@@ -6,15 +6,13 @@ use crate::{
 };
 use crate::{
     backend::{
-        LettreBackend, NativeProcessBackend, ProcessBackend, SendmailRequest, SesClient,
-        SesRequest, SmtpBackend, SmtpRequest, envelope_recipients,
+        LettreBackend, NativeProcessBackend, ProcessBackend, SesClient, SmtpBackend, SmtpRequest,
     },
-    compose::{addresses, metadata, mime, normalize_json},
+    compose::{metadata, mime, normalize_json},
     content::{ContentResolver, NativeContentResolver},
-    message::buffer_json,
-    options::{TransportKind, TransportOptions, flag, string, truthy},
+    options::{TransportKind, TransportOptions, flag},
 };
-use serde_json::{Value, json};
+use serde_json::json;
 use std::{
     io,
     pin::Pin,
@@ -24,6 +22,8 @@ use std::{
 use tokio::io::{AsyncRead, ReadBuf};
 
 mod capabilities;
+mod sendmail;
+mod ses;
 use capabilities::{unsupported, unsupported_config, unsupported_message};
 
 /// Native transport selection. Providers replace unsupported SDK capabilities explicitly.
@@ -80,6 +80,19 @@ impl NativeFactory {
         self.provider = Some(provider);
         self
     }
+
+    /// Preserve one complete-provider construction or the caller's named capability error.
+    fn provider_transport(
+        &self,
+        config: &EmailConfig,
+        reason: &str,
+    ) -> EmailResult<Box<dyn Transport>> {
+        // The provider receives the original section, never the partially resolved options.
+        match &self.provider {
+            Some(provider) => provider.create(config),
+            None => Err(unsupported(reason)),
+        }
+    }
 }
 
 impl TransportFactory for NativeFactory {
@@ -91,26 +104,17 @@ impl TransportFactory for NativeFactory {
                 if matches!(config, EmailConfig::ConnectionString(_))
                     || matches!(config,EmailConfig::Options(fields) if flag(fields,"url")) =>
             {
-                return match &self.provider {
-                    Some(provider) => provider.create(config),
-                    None => Err(unsupported(&format!(
-                        "legacy connection URL syntax: {error}"
-                    ))),
-                };
+                return self
+                    .provider_transport(config, &format!("legacy connection URL syntax: {error}"));
             }
             Err(error) => return Err(error),
         };
         if let Some(reason) = unsupported_config(&options) {
-            return match &self.provider {
-                Some(provider) => provider.create(config),
-                None => Err(unsupported(&reason)),
-            };
+            return self.provider_transport(config, &reason);
         }
         if options.kind == TransportKind::Ses && self.ses.is_none() {
-            return match &self.provider {
-                Some(provider) => provider.create(config),
-                None => Err(unsupported("SES.sesClient/SendEmailCommand native binding")),
-            };
+            return self
+                .provider_transport(config, "SES.sesClient/SendEmailCommand native binding");
         }
         Ok(Box::new(NativeTransport {
             factory: self.clone(),
@@ -122,8 +126,11 @@ impl TransportFactory for NativeFactory {
 
 /// One source invocation; it owns its selected adapter and never shares mutable transport state.
 struct NativeTransport {
+    /// Shared immutable IO/provider bindings; the mutable transport remains per-call.
     factory: NativeFactory,
+    /// Original section forwarded intact if a message needs the complete provider.
     config: EmailConfig,
+    /// Resolved constructor defaults used only by the selected built-in adapter.
     options: TransportOptions,
 }
 
@@ -210,100 +217,8 @@ impl Transport for NativeTransport {
                     }
                     Ok(result)
                 }
-                TransportKind::Sendmail => {
-                    let from = meta.envelope.get("from").filter(|v| truthy(v)).map(string);
-                    let to = envelope_recipients(&meta.envelope);
-                    // This rejection is in the original sendmail adapter, not new hardening.
-                    if from.iter().chain(to.iter()).any(|v| v.starts_with('-')) {
-                        return Err(io::Error::other(
-                            "Can not send mail. Invalid envelope addresses.",
-                        )
-                        .into());
-                    }
-                    let mut args = vec!["-i".into()];
-                    if let Some(explicit) =
-                        self.options.fields.get("args").and_then(Value::as_array)
-                    {
-                        args.extend(explicit.iter().map(string));
-                    } else if let Some(from) = from {
-                        args.extend(["-f".into(), from]);
-                    }
-                    args.extend(to);
-                    let program = self
-                        .options
-                        .fields
-                        .get("path")
-                        .filter(|v| truthy(v))
-                        .map(string)
-                        .unwrap_or_else(|| "sendmail".into());
-                    let bytes = mime(mail, &meta, &self.factory.resolver, true).await?;
-                    match self.factory.process.run(SendmailRequest{program,args,message:bytes}).await? {
-                        None|Some(0)=>Ok(json!({"envelope":meta.envelope,"messageId":meta.message_id,"response":"Messages queued for delivery"}).into()),
-                        Some(127)=>Err(io::Error::other("Sendmail command not found, process exited with code 127").into()),
-                        Some(code)=>Err(io::Error::other(format!("Sendmail exited with code {code}")).into()),
-                    }
-                }
-                TransportKind::Ses => {
-                    let overrides = mail
-                        .fields
-                        .get("ses")
-                        .and_then(Value::as_object)
-                        .cloned()
-                        .unwrap_or_default();
-                    let from = match mail.fields.get("from") {
-                        Some(value) => json!(
-                            addresses(value)?
-                                .iter()
-                                .map(ToString::to_string)
-                                .collect::<Vec<_>>()
-                                .join(", ")
-                        ),
-                        None => meta.envelope.get("from").cloned().unwrap_or(Value::Null),
-                    };
-                    let bytes = mime(mail, &meta, &self.factory.resolver, false).await?;
-                    let mut input = json!({"Content":{"Raw":{"Data":buffer_json(&bytes)}},"FromEmailAddress":from,"Destination":{"ToAddresses":meta.envelope["to"]}});
-                    if let Some(fields) = input.as_object_mut() {
-                        fields.extend(overrides);
-                    }
-                    let client = self
-                        .factory
-                        .ses
-                        .as_ref()
-                        .ok_or_else(|| unsupported("SES native client"))?;
-                    let region = client
-                        .region()
-                        .await
-                        .ok()
-                        .flatten()
-                        .filter(|v| !v.is_empty())
-                        .unwrap_or_else(|| "us-east-1".into());
-                    let response = client
-                        .send(SesRequest {
-                            input,
-                            raw: bytes.clone(),
-                        })
-                        .await?;
-                    let id = response.get("MessageId");
-                    let id_text = id.map(string).unwrap_or_else(|| "undefined".into());
-                    let region = if region == "us-east-1" {
-                        "email"
-                    } else {
-                        &region
-                    };
-                    let id_text = if id_text.contains('@') {
-                        format!("<{id_text}>")
-                    } else {
-                        format!("<{id_text}@{region}.amazonses.com>")
-                    };
-                    let mut result = SentMessageInfo::from(
-                        json!({"envelope":meta.envelope,"messageId":id_text}),
-                    );
-                    if let Some(id) = id {
-                        result.fields["response"] = id.clone();
-                    }
-                    result.raw = Some(bytes);
-                    Ok(result)
-                }
+                TransportKind::Sendmail => sendmail::send(self, mail, meta).await,
+                TransportKind::Ses => ses::send(self, mail, meta).await,
             }
         })
     }
@@ -311,8 +226,11 @@ impl Transport for NativeTransport {
 
 /// Deferred MIME preparation retains source stream error timing without detaching a task.
 struct DeferredMessage {
+    /// Pending compilation is retained; completion clears it before exposing bytes or an error.
     future: Option<crate::content::ContentFuture<'static>>,
+    /// Compiled bytes are immutable once available and remain owned until stream drop.
     bytes: Vec<u8>,
+    /// Next unread byte, always within 0..=bytes.len().
     offset: usize,
 }
 impl DeferredMessage {
@@ -336,6 +254,7 @@ impl AsyncRead for DeferredMessage {
             match future.as_mut().poll(cx) {
                 Poll::Pending => return Poll::Pending,
                 Poll::Ready(result) => {
+                    // Never poll a completed future again, including after a read error.
                     self.future = None;
                     match result {
                         Ok(bytes) => self.bytes = bytes,
@@ -344,6 +263,7 @@ impl AsyncRead for DeferredMessage {
                 }
             }
         }
+        // Advance only by bytes copied; partial reads and repeated EOF retain the cursor bound.
         let count = (self.bytes.len() - self.offset).min(buf.remaining());
         buf.put_slice(&self.bytes[self.offset..self.offset + count]);
         self.offset += count;

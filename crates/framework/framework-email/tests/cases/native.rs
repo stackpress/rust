@@ -88,7 +88,17 @@ async fn source_stream_raw_buffer_and_reader_vectors() {
         result.message = Some(match result.message.take().unwrap() {
             MessageOutput::Stream(mut reader) => {
                 let mut bytes = Vec::new();
-                reader.read_to_end(&mut bytes).await.unwrap();
+                // A small buffer exercises partial output reads against the original byte oracle.
+                let mut chunk = [0; 3];
+                loop {
+                    let count = reader.read(&mut chunk).await.unwrap();
+                    if count == 0 {
+                        break;
+                    }
+                    bytes.extend_from_slice(&chunk[..count]);
+                }
+                // EOF remains stable; the completed MIME future must never be polled again.
+                assert_eq!(reader.read(&mut chunk).await.unwrap(), 0);
                 MessageOutput::Buffer(bytes)
             }
             buffer => buffer,
@@ -561,6 +571,8 @@ async fn deferred_stream_errors_and_native_slot_ownership() {
                 .to_string()
                 .contains("fixture content failed")
         );
+        // A surfaced compiler failure completes the stream without rerunning content IO.
+        assert_eq!(reader.read(&mut [0; 1]).await.unwrap(), 0);
     } else {
         panic!("stream expected");
     }

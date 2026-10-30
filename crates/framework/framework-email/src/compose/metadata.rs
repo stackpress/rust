@@ -58,6 +58,12 @@ pub fn addresses(value: &Value) -> EmailResult<Vec<Mailbox>> {
 }
 
 /// Select metadata before content reads so stream-result errors can remain deferred.
+///
+/// Explicit envelopes retain their original fields alongside a parsed SMTP projection.
+/// Missing Message-ID values use OS randomness; this function does not consume content.
+///
+/// # Errors
+/// Returns native mailbox parsing or OS entropy errors without inventing a provider result.
 pub fn metadata(fields: &Map<String, Value>) -> EmailResult<MessageMetadata> {
     let entries = message_headers(fields);
     let mut from = None;
