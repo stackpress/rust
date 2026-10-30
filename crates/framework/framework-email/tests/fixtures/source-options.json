@@ -1,0 +1,751 @@
+{
+  "source": "packages/stackpress-email/src/events.ts",
+  "sha256": "4061c0714fc3fff61e65cd05d916332629bcede7f39df0fd55aac8cf7dddc65d",
+  "cases": [
+    {
+      "config": null,
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "html": "<p>fixture</p>",
+        "attachments": [
+          {
+            "path": "/fixture",
+            "href": "https://example.test/fixture"
+          }
+        ],
+        "headers": {
+          "X-Fixture": "yes"
+        },
+        "extension": {
+          "empty": [],
+          "flag": false
+        }
+      },
+      "calls": [],
+      "result": null
+    },
+    {
+      "config": false,
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "html": "<p>fixture</p>",
+        "attachments": [
+          {
+            "path": "/fixture",
+            "href": "https://example.test/fixture"
+          }
+        ],
+        "headers": {
+          "X-Fixture": "yes"
+        },
+        "extension": {
+          "empty": [],
+          "flag": false
+        }
+      },
+      "calls": [],
+      "result": null
+    },
+    {
+      "config": 0,
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "html": "<p>fixture</p>",
+        "attachments": [
+          {
+            "path": "/fixture",
+            "href": "https://example.test/fixture"
+          }
+        ],
+        "headers": {
+          "X-Fixture": "yes"
+        },
+        "extension": {
+          "empty": [],
+          "flag": false
+        }
+      },
+      "calls": [],
+      "result": null
+    },
+    {
+      "config": "",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "html": "<p>fixture</p>",
+        "attachments": [
+          {
+            "path": "/fixture",
+            "href": "https://example.test/fixture"
+          }
+        ],
+        "headers": {
+          "X-Fixture": "yes"
+        },
+        "extension": {
+          "empty": [],
+          "flag": false
+        }
+      },
+      "calls": [],
+      "result": null
+    },
+    {
+      "config": {},
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "html": "<p>fixture</p>",
+        "attachments": [
+          {
+            "path": "/fixture",
+            "href": "https://example.test/fixture"
+          }
+        ],
+        "headers": {
+          "X-Fixture": "yes"
+        },
+        "extension": {
+          "empty": [],
+          "flag": false
+        }
+      },
+      "calls": [
+        [
+          "create",
+          {}
+        ],
+        [
+          "send",
+          {
+            "from": "sender@example.test",
+            "to": [
+              "recipient@example.test"
+            ],
+            "text": "fixture",
+            "html": "<p>fixture</p>",
+            "attachments": [
+              {
+                "path": "/fixture",
+                "href": "https://example.test/fixture"
+              }
+            ],
+            "headers": {
+              "X-Fixture": "yes"
+            },
+            "extension": {
+              "empty": [],
+              "flag": false
+            }
+          }
+        ]
+      ],
+      "result": {
+        "messageId": "fixture-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "response": "fixture provider response",
+        "extension": {
+          "retained": true
+        }
+      }
+    },
+    {
+      "config": {
+        "host": "localhost",
+        "port": 25,
+        "secure": false,
+        "tls": {
+          "rejectUnauthorized": false
+        }
+      },
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "html": "<p>fixture</p>",
+        "attachments": [
+          {
+            "path": "/fixture",
+            "href": "https://example.test/fixture"
+          }
+        ],
+        "headers": {
+          "X-Fixture": "yes"
+        },
+        "extension": {
+          "empty": [],
+          "flag": false
+        }
+      },
+      "calls": [
+        [
+          "create",
+          {
+            "host": "localhost",
+            "port": 25,
+            "secure": false,
+            "tls": {
+              "rejectUnauthorized": false
+            }
+          }
+        ],
+        [
+          "send",
+          {
+            "from": "sender@example.test",
+            "to": [
+              "recipient@example.test"
+            ],
+            "text": "fixture",
+            "html": "<p>fixture</p>",
+            "attachments": [
+              {
+                "path": "/fixture",
+                "href": "https://example.test/fixture"
+              }
+            ],
+            "headers": {
+              "X-Fixture": "yes"
+            },
+            "extension": {
+              "empty": [],
+              "flag": false
+            }
+          }
+        ]
+      ],
+      "result": {
+        "messageId": "fixture-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "response": "fixture provider response",
+        "extension": {
+          "retained": true
+        }
+      }
+    },
+    {
+      "config": {
+        "pool": true,
+        "maxConnections": 2
+      },
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "html": "<p>fixture</p>",
+        "attachments": [
+          {
+            "path": "/fixture",
+            "href": "https://example.test/fixture"
+          }
+        ],
+        "headers": {
+          "X-Fixture": "yes"
+        },
+        "extension": {
+          "empty": [],
+          "flag": false
+        }
+      },
+      "calls": [
+        [
+          "create",
+          {
+            "pool": true,
+            "maxConnections": 2
+          }
+        ],
+        [
+          "send",
+          {
+            "from": "sender@example.test",
+            "to": [
+              "recipient@example.test"
+            ],
+            "text": "fixture",
+            "html": "<p>fixture</p>",
+            "attachments": [
+              {
+                "path": "/fixture",
+                "href": "https://example.test/fixture"
+              }
+            ],
+            "headers": {
+              "X-Fixture": "yes"
+            },
+            "extension": {
+              "empty": [],
+              "flag": false
+            }
+          }
+        ]
+      ],
+      "result": {
+        "messageId": "fixture-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "response": "fixture provider response",
+        "extension": {
+          "retained": true
+        }
+      }
+    },
+    {
+      "config": {
+        "jsonTransport": true
+      },
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "html": "<p>fixture</p>",
+        "attachments": [
+          {
+            "path": "/fixture",
+            "href": "https://example.test/fixture"
+          }
+        ],
+        "headers": {
+          "X-Fixture": "yes"
+        },
+        "extension": {
+          "empty": [],
+          "flag": false
+        }
+      },
+      "calls": [
+        [
+          "create",
+          {
+            "jsonTransport": true
+          }
+        ],
+        [
+          "send",
+          {
+            "from": "sender@example.test",
+            "to": [
+              "recipient@example.test"
+            ],
+            "text": "fixture",
+            "html": "<p>fixture</p>",
+            "attachments": [
+              {
+                "path": "/fixture",
+                "href": "https://example.test/fixture"
+              }
+            ],
+            "headers": {
+              "X-Fixture": "yes"
+            },
+            "extension": {
+              "empty": [],
+              "flag": false
+            }
+          }
+        ]
+      ],
+      "result": {
+        "messageId": "fixture-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "response": "fixture provider response",
+        "extension": {
+          "retained": true
+        }
+      }
+    },
+    {
+      "config": {
+        "streamTransport": true,
+        "buffer": false
+      },
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "html": "<p>fixture</p>",
+        "attachments": [
+          {
+            "path": "/fixture",
+            "href": "https://example.test/fixture"
+          }
+        ],
+        "headers": {
+          "X-Fixture": "yes"
+        },
+        "extension": {
+          "empty": [],
+          "flag": false
+        }
+      },
+      "calls": [
+        [
+          "create",
+          {
+            "streamTransport": true,
+            "buffer": false
+          }
+        ],
+        [
+          "send",
+          {
+            "from": "sender@example.test",
+            "to": [
+              "recipient@example.test"
+            ],
+            "text": "fixture",
+            "html": "<p>fixture</p>",
+            "attachments": [
+              {
+                "path": "/fixture",
+                "href": "https://example.test/fixture"
+              }
+            ],
+            "headers": {
+              "X-Fixture": "yes"
+            },
+            "extension": {
+              "empty": [],
+              "flag": false
+            }
+          }
+        ]
+      ],
+      "result": {
+        "messageId": "fixture-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "response": "fixture provider response",
+        "extension": {
+          "retained": true
+        }
+      }
+    },
+    {
+      "config": {
+        "sendmail": true,
+        "args": [
+          "-i"
+        ]
+      },
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "html": "<p>fixture</p>",
+        "attachments": [
+          {
+            "path": "/fixture",
+            "href": "https://example.test/fixture"
+          }
+        ],
+        "headers": {
+          "X-Fixture": "yes"
+        },
+        "extension": {
+          "empty": [],
+          "flag": false
+        }
+      },
+      "calls": [
+        [
+          "create",
+          {
+            "sendmail": true,
+            "args": [
+              "-i"
+            ]
+          }
+        ],
+        [
+          "send",
+          {
+            "from": "sender@example.test",
+            "to": [
+              "recipient@example.test"
+            ],
+            "text": "fixture",
+            "html": "<p>fixture</p>",
+            "attachments": [
+              {
+                "path": "/fixture",
+                "href": "https://example.test/fixture"
+              }
+            ],
+            "headers": {
+              "X-Fixture": "yes"
+            },
+            "extension": {
+              "empty": [],
+              "flag": false
+            }
+          }
+        ]
+      ],
+      "result": {
+        "messageId": "fixture-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "response": "fixture provider response",
+        "extension": {
+          "retained": true
+        }
+      }
+    },
+    {
+      "config": {
+        "SES": {
+          "extension": "native-callback-fixture"
+        }
+      },
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "html": "<p>fixture</p>",
+        "attachments": [
+          {
+            "path": "/fixture",
+            "href": "https://example.test/fixture"
+          }
+        ],
+        "headers": {
+          "X-Fixture": "yes"
+        },
+        "extension": {
+          "empty": [],
+          "flag": false
+        }
+      },
+      "calls": [
+        [
+          "create",
+          {
+            "SES": {
+              "extension": "native-callback-fixture"
+            }
+          }
+        ],
+        [
+          "send",
+          {
+            "from": "sender@example.test",
+            "to": [
+              "recipient@example.test"
+            ],
+            "text": "fixture",
+            "html": "<p>fixture</p>",
+            "attachments": [
+              {
+                "path": "/fixture",
+                "href": "https://example.test/fixture"
+              }
+            ],
+            "headers": {
+              "X-Fixture": "yes"
+            },
+            "extension": {
+              "empty": [],
+              "flag": false
+            }
+          }
+        ]
+      ],
+      "result": {
+        "messageId": "fixture-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "response": "fixture provider response",
+        "extension": {
+          "retained": true
+        }
+      }
+    },
+    {
+      "config": "smtp://user:pass@localhost:25/?pool=true",
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "html": "<p>fixture</p>",
+        "attachments": [
+          {
+            "path": "/fixture",
+            "href": "https://example.test/fixture"
+          }
+        ],
+        "headers": {
+          "X-Fixture": "yes"
+        },
+        "extension": {
+          "empty": [],
+          "flag": false
+        }
+      },
+      "calls": [
+        [
+          "create",
+          "smtp://user:pass@localhost:25/?pool=true"
+        ],
+        [
+          "send",
+          {
+            "from": "sender@example.test",
+            "to": [
+              "recipient@example.test"
+            ],
+            "text": "fixture",
+            "html": "<p>fixture</p>",
+            "attachments": [
+              {
+                "path": "/fixture",
+                "href": "https://example.test/fixture"
+              }
+            ],
+            "headers": {
+              "X-Fixture": "yes"
+            },
+            "extension": {
+              "empty": [],
+              "flag": false
+            }
+          }
+        ]
+      ],
+      "result": {
+        "messageId": "fixture-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "response": "fixture provider response",
+        "extension": {
+          "retained": true
+        }
+      }
+    },
+    {
+      "config": {
+        "customProvider": {
+          "field": false
+        }
+      },
+      "options": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ],
+        "text": "fixture",
+        "html": "<p>fixture</p>",
+        "attachments": [
+          {
+            "path": "/fixture",
+            "href": "https://example.test/fixture"
+          }
+        ],
+        "headers": {
+          "X-Fixture": "yes"
+        },
+        "extension": {
+          "empty": [],
+          "flag": false
+        }
+      },
+      "calls": [
+        [
+          "create",
+          {
+            "customProvider": {
+              "field": false
+            }
+          }
+        ],
+        [
+          "send",
+          {
+            "from": "sender@example.test",
+            "to": [
+              "recipient@example.test"
+            ],
+            "text": "fixture",
+            "html": "<p>fixture</p>",
+            "attachments": [
+              {
+                "path": "/fixture",
+                "href": "https://example.test/fixture"
+              }
+            ],
+            "headers": {
+              "X-Fixture": "yes"
+            },
+            "extension": {
+              "empty": [],
+              "flag": false
+            }
+          }
+        ]
+      ],
+      "result": {
+        "messageId": "fixture-id",
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "response": "fixture provider response",
+        "extension": {
+          "retained": true
+        }
+      }
+    }
+  ]
+}
