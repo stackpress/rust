@@ -51,7 +51,11 @@ async fn optional_config_activation_and_typed_boundary() -> Result<()> {
     let service = server.host().service::<Service>()?;
     assert_eq!(service.config.endpoints[0].priority, -7);
     assert_eq!(service.config.endpoints[0].scopes, ["unregistered"]);
-    assert_eq!(server.listeners().count(), 0, "M0 mounts no endpoints");
+    assert_eq!(
+        server.listeners().count(),
+        3,
+        "M2 installs two CORS callbacks and the endpoint"
+    );
     assert!(
         configured(json!({"api": {}}))
             .await?
@@ -828,19 +832,16 @@ impl Drop for OwnedChild {
 
 /// Readiness and completion have separate hard wall-clock deadlines; no runtime timer is trusted.
 #[cfg(unix)]
-fn watchdog(block: bool) -> bool {
+pub(super) fn watchdog(block: bool, test: &str) -> bool {
     use std::os::unix::process::CommandExt;
-    let ready =
-        std::env::temp_dir().join(format!("slice10-m0-{}-{block}.ready", std::process::id()));
+    let ready = std::env::temp_dir().join(format!(
+        "slice10-{}-{test}-{block}.ready",
+        std::process::id()
+    ));
     let _ = std::fs::remove_file(&ready);
     let mut child = OwnedChild {
         child: Command::new(std::env::current_exe().unwrap())
-            .args([
-                "--exact",
-                "proof::watchdog_child",
-                "--ignored",
-                "--nocapture",
-            ])
+            .args(["--exact", test, "--ignored", "--nocapture"])
             .env("SLICE10_READY", &ready)
             .env("SLICE10_BLOCK", if block { "1" } else { "0" })
             .process_group(0)
@@ -884,13 +885,19 @@ fn watchdog(block: bool) -> bool {
 #[test]
 #[cfg(unix)]
 fn reentrant_lookup_fetch_has_process_watchdog() {
-    assert!(watchdog(false), "reentrant case deadline exceeded");
+    assert!(
+        watchdog(false, "proof::watchdog_child"),
+        "reentrant case deadline exceeded"
+    );
 }
 
 #[test]
 #[cfg(unix)]
 fn process_watchdog_kills_and_reaps_blocked_child() {
-    assert!(!watchdog(true), "blocked child unexpectedly completed");
+    assert!(
+        !watchdog(true, "proof::watchdog_child"),
+        "blocked child unexpectedly completed"
+    );
 }
 
 #[test]
