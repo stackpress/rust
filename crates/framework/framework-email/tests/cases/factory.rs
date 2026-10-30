@@ -60,7 +60,7 @@ impl Transport for FakeTransport {
                 return Err(io::Error::other("send failed").into());
             }
             Ok(
-                json!({"providerId":self.id.get(), "options":options, "accepted":["fixture"], "extension":{"raw":true}}),
+                json!({"providerId":self.id.get(), "options":options, "accepted":["fixture"], "extension":{"raw":true}}).into(),
             )
         })
     }
