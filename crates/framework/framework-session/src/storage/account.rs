@@ -9,6 +9,7 @@ use std::sync::Arc;
 
 /// Source password checks, ordered min/max/upper/lower/number/special.
 #[derive(Clone, Debug, Default, Serialize, Deserialize)]
+#[serde(default)]
 pub struct PasswordConfig {
     /// Minimum JavaScript UTF-16 code-unit length; zero disables the check.
     pub min: Option<usize>,
@@ -57,7 +58,10 @@ impl AuthActions {
     }
     /// Source ProfileActions collaborator, using the same database seed and engine.
     pub fn profile(&self) -> ProfileActions {
-        ProfileActions::new(self.engine.clone(), self.store.seed.clone())
+        let mut profile = ProfileActions::new(self.engine.clone(), self.store.seed.clone());
+        // The source collaborator runs in the same process timezone as its AuthActions.
+        profile.store.schema.offset = self.store.offset;
+        profile
     }
 
     /// Ordered source signup/password validation; errors accumulate across independent fields.
