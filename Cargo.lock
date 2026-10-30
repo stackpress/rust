@@ -6135,13 +6135,19 @@ dependencies = [
 name = "stackpress-framework-api"
 version = "0.1.0"
 dependencies = [
+ "chrono",
+ "leptos",
  "reqwest",
  "serde",
  "serde_json",
+ "stackpress-framework-admin",
+ "stackpress-framework-csrf",
  "stackpress-framework-schema",
  "stackpress-framework-session",
  "stackpress-framework-sql",
+ "stackpress-framework-view",
  "stackpress-idea-parser",
+ "stackpress-leptos",
  "stackpress-lib",
  "stackpress-server",
  "stackpress-sql",

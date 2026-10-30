@@ -5,6 +5,7 @@ use std::collections::BTreeMap;
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value};
 use stackpress_framework_schema::Input;
+#[cfg(not(target_arch = "wasm32"))]
 use stackpress_lib::Result;
 
 /// The source's public, application and persisted API-session adapters.
@@ -125,6 +126,7 @@ impl ApiConfig {
 }
 
 /// Preserve typed source input without adding security or scope-registry validation.
+#[cfg(not(target_arch = "wasm32"))]
 pub(crate) fn validate(_: &Option<ApiConfig>) -> Result<()> {
     // Host serde decoding supplies the representation boundary; later adapters own behavior.
     Ok(())

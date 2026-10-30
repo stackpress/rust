@@ -17,8 +17,18 @@ pub const SOURCE: &str = include_str!("../schema.idea");
 /// Register the shared approved CUID definition in an otherwise app-owned catalog.
 pub fn definitions() -> SchemaResult<DefinitionRegistry> {
     let mut registry = DefinitionRegistry::standard().with_provider(cuid_definition())?;
-    // Source role argument shapes are retained as metadata. Concrete Leptos imports
-    // are selected at M5; claiming an implementation now would misstate that boundary.
+    // Select shared canonical controls, then fill only the source-specific role shapes.
+    for component in stackpress_framework_admin::codegen::components()
+        .into_iter()
+        .filter(|component| {
+            !matches!(
+                component.definition.name.as_str(),
+                "field.input" | "field.switch" | "view.date"
+            )
+        })
+    {
+        registry = registry.with_component(component.definition, Some(component.import))?;
+    }
     for (name, props) in [
         (
             "field.relation",
@@ -29,6 +39,8 @@ pub fn definitions() -> SchemaResult<DefinitionRegistry> {
             ],
         ),
         ("field.input", vec![("type", PropType::String)]),
+        ("field.switch", Vec::new()),
+        ("field.url", vec![("type", PropType::String)]),
         (
             "view.image",
             vec![("width", PropType::Number), ("height", PropType::Number)],
@@ -59,10 +71,30 @@ pub fn definitions() -> SchemaResult<DefinitionRegistry> {
                         public: true,
                     })
                     .collect(),
-                fixed: Default::default(),
-                available: false,
+                fixed: if name == "field.url" {
+                    std::collections::BTreeMap::from([("type".into(), serde_json::json!("url"))])
+                } else {
+                    Default::default()
+                },
+                available: true,
             },
-            None,
+            Some(stackpress_framework_schema::codegen::ComponentImport {
+                component: format!("api.source.{name}"),
+                module: "stackpress_framework_api::views::roles".into(),
+                symbol: match name {
+                    "field.relation" => "RelationField",
+                    "field.switch" => "SwitchField",
+                    "field.input" | "field.url" => "InputField",
+                    "view.image" => "ImageView",
+                    "view.template" => "TemplateView",
+                    "view.link" => "LinkView",
+                    "view.tags" => "TagsView",
+                    "view.date" => "DateView",
+                    _ => unreachable!(),
+                }
+                .into(),
+                default: false,
+            }),
         )?;
     }
     // API storage/admin publishes its plaintext secrets as the source does. Runtime

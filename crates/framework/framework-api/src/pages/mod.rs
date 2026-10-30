@@ -68,7 +68,7 @@ pub(crate) fn prepare() -> Vec<crate::routes::PreparedRoute> {
 }
 
 /// Preserve only the upstream truthy body / nonzero non-200 status entry guard.
-fn completed(response: &Response) -> bool {
+pub(crate) fn completed(response: &Response) -> bool {
     let body = match response.body() {
         Body::Empty => false,
         Body::Text(text) => !text.is_empty(),
@@ -82,7 +82,7 @@ fn completed(response: &Response) -> bool {
 }
 
 /// Source Boolean(value), with missing handled by the caller before reaching this function.
-fn truthy(value: &Value) -> bool {
+pub(crate) fn truthy(value: &Value) -> bool {
     match value {
         Value::Null => false,
         Value::Bool(value) => *value,
