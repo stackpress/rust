@@ -105,6 +105,12 @@ async fn routes(start: &mut StartupContext) -> Result<Flow> {
     // Source import order precedes configured endpoints; the view contribution belongs to M5.
     let mut routes = crate::pages::prepare();
     routes.extend(endpoints::prepare(&config.endpoints)?);
+    #[cfg(feature = "ui-ssr")]
+    start.route_with(
+        stackpress_server::RouteSpec::new(stackpress_lib::MethodPattern::Any, "/auth/oauth")
+            .priority(-100),
+        crate::views::host::oauth,
+    )?;
     // Each prepared callback is registered independently; no matcher uniqueness is imposed.
     for route in routes {
         start.route_with(route.spec, route.action)?;
