@@ -97,3 +97,15 @@ Store: /Users/cblanquera/server/projects/stackpress/rust/.agents/resources/build
 | `20261030T092351.814022Z-15c49872d5ec` | gate email coverage; passed (0) | 12.209543 | 8.66 |
 | `20261030T092423.901850Z-81ba291d0b9b` | gate final size guard; passed (0) | 0.945261 | none |
 | `20261030T092446.644943Z-3f6640708e9e` | gate final scope source lock KB audit; passed (0) | 2.793049 | none |
+
+## Coordinator verification
+
+Committed as `b84e871` on top of `87a60ff` (trial/3 unchanged since, so no merge was needed). The lock is byte-identical; the three email consumer locks and both API checkpoint locks use only workspace registry tuples. Reviewed the provider-fallback consolidation and the sendmail/SES module moves: private, with unchanged messages, order and results. Reran at gate tier (`sccache`, non-incremental, empty target), recorded as `s9brounds-verify gate *`. All passed:
+- fmt; workspace Clippy `-D warnings` and Rustdoc `-D warnings` with the six features.
+- `cargo nextest run --workspace --all-targets --locked --no-fail-fast` with no exclusions: default 901 passed; six features 941 passed. Both include `tcp_watchdog`.
+- Workspace doctests with the six features: 962 passed.
+- `--no-default-features`: framework-csrf 6 passed, framework-email 31 passed.
+- `consumers/graphs.py --check` and `consumers/run.py`.
+- Coverage: framework-csrf with `server` 97.10% lines; framework-email with `server` 88.46% lines.
+
+Agreed with the round 2 decision to keep the three consumers independent: they prove distinct dependency graphs. Merged into trial/3 on 2026-10-30. Lane B rounds are complete; the documentation follow-up remains.
