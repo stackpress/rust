@@ -1,4 +1,4 @@
-//! Source-mechanics and M2 endpoint/plugin/CORS contracts in one test executable.
+//! Source mechanics, endpoints, webhooks, SQL and OAuth contracts in one test executable.
 mod config;
 mod cors;
 mod endpoints;
@@ -9,3 +9,5 @@ mod webhooks;
 
 #[cfg(feature = "sql")]
 mod sql;
+
+mod oauth;

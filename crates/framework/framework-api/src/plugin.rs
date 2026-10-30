@@ -1,7 +1,8 @@
 //! Optional API selection through ordinary Config and Route startup phases.
 //!
 //! Configured endpoints/CORS and late inline webhooks share the existing startup phases.
-//! SQL and OAuth pages retain their milestones; registration performs no network I/O.
+//! SQL is selected independently; OAuth process routes follow the source endpoint gate.
+//! Registration performs no network I/O.
 
 use std::sync::Arc;
 
@@ -98,7 +99,12 @@ async fn routes(start: &mut StartupContext) -> Result<Flow> {
     let Some(config) = start.config::<Option<ApiConfig>>()? else {
         return Ok(Flow::Continue);
     };
-    let routes = endpoints::prepare(&config.endpoints)?;
+    if config.endpoints.is_empty() {
+        return Ok(Flow::Continue);
+    }
+    // Source import order precedes configured endpoints; the view contribution belongs to M5.
+    let mut routes = crate::pages::prepare();
+    routes.extend(endpoints::prepare(&config.endpoints)?);
     // Each prepared callback is registered independently; no matcher uniqueness is imposed.
     for route in routes {
         start.route_with(route.spec, route.action)?;
