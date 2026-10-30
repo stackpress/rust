@@ -53,8 +53,8 @@ async fn optional_config_activation_and_typed_boundary() -> Result<()> {
     assert_eq!(service.config.endpoints[0].scopes, ["unregistered"]);
     assert_eq!(
         server.listeners().count(),
-        3,
-        "M2 installs two CORS callbacks and the endpoint"
+        5,
+        "Two M3 processes, two CORS callbacks and the endpoint"
     );
     assert!(
         configured(json!({"api": {}}))
