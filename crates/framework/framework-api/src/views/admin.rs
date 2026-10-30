@@ -330,17 +330,22 @@ async fn relations(inv: &Invocation<'_>, data: &Value) -> Result<Relations> {
 /// # Errors
 /// Reports source seed or native render conversion errors.
 pub fn document(page: Management, ui: Ui) -> Result<String> {
-    let owner = Owner::new();
-    let result=owner.with(|| {
-        let title=view!{<title>{format!("{} {}",page.module,page.action.name())}</title>}.to_html();
-        let body=view!{<ManagementPage page=page.clone() ui/>}.to_html();
-        let seed=super::seed(&page)?;
-        let marker=if page.theme.is_none(){" data-theme-unset"}else{""};
-        let bootstrap=if page.theme.is_none(){stackpress_framework_view::theme::bootstrap_tag(&Default::default(),Some(&stackpress_framework_view::theme::bootstrap_location().map_err(Error::from_source)?),None).map_err(Error::from_source)?}else{String::new()};
-        Ok(format!("<!doctype html><html lang=\"en\" data-theme=\"{}\"{marker}><head>{bootstrap}<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">{title}<link rel=\"stylesheet\" href=\"/styles/global.css\"></head><body><div id=\"app\">{body}</div><script id=\"api-management-seed\" type=\"application/json\">{seed}</script><script type=\"module\" src=\"/assets/api-checkpoint.js\"></script></body></html>",page.theme.map(|theme|theme.as_str()).unwrap_or("light")))
-    });
-    owner.cleanup();
-    result
+    super::document::render(|| {
+        let title =
+            view! {<title>{format!("{} {}",page.module,page.action.name())}</title>}.to_html();
+        let body = view! {<ManagementPage page=page.clone() ui/>}.to_html();
+        let seed = super::seed(&page)?;
+        let marker = if page.theme.is_none() {
+            " data-theme-unset"
+        } else {
+            ""
+        };
+        let bootstrap = super::document::bootstrap(page.theme)?;
+        Ok(format!(
+            "<!doctype html><html lang=\"en\" data-theme=\"{}\"{marker}><head>{bootstrap}<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">{title}<link rel=\"stylesheet\" href=\"/styles/global.css\"></head><body><div id=\"app\">{body}</div><script id=\"api-management-seed\" type=\"application/json\">{seed}</script><script type=\"module\" src=\"/assets/api-checkpoint.js\"></script></body></html>",
+            page.theme.map(|theme| theme.as_str()).unwrap_or("light")
+        ))
+    })
 }
 /// Source relation-export algorithm: JSON-stringified cells and dynamically discovered columns.
 /// # Errors

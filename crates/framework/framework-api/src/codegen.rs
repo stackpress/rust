@@ -10,7 +10,9 @@ use stackpress_framework_schema::{
     providers::cuid_definition,
 };
 use stackpress_framework_session::profile::ProfileSchema;
-use stackpress_idea_parser::{AttributeValue, CompileInputs, SchemaConfig};
+use stackpress_idea_parser::{CompileInputs, SchemaConfig};
+
+mod source_compat;
 
 /// Exact owned upstream API schema, including its management metadata.
 pub const SOURCE: &str = include_str!("../schema.idea");
@@ -178,53 +180,7 @@ pub fn config() -> Result<SchemaConfig, stackpress_idea_parser::IdeaError> {
         &source,
         &CompileInputs::default(),
     )?;
-    // The existing typed normalizer requires finite paths. Expand source wildcards
-    // against the same composed stored columns; runtime StoreQuery stays unchanged.
-    let snapshot = config.clone();
-    for model in config.model.values_mut() {
-        let Some(AttributeValue::Array(paths)) = model.attributes.get_mut("query") else {
-            continue;
-        };
-        let mut expanded = Vec::new();
-        for path in paths.iter().filter_map(serde_json::Value::as_str) {
-            let (prefix, model_name) = if let Some((prefix, _)) = path.rsplit_once(".*") {
-                let target = snapshot.model[&model.name]
-                    .columns
-                    .iter()
-                    .find(|column| column.name == prefix)
-                    .map(|column| column.column_type.as_str());
-                (format!("{prefix}."), target.unwrap_or(&model.name))
-            } else {
-                (String::new(), model.name.as_str())
-            };
-            if path == "*" || path.ends_with(".*") {
-                expanded.extend(
-                    snapshot.model[model_name]
-                        .columns
-                        .iter()
-                        .filter(|column| !snapshot.model.contains_key(&column.column_type))
-                        .map(|column| {
-                            serde_json::Value::String(format!("{prefix}{}", column.name))
-                        }),
-                );
-            } else {
-                expanded.push(path.into());
-            }
-        }
-        *paths = expanded;
-    }
-    // The native relation checker requires the inverse name that upstream derives
-    // from its sole matching reverse array. This is metadata, not a new store join.
-    if let Some(column) = config.model.get_mut("Session").and_then(|model| {
-        model
-            .columns
-            .iter_mut()
-            .find(|column| column.name == "application")
-    }) && let Some(AttributeValue::Array(args)) = column.attributes.get_mut("relation")
-        && let Some(serde_json::Value::Object(mapping)) = args.first_mut()
-    {
-        mapping.insert("name".into(), "session".into());
-    }
+    source_compat::apply(&mut config);
     Ok(config)
 }
 /// Normalize the full source management data with the caller's frozen component registry.

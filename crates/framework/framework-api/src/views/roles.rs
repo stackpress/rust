@@ -102,25 +102,70 @@ pub fn RelationField(
     // Re-keying only the finite choice widget permits refreshed options; the draft value stays
     // root-owned. A failed/late lookup never changes the selected stored ID by itself.
     let revision = RwSignal::new(0_u64);
-    view! {<div class="relation" on:input=move |event| {
-        if let Some(loader)=&loader {
-            let query=event_target_value(&event);
-            let mut carrier=stackpress_lib::Request::new().url;carrier.set_query(None);carrier.query_pairs_mut().append_pair("q",&query);
-            let encoded=carrier.query().unwrap_or("").trim_start_matches("q=").to_owned();
-            let url=if search.contains("{{query}}") {search.replace("{{query}}",&encoded)} else {format!("{search}&q={encoded}")};
-            loader.0.run(RelationRequest {url,field:field.clone(),complete:Callback::new(move |rows| {options.set(rows);revision.update(|revision|*revision+=1);})});
-        }
-    }>{move || {
-        let _=revision.get();
-        let choices=options.get();
-        let current=match selected.get_untracked() {Presence::Value(Value::String(value))=>Some(value),_=>None};
-        let mut entries=choices.iter().map(|choice|SelectOption {value:choice.id.clone(),label:choice.label.clone(),disabled:false}).collect::<Vec<_>>();
-        if let Some(current)=&current && !entries.iter().any(|choice|&choice.value==current) {entries.push(SelectOption {value:current.clone(),label:current.clone(),disabled:false});}
-        let Ok(entries)=SelectOptions::new(entries) else {return view!{<p role="alert">"Relation choices exceed the UI representation budget"</p>}.into_any();};
-        let Ok(state)=ComboboxState::new(entries,current) else {return view!{<p role="alert">"Relation selection is unavailable"</p>}.into_any();};
-        Effect::watch(move ||state.selected(),move |value,_,_|selected.set(value.clone().map_or(Presence::Missing,|value|Presence::Value(Value::String(value)))),false);
-        view!{<Combobox id=id.clone() label=label.clone() name=context.field.wire_name.clone() state/>}.into_any()
-    }}</div>}
+    view! {
+        <div class="relation" on:input=move |event| {
+            if let Some(loader) = &loader {
+                // Encode the user's text as one URLSearchParams value before substituting
+                // the source template. The host owns fetch/cancellation, not this field.
+                let query = event_target_value(&event);
+                let mut carrier = stackpress_lib::Request::new().url;
+                carrier.set_query(None);
+                carrier.query_pairs_mut().append_pair("q", &query);
+                let encoded = carrier.query().unwrap_or("").trim_start_matches("q=").to_owned();
+                let url = if search.contains("{{query}}") {
+                    search.replace("{{query}}", &encoded)
+                } else {
+                    format!("{search}&q={encoded}")
+                };
+                loader.0.run(RelationRequest {
+                    url,
+                    field: field.clone(),
+                    complete: Callback::new(move |rows| {
+                        options.set(rows);
+                        revision.update(|revision| *revision += 1);
+                    }),
+                });
+            }
+        }>
+            {move || {
+                // Refresh only the finite choice widget; retain the selected stored ID even
+                // when a search response no longer includes it. No automatic draft rewrite.
+                let _ = revision.get();
+                let choices = options.get();
+                let current = match selected.get_untracked() {
+                    Presence::Value(Value::String(value)) => Some(value),
+                    _ => None,
+                };
+                let mut entries = choices.iter().map(|choice| SelectOption {
+                    value: choice.id.clone(), label: choice.label.clone(), disabled: false,
+                }).collect::<Vec<_>>();
+                if let Some(current) = &current
+                    && !entries.iter().any(|choice| &choice.value == current)
+                {
+                    entries.push(SelectOption {
+                        value: current.clone(), label: current.clone(), disabled: false,
+                    });
+                }
+                // Representation failures remain visible and leave the root draft alone.
+                let Ok(entries) = SelectOptions::new(entries) else {
+                    return view!{<p role="alert">"Relation choices exceed the UI representation budget"</p>}.into_any();
+                };
+                let Ok(state) = ComboboxState::new(entries, current) else {
+                    return view!{<p role="alert">"Relation selection is unavailable"</p>}.into_any();
+                };
+                // Subscribe without an immediate write: Missing must remain omitted until
+                // the user makes a selection, preserving native optional-field behavior.
+                Effect::watch(
+                    move || state.selected(),
+                    move |value, _, _| selected.set(value.clone().map_or(
+                        Presence::Missing, |value| Presence::Value(Value::String(value)),
+                    )),
+                    false,
+                );
+                view!{<Combobox id=id.clone() label=label.clone() name=context.field.wire_name.clone() state/>}.into_any()
+            }}
+        </div>
+    }
 }
 /// Source image dimensions and URL, with normal escaped native attributes.
 #[component]
