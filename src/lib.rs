@@ -91,3 +91,7 @@ pub use stackpress_framework_sql as framework_sql;
 /// Generated role controls and optional build-host UI emission.
 #[cfg(feature = "framework-admin")]
 pub use stackpress_framework_admin as framework_admin;
+
+/// Source-parity identity/auth mechanisms, selected without registering a plugin.
+#[cfg(feature = "framework-session")]
+pub use stackpress_framework_session as framework_session;
