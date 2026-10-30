@@ -120,3 +120,18 @@ Shared benchmark store: /Users/cblanquera/server/projects/stackpress/rust/.agent
 ## Stop
 
 All four released rounds are complete for coordinator verification. No material in-scope finding remains; no new owner decision or dependency request is needed. Stop before docs follow-up and before task 00022 adapter removal. Commit nothing.
+
+## Coordinator verification
+
+Verified 2026-10-30 by the coordinator on worktree commit `753e502` (trial/3 `9a2d5c9` already contained; no integration merge needed), fresh target, gate tier, script `/private/tmp/s10rounds-verify/run.sh`, eight-feature selection (`api/sql,codegen,ui-ssr`, `session/leptos-ssr,auth-server`, `csrf/server`, `email/server`, `schema/providers`):
+
+- Locks: original external tuples kept, 0 added/removed; all api-checkpoint and email consumer locks are subsets of the workspace lock.
+- `cargo fmt --all --check`, workspace Clippy `-D warnings`: pass.
+- nextest default: 925 passed, 85 skipped, including `tcp_watchdog`. nextest eight-feature (2 threads): 990 passed, 88 skipped, including `tcp_watchdog`.
+- Doctests 965 passed, 0 failed; Rustdoc `-D warnings`: pass.
+- API default-features nextest 61 passed; `native` and `codegen` without SQL check; WASM `ui-hydrate` and `ui-csr` check.
+- api-checkpoint tool `--check` fresh; web Clippy; client Clippy hydrate and CSR: pass.
+- `cargo llvm-cov` API (`sql,codegen,ui-ssr`): 89.43% lines (fail-under 70).
+- Tracked tree clean after the gate. Behaviour-preserving review of the relation-fallback and document-helper diffs: no public behaviour change; G42/G43 unchanged.
+
+Merged into trial/3 as `cd16724`.
