@@ -102,3 +102,14 @@ Recorder store: /Users/cblanquera/server/projects/stackpress/rust/.agents/resour
 | `20261030T065858.940515Z-f7963e9bc90c` | final receipt validation; passed | 0.790431 | — |
 
 The three already-open source questions remain at parity: literal ILIKE, Auth create-return schema.unserialize behavior, and positive hasnt. No new owner/product/dependency decision is requested. No M3 implementation, root facade/shared-lib/schema change, other-lane write, historical Agent File edit, commit/push/install/GitHub write or listener occurred. Coordinator verification (including tcp_watchdog) is the next gate; work stops at M2.
+
+## Coordinator verification
+
+Committed as `a56f433`, then trial/3 (Lane B M2, email-send) was merged into the branch cleanly; the lock kept every existing external tuple, with none added or removed. Reran on the combined tree at gate tier (`sccache`, non-incremental, empty target), recorded as `s9am2-verify gate *`. All passed:
+- fmt; workspace Clippy `-D warnings` and workspace Rustdoc `-D warnings`, both with `session/auth-server`, `schema/providers` and `email/server`.
+- `cargo nextest run --workspace --all-targets --locked --no-fail-fast` with no exclusions: default features 853 passed; with the three features 904 passed. Both include `tcp_watchdog`.
+- Workspace doctests with the three features: 960 passed.
+- `framework-session --no-default-features --features auth-server` checks for `wasm32-unknown-unknown`.
+- Coverage: framework-session with `auth-server` 90.30% lines.
+
+Review: G44 optional signup phone is the one intended change against the preserved source oracle; every other branch keeps source behaviour, including unchecked GET finalization, the 404-then-400 status rewrite and pre-config consumed rotation. The three open source questions (ILIKE, auth create-return, positive `hasnt`) stay at parity. The session's own email-send fake is still to be swapped for Lane B's real event at integration. Merged into trial/3 on 2026-10-30; Lane A M3 and API M3 may be released.
