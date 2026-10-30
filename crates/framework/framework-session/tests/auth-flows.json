@@ -1,0 +1,3681 @@
+{
+  "cases": [
+    {
+      "scenario": {
+        "name": "signin-flags",
+        "target": "auth/events/signin",
+        "data": {
+          "type": "email",
+          "email": "ada@example.test",
+          "password": false,
+          "2fa": false
+        }
+      },
+      "nested": [],
+      "expected": {
+        "code": 200,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "result": {
+          "id": "a1",
+          "profileId": "p1",
+          "type": "email",
+          "token": "ada@example.test",
+          "consumed": "2023-11-14T22:13:20.000Z",
+          "profile": {
+            "id": "p1",
+            "name": "Ada",
+            "roles": [],
+            "image": null
+          }
+        },
+        "input": {
+          "type": "email",
+          "email": "ada@example.test",
+          "password": false,
+          "2fa": false
+        },
+        "trace": [
+          [
+            "actions.signin",
+            "email",
+            false
+          ],
+          [
+            "session.create",
+            {
+              "id": "p1",
+              "name": "Ada",
+              "roles": [
+                "GUEST"
+              ]
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "signin-password-empty",
+        "target": "auth/events/signin",
+        "data": {
+          "email": "ada@example.test",
+          "type": "email",
+          "password": "",
+          "2fa": false
+        }
+      },
+      "nested": [],
+      "expected": {
+        "code": 200,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "result": {
+          "id": "a1",
+          "profileId": "p1",
+          "type": "email",
+          "token": "ada@example.test",
+          "consumed": "2023-11-14T22:13:20.000Z",
+          "profile": {
+            "id": "p1",
+            "name": "Ada",
+            "roles": [],
+            "image": null
+          }
+        },
+        "input": {
+          "email": "ada@example.test",
+          "type": "email",
+          "password": "",
+          "2fa": false
+        },
+        "trace": [
+          [
+            "actions.signin",
+            "email",
+            false
+          ],
+          [
+            "session.create",
+            {
+              "id": "p1",
+              "name": "Ada",
+              "roles": [
+                "GUEST"
+              ]
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "signin-2fa-null-is-checked",
+        "target": "auth/events/signin",
+        "data": {
+          "type": "email",
+          "2fa": null
+        },
+        "search": [
+          {
+            "id": "totp"
+          }
+        ]
+      },
+      "nested": [],
+      "expected": {
+        "code": 302,
+        "error": null,
+        "errors": {},
+        "location": "/auth/signin/2fa/p1/a1/d87160dabb1a642e203807394671acba7ab6d08ce696e21d73f39f2553b0129a?redirect_uri=%2F",
+        "result": null,
+        "input": {
+          "type": "email",
+          "2fa": null
+        },
+        "trace": [
+          [
+            "actions.signin",
+            "email",
+            true
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "type": "2fa",
+                "profileId": "p1"
+              }
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "signin-2fa-empty",
+        "target": "auth/events/signin",
+        "data": {
+          "type": "email"
+        }
+      },
+      "nested": [],
+      "expected": {
+        "code": 200,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "result": {
+          "id": "a1",
+          "profileId": "p1",
+          "type": "email",
+          "token": "ada@example.test",
+          "consumed": "2023-11-14T22:13:20.000Z",
+          "profile": {
+            "id": "p1",
+            "name": "Ada",
+            "roles": [],
+            "image": null
+          }
+        },
+        "input": {
+          "type": "email"
+        },
+        "trace": [
+          [
+            "actions.signin",
+            "email",
+            true
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "type": "2fa",
+                "profileId": "p1"
+              }
+            }
+          ],
+          [
+            "session.create",
+            {
+              "id": "p1",
+              "name": "Ada",
+              "roles": [
+                "GUEST"
+              ]
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "signin-incomplete",
+        "target": "auth/events/signin",
+        "data": {},
+        "signin": {}
+      },
+      "nested": [],
+      "expected": {
+        "code": 302,
+        "error": null,
+        "errors": {},
+        "location": "/auth/signin",
+        "result": null,
+        "input": {},
+        "trace": [
+          [
+            "actions.signin",
+            "username",
+            true
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "signin-action-error",
+        "target": "auth/events/signin",
+        "data": {},
+        "failure": {
+          "code": 401,
+          "message": "Invalid Parameters",
+          "errors": {
+            "secret": "Invalid Password"
+          }
+        }
+      },
+      "nested": [],
+      "expected": {
+        "code": 401,
+        "error": "Invalid Parameters",
+        "errors": {
+          "secret": "Invalid Password"
+        },
+        "location": null,
+        "result": null,
+        "input": {},
+        "trace": [
+          [
+            "actions.signin",
+            "username",
+            true
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "signout-literal",
+        "target": "auth/events/signout",
+        "data": {}
+      },
+      "nested": [],
+      "expected": {
+        "code": 200,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "result": null,
+        "input": {},
+        "trace": [],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "signup-roles-and-hooks",
+        "target": "auth/events/signup",
+        "data": {
+          "name": "Ada",
+          "email": "ada@example.test",
+          "phone": "+1 (234) 567",
+          "roles": [
+            "OVERRIDE"
+          ]
+        },
+        "signup": {
+          "id": "p1",
+          "auth": {
+            "email": {
+              "secret": "e"
+            },
+            "phone": {
+              "secret": "p"
+            },
+            "username": {
+              "secret": "u"
+            },
+            "custom": {
+              "secret": "keep"
+            }
+          }
+        }
+      },
+      "nested": [],
+      "expected": {
+        "code": 200,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "result": {
+          "id": "p1",
+          "auth": {
+            "email": {},
+            "phone": {},
+            "username": {},
+            "custom": {
+              "secret": "keep"
+            }
+          }
+        },
+        "input": {
+          "name": "Ada",
+          "email": "ada@example.test",
+          "phone": "+1 (234) 567",
+          "roles": [
+            "OVERRIDE"
+          ]
+        },
+        "trace": [
+          [
+            "actions.signup",
+            {
+              "roles": [
+                "OVERRIDE"
+              ],
+              "name": "Ada",
+              "email": "ada@example.test",
+              "phone": "+1234567"
+            }
+          ],
+          [
+            "resolve",
+            "email-email-send",
+            {
+              "email": "ada@example.test",
+              "id": "p1",
+              "auth": {
+                "email": {
+                  "secret": "e"
+                },
+                "phone": {
+                  "secret": "p"
+                },
+                "username": {
+                  "secret": "u"
+                },
+                "custom": {
+                  "secret": "keep"
+                }
+              }
+            }
+          ],
+          [
+            "resolve",
+            "auth-phone-verify",
+            {
+              "phone": "+1234567",
+              "id": "p1",
+              "auth": {
+                "email": {
+                  "secret": "e"
+                },
+                "phone": {
+                  "secret": "p"
+                },
+                "username": {
+                  "secret": "u"
+                },
+                "custom": {
+                  "secret": "keep"
+                }
+              }
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "signup-optional-phone",
+        "target": "auth/events/signup",
+        "data": {
+          "name": "Ada",
+          "username": "ada"
+        },
+        "signup": {
+          "id": "p1",
+          "auth": {
+            "username": {
+              "secret": "u"
+            }
+          }
+        }
+      },
+      "nested": [],
+      "expected": {
+        "code": 0,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "result": null,
+        "input": {
+          "name": "Ada",
+          "username": "ada"
+        },
+        "trace": [],
+        "flash": null,
+        "thrown": "Cannot read properties of undefined (reading 'trim')"
+      }
+    },
+    {
+      "scenario": {
+        "name": "username-overwrites-flags",
+        "target": "auth/pages/signin/username",
+        "method": "POST",
+        "data": {
+          "password": false,
+          "2fa": false,
+          "redirect_uri": "/next"
+        }
+      },
+      "nested": [
+        {
+          "event": "auth-signin",
+          "trace": [
+            [
+              "actions.signin",
+              "username",
+              true
+            ],
+            [
+              "session.create",
+              {
+                "id": "p1",
+                "name": "Ada",
+                "roles": [
+                  "GUEST"
+                ]
+              }
+            ]
+          ],
+          "code": 200,
+          "error": null,
+          "errors": {},
+          "location": null,
+          "result": {
+            "id": "a1",
+            "profileId": "p1",
+            "type": "email",
+            "token": "ada@example.test",
+            "consumed": "2023-11-14T22:13:20.000Z",
+            "profile": {
+              "id": "p1",
+              "name": "Ada",
+              "roles": [],
+              "image": null
+            }
+          }
+        }
+      ],
+      "expected": {
+        "code": 302,
+        "error": null,
+        "errors": {},
+        "location": "/next",
+        "result": {
+          "id": "a1",
+          "profileId": "p1",
+          "type": "email",
+          "token": "ada@example.test",
+          "consumed": "2023-11-14T22:13:20.000Z",
+          "profile": {
+            "id": "p1",
+            "name": "Ada",
+            "roles": [],
+            "image": null
+          }
+        },
+        "input": {
+          "password": true,
+          "2fa": false,
+          "redirect_uri": "/next",
+          "type": "username"
+        },
+        "trace": [
+          [
+            "csrf.generate"
+          ],
+          [
+            "csrf.valid"
+          ],
+          [
+            "emit",
+            "auth-signin"
+          ],
+          [
+            "actions.signin",
+            "username",
+            true
+          ],
+          [
+            "session.create",
+            {
+              "id": "p1",
+              "name": "Ada",
+              "roles": [
+                "GUEST"
+              ]
+            }
+          ],
+          [
+            "csrf.clear"
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "phone-normalizes",
+        "target": "auth/pages/signin/phone",
+        "method": "POST",
+        "data": {
+          "phone": " +1 (234)-567 ",
+          "password": false,
+          "2fa": false
+        }
+      },
+      "nested": [
+        {
+          "event": "auth-signin",
+          "trace": [
+            [
+              "actions.signin",
+              "phone",
+              true
+            ],
+            [
+              "session.create",
+              {
+                "id": "p1",
+                "name": "Ada",
+                "roles": [
+                  "GUEST"
+                ]
+              }
+            ]
+          ],
+          "code": 200,
+          "error": null,
+          "errors": {},
+          "location": null,
+          "result": {
+            "id": "a1",
+            "profileId": "p1",
+            "type": "email",
+            "token": "ada@example.test",
+            "consumed": "2023-11-14T22:13:20.000Z",
+            "profile": {
+              "id": "p1",
+              "name": "Ada",
+              "roles": [],
+              "image": null
+            }
+          }
+        }
+      ],
+      "expected": {
+        "code": 302,
+        "error": null,
+        "errors": {},
+        "location": "/",
+        "result": {
+          "id": "a1",
+          "profileId": "p1",
+          "type": "email",
+          "token": "ada@example.test",
+          "consumed": "2023-11-14T22:13:20.000Z",
+          "profile": {
+            "id": "p1",
+            "name": "Ada",
+            "roles": [],
+            "image": null
+          }
+        },
+        "input": {
+          "phone": "+1234567",
+          "password": true,
+          "2fa": false,
+          "type": "phone"
+        },
+        "trace": [
+          [
+            "csrf.generate"
+          ],
+          [
+            "csrf.valid"
+          ],
+          [
+            "emit",
+            "auth-signin"
+          ],
+          [
+            "actions.signin",
+            "phone",
+            true
+          ],
+          [
+            "session.create",
+            {
+              "id": "p1",
+              "name": "Ada",
+              "roles": [
+                "GUEST"
+              ]
+            }
+          ],
+          [
+            "csrf.clear"
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "password-redirect-2fa",
+        "target": "auth/pages/signin/username",
+        "method": "POST",
+        "data": {},
+        "search": [
+          {
+            "id": "totp"
+          }
+        ]
+      },
+      "nested": [
+        {
+          "event": "auth-signin",
+          "trace": [
+            [
+              "actions.signin",
+              "username",
+              true
+            ],
+            [
+              "resolve",
+              "auth-search",
+              {
+                "eq": {
+                  "type": "2fa",
+                  "profileId": "p1"
+                }
+              }
+            ]
+          ],
+          "code": 302,
+          "error": null,
+          "errors": {},
+          "location": "/auth/signin/2fa/p1/a1/d87160dabb1a642e203807394671acba7ab6d08ce696e21d73f39f2553b0129a?redirect_uri=%2F",
+          "result": null
+        }
+      ],
+      "expected": {
+        "code": 302,
+        "error": null,
+        "errors": {},
+        "location": "/auth/signin/2fa/p1/a1/d87160dabb1a642e203807394671acba7ab6d08ce696e21d73f39f2553b0129a?redirect_uri=%2F",
+        "result": null,
+        "input": {
+          "password": true,
+          "type": "username"
+        },
+        "trace": [
+          [
+            "csrf.generate"
+          ],
+          [
+            "csrf.valid"
+          ],
+          [
+            "emit",
+            "auth-signin"
+          ],
+          [
+            "actions.signin",
+            "username",
+            true
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "type": "2fa",
+                "profileId": "p1"
+              }
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "password-invalid-csrf",
+        "target": "auth/pages/signin/username",
+        "method": "POST",
+        "data": {},
+        "csrf": false
+      },
+      "nested": [],
+      "expected": {
+        "code": 419,
+        "error": "csrf",
+        "errors": {},
+        "location": null,
+        "result": null,
+        "input": {},
+        "trace": [
+          [
+            "csrf.generate"
+          ],
+          [
+            "csrf.valid"
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "email-invalid-method",
+        "target": "auth/pages/signin/email",
+        "method": "POST",
+        "data": {
+          "auth": "other"
+        }
+      },
+      "nested": [],
+      "expected": {
+        "code": 400,
+        "error": "Invalid Parameters",
+        "errors": {
+          "auth": "Invalid sign-in method"
+        },
+        "location": null,
+        "result": null,
+        "input": {
+          "auth": "other"
+        },
+        "trace": [
+          [
+            "csrf.generate"
+          ],
+          [
+            "csrf.valid"
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "otp-issue",
+        "target": "auth/pages/signin/email",
+        "method": "POST",
+        "data": {
+          "auth": "otp",
+          "email": " ada@example.test ",
+          "redirect_uri": "/next?a=1"
+        },
+        "issue": true
+      },
+      "nested": [],
+      "expected": {
+        "code": 302,
+        "error": null,
+        "errors": {},
+        "location": "/auth/signin/otp/a1/1f946321ba6dec2657942b81fff91467726f6d8eef31e95b4835c502e5062101?redirect_uri=%2Fnext%3Fa%3D1",
+        "result": {
+          "sent": true
+        },
+        "input": {
+          "auth": "otp",
+          "email": " ada@example.test ",
+          "redirect_uri": "/next?a=1"
+        },
+        "trace": [
+          [
+            "csrf.generate"
+          ],
+          [
+            "csrf.valid"
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "columns": [
+                "*",
+                "profile.*"
+              ],
+              "eq": {
+                "type": "email",
+                "token": "ada@example.test"
+              }
+            }
+          ],
+          [
+            "resolve",
+            "auth-update",
+            {
+              "id": "a1",
+              "consumed": "2023-11-14T22:13:20.000Z"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "columns": [
+                "*",
+                "profile.*"
+              ],
+              "eq": {
+                "id": "a1"
+              }
+            }
+          ],
+          [
+            "resolve",
+            "email-send",
+            {
+              "from": {
+                "name": "Sender",
+                "address": "sender@example.test"
+              },
+              "to": "ada@example.test",
+              "subject": "Stackpress Sign In OTP",
+              "text": "Hello Ada,\n\nYou requested a one-time password to sign in to Brand.\n\n----\n\nYour OTP is: 000007\nOpen https://example.test/auth/signin/otp/a1/1f946321ba6dec2657942b81fff91467726f6d8eef31e95b4835c502e5062101?redirect_uri=%2Fnext%3Fa%3D1 to continue signing in.\n\n----\n\nIf you did not request this sign-in, please ignore this email.",
+              "html": "<p>Hello Ada,</p>\n<p>You requested a one-time password to sign in to Brand.</p>\n<hr />\n<p>Your OTP is: <strong>000007</strong></p>\n<p>Open <a href=\"https://example.test/auth/signin/otp/a1/1f946321ba6dec2657942b81fff91467726f6d8eef31e95b4835c502e5062101?redirect_uri=%2Fnext%3Fa%3D1\">this sign-in page</a> to continue.</p>\n<hr />\n<p>If you did not request this sign-in, please ignore this email.</p>"
+            }
+          ],
+          [
+            "csrf.clear"
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "magic-issue",
+        "target": "auth/pages/signin/email",
+        "method": "POST",
+        "data": {
+          "auth": "magic",
+          "email": "ada@example.test"
+        },
+        "issue": true
+      },
+      "nested": [],
+      "expected": {
+        "code": 200,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "result": {
+          "sent": true
+        },
+        "input": {
+          "auth": "magic",
+          "email": "ada@example.test"
+        },
+        "trace": [
+          [
+            "csrf.generate"
+          ],
+          [
+            "csrf.valid"
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "columns": [
+                "*",
+                "profile.*"
+              ],
+              "eq": {
+                "type": "email",
+                "token": "ada@example.test"
+              }
+            }
+          ],
+          [
+            "resolve",
+            "auth-update",
+            {
+              "id": "a1",
+              "consumed": "2023-11-14T22:13:20.000Z"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "columns": [
+                "*",
+                "profile.*"
+              ],
+              "eq": {
+                "id": "a1"
+              }
+            }
+          ],
+          [
+            "resolve",
+            "email-send",
+            {
+              "from": {
+                "name": "Sender",
+                "address": "sender@example.test"
+              },
+              "to": "ada@example.test",
+              "subject": "Stackpress Magic Sign In Link",
+              "text": "Hello Ada,\n\nYou requested a magic link to sign in to Brand.\n\n----\n\nOpen https://example.test/auth/signin/link/a1/d87160dabb1a642e203807394671acba7ab6d08ce696e21d73f39f2553b0129a?redirect_uri=%2F to continue signing in.\n\n----\n\nIf you did not request this sign-in, please ignore this email.",
+              "html": "<p>Hello Ada,</p>\n<p>You requested a magic link to sign in to Brand.</p>\n<hr />\n<p><a href=\"https://example.test/auth/signin/link/a1/d87160dabb1a642e203807394671acba7ab6d08ce696e21d73f39f2553b0129a?redirect_uri=%2F\">Click here to sign in</a></p>\n<hr />\n<p>If you did not request this sign-in, please ignore this email.</p>"
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "otp-missing-transport",
+        "target": "auth/pages/signin/email",
+        "method": "POST",
+        "data": {
+          "auth": "otp",
+          "email": "ada@example.test"
+        },
+        "issue": true,
+        "noEmail": true
+      },
+      "nested": [],
+      "expected": {
+        "code": 200,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "result": {
+          "id": "a1",
+          "profileId": "p1",
+          "type": "email",
+          "token": "ada@example.test",
+          "secret": "stored-secret",
+          "consumed": "2023-11-14T22:13:20.000Z",
+          "profile": {
+            "id": "p1",
+            "name": "Ada",
+            "roles": [],
+            "image": null
+          }
+        },
+        "input": {
+          "auth": "otp",
+          "email": "ada@example.test"
+        },
+        "trace": [
+          [
+            "csrf.generate"
+          ],
+          [
+            "csrf.valid"
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "columns": [
+                "*",
+                "profile.*"
+              ],
+              "eq": {
+                "type": "email",
+                "token": "ada@example.test"
+              }
+            }
+          ],
+          [
+            "resolve",
+            "auth-update",
+            {
+              "id": "a1",
+              "consumed": "2023-11-14T22:13:20.000Z"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "columns": [
+                "*",
+                "profile.*"
+              ],
+              "eq": {
+                "id": "a1"
+              }
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "magic-missing-sender",
+        "target": "auth/pages/signin/email",
+        "method": "POST",
+        "data": {
+          "auth": "magic",
+          "email": "ada@example.test"
+        },
+        "issue": true,
+        "noSender": true
+      },
+      "nested": [],
+      "expected": {
+        "code": 200,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "result": {
+          "id": "a1",
+          "profileId": "p1",
+          "type": "email",
+          "token": "ada@example.test",
+          "secret": "stored-secret",
+          "consumed": "2023-11-14T22:13:20.000Z",
+          "profile": {
+            "id": "p1",
+            "name": "Ada",
+            "roles": [],
+            "image": null
+          }
+        },
+        "input": {
+          "auth": "magic",
+          "email": "ada@example.test"
+        },
+        "trace": [
+          [
+            "csrf.generate"
+          ],
+          [
+            "csrf.valid"
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "columns": [
+                "*",
+                "profile.*"
+              ],
+              "eq": {
+                "type": "email",
+                "token": "ada@example.test"
+              }
+            }
+          ],
+          [
+            "resolve",
+            "auth-update",
+            {
+              "id": "a1",
+              "consumed": "2023-11-14T22:13:20.000Z"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "columns": [
+                "*",
+                "profile.*"
+              ],
+              "eq": {
+                "id": "a1"
+              }
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "otp-empty-email",
+        "target": "auth/pages/signin/email",
+        "method": "POST",
+        "data": {
+          "auth": "otp",
+          "email": " "
+        }
+      },
+      "nested": [],
+      "expected": {
+        "code": 400,
+        "error": "Invalid Parameters",
+        "errors": {
+          "email": "Email Address is required"
+        },
+        "location": null,
+        "result": null,
+        "input": {
+          "auth": "otp",
+          "email": " "
+        },
+        "trace": [
+          [
+            "csrf.generate"
+          ],
+          [
+            "csrf.valid"
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "otp-missing-account",
+        "target": "auth/pages/signin/email",
+        "method": "POST",
+        "data": {
+          "auth": "otp",
+          "email": "ada@example.test"
+        },
+        "issue": true,
+        "search": []
+      },
+      "nested": [],
+      "expected": {
+        "code": 400,
+        "error": "Invalid Parameters",
+        "errors": {
+          "email": "Account not found"
+        },
+        "location": null,
+        "result": null,
+        "input": {
+          "auth": "otp",
+          "email": "ada@example.test"
+        },
+        "trace": [
+          [
+            "csrf.generate"
+          ],
+          [
+            "csrf.valid"
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "columns": [
+                "*",
+                "profile.*"
+              ],
+              "eq": {
+                "type": "email",
+                "token": "ada@example.test"
+              }
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "otp-get-no-code-check",
+        "target": "auth/pages/signin/otp",
+        "data": {
+          "auth": "a1",
+          "challenge": "wrong"
+        },
+        "search": [
+          {
+            "id": "a1",
+            "profileId": "p1",
+            "type": "email",
+            "token": "ada@example.test",
+            "secret": "stored-secret",
+            "consumed": "2023-11-14T22:13:20.000Z",
+            "profile": {
+              "id": "p1",
+              "name": "Ada",
+              "roles": [],
+              "image": null
+            }
+          }
+        ]
+      },
+      "nested": [],
+      "expected": {
+        "code": 200,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "result": {
+          "id": "a1",
+          "profileId": "p1",
+          "type": "email",
+          "token": "ada@example.test",
+          "consumed": "2023-11-14T22:13:20.000Z",
+          "profile": {
+            "id": "p1",
+            "name": "Ada",
+            "roles": [],
+            "image": null
+          }
+        },
+        "input": {
+          "auth": "a1",
+          "challenge": "wrong"
+        },
+        "trace": [
+          [
+            "guest"
+          ],
+          [
+            "csrf.generate"
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "id": "a1"
+              }
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "otp-short-code",
+        "target": "auth/pages/signin/otp",
+        "method": "POST",
+        "data": {
+          "auth": "a1",
+          "challenge": "1f946321ba6dec2657942b81fff91467726f6d8eef31e95b4835c502e5062101",
+          "code": "7"
+        },
+        "search": [
+          {
+            "id": "a1",
+            "profileId": "p1",
+            "type": "email",
+            "token": "ada@example.test",
+            "secret": "stored-secret",
+            "consumed": "2023-11-14T22:13:20.000Z",
+            "profile": {
+              "id": "p1",
+              "name": "Ada",
+              "roles": [],
+              "image": null
+            }
+          }
+        ]
+      },
+      "nested": [],
+      "expected": {
+        "code": 302,
+        "error": null,
+        "errors": {},
+        "location": "/auth/signin/2fa/p1/a1/d87160dabb1a642e203807394671acba7ab6d08ce696e21d73f39f2553b0129a?redirect_uri=%2F",
+        "result": {
+          "id": "a1",
+          "profileId": "p1",
+          "type": "email",
+          "token": "ada@example.test",
+          "consumed": "2023-11-14T22:13:20.000Z",
+          "profile": {
+            "id": "p1",
+            "name": "Ada",
+            "roles": [],
+            "image": null
+          }
+        },
+        "input": {
+          "auth": "a1",
+          "challenge": "1f946321ba6dec2657942b81fff91467726f6d8eef31e95b4835c502e5062101",
+          "code": "7"
+        },
+        "trace": [
+          [
+            "guest"
+          ],
+          [
+            "csrf.generate"
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "id": "a1"
+              }
+            }
+          ],
+          [
+            "csrf.valid"
+          ],
+          [
+            "csrf.clear"
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "otp-nondigit-six-chars",
+        "target": "auth/pages/signin/otp",
+        "method": "POST",
+        "data": {
+          "auth": "a1",
+          "challenge": "f444065958a5e3641ea73aacf6b7e3bde0933434c42ce92f814d438e9535ec35",
+          "code": "abcdef"
+        },
+        "search": [
+          {
+            "id": "a1",
+            "profileId": "p1",
+            "type": "email",
+            "token": "ada@example.test",
+            "secret": "stored-secret",
+            "consumed": "2023-11-14T22:13:20.000Z",
+            "profile": {
+              "id": "p1",
+              "name": "Ada",
+              "roles": [],
+              "image": null
+            }
+          }
+        ]
+      },
+      "nested": [],
+      "expected": {
+        "code": 302,
+        "error": null,
+        "errors": {},
+        "location": "/auth/signin/2fa/p1/a1/d87160dabb1a642e203807394671acba7ab6d08ce696e21d73f39f2553b0129a?redirect_uri=%2F",
+        "result": {
+          "id": "a1",
+          "profileId": "p1",
+          "type": "email",
+          "token": "ada@example.test",
+          "consumed": "2023-11-14T22:13:20.000Z",
+          "profile": {
+            "id": "p1",
+            "name": "Ada",
+            "roles": [],
+            "image": null
+          }
+        },
+        "input": {
+          "auth": "a1",
+          "challenge": "f444065958a5e3641ea73aacf6b7e3bde0933434c42ce92f814d438e9535ec35",
+          "code": "abcdef"
+        },
+        "trace": [
+          [
+            "guest"
+          ],
+          [
+            "csrf.generate"
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "id": "a1"
+              }
+            }
+          ],
+          [
+            "csrf.valid"
+          ],
+          [
+            "csrf.clear"
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "otp-invalid-code",
+        "target": "auth/pages/signin/otp",
+        "method": "POST",
+        "data": {
+          "auth": "a1",
+          "challenge": "wrong",
+          "code": "7"
+        },
+        "search": [
+          {
+            "id": "a1",
+            "profileId": "p1",
+            "type": "email",
+            "token": "ada@example.test",
+            "secret": "stored-secret",
+            "consumed": "2023-11-14T22:13:20.000Z",
+            "profile": {
+              "id": "p1",
+              "name": "Ada",
+              "roles": [],
+              "image": null
+            }
+          }
+        ]
+      },
+      "nested": [],
+      "expected": {
+        "code": 400,
+        "error": "Invalid OTP Code",
+        "errors": {
+          "code": "The OTP code is invalid or has expired"
+        },
+        "location": null,
+        "result": {
+          "id": "a1",
+          "profileId": "p1",
+          "type": "email",
+          "token": "ada@example.test",
+          "consumed": "2023-11-14T22:13:20.000Z",
+          "profile": {
+            "id": "p1",
+            "name": "Ada",
+            "roles": [],
+            "image": null
+          }
+        },
+        "input": {
+          "auth": "a1",
+          "challenge": "wrong",
+          "code": "7"
+        },
+        "trace": [
+          [
+            "guest"
+          ],
+          [
+            "csrf.generate"
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "id": "a1"
+              }
+            }
+          ],
+          [
+            "csrf.valid"
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "otp-long-code",
+        "target": "auth/pages/signin/otp",
+        "method": "POST",
+        "data": {
+          "auth": "a1",
+          "challenge": "wrong",
+          "code": "1234567"
+        },
+        "search": [
+          {
+            "id": "a1",
+            "profileId": "p1",
+            "type": "email",
+            "token": "ada@example.test",
+            "secret": "stored-secret",
+            "consumed": "2023-11-14T22:13:20.000Z",
+            "profile": {
+              "id": "p1",
+              "name": "Ada",
+              "roles": [],
+              "image": null
+            }
+          }
+        ]
+      },
+      "nested": [],
+      "expected": {
+        "code": 400,
+        "error": "Invalid Parameters",
+        "errors": {
+          "code": "OTP code is required"
+        },
+        "location": null,
+        "result": {
+          "id": "a1",
+          "profileId": "p1",
+          "type": "email",
+          "token": "ada@example.test",
+          "consumed": "2023-11-14T22:13:20.000Z",
+          "profile": {
+            "id": "p1",
+            "name": "Ada",
+            "roles": [],
+            "image": null
+          }
+        },
+        "input": {
+          "auth": "a1",
+          "challenge": "wrong",
+          "code": "1234567"
+        },
+        "trace": [
+          [
+            "guest"
+          ],
+          [
+            "csrf.generate"
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "id": "a1"
+              }
+            }
+          ],
+          [
+            "csrf.valid"
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "otp-incomplete-link-final-400",
+        "target": "auth/pages/signin/otp",
+        "data": {}
+      },
+      "nested": [],
+      "expected": {
+        "code": 400,
+        "error": "One-time password link is invalid or expired.",
+        "errors": {},
+        "location": null,
+        "result": null,
+        "input": {},
+        "trace": [
+          [
+            "guest"
+          ],
+          [
+            "csrf.generate"
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "magic-get-no-csrf",
+        "target": "auth/pages/signin/link",
+        "data": {
+          "auth": "a1",
+          "challenge": "d87160dabb1a642e203807394671acba7ab6d08ce696e21d73f39f2553b0129a"
+        },
+        "search": [
+          {
+            "id": "a1",
+            "profileId": "p1",
+            "type": "email",
+            "token": "ada@example.test",
+            "secret": "stored-secret",
+            "consumed": "2023-11-14T22:13:20.000Z",
+            "profile": {
+              "id": "p1",
+              "name": "Ada",
+              "roles": [],
+              "image": null
+            }
+          }
+        ]
+      },
+      "nested": [],
+      "expected": {
+        "code": 302,
+        "error": null,
+        "errors": {},
+        "location": "/auth/signin/2fa/p1/a1/d87160dabb1a642e203807394671acba7ab6d08ce696e21d73f39f2553b0129a?redirect_uri=%2F",
+        "result": null,
+        "input": {
+          "auth": "a1",
+          "challenge": "d87160dabb1a642e203807394671acba7ab6d08ce696e21d73f39f2553b0129a"
+        },
+        "trace": [
+          [
+            "guest"
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "id": "a1"
+              }
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "magic-post-no-csrf",
+        "target": "auth/pages/signin/link",
+        "method": "POST",
+        "data": {
+          "auth": "a1",
+          "challenge": "d87160dabb1a642e203807394671acba7ab6d08ce696e21d73f39f2553b0129a"
+        },
+        "search": [
+          {
+            "id": "a1",
+            "profileId": "p1",
+            "type": "email",
+            "token": "ada@example.test",
+            "secret": "stored-secret",
+            "consumed": "2023-11-14T22:13:20.000Z",
+            "profile": {
+              "id": "p1",
+              "name": "Ada",
+              "roles": [],
+              "image": null
+            }
+          }
+        ],
+        "csrf": false
+      },
+      "nested": [],
+      "expected": {
+        "code": 302,
+        "error": null,
+        "errors": {},
+        "location": "/auth/signin/2fa/p1/a1/d87160dabb1a642e203807394671acba7ab6d08ce696e21d73f39f2553b0129a?redirect_uri=%2F",
+        "result": null,
+        "input": {
+          "auth": "a1",
+          "challenge": "d87160dabb1a642e203807394671acba7ab6d08ce696e21d73f39f2553b0129a"
+        },
+        "trace": [
+          [
+            "guest"
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "id": "a1"
+              }
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "magic-invalid-final-400",
+        "target": "auth/pages/signin/link",
+        "data": {
+          "auth": "a1",
+          "challenge": "wrong"
+        },
+        "search": [
+          {
+            "id": "a1",
+            "profileId": "p1",
+            "type": "email",
+            "token": "ada@example.test",
+            "secret": "stored-secret",
+            "consumed": "2023-11-14T22:13:20.000Z",
+            "profile": {
+              "id": "p1",
+              "name": "Ada",
+              "roles": [],
+              "image": null
+            }
+          }
+        ]
+      },
+      "nested": [],
+      "expected": {
+        "code": 400,
+        "error": "Magic link is invalid or expired.",
+        "errors": {},
+        "location": null,
+        "result": null,
+        "input": {
+          "auth": "a1",
+          "challenge": "wrong"
+        },
+        "trace": [
+          [
+            "guest"
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "id": "a1"
+              }
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "otp-literal-undefined-base",
+        "target": "auth/pages/signin/otp",
+        "method": "POST",
+        "data": {
+          "auth": "a1",
+          "challenge": "1f946321ba6dec2657942b81fff91467726f6d8eef31e95b4835c502e5062101",
+          "code": "7"
+        },
+        "search": [
+          {
+            "id": "a1",
+            "profileId": "p1",
+            "type": "email",
+            "token": "ada@example.test",
+            "secret": "stored-secret",
+            "consumed": "2023-11-14T22:13:20.000Z",
+            "profile": {
+              "id": "p1",
+              "name": "Ada",
+              "roles": [],
+              "image": null
+            }
+          }
+        ],
+        "noBase": true
+      },
+      "nested": [],
+      "expected": {
+        "code": 302,
+        "error": null,
+        "errors": {},
+        "location": "undefined/signin/2fa/p1/a1/d87160dabb1a642e203807394671acba7ab6d08ce696e21d73f39f2553b0129a?redirect_uri=%2F",
+        "result": {
+          "id": "a1",
+          "profileId": "p1",
+          "type": "email",
+          "token": "ada@example.test",
+          "consumed": "2023-11-14T22:13:20.000Z",
+          "profile": {
+            "id": "p1",
+            "name": "Ada",
+            "roles": [],
+            "image": null
+          }
+        },
+        "input": {
+          "auth": "a1",
+          "challenge": "1f946321ba6dec2657942b81fff91467726f6d8eef31e95b4835c502e5062101",
+          "code": "7"
+        },
+        "trace": [
+          [
+            "guest"
+          ],
+          [
+            "csrf.generate"
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "id": "a1"
+              }
+            }
+          ],
+          [
+            "csrf.valid"
+          ],
+          [
+            "csrf.clear"
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "2fa-get-without-factor",
+        "target": "auth/pages/signin/2fa",
+        "data": {
+          "profile": "p1",
+          "auth": "a1",
+          "challenge": "d87160dabb1a642e203807394671acba7ab6d08ce696e21d73f39f2553b0129a"
+        },
+        "search": [
+          {
+            "id": "a1",
+            "profileId": "p1",
+            "type": "email",
+            "token": "ada@example.test",
+            "secret": "stored-secret",
+            "consumed": "2023-11-14T22:13:20.000Z",
+            "profile": {
+              "id": "p1",
+              "name": "Ada",
+              "roles": [],
+              "image": null
+            }
+          }
+        ]
+      },
+      "nested": [
+        {
+          "event": "auth-signin",
+          "trace": [
+            [
+              "actions.signin",
+              "email",
+              false
+            ],
+            [
+              "session.create",
+              {
+                "id": "p1",
+                "name": "Ada",
+                "roles": [
+                  "GUEST"
+                ]
+              }
+            ]
+          ],
+          "code": 200,
+          "error": null,
+          "errors": {},
+          "location": null,
+          "result": {
+            "id": "a1",
+            "profileId": "p1",
+            "type": "email",
+            "token": "ada@example.test",
+            "consumed": "2023-11-14T22:13:20.000Z",
+            "profile": {
+              "id": "p1",
+              "name": "Ada",
+              "roles": [],
+              "image": null
+            }
+          }
+        }
+      ],
+      "expected": {
+        "code": 302,
+        "error": null,
+        "errors": {},
+        "location": "/",
+        "result": {
+          "id": "a1",
+          "profileId": "p1",
+          "type": "email",
+          "token": "ada@example.test",
+          "consumed": "2023-11-14T22:13:20.000Z",
+          "profile": {
+            "id": "p1",
+            "name": "Ada",
+            "roles": [],
+            "image": null
+          }
+        },
+        "input": {
+          "profile": "p1",
+          "auth": "a1",
+          "challenge": "d87160dabb1a642e203807394671acba7ab6d08ce696e21d73f39f2553b0129a",
+          "password": false,
+          "type": "email",
+          "email": "ada@example.test",
+          "2fa": false
+        },
+        "trace": [
+          [
+            "csrf.generate"
+          ],
+          [
+            "guest"
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ],
+          [
+            "emit",
+            "auth-signin"
+          ],
+          [
+            "actions.signin",
+            "email",
+            false
+          ],
+          [
+            "session.create",
+            {
+              "id": "p1",
+              "name": "Ada",
+              "roles": [
+                "GUEST"
+              ]
+            }
+          ],
+          [
+            "csrf.clear"
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "2fa-enabled-get-no-code-check",
+        "target": "auth/pages/signin/2fa",
+        "data": {
+          "profile": "p1",
+          "auth": "a1",
+          "challenge": "d87160dabb1a642e203807394671acba7ab6d08ce696e21d73f39f2553b0129a"
+        },
+        "search": [
+          {
+            "id": "a1",
+            "profileId": "p1",
+            "type": "email",
+            "token": "ada@example.test",
+            "secret": "stored-secret",
+            "consumed": "2023-11-14T22:13:20.000Z",
+            "profile": {
+              "id": "p1",
+              "name": "Ada",
+              "roles": [],
+              "image": null
+            }
+          },
+          {
+            "id": "factor",
+            "type": "2fa",
+            "token": "JBSWY3DPEHPK3PXP"
+          }
+        ]
+      },
+      "nested": [],
+      "expected": {
+        "code": 0,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "result": null,
+        "input": {
+          "profile": "p1",
+          "auth": "a1",
+          "challenge": "d87160dabb1a642e203807394671acba7ab6d08ce696e21d73f39f2553b0129a"
+        },
+        "trace": [
+          [
+            "csrf.generate"
+          ],
+          [
+            "guest"
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "2fa-enabled-invalid-post",
+        "target": "auth/pages/signin/2fa",
+        "method": "POST",
+        "data": {
+          "profile": "p1",
+          "auth": "a1",
+          "challenge": "d87160dabb1a642e203807394671acba7ab6d08ce696e21d73f39f2553b0129a",
+          "code": "bad"
+        },
+        "search": [
+          {
+            "id": "a1",
+            "profileId": "p1",
+            "type": "email",
+            "token": "ada@example.test",
+            "secret": "stored-secret",
+            "consumed": "2023-11-14T22:13:20.000Z",
+            "profile": {
+              "id": "p1",
+              "name": "Ada",
+              "roles": [],
+              "image": null
+            }
+          },
+          {
+            "id": "factor",
+            "type": "2fa",
+            "token": "JBSWY3DPEHPK3PXP"
+          }
+        ]
+      },
+      "nested": [],
+      "expected": {
+        "code": 400,
+        "error": "Invalid code",
+        "errors": {},
+        "location": null,
+        "result": null,
+        "input": {
+          "profile": "p1",
+          "auth": "a1",
+          "challenge": "d87160dabb1a642e203807394671acba7ab6d08ce696e21d73f39f2553b0129a",
+          "code": "bad"
+        },
+        "trace": [
+          [
+            "csrf.generate"
+          ],
+          [
+            "guest"
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ],
+          [
+            "csrf.valid"
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "2fa-enabled-valid-post",
+        "target": "auth/pages/signin/2fa",
+        "method": "POST",
+        "data": {
+          "profile": "p1",
+          "auth": "a1",
+          "challenge": "d87160dabb1a642e203807394671acba7ab6d08ce696e21d73f39f2553b0129a",
+          "code": "324550"
+        },
+        "search": [
+          {
+            "id": "a1",
+            "profileId": "p1",
+            "type": "email",
+            "token": "ada@example.test",
+            "secret": "stored-secret",
+            "consumed": "2023-11-14T22:13:20.000Z",
+            "profile": {
+              "id": "p1",
+              "name": "Ada",
+              "roles": [],
+              "image": null
+            }
+          },
+          {
+            "id": "factor",
+            "type": "2fa",
+            "token": "JBSWY3DPEHPK3PXP"
+          }
+        ]
+      },
+      "nested": [
+        {
+          "event": "auth-signin",
+          "trace": [
+            [
+              "actions.signin",
+              "email",
+              false
+            ],
+            [
+              "session.create",
+              {
+                "id": "p1",
+                "name": "Ada",
+                "roles": [
+                  "GUEST"
+                ]
+              }
+            ]
+          ],
+          "code": 200,
+          "error": null,
+          "errors": {},
+          "location": null,
+          "result": {
+            "id": "a1",
+            "profileId": "p1",
+            "type": "email",
+            "token": "ada@example.test",
+            "consumed": "2023-11-14T22:13:20.000Z",
+            "profile": {
+              "id": "p1",
+              "name": "Ada",
+              "roles": [],
+              "image": null
+            }
+          }
+        }
+      ],
+      "expected": {
+        "code": 302,
+        "error": null,
+        "errors": {},
+        "location": "/",
+        "result": {
+          "id": "a1",
+          "profileId": "p1",
+          "type": "email",
+          "token": "ada@example.test",
+          "consumed": "2023-11-14T22:13:20.000Z",
+          "profile": {
+            "id": "p1",
+            "name": "Ada",
+            "roles": [],
+            "image": null
+          }
+        },
+        "input": {
+          "profile": "p1",
+          "auth": "a1",
+          "challenge": "d87160dabb1a642e203807394671acba7ab6d08ce696e21d73f39f2553b0129a",
+          "code": "324550",
+          "password": false,
+          "type": "email",
+          "email": "ada@example.test",
+          "2fa": false
+        },
+        "trace": [
+          [
+            "csrf.generate"
+          ],
+          [
+            "guest"
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ],
+          [
+            "csrf.valid"
+          ],
+          [
+            "emit",
+            "auth-signin"
+          ],
+          [
+            "actions.signin",
+            "email",
+            false
+          ],
+          [
+            "session.create",
+            {
+              "id": "p1",
+              "name": "Ada",
+              "roles": [
+                "GUEST"
+              ]
+            }
+          ],
+          [
+            "csrf.clear"
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "2fa-mismatch-flash",
+        "target": "auth/pages/signin/2fa",
+        "data": {
+          "profile": "p1",
+          "auth": "a1",
+          "challenge": "wrong"
+        },
+        "search": [
+          {
+            "id": "a1",
+            "profileId": "p1",
+            "type": "email",
+            "token": "ada@example.test",
+            "secret": "stored-secret",
+            "consumed": "2023-11-14T22:13:20.000Z",
+            "profile": {
+              "id": "p1",
+              "name": "Ada",
+              "roles": [],
+              "image": null
+            }
+          }
+        ]
+      },
+      "nested": [],
+      "expected": {
+        "code": 302,
+        "error": null,
+        "errors": {},
+        "location": "/auth/signin/email?redirect_uri=%2F",
+        "result": null,
+        "input": {
+          "profile": "p1",
+          "auth": "a1",
+          "challenge": "wrong"
+        },
+        "trace": [
+          [
+            "csrf.generate"
+          ],
+          [
+            "guest"
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ]
+        ],
+        "flash": "{\"type\":\"error\",\"message\":\"Two-factor authentication failed.\"}",
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "2fa-missing-auth",
+        "target": "auth/pages/signin/2fa",
+        "data": {
+          "profile": "p1"
+        }
+      },
+      "nested": [],
+      "expected": {
+        "code": 302,
+        "error": null,
+        "errors": {},
+        "location": "/auth/signin?redirect_uri=%2F",
+        "result": null,
+        "input": {
+          "profile": "p1"
+        },
+        "trace": [
+          [
+            "csrf.generate"
+          ],
+          [
+            "guest"
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "2fa-empty-methods",
+        "target": "auth/pages/signin/2fa",
+        "data": {
+          "profile": "p1",
+          "auth": "a1"
+        },
+        "search": []
+      },
+      "nested": [],
+      "expected": {
+        "code": 400,
+        "error": "No authentication methods found",
+        "errors": {},
+        "location": null,
+        "result": null,
+        "input": {
+          "profile": "p1",
+          "auth": "a1"
+        },
+        "trace": [
+          [
+            "csrf.generate"
+          ],
+          [
+            "guest"
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "2fa-invalid-method",
+        "target": "auth/pages/signin/2fa",
+        "data": {
+          "profile": "p1",
+          "auth": "missing"
+        },
+        "search": [
+          {
+            "id": "a1",
+            "profileId": "p1",
+            "type": "email",
+            "token": "ada@example.test",
+            "secret": "stored-secret",
+            "consumed": "2023-11-14T22:13:20.000Z",
+            "profile": {
+              "id": "p1",
+              "name": "Ada",
+              "roles": [],
+              "image": null
+            }
+          }
+        ]
+      },
+      "nested": [],
+      "expected": {
+        "code": 400,
+        "error": "Invalid authentication method",
+        "errors": {},
+        "location": null,
+        "result": null,
+        "input": {
+          "profile": "p1",
+          "auth": "missing"
+        },
+        "trace": [
+          [
+            "csrf.generate"
+          ],
+          [
+            "guest"
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "signed-in-link-skips-proof",
+        "target": "auth/pages/signin/link",
+        "data": {},
+        "signedIn": true
+      },
+      "nested": [],
+      "expected": {
+        "code": 302,
+        "error": null,
+        "errors": {},
+        "location": "/",
+        "result": null,
+        "input": {},
+        "trace": [
+          [
+            "guest"
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "signed-in-otp-skips-proof",
+        "target": "auth/pages/signin/otp",
+        "data": {},
+        "signedIn": true
+      },
+      "nested": [],
+      "expected": {
+        "code": 302,
+        "error": null,
+        "errors": {},
+        "location": "/",
+        "result": null,
+        "input": {},
+        "trace": [
+          [
+            "guest"
+          ],
+          [
+            "csrf.clear"
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "signup-page-post",
+        "target": "auth/pages/signup",
+        "method": "POST",
+        "data": {
+          "name": "Ada",
+          "username": "ada-user",
+          "phone": "",
+          "secret": "secret"
+        },
+        "signup": {
+          "id": "p1",
+          "auth": {
+            "username": {
+              "secret": "u"
+            }
+          }
+        }
+      },
+      "nested": [
+        {
+          "event": "auth-signup",
+          "trace": [
+            [
+              "actions.signup",
+              {
+                "roles": [
+                  "USER"
+                ],
+                "name": "Ada",
+                "username": "ada-user",
+                "secret": "secret"
+              }
+            ]
+          ],
+          "code": 200,
+          "error": null,
+          "errors": {},
+          "location": null,
+          "result": {
+            "id": "p1",
+            "auth": {
+              "username": {}
+            }
+          }
+        }
+      ],
+      "expected": {
+        "code": 302,
+        "error": null,
+        "errors": {},
+        "location": "/auth/signin",
+        "result": {
+          "id": "p1",
+          "auth": {
+            "username": {}
+          }
+        },
+        "input": {
+          "name": "Ada",
+          "username": "ada-user",
+          "phone": "",
+          "secret": "secret"
+        },
+        "trace": [
+          [
+            "csrf.generate"
+          ],
+          [
+            "csrf.valid"
+          ],
+          [
+            "emit",
+            "auth-signup"
+          ],
+          [
+            "actions.signup",
+            {
+              "roles": [
+                "USER"
+              ],
+              "name": "Ada",
+              "username": "ada-user",
+              "secret": "secret"
+            }
+          ],
+          [
+            "csrf.clear"
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "signup-page-existing-user",
+        "target": "auth/pages/signup",
+        "data": {},
+        "signedIn": true
+      },
+      "nested": [],
+      "expected": {
+        "code": 302,
+        "error": null,
+        "errors": {},
+        "location": "/",
+        "result": null,
+        "input": {},
+        "trace": [
+          [
+            "csrf.generate"
+          ],
+          [
+            "guest"
+          ],
+          [
+            "csrf.clear"
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "otp-search-failure",
+        "target": "auth/pages/signin/email",
+        "method": "POST",
+        "data": {
+          "auth": "otp",
+          "email": "ada@example.test"
+        },
+        "issue": true,
+        "failEvent": "auth-search"
+      },
+      "nested": [],
+      "expected": {
+        "code": 503,
+        "error": "child failure",
+        "errors": {},
+        "location": null,
+        "result": [
+          {
+            "id": "a1",
+            "profileId": "p1",
+            "type": "email",
+            "token": "ada@example.test",
+            "secret": "stored-secret",
+            "consumed": "2023-11-14T22:13:20.000Z",
+            "profile": {
+              "id": "p1",
+              "name": "Ada",
+              "roles": [],
+              "image": null
+            }
+          }
+        ],
+        "input": {
+          "auth": "otp",
+          "email": "ada@example.test"
+        },
+        "trace": [
+          [
+            "csrf.generate"
+          ],
+          [
+            "csrf.valid"
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "columns": [
+                "*",
+                "profile.*"
+              ],
+              "eq": {
+                "type": "email",
+                "token": "ada@example.test"
+              }
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "otp-rotation-failure",
+        "target": "auth/pages/signin/email",
+        "method": "POST",
+        "data": {
+          "auth": "otp",
+          "email": "ada@example.test"
+        },
+        "issue": true,
+        "failEvent": "auth-update"
+      },
+      "nested": [],
+      "expected": {
+        "code": 503,
+        "error": "child failure",
+        "errors": {},
+        "location": null,
+        "result": {
+          "id": "a1",
+          "profileId": "p1",
+          "type": "email",
+          "token": "ada@example.test",
+          "secret": "stored-secret",
+          "consumed": "2023-11-14T22:13:20.000Z",
+          "profile": {
+            "id": "p1",
+            "name": "Ada",
+            "roles": [],
+            "image": null
+          }
+        },
+        "input": {
+          "auth": "otp",
+          "email": "ada@example.test"
+        },
+        "trace": [
+          [
+            "csrf.generate"
+          ],
+          [
+            "csrf.valid"
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "columns": [
+                "*",
+                "profile.*"
+              ],
+              "eq": {
+                "type": "email",
+                "token": "ada@example.test"
+              }
+            }
+          ],
+          [
+            "resolve",
+            "auth-update",
+            {
+              "id": "a1",
+              "consumed": "2023-11-14T22:13:20.000Z"
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "magic-reload-failure",
+        "target": "auth/pages/signin/email",
+        "method": "POST",
+        "data": {
+          "auth": "magic",
+          "email": "ada@example.test"
+        },
+        "issue": true,
+        "failEvent": "reload"
+      },
+      "nested": [],
+      "expected": {
+        "code": 503,
+        "error": "child failure",
+        "errors": {},
+        "location": null,
+        "result": [
+          {
+            "id": "a1",
+            "profileId": "p1",
+            "type": "email",
+            "token": "ada@example.test",
+            "secret": "stored-secret",
+            "consumed": "2023-11-14T22:13:20.000Z",
+            "profile": {
+              "id": "p1",
+              "name": "Ada",
+              "roles": [],
+              "image": null
+            }
+          }
+        ],
+        "input": {
+          "auth": "magic",
+          "email": "ada@example.test"
+        },
+        "trace": [
+          [
+            "csrf.generate"
+          ],
+          [
+            "csrf.valid"
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "columns": [
+                "*",
+                "profile.*"
+              ],
+              "eq": {
+                "type": "email",
+                "token": "ada@example.test"
+              }
+            }
+          ],
+          [
+            "resolve",
+            "auth-update",
+            {
+              "id": "a1",
+              "consumed": "2023-11-14T22:13:20.000Z"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "columns": [
+                "*",
+                "profile.*"
+              ],
+              "eq": {
+                "id": "a1"
+              }
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "magic-record-disappeared",
+        "target": "auth/pages/signin/email",
+        "method": "POST",
+        "data": {
+          "auth": "magic",
+          "email": "ada@example.test"
+        },
+        "issue": true,
+        "disappear": true
+      },
+      "nested": [],
+      "expected": {
+        "code": 400,
+        "error": "Invalid Parameters",
+        "errors": {
+          "email": "Account not found"
+        },
+        "location": null,
+        "result": {
+          "id": "a1",
+          "profileId": "p1",
+          "type": "email",
+          "token": "ada@example.test",
+          "secret": "stored-secret",
+          "consumed": "2023-11-14T22:13:20.000Z",
+          "profile": {
+            "id": "p1",
+            "name": "Ada",
+            "roles": [],
+            "image": null
+          }
+        },
+        "input": {
+          "auth": "magic",
+          "email": "ada@example.test"
+        },
+        "trace": [
+          [
+            "csrf.generate"
+          ],
+          [
+            "csrf.valid"
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "columns": [
+                "*",
+                "profile.*"
+              ],
+              "eq": {
+                "type": "email",
+                "token": "ada@example.test"
+              }
+            }
+          ],
+          [
+            "resolve",
+            "auth-update",
+            {
+              "id": "a1",
+              "consumed": "2023-11-14T22:13:20.000Z"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "columns": [
+                "*",
+                "profile.*"
+              ],
+              "eq": {
+                "id": "a1"
+              }
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "otp-mail-failure",
+        "target": "auth/pages/signin/email",
+        "method": "POST",
+        "data": {
+          "auth": "otp",
+          "email": "ada@example.test"
+        },
+        "issue": true,
+        "failEvent": "email-send"
+      },
+      "nested": [],
+      "expected": {
+        "code": 503,
+        "error": "child failure",
+        "errors": {},
+        "location": null,
+        "result": {
+          "sent": true
+        },
+        "input": {
+          "auth": "otp",
+          "email": "ada@example.test"
+        },
+        "trace": [
+          [
+            "csrf.generate"
+          ],
+          [
+            "csrf.valid"
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "columns": [
+                "*",
+                "profile.*"
+              ],
+              "eq": {
+                "type": "email",
+                "token": "ada@example.test"
+              }
+            }
+          ],
+          [
+            "resolve",
+            "auth-update",
+            {
+              "id": "a1",
+              "consumed": "2023-11-14T22:13:20.000Z"
+            }
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "columns": [
+                "*",
+                "profile.*"
+              ],
+              "eq": {
+                "id": "a1"
+              }
+            }
+          ],
+          [
+            "resolve",
+            "email-send",
+            {
+              "from": {
+                "name": "Sender",
+                "address": "sender@example.test"
+              },
+              "to": "ada@example.test",
+              "subject": "Stackpress Sign In OTP",
+              "text": "Hello Ada,\n\nYou requested a one-time password to sign in to Brand.\n\n----\n\nYour OTP is: 000007\nOpen https://example.test/auth/signin/otp/a1/1f946321ba6dec2657942b81fff91467726f6d8eef31e95b4835c502e5062101?redirect_uri=%2F to continue signing in.\n\n----\n\nIf you did not request this sign-in, please ignore this email.",
+              "html": "<p>Hello Ada,</p>\n<p>You requested a one-time password to sign in to Brand.</p>\n<hr />\n<p>Your OTP is: <strong>000007</strong></p>\n<p>Open <a href=\"https://example.test/auth/signin/otp/a1/1f946321ba6dec2657942b81fff91467726f6d8eef31e95b4835c502e5062101?redirect_uri=%2F\">this sign-in page</a> to continue.</p>\n<hr />\n<p>If you did not request this sign-in, please ignore this email.</p>"
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "otp-guest-shortcut-post",
+        "target": "auth/pages/signin/otp",
+        "method": "POST",
+        "data": {
+          "code": "bad"
+        },
+        "signedIn": true,
+        "csrf": false
+      },
+      "nested": [],
+      "expected": {
+        "code": 302,
+        "error": null,
+        "errors": {},
+        "location": "/",
+        "result": null,
+        "input": {
+          "code": "bad"
+        },
+        "trace": [
+          [
+            "guest"
+          ],
+          [
+            "csrf.clear"
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "otp-object-code",
+        "target": "auth/pages/signin/otp",
+        "method": "POST",
+        "data": {
+          "auth": "a1",
+          "challenge": "wrong",
+          "code": {}
+        },
+        "search": [
+          {
+            "id": "a1",
+            "profileId": "p1",
+            "type": "email",
+            "token": "ada@example.test",
+            "secret": "stored-secret",
+            "consumed": "2023-11-14T22:13:20.000Z",
+            "profile": {
+              "id": "p1",
+              "name": "Ada",
+              "roles": [],
+              "image": null
+            }
+          }
+        ]
+      },
+      "nested": [],
+      "expected": {
+        "code": 400,
+        "error": "Invalid Parameters",
+        "errors": {
+          "code": "OTP code is required"
+        },
+        "location": null,
+        "result": {
+          "id": "a1",
+          "profileId": "p1",
+          "type": "email",
+          "token": "ada@example.test",
+          "consumed": "2023-11-14T22:13:20.000Z",
+          "profile": {
+            "id": "p1",
+            "name": "Ada",
+            "roles": [],
+            "image": null
+          }
+        },
+        "input": {
+          "auth": "a1",
+          "challenge": "wrong",
+          "code": {}
+        },
+        "trace": [
+          [
+            "guest"
+          ],
+          [
+            "csrf.generate"
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "id": "a1"
+              }
+            }
+          ],
+          [
+            "csrf.valid"
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "otp-empty-code",
+        "target": "auth/pages/signin/otp",
+        "method": "POST",
+        "data": {
+          "auth": "a1",
+          "challenge": "wrong",
+          "code": ""
+        },
+        "search": [
+          {
+            "id": "a1",
+            "profileId": "p1",
+            "type": "email",
+            "token": "ada@example.test",
+            "secret": "stored-secret",
+            "consumed": "2023-11-14T22:13:20.000Z",
+            "profile": {
+              "id": "p1",
+              "name": "Ada",
+              "roles": [],
+              "image": null
+            }
+          }
+        ]
+      },
+      "nested": [],
+      "expected": {
+        "code": 400,
+        "error": "Invalid Parameters",
+        "errors": {
+          "code": "OTP code is required"
+        },
+        "location": null,
+        "result": {
+          "id": "a1",
+          "profileId": "p1",
+          "type": "email",
+          "token": "ada@example.test",
+          "consumed": "2023-11-14T22:13:20.000Z",
+          "profile": {
+            "id": "p1",
+            "name": "Ada",
+            "roles": [],
+            "image": null
+          }
+        },
+        "input": {
+          "auth": "a1",
+          "challenge": "wrong",
+          "code": ""
+        },
+        "trace": [
+          [
+            "guest"
+          ],
+          [
+            "csrf.generate"
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "id": "a1"
+              }
+            }
+          ],
+          [
+            "csrf.valid"
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "otp-wrong-csrf",
+        "target": "auth/pages/signin/otp",
+        "method": "POST",
+        "data": {
+          "auth": "a1",
+          "challenge": "wrong",
+          "code": "7"
+        },
+        "search": [
+          {
+            "id": "a1",
+            "profileId": "p1",
+            "type": "email",
+            "token": "ada@example.test",
+            "secret": "stored-secret",
+            "consumed": "2023-11-14T22:13:20.000Z",
+            "profile": {
+              "id": "p1",
+              "name": "Ada",
+              "roles": [],
+              "image": null
+            }
+          }
+        ],
+        "csrf": false
+      },
+      "nested": [],
+      "expected": {
+        "code": 419,
+        "error": "csrf",
+        "errors": {},
+        "location": null,
+        "result": {
+          "id": "a1",
+          "profileId": "p1",
+          "type": "email",
+          "token": "ada@example.test",
+          "consumed": "2023-11-14T22:13:20.000Z",
+          "profile": {
+            "id": "p1",
+            "name": "Ada",
+            "roles": [],
+            "image": null
+          }
+        },
+        "input": {
+          "auth": "a1",
+          "challenge": "wrong",
+          "code": "7"
+        },
+        "trace": [
+          [
+            "guest"
+          ],
+          [
+            "csrf.generate"
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "id": "a1"
+              }
+            }
+          ],
+          [
+            "csrf.valid"
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "magic-empty-record",
+        "target": "auth/pages/signin/link",
+        "data": {
+          "auth": "a1",
+          "challenge": "d87160dabb1a642e203807394671acba7ab6d08ce696e21d73f39f2553b0129a"
+        },
+        "search": []
+      },
+      "nested": [],
+      "expected": {
+        "code": 400,
+        "error": "Magic link is invalid or expired.",
+        "errors": {},
+        "location": null,
+        "result": null,
+        "input": {
+          "auth": "a1",
+          "challenge": "d87160dabb1a642e203807394671acba7ab6d08ce696e21d73f39f2553b0129a"
+        },
+        "trace": [
+          [
+            "guest"
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "id": "a1"
+              }
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "two-factor-wrong-csrf",
+        "target": "auth/pages/signin/2fa",
+        "method": "POST",
+        "data": {
+          "profile": "p1",
+          "auth": "a1",
+          "challenge": "d87160dabb1a642e203807394671acba7ab6d08ce696e21d73f39f2553b0129a",
+          "code": "123456"
+        },
+        "search": [
+          {
+            "id": "a1",
+            "profileId": "p1",
+            "type": "email",
+            "token": "ada@example.test",
+            "secret": "stored-secret",
+            "consumed": "2023-11-14T22:13:20.000Z",
+            "profile": {
+              "id": "p1",
+              "name": "Ada",
+              "roles": [],
+              "image": null
+            }
+          },
+          {
+            "id": "factor",
+            "type": "2fa",
+            "token": "JBSWY3DPEHPK3PXP"
+          }
+        ],
+        "csrf": false
+      },
+      "nested": [],
+      "expected": {
+        "code": 419,
+        "error": "csrf",
+        "errors": {},
+        "location": null,
+        "result": null,
+        "input": {
+          "profile": "p1",
+          "auth": "a1",
+          "challenge": "d87160dabb1a642e203807394671acba7ab6d08ce696e21d73f39f2553b0129a",
+          "code": "123456"
+        },
+        "trace": [
+          [
+            "csrf.generate"
+          ],
+          [
+            "guest"
+          ],
+          [
+            "resolve",
+            "auth-search",
+            {
+              "eq": {
+                "profileId": "p1"
+              }
+            }
+          ],
+          [
+            "csrf.valid"
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "phone-bom-normalization",
+        "target": "auth/pages/signin/phone",
+        "method": "POST",
+        "data": {
+          "phone": "﻿+1 (234)-567﻿",
+          "2fa": false
+        }
+      },
+      "nested": [
+        {
+          "event": "auth-signin",
+          "trace": [
+            [
+              "actions.signin",
+              "phone",
+              true
+            ],
+            [
+              "session.create",
+              {
+                "id": "p1",
+                "name": "Ada",
+                "roles": [
+                  "GUEST"
+                ]
+              }
+            ]
+          ],
+          "code": 200,
+          "error": null,
+          "errors": {},
+          "location": null,
+          "result": {
+            "id": "a1",
+            "profileId": "p1",
+            "type": "email",
+            "token": "ada@example.test",
+            "consumed": "2023-11-14T22:13:20.000Z",
+            "profile": {
+              "id": "p1",
+              "name": "Ada",
+              "roles": [],
+              "image": null
+            }
+          }
+        }
+      ],
+      "expected": {
+        "code": 302,
+        "error": null,
+        "errors": {},
+        "location": "/",
+        "result": {
+          "id": "a1",
+          "profileId": "p1",
+          "type": "email",
+          "token": "ada@example.test",
+          "consumed": "2023-11-14T22:13:20.000Z",
+          "profile": {
+            "id": "p1",
+            "name": "Ada",
+            "roles": [],
+            "image": null
+          }
+        },
+        "input": {
+          "phone": "+1234567",
+          "2fa": false,
+          "password": true,
+          "type": "phone"
+        },
+        "trace": [
+          [
+            "csrf.generate"
+          ],
+          [
+            "csrf.valid"
+          ],
+          [
+            "emit",
+            "auth-signin"
+          ],
+          [
+            "actions.signin",
+            "phone",
+            true
+          ],
+          [
+            "session.create",
+            {
+              "id": "p1",
+              "name": "Ada",
+              "roles": [
+                "GUEST"
+              ]
+            }
+          ],
+          [
+            "csrf.clear"
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "signout-page-no-csrf",
+        "target": "auth/pages/signout",
+        "data": {
+          "redirect_uri": "/bye"
+        }
+      },
+      "nested": [],
+      "expected": {
+        "code": 302,
+        "error": null,
+        "errors": {},
+        "location": "/bye",
+        "result": null,
+        "input": {
+          "redirect_uri": "/bye"
+        },
+        "trace": [
+          [
+            "resolve",
+            "auth-signout",
+            {
+              "redirect_uri": "/bye"
+            }
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "chooser-no-csrf-generation",
+        "target": "auth/pages/signin",
+        "data": {}
+      },
+      "nested": [],
+      "expected": {
+        "code": 0,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "result": null,
+        "input": {},
+        "trace": [
+          [
+            "guest"
+          ]
+        ],
+        "flash": null,
+        "thrown": null
+      }
+    },
+    {
+      "scenario": {
+        "name": "earlier-body-skips-page",
+        "target": "auth/pages/signin/otp",
+        "data": {},
+        "body": "earlier"
+      },
+      "nested": [],
+      "expected": {
+        "code": 200,
+        "error": null,
+        "errors": {},
+        "location": null,
+        "result": "earlier",
+        "input": {},
+        "trace": [],
+        "flash": null,
+        "thrown": null
+      }
+    }
+  ],
+  "templates": [
+    {
+      "otp": true,
+      "input": {
+        "brand": "B & <C>",
+        "email": "ada@example.test",
+        "link": "https://example.test/?a=1&b=\"two\"",
+        "name": "  Ada <A>  ",
+        "pin": "000007"
+      },
+      "expected": {
+        "subject": "Stackpress Sign In OTP",
+        "text": "Hello Ada &lt;A&gt;,\n\nYou requested a one-time password to sign in to B &amp; &lt;C&gt;.\n\n----\n\nYour OTP is: 000007\nOpen https://example.test/?a=1&amp;b=&quot;two&quot; to continue signing in.\n\n----\n\nIf you did not request this sign-in, please ignore this email.",
+        "html": "<p>Hello Ada &lt;A&gt;,</p>\n<p>You requested a one-time password to sign in to B &amp; &lt;C&gt;.</p>\n<hr />\n<p>Your OTP is: <strong>000007</strong></p>\n<p>Open <a href=\"https://example.test/?a=1&amp;b=&quot;two&quot;\">this sign-in page</a> to continue.</p>\n<hr />\n<p>If you did not request this sign-in, please ignore this email.</p>"
+      }
+    },
+    {
+      "otp": false,
+      "input": {
+        "brand": "B & <C>",
+        "email": "ada@example.test",
+        "link": "https://example.test/?a=1&b=\"two\"",
+        "name": "  Ada <A>  ",
+        "pin": "000007"
+      },
+      "expected": {
+        "subject": "Stackpress Magic Sign In Link",
+        "text": "Hello Ada &lt;A&gt;,\n\nYou requested a magic link to sign in to B &amp; &lt;C&gt;.\n\n----\n\nOpen https://example.test/?a=1&amp;b=&quot;two&quot; to continue signing in.\n\n----\n\nIf you did not request this sign-in, please ignore this email.",
+        "html": "<p>Hello Ada &lt;A&gt;,</p>\n<p>You requested a magic link to sign in to B &amp; &lt;C&gt;.</p>\n<hr />\n<p><a href=\"https://example.test/?a=1&amp;b=&quot;two&quot;\">Click here to sign in</a></p>\n<hr />\n<p>If you did not request this sign-in, please ignore this email.</p>"
+      }
+    }
+  ],
+  "totp": [
+    {
+      "seconds": 0,
+      "code": "282760"
+    },
+    {
+      "seconds": 59,
+      "code": "996554"
+    },
+    {
+      "seconds": 1111111109,
+      "code": "071271"
+    },
+    {
+      "seconds": 1700000000,
+      "code": "324550"
+    }
+  ],
+  "timezone": [
+    {
+      "zone": "UTC",
+      "offset": 0,
+      "display": "Tue Nov 14 2023 22:13:20 GMT+0000 (Coordinated Universal Time)",
+      "serialized": "2023-11-14 22:13:20",
+      "sql": "2023-11-14T22:13:20.000Z"
+    },
+    {
+      "zone": "Asia/Manila",
+      "offset": 480,
+      "display": "Wed Nov 15 2023 06:13:20 GMT+0800 (Philippine Standard Time)",
+      "serialized": "2023-11-14 06:13:20",
+      "sql": "2023-11-13T22:13:20.000Z"
+    },
+    {
+      "zone": "America/New_York",
+      "offset": -300,
+      "display": "Tue Nov 14 2023 17:13:20 GMT-0500 (Eastern Standard Time)",
+      "serialized": "2023-11-14 17:13:20",
+      "sql": "2023-11-14T22:13:20.000Z"
+    }
+  ]
+}

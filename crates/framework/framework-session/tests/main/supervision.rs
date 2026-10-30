@@ -71,6 +71,8 @@ fn child() {
     runtime.block_on(async {
         #[cfg(feature = "sql")]
         super::actions::transaction_child().await;
+        #[cfg(feature = "auth-server")]
+        super::auth_flows::concurrency_child().await;
         use stackpress_framework_session::Service;
         use std::sync::Arc;
         // Reentrant host code must run after settings locks have been released.

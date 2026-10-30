@@ -2,7 +2,8 @@
 //!
 //! Default builds expose portable configuration and permission data only. `native` adds
 //! JWT instances, source Auth/Profile schemas and codecs. `sql` adds direct SQL-backed
-//! Stores/Actions; `server` adds ordinary identity registration.
+//! Stores/Actions; `server` adds ordinary identity registration. `auth-server` adds the
+//! separate auth registrar, reusable events, native processes and supervised hook ownership.
 //! No configuration installs default protection: hosts and individual processes decide.
 
 mod types;

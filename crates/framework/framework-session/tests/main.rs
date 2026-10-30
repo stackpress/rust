@@ -26,3 +26,7 @@ mod actions;
 #[cfg(feature = "native")]
 #[path = "main/records.rs"]
 mod records;
+
+#[cfg(feature = "auth-server")]
+#[path = "main/auth_flows.rs"]
+mod auth_flows;

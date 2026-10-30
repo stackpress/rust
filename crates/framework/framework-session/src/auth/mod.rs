@@ -3,6 +3,31 @@
 use crate::columns::{Record, RecordSchema};
 use std::ops::Deref;
 
+#[cfg(feature = "auth-server")]
+mod config;
+#[cfg(feature = "auth-server")]
+pub use config::{
+    AuthConfig, AuthEmailConfig, AuthMenuConfig, AuthSection, Environment, RandomFraction,
+};
+#[cfg(feature = "auth-server")]
+mod bridge;
+#[cfg(feature = "auth-server")]
+pub mod events;
+#[cfg(feature = "auth-server")]
+mod hooks;
+#[cfg(feature = "auth-server")]
+pub mod pages;
+#[cfg(feature = "auth-server")]
+pub use hooks::Hooks;
+#[cfg(feature = "auth-server")]
+mod plugin;
+#[cfg(feature = "auth-server")]
+pub use plugin::register;
+#[cfg(feature = "auth-server")]
+pub mod templates;
+#[cfg(feature = "auth-server")]
+pub mod totp;
+
 /// Source Auth record; token is plaintext after native decode, secret remains its stored hash.
 pub type Auth = Record;
 /// Partial source input; values are prepared before field assertions.
