@@ -120,3 +120,16 @@ Store: /Users/cblanquera/server/projects/stackpress/rust/.agents/resources/build
 | `20261030T083554.888653Z-ccab68ece7d8` | gate final source lock scope KB size audit; passed (0) | 2.824161 | none |
 
 Stop at M4 for coordinator review/independent verification. No product question is open.
+
+## Coordinator verification
+
+Committed as `d1492d6`, then trial/3 (API M3) was merged into the branch cleanly at `3d33ff1`. The lock kept every existing external tuple and added none; the removed temporary test helper leaves no trace. Every registry tuple in the three email consumer locks and both API checkpoint locks is in the workspace lock. The CSRF `server` registrar publishes the service only: no request listener, no routes, no global guard. Reran on the combined tree at gate tier (`sccache`, non-incremental, empty target), recorded as `s9bm4-verify gate *`. All passed:
+- fmt; workspace Clippy `-D warnings` and Rustdoc `-D warnings` with csrf/server, email/server, api/sql, api/codegen, session/auth-server and schema/providers.
+- `cargo nextest run --workspace --all-targets --locked --no-fail-fast` with no exclusions: default features 901 passed; with the six features 941 passed. Both include `tcp_watchdog`.
+- Workspace doctests with the six features: 962 passed.
+- `--no-default-features`: framework-csrf 6 passed, framework-email 31 passed.
+- `consumers/graphs.py --check` (all four server-feature combinations) and `consumers/run.py` (direct, event and disabled consumers).
+- Coverage: framework-csrf with `server` 97.10% lines; framework-email with `server` 88.24% lines.
+- No tracked file was left dirty by the gate.
+
+Owner question raised: the real auth-update adapter leaves a truthy results body on the shared response, so the source `email-send` handler skips sending during email sign-in. The source oracle reproduces this, so it is preserved under G43 pending the owner's answer. Merged into trial/3 on 2026-10-30; Lane B refactoring rounds 1–4 may be released.
