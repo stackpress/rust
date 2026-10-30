@@ -1,4 +1,4 @@
-# Account processes and shared views (M3)
+# Account processes and shared view details
 
 `auth-server` exposes native `account` handlers and explicit generated-SQL-style events.
 `leptos-ssr` adds ordinary view handlers at priority **-100**. Select `leptos-hydrate` or
@@ -7,16 +7,15 @@ The default and native-identity-only features do not select a renderer or phone 
 
 ## Registration and direct use
 
+<!-- example: server -->
 ```rust
-use stackpress_framework_session::{account, auth, plugin as identity};
+use stackpress_framework_session::{account, composite};
 use stackpress_lib::Result;
 use stackpress_server::ServerBuilder;
 
-fn account_application(app: &mut ServerBuilder) -> Result<()> {
+pub fn account_application(app: &mut ServerBuilder) -> Result<()> {
     account::events::register(app)?; // optional explicit source SQL event adapters
-    auth::register(app)?;
-    // Select stackpress_framework_email::plugin::register here when email is wanted.
-    identity::register(app)?;
+    composite::register(app)?;
     Ok(())
 }
 ```
@@ -114,3 +113,9 @@ Run the finite SQL-backed host with the recorder as required by the project work
 It renders all pages in three themes, invokes the real email-send JSON transport and exits.
 Browser verification fulfills every request in memory and starts no listener. Live email,
 installed-platform behavior and owner visual acceptance remain separate evidence.
+
+## Evidence and open questions
+
+[Account traces](../tests/main/account_flows.rs), [real SQLite update/export/enrollment/removal](../tests/main/account_flows/sql.rs), [shared view tests](../tests/main/account_ui.rs), [route contributions](../tests/main/account_ui/registration.rs) and [browser matrix](../proofs/browser.cjs) anchor the process/UI behavior. Use [account API](api/account.md) or [views API](api/views.md) for lookup.
+
+**Open question — current behaviour follows upstream:** account removal keeps the Profile when the existing parent body makes profile-remove skip. **Open question — current behaviour follows upstream:** optional phone on update retains the missing-input trim error, unlike signup under G44. The [question register](source-behavior.md#open-owner-questions) also records the inherited Moment admin-date pattern; these account pages do not resolve it.

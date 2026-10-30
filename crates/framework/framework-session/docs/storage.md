@@ -5,22 +5,26 @@ constructing actions performs no I/O. Call `ProfileActions::install()` before
 `AuthActions::install()` explicitly, or use the detached Store create definitions in an
 application migration. No session plugin invokes installation or maintenance.
 
-```rust,no_run
-use std::sync::Arc;
+<!-- example: server -->
+```rust
 use stackpress_framework_session::{
     columns::Record,
     storage::{AuthActions, ProfileActions, Result, StoreQuery},
 };
 use stackpress_sql::Engine;
+use std::sync::Arc;
 
-async fn account(engine: Arc<Engine>) -> Result<()> {
+pub async fn account(engine: Arc<Engine>) -> Result<()> {
     let profiles = ProfileActions::new(engine.clone(), "database-seed");
     let auth = AuthActions::new(engine, "database-seed");
     let input: Record = serde_json::from_value(serde_json::json!({
         "name": "Ada", "email": "ada@example.test", "secret": "hello"
-    })).unwrap();
+    }))
+    .unwrap();
     let profile = auth.signup(&input).await?;
-    let stored = profiles.find(&StoreQuery::eq("id", profile["id"].clone())).await?;
+    let stored = profiles
+        .find(&StoreQuery::eq("id", profile["id"].clone()))
+        .await?;
     assert!(stored.is_some());
     Ok(())
 }
@@ -89,3 +93,9 @@ live backend acceptance and backend-specific JSON semantics are not claimed here
 identifiers/JSON paths use the existing Rust SQL crate's checked/bound representation,
 a mechanics boundary rather than a new application admission policy. No native resource,
 DB seed, secret or full result becomes a browser snapshot automatically.
+
+## Evidence and open questions
+
+[Schema/column vectors](../tests/main/records.rs), [real SQLite Actions](../tests/main/actions.rs), [codec challenges](../tests/main/storage.rs) and [exclusive-executor compile failure](../tests/ui-sql/exclusive_executor.rs) anchor the storage contract. [Storage API](api/storage.md) lists the public methods and shared providers.
+
+**Open question — current behaviour follows upstream:** literal SQLite ILIKE, Auth native create-return and positive hasnt retain their source behavior. The [question register](source-behavior.md#open-owner-questions) gives each source anchor separately; no backend fallback or return decoding repair is selected.
