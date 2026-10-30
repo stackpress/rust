@@ -1,14 +1,14 @@
 //! Optional API selection through ordinary Config and Route startup phases.
 //!
-//! M2 installs configured endpoint/CORS callbacks. SQL, OAuth pages and webhooks retain
-//! their separately released milestones; registration performs no external I/O.
+//! Configured endpoints/CORS and late inline webhooks share the existing startup phases.
+//! SQL and OAuth pages retain their milestones; registration performs no network I/O.
 
 use std::sync::Arc;
 
 use stackpress_lib::{Flow, Result};
 use stackpress_server::{ServerBuilder, StartupContext};
 
-use crate::{ApiConfig, Service, config, endpoints};
+use crate::{ApiConfig, Service, config, endpoints, webhooks};
 
 /// Select the optional API section and its configured endpoint routes.
 ///
@@ -53,8 +53,34 @@ pub fn register(app: &mut ServerBuilder) -> Result<()> {
     // Optional lowest-layer configuration preserves the source's deactivation behavior.
     app.config_section("api", None::<ApiConfig>, config::validate)?;
     app.on_config(configure)?;
+    app.on_listen(listen)?;
     app.on_route(routes)?;
     Ok(())
+}
+
+/// Install late observers independently of whether any API endpoint was configured.
+async fn listen(start: &mut StartupContext) -> Result<Flow> {
+    let Some(config) = start.config::<Option<ApiConfig>>()? else {
+        return Ok(Flow::Continue);
+    };
+    if config.webhooks.is_empty() {
+        // Inert configurations do not even construct the native transport.
+        return Ok(Flow::Continue);
+    }
+    let configs = config.webhooks.clone();
+    let fetch = match start.service::<webhooks::Transport>() {
+        Ok(transport) => Arc::clone(&transport.0),
+        Err(_) => Arc::new(webhooks::ReqwestFetch::new()?),
+    };
+    for config in configs {
+        let webhook = webhooks::Webhook::new(config)?;
+        start.on_priority(
+            &webhook.config.event.clone(),
+            -200,
+            webhooks::action(webhook, fetch.clone()),
+        )?;
+    }
+    Ok(Flow::Continue)
 }
 
 /// Publish the present immutable configuration before any Listen/Route consumer runs.

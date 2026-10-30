@@ -5,3 +5,4 @@ mod endpoints;
 mod plugins;
 #[path = "proof.rs"]
 mod proof;
+mod webhooks;

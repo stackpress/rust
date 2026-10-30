@@ -29,7 +29,13 @@ async fn missing_null_empty_and_webhook_only_config_have_no_m2_routes() -> Resul
         app.config_layers(layers)?;
         let server = app.build().await.map_err(|failure| failure.error)?;
         assert_eq!(server.host().service::<Service>().is_ok(), active);
-        assert_eq!(server.listeners().count(), 0);
+        let expected = usize::from(
+            server
+                .host()
+                .service::<Service>()
+                .is_ok_and(|service| !service.config.webhooks.is_empty()),
+        );
+        assert_eq!(server.listeners().count(), expected);
     }
     Ok(())
 }

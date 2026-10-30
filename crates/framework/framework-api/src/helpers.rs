@@ -1,11 +1,7 @@
 //! Original header, overlay and predicate semantics plus Send nested/fetch boundaries.
 
-use std::{collections::BTreeMap, sync::Arc};
-
 use serde_json::Value as Json;
-use stackpress_lib::{
-    Flow, HandlerFuture, Invocation, Nest, PublicError, Request, Response, Result,
-};
+use stackpress_lib::{Flow, Invocation, Nest, PublicError, Request, Response, Result};
 
 /// Source ID/secret parsing result; this is not a verified caller or a JWT session.
 #[derive(Clone, PartialEq, Eq)]
@@ -133,162 +129,10 @@ pub async fn resolve_into(
     Ok(())
 }
 
-/// Source predicate object with explicit shared-container identity.
-pub type PredicateObject = Arc<BTreeMap<String, PredicateValue>>;
-
-/// JavaScript-compatible predicate values; cloning a container keeps its identity.
-///
-/// Separately decoded JSON creates distinct Arc containers. This carrier is intentionally
-/// separate from ordinary JSON equality and from low-level Request/Response identity.
-#[derive(Clone, Debug)]
-pub enum PredicateValue {
-    /// A source undefined value; an expected key whose actual value is undefined fails.
-    Undefined,
-    /// Explicit null, distinct from an absent/undefined member.
-    Null,
-    /// Source Boolean, never truthiness-coerced for equality.
-    Boolean(bool),
-    /// Source numeric equality, including SameValueZero for array membership.
-    Number(f64),
-    /// Source string, distinct from a numeric or Boolean representation.
-    String(String),
-    /// Array identity is compared by pointer when it is an includes element.
-    Array(Arc<Vec<PredicateValue>>),
-    /// Object subset checks recurse, but includes elements compare pointer identity.
-    Object(PredicateObject),
-}
-
-impl PredicateValue {
-    /// Convert bounded JSON, assigning fresh identity to every decoded container.
-    ///
-    /// # Errors
-    /// Retains the existing schema JSON representation limits; adds no API-specific policy.
-    pub fn from_json(value: &Json) -> Result<Self> {
-        // Existing finite depth/node checks precede recursive carrier construction.
-        stackpress_framework_schema::check_json(value)
-            .map_err(stackpress_lib::Error::from_source)?;
-        Self::decoded(value)
-    }
-
-    /// Convert an already bounded JSON subtree, preserving only explicitly shared Arc identity.
-    fn decoded(value: &Json) -> Result<Self> {
-        Ok(match value {
-            Json::Null => Self::Null,
-            Json::Bool(value) => Self::Boolean(*value),
-            // Additive arbitrary_precision can retain a numeric lexeme outside finite f64.
-            // Parsing its JSON spelling retains source double rounding/overflow without panic.
-            Json::Number(value) => Self::Number(match value.as_f64() {
-                Some(number) => number,
-                None => value
-                    .to_string()
-                    .parse()
-                    .map_err(stackpress_lib::Error::from_source)?,
-            }),
-            Json::String(value) => Self::String(value.clone()),
-            Json::Array(values) => Self::Array(Arc::new(
-                values.iter().map(Self::decoded).collect::<Result<_>>()?,
-            )),
-            Json::Object(values) => Self::Object(Arc::new(
-                values
-                    .iter()
-                    .map(|(key, value)| Ok((key.clone(), Self::decoded(value)?)))
-                    .collect::<Result<_>>()?,
-            )),
-        })
-    }
-}
-
-/// Match source object subsets and array includes without replacing reference identity.
-///
-/// The work stack avoids native recursion during matching. It adds no scope, identity or
-/// data-projection rule. Empty expected objects match any supplied object.
-pub fn valid_data(assertion: &PredicateObject, data: &PredicateObject) -> bool {
-    let mut pending = vec![(assertion, data)];
-    while let Some((assertion, data)) = pending.pop() {
-        for (key, expected) in assertion.iter() {
-            // Source checks typeof actual === undefined before selecting the comparison branch.
-            let Some(actual) = data
-                .get(key)
-                .filter(|value| !matches!(value, PredicateValue::Undefined))
-            else {
-                return false;
-            };
-            match (expected, actual) {
-                (PredicateValue::Array(expected), PredicateValue::Array(actual)) => {
-                    // includes is SameValueZero for scalars and identity for container elements.
-                    if !expected
-                        .iter()
-                        .all(|item| actual.iter().any(|other| same_value(item, other, true)))
-                    {
-                        return false;
-                    }
-                }
-                (PredicateValue::Object(expected), PredicateValue::Object(actual)) => {
-                    pending.push((expected, actual));
-                }
-                // A container expected against another type cannot fall through to scalar equality.
-                (PredicateValue::Array(_) | PredicateValue::Object(_), _) => return false,
-                _ if !same_value(expected, actual, false) => return false,
-                _ => {}
-            }
-        }
-    }
-    true
-}
-
-/// Compare scalar strict equality or includes SameValueZero, retaining container pointer identity.
-fn same_value(left: &PredicateValue, right: &PredicateValue, includes: bool) -> bool {
-    match (left, right) {
-        (PredicateValue::Undefined, PredicateValue::Undefined)
-        | (PredicateValue::Null, PredicateValue::Null) => true,
-        (PredicateValue::Boolean(left), PredicateValue::Boolean(right)) => left == right,
-        (PredicateValue::Number(left), PredicateValue::Number(right)) => {
-            left == right || (includes && left.is_nan() && right.is_nan())
-        }
-        (PredicateValue::String(left), PredicateValue::String(right)) => left == right,
-        (PredicateValue::Array(left), PredicateValue::Array(right)) => Arc::ptr_eq(left, right),
-        (PredicateValue::Object(left), PredicateValue::Object(right)) => Arc::ptr_eq(left, right),
-        _ => false,
-    }
-}
-
-/// One borrowed source fetch invocation; the future may not outlive these bytes/strings.
-pub struct FetchRequest<'a> {
-    /// Configured destination, without an API-added URI policy.
-    pub uri: &'a str,
-    /// Source method, passed unchanged to the eventual native adapter.
-    pub method: &'a str,
-    /// Source Content-Type header value.
-    pub content_type: &'a str,
-    /// Already serialized exact `{data,params,results}` bytes, borrowed until completion.
-    pub body: &'a [u8],
-}
-
-/// The inline asynchronous native-fetch boundary, not a worker or delivery queue.
-pub trait Fetch: Send + Sync {
-    /// Await one send and return its resolved HTTP status, or its original transport error.
-    ///
-    /// No response-status retry or interpretation is implied. Futures must be Send, and the
-    /// caller owns cancellation and all borrowed request data until the await completes.
-    fn send<'a>(&'a self, request: FetchRequest<'a>) -> HandlerFuture<'a, Result<u16>>;
-}
-
-/// Await one source fetch, deliberately ignoring a resolved HTTP error status.
-///
-/// # Errors
-/// Propagates the single transport rejection. No retry, signature, dedup or extra policy is
-/// added. This M0 boundary does not yet select source response eligibility or serialize it.
-pub async fn fetch_once(fetch: &dyn Fetch, uri: &str, method: &str, body: &[u8]) -> Result<()> {
-    fetch
-        .send(FetchRequest {
-            uri,
-            method,
-            content_type: "application/json",
-            body,
-        })
-        .await?;
-    Ok(())
-}
+/// Borrowed fetch compatibility exports retained from M0.
+pub use crate::webhooks::fetch::{Fetch, FetchRequest, fetch_once};
+/// Source predicate compatibility exports retained from the M0 public helper surface.
+pub use crate::webhooks::predicate::{PredicateObject, PredicateValue, valid_data};
 
 /// Match ECMAScript trim's explicit whitespace set, which differs from Rust Unicode trim.
 fn js_trim(value: &str) -> &str {
