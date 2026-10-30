@@ -156,3 +156,32 @@ Recorder store: /Users/cblanquera/server/projects/stackpress/rust/.agents/resour
 Should account removal eventually remove the profile despite the existing parent response body? Exact source: packages/stackpress-session/src/session/pages/remove.ts:28 loads that body; line 69 passes it to profile-remove; packages/stackpress-sql/src/transform/events/remove.ts:79–81 skips when res.body is truthy. Both the original joined-handler proof and real SQLite preserve 1 auth removal/0 profile removals with success flash and /auth/signout redirect. No fix is selected. Prior ILIKE/Auth create-return/positive hasnt questions remain at source parity.
 
 No M4/composite integration, other-lane write, historical Agent File edit, commit/push/install/GitHub write or listener occurred. Coordinator verification, including tcp_watchdog and the combined API sql/codegen surface, is next. Work stops at M3.
+
+## Merge integration
+
+Integration-only follow-up on merged HEAD `7b4995b`. Replaced these three deprecated Record/IndexMap calls with insertion-order-preserving `shift_remove` in `crates/framework/framework-api/tests/sql.rs`:
+
+- Line 297: `input.remove("id")` → `input.shift_remove("id")`.
+- Line 298: `input.remove("secret")` → `input.shift_remove("secret")`.
+- Line 411: `without.remove("id")` → `without.shift_remove("id")`.
+
+Workspace-wide Rust/source/template searches across src, crates, examples and tools found no other deprecated Record/DataMap removals; remaining remove calls use vectors, standard maps/sets, serde_json maps or nondeprecated wrapper/action APIs. The exact requested combined-feature workspace Clippy `-D warnings` passed (record `20261030T095201.079591Z-7a3249cf83aa`); API nextest with `sql,codegen --locked` passed **81 tests, five skipped** (record `20261030T095329.633702Z-97d9af85eb1b`). Warm target/sccache/gate environment and the existing 16 GiB cap/15.4 GiB guard were retained; no cleanup was needed. Only those three test lines and this appended note changed; Cargo.lock is unchanged. No commits; stop after this integration fix.
+
+### Email/session renderer assertions
+
+Coordinator accepted diagnosis `20261030T100115.575096Z-9ec88bdcf189`: the real session view matches upstream, leaves the email input empty, and renders before the response-only fixture. Its tuple snapshot and absent fixture `render` marker invalidated the old test assumptions. Only `framework-email/tests/cases/integration/{rendering.rs,mod.rs}` changed in this follow-up. Helpers now check the selected public snapshot/HTML, native magic-link confirmation without a form, native request-input round-trip, and source-empty email field. Existing fixture escaping, event order, status, redirect, CSRF and mail assertions remain; shared checks reject literal injected script/seed markup, SMTP/provider sentinels and leaked database seed. No production or oracle changes.
+
+Three review rounds covered branch/escaping logic (package tests), responsibility and dependency-feature selection (six-feature workspace tests), then comments/consistency (formatting, Clippy and full combined tests). No further refactor was warranted. These test-only changes do not alter the previously measured production coverage.
+
+| Verification | Result | Benchmark record | Command seconds | Cargo stage seconds |
+| --- | --- | --- | --- | --- |
+| Email/server package, fixture graph | 51 passed | `20261030T102119.453392Z-095085fc6ab4` | 35.508626 | 23.67 |
+| Six-feature workspace, email selection, fixture graph | 51 passed | `20261030T102530.311710Z-37e9e9e69a69` | 42.085426 | 37.53 |
+| Full combined workspace formatting + Clippy `-D warnings` | passed | `20261030T102641.859646Z-920a81c3ccf0` | 15.186045 | 9.56 |
+| Full combined workspace, default parallelism | 950 passed; unrelated HTTP m1_watchdog timing assertion failed | `20261030T102724.419469Z-0573c0170f1e` | 95.483607 | 15.66 |
+| Isolated m1_watchdog, same full graph | passed | `20261030T103030.787587Z-8b6e298eabeb` | 6.266025 | 0.73 |
+| Full combined workspace, two test threads, native session view | 951 passed; 88 skipped | `20261030T103130.789936Z-0be9714a1198` | 73.409059 | 0.71 |
+
+All workspace nextest commands exclude tcp_watchdog; the six-feature run selects all email tests in the workspace graph. The initial default-parallelism failure was the existing 80–300 ms elapsed-time assertion at `crates/server/http/tests/m1.rs:492`; no HTTP source/test was edited. The final full run retains every selected test, with `--test-threads 2` limiting interference. Full features are session/leptos-ssr, csrf/server, email/server, api/sql, api/codegen, session/auth-server and schema/providers (full Cargo package prefixes in recorded commands).
+
+Warm `target/slice9a`, sccache, two build jobs and nonincremental compilation were retained for headroom. Incremental-only cleanup freed zero bytes (`20261030T101639.875385Z-57b079cdc60b`); owned session/email package cleanup freed 627.4 MiB while retaining dependencies (`20261030T101719.359067Z-dd8cda64f2a7`). The first six-feature build hit the old 15.4 GiB guard (`20261030T102227.435826Z-3b9875295dd6`; size inventory `20261030T102506.071966Z-84e3ddd5f938`). Coordinator then raised the cap from **16 to 20 GiB**, guard **15.4 to 19.4 GiB**, updated in `/private/tmp/slice9a/run.py`. Resumed checks peaked at **16.503 GiB**; no further cleanup or dependency-artifact removal occurred. Cargo.lock/external tuples remain unchanged. No commits or listeners; stop for coordinator verification.

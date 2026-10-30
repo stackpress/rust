@@ -294,8 +294,8 @@ async fn create_defaults_required_errors_native_return_and_foreign_keys() {
     assert_eq!(error.error, "Invalid parameters");
     assert!(error.errors.contains_key("name"));
     let mut input = application("a");
-    input.remove("id");
-    input.remove("secret");
+    input.shift_remove("id");
+    input.shift_remove("secret");
     input.insert("unknown".into(), true.into());
     let created = f.app.create(&input).await.unwrap();
     assert!(created["secret"].as_str().unwrap().len() == 24);
@@ -408,7 +408,7 @@ async fn batch_atomicity_attempt_status_and_upsert_missing_id() {
             .is_none()
     );
     let mut without = application("discard");
-    without.remove("id");
+    without.shift_remove("id");
     assert!(f.app.upsert(&mut without).await.unwrap().is_some());
     let statuses = f
         .app
