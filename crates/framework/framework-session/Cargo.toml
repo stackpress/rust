@@ -11,6 +11,7 @@ default = []
 native = ["dep:base64", "dep:jsonwebtoken", "dep:stackpress-framework-schema", "dep:time"]
 sql = ["native", "dep:stackpress-sql", "dep:stackpress-framework-sql"]
 server = ["native", "dep:stackpress-lib", "dep:stackpress-server"]
+auth-server = ["server", "sql", "dep:stackpress-framework-csrf", "dep:stackpress-framework-email", "dep:tokio", "dep:ring"]
 
 [dependencies]
 serde = { version = "1", features = ["derive"] }
@@ -26,6 +27,10 @@ stackpress-sql = { path = "../../sql/sql", optional = true }
 stackpress-framework-sql = { path = "../framework-sql", optional = true }
 stackpress-lib = { path = "../../lib", optional = true }
 stackpress-server = { path = "../../server/server", optional = true }
+stackpress-framework-csrf = { path = "../framework-csrf", optional = true }
+stackpress-framework-email = { path = "../framework-email", optional = true }
+tokio = { version = "1", features = ["rt", "sync"], optional = true }
+ring = { version = "=0.17.14", default-features = false, features = ["std"], optional = true }
 
 [dev-dependencies]
 tokio = { version = "1", features = ["macros", "rt-multi-thread", "sync", "time"] }

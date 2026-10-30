@@ -1,7 +1,7 @@
-//! M0 identity constituent: optional session config, me/authorize and conditional guard.
+//! Identity constituent: optional session config, me/authorize and conditional guard.
 //!
-//! The auth/email composite and account routes belong to later released milestones. This
-//! function is the identity registrar; no other lane's crate is created or selected here.
+//! Auth processes have their own registrar. The full auth/email/identity composite is
+//! wired at integration, using Lane B's registrar rather than a local transport substitute.
 
 use crate::{Service, SessionConfig, SessionPermission};
 use stackpress_lib::{
@@ -108,7 +108,9 @@ impl crate::Session {
     }
 }
 /// Ordinary source me adapter; authorization deliberately contains raw token data.
-async fn me(
+/// # Errors
+/// Propagates the current invocation's service/result failures.
+pub async fn me(
     request: &mut Request,
     response: &mut Response,
     invocation: Invocation<'_>,
@@ -118,7 +120,9 @@ async fn me(
     Ok(Flow::Continue)
 }
 /// Direct authorize event shares the original Service implementation.
-async fn authorize_event(
+/// # Errors
+/// Propagates source permission errors and native host/response failures.
+pub async fn authorize_event(
     request: &mut Request,
     response: &mut Response,
     invocation: Invocation<'_>,
@@ -130,16 +134,14 @@ async fn authorize_event(
     Ok(Flow::Continue)
 }
 /// Cooperate with earlier response/error handlers; a normal source return never adds Abort.
-async fn request_guard(
+/// # Errors
+/// Propagates nested dispatch and existing response mutation failures.
+pub async fn request_guard(
     request: &mut Request,
     response: &mut Response,
     invocation: Invocation<'_>,
 ) -> Result<Flow> {
-    if !matches!(response.body(), Body::Empty)
-        || response
-            .status()
-            .is_some_and(|s| s.code != 0 && s.code != 200)
-    {
+    if completed(response) {
         return Ok(Flow::Continue);
     }
     // Resolve source authorization into a fresh response while borrowing the same request.
@@ -148,11 +150,30 @@ async fn request_guard(
     invocation
         .emit("authorize", request, &mut authorized)
         .await?;
-    if authorized.status().is_some_and(|s| s.code != 200) {
+    // Source raw Response starts at code zero. Even an empty access map's no-result
+    // authorize shortcut is offered to `error`, without inventing a denial/error status.
+    if authorized.status().map_or(0, |s| s.code) != 200 {
         response.apply_envelope(authorized.to_envelope())?;
         invocation.emit("error", request, response).await?;
     }
     Ok(Flow::Continue)
+}
+/// Source response-body truthiness; an explicit null/false/zero/empty string does not skip.
+pub(crate) fn completed(response: &Response) -> bool {
+    use stackpress_lib::Value;
+    let body = match response.body() {
+        Body::Empty => false,
+        Body::Text(text) => !text.is_empty(),
+        Body::Value(Value::Null) => false,
+        Body::Value(Value::Bool(value)) => *value,
+        Body::Value(Value::Number(value)) => value.as_f64() != Some(0.0),
+        Body::Value(Value::String(value)) => !value.is_empty(),
+        // Objects/arrays/buffers are truthy in JavaScript, including empty ones.
+        _ => true,
+    };
+    body || response
+        .status()
+        .is_some_and(|status| status.code != 0 && status.code != 200)
 }
 /// Attach a safe message and typed cause without exposing seeds/tokens in public errors.
 fn native_error(error: crate::SessionError) -> Error {
