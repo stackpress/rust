@@ -2,6 +2,7 @@
 //!
 //! Generation stages outgoing cookie/form values; validation reads incoming values.
 //! Callers choose which processes validate. There is no automatic route guard.
+//! The optional `server` feature adds the ordinary `plugin::register` constituent.
 //!
 //! ```
 //! use stackpress_framework_csrf::Service;
@@ -16,6 +17,9 @@ use ring::rand::{SecureRandom, SystemRandom};
 use serde::{Deserialize, Serialize};
 use stackpress_lib::{Error, PublicError, Request, Response, Result};
 use subtle::ConstantTimeEq;
+
+#[cfg(feature = "server")]
+pub mod plugin;
 
 /// Original default page-expiry explanation, including its retry instruction.
 pub const DEFAULT_ERROR: &str = "This page may have been requested from an external source. We corrected the issue. Please try again.";

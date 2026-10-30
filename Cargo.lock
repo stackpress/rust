@@ -6139,8 +6139,13 @@ dependencies = [
  "serde",
  "serde_json",
  "stackpress-framework-schema",
+ "stackpress-framework-session",
+ "stackpress-framework-sql",
+ "stackpress-idea-parser",
  "stackpress-lib",
  "stackpress-server",
+ "stackpress-sql",
+ "stackpress-sql-sqlite",
  "tokio",
 ]
 
@@ -6152,7 +6157,9 @@ dependencies = [
  "serde",
  "serde_json",
  "stackpress-lib",
+ "stackpress-server",
  "subtle",
+ "tokio",
 ]
 
 [[package]]
@@ -6165,8 +6172,14 @@ dependencies = [
  "ring",
  "serde",
  "serde_json",
+ "stackpress-framework-csrf",
+ "stackpress-framework-session",
+ "stackpress-framework-view",
+ "stackpress-leptos",
  "stackpress-lib",
  "stackpress-server",
+ "stackpress-sql",
+ "stackpress-sql-sqlite",
  "tokio",
  "url",
 ]

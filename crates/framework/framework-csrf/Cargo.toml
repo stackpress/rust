@@ -6,12 +6,20 @@ edition.workspace = true
 rust-version.workspace = true
 publish.workspace = true
 
+[features]
+default = []
+server = ["dep:stackpress-server"]
+
 [dependencies]
 stackpress-lib = { path = "../../lib" }
+stackpress-server = { path = "../../server/server", optional = true }
 ring = { version = "=0.17.14", default-features = false, features = ["std"] }
 subtle = { version = "=2.6.1", default-features = false }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["macros", "rt"] }
 
 [lints]
 workspace = true

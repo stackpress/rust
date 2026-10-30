@@ -23,6 +23,12 @@ ring = { version = "=0.17.14", default-features = false, features = ["std"] }
 reqwest = { version = "=0.13.4", default-features = false, features = ["rustls-no-provider", "gzip", "deflate", "cookies"] }
 
 [dev-dependencies]
+stackpress-framework-csrf = { path = "../framework-csrf", features = ["server"] }
+stackpress-framework-session = { path = "../framework-session", features = ["auth-server"] }
+stackpress-sql = { path = "../../sql/sql" }
+stackpress-sql-sqlite = { path = "../../sql/sql-sqlite" }
+stackpress-framework-view = { path = "../framework-view", features = ["leptos-ssr"] }
+stackpress-leptos = { path = "../../leptos", default-features = false, features = ["ssr"] }
 tokio = { version = "1", features = ["macros", "rt-multi-thread", "sync"] }
 
 [lints]

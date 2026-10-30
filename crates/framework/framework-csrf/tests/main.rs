@@ -178,3 +178,55 @@ fn invalid_cookie_name_propagates_existing_mechanics_error() {
     assert!(service.generate(&mut res).is_err());
     assert!(!res.data().has("bad name"));
 }
+
+/// Source selection always publishes defaults but never installs a global request listener.
+#[cfg(feature = "server")]
+#[tokio::test]
+async fn explicit_registrar_defaults_overrides_and_duplicate_mechanics() {
+    use stackpress_framework_csrf::plugin;
+    use stackpress_server::{ConfigLayers, ServerBuilder};
+    for section in [
+        None,
+        Some(json!(null)),
+        Some(json!(false)),
+        Some(json!(0)),
+        Some(json!("")),
+        Some(json!({})),
+        Some(json!({"name":"form","error":"custom"})),
+    ] {
+        let mut app = ServerBuilder::new();
+        if let Some(section) = section.clone() {
+            let mut layers = ConfigLayers::new();
+            layers.value("fixture", json!({"csrf":section})).unwrap();
+            app.config_layers(layers).unwrap();
+        }
+        app.plugin("csrf", plugin::register).unwrap();
+        let host = app.build().await.unwrap();
+        let csrf = host.host().service::<Service>().unwrap();
+        assert_eq!(
+            csrf.name(),
+            if section
+                .as_ref()
+                .is_some_and(|section| section.get("name").is_some())
+            {
+                "form"
+            } else {
+                "csrf"
+            }
+        );
+        assert_eq!(host.listeners().count(), 0);
+        let mut res = Response::new();
+        assert!(!csrf.valid(&Request::new(), &mut res).unwrap());
+        assert_eq!(
+            res.error(),
+            Some(if csrf.name() == "form" {
+                "custom"
+            } else {
+                DEFAULT_ERROR
+            })
+        );
+    }
+    let mut app = ServerBuilder::new();
+    plugin::register(&mut app).unwrap();
+    assert!(plugin::register(&mut app).is_err());
+}

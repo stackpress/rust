@@ -1,0 +1,15 @@
+[package]
+name = "api-checkpoint-web"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.94"
+publish = false
+
+[workspace]
+
+[dependencies]
+stackpress-lib = { path = "../../../crates/lib" }
+stackpress-server = { path = "../../../crates/server/server" }
+stackpress-framework-api = { path = "../../../crates/framework/framework-api", features = ["sql"] }
+stackpress-framework-session = { path = "../../../crates/framework/framework-session", features = ["server"] }
+stackpress-sql = { path = "../../../crates/sql/sql" }

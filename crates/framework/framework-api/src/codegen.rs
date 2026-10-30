@@ -1,0 +1,208 @@
+//! Build-host composition of the API Idea input and the public external Profile catalog.
+//!
+//! Rust has no package-relative dynamic Idea import resolver. This composition resolves
+//! the one source session import through ProfileSchema, without copying its declaration.
+use stackpress_framework_schema::{
+    Schema, SchemaResult, ValueType,
+    codegen::{
+        ComponentDefinition, DefinitionRegistry, NormalizeOptions, PropDefinition, PropType,
+    },
+    providers::cuid_definition,
+};
+use stackpress_framework_session::profile::ProfileSchema;
+use stackpress_idea_parser::{AttributeValue, CompileInputs, SchemaConfig};
+
+/// Exact owned upstream API schema, including its management metadata.
+pub const SOURCE: &str = include_str!("../schema.idea");
+/// Register the shared approved CUID definition in an otherwise app-owned catalog.
+pub fn definitions() -> SchemaResult<DefinitionRegistry> {
+    let mut registry = DefinitionRegistry::standard().with_provider(cuid_definition())?;
+    // Source role argument shapes are retained as metadata. Concrete Leptos imports
+    // are selected at M5; claiming an implementation now would misstate that boundary.
+    for (name, props) in [
+        (
+            "field.relation",
+            vec![
+                ("id", PropType::String),
+                ("search", PropType::String),
+                ("template", PropType::String),
+            ],
+        ),
+        ("field.input", vec![("type", PropType::String)]),
+        (
+            "view.image",
+            vec![("width", PropType::Number), ("height", PropType::Number)],
+        ),
+        ("view.template", vec![("template", PropType::String)]),
+        ("view.link", vec![("target", PropType::String)]),
+        (
+            "view.tags",
+            vec![
+                ("warning", PropType::Boolean),
+                ("pill", PropType::Boolean),
+                ("className", PropType::String),
+            ],
+        ),
+        ("view.date", vec![("format", PropType::String)]),
+    ] {
+        registry = registry.with_component(
+            ComponentDefinition {
+                name: name.into(),
+                key: format!("api.source.{name}"),
+                revision: "source-1".into(),
+                props: props
+                    .into_iter()
+                    .map(|(name, value_type)| PropDefinition {
+                        name: name.into(),
+                        value_type,
+                        required: false,
+                        public: true,
+                    })
+                    .collect(),
+                fixed: Default::default(),
+                available: false,
+            },
+            None,
+        )?;
+    }
+    // API storage/admin publishes its plaintext secrets as the source does. Runtime
+    // actions do not use generated strict operation DTOs or a global SQL Policy.
+    for model in [
+        crate::models::ApplicationSchema::new().model(),
+        crate::models::SessionSchema::new().model(),
+    ] {
+        for field in model.fields {
+            registry = registry.with_field_policy(
+                &model.name,
+                &field.name,
+                stackpress_framework_schema::FieldAccess {
+                    readable: true,
+                    writable: !matches!(field.value_type, ValueType::Model(_)),
+                    sensitive: false,
+                    publish_default: true,
+                },
+            )?;
+        }
+    }
+    // Joined Profile columns retain their owner's publication description. The API
+    // does not invent a second Profile schema or expose its unrelated Auth reverse edge.
+    for field in ProfileSchema::default()
+        .model()
+        .fields
+        .into_iter()
+        .filter(|field| !matches!(field.value_type, ValueType::Model(_)))
+    {
+        registry = registry.with_field_policy("Profile", &field.name, field.access)?;
+    }
+    Ok(registry)
+}
+/// Resolve the source package import through Profile's public descriptor.
+/// No source tree outside the selected Cargo package is needed at generation time.
+pub fn config() -> Result<SchemaConfig, stackpress_idea_parser::IdeaError> {
+    let profile = ProfileSchema::default().model();
+    let mut source = SOURCE.replacen("use \"stackpress-session/schema.idea\"", "", 1);
+    source.push_str("\nmodel Profile {\n");
+    for field in profile.fields.iter().filter(|field| {
+        field.relation.is_none() && !matches!(field.value_type, ValueType::Model(_))
+    }) {
+        let kind = match field.value_type {
+            ValueType::Boolean => "Boolean",
+            ValueType::Object => "Hash",
+            ValueType::Datetime => "Datetime",
+            _ => "String",
+        };
+        source.push_str(&format!(
+            "{} {}{}{}",
+            field.name,
+            kind,
+            if field.multiple { "[]" } else { "" },
+            if field.required { "" } else { "?" }
+        ));
+        if field.key {
+            source.push_str(" @id");
+        }
+        if field.active {
+            source.push_str(" @active");
+        }
+        if field.timestamp {
+            source.push_str(" @timestamp");
+        }
+        if field.searchable {
+            source.push_str(" @searchable");
+        }
+        if field.sortable {
+            source.push_str(" @sortable");
+        }
+        if let Some(rule) = &field.value_rule {
+            source.push_str(&format!(" @default(\"{}()\")", rule.provider));
+        } else if let Some(value) = &field.default {
+            source.push_str(&format!(" @default({value})"));
+        }
+        source.push('\n');
+    }
+    source.push_str("}\n");
+    let mut config = stackpress_idea_parser::parse(
+        "framework-api/schema.idea",
+        &source,
+        &CompileInputs::default(),
+    )?;
+    // The existing typed normalizer requires finite paths. Expand source wildcards
+    // against the same composed stored columns; runtime StoreQuery stays unchanged.
+    let snapshot = config.clone();
+    for model in config.model.values_mut() {
+        let Some(AttributeValue::Array(paths)) = model.attributes.get_mut("query") else {
+            continue;
+        };
+        let mut expanded = Vec::new();
+        for path in paths.iter().filter_map(serde_json::Value::as_str) {
+            let (prefix, model_name) = if let Some((prefix, _)) = path.rsplit_once(".*") {
+                let target = snapshot.model[&model.name]
+                    .columns
+                    .iter()
+                    .find(|column| column.name == prefix)
+                    .map(|column| column.column_type.as_str());
+                (format!("{prefix}."), target.unwrap_or(&model.name))
+            } else {
+                (String::new(), model.name.as_str())
+            };
+            if path == "*" || path.ends_with(".*") {
+                expanded.extend(
+                    snapshot.model[model_name]
+                        .columns
+                        .iter()
+                        .filter(|column| !snapshot.model.contains_key(&column.column_type))
+                        .map(|column| {
+                            serde_json::Value::String(format!("{prefix}{}", column.name))
+                        }),
+                );
+            } else {
+                expanded.push(path.into());
+            }
+        }
+        *paths = expanded;
+    }
+    // The native relation checker requires the inverse name that upstream derives
+    // from its sole matching reverse array. This is metadata, not a new store join.
+    if let Some(column) = config.model.get_mut("Session").and_then(|model| {
+        model
+            .columns
+            .iter_mut()
+            .find(|column| column.name == "application")
+    }) && let Some(AttributeValue::Array(args)) = column.attributes.get_mut("relation")
+        && let Some(serde_json::Value::Object(mapping)) = args.first_mut()
+    {
+        mapping.insert("name".into(), "session".into());
+    }
+    Ok(config)
+}
+/// Normalize the full source management data with the caller's frozen component registry.
+pub fn normalize(definitions: &DefinitionRegistry) -> SchemaResult<Schema> {
+    let config = config().map_err(|cause| {
+        stackpress_framework_schema::SchemaError::new(
+            stackpress_framework_schema::SchemaErrorKind::Invalid,
+            "API Idea composition failed",
+        )
+        .with_cause(cause)
+    })?;
+    Schema::normalize(&config, definitions, NormalizeOptions::default())
+}
