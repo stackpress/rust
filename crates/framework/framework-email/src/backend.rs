@@ -462,7 +462,9 @@ pub trait ProcessBackend: Send + Sync {
     fn run(&self, request: SendmailRequest) -> ProviderFuture<'_, Option<i32>>;
 }
 
-/// Tokio process IO with explicit cancellation cleanup and no listener or shell.
+/// Tokio process IO with kill-on-drop cancellation and normal-path child reaping.
+///
+/// Dropping a pending call requests termination; only an awaited completion proves reaping.
 #[derive(Default)]
 pub struct NativeProcessBackend;
 

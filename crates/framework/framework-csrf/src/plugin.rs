@@ -10,7 +10,10 @@ use std::sync::Arc;
 /// Raw source section; missing or nonobject sections have no name/error overrides.
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(transparent)]
-pub struct CsrfSection(pub Value);
+pub struct CsrfSection(
+    /// Original section; only object fields contribute typed name/error overrides.
+    pub Value,
+);
 
 /// Select the CSRF mechanism even when its config section is absent.
 /// No request listener or route is contributed; processes call the service explicitly.
