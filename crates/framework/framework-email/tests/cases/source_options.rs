@@ -34,7 +34,7 @@ impl Transport for RecordingTransport {
     fn send(&mut self, options: SendMailOptions) -> MailFuture<'_> {
         Box::pin(async move {
             self.calls.lock().unwrap().push(json!(["send", options]));
-            Ok(self.result.clone())
+            Ok(self.result.clone().into())
         })
     }
 }
@@ -47,7 +47,7 @@ async fn source_event_option_and_default_vectors() {
     for case in fixtures["cases"].as_array().unwrap() {
         let config = EmailConfig::from_section(Some(&case["config"])).unwrap();
         let calls = Arc::new(Mutex::new(vec![]));
-        let mut result = Value::Null;
+        let mut result = stackpress_framework_email::SentMessageInfo::from(Value::Null);
         if let Some(config) = config {
             let factory = Arc::new(RecordingFactory {
                 calls: calls.clone(),

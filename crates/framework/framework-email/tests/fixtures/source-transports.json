@@ -1,0 +1,2912 @@
+{
+  "version": "7.0.13",
+  "hashes": {
+    "lib/nodemailer.js": "ebb3f99c9a5ec23e3d0639d2021ebec256b961e14ad65fed77feff0de0776385",
+    "lib/shared/index.js": "43d325d0c8cf914d0bd42d9d77ca869c9c90811b0e7250d3019f23580b8997f3",
+    "lib/json-transport/index.js": "582127ab7975a1591fd6ea04f9df21574ac4d1f30007acb4421f36cb18248b1a",
+    "lib/stream-transport/index.js": "dc1254cff34b0852672ed7a2275b07ca2dbc5f034767a3d27a26f6dd94923dc3",
+    "lib/sendmail-transport/index.js": "e9d4623514eda64a1a82fa32ef9d781a7e21773b05e5e2a243b89c7fe5e2d635",
+    "lib/ses-transport/index.js": "4d0ec2ad48b640c978708ec4c0538740c7a89053bb3d3e4abdec5b5ddc820050",
+    "lib/smtp-transport/index.js": "d2c7afe741f93c8021ddb7bfce3c49fa596ce2822da588e76b699d2722f7bf5d",
+    "lib/smtp-pool/index.js": "76d838c57d5d559989de4d3467e6ff10c2ad28f2f1ea9438825d1c5d77f8909b",
+    "lib/mail-composer/index.js": "de5af1f99fbc14e0afc3d07014c727b416e7cf02333891d6e628f274a65cf946",
+    "lib/mime-node/index.js": "70ec4a42ce681554c8e4d2a9729231df19c8580a5fdc32c41eee6e074661d340",
+    "lib/fetch/index.js": "0eefe1670d4d708cacd60d8af5ff64b6d661530635552eb15d55dea4d95ba6ed"
+  },
+  "selection": [
+    {
+      "config": {},
+      "kind": "Smtp",
+      "fields": {},
+      "smtp": {
+        "host": "localhost",
+        "port": 587,
+        "secure": false,
+        "secured": false
+      }
+    },
+    {
+      "config": {
+        "secure": true
+      },
+      "kind": "Smtp",
+      "fields": {
+        "secure": true
+      },
+      "smtp": {
+        "host": "localhost",
+        "port": 465,
+        "secure": true,
+        "secured": false
+      }
+    },
+    {
+      "config": {
+        "port": 465
+      },
+      "kind": "Smtp",
+      "fields": {
+        "port": 465
+      },
+      "smtp": {
+        "host": "localhost",
+        "port": 465,
+        "secure": true,
+        "secured": false
+      }
+    },
+    {
+      "config": {
+        "port": 465,
+        "secure": false
+      },
+      "kind": "Smtp",
+      "fields": {
+        "port": 465,
+        "secure": false
+      },
+      "smtp": {
+        "host": "localhost",
+        "port": 465,
+        "secure": false,
+        "secured": false
+      }
+    },
+    {
+      "config": {
+        "port": 0,
+        "secure": false
+      },
+      "kind": "Smtp",
+      "fields": {
+        "port": 0,
+        "secure": false
+      },
+      "smtp": {
+        "host": "localhost",
+        "port": 587,
+        "secure": false,
+        "secured": false
+      }
+    },
+    {
+      "config": {
+        "service": "google mail",
+        "host": "ignored.test",
+        "port": 25,
+        "secure": false
+      },
+      "kind": "Smtp",
+      "fields": {
+        "service": "google mail",
+        "host": "smtp.gmail.com",
+        "port": 465,
+        "secure": true,
+        "description": "Gmail"
+      },
+      "smtp": {
+        "host": "smtp.gmail.com",
+        "port": 465,
+        "secure": true,
+        "secured": false
+      }
+    },
+    {
+      "config": {
+        "pool": true
+      },
+      "kind": "Pool",
+      "fields": {
+        "pool": true,
+        "maxConnections": 5,
+        "maxMessages": 100
+      },
+      "smtp": {
+        "host": "localhost",
+        "port": 587,
+        "secure": false,
+        "secured": false
+      },
+      "rate": [
+        1000,
+        0
+      ]
+    },
+    {
+      "config": {
+        "pool": true,
+        "maxConnections": 0,
+        "maxMessages": 4,
+        "rateDelta": 0,
+        "rateLimit": "5"
+      },
+      "kind": "Pool",
+      "fields": {
+        "pool": true,
+        "maxConnections": 5,
+        "maxMessages": 4,
+        "rateDelta": 0,
+        "rateLimit": "5"
+      },
+      "smtp": {
+        "host": "localhost",
+        "port": 587,
+        "secure": false,
+        "secured": false
+      },
+      "rate": [
+        1000,
+        5
+      ]
+    },
+    {
+      "config": {
+        "pool": true,
+        "sendmail": true,
+        "jsonTransport": true
+      },
+      "kind": "Pool",
+      "fields": {
+        "pool": true,
+        "sendmail": true,
+        "jsonTransport": true,
+        "maxConnections": 5,
+        "maxMessages": 100
+      },
+      "smtp": {
+        "host": "localhost",
+        "port": 587,
+        "secure": false,
+        "secured": false
+      },
+      "rate": [
+        1000,
+        0
+      ]
+    },
+    {
+      "config": {
+        "sendmail": true,
+        "streamTransport": true
+      },
+      "kind": "Sendmail",
+      "fields": {
+        "sendmail": true,
+        "streamTransport": true
+      }
+    },
+    {
+      "config": {
+        "streamTransport": true,
+        "newline": "WINDOWS"
+      },
+      "kind": "Stream",
+      "fields": {
+        "streamTransport": true,
+        "newline": "WINDOWS"
+      }
+    },
+    {
+      "config": {
+        "jsonTransport": true,
+        "skipEncoding": true
+      },
+      "kind": "Json",
+      "fields": {
+        "jsonTransport": true,
+        "skipEncoding": true
+      }
+    },
+    {
+      "config": {
+        "SES": {}
+      },
+      "kind": "SesTransport",
+      "fields": {
+        "SES": {}
+      }
+    },
+    {
+      "config": "smtps://user:p%3Aa%2Bss@localhost:2465/?pool=true&maxConnections=2&tls.rejectUnauthorized=false",
+      "kind": "Pool",
+      "fields": {
+        "secure": true,
+        "port": 2465,
+        "host": "localhost",
+        "auth": {
+          "user": "user",
+          "pass": "p:a+ss"
+        },
+        "pool": true,
+        "maxConnections": 2,
+        "tls": {
+          "rejectUnauthorized": false
+        },
+        "maxMessages": 100
+      },
+      "smtp": {
+        "host": "localhost",
+        "port": 2465,
+        "secure": true,
+        "secured": false
+      },
+      "rate": [
+        1000,
+        0
+      ]
+    },
+    {
+      "config": "smtp://us%3Aer:p@localhost/",
+      "kind": "Smtp",
+      "fields": {
+        "secure": false,
+        "host": "localhost",
+        "auth": {
+          "user": "us",
+          "pass": "er:p"
+        }
+      },
+      "smtp": {
+        "host": "localhost",
+        "port": 587,
+        "secure": false,
+        "secured": false
+      }
+    },
+    {
+      "config": "smtp://localhost/?port=99&secure=true&x=1&x=2&tls.a=1&tls.a=2&other.nested=skip&empty=",
+      "kind": "Smtp",
+      "fields": {
+        "secure": false,
+        "host": "localhost",
+        "port": 99,
+        "x": [
+          "1",
+          "2"
+        ],
+        "tls": {
+          "a": [
+            "1",
+            "2"
+          ]
+        },
+        "empty": 0
+      },
+      "smtp": {
+        "host": "localhost",
+        "port": 99,
+        "secure": false,
+        "secured": false
+      }
+    },
+    {
+      "config": {
+        "url": "smtp://localhost:25/?jsonTransport=true",
+        "pool": true,
+        "ignored": "discarded-before-selection"
+      },
+      "kind": "Json",
+      "fields": {
+        "secure": false,
+        "port": 25,
+        "host": "localhost",
+        "jsonTransport": true
+      }
+    }
+  ],
+  "jsonCases": [
+    {
+      "config": {
+        "jsonTransport": true,
+        "skipEncoding": false
+      },
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000"
+      },
+      "result": {
+        "envelope": {
+          "from": "sender@example.test",
+          "to": [
+            "recipient@example.test"
+          ]
+        },
+        "messageId": "fixture@example.test",
+        "message": "{\"from\":{\"address\":\"sender@example.test\",\"name\":\"Sender\"},\"to\":[{\"address\":\"recipient@example.test\",\"name\":\"\"}],\"messageId\":\"fixture@example.test\",\"date\":\"Thu, 01 Jan 1970 00:00:00 +0000\",\"headers\":{}}"
+      }
+    },
+    {
+      "config": {
+        "jsonTransport": true,
+        "skipEncoding": false
+      },
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "text": "hello",
+        "html": "<p>hello</p>"
+      },
+      "result": {
+        "envelope": {
+          "from": "sender@example.test",
+          "to": [
+            "recipient@example.test"
+          ]
+        },
+        "messageId": "fixture@example.test",
+        "message": "{\"from\":{\"address\":\"sender@example.test\",\"name\":\"Sender\"},\"to\":[{\"address\":\"recipient@example.test\",\"name\":\"\"}],\"messageId\":\"fixture@example.test\",\"date\":\"Thu, 01 Jan 1970 00:00:00 +0000\",\"text\":\"hello\",\"html\":\"<p>hello</p>\",\"headers\":{}}"
+      }
+    },
+    {
+      "config": {
+        "jsonTransport": true,
+        "skipEncoding": false
+      },
+      "options": {
+        "from": [
+          "First <first@example.test>",
+          "second@example.test"
+        ],
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "sender": "Agent <agent@example.test>",
+        "cc": [
+          "cc@example.test"
+        ],
+        "bcc": "Hidden <hidden@example.test>",
+        "replyTo": {
+          "name": "Reply",
+          "address": "reply@example.test"
+        }
+      },
+      "result": {
+        "envelope": {
+          "from": "first@example.test",
+          "to": [
+            "recipient@example.test",
+            "cc@example.test",
+            "hidden@example.test"
+          ]
+        },
+        "messageId": "fixture@example.test",
+        "message": "{\"from\":{\"address\":\"first@example.test\",\"name\":\"First\"},\"to\":[{\"address\":\"recipient@example.test\",\"name\":\"\"}],\"messageId\":\"fixture@example.test\",\"date\":\"Thu, 01 Jan 1970 00:00:00 +0000\",\"sender\":{\"address\":\"agent@example.test\",\"name\":\"Agent\"},\"cc\":[{\"address\":\"cc@example.test\",\"name\":\"\"}],\"bcc\":[{\"address\":\"hidden@example.test\",\"name\":\"Hidden\"}],\"replyTo\":[{\"name\":\"Reply\",\"address\":\"reply@example.test\"}],\"headers\":{}}"
+      }
+    },
+    {
+      "config": {
+        "jsonTransport": true,
+        "skipEncoding": false
+      },
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "envelope": {
+          "from": "return@example.test",
+          "to": [
+            "envelope@example.test"
+          ],
+          "extra": {
+            "retained": true
+          }
+        },
+        "headers": {
+          "X-Array": [
+            "one",
+            "two"
+          ]
+        },
+        "extension": {
+          "retained": true
+        }
+      },
+      "result": {
+        "envelope": {
+          "from": "return@example.test",
+          "to": [
+            "envelope@example.test"
+          ],
+          "extra": {
+            "retained": true
+          }
+        },
+        "messageId": "fixture@example.test",
+        "message": "{\"from\":{\"address\":\"sender@example.test\",\"name\":\"Sender\"},\"to\":[{\"address\":\"recipient@example.test\",\"name\":\"\"}],\"messageId\":\"fixture@example.test\",\"date\":\"Thu, 01 Jan 1970 00:00:00 +0000\",\"headers\":{\"X-Array\":[\"one\",\"two\"]},\"extension\":{\"retained\":true}}"
+      }
+    },
+    {
+      "config": {
+        "jsonTransport": true,
+        "skipEncoding": false
+      },
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "attachments": [
+          {
+            "content": "abc",
+            "filename": "attachment-1.bin",
+            "contentType": "application/octet-stream"
+          },
+          {
+            "content": "AAH/",
+            "contentType": "image/png",
+            "filename": "attachment-2.png",
+            "encoding": "base64"
+          },
+          {
+            "content": "YWJj",
+            "contentType": "text/plain",
+            "filename": "attachment-3.txt",
+            "encoding": "base64"
+          }
+        ]
+      },
+      "result": {
+        "envelope": {
+          "from": "sender@example.test",
+          "to": [
+            "recipient@example.test"
+          ]
+        },
+        "messageId": "fixture@example.test",
+        "message": "{\"from\":{\"address\":\"sender@example.test\",\"name\":\"Sender\"},\"to\":[{\"address\":\"recipient@example.test\",\"name\":\"\"}],\"messageId\":\"fixture@example.test\",\"date\":\"Thu, 01 Jan 1970 00:00:00 +0000\",\"attachments\":[{\"content\":\"abc\",\"filename\":\"attachment-1.bin\",\"contentType\":\"application/octet-stream\"},{\"content\":\"AAH/\",\"contentType\":\"image/png\",\"filename\":\"attachment-2.png\",\"encoding\":\"base64\"},{\"content\":\"YWJj\",\"contentType\":\"text/plain\",\"filename\":\"attachment-3.txt\",\"encoding\":\"base64\"}],\"headers\":{}}"
+      }
+    },
+    {
+      "config": {
+        "jsonTransport": true,
+        "skipEncoding": false
+      },
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "text": {
+          "content": "aGVsbG8=",
+          "encoding": "base64",
+          "contentType": "text/plain; charset=utf-8"
+        },
+        "watchHtml": "watch",
+        "amp": {
+          "content": "amp",
+          "contentType": "text/x-amp-html; charset=utf-8"
+        },
+        "icalEvent": {
+          "method": "REQUEST",
+          "content": {
+            "type": "Buffer",
+            "data": [
+              99,
+              97,
+              108,
+              101,
+              110,
+              100,
+              97,
+              114
+            ]
+          }
+        }
+      },
+      "result": {
+        "envelope": {
+          "from": "sender@example.test",
+          "to": [
+            "recipient@example.test"
+          ]
+        },
+        "messageId": "fixture@example.test",
+        "message": "{\"from\":{\"address\":\"sender@example.test\",\"name\":\"Sender\"},\"to\":[{\"address\":\"recipient@example.test\",\"name\":\"\"}],\"messageId\":\"fixture@example.test\",\"date\":\"Thu, 01 Jan 1970 00:00:00 +0000\",\"text\":\"hello\",\"watchHtml\":\"watch\",\"amp\":\"amp\",\"icalEvent\":{\"content\":\"Y2FsZW5kYXI=\",\"method\":\"REQUEST\",\"encoding\":\"base64\"},\"headers\":{}}"
+      }
+    },
+    {
+      "config": {
+        "jsonTransport": true,
+        "skipEncoding": false
+      },
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "alternatives": [
+          {
+            "content": "b3RoZXI=",
+            "contentType": "text/x-fixture",
+            "encoding": "base64"
+          }
+        ],
+        "raw": "Subject: raw\r\n\r\nbody"
+      },
+      "result": {
+        "envelope": {
+          "from": "sender@example.test",
+          "to": [
+            "recipient@example.test"
+          ]
+        },
+        "messageId": "fixture@example.test",
+        "message": "{\"from\":{\"address\":\"sender@example.test\",\"name\":\"Sender\"},\"to\":[{\"address\":\"recipient@example.test\",\"name\":\"\"}],\"messageId\":\"fixture@example.test\",\"date\":\"Thu, 01 Jan 1970 00:00:00 +0000\",\"alternatives\":[{\"content\":\"b3RoZXI=\",\"contentType\":\"text/x-fixture\",\"encoding\":\"base64\"}],\"raw\":\"Subject: raw\\r\\n\\r\\nbody\",\"headers\":{}}"
+      }
+    },
+    {
+      "config": {
+        "jsonTransport": true,
+        "skipEncoding": false
+      },
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": [
+          "recipient@example.test",
+          "recipient@example.test"
+        ],
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "cc": "recipient@example.test",
+        "envelope": {
+          "from": "Bounce <bounce@example.test>",
+          "to": [
+            "One <one@example.test>"
+          ],
+          "cc": [
+            "one@example.test",
+            "two@example.test"
+          ],
+          "extension": 17
+        }
+      },
+      "result": {
+        "envelope": {
+          "from": "Bounce <bounce@example.test>",
+          "to": [
+            "One <one@example.test>"
+          ],
+          "cc": [
+            "one@example.test",
+            "two@example.test"
+          ],
+          "extension": 17
+        },
+        "messageId": "fixture@example.test",
+        "message": "{\"from\":{\"address\":\"sender@example.test\",\"name\":\"Sender\"},\"to\":[{\"address\":\"recipient@example.test\",\"name\":\"\"},{\"address\":\"recipient@example.test\",\"name\":\"\"}],\"messageId\":\"fixture@example.test\",\"date\":\"Thu, 01 Jan 1970 00:00:00 +0000\",\"cc\":[{\"address\":\"recipient@example.test\",\"name\":\"\"}],\"headers\":{}}"
+      }
+    },
+    {
+      "config": {
+        "jsonTransport": true,
+        "skipEncoding": false
+      },
+      "options": {
+        "from": false,
+        "to": false,
+        "messageId": false,
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "headers": [
+          {
+            "key": "From",
+            "value": "Custom <custom@example.test>"
+          },
+          {
+            "key": "To",
+            "value": "custom-to@example.test"
+          },
+          {
+            "key": "Message-ID",
+            "value": "custom@example.test"
+          }
+        ]
+      },
+      "result": {
+        "envelope": {
+          "from": "custom@example.test",
+          "to": [
+            "custom-to@example.test"
+          ]
+        },
+        "messageId": "custom@example.test",
+        "message": "{\"from\":{\"address\":\"custom@example.test\",\"name\":\"Custom\"},\"to\":[{\"address\":\"custom-to@example.test\",\"name\":\"\"}],\"messageId\":\"custom@example.test\",\"date\":\"Thu, 01 Jan 1970 00:00:00 +0000\",\"headers\":[{\"key\":\"From\",\"value\":\"Custom <custom@example.test>\"},{\"key\":\"To\",\"value\":\"custom-to@example.test\"},{\"key\":\"Message-ID\",\"value\":\"custom@example.test\"}]}"
+      }
+    },
+    {
+      "config": {
+        "jsonTransport": true,
+        "skipEncoding": true
+      },
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000"
+      },
+      "result": {
+        "envelope": {
+          "from": "sender@example.test",
+          "to": [
+            "recipient@example.test"
+          ]
+        },
+        "messageId": "fixture@example.test",
+        "message": {
+          "from": {
+            "address": "sender@example.test",
+            "name": "Sender"
+          },
+          "to": [
+            {
+              "address": "recipient@example.test",
+              "name": ""
+            }
+          ],
+          "messageId": "fixture@example.test",
+          "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+          "headers": {}
+        }
+      }
+    },
+    {
+      "config": {
+        "jsonTransport": true,
+        "skipEncoding": true
+      },
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "text": "hello",
+        "html": "<p>hello</p>"
+      },
+      "result": {
+        "envelope": {
+          "from": "sender@example.test",
+          "to": [
+            "recipient@example.test"
+          ]
+        },
+        "messageId": "fixture@example.test",
+        "message": {
+          "from": {
+            "address": "sender@example.test",
+            "name": "Sender"
+          },
+          "to": [
+            {
+              "address": "recipient@example.test",
+              "name": ""
+            }
+          ],
+          "messageId": "fixture@example.test",
+          "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+          "text": "hello",
+          "html": "<p>hello</p>",
+          "headers": {}
+        }
+      }
+    },
+    {
+      "config": {
+        "jsonTransport": true,
+        "skipEncoding": true
+      },
+      "options": {
+        "from": [
+          "First <first@example.test>",
+          "second@example.test"
+        ],
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "sender": "Agent <agent@example.test>",
+        "cc": [
+          "cc@example.test"
+        ],
+        "bcc": "Hidden <hidden@example.test>",
+        "replyTo": {
+          "name": "Reply",
+          "address": "reply@example.test"
+        }
+      },
+      "result": {
+        "envelope": {
+          "from": "first@example.test",
+          "to": [
+            "recipient@example.test",
+            "cc@example.test",
+            "hidden@example.test"
+          ]
+        },
+        "messageId": "fixture@example.test",
+        "message": {
+          "from": {
+            "address": "first@example.test",
+            "name": "First"
+          },
+          "to": [
+            {
+              "address": "recipient@example.test",
+              "name": ""
+            }
+          ],
+          "messageId": "fixture@example.test",
+          "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+          "sender": {
+            "address": "agent@example.test",
+            "name": "Agent"
+          },
+          "cc": [
+            {
+              "address": "cc@example.test",
+              "name": ""
+            }
+          ],
+          "bcc": [
+            {
+              "address": "hidden@example.test",
+              "name": "Hidden"
+            }
+          ],
+          "replyTo": [
+            {
+              "name": "Reply",
+              "address": "reply@example.test"
+            }
+          ],
+          "headers": {}
+        }
+      }
+    },
+    {
+      "config": {
+        "jsonTransport": true,
+        "skipEncoding": true
+      },
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "envelope": {
+          "from": "return@example.test",
+          "to": [
+            "envelope@example.test"
+          ],
+          "extra": {
+            "retained": true
+          }
+        },
+        "headers": {
+          "X-Array": [
+            "one",
+            "two"
+          ]
+        },
+        "extension": {
+          "retained": true
+        }
+      },
+      "result": {
+        "envelope": {
+          "from": "return@example.test",
+          "to": [
+            "envelope@example.test"
+          ],
+          "extra": {
+            "retained": true
+          }
+        },
+        "messageId": "fixture@example.test",
+        "message": {
+          "from": {
+            "address": "sender@example.test",
+            "name": "Sender"
+          },
+          "to": [
+            {
+              "address": "recipient@example.test",
+              "name": ""
+            }
+          ],
+          "messageId": "fixture@example.test",
+          "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+          "headers": {
+            "X-Array": [
+              "one",
+              "two"
+            ]
+          },
+          "extension": {
+            "retained": true
+          }
+        }
+      }
+    },
+    {
+      "config": {
+        "jsonTransport": true,
+        "skipEncoding": true
+      },
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "attachments": [
+          {
+            "content": "abc",
+            "filename": "attachment-1.bin",
+            "contentType": "application/octet-stream"
+          },
+          {
+            "content": "AAH/",
+            "contentType": "image/png",
+            "filename": "attachment-2.png",
+            "encoding": "base64"
+          },
+          {
+            "content": "YWJj",
+            "contentType": "text/plain",
+            "filename": "attachment-3.txt",
+            "encoding": "base64"
+          }
+        ]
+      },
+      "result": {
+        "envelope": {
+          "from": "sender@example.test",
+          "to": [
+            "recipient@example.test"
+          ]
+        },
+        "messageId": "fixture@example.test",
+        "message": {
+          "from": {
+            "address": "sender@example.test",
+            "name": "Sender"
+          },
+          "to": [
+            {
+              "address": "recipient@example.test",
+              "name": ""
+            }
+          ],
+          "messageId": "fixture@example.test",
+          "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+          "attachments": [
+            {
+              "content": "abc",
+              "filename": "attachment-1.bin",
+              "contentType": "application/octet-stream"
+            },
+            {
+              "content": "AAH/",
+              "contentType": "image/png",
+              "filename": "attachment-2.png",
+              "encoding": "base64"
+            },
+            {
+              "content": "YWJj",
+              "contentType": "text/plain",
+              "filename": "attachment-3.txt",
+              "encoding": "base64"
+            }
+          ],
+          "headers": {}
+        }
+      }
+    },
+    {
+      "config": {
+        "jsonTransport": true,
+        "skipEncoding": true
+      },
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "text": {
+          "content": "aGVsbG8=",
+          "encoding": "base64",
+          "contentType": "text/plain; charset=utf-8"
+        },
+        "watchHtml": "watch",
+        "amp": {
+          "content": "amp",
+          "contentType": "text/x-amp-html; charset=utf-8"
+        },
+        "icalEvent": {
+          "method": "REQUEST",
+          "content": {
+            "type": "Buffer",
+            "data": [
+              99,
+              97,
+              108,
+              101,
+              110,
+              100,
+              97,
+              114
+            ]
+          }
+        }
+      },
+      "result": {
+        "envelope": {
+          "from": "sender@example.test",
+          "to": [
+            "recipient@example.test"
+          ]
+        },
+        "messageId": "fixture@example.test",
+        "message": {
+          "from": {
+            "address": "sender@example.test",
+            "name": "Sender"
+          },
+          "to": [
+            {
+              "address": "recipient@example.test",
+              "name": ""
+            }
+          ],
+          "messageId": "fixture@example.test",
+          "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+          "text": "hello",
+          "watchHtml": "watch",
+          "amp": "amp",
+          "icalEvent": {
+            "content": "Y2FsZW5kYXI=",
+            "method": "REQUEST",
+            "encoding": "base64"
+          },
+          "headers": {}
+        }
+      }
+    },
+    {
+      "config": {
+        "jsonTransport": true,
+        "skipEncoding": true
+      },
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "alternatives": [
+          {
+            "content": "b3RoZXI=",
+            "contentType": "text/x-fixture",
+            "encoding": "base64"
+          }
+        ],
+        "raw": "Subject: raw\r\n\r\nbody"
+      },
+      "result": {
+        "envelope": {
+          "from": "sender@example.test",
+          "to": [
+            "recipient@example.test"
+          ]
+        },
+        "messageId": "fixture@example.test",
+        "message": {
+          "from": {
+            "address": "sender@example.test",
+            "name": "Sender"
+          },
+          "to": [
+            {
+              "address": "recipient@example.test",
+              "name": ""
+            }
+          ],
+          "messageId": "fixture@example.test",
+          "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+          "alternatives": [
+            {
+              "content": "b3RoZXI=",
+              "contentType": "text/x-fixture",
+              "encoding": "base64"
+            }
+          ],
+          "raw": "Subject: raw\r\n\r\nbody",
+          "headers": {}
+        }
+      }
+    },
+    {
+      "config": {
+        "jsonTransport": true,
+        "skipEncoding": true
+      },
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": [
+          "recipient@example.test",
+          "recipient@example.test"
+        ],
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "cc": "recipient@example.test",
+        "envelope": {
+          "from": "Bounce <bounce@example.test>",
+          "to": [
+            "One <one@example.test>"
+          ],
+          "cc": [
+            "one@example.test",
+            "two@example.test"
+          ],
+          "extension": 17
+        }
+      },
+      "result": {
+        "envelope": {
+          "from": "Bounce <bounce@example.test>",
+          "to": [
+            "One <one@example.test>"
+          ],
+          "cc": [
+            "one@example.test",
+            "two@example.test"
+          ],
+          "extension": 17
+        },
+        "messageId": "fixture@example.test",
+        "message": {
+          "from": {
+            "address": "sender@example.test",
+            "name": "Sender"
+          },
+          "to": [
+            {
+              "address": "recipient@example.test",
+              "name": ""
+            },
+            {
+              "address": "recipient@example.test",
+              "name": ""
+            }
+          ],
+          "messageId": "fixture@example.test",
+          "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+          "cc": [
+            {
+              "address": "recipient@example.test",
+              "name": ""
+            }
+          ],
+          "headers": {}
+        }
+      }
+    },
+    {
+      "config": {
+        "jsonTransport": true,
+        "skipEncoding": true
+      },
+      "options": {
+        "from": false,
+        "to": false,
+        "messageId": false,
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "headers": [
+          {
+            "key": "From",
+            "value": "Custom <custom@example.test>"
+          },
+          {
+            "key": "To",
+            "value": "custom-to@example.test"
+          },
+          {
+            "key": "Message-ID",
+            "value": "custom@example.test"
+          }
+        ]
+      },
+      "result": {
+        "envelope": {
+          "from": "custom@example.test",
+          "to": [
+            "custom-to@example.test"
+          ]
+        },
+        "messageId": "custom@example.test",
+        "message": {
+          "from": {
+            "address": "custom@example.test",
+            "name": "Custom"
+          },
+          "to": [
+            {
+              "address": "custom-to@example.test",
+              "name": ""
+            }
+          ],
+          "messageId": "custom@example.test",
+          "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+          "headers": [
+            {
+              "key": "From",
+              "value": "Custom <custom@example.test>"
+            },
+            {
+              "key": "To",
+              "value": "custom-to@example.test"
+            },
+            {
+              "key": "Message-ID",
+              "value": "custom@example.test"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "mimeCases": [
+    {
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "text": "hello"
+      },
+      "envelope": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ]
+      },
+      "messageId": "fixture@example.test",
+      "message": "From: Sender <sender@example.test>\r\nTo: recipient@example.test\r\nMessage-ID: <fixture@example.test>\r\nDate: Thu, 01 Jan 1970 00:00:00 +0000\r\nContent-Transfer-Encoding: 7bit\r\nMIME-Version: 1.0\r\nContent-Type: text/plain; charset=utf-8\r\n\r\nhello\r\n"
+    },
+    {
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "text": "hello",
+        "html": "<b>hello</b>"
+      },
+      "envelope": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ]
+      },
+      "messageId": "fixture@example.test",
+      "message": "From: Sender <sender@example.test>\r\nTo: recipient@example.test\r\nMessage-ID: <fixture@example.test>\r\nDate: Thu, 01 Jan 1970 00:00:00 +0000\r\nMIME-Version: 1.0\r\nContent-Type: multipart/alternative;\r\n boundary=\"--_NmP-26c0bc00013eb4e5-Part_1\"\r\n\r\n----_NmP-26c0bc00013eb4e5-Part_1\r\nContent-Type: text/plain; charset=utf-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nhello\r\n----_NmP-26c0bc00013eb4e5-Part_1\r\nContent-Type: text/html; charset=utf-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\n<b>hello</b>\r\n----_NmP-26c0bc00013eb4e5-Part_1--\r\n"
+    },
+    {
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "alternatives": [
+          {
+            "path": "/fixture/mime-alternative.html"
+          }
+        ]
+      },
+      "envelope": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ]
+      },
+      "messageId": "fixture@example.test",
+      "message": "From: Sender <sender@example.test>\r\nTo: recipient@example.test\r\nMessage-ID: <fixture@example.test>\r\nDate: Thu, 01 Jan 1970 00:00:00 +0000\r\nContent-Transfer-Encoding: quoted-printable\r\nMIME-Version: 1.0\r\nContent-Type: text/html\r\n\r\nfixture content\r\n"
+    },
+    {
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "alternatives": [
+          {
+            "path": "/fixture/mime-alternative.html"
+          }
+        ],
+        "textEncoding": " base64 "
+      },
+      "envelope": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ]
+      },
+      "messageId": "fixture@example.test",
+      "message": "From: Sender <sender@example.test>\r\nTo: recipient@example.test\r\nMessage-ID: <fixture@example.test>\r\nDate: Thu, 01 Jan 1970 00:00:00 +0000\r\nContent-Transfer-Encoding: base64\r\nMIME-Version: 1.0\r\nContent-Type: text/html\r\n\r\nZml4dHVyZSBjb250ZW50\r\n"
+    },
+    {
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "text": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "textEncoding": "base64"
+      },
+      "envelope": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ]
+      },
+      "messageId": "fixture@example.test",
+      "message": "From: Sender <sender@example.test>\r\nTo: recipient@example.test\r\nMessage-ID: <fixture@example.test>\r\nDate: Thu, 01 Jan 1970 00:00:00 +0000\r\nContent-Transfer-Encoding: base64\r\nMIME-Version: 1.0\r\nContent-Type: text/plain; charset=utf-8\r\n\r\nYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFh\r\nYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWE=\r\n"
+    },
+    {
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "text": "café",
+        "textEncoding": "quoted-printable"
+      },
+      "envelope": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ]
+      },
+      "messageId": "fixture@example.test",
+      "message": "From: Sender <sender@example.test>\r\nTo: recipient@example.test\r\nMessage-ID: <fixture@example.test>\r\nDate: Thu, 01 Jan 1970 00:00:00 +0000\r\nContent-Transfer-Encoding: quoted-printable\r\nMIME-Version: 1.0\r\nContent-Type: text/plain; charset=utf-8\r\n\r\ncaf=C3=A9\r\n"
+    },
+    {
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "html": "<img src=\"cid:fixture\">",
+        "attachments": [
+          {
+            "filename": "logo.png",
+            "cid": "fixture",
+            "content": {
+              "type": "Buffer",
+              "data": [
+                1,
+                2,
+                3
+              ]
+            }
+          },
+          {
+            "filename": false,
+            "content": "plain"
+          }
+        ]
+      },
+      "envelope": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ]
+      },
+      "messageId": "fixture@example.test",
+      "message": "From: Sender <sender@example.test>\r\nTo: recipient@example.test\r\nMessage-ID: <fixture@example.test>\r\nDate: Thu, 01 Jan 1970 00:00:00 +0000\r\nMIME-Version: 1.0\r\nContent-Type: multipart/mixed; boundary=\"--_NmP-8587fbb361de42e3-Part_1\"\r\n\r\n----_NmP-8587fbb361de42e3-Part_1\r\nContent-Type: multipart/related; type=\"text/html\";\r\n boundary=\"--_NmP-8587fbb361de42e3-Part_2\"\r\n\r\n----_NmP-8587fbb361de42e3-Part_2\r\nContent-Type: text/html; charset=utf-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\n<img src=\"cid:fixture\">\r\n----_NmP-8587fbb361de42e3-Part_2\r\nContent-Type: image/png; name=logo.png\r\nContent-ID: <fixture>\r\nContent-Transfer-Encoding: base64\r\nContent-Disposition: inline; filename=logo.png\r\n\r\nAQID\r\n----_NmP-8587fbb361de42e3-Part_2--\r\n\r\n----_NmP-8587fbb361de42e3-Part_1\r\nContent-Type: application/octet-stream\r\nContent-Transfer-Encoding: base64\r\nContent-Disposition: attachment\r\n\r\ncGxhaW4=\r\n----_NmP-8587fbb361de42e3-Part_1--\r\n"
+    },
+    {
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "attachments": [
+          {
+            "filename": "forward.eml",
+            "contentType": "message/rfc822",
+            "content": "From: a@example.test\r\n\r\nforward"
+          }
+        ]
+      },
+      "envelope": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ]
+      },
+      "messageId": "fixture@example.test",
+      "message": "Content-Transfer-Encoding: 8bit\r\nContent-Disposition: inline; filename=forward.eml\r\nFrom: Sender <sender@example.test>\r\nTo: recipient@example.test\r\nMessage-ID: <fixture@example.test>\r\nDate: Thu, 01 Jan 1970 00:00:00 +0000\r\nMIME-Version: 1.0\r\nContent-Type: message/rfc822; name=forward.eml\r\n\r\nFrom: a@example.test\r\n\r\nforward\r\n"
+    },
+    {
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "attachments": [
+          {
+            "content": "abc",
+            "filename": "test.txt",
+            "contentDisposition": "x-fixture"
+          }
+        ]
+      },
+      "envelope": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ]
+      },
+      "messageId": "fixture@example.test",
+      "message": "Content-Transfer-Encoding: base64\r\nContent-Disposition: x-fixture; filename=test.txt\r\nFrom: Sender <sender@example.test>\r\nTo: recipient@example.test\r\nMessage-ID: <fixture@example.test>\r\nDate: Thu, 01 Jan 1970 00:00:00 +0000\r\nMIME-Version: 1.0\r\nContent-Type: text/plain; name=test.txt\r\n\r\nYWJj\r\n"
+    },
+    {
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "text": "hello",
+        "priority": "high",
+        "references": [
+          "one@example.test",
+          "<two@example.test>"
+        ],
+        "headers": {
+          "X-Extra": [
+            "one",
+            "two"
+          ],
+          "X-Priority": "bad"
+        }
+      },
+      "envelope": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ]
+      },
+      "messageId": "fixture@example.test",
+      "message": "X-Extra: one\r\nX-Extra: two\r\nX-Priority: 1 (Highest)\r\nFrom: Sender <sender@example.test>\r\nTo: recipient@example.test\r\nReferences: <one@example.test> <two@example.test>\r\nMessage-ID: <fixture@example.test>\r\nDate: Thu, 01 Jan 1970 00:00:00 +0000\r\nX-Msmail-Priority: High\r\nImportance: High\r\nContent-Transfer-Encoding: 7bit\r\nMIME-Version: 1.0\r\nContent-Type: text/plain; charset=utf-8\r\n\r\nhello\r\n"
+    },
+    {
+      "options": {
+        "from": false,
+        "to": false,
+        "messageId": false,
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "text": "hello",
+        "priority": "low",
+        "headers": {
+          "From": "Custom <custom@example.test>",
+          "To": "custom-to@example.test",
+          "Message-ID": "custom@example.test"
+        }
+      },
+      "envelope": {
+        "from": "custom@example.test",
+        "to": [
+          "custom-to@example.test"
+        ]
+      },
+      "messageId": "custom@example.test",
+      "message": "From: Custom <custom@example.test>\r\nTo: custom-to@example.test\r\nMessage-ID: <custom@example.test>\r\nDate: Thu, 01 Jan 1970 00:00:00 +0000\r\nX-Priority: 5 (Lowest)\r\nX-Msmail-Priority: Low\r\nImportance: Low\r\nContent-Transfer-Encoding: 7bit\r\nMIME-Version: 1.0\r\nContent-Type: text/plain; charset=utf-8\r\n\r\nhello\r\n"
+    },
+    {
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "alternatives": [
+          {
+            "content": "other",
+            "contentType": "text/x-fixture"
+          }
+        ],
+        "attachments": [
+          {
+            "path": false,
+            "content": {
+              "type": "Buffer",
+              "data": [
+                97,
+                98,
+                99
+              ]
+            },
+            "contentType": "text/plain"
+          }
+        ]
+      },
+      "envelope": {
+        "from": "sender@example.test",
+        "to": [
+          "recipient@example.test"
+        ]
+      },
+      "messageId": "fixture@example.test",
+      "message": "From: Sender <sender@example.test>\r\nTo: recipient@example.test\r\nMessage-ID: <fixture@example.test>\r\nDate: Thu, 01 Jan 1970 00:00:00 +0000\r\nMIME-Version: 1.0\r\nContent-Type: multipart/mixed; boundary=\"--_NmP-d3aeadae391cb450-Part_1\"\r\n\r\n----_NmP-d3aeadae391cb450-Part_1\r\nContent-Type: text/x-fixture\r\nContent-Transfer-Encoding: 7bit\r\n\r\nother\r\n----_NmP-d3aeadae391cb450-Part_1\r\nContent-Type: text/plain; name=attachment-1.txt\r\nContent-Transfer-Encoding: base64\r\nContent-Disposition: attachment; filename=attachment-1.txt\r\n\r\nYWJj\r\n----_NmP-d3aeadae391cb450-Part_1--\r\n"
+    }
+  ],
+  "streamCases": [
+    {
+      "config": {
+        "streamTransport": true,
+        "buffer": true
+      },
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "raw": "From: source@example.test\r\nSubject: raw\r\n\r\nBody.\r\n"
+      },
+      "result": {
+        "envelope": {
+          "from": "sender@example.test",
+          "to": [
+            "recipient@example.test"
+          ]
+        },
+        "messageId": "fixture@example.test",
+        "message": {
+          "type": "Buffer",
+          "data": [
+            70,
+            114,
+            111,
+            109,
+            58,
+            32,
+            115,
+            111,
+            117,
+            114,
+            99,
+            101,
+            64,
+            101,
+            120,
+            97,
+            109,
+            112,
+            108,
+            101,
+            46,
+            116,
+            101,
+            115,
+            116,
+            13,
+            10,
+            83,
+            117,
+            98,
+            106,
+            101,
+            99,
+            116,
+            58,
+            32,
+            114,
+            97,
+            119,
+            13,
+            10,
+            13,
+            10,
+            66,
+            111,
+            100,
+            121,
+            46,
+            13,
+            10
+          ]
+        }
+      }
+    },
+    {
+      "config": {
+        "streamTransport": true,
+        "buffer": true,
+        "newline": "windows"
+      },
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "raw": "From: source@example.test\r\nSubject: raw\r\n\r\nBody.\r\n"
+      },
+      "result": {
+        "envelope": {
+          "from": "sender@example.test",
+          "to": [
+            "recipient@example.test"
+          ]
+        },
+        "messageId": "fixture@example.test",
+        "message": {
+          "type": "Buffer",
+          "data": [
+            70,
+            114,
+            111,
+            109,
+            58,
+            32,
+            115,
+            111,
+            117,
+            114,
+            99,
+            101,
+            64,
+            101,
+            120,
+            97,
+            109,
+            112,
+            108,
+            101,
+            46,
+            116,
+            101,
+            115,
+            116,
+            13,
+            10,
+            83,
+            117,
+            98,
+            106,
+            101,
+            99,
+            116,
+            58,
+            32,
+            114,
+            97,
+            119,
+            13,
+            10,
+            13,
+            10,
+            66,
+            111,
+            100,
+            121,
+            46,
+            13,
+            10
+          ]
+        }
+      }
+    },
+    {
+      "config": {
+        "streamTransport": true,
+        "buffer": false
+      },
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "raw": "From: source@example.test\r\nSubject: raw\r\n\r\nBody.\r\n"
+      },
+      "result": {
+        "envelope": {
+          "from": "sender@example.test",
+          "to": [
+            "recipient@example.test"
+          ]
+        },
+        "messageId": "fixture@example.test",
+        "message": {
+          "type": "Buffer",
+          "data": [
+            70,
+            114,
+            111,
+            109,
+            58,
+            32,
+            115,
+            111,
+            117,
+            114,
+            99,
+            101,
+            64,
+            101,
+            120,
+            97,
+            109,
+            112,
+            108,
+            101,
+            46,
+            116,
+            101,
+            115,
+            116,
+            13,
+            10,
+            83,
+            117,
+            98,
+            106,
+            101,
+            99,
+            116,
+            58,
+            32,
+            114,
+            97,
+            119,
+            13,
+            10,
+            13,
+            10,
+            66,
+            111,
+            100,
+            121,
+            46,
+            13,
+            10
+          ]
+        }
+      }
+    }
+  ],
+  "sendmailCases": [
+    {
+      "config": {
+        "sendmail": true
+      },
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "raw": "From: source@example.test\r\nSubject: raw\r\n\r\nBody.\r\n",
+        "envelope": {
+          "from": "return@example.test",
+          "to": [
+            "one@example.test",
+            "two@example.test"
+          ]
+        }
+      },
+      "invocation": {
+        "program": "sendmail",
+        "args": [
+          "-i",
+          "-f",
+          "return@example.test",
+          "one@example.test",
+          "two@example.test"
+        ],
+        "message": {
+          "type": "Buffer",
+          "data": [
+            70,
+            114,
+            111,
+            109,
+            58,
+            32,
+            115,
+            111,
+            117,
+            114,
+            99,
+            101,
+            64,
+            101,
+            120,
+            97,
+            109,
+            112,
+            108,
+            101,
+            46,
+            116,
+            101,
+            115,
+            116,
+            13,
+            10,
+            83,
+            117,
+            98,
+            106,
+            101,
+            99,
+            116,
+            58,
+            32,
+            114,
+            97,
+            119,
+            13,
+            10,
+            13,
+            10,
+            66,
+            111,
+            100,
+            121,
+            46,
+            13,
+            10
+          ]
+        }
+      },
+      "result": {
+        "envelope": {
+          "from": "return@example.test",
+          "to": [
+            "one@example.test",
+            "two@example.test"
+          ]
+        },
+        "messageId": "fixture@example.test",
+        "response": "Messages queued for delivery"
+      },
+      "error": null
+    },
+    {
+      "config": {
+        "sendmail": true,
+        "args": []
+      },
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "raw": "From: source@example.test\r\nSubject: raw\r\n\r\nBody.\r\n",
+        "envelope": {
+          "from": "return@example.test",
+          "to": [
+            "one@example.test",
+            "two@example.test"
+          ]
+        }
+      },
+      "invocation": {
+        "program": "sendmail",
+        "args": [
+          "-i",
+          "one@example.test",
+          "two@example.test"
+        ],
+        "message": {
+          "type": "Buffer",
+          "data": [
+            70,
+            114,
+            111,
+            109,
+            58,
+            32,
+            115,
+            111,
+            117,
+            114,
+            99,
+            101,
+            64,
+            101,
+            120,
+            97,
+            109,
+            112,
+            108,
+            101,
+            46,
+            116,
+            101,
+            115,
+            116,
+            13,
+            10,
+            83,
+            117,
+            98,
+            106,
+            101,
+            99,
+            116,
+            58,
+            32,
+            114,
+            97,
+            119,
+            13,
+            10,
+            13,
+            10,
+            66,
+            111,
+            100,
+            121,
+            46,
+            13,
+            10
+          ]
+        }
+      },
+      "result": {
+        "envelope": {
+          "from": "return@example.test",
+          "to": [
+            "one@example.test",
+            "two@example.test"
+          ]
+        },
+        "messageId": "fixture@example.test",
+        "response": "Messages queued for delivery"
+      },
+      "error": null
+    },
+    {
+      "config": {
+        "sendmail": true,
+        "path": "/fixture/sendmail",
+        "args": [
+          "-v"
+        ]
+      },
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "raw": "From: source@example.test\r\nSubject: raw\r\n\r\nBody.\r\n",
+        "envelope": {
+          "from": "return@example.test",
+          "to": [
+            "one@example.test",
+            "two@example.test"
+          ]
+        }
+      },
+      "invocation": {
+        "program": "/fixture/sendmail",
+        "args": [
+          "-i",
+          "-v",
+          "one@example.test",
+          "two@example.test"
+        ],
+        "message": {
+          "type": "Buffer",
+          "data": [
+            70,
+            114,
+            111,
+            109,
+            58,
+            32,
+            115,
+            111,
+            117,
+            114,
+            99,
+            101,
+            64,
+            101,
+            120,
+            97,
+            109,
+            112,
+            108,
+            101,
+            46,
+            116,
+            101,
+            115,
+            116,
+            13,
+            10,
+            83,
+            117,
+            98,
+            106,
+            101,
+            99,
+            116,
+            58,
+            32,
+            114,
+            97,
+            119,
+            13,
+            10,
+            13,
+            10,
+            66,
+            111,
+            100,
+            121,
+            46,
+            13,
+            10
+          ]
+        }
+      },
+      "result": null,
+      "error": "Sendmail command not found, process exited with code 127"
+    },
+    {
+      "config": {
+        "sendmail": true
+      },
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "raw": "From: source@example.test\r\nSubject: raw\r\n\r\nBody.\r\n",
+        "envelope": {
+          "from": "return@example.test",
+          "to": [
+            "one@example.test",
+            "two@example.test"
+          ]
+        }
+      },
+      "invocation": {
+        "program": "sendmail",
+        "args": [
+          "-i",
+          "-f",
+          "return@example.test",
+          "one@example.test",
+          "two@example.test"
+        ],
+        "message": {
+          "type": "Buffer",
+          "data": [
+            70,
+            114,
+            111,
+            109,
+            58,
+            32,
+            115,
+            111,
+            117,
+            114,
+            99,
+            101,
+            64,
+            101,
+            120,
+            97,
+            109,
+            112,
+            108,
+            101,
+            46,
+            116,
+            101,
+            115,
+            116,
+            13,
+            10,
+            83,
+            117,
+            98,
+            106,
+            101,
+            99,
+            116,
+            58,
+            32,
+            114,
+            97,
+            119,
+            13,
+            10,
+            13,
+            10,
+            66,
+            111,
+            100,
+            121,
+            46,
+            13,
+            10
+          ]
+        }
+      },
+      "result": null,
+      "error": "Sendmail exited with code 3"
+    }
+  ],
+  "sesCases": [
+    {
+      "region": "us-east-1",
+      "id": "provider-id",
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "raw": "From: source@example.test\r\nSubject: raw\r\n\r\nBody.\r\n",
+        "ses": {}
+      },
+      "input": {
+        "Content": {
+          "Raw": {
+            "Data": {
+              "type": "Buffer",
+              "data": [
+                70,
+                114,
+                111,
+                109,
+                58,
+                32,
+                115,
+                111,
+                117,
+                114,
+                99,
+                101,
+                64,
+                101,
+                120,
+                97,
+                109,
+                112,
+                108,
+                101,
+                46,
+                116,
+                101,
+                115,
+                116,
+                13,
+                10,
+                83,
+                117,
+                98,
+                106,
+                101,
+                99,
+                116,
+                58,
+                32,
+                114,
+                97,
+                119,
+                13,
+                10,
+                13,
+                10,
+                66,
+                111,
+                100,
+                121,
+                46,
+                13,
+                10
+              ]
+            }
+          }
+        },
+        "FromEmailAddress": "Sender <sender@example.test>",
+        "Destination": {
+          "ToAddresses": [
+            "recipient@example.test"
+          ]
+        }
+      },
+      "result": {
+        "envelope": {
+          "from": "sender@example.test",
+          "to": [
+            "recipient@example.test"
+          ]
+        },
+        "messageId": "<provider-id@email.amazonses.com>",
+        "response": "provider-id",
+        "raw": {
+          "type": "Buffer",
+          "data": [
+            70,
+            114,
+            111,
+            109,
+            58,
+            32,
+            115,
+            111,
+            117,
+            114,
+            99,
+            101,
+            64,
+            101,
+            120,
+            97,
+            109,
+            112,
+            108,
+            101,
+            46,
+            116,
+            101,
+            115,
+            116,
+            13,
+            10,
+            83,
+            117,
+            98,
+            106,
+            101,
+            99,
+            116,
+            58,
+            32,
+            114,
+            97,
+            119,
+            13,
+            10,
+            13,
+            10,
+            66,
+            111,
+            100,
+            121,
+            46,
+            13,
+            10
+          ]
+        }
+      }
+    },
+    {
+      "region": "eu-west-1",
+      "id": "existing@example.test",
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "raw": "From: source@example.test\r\nSubject: raw\r\n\r\nBody.\r\n",
+        "ses": {
+          "ConfigurationSetName": "fixture",
+          "Destination": {
+            "ToAddresses": [
+              "override@example.test"
+            ]
+          }
+        }
+      },
+      "input": {
+        "Content": {
+          "Raw": {
+            "Data": {
+              "type": "Buffer",
+              "data": [
+                70,
+                114,
+                111,
+                109,
+                58,
+                32,
+                115,
+                111,
+                117,
+                114,
+                99,
+                101,
+                64,
+                101,
+                120,
+                97,
+                109,
+                112,
+                108,
+                101,
+                46,
+                116,
+                101,
+                115,
+                116,
+                13,
+                10,
+                83,
+                117,
+                98,
+                106,
+                101,
+                99,
+                116,
+                58,
+                32,
+                114,
+                97,
+                119,
+                13,
+                10,
+                13,
+                10,
+                66,
+                111,
+                100,
+                121,
+                46,
+                13,
+                10
+              ]
+            }
+          }
+        },
+        "FromEmailAddress": "Sender <sender@example.test>",
+        "Destination": {
+          "ToAddresses": [
+            "override@example.test"
+          ]
+        },
+        "ConfigurationSetName": "fixture"
+      },
+      "result": {
+        "envelope": {
+          "from": "sender@example.test",
+          "to": [
+            "recipient@example.test"
+          ]
+        },
+        "messageId": "<existing@example.test>",
+        "response": "existing@example.test",
+        "raw": {
+          "type": "Buffer",
+          "data": [
+            70,
+            114,
+            111,
+            109,
+            58,
+            32,
+            115,
+            111,
+            117,
+            114,
+            99,
+            101,
+            64,
+            101,
+            120,
+            97,
+            109,
+            112,
+            108,
+            101,
+            46,
+            116,
+            101,
+            115,
+            116,
+            13,
+            10,
+            83,
+            117,
+            98,
+            106,
+            101,
+            99,
+            116,
+            58,
+            32,
+            114,
+            97,
+            119,
+            13,
+            10,
+            13,
+            10,
+            66,
+            111,
+            100,
+            121,
+            46,
+            13,
+            10
+          ]
+        }
+      }
+    },
+    {
+      "region": null,
+      "id": "another",
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "raw": "From: source@example.test\r\nSubject: raw\r\n\r\nBody.\r\n",
+        "ses": {}
+      },
+      "input": {
+        "Content": {
+          "Raw": {
+            "Data": {
+              "type": "Buffer",
+              "data": [
+                70,
+                114,
+                111,
+                109,
+                58,
+                32,
+                115,
+                111,
+                117,
+                114,
+                99,
+                101,
+                64,
+                101,
+                120,
+                97,
+                109,
+                112,
+                108,
+                101,
+                46,
+                116,
+                101,
+                115,
+                116,
+                13,
+                10,
+                83,
+                117,
+                98,
+                106,
+                101,
+                99,
+                116,
+                58,
+                32,
+                114,
+                97,
+                119,
+                13,
+                10,
+                13,
+                10,
+                66,
+                111,
+                100,
+                121,
+                46,
+                13,
+                10
+              ]
+            }
+          }
+        },
+        "FromEmailAddress": "Sender <sender@example.test>",
+        "Destination": {
+          "ToAddresses": [
+            "recipient@example.test"
+          ]
+        }
+      },
+      "result": {
+        "envelope": {
+          "from": "sender@example.test",
+          "to": [
+            "recipient@example.test"
+          ]
+        },
+        "messageId": "<another@email.amazonses.com>",
+        "response": "another",
+        "raw": {
+          "type": "Buffer",
+          "data": [
+            70,
+            114,
+            111,
+            109,
+            58,
+            32,
+            115,
+            111,
+            117,
+            114,
+            99,
+            101,
+            64,
+            101,
+            120,
+            97,
+            109,
+            112,
+            108,
+            101,
+            46,
+            116,
+            101,
+            115,
+            116,
+            13,
+            10,
+            83,
+            117,
+            98,
+            106,
+            101,
+            99,
+            116,
+            58,
+            32,
+            114,
+            97,
+            119,
+            13,
+            10,
+            13,
+            10,
+            66,
+            111,
+            100,
+            121,
+            46,
+            13,
+            10
+          ]
+        }
+      }
+    }
+  ],
+  "smtpCases": [
+    {
+      "config": {},
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "raw": "From: source@example.test\r\nSubject: raw\r\n\r\nBody.\r\n"
+      },
+      "captured": {
+        "fields": {},
+        "envelope": {
+          "from": "sender@example.test",
+          "to": [
+            "recipient@example.test"
+          ]
+        },
+        "message": {
+          "type": "Buffer",
+          "data": [
+            70,
+            114,
+            111,
+            109,
+            58,
+            32,
+            115,
+            111,
+            117,
+            114,
+            99,
+            101,
+            64,
+            101,
+            120,
+            97,
+            109,
+            112,
+            108,
+            101,
+            46,
+            116,
+            101,
+            115,
+            116,
+            13,
+            10,
+            83,
+            117,
+            98,
+            106,
+            101,
+            99,
+            116,
+            58,
+            32,
+            114,
+            97,
+            119,
+            13,
+            10,
+            13,
+            10,
+            66,
+            111,
+            100,
+            121,
+            46,
+            13,
+            10
+          ]
+        }
+      },
+      "result": {
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "response": "250 fixture",
+        "envelopeTime": 1,
+        "messageTime": 2,
+        "messageSize": 3,
+        "envelope": {
+          "from": "sender@example.test",
+          "to": [
+            "recipient@example.test"
+          ]
+        },
+        "messageId": "fixture@example.test"
+      }
+    },
+    {
+      "config": {
+        "host": "relay.example.test",
+        "port": 25,
+        "ignoreTLS": true
+      },
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "raw": "From: source@example.test\r\nSubject: raw\r\n\r\nBody.\r\n"
+      },
+      "captured": {
+        "fields": {
+          "host": "relay.example.test",
+          "port": 25,
+          "ignoreTLS": true
+        },
+        "envelope": {
+          "from": "sender@example.test",
+          "to": [
+            "recipient@example.test"
+          ]
+        },
+        "message": {
+          "type": "Buffer",
+          "data": [
+            70,
+            114,
+            111,
+            109,
+            58,
+            32,
+            115,
+            111,
+            117,
+            114,
+            99,
+            101,
+            64,
+            101,
+            120,
+            97,
+            109,
+            112,
+            108,
+            101,
+            46,
+            116,
+            101,
+            115,
+            116,
+            13,
+            10,
+            83,
+            117,
+            98,
+            106,
+            101,
+            99,
+            116,
+            58,
+            32,
+            114,
+            97,
+            119,
+            13,
+            10,
+            13,
+            10,
+            66,
+            111,
+            100,
+            121,
+            46,
+            13,
+            10
+          ]
+        }
+      },
+      "result": {
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "response": "250 fixture",
+        "envelopeTime": 1,
+        "messageTime": 2,
+        "messageSize": 3,
+        "envelope": {
+          "from": "sender@example.test",
+          "to": [
+            "recipient@example.test"
+          ]
+        },
+        "messageId": "fixture@example.test"
+      }
+    },
+    {
+      "config": {
+        "service": "Gmail",
+        "auth": {
+          "user": "fixture",
+          "pass": "fixture"
+        }
+      },
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "raw": "From: source@example.test\r\nSubject: raw\r\n\r\nBody.\r\n"
+      },
+      "captured": {
+        "fields": {
+          "service": "Gmail",
+          "auth": {
+            "user": "fixture",
+            "pass": "fixture"
+          },
+          "description": "Gmail",
+          "host": "smtp.gmail.com",
+          "port": 465,
+          "secure": true
+        },
+        "envelope": {
+          "from": "sender@example.test",
+          "to": [
+            "recipient@example.test"
+          ]
+        },
+        "message": {
+          "type": "Buffer",
+          "data": [
+            70,
+            114,
+            111,
+            109,
+            58,
+            32,
+            115,
+            111,
+            117,
+            114,
+            99,
+            101,
+            64,
+            101,
+            120,
+            97,
+            109,
+            112,
+            108,
+            101,
+            46,
+            116,
+            101,
+            115,
+            116,
+            13,
+            10,
+            83,
+            117,
+            98,
+            106,
+            101,
+            99,
+            116,
+            58,
+            32,
+            114,
+            97,
+            119,
+            13,
+            10,
+            13,
+            10,
+            66,
+            111,
+            100,
+            121,
+            46,
+            13,
+            10
+          ]
+        }
+      },
+      "result": {
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "response": "250 fixture",
+        "envelopeTime": 1,
+        "messageTime": 2,
+        "messageSize": 3,
+        "envelope": {
+          "from": "sender@example.test",
+          "to": [
+            "recipient@example.test"
+          ]
+        },
+        "messageId": "fixture@example.test"
+      }
+    },
+    {
+      "config": {},
+      "options": {
+        "from": "Sender <sender@example.test>",
+        "to": "recipient@example.test",
+        "messageId": "fixture@example.test",
+        "date": "Thu, 01 Jan 1970 00:00:00 +0000",
+        "raw": "From: source@example.test\r\nSubject: raw\r\n\r\nBody.\r\n",
+        "envelope": {
+          "from": "Bounce <bounce@example.test>",
+          "to": [
+            "One <one@example.test>"
+          ],
+          "cc": [
+            "one@example.test",
+            "two@example.test"
+          ],
+          "extension": 17
+        }
+      },
+      "captured": {
+        "fields": {},
+        "envelope": {
+          "from": "bounce@example.test",
+          "to": [
+            "one@example.test",
+            "two@example.test"
+          ],
+          "extension": 17
+        },
+        "message": {
+          "type": "Buffer",
+          "data": [
+            70,
+            114,
+            111,
+            109,
+            58,
+            32,
+            115,
+            111,
+            117,
+            114,
+            99,
+            101,
+            64,
+            101,
+            120,
+            97,
+            109,
+            112,
+            108,
+            101,
+            46,
+            116,
+            101,
+            115,
+            116,
+            13,
+            10,
+            83,
+            117,
+            98,
+            106,
+            101,
+            99,
+            116,
+            58,
+            32,
+            114,
+            97,
+            119,
+            13,
+            10,
+            13,
+            10,
+            66,
+            111,
+            100,
+            121,
+            46,
+            13,
+            10
+          ]
+        }
+      },
+      "result": {
+        "accepted": [
+          "recipient@example.test"
+        ],
+        "rejected": [],
+        "response": "250 fixture",
+        "envelopeTime": 1,
+        "messageTime": 2,
+        "messageSize": 3,
+        "envelope": {
+          "from": "bounce@example.test",
+          "to": [
+            "one@example.test",
+            "two@example.test"
+          ]
+        },
+        "messageId": "fixture@example.test"
+      }
+    }
+  ]
+}
