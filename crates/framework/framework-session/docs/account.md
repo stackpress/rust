@@ -105,8 +105,8 @@ Writes retain source partial effects. Password change ignores returned per-row u
 errors, then flashes/redirects. Enrollment likewise retains its source post-write redirect.
 Removal's original generated profile-remove sees the already-loaded parent profile body
 and passes through: auth rows are removed but the profile remains active, while success is
-flashed. The original joined-handler proof records this interaction as a question for the
-owner; no fix is selected. No session revocation or new CSRF/reauth/global policy is added.
+flashed. G46 resolves this as intended; the joined-handler proof remains the source anchor.
+No session revocation or new CSRF/reauth/global policy is added. Under G46, optional phone on update retains the missing-input trim error, following the original source unchanged.
 
 Run the finite SQL-backed host with the recorder as required by the project workflow:
 `cargo run -p stackpress-framework-session --features leptos-ssr --example account_host -- <output>`.
@@ -114,8 +114,8 @@ It renders all pages in three themes, invokes the real email-send JSON transport
 Browser verification fulfills every request in memory and starts no listener. Live email,
 installed-platform behavior and owner visual acceptance remain separate evidence.
 
-## Evidence and open questions
+## Evidence and G46 decisions
 
 [Account traces](../tests/main/account_flows.rs), [real SQLite update/export/enrollment/removal](../tests/main/account_flows/sql.rs), [shared view tests](../tests/main/account_ui.rs), [route contributions](../tests/main/account_ui/registration.rs) and [browser matrix](../proofs/browser.cjs) anchor the process/UI behavior. Use [account API](api/account.md) or [views API](api/views.md) for lookup.
 
-**Open question — current behaviour follows upstream:** account removal keeps the Profile when the existing parent body makes profile-remove skip. **Open question — current behaviour follows upstream:** optional phone on update retains the missing-input trim error, unlike signup under G44. The [question register](source-behavior.md#open-owner-questions) also records the inherited Moment admin-date pattern; these account pages do not resolve it.
+**Resolved under G46:** account deletion is intended soft delete via @active, with the existing account flow keeping Profile. Optional phone on update and Moment admin dates follow the original source, unchanged. G44's optional phone-on-signup decision remains separate. The [decision register](source-behavior.md#owner-decisions-g46) records all ten resolutions.

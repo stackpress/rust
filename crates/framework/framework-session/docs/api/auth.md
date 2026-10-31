@@ -78,4 +78,4 @@ The native TOTP helpers are explicit about time and window; they do not choose a
 | `verify_at` | `token: &str, secret: &str, seconds: u64, window: i64` → Result<bool>, 30-second step |
 | `generate_secret` | `length: usize` → Result<String>, source base32 alphabet with native entropy |
 
-This renders strings only; the email-send event owns delivery. The [email sign-in skip question](../source-behavior.md#open-owner-questions) remains open at source parity.
+This renders strings only; the email-send event owns delivery. The [email sign-in skip decision](../source-behavior.md#owner-decisions-g46) is resolved under G46: follow the original source, unchanged.

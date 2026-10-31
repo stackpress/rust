@@ -1,6 +1,6 @@
-# Preserved source behavior and open questions
+# Preserved source behaviour and G46 decisions
 
-G43 treats the original Stackpress logic as intentional. Plugins secure the app only as configured; route/event processes choose their own checks. This page records current behavior and Rust mechanics boundaries, without selecting a policy change.
+G43 treats the original Stackpress logic as intentional. Plugins secure the app only as configured; route/event processes choose their own checks. G46 resolves the ten source-behaviour questions, with one rendering change: PostgreSQL retains ILIKE; SQLite and MySQL use LIKE.
 
 ## Source provenance
 
@@ -22,19 +22,22 @@ Signup and account mutations keep source sequential partial writes; batch separa
 
 The deterministic storage codec is original AES-256-CBC and SHAKE256; no integrity envelope or password-format migration is added. Token uniqueness spans all auth types and inactive records. Native services/seeds stay outside automatic public projection, while source enrollment secrets/CSRF inputs remain deliberate page data. See [storage](storage.md), [account](account.md) and [projection tests](../tests/main/account_ui.rs).
 
-## Open owner questions
+## Owner decisions G46
 
-Every item below is **open question — current behaviour follows upstream**. None is resolved by documentation or by substituting different defaults.
+All ten items are **resolved under owner decision G46**. The five source-specific flows remain unchanged; search uses the dialect's supported operator. These decisions add no global guard or new account policy.
 
-| Question | Current behavior and source anchor | Rust evidence |
+| Resolved item | Current behaviour and source anchor | Rust evidence |
 | --- | --- | --- |
-| Account delete keeps profile | `session/pages/remove.ts:28,69` shares the loaded parent body; `stackpress-sql/src/transform/events/remove.ts:79–81` skips on truthy body. Auth rows removed, profile active, success flash and signout redirect. | [Joined oracle](../tests/account-removal-join.json), [SQL removal test](../tests/main/account_flows/sql.rs) |
-| SQLite ILIKE | Generated `ProfileStore.ts:491,561` and `AuthStore.ts:659` emit literal ILIKE; SQLite q/like execution fails. | [Query compiler](../src/storage/query.rs), [predicates test](../tests/main/actions.rs) |
-| Auth create-return | `auth/AuthActions.ts:248` calls store.unserialize(raw) (schema decoding, not SQL unscalarize): ciphertext token remains, raw profile_id omitted. Ordinary find decodes normally. | [Create branch](../src/storage/actions.rs), [source scalar goldens](../tests/main/actions.rs) |
-| Positive hasnt | `profile/ProfileStore.ts:519–522` and `auth/AuthStore.ts:617–620` compile hasnt through the same positive membership as has; no negation added. | [Query compiler](../src/storage/query.rs), [predicate execution test](../tests/main/actions.rs) |
-| Optional phone on update | `session/pages/update.ts:161` passes absent phone to normalizePhone; `auth/helpers.ts:6` calls trim. Update keeps the error; signup alone accepts missing phone under G44. | [Update process](../src/account/profile.rs), [account oracle](../tests/account-flows.json) |
-| Email sign-in skips send | `auth/pages/signin/email.ts:158,223,284,343` shares the auth-update response with email-send; `stackpress-email/src/events.ts:10–19` skips its truthy body before constructing a transport. | [Real email integration](../../framework-email/tests/cases/integration/mod.rs), [source boundaries](../../framework-email/tests/fixtures/source-page-boundaries.json) |
-| Moment admin dates | Session `schema.idea:85–95,183–208` uses `m d, Y h:iA`. Moment interprets minute/weekday/year/12-hour/literal i; the API shared adapter retains that interpretation, including UTC `0 5, 2100 12:iAM`. This is admin schema metadata, separate from account ISO/Date.toString helpers. | [API date adapter](../../framework-api/src/views/roles.rs), [accepted API date evidence](../../../../.agents/specs/00001-stackpress-rust-foundation/tasks/00021-slice-10-m5.md) |
+| Account delete keeps profile | Intended soft delete via @active: removed records are deactivated, queries filter active rows by default, and active=-1 is the escape. The account process retains Profile: `session/pages/remove.ts:28,69` shares the parent body; `stackpress-sql/src/transform/events/remove.ts:79–81` skips profile removal on truthy body. No code change. | [Joined oracle](../tests/account-removal-join.json), [SQL removal test](../tests/main/account_flows/sql.rs), [active-filter tests](../tests/main/actions.rs) |
+| SQLite ILIKE | Owner: use LIKE. Generated source `ProfileStore.ts:491,561` and `AuthStore.ts:659` use ILIKE; G46 keeps that spelling only on PostgreSQL. SQLite/MySQL render LIKE; SQLite matches ASCII case-insensitively by default, MySQL relies on default _ci collations. | [Dialect adapter](../src/storage/statement.rs), [rendering and real SQLite tests](../tests/main/actions.rs) |
+| Auth create-return | Follow original source, unchanged: `auth/AuthActions.ts:248` calls store.unserialize(raw), so ciphertext token remains and raw profile_id is omitted. Ordinary find decodes normally. | [Create branch](../src/storage/actions.rs), [source scalar goldens](../tests/main/actions.rs) |
+| Positive hasnt | Follow original source, unchanged: `profile/ProfileStore.ts:519–522` and `auth/AuthStore.ts:617–620` compile hasnt through the same positive membership as has. | [Query compiler](../src/storage/query.rs), [predicate execution test](../tests/main/actions.rs) |
+| Optional phone on update | Follow original source, unchanged: `session/pages/update.ts:161` passes absent phone to normalizePhone; `auth/helpers.ts:6` calls trim. Update keeps the error; G44 optional signup phone remains separate. | [Update process](../src/account/profile.rs), [account oracle](../tests/account-flows.json) |
+| Email sign-in skips send | Follow original source, unchanged: `auth/pages/signin/email.ts:158,223,284,343` shares the auth-update response with email-send; `stackpress-email/src/events.ts:10–19` skips truthy body before constructing a transport. | [Real email integration](../../framework-email/tests/cases/integration/mod.rs), [source boundaries](../../framework-email/tests/fixtures/source-page-boundaries.json) |
+| Moment admin dates | Follow original source, unchanged: session `schema.idea:85–95,183–208` uses `m d, Y h:iA`. Moment retains minute/weekday/year/12-hour/literal i interpretation, including UTC `0 5, 2100 12:iAM`. Separate from account ISO/Date.toString helpers. | [API date adapter](../../framework-api/src/views/roles.rs), [accepted API date evidence](../../../../.agents/specs/00001-stackpress-rust-foundation/tasks/00021-slice-10-m5.md) |
+| PGlite | Not required. The three standard engines are MySQL, SQLite and PostgreSQL; no PGlite connector is planned. | [Resolved aggregate ledger](../../framework/proofs/coverage-map.json) |
+| License | Owner-owned. | [Resolved aggregate ledger](../../framework/proofs/coverage-map.json) |
+| SQLite purge | Keep DELETE FROM "table"; no TRUNCATE or added WHERE 1 is needed. | [SQL renderer](../../../sql/sql/src/table.rs), [SQLite DDL tests](../../../sql/sql-sqlite/src/tests/m2/ddl.rs) |
 
 ## Rust mechanics and evidence limits
 

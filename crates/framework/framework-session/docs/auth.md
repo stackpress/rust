@@ -47,7 +47,7 @@ Optional adapters `events::{search, update}` implement the source `auth-search` 
 or provide the application's existing handlers for those events. The auth registrar
 neither selects a global SQL operation policy nor silently registers those extensions.
 `search` accepts `storage::StoreQuery`; `update` uses `id` plus patch fields, returning the
-first row or null. Existing source ILIKE/create-return/positive-hasnt behavior is retained.
+first row or null. G46 uses PostgreSQL ILIKE and SQLite/MySQL LIKE; create-return and positive-hasnt follow the original source, unchanged.
 
 ## Native resources and task ownership
 
@@ -145,4 +145,4 @@ provider is needed for these finite proofs. See [storage](storage.md) for direct
 
 [Auth source traces](../tests/main/auth_flows/oracle.rs), [real events and missing modes](../tests/main/auth_flows/events.rs), [registration ordering](../tests/main/auth_flows/registration.rs) and [hook supervision](../tests/main/supervision.rs) anchor the sections above. [Configuration](guides/configuration.md) and [auth API](api/auth.md) provide lookup paths.
 
-**Open question — current behaviour follows upstream:** email sign-in can skip send on the shared auth-update response. The [seven-question register](source-behavior.md#open-owner-questions) links the real-email oracle and the unchanged storage/account questions.
+**Resolved under G46:** email sign-in follows the original source, unchanged, including the shared auth-update response that can skip send. The [decision register](source-behavior.md#owner-decisions-g46) links the real-email oracle and all ten resolutions.

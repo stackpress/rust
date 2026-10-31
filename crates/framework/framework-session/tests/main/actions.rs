@@ -32,6 +32,95 @@ fn record(value: JsonValue) -> Record {
     serde_json::from_value(value).unwrap()
 }
 
+/// G46 selects a supported search operator without rewriting bound caller text.
+#[test]
+fn g46_search_operators_follow_dialect_for_profile_and_auth() {
+    let profile = ProfileStore::new("database-seed");
+    let auth = AuthStore::new("database-seed");
+    let search = StoreQuery {
+        q: Some("A LIKE B".into()),
+        ..Default::default()
+    };
+    let profile_like = StoreQuery {
+        like: record(json!({"name":"A LIKE B"})),
+        ..Default::default()
+    };
+    let auth_like = StoreQuery {
+        like: record(json!({"profile.name":"A LIKE B"})),
+        ..Default::default()
+    };
+    for (dialect, operator, excluded) in [
+        (DialectId::Sqlite, " LIKE ", " ILIKE "),
+        (DialectId::Postgres, " ILIKE ", " LIKE "),
+        (DialectId::Mysql, " LIKE ", " ILIKE "),
+    ] {
+        for statement in [
+            profile.select(&search, dialect).unwrap(),
+            profile.select(&profile_like, dialect).unwrap(),
+            auth.select(&auth_like, dialect).unwrap(),
+        ] {
+            let query = statement.render(dialect).unwrap();
+            assert!(
+                query.sql().contains(operator),
+                "{dialect:?}: {}",
+                query.sql()
+            );
+            assert!(
+                !query.sql().contains(excluded),
+                "{dialect:?}: {}",
+                query.sql()
+            );
+            assert!(
+                query
+                    .binds()
+                    .contains(&stackpress_sql::SqlValue::Text("%A LIKE B%".into()))
+            );
+        }
+    }
+}
+
+/// Real SQLite searches exercise Profile q/like and the Auth-to-Profile join with ASCII case.
+#[tokio::test]
+async fn g46_sqlite_ascii_searches_execute_for_profile_and_auth() {
+    let (_dir, engine, profile, auth) = database().await;
+    for (id, name) in [("p1", "Ada"), ("p2", "Bert"), ("p3", "ADAM")] {
+        profile
+            .create(&record(json!({"id":id,"name":name})))
+            .await
+            .unwrap();
+    }
+    let mut query = StoreQuery {
+        q: Some("ad".into()),
+        sort: record(json!({"id":"ASC"})),
+        ..Default::default()
+    };
+    let rows = profile.find_all(&query).await.unwrap();
+    assert_eq!(
+        rows.iter()
+            .map(|row| row["id"].as_str().unwrap())
+            .collect::<Vec<_>>(),
+        ["p1", "p3"]
+    );
+    assert_eq!(profile.count(&query).await.unwrap(), 2);
+    query.q = None;
+    query.like = record(json!({"name":"aD"}));
+    assert_eq!(profile.find_all(&query).await.unwrap(), rows);
+    for (id, profile_id) in [("Alpha", "p1"), ("Bravo", "p2")] {
+        auth.create(&record(
+            json!({"id":id,"profileId":profile_id,"token":id,"secret":"hello"}),
+        ))
+        .await
+        .unwrap();
+    }
+    query.like = record(json!({"profile.name":"ADA"}));
+    let rows = auth.find_all(&query).await.unwrap();
+    assert_eq!(rows.len(), 1);
+    assert_eq!(rows[0]["id"], "Alpha");
+    query.like = record(json!({"id":"ALPHA"}));
+    assert_eq!(auth.count(&query).await.unwrap(), 1);
+    engine.close().await.unwrap();
+}
+
 /// Only equality's literal -1 bypasses active filtering; other operators keep their codec.
 #[tokio::test]
 async fn active_override_keeps_non_equality_predicates() {
@@ -356,8 +445,8 @@ async fn predicates_sort_projection_join_and_maintenance() {
         take: 1,
         ..Default::default()
     };
-    assert!(profile.find(&query).await.is_err());
-    assert!(profile.count(&query).await.is_err()); // Literal source ILIKE is rejected by SQLite.
+    assert_eq!(profile.find(&query).await.unwrap().unwrap()["name"], "Ada");
+    assert_eq!(profile.count(&query).await.unwrap(), 2);
     query = StoreQuery::default();
     query.has = record(json!({"tags":"red"}));
     let found = profile.find_all(&query).await.unwrap();
@@ -371,7 +460,7 @@ async fn predicates_sort_projection_join_and_maintenance() {
     query.ge = record(json!({"name":"A"}));
     query.le = record(json!({"name":"Z"}));
     query.like = record(json!({"name":"d"}));
-    assert!(profile.find_all(&query).await.is_err());
+    assert_eq!(profile.find_all(&query).await.unwrap().len(), 1);
     query.like.clear();
     assert_eq!(profile.find_all(&query).await.unwrap().len(), 1);
     auth.create(&record(

@@ -85,8 +85,8 @@ Source behaviors intentionally retained:
   SQL writes only supplied fields. Empty text removed from a merged return can still be
   written by the original input. These returns are not a persisted-row acknowledgement.
 - `hasnt` currently compiles as `has`. JSON membership arrays form source OR groups.
-- Source literal ILIKE is retained on every dialect. SQLite rejects q/like searches;
-  the framework does not silently substitute LIKE. These source edges are owner questions.
+- G46 keeps ILIKE only on PostgreSQL. SQLite/MySQL use LIKE, relying on SQLite's default
+  ASCII case-insensitive matching and MySQL's default _ci collations.
 
 SQLite execution is proved in tests. PostgreSQL/MySQL DDL and insert rendering are checked;
 live backend acceptance and backend-specific JSON semantics are not claimed here. Raw SQL
@@ -94,8 +94,8 @@ identifiers/JSON paths use the existing Rust SQL crate's checked/bound represent
 a mechanics boundary rather than a new application admission policy. No native resource,
 DB seed, secret or full result becomes a browser snapshot automatically.
 
-## Evidence and open questions
+## Evidence and G46 decisions
 
 [Schema/column vectors](../tests/main/records.rs), [real SQLite Actions](../tests/main/actions.rs), [codec challenges](../tests/main/storage.rs) and [exclusive-executor compile failure](../tests/ui-sql/exclusive_executor.rs) anchor the storage contract. [Storage API](api/storage.md) lists the public methods and shared providers.
 
-**Open question — current behaviour follows upstream:** literal SQLite ILIKE, Auth native create-return and positive hasnt retain their source behavior. The [question register](source-behavior.md#open-owner-questions) gives each source anchor separately; no backend fallback or return decoding repair is selected.
+**Resolved under G46:** PostgreSQL uses ILIKE; SQLite/MySQL use LIKE. Auth native create-return and positive hasnt follow the original source, unchanged. The [decision register](source-behavior.md#owner-decisions-g46) records the source anchors and rendering/execution evidence.

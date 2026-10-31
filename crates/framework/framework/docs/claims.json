@@ -881,7 +881,9 @@
           "Account delete keeps profile"
         ]
       }
-    ]
+    ],
+    "status": "resolved",
+    "decision": "G46"
   },
   {
     "id": "question-sqlite-ilike",
@@ -893,8 +895,38 @@
         "contains": [
           "SQLite ILIKE"
         ]
+      },
+      {
+        "path": "crates/framework/framework-session/tests/main/actions.rs",
+        "contains": [
+          "g46_search_operators_follow_dialect_for_profile_and_auth",
+          "g46_sqlite_ascii_searches_execute_for_profile_and_auth"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-api/tests/sql.rs",
+        "contains": [
+          "g46_search_operators_follow_dialect_for_application_and_session",
+          "g46_sqlite_ascii_searches_execute_for_application_and_session"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-session/src/storage/statement.rs",
+        "contains": [
+          "DialectId::Postgres =>",
+          "DialectId::Sqlite | DialectId::Mysql => return Ok(query)"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-api/src/sql/adapter.rs",
+        "contains": [
+          "DialectId::Postgres =>",
+          "DialectId::Sqlite | DialectId::Mysql => return Ok(query)"
+        ]
       }
-    ]
+    ],
+    "status": "resolved",
+    "decision": "G46"
   },
   {
     "id": "question-auth-create-return",
@@ -907,7 +939,9 @@
           "Auth create-return"
         ]
       }
-    ]
+    ],
+    "status": "resolved",
+    "decision": "G46"
   },
   {
     "id": "question-positive-hasnt",
@@ -920,7 +954,9 @@
           "Positive hasnt"
         ]
       }
-    ]
+    ],
+    "status": "resolved",
+    "decision": "G46"
   },
   {
     "id": "question-optional-phone-on-update",
@@ -933,7 +969,9 @@
           "Optional phone on update"
         ]
       }
-    ]
+    ],
+    "status": "resolved",
+    "decision": "G46"
   },
   {
     "id": "question-email-sign-in-skips-send",
@@ -946,7 +984,9 @@
           "Email sign-in skips send"
         ]
       }
-    ]
+    ],
+    "status": "resolved",
+    "decision": "G46"
   },
   {
     "id": "question-moment-admin-dates",
@@ -959,7 +999,9 @@
           "Moment admin dates"
         ]
       }
-    ]
+    ],
+    "status": "resolved",
+    "decision": "G46"
   },
   {
     "id": "question-s11-pglite",
@@ -972,7 +1014,9 @@
           "S11-PGLITE"
         ]
       }
-    ]
+    ],
+    "status": "resolved",
+    "decision": "G46"
   },
   {
     "id": "question-source-license",
@@ -985,7 +1029,9 @@
           "SOURCE-LICENSE"
         ]
       }
-    ]
+    ],
+    "status": "resolved",
+    "decision": "G46"
   },
   {
     "id": "question-sqlite-truncate",
@@ -998,7 +1044,9 @@
           "SQLITE-TRUNCATE"
         ]
       }
-    ]
+    ],
+    "status": "resolved",
+    "decision": "G46"
   },
   {
     "id": "evidence-gaps",

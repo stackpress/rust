@@ -63,4 +63,4 @@ The [real SQLite lifecycle tests](../../tests/cases/sql.rs) cover command events
 
 ## Accepted SQLite divergence
 
-SQLite purge uses the accepted lower-crate truncate → DELETE mapping. Upstream Sqlite.js:404–408 emits TRUNCATE … CASCADE that SQLite rejects; the aggregate does not bypass its accepted dialect to reproduce that driver failure. This remains an [open owner question](../source-behavior.md). Evidence: [TableCommand rendering](../../../../sql/sql/src/table.rs), [SQLite DDL tests](../../../../sql/sql-sqlite/src/tests/m2/ddl.rs).
+G46 resolves SQLite purge by keeping the accepted DELETE FROM "table" mapping. No TRUNCATE or additional WHERE 1 form is introduced. See the [resolved decisions](../source-behavior.md), [TableCommand rendering](../../../../sql/sql/src/table.rs) and [SQLite DDL tests](../../../../sql/sql-sqlite/src/tests/m2/ddl.rs).
