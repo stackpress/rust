@@ -111,3 +111,9 @@ Store: `/Users/cblanquera/server/projects/stackpress/rust/.agents/resources/buil
 | 20261031T044113.547063Z-cd166103a125 | final receipt scope and KB validation | passed (0) | 6.19 | unavailable |
 
 No commits, staging, pushes, installs, dependency downloads, listener starts or GitHub writes. Stopped for coordinator verification of G46.
+
+## Coordinator verification
+
+Committed as `c734147` on `3a95c1f`; 22 tracked files plus this receipt, no manifest, lock or license change. Reviewed the two adapter diffs (exhaustive dialect match; PostgreSQL alone rewrites to ILIKE; SQLite/MySQL return the rendered query unchanged; binds untouched, proven by the `%A LIKE B%` bind assertions) and the test changes (former SQLite-failure assertions now assert results). Independent fresh-target gate `/private/tmp/g46-verify/run.sh` on 2026-10-31, exit 0: Cargo.lock identical to `3a95c1f`; fmt; clippy session+API (sql, all targets, -D warnings); nextest session+API sql 113 passed / 6 skipped (network opt-ins unset); aggregate full,codegen 36 passed; doctests; session and aggregate docs checks and aggregate proofs ledger check green. Live PostgreSQL/MySQL execution not exercised; those dialects are proven at the rendered-SQL level only.
+
+Merged into trial/3 as `70da23f`.
