@@ -25,7 +25,7 @@ The facade is opt-in: `stackpress::framework_session` is exported by `framework-
 
 ## Configuration controls protection
 
-As in the original source, plugins secure the application only as configured. Missing `session` contributes no identity service/events; missing `session.access` contributes no global request guard; missing `auth` removes auth process routes. Each route or event secures its own process. An empty access map remains permissive. See the [activation table](docs/guides/configuration.md#activation) and [source behavior](docs/source-behavior.md) for the exact guard, flags, errors and seven open owner questions.
+As in the original source, plugins secure the application only as configured. Missing `session` contributes no identity service/events; missing `session.access` contributes no global request guard; missing `auth` removes auth process routes. Each route or event secures its own process. An empty access map remains permissive. See the [activation table](docs/guides/configuration.md#activation) and [source behavior](docs/source-behavior.md) for the exact guard, flags, errors and ten resolved owner decisions under G46.
 
 [`plugin::register`](src/plugin.rs) selects identity only. [`composite::register`](src/composite.rs) calls auth, email, then identity. Both are ordinary registration functions. Multiple handlers may contribute to one route/event in priority then registration order, and any handler may abort the chain; no registrar owns a route. [Composition tests](tests/main/composite.rs) cover both forms.
 

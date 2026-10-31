@@ -20,7 +20,7 @@ Ordinary handlers run by priority, then registration order; any handler may retu
 
 Auth/Profile Actions retain the application's `Arc<Engine>` and source codecs. Constructors do no I/O; installation and maintenance are explicit. `_in` calls borrow one exclusive `DataSession`; batch owns a transaction. Signup and account processes retain sequential partial effects rather than acquiring an outer transaction. [SQL tests](../tests/main/actions.rs) cover these differences.
 
-Signup hook jobs own separate request/response values and run without the parent awaiting completion. The application binds Hooks after build and drains or shuts them down. The email package owns `email-send` and transport creation. A shared auth-update result can make that event skip; this is an [open source question](source-behavior.md#open-owner-questions), not a reason to clear the response in the session adapter.
+Signup hook jobs own separate request/response values and run without the parent awaiting completion. The application binds Hooks after build and drains or shuts them down. The email package owns `email-send` and transport creation. A shared auth-update result can make that event skip; [G46 resolves this behaviour](source-behavior.md#owner-decisions-g46) by following the original source, unchanged.
 
 ## Native work and public presentation
 

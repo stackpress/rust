@@ -667,7 +667,7 @@
     }
   ],
   "limitations": {
-    "S11-PGLITE": "No PGlite runtime/connector/dummy feature. PostgreSQL SQL vocabulary does not establish an embedded JS execution host.",
+    "S11-PGLITE": "Resolved under G46: PGlite is not required. The standard engines are MySQL, SQLite and PostgreSQL; no PGlite connector is planned.",
     "S11-WHATWG": "No JS/serverless Request/Response/ReadableStream host bridge. Native Request/Response and adapters are the accepted replacement.",
     "JS-MECHANICS": "Flat JS aliases, dynamic imports/classes/callable objects, Node streams/reflection, TS compiler/CJS/ESM/React/Vite/UnoCSS/reset APIs are intentionally not duplicated. Qualified Rust owners and explicit app bindings are used.",
     "NODE-PACKAGING": "No npm package.json writer. Optional supervised non-awaited app callback preserves build.ts:21 timing; bundler/watch/TTY/listener/FS integration is application-owned.",
@@ -675,8 +675,8 @@
     "INSTALLED-TAURI": "No installed desktop/mobile/Tauri acceptance. Native/WASM compile and Chromium execution are separate evidence.",
     "API-MATRIX": "The existing 13-case/mode API checkpoint matrix includes generated Application/Profile/Session management, native-form navigation, persisted consent/token exchange and cancellable relation fetch through its separate stdio host. Its host hard-codes direct registrars and has no injected aggregate seam; the aggregate website has generated Note admin plus a static session seed. Full replay would require a second app transport/generated-management fixture. Current API native/SSR suites run in the compatible workspace; API browser features compile, but those 26 end-to-end cases are not claimed through aggregate.",
     "API-BUILD-HOST": "Aggregate generation/freshness is executed with Note; the existing API checkpoint tool demonstrates real built-in API/session schema composition. Complete API client regeneration through the new aggregate build-host consumer is not replayed here.",
-    "EDGE-REPLAY": "Seven accepted source questions remain pinned by owning-crate tests/source. Not every such edge is reinvoked under aggregate registration; aggregate adds no replacement implementation. Session matrix does replay actual account loaders/exports and real email event.",
-    "SOURCE-LICENSE": "MIT package metadata vs Apache LICENSE/README remains an owner question. No original source asset is copied/distributed by this effort.",
-    "SQLITE-TRUNCATE": "Upstream Sqlite.js:404\u2013408 emits rejected TRUNCATE \u2026 CASCADE; Rust aggregate reuses the accepted stackpress-sql SQLite DELETE mapping. This is an accepted lower-crate divergence, pending owner direction."
+    "EDGE-REPLAY": "The seven account/API behaviours are resolved under G46 and pinned by owning-crate tests/source. Not every such edge is reinvoked under aggregate registration; aggregate adds no replacement implementation. Session matrix does replay actual account loaders/exports and real email event.",
+    "SOURCE-LICENSE": "Resolved under G46: owner-owned.",
+    "SQLITE-TRUNCATE": "Resolved under G46: SQLite purge keeps DELETE FROM \"table\", the accepted stackpress-sql mapping. No TRUNCATE or added WHERE 1."
   }
 }

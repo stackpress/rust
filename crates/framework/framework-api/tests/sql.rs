@@ -113,6 +113,77 @@ fn result(res: &Response) -> Json {
     res.result().unwrap().to_json().unwrap()
 }
 
+/// G46 preserves PostgreSQL ILIKE and bound data; both other dialects use supported LIKE.
+#[test]
+fn g46_search_operators_follow_dialect_for_application_and_session() {
+    let application = ApplicationStore::new("");
+    let session = SessionStore::new("");
+    let search = StoreQuery {
+        q: Some("A LIKE B".into()),
+        ..Default::default()
+    };
+    let like = StoreQuery {
+        like: record(json!({"id":"A LIKE B"})),
+        ..Default::default()
+    };
+    for (dialect, operator, excluded) in [
+        (DialectId::Sqlite, " LIKE ", " ILIKE "),
+        (DialectId::Postgres, " ILIKE ", " LIKE "),
+        (DialectId::Mysql, " LIKE ", " ILIKE "),
+    ] {
+        for statement in [
+            application.select(&search, dialect).unwrap(),
+            application.select(&like, dialect).unwrap(),
+            session.select(&like, dialect).unwrap(),
+        ] {
+            let query = statement.render(dialect).unwrap();
+            assert!(
+                query.sql().contains(operator),
+                "{dialect:?}: {}",
+                query.sql()
+            );
+            assert!(
+                !query.sql().contains(excluded),
+                "{dialect:?}: {}",
+                query.sql()
+            );
+            assert!(
+                query
+                    .binds()
+                    .contains(&stackpress_sql::SqlValue::Text("%A LIKE B%".into()))
+            );
+        }
+    }
+}
+
+/// Actual SQLite q/like reads and registered search events now match ASCII case-insensitively.
+#[tokio::test]
+async fn g46_sqlite_ascii_searches_execute_for_application_and_session() {
+    let f = Fixture::seeded().await;
+    let query = StoreQuery {
+        q: Some("eXaMpLe".into()),
+        ..Default::default()
+    };
+    assert_eq!(f.app.find_all(&query).await.unwrap()[0]["id"], "a");
+    assert_eq!(f.app.count(&query).await.unwrap(), 1);
+    let like = StoreQuery {
+        like: record(json!({"name":"eXaMpLe"})),
+        ..Default::default()
+    };
+    assert_eq!(f.app.find_all(&like).await.unwrap()[0]["id"], "a");
+    let like = StoreQuery {
+        like: record(json!({"id":"S"})),
+        ..Default::default()
+    };
+    assert_eq!(f.session.find_all(&like).await.unwrap()[0]["id"], "s");
+    assert_eq!(f.session.count(&like).await.unwrap(), 1);
+    let server = f.server().await;
+    let (_, response) = emit(&server, "application-search", json!({"q":"eXaMpLe"})).await;
+    assert_eq!(response.status().unwrap().code, 200);
+    assert_eq!(result(&response)[0]["id"], "a");
+    f.close().await;
+}
+
 #[test]
 fn source_model_columns_defaults_provider_and_plaintext_codecs() {
     for (schema, names) in [
@@ -348,7 +419,7 @@ async fn source_partial_update_return_differs_from_write_and_remove_restore() {
     f.close().await;
 }
 #[tokio::test]
-async fn source_filters_sort_paging_membership_and_sqlite_ilike_limitation() {
+async fn source_filters_sort_paging_membership_and_sqlite_like_search() {
     let f = Fixture::seeded().await;
     f.app.create(&application("b")).await.unwrap();
     let mut query = StoreQuery {
@@ -375,12 +446,12 @@ async fn source_filters_sort_paging_membership_and_sqlite_ilike_limitation() {
         q: Some("Example".into()),
         ..Default::default()
     };
-    assert!(f.app.find_all(&query).await.is_err());
+    assert_eq!(f.app.find_all(&query).await.unwrap().len(), 2);
     query = StoreQuery {
         like: record(json!({"name":"%"})),
         ..Default::default()
     };
-    assert!(f.app.find_all(&query).await.is_err());
+    assert_eq!(f.app.find_all(&query).await.unwrap().len(), 2);
     query = StoreQuery {
         eq: record(json!({"profile":{"name":"Ada"}})),
         ..Default::default()
@@ -870,7 +941,8 @@ async fn event_request_mutations_defaults_status_guards_and_empty_paths() -> Res
     .await;
     assert_eq!(res.status().unwrap().code, 404);
     let (_, res) = emit(&server, "application-search", json!({"q":"Example"})).await;
-    assert_eq!(res.status().unwrap().code, 500);
+    assert_eq!(res.status().unwrap().code, 200);
+    assert_eq!(result(&res), json!([]));
     for body in [Body::Text("existing".into()), Body::Bytes(Vec::new())] {
         let mut res = Response::new();
         res.set("text/plain", body.clone())?;
@@ -1079,12 +1151,17 @@ async fn javascript_query_numbers_truthiness_and_computed_keys_remain_source_val
     );
     assert!(sql::defaults::query(&record(json!({"take":-1}))).is_err());
     assert!(sql::defaults::query(&record(json!({"take":1.5}))).is_err());
-    // Truthy empty arrays still issue source ILIKE %% (unsupported by SQLite),
-    // while numeric zero and empty text omit search. Session ignores any q value.
-    for q in [json!([]), json!({}), json!(true), json!(1.0)] {
+    // Truthy values retain source coercion: [] searches LIKE %%, while the other strings
+    // match no seeded application. Session ignores any q value, as before G46.
+    for (q, count) in [
+        (json!([]), 1),
+        (json!({}), 0),
+        (json!(true), 0),
+        (json!(1.0), 0),
+    ] {
         let query = sql::defaults::query(&record(json!({"q":q}))).unwrap();
-        assert!(f.app.find_all(&query).await.is_err());
-        assert!(f.session.find_all(&query).await.is_ok());
+        assert_eq!(f.app.find_all(&query).await.unwrap().len(), count);
+        assert_eq!(f.session.find_all(&query).await.unwrap().len(), 1);
     }
     for q in [json!(0.0), json!(false), Json::Null, json!("")] {
         let query = sql::defaults::query(&record(json!({"q":q}))).unwrap();

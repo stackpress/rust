@@ -19,7 +19,7 @@ Select `auth-server` for the native `account` module. Its page handlers use the 
 
 **Returns:** process effects/errors remain on the supplied Response and normal paths continue; native failures use lib Result. `load_account_profile` returns the selected child response. [Event adapters](../../src/account/events.rs) register auth-search/update/create/remove and profile-detail/update/remove explicitly, without selecting access policy, installing tables or adding authorization. They skip existing truthy body/non-200 status/missing Engine, validate required IDs before I/O and return source first-row/null shapes. Remove selects by ID alone.
 
-**Open question — current behaviour follows upstream:** account delete removes credentials but keeps the Profile when the generated profile-remove sees the already-loaded parent body. **Open question — current behaviour follows upstream:** omitted phone on update reaches the source trim error; G44's optional phone ruling applies to signup. See [question evidence](../source-behavior.md#open-owner-questions).
+**Resolved under G46:** account deletion is intended soft delete via @active; the existing account flow retains Profile. Omitted phone on update follows the original source, unchanged; G44's optional phone ruling applies to signup. See [decision evidence](../source-behavior.md#owner-decisions-g46).
 
 ## CSV helper
 

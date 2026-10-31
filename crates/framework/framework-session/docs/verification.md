@@ -6,7 +6,7 @@ Every Rust fence in the README/docs tree is classified and compile-checked as ex
 
 Run `python3 crates/framework/framework-session/docs/check.py` from the checkout through the benchmark recorder. It checks one H1, heading orientation, tagged/classified fences, single blank-line separation, all local paths/heading anchors and the [claim map](claims.json). Every behavior section also links implementation, regression tests or a source oracle for manual review. There are no external web links to probe.
 
-The map checks representative statements and source/test anchors for drift; it cannot prove arbitrary prose. Review exact defaults, mutation/error order, privacy boundaries and [the seven open questions](source-behavior.md#open-owner-questions) against their linked evidence. The checker includes negative controls for omitted example classification, invalid links/anchors and stale claims.
+The map checks representative statements and source/test anchors for drift; it cannot prove arbitrary prose. Review exact defaults, mutation/error order, privacy boundaries and [the ten G46 decisions](source-behavior.md#owner-decisions-g46) against their linked evidence. The checker includes negative controls for omitted example classification, invalid links/anchors and stale claims.
 
 ## Compile exact examples
 

@@ -628,7 +628,9 @@
           "sql_totp_enroll_regenerate_remove_get_and_account_soft_removal"
         ]
       }
-    ]
+    ],
+    "status": "resolved",
+    "decision": "G46"
   },
   {
     "id": "question-sql",
@@ -647,8 +649,38 @@
           "source_scalar_goldens_and_auth_returning_branch",
           "predicates_sort_projection_join_and_maintenance"
         ]
+      },
+      {
+        "path": "crates/framework/framework-session/tests/main/actions.rs",
+        "contains": [
+          "g46_search_operators_follow_dialect_for_profile_and_auth",
+          "g46_sqlite_ascii_searches_execute_for_profile_and_auth"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-api/tests/sql.rs",
+        "contains": [
+          "g46_search_operators_follow_dialect_for_application_and_session",
+          "g46_sqlite_ascii_searches_execute_for_application_and_session"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-session/src/storage/statement.rs",
+        "contains": [
+          "DialectId::Postgres =>",
+          "DialectId::Sqlite | DialectId::Mysql => return Ok(query)"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-api/src/sql/adapter.rs",
+        "contains": [
+          "DialectId::Postgres =>",
+          "DialectId::Sqlite | DialectId::Mysql => return Ok(query)"
+        ]
       }
-    ]
+    ],
+    "status": "resolved",
+    "decision": "G46"
   },
   {
     "id": "question-phone",
@@ -667,7 +699,9 @@
           "phone"
         ]
       }
-    ]
+    ],
+    "status": "resolved",
+    "decision": "G46"
   },
   {
     "id": "question-email",
@@ -687,7 +721,9 @@
           "source_page_csrf_email_render_and_error_boundaries"
         ]
       }
-    ]
+    ],
+    "status": "resolved",
+    "decision": "G46"
   },
   {
     "id": "account-listen-registration",
@@ -722,6 +758,8 @@
           "0 5, 2100 12:iAM"
         ]
       }
-    ]
+    ],
+    "status": "resolved",
+    "decision": "G46"
   }
 ]
