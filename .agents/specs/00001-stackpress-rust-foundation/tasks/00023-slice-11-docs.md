@@ -107,3 +107,9 @@ Store: `/Users/cblanquera/server/projects/stackpress/rust/.agents/resources/buil
 Final scope/link/KB/receipt assertion: 20261030T235343.890812Z-d1335389ae68 (outcome in recorder). 12 prior completed attempts, 4 failed draft checks retained. Prior command wall total 587.02 s; observed Cargo-stage subtotal 324.55 s. These overlap and remain separate; end-to-end elapsed 1328.40 s includes drafting/review/waits.
 
 Stop at docs for coordinator verification. No implementation/test/consumer/manifest/lock/facade/history edits, commits, pushes, installs, GitHub writes, listeners, other-agent messages or later-stage work.
+
+## Coordinator verification
+
+Committed as `831217d` on top of `40da86b` (trial/3 unchanged since). The commit adds only `crates/framework/framework/README.md`, the `docs/` tree and this receipt; no source, test, consumer, manifest or lock change. Reran independently on 2026-10-31: `docs/check.py` (19 pages, 11 fences, 59 claim anchors, 7 negative controls, all links resolve) and `docs/check.py --compile` in a fresh empty target: all 11 fences compiled in external full, headless, facade, browser (SSR/hydrate/CSR) and build-host copies; 10 finite examples executed. Tracked tree unchanged afterwards. Spot review: `source-behavior.md` records all ten owner questions as open with evidence links, frames G43 as source behaviour without hardening advice, and lists the named limits and evidence gaps.
+
+Merged into trial/3 as `7190a70`. Slice 11 (aggregate framework plugin) is complete.
