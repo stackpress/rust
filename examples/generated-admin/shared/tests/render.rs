@@ -105,3 +105,30 @@ fn generated_public_tables_validate_keys_before_rendering() {
     });
     owner.cleanup();
 }
+
+/// The default column uses source DTO identities and retains cells for denied rows.
+#[test]
+fn generated_row_actions_keep_signatures_and_permission_scoped_cells() {
+    use generated_admin_shared::ui;
+    use stackpress_framework_admin::row_actions::RowActions;
+    use std::sync::{Arc, Mutex};
+    let owner = Owner::new();
+    owner.with(|| {
+        let calls = Arc::new(Mutex::new(Vec::new()));
+        let capture = calls.clone();
+        provide_context(RowActions::new("/admin", Callback::new(move |(method, route): (String, String)| {
+            capture.lock().unwrap().push((method, route.clone()));
+            route.ends_with("/t1")
+        })));
+        let make = |id| serde_json::from_value(serde_json::json!({"id":id,"projectId":"p","title":"Task","done":false,"priority":0})).unwrap();
+        let rows = vec![("unrelated-dom-key".into(), make("t1")), ("other-dom-key".into(), make("t2"))];
+        let html = ui::task::table(&rows, "table").unwrap().to_html();
+        assert_eq!(*calls.lock().unwrap(), [("GET".into(),"/admin/task/detail/t1".into()),("GET".into(),"/admin/task/detail/t2".into())]);
+        assert_eq!(html.matches("sp-sticky-right").count(), 3, "header plus every data row");
+        assert_eq!(html.matches("aria-label=\"View details\"").count(), 1);
+        assert!(html.contains("href=\"detail/t1\""));
+        assert!(!html.contains("href=\"detail/t2\""));
+        let _ = ui::pages::table("task", &serde_json::json!({"rows":[{"id":"t1","projectId":"p","title":"Task","done":false,"priority":0}]}), "dispatch").unwrap();
+    });
+    owner.cleanup();
+}

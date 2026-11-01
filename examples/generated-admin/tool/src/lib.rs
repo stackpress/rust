@@ -48,7 +48,7 @@ pub fn definitions(plugin: bool) -> stackpress_framework_schema::SchemaResult<De
         )?;
     }
     for field in [
-        "id", "text", "flag", "zero", "rows", "metadata", "score", "slug",
+        "id", "text", "flag", "zero", "rows", "metadata", "score", "slug", "site",
     ] {
         definitions = definitions.with_field_policy(
             "RoleProof",

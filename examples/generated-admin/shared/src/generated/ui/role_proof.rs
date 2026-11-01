@@ -4,7 +4,7 @@ use stackpress_framework_admin::{Draft, RoleContext};
 use stackpress_framework_schema::{Role, SchemaError, SchemaErrorKind, SchemaResult, UiField};
 /// Decode only approved field descriptors; imports and source positions stay tool-only.
 pub fn descriptors() -> SchemaResult<Vec<UiField>> {
-    serde_json::from_str("[{\"id\":\"RoleProof.id\",\"wire_name\":\"id\",\"label\":\"id\",\"value_type\":{\"value\":{\"kind\":\"String\"},\"multiple\":false,\"choices\":[]},\"required\":true,\"input_required\":true,\"readable\":true,\"writable\":true,\"sensitive\":false,\"nullable\":false,\"default\":\"None\",\"validation\":[],\"filterable\":true,\"searchable\":false,\"sortable\":false,\"roles\":[],\"relation\":null},{\"id\":\"RoleProof.text\",\"wire_name\":\"text\",\"label\":\"text\",\"value_type\":{\"value\":{\"kind\":\"String\"},\"multiple\":false,\"choices\":[]},\"required\":false,\"input_required\":false,\"readable\":true,\"writable\":true,\"sensitive\":false,\"nullable\":true,\"default\":{\"Literal\":\"fixture default\"},\"validation\":[],\"filterable\":true,\"searchable\":false,\"sortable\":false,\"roles\":[{\"role\":\"field\",\"component\":\"stackpress.ui.field.input\",\"props\":{},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"filter\",\"component\":\"stackpress.ui.field.input\",\"props\":{},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"list\",\"component\":\"stackpress.ui.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"span\",\"component\":\"stackpress.ui.field.input\",\"props\":{},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"view\",\"component\":\"stackpress.ui.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":true}],\"relation\":null},{\"id\":\"RoleProof.flag\",\"wire_name\":\"flag\",\"label\":\"flag\",\"value_type\":{\"value\":{\"kind\":\"Boolean\"},\"multiple\":false,\"choices\":[]},\"required\":true,\"input_required\":false,\"readable\":true,\"writable\":true,\"sensitive\":false,\"nullable\":false,\"default\":{\"Literal\":false},\"validation\":[],\"filterable\":false,\"searchable\":false,\"sortable\":false,\"roles\":[{\"role\":\"field\",\"component\":\"stackpress.ui.field.switch\",\"props\":{},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"list\",\"component\":\"stackpress.ui.view.yesno\",\"props\":{},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"view\",\"component\":\"stackpress.ui.view.yesno\",\"props\":{},\"definition_revision\":\"1\",\"available\":true}],\"relation\":null},{\"id\":\"RoleProof.zero\",\"wire_name\":\"zero\",\"label\":\"zero\",\"value_type\":{\"value\":{\"kind\":\"Integer\"},\"multiple\":false,\"choices\":[]},\"required\":true,\"input_required\":false,\"readable\":true,\"writable\":true,\"sensitive\":false,\"nullable\":false,\"default\":{\"Literal\":0},\"validation\":[],\"filterable\":false,\"searchable\":false,\"sortable\":false,\"roles\":[{\"role\":\"field\",\"component\":\"stackpress.ui.field.slider\",\"props\":{\"max\":10,\"min\":0,\"step\":1},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"list\",\"component\":\"stackpress.ui.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"view\",\"component\":\"stackpress.ui.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":true}],\"relation\":null},{\"id\":\"RoleProof.rows\",\"wire_name\":\"rows\",\"label\":\"Rows </script> 🦀\",\"value_type\":{\"value\":{\"kind\":\"String\"},\"multiple\":true,\"choices\":[]},\"required\":false,\"input_required\":false,\"readable\":true,\"writable\":true,\"sensitive\":false,\"nullable\":true,\"default\":\"None\",\"validation\":[],\"filterable\":false,\"searchable\":false,\"sortable\":false,\"roles\":[{\"role\":\"field\",\"component\":\"stackpress.ui.field.stringlist\",\"props\":{\"tags\":false},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"list\",\"component\":\"stackpress.ui.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"span\",\"component\":\"stackpress.ui.field.textlist\",\"props\":{\"tags\":false},\"definition_revision\":\"1\",\"available\":true}],\"relation\":null},{\"id\":\"RoleProof.metadata\",\"wire_name\":\"metadata\",\"label\":\"metadata\",\"value_type\":{\"value\":{\"kind\":\"Object\"},\"multiple\":false,\"choices\":[]},\"required\":false,\"input_required\":false,\"readable\":true,\"writable\":true,\"sensitive\":false,\"nullable\":true,\"default\":\"None\",\"validation\":[],\"filterable\":false,\"searchable\":false,\"sortable\":false,\"roles\":[{\"role\":\"field\",\"component\":\"stackpress.ui.field.metadata\",\"props\":{},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"list\",\"component\":\"stackpress.ui.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":true}],\"relation\":null},{\"id\":\"RoleProof.score\",\"wire_name\":\"score\",\"label\":\"score\",\"value_type\":{\"value\":{\"kind\":\"Integer\"},\"multiple\":false,\"choices\":[]},\"required\":false,\"input_required\":false,\"readable\":true,\"writable\":true,\"sensitive\":false,\"nullable\":true,\"default\":\"None\",\"validation\":[],\"filterable\":false,\"searchable\":false,\"sortable\":false,\"roles\":[{\"role\":\"field\",\"component\":\"stackpress.ui.field.rating\",\"props\":{\"max\":5},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"list\",\"component\":\"stackpress.ui.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":true}],\"relation\":null},{\"id\":\"RoleProof.slug\",\"wire_name\":\"slug\",\"label\":\"slug\",\"value_type\":{\"value\":{\"kind\":\"String\"},\"multiple\":false,\"choices\":[]},\"required\":false,\"input_required\":false,\"readable\":true,\"writable\":true,\"sensitive\":false,\"nullable\":true,\"default\":\"None\",\"validation\":[],\"filterable\":false,\"searchable\":false,\"sortable\":false,\"roles\":[{\"role\":\"field\",\"component\":\"stackpress.ui.field.slug\",\"props\":{},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"list\",\"component\":\"stackpress.ui.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":true}],\"relation\":null}]").map_err(|cause| SchemaError::new(SchemaErrorKind::Codec, "public role descriptor decoding failed").with_cause(cause))
+    serde_json::from_str("[{\"id\":\"RoleProof.id\",\"wire_name\":\"id\",\"label\":\"id\",\"value_type\":{\"value\":{\"kind\":\"String\"},\"multiple\":false,\"choices\":[]},\"required\":true,\"input_required\":true,\"readable\":true,\"writable\":true,\"sensitive\":false,\"nullable\":false,\"default\":\"None\",\"validation\":[],\"filterable\":true,\"searchable\":false,\"sortable\":false,\"roles\":[],\"relation\":null},{\"id\":\"RoleProof.text\",\"wire_name\":\"text\",\"label\":\"text\",\"value_type\":{\"value\":{\"kind\":\"String\"},\"multiple\":false,\"choices\":[]},\"required\":false,\"input_required\":false,\"readable\":true,\"writable\":true,\"sensitive\":false,\"nullable\":true,\"default\":{\"Literal\":\"fixture default\"},\"validation\":[],\"filterable\":true,\"searchable\":false,\"sortable\":false,\"roles\":[{\"role\":\"field\",\"component\":\"stackpress.ui.field.input\",\"props\":{},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"filter\",\"component\":\"stackpress.ui.field.input\",\"props\":{},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"list\",\"component\":\"stackpress.ui.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"span\",\"component\":\"stackpress.ui.field.input\",\"props\":{},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"view\",\"component\":\"stackpress.ui.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":true}],\"relation\":null},{\"id\":\"RoleProof.flag\",\"wire_name\":\"flag\",\"label\":\"flag\",\"value_type\":{\"value\":{\"kind\":\"Boolean\"},\"multiple\":false,\"choices\":[]},\"required\":true,\"input_required\":false,\"readable\":true,\"writable\":true,\"sensitive\":false,\"nullable\":false,\"default\":{\"Literal\":false},\"validation\":[],\"filterable\":false,\"searchable\":false,\"sortable\":false,\"roles\":[{\"role\":\"field\",\"component\":\"stackpress.ui.field.switch\",\"props\":{},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"list\",\"component\":\"stackpress.ui.view.yesno\",\"props\":{},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"view\",\"component\":\"stackpress.ui.view.yesno\",\"props\":{},\"definition_revision\":\"1\",\"available\":true}],\"relation\":null},{\"id\":\"RoleProof.zero\",\"wire_name\":\"zero\",\"label\":\"zero\",\"value_type\":{\"value\":{\"kind\":\"Integer\"},\"multiple\":false,\"choices\":[]},\"required\":true,\"input_required\":false,\"readable\":true,\"writable\":true,\"sensitive\":false,\"nullable\":false,\"default\":{\"Literal\":0},\"validation\":[],\"filterable\":false,\"searchable\":false,\"sortable\":false,\"roles\":[{\"role\":\"field\",\"component\":\"stackpress.ui.field.slider\",\"props\":{\"max\":10,\"min\":0,\"step\":1},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"list\",\"component\":\"stackpress.ui.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"view\",\"component\":\"stackpress.ui.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":true}],\"relation\":null},{\"id\":\"RoleProof.rows\",\"wire_name\":\"rows\",\"label\":\"Rows </script> 🦀\",\"value_type\":{\"value\":{\"kind\":\"String\"},\"multiple\":true,\"choices\":[]},\"required\":false,\"input_required\":false,\"readable\":true,\"writable\":true,\"sensitive\":false,\"nullable\":true,\"default\":\"None\",\"validation\":[],\"filterable\":false,\"searchable\":false,\"sortable\":false,\"roles\":[{\"role\":\"field\",\"component\":\"stackpress.ui.field.stringlist\",\"props\":{\"tags\":false},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"list\",\"component\":\"stackpress.ui.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"span\",\"component\":\"stackpress.ui.field.textlist\",\"props\":{\"tags\":false},\"definition_revision\":\"1\",\"available\":true}],\"relation\":null},{\"id\":\"RoleProof.metadata\",\"wire_name\":\"metadata\",\"label\":\"metadata\",\"value_type\":{\"value\":{\"kind\":\"Object\"},\"multiple\":false,\"choices\":[]},\"required\":false,\"input_required\":false,\"readable\":true,\"writable\":true,\"sensitive\":false,\"nullable\":true,\"default\":\"None\",\"validation\":[],\"filterable\":false,\"searchable\":false,\"sortable\":false,\"roles\":[{\"role\":\"field\",\"component\":\"stackpress.ui.field.metadata\",\"props\":{},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"list\",\"component\":\"stackpress.ui.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":true}],\"relation\":null},{\"id\":\"RoleProof.score\",\"wire_name\":\"score\",\"label\":\"score\",\"value_type\":{\"value\":{\"kind\":\"Integer\"},\"multiple\":false,\"choices\":[]},\"required\":false,\"input_required\":false,\"readable\":true,\"writable\":true,\"sensitive\":false,\"nullable\":true,\"default\":\"None\",\"validation\":[],\"filterable\":false,\"searchable\":false,\"sortable\":false,\"roles\":[{\"role\":\"field\",\"component\":\"stackpress.ui.field.rating\",\"props\":{\"max\":5},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"list\",\"component\":\"stackpress.ui.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":true}],\"relation\":null},{\"id\":\"RoleProof.slug\",\"wire_name\":\"slug\",\"label\":\"slug\",\"value_type\":{\"value\":{\"kind\":\"String\"},\"multiple\":false,\"choices\":[]},\"required\":false,\"input_required\":false,\"readable\":true,\"writable\":true,\"sensitive\":false,\"nullable\":true,\"default\":\"None\",\"validation\":[],\"filterable\":false,\"searchable\":false,\"sortable\":false,\"roles\":[{\"role\":\"field\",\"component\":\"stackpress.ui.field.slug\",\"props\":{},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"list\",\"component\":\"stackpress.ui.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":true}],\"relation\":null},{\"id\":\"RoleProof.site\",\"wire_name\":\"site\",\"label\":\"site\",\"value_type\":{\"value\":{\"kind\":\"String\"},\"multiple\":false,\"choices\":[]},\"required\":false,\"input_required\":false,\"readable\":true,\"writable\":true,\"sensitive\":false,\"nullable\":true,\"default\":\"None\",\"validation\":[],\"filterable\":false,\"searchable\":false,\"sortable\":false,\"roles\":[{\"role\":\"field\",\"component\":\"stackpress.ui.field.url\",\"props\":{\"input_type\":\"url\"},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"span\",\"component\":\"stackpress.ui.field.url\",\"props\":{\"input_type\":\"url\"},\"definition_revision\":\"1\",\"available\":true}],\"relation\":null}]").map_err(|cause| SchemaError::new(SchemaErrorKind::Codec, "public role descriptor decoding failed").with_cause(cause))
 }
 /// Render the explicitly selected field controls for one caller-owned instance.
 pub fn field(draft: &Draft, instance: &str) -> SchemaResult<AnyView> {
@@ -183,6 +183,31 @@ pub fn field(draft: &Draft, instance: &str) -> SchemaResult<AnyView> {
         };
         controls.push(
             view! { <stackpress_framework_admin::components::SlugField context/> }.into_any(),
+        );
+    }
+    {
+        // This exact field was approved by the app before normalization.
+        let field = fields
+            .iter()
+            .find(|field| field.wire_name == "site")
+            .cloned()
+            .ok_or_else(|| {
+                SchemaError::new(
+                    SchemaErrorKind::Invalid,
+                    "missing generated field descriptor",
+                )
+            })?;
+        let value = draft.get("site").ok_or_else(|| {
+            SchemaError::new(SchemaErrorKind::Invalid, "missing generated draft field")
+        })?;
+        let context = RoleContext {
+            id: format!("{}-field-{}", instance, "site"),
+            field,
+            role: Role::Field,
+            value,
+        };
+        controls.push(
+            view! { <stackpress_framework_admin::components::TextField context/> }.into_any(),
         );
     }
     Ok(controls.collect_view().into_any())
@@ -449,6 +474,31 @@ pub fn span(draft: &Draft, instance: &str) -> SchemaResult<AnyView> {
         };
         controls.push(
             view! { <stackpress_framework_admin::components::TextListField context/> }.into_any(),
+        );
+    }
+    {
+        // This exact field was approved by the app before normalization.
+        let field = fields
+            .iter()
+            .find(|field| field.wire_name == "site")
+            .cloned()
+            .ok_or_else(|| {
+                SchemaError::new(
+                    SchemaErrorKind::Invalid,
+                    "missing generated field descriptor",
+                )
+            })?;
+        let value = draft.get("site").ok_or_else(|| {
+            SchemaError::new(SchemaErrorKind::Invalid, "missing generated draft field")
+        })?;
+        let context = RoleContext {
+            id: format!("{}-span-{}", instance, "site"),
+            field,
+            role: Role::Span,
+            value,
+        };
+        controls.push(
+            view! { <stackpress_framework_admin::components::TextField context/> }.into_any(),
         );
     }
     Ok(controls.collect_view().into_any())
@@ -749,7 +799,9 @@ pub fn table(
             .into_iter()
             .map(|control| view! { <TableCell>{control}</TableCell> })
             .collect_view();
-        rendered.push(view! { <TableRow row_key=key.clone()>{cells}</TableRow> });
+        let action =
+            stackpress_framework_admin::row_actions::detail_action("role_proof", &["id"], &seed);
+        rendered.push(view! { <TableRow row_key=key.clone()>{cells}<TableCell sticky_right=true>{action}</TableCell></TableRow> });
     }
     let headers = vec![
         view! { <TableHeader>{"text"}</TableHeader> },
@@ -759,6 +811,7 @@ pub fn table(
         view! { <TableHeader>{"metadata"}</TableHeader> },
         view! { <TableHeader>{"score"}</TableHeader> },
         view! { <TableHeader>{"slug"}</TableHeader> },
+        view! { <TableHeader sticky=true sticky_right=true>{().into_any()}</TableHeader> },
     ]
     .collect_view();
     let rows = rendered.collect_view();

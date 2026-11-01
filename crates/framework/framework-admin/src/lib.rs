@@ -18,6 +18,7 @@ pub use draft::{Draft, RoleContext};
 pub mod codegen;
 pub mod components;
 pub mod pages;
+pub mod row_actions;
 pub mod search;
 
 pub mod presentation;

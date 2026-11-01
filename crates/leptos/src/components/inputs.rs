@@ -204,7 +204,8 @@ pub fn Checkbox(
     on:change=move |event| checked.set(event_target_checked(&event))/> }
 }
 
-/// Native controlled boolean, retaining false as an explicit value.
+/// Frui-style square toggle over a native controlled checkbox, retaining explicit false.
+/// Labels, keyboard activation, disabled/required behavior and FormData remain native.
 #[component]
 pub fn Switch(
     /// Unique native identity; pair with FieldControl's for_id.
@@ -232,11 +233,11 @@ pub fn Switch(
     value: String,
 ) -> impl IntoView {
     // Native checkbox events preserve Space-key activation and form semantics.
-    view! { <input class="sp-check" type="checkbox" role="switch" aria-checked=move || checked.get().to_string() id=id name=name value=value
+    view! { <label class="sp-switch"><input class="sp-switch-control" type="checkbox" role="switch" aria-checked=move || checked.get().to_string() id=id name=name value=value
     checked=move || checked.get() prop:checked=move || checked.get()
     aria-describedby=move || described_by.get() aria-invalid=move || invalid.get().to_string()
     required=move || required.get() disabled=move || disabled.get()
-    on:change=move |event| checked.set(event_target_checked(&event))/> }
+    on:change=move |event| checked.set(event_target_checked(&event))/><span class="sp-switch-track" aria-hidden="true"></span></label> }
 }
 
 /// Native radio within a caller-labelled fieldset; identical names form one group.

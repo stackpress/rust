@@ -247,3 +247,34 @@ fn pinned_leptos_raw_text_characterization() {
     assert!(!title.contains("<script>globalThis.pwned"));
     assert!(title.contains("&lt;/title&gt;"));
 }
+
+/// Additive native types and switch decoration retain the existing control contract.
+#[test]
+fn typed_input_switch_and_sticky_cells_keep_native_semantics() {
+    let owner = Owner::new();
+    owner.with(|| {
+        let value = RwSignal::new("https://example.invalid".to_owned());
+        let html = view! {<Input id="default" name="default" value/>}.to_html();
+        assert!(html.contains("type=\"text\""));
+        for kind in ["url", "email", "search", "number"] {
+            let html = view! {<Input id="typed" name="typed" value input_type=kind/>}.to_html();
+            assert!(html.contains(&format!("type=\"{kind}\"")));
+        }
+        let checked = RwSignal::new(true);
+        let html = view! {<Switch id="toggle" name="toggle" checked disabled=true required=true value="1".to_owned() described_by="toggle-help"/>}.to_html();
+        for needle in ["<label class=\"sp-switch\"", "sp-switch-control", "sp-switch-track", "type=\"checkbox\"", "role=\"switch\"", "aria-checked=\"true\"", "aria-describedby=\"toggle-help\"", "disabled", "required", "value=\"1\""] { assert!(html.contains(needle), "{html}"); }
+        let html = view! {<TableHeader sticky=true sticky_right=true>{().into_any()}</TableHeader><TableCell sticky_right=true>{().into_any()}</TableCell>}.to_html();
+        assert_eq!(html.matches("sp-sticky-right").count(), 2);
+        assert!(!html.contains("> </th>"), "empty heading has no hydration text space");
+    });
+    owner.cleanup();
+}
+
+/// Ordinary controls and table slots work with their documented opt-in bundles alone.
+#[test]
+fn component_styles_belong_to_their_documented_bundles() {
+    assert!(CORE_STYLES.contains(".sp-switch-control:checked + .sp-switch-track"));
+    assert!(CORE_STYLES.contains(".sp-switch-control:focus-visible"));
+    assert!(ADVANCED_STYLES.contains(".sp-sticky-right"));
+    assert!(ADVANCED_STYLES.contains(".sp-row-detail"));
+}

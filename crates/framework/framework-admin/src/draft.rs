@@ -19,7 +19,8 @@ impl Draft {
     /// Create controls from public descriptors, dropping sensitive and host-only fields.
     ///
     /// Missing field values use approved literal defaults; explicit null is never defaulted.
-    /// Filters start missing and do not apply creation defaults.
+    /// Filters start missing and do not apply creation defaults. Rendered Boolean filters
+    /// subsequently mirror the source hidden zero through their control adapter.
     /// # Errors
     /// Refuses nonobject, oversized or browser-inexact seed/default JSON and duplicate fields.
     pub fn new(fields: &[UiField], seed: &Value, role: Role) -> SchemaResult<Self> {

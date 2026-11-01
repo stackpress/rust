@@ -25,6 +25,8 @@ pub(super) fn source(
         return Ok(String::new());
     }
     let public = public_type(&model.id)?;
+    let module = stackpress_framework_schema::codegen::portable_name(&model.id)?;
+    let identity: Vec<_> = model.key.iter().map(String::as_str).collect();
     let mut source = format!(
         "/// Render at most 100 public rows through selected list adapters.\n/// Caller-supplied unique nonempty keys (at most 128 bytes) retain row identity.\n/// Invalid row identities fail before constructing any controls.\npub fn table(rows: &[(String,super::super::contracts::public::{public})], instance: &str) -> SchemaResult<AnyView> {{\nuse stackpress_leptos::components::{{Table,TableHead,TableGroup,TableRow,TableHeader,TableCell}};\nlet mut keys = std::collections::BTreeSet::new();\nif rows.len() > 100 || rows.iter().any(|(key,_)| key.is_empty() || key.len() > 128 || !keys.insert(key)) {{ return Err(SchemaError::new(SchemaErrorKind::Invalid, \"invalid public table row identities\")); }}\nlet fields = descriptors()?;\nlet mut rendered = Vec::new();\nfor (key,value) in rows {{\nlet seed = stackpress_framework_schema::to_bounded_value(value)?;\nlet draft = Draft::new(&fields,&seed,Role::List)?;\n// Hex encoding is injective and cannot collide with role/field delimiters.\nlet identity: String = key.as_bytes().iter().map(|byte| format!(\"{{byte:02x}}\")).collect();\nlet instance = format!(\"{{instance}}-row-{{identity}}\");\nlet mut controls = Vec::new();\n"
     );
@@ -37,7 +39,15 @@ pub(super) fn source(
             false,
         )?);
     }
-    source.push_str("let cells = controls.into_iter().map(|control| view! { <TableCell>{control}</TableCell> }).collect_view();\nrendered.push(view! { <TableRow row_key=key.clone()>{cells}</TableRow> });\n}\nlet headers = vec![\n");
+    source.push_str("let cells = controls.into_iter().map(|control| view! { <TableCell>{control}</TableCell> }).collect_view();\n");
+    if !identity.is_empty() {
+        source.push_str(&format!("let action=stackpress_framework_admin::row_actions::detail_action({module:?},&{identity:?},&seed);\nrendered.push(view! {{ <TableRow row_key=key.clone()>{{cells}}<TableCell sticky_right=true>{{action}}</TableCell></TableRow> }});\n"));
+    } else {
+        source.push_str(
+            "rendered.push(view! { <TableRow row_key=key.clone()>{cells}</TableRow> });\n",
+        );
+    }
+    source.push_str("}\nlet headers = vec![\n");
     for (field, binding) in selected {
         let label = binding
             .props
@@ -47,6 +57,12 @@ pub(super) fn source(
         source.push_str(&format!(
             "view! {{ <TableHeader>{{{label:?}}}</TableHeader> }},\n"
         ));
+    }
+    if !identity.is_empty() {
+        // Erased unit preserves the source's empty heading without a hydration text space.
+        source.push_str(
+            "view! { <TableHeader sticky=true sticky_right=true>{().into_any()}</TableHeader> },\n",
+        );
     }
     source.push_str(&format!("].collect_view();\nlet rows = rendered.collect_view();\nOk(view! {{ <Table caption={:?}><TableHead><TableRow row_key=\"header\">{{headers}}</TableRow></TableHead><TableGroup>{{rows}}</TableGroup></Table> }}.into_any())\n}}\n",model.label));
     Ok(source)

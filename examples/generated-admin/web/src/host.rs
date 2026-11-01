@@ -34,6 +34,8 @@ impl OperationPolicy for FixturePolicy {
     fn authorize(&self, _: &'static str, operation: Operation, request: &Request) -> Result<()> {
         match request.headers.get("x-admin-actor") {
             Some("editor") => Ok(()),
+            // This finite UI fixture can search rows while detail visibility remains denied.
+            Some("list-only") if operation == Operation::Search => Ok(()),
             Some("reader")
                 if matches!(
                     operation,

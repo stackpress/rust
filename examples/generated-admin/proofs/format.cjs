@@ -1,5 +1,6 @@
 // Scenario assertions are separate from the shared listener-free HTTP/browser harness.
 const assert = require('node:assert/strict');
+const booleanFilter = require('./boolean_filter.cjs');
 module.exports = async function flow(h, page) {
   const { config, calls, errors, unexpected, releaseBoot, native,
     url, frame, snapshot, draft, status, settled, go, click, picture } = h;
@@ -160,7 +161,7 @@ module.exports = async function flow(h, page) {
   await page.getByRole('button',{name:'Search',exact:true}).click();await settled(page);
   zeroLink=await page.locator('#search-deep-link').getAttribute('href');
   assert.equal(JSON.parse(new URL(zeroLink,'https://admin.invalid').searchParams.get('state')).filters.priority,0,'a native edit at displayed zero supplies a concrete value');
-  await page.locator('#admin-search-filter-done-presence').selectOption('value');
+  await booleanFilter(page,'admin-search-filter-done','done');
   await page.locator('#admin-search-filter-priority-presence').selectOption('value');
   await page.locator('#admin-limit').selectOption('1');
   await page.getByRole('button',{name:'Search',exact:true}).click();await settled(page);

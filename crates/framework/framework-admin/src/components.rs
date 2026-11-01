@@ -58,6 +58,12 @@ fn text_signal(context: &RoleContext) -> RwSignal<String> {
 
 /// Explicit input presence selector; clearing a text box remains a supplied empty string.
 fn presence(context: &RoleContext) -> AnyView {
+    // Source Boolean filters submit hidden zero plus the checked control, without a selector.
+    if context.role == stackpress_framework_schema::Role::Filter
+        && context.field.value_type.value == ValueType::Boolean
+    {
+        return ().into_any();
+    }
     let patch = use_context::<crate::pages::EditorAction>()
         .is_some_and(|action| action.0 == crate::pages::Action::Update);
     let omission = context.role == stackpress_framework_schema::Role::Filter || patch;
@@ -152,6 +158,7 @@ pub fn TextField(
     let value = text_signal(&context);
     let draft = context.value;
     let control = view! { <Input id=context.id.clone() name=context.field.wire_name.clone() value
+    input_type=context.text_prop("input_type", "text")
     described_by=format!("{}-help {}-error", context.id, context.id)
     required=context.input_required() disabled=context.bool_prop("disabled", false)
     read_only=context.bool_prop("read_only", false) placeholder=context.text_prop("placeholder", "")
@@ -177,6 +184,16 @@ pub fn TextareaField(
 
 /// Shared exact Boolean bridge for checkbox and switch presentation.
 fn boolean(context: RoleContext, switch: bool) -> AnyView {
+    let filter = context.role == stackpress_framework_schema::Role::Filter;
+    // The typed draft mirrors the source hidden zero when the initial switch is unchecked.
+    if filter
+        && !matches!(
+            context.value.get_untracked(),
+            FieldInput::Value(Value::Bool(_))
+        )
+    {
+        context.value.set(FieldInput::Value(Value::Bool(false)));
+    }
     let checked = RwSignal::new(matches!(
         context.value.get_untracked(),
         FieldInput::Value(Value::Bool(true))
@@ -199,9 +216,15 @@ fn boolean(context: RoleContext, switch: bool) -> AnyView {
     let disabled = context.bool_prop("disabled", false);
     let required = context.input_required();
     let control = if switch {
-        view! { <Switch id name checked described_by=description disabled required on:change=move |event| value.set(FieldInput::Value(Value::Bool(event_target_checked(&event))))/> }.into_any()
+        view! { <Switch id name checked described_by=description disabled required value=if filter { "1" } else { "on" }.to_owned() on:change=move |event| value.set(FieldInput::Value(Value::Bool(event_target_checked(&event))))/> }.into_any()
     } else {
-        view! { <Checkbox id name checked described_by=description disabled required on:change=move |event| value.set(FieldInput::Value(Value::Bool(event_target_checked(&event))))/> }.into_any()
+        view! { <Checkbox id name checked described_by=description disabled required value=if filter { "1" } else { "on" }.to_owned() on:change=move |event| value.set(FieldInput::Value(Value::Bool(event_target_checked(&event))))/> }.into_any()
+    };
+    let control = if filter {
+        let name = context.field.wire_name.clone();
+        view! { <input type="hidden" name=name value="0"/>{control} }.into_any()
+    } else {
+        control
     };
     frame(context, control)
 }

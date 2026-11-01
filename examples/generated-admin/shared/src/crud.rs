@@ -66,6 +66,25 @@ fn contents(snapshot: Snapshot, transport: Callback<Command>) -> SchemaResult<An
     provide_context(stackpress_framework_admin::pages::FormIssues(fields));
     let versions = crate::write_version::WriteVersions::default();
     let snapshot = StoredValue::new(snapshot);
+    // Reuse this host's visible Detail grant and mount; protected handlers recheck policy.
+    let can = Callback::new(move |(method, _route): (String, String)| {
+        method == "GET" && snapshot.get_value().allowed.contains(&Action::Detail)
+    });
+    let href = Callback::new(
+        move |row: stackpress_framework_admin::row_actions::RowDetail| {
+            let mut seed = snapshot.get_value();
+            seed.spec.module = row.model;
+            link(&seed, Action::Detail, &row.key)
+        },
+    );
+    provide_context(
+        stackpress_framework_admin::row_actions::RowActions::new(
+            // The validated Rust mount includes the separator; the source base does not.
+            config.mount.strip_suffix('/').unwrap_or(&config.mount),
+            can,
+        )
+        .with_href(href),
+    );
     let current = snapshot.get_value();
     provide_context(stackpress_framework_admin::pages::LockedFields(
         current

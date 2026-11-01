@@ -109,7 +109,7 @@ pub fn Button(
     }
 }
 
-/// Controlled text input; value changes belong to the supplied root-owned signal.
+/// Controlled native input; value changes belong to the supplied root-owned signal.
 ///
 /// # Examples
 /// ```
@@ -128,6 +128,9 @@ pub fn Button(
 /// ```
 #[component]
 pub fn Input(
+    /// Native field type, forwarded as supplied; ordinary callers retain text inputs.
+    #[prop(default = "text".to_owned(), into)]
+    input_type: String,
     /// Label target and unique native DOM identifier.
     #[prop(into)]
     id: String,
@@ -156,7 +159,7 @@ pub fn Input(
     placeholder: String,
 ) -> impl IntoView {
     // Attribute seeds SSR while property keeps subsequent browser edits controlled.
-    view! { <input class="sp-input" type="text" id=id name=name
+    view! { <input class="sp-input" type=input_type id=id name=name
     value=move || value.get() prop:value=move || value.get()
     aria-describedby=move || described_by.get() aria-invalid=move || invalid.get().to_string()
     disabled=move || disabled.get() required=move || required.get() readonly=move || read_only.get() placeholder=placeholder

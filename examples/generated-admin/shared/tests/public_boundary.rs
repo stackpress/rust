@@ -50,7 +50,7 @@ fn normalized_boundary_defaults_and_exact_supplied_values() {
     let public = serde_json::to_value(stored.project().unwrap()).unwrap();
     assert_eq!(
         public,
-        json!({"id":"proof","text":"fixture default","flag":false,"zero":0,"rows":null,"metadata":null,"score":null,"slug":null})
+        json!({"id":"proof","text":"fixture default","flag":false,"zero":0,"rows":null,"metadata":null,"score":null,"slug":null,"site":null})
     );
     assert!(!public.to_string().contains("sensitive"));
     for text in [Value::Null, json!(""), json!("supplied")] {

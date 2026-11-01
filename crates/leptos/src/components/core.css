@@ -37,3 +37,89 @@
 
 /* Full text remains accessible when its visual presentation is shortened. */
 .sp-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+
+/* Frui's default square/smooth switch: its transparent checkbox owns native interaction. */
+.sp-switch, .sp-field .sp-switch {
+  display:inline-block;
+  position:relative;
+  margin:0;
+  min-height:25px;
+}
+.sp-switch-track {
+  display:inline-block;
+  font-weight:normal;
+  line-height:20px;
+  margin:0 4px;
+  min-height:24px;
+  min-width:18px;
+  position:relative;
+  z-index:11;
+}
+.sp-switch-track::before {
+  box-shadow:inset 0 2px 2px 0 rgba(0,0,0,.2);
+  font-family:Arial,Helvetica,sans-serif;
+  border:1px solid #ccc;
+  display:inline-block;
+  font-weight:bold;
+  height:20px;
+  margin-right:8px;
+  overflow:hidden;
+  padding:0;
+  position:relative;
+  text-align:left;
+  text-indent:-19px;
+  top:5px;
+  transition:text-indent .4s ease;
+  width:52px;
+  background:#f5f5f5;
+  color:#999;
+  content:"\00a0\2713\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\2716";
+  font-size:13px;
+}
+.sp-switch-track::after {
+  box-shadow:0 1px 1px 1px rgba(0,0,0,.3);
+  font-family:Arial,Helvetica,sans-serif;
+  font-size:10px;
+  font-weight:lighter;
+  left:-3px;
+  line-height:20px;
+  height:22px;
+  padding:0;
+  position:absolute;
+  text-align:center;
+  text-shadow:-1px 0 0 rgba(0,0,0,.15);
+  top:4px;
+  transition:left .4s ease;
+  width:22px;
+  content:' ';
+  background:#fff;
+  color:#d5d5d5;
+}
+.sp-switch-control {
+  cursor:pointer;
+  height:25px;
+  opacity:0;
+  position:absolute;
+  width:55px;
+  z-index:12;
+  margin:0;
+}
+.sp-switch-control:checked + .sp-switch-track::before {
+  text-indent:9px;
+  background:#8ab2c9;
+  border-color:#468fcc;
+  color:#fff;
+}
+.sp-switch-control:checked + .sp-switch-track::after {
+  left:34px;
+  color:#8ab2c9;
+}
+/* The visual track follows the existing native focus state, including keyboard-only focus. */
+.sp-switch-control:focus-visible + .sp-switch-track::before {
+  outline:3px solid var(--sp-fg,currentColor);
+  outline-offset:4px;
+}
+/* Preserve the library root's reduced-motion behavior for the decorative pseudo-elements. */
+@media (prefers-reduced-motion: reduce) {
+  .sp-switch-track::before, .sp-switch-track::after { transition: none; }
+}

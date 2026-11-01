@@ -118,6 +118,9 @@ pub fn CoreGallery(
             <FieldControl for_id="core-text" label="Text" help="Verbatim text, including IME" error=move || if invalid.get() { "Enter text" } else { "" }.to_owned()>
                 <Input id="core-text" name="text" value=text disabled required=true invalid described_by="core-text-help core-text-error"/>
             </FieldControl>
+            <FieldControl for_id="core-url" label="Website" help="Native URL input">
+                <Input id="core-url" name="website" input_type="url" value=RwSignal::new("https://example.invalid".to_owned()) disabled described_by="core-url-help core-url-error"/>
+            </FieldControl>
             <FieldControl for_id="core-notes" label="Notes" help="Multiline draft">
                 <Textarea id="core-notes" name="notes" value=notes disabled required=true described_by="core-notes-help core-notes-error"/>
             </FieldControl>

@@ -1,0 +1,6 @@
+Frui default switch appearance adapted to the native Leptos checkbox.
+Read-only source commit 096fd14580f0f49b6e159fa0aa5ae2a5bce8fb0e.
+Source files: src/form/Switch.tsx and styles/form/switch.css.
+Default square/checkex/smooth/default-colour presentation only; sp-prefixed selectors
+retain the existing native focus semantics and provide the visible focus track.
+Source licence is reproduced in LICENSE.

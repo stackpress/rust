@@ -22,7 +22,7 @@ pub struct Input {
     /// Buffered HTTP path/query, independent of authority headers.
     #[serde(default = "path")]
     pub path: String,
-    /// Explicit finite fixture principal: editor/reader/unknown.
+    /// Explicit finite fixture principal: editor/reader/list-only/unknown.
     pub actor: String,
     /// Native incoming headers, preserving the real CSRF check.
     #[serde(default)]

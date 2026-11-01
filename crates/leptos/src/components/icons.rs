@@ -4,6 +4,8 @@ use leptos::prelude::*;
 /// Closed geometry inventory, independent of the consuming control's semantics.
 #[derive(Clone, Copy)]
 pub(super) enum IconKind {
+    /// Right-pointing chevron: follow a row's detail link.
+    ChevronRight,
     /// Upward arrow: move an existing row earlier.
     ArrowUp,
     /// Downward arrow: move an existing row later.
@@ -25,6 +27,7 @@ pub(super) fn icon(kind: IconKind) -> AnyView {
     // Keep primitive attributes identical to the pinned Lucide masters. No raw HTML,
     // dynamic paths, resource references or external icon font enters this renderer.
     let geometry = match kind {
+        IconKind::ChevronRight => view! { <path d="m9 18 6-6-6-6"/> }.into_any(),
         IconKind::ArrowUp => view! {
             <path d="m5 12 7-7 7 7"/><path d="M12 19V5"/>
         }
@@ -65,4 +68,10 @@ pub(super) fn icon(kind: IconKind) -> AnyView {
         </svg>
     }
     .into_any()
+}
+
+/// Decorative pinned Lucide chevron; its containing link supplies the accessible name.
+#[component]
+pub fn ChevronRight() -> impl IntoView {
+    icon(IconKind::ChevronRight)
 }
