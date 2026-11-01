@@ -6177,6 +6177,8 @@ dependencies = [
  "stackpress-lib",
  "stackpress-server",
  "stackpress-sql",
+ "stackpress-sql-mysql",
+ "stackpress-sql-postgres",
  "stackpress-sql-sqlite",
  "tokio",
 ]
@@ -6263,6 +6265,8 @@ dependencies = [
  "stackpress-lib",
  "stackpress-server",
  "stackpress-sql",
+ "stackpress-sql-mysql",
+ "stackpress-sql-postgres",
  "stackpress-sql-sqlite",
  "tempfile",
  "time",

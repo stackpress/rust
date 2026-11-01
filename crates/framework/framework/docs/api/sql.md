@@ -59,7 +59,7 @@ pub async fn sqlite_transaction() -> Result<(), Box<dyn std::error::Error + Send
 }
 ```
 
-The [real SQLite lifecycle tests](../../tests/cases/sql.rs) cover command events, rollback, script skips, query output and revision laziness beyond this small transaction. Check the adapter's current constructors when integrating other backends; Postgres/MySQL dialect output is not proof of a live connection.
+The [real SQLite lifecycle tests](../../tests/cases/sql.rs) cover command events, rollback, script skips, query output and revision laziness beyond this small transaction. Check the adapter's current constructors when integrating other backends; Postgres/MySQL dialect output is not proof of a live connection. Separate [session/API live tests](../../../framework-session/docs/live-search.md) now execute direct PostgreSQL source-store ASCII searches; MySQL source installation rejects transactional DDL before search. These do not establish aggregate live command-provider routing.
 
 ## Accepted SQLite divergence
 

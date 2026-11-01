@@ -36,7 +36,7 @@ These describe what the current proof establishes; they do not imply another hos
 | EDGE-REPLAY | Owning source-edge tests remain current, but not every G46 account/API behaviour is reinvoked under aggregate registration. |
 | S11-WHATWG | No JS/serverless Request/Response/ReadableStream bridge. |
 | NODE-PACKAGING | No npm package.json writer; optional non-awaited app callback retains timing and supervision. Actual bundler/HMR/TTY/listener/process/filesystem integration stays app-owned. |
-| LIVE-PROVIDERS | Real finite SQLite and JSON mail do not establish live SMTP/SES/sendmail/Postgres/MySQL, remote acknowledgement or TCP/TLS flush. |
+| LIVE-PROVIDERS | Owning [session/API live tests](../../framework-session/docs/live-search.md) now execute direct PostgreSQL ASCII searches. MySQL connects but source Profile install rejects transactional DDL before search. Neither proves aggregate provider routing, live SMTP/SES/sendmail, remote delivery acknowledgement or TCP/TLS flush. |
 | INSTALLED-TAURI | Native/WASM compilation and Chromium replay do not establish installed desktop/mobile acceptance. |
 | JS-MECHANICS | No duplication of flat JS aliases, dynamic classes/imports, Node streams, TS/CJS/ESM/React/Vite/UnoCSS/reset assets. Qualified Rust owners and explicit bindings apply. |
 

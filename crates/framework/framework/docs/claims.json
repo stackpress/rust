@@ -1120,5 +1120,24 @@
         ]
       }
     ]
+  },
+  {
+    "id": "g46-live-owning-stores",
+    "page": "crates/framework/framework/docs/source-behavior.md",
+    "statement": "now execute direct PostgreSQL ASCII searches",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/tests/live_search.rs",
+        "contains": ["profile.install().await?", "auth.install().await?", "Auth-to-Profile like search"]
+      },
+      {
+        "path": "crates/framework/framework-api/tests/live_search.rs",
+        "contains": ["app.install().await?", "session.install().await?", "Application q/like search", "Session like search"]
+      },
+      {
+        "path": "crates/sql/sql/src/engine.rs",
+        "contains": ["dialect does not support transactional DDL plans"]
+      }
+    ]
   }
 ]

@@ -88,8 +88,10 @@ Source behaviors intentionally retained:
 - G46 keeps ILIKE only on PostgreSQL. SQLite/MySQL use LIKE, relying on SQLite's default
   ASCII case-insensitive matching and MySQL's default _ci collations.
 
-SQLite execution is proved in tests. PostgreSQL/MySQL DDL and insert rendering are checked;
-live backend acceptance and backend-specific JSON semantics are not claimed here. Raw SQL
+SQLite execution is proved in tests. [Live PostgreSQL searches](live-search.md) now execute
+Profile q/like and Auth-to-Profile like with source installation/codecs. MySQL connects but
+Profile install rejects transactional DDL before a search; the opted-in test remains failing.
+Arbitrary collations and backend-specific JSON-query semantics remain unverified. Raw SQL
 identifiers/JSON paths use the existing Rust SQL crate's checked/bound representation,
 a mechanics boundary rather than a new application admission policy. No native resource,
 DB seed, secret or full result becomes a browser snapshot automatically.
