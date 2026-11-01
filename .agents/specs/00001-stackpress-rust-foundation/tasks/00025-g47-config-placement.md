@@ -120,3 +120,9 @@ Standing cap **24 GiB**, guard **23.4 GiB**. Sampled completed-command peak **9.
 | 20261101T102454.554725Z-ee62f577e334 | final receipt exact scope and KB verification | passed (0) | 5.22 | unavailable |
 
 Canonical-layout KB: **0 errors / 28 inherited warnings**. Raw worktree: **146 inherited sibling-path errors / 28 warnings**; exact error/warning delta zero. Receipt links resolve; the deleted file is listed without a broken link. Final audit passed after writing/validation; its completed status and timing are transcribed above. No commits, staging, pushes, installs, listener starts or GitHub writes. Stopped for coordinator verification.
+
+## Coordinator verification
+
+Committed as `591b0e9` on `8115fd4`; 15 files (sql-profile example, its tests and README, typed-config guide, two CLI guides, aggregate getting-started and claims, this receipt). No manifest, lock, license or framework API change. Reviewed `src/config.rs`, both environment files and the `build_application` wiring (shared layer installed before caller layers). Independent fresh-target gate `/private/tmp/g47-verify/run.sh` on 2026-11-01, exit 0: Cargo.lock identical to `8115fd4`; fmt; example clippy -D warnings; example nextest 4 passed / 2 skipped; example doctests; aggregate docs check; both README environments set up and searched as written (develop and build each returned the three canonical rows), scratch databases removed. With the owner's local servers running, the live `stackpress-sql-postgres` and `stackpress-sql-mysql` suites passed (M0/M1/M2 each printed matching `created owned database` / `drop confirmed` pairs).
+
+Merged into trial/3 as `fb43538`.
