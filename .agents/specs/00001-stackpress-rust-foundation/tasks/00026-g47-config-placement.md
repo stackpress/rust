@@ -74,7 +74,7 @@ All exceed the 70% development floor. Server/CLI/aggregate implementation is unc
 
 | Status | File |
 | --- | --- |
-| `A` | [.agents/specs/00001-stackpress-rust-foundation/tasks/00025-g47-config-placement.md](../../../../.agents/specs/00001-stackpress-rust-foundation/tasks/00025-g47-config-placement.md) |
+| `A` | [.agents/specs/00001-stackpress-rust-foundation/tasks/00026-g47-config-placement.md](../../../../.agents/specs/00001-stackpress-rust-foundation/tasks/00026-g47-config-placement.md) |
 | `M` | [crates/framework/framework/docs/claims.json](../../../../crates/framework/framework/docs/claims.json) |
 | `M` | [crates/framework/framework/docs/getting-started.md](../../../../crates/framework/framework/docs/getting-started.md) |
 | `M` | [crates/server/server/docs/guides/typed-config.md](../../../../crates/server/server/docs/guides/typed-config.md) |
@@ -126,3 +126,5 @@ Canonical-layout KB: **0 errors / 28 inherited warnings**. Raw worktree: **146 i
 Committed as `591b0e9` on `8115fd4`; 15 files (sql-profile example, its tests and README, typed-config guide, two CLI guides, aggregate getting-started and claims, this receipt). No manifest, lock, license or framework API change. Reviewed `src/config.rs`, both environment files and the `build_application` wiring (shared layer installed before caller layers). Independent fresh-target gate `/private/tmp/g47-verify/run.sh` on 2026-11-01, exit 0: Cargo.lock identical to `8115fd4`; fmt; example clippy -D warnings; example nextest 4 passed / 2 skipped; example doctests; aggregate docs check; both README environments set up and searched as written (develop and build each returned the three canonical rows), scratch databases removed. With the owner's local servers running, the live `stackpress-sql-postgres` and `stackpress-sql-mysql` suites passed (M0/M1/M2 each printed matching `created owned database` / `drop confirmed` pairs).
 
 Merged into trial/3 as `fb43538`.
+
+Renumbered from 00025 on 2026-11-01 to avoid colliding with the concurrent 00025 template-engine task records.
