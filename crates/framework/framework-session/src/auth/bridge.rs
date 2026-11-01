@@ -86,12 +86,18 @@ pub(crate) fn result(res: &Response) -> Result<Value> {
         .transpose()
         .map(|value| value.unwrap_or(Value::Null))
 }
-/// JavaScript ctx.resolve supplies a fresh request/response; Rust explicitly owns both.
-pub(crate) async fn resolve(inv: &Invocation<'_>, event: &str, data: Record) -> Result<Response> {
+/// Construct fresh nested-event input with ordered, rich source values and Nest budgets.
+/// Keep conversion at invocation/poll time so hook failures remain supervised outcomes.
+pub(crate) fn request(data: Record) -> Result<Request> {
     let mut req = Request::new();
     for (key, value) in data {
         set(&mut req, &key, value)?;
     }
+    Ok(req)
+}
+/// JavaScript ctx.resolve supplies a fresh request/response; Rust explicitly owns both.
+pub(crate) async fn resolve(inv: &Invocation<'_>, event: &str, data: Record) -> Result<Response> {
+    let mut req = request(data)?;
     let mut res = Response::new();
     inv.emit(event, &mut req, &mut res).await?;
     Ok(res)

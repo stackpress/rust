@@ -15,17 +15,28 @@ path = "tests/main.rs"
 default = []
 native = ["dep:stackpress-framework-session", "stackpress-framework-schema/providers"]
 sql = ["native", "stackpress-framework-session/sql", "dep:stackpress-framework-sql", "dep:stackpress-sql"]
-codegen = ["native", "stackpress-framework-schema/codegen", "dep:stackpress-idea-parser"]
+codegen = ["native", "stackpress-framework-schema/codegen", "dep:stackpress-idea-parser", "dep:stackpress-framework-admin", "stackpress-framework-admin/codegen", "stackpress-framework-admin/format"]
+ui = ["dep:leptos", "dep:stackpress-leptos", "dep:stackpress-framework-admin", "stackpress-framework-admin/format", "dep:stackpress-framework-view"]
+ui-ssr = ["ui", "dep:chrono", "dep:stackpress-framework-csrf", "leptos/ssr", "stackpress-leptos/ssr", "stackpress-framework-admin/ssr", "dep:stackpress-framework-view"]
+ui-hydrate = ["ui", "leptos/hydrate", "stackpress-leptos/hydrate", "stackpress-framework-admin/hydrate"]
+ui-csr = ["ui", "leptos/csr", "stackpress-leptos/csr", "stackpress-framework-admin/csr"]
 
 [dependencies]
 stackpress-lib = { path = "../../lib" }
-stackpress-server = { path = "../../server/server" }
+
 stackpress-framework-schema = { path = "../framework-schema" }
 serde = { version = "=1.0.229", features = ["derive"] }
 serde_json = "=1.0.154"
-reqwest = { version = "=0.13.4", default-features = false, features = ["rustls"] }
+leptos = { version = "=0.8.22", default-features = false, optional = true }
+stackpress-leptos = { path = "../../leptos", features = ["format"], optional = true }
+stackpress-framework-admin = { path = "../framework-admin", optional = true }
+stackpress-framework-view = { path = "../framework-view", features = ["preferences"], optional = true }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+stackpress-server = { path = "../../server/server" }
+chrono = { version = "=0.4.45", default-features = false, features = ["clock"], optional = true }
+stackpress-framework-csrf = { path = "../framework-csrf", optional = true }
+reqwest = { version = "=0.13.4", default-features = false, features = ["rustls"] }
 stackpress-framework-session = { path = "../framework-session", features = ["native"], optional = true }
 stackpress-framework-sql = { path = "../framework-sql", optional = true }
 stackpress-sql = { path = "../../sql/sql", optional = true }

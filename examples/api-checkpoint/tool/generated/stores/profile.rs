@@ -10,7 +10,7 @@ use stackpress_framework_sql::{
 use stackpress_sql::{Insert, Row, Select, TableDefinition};
 const _: () = assert!(stackpress_framework_sql::CONTRACT_REVISION == 1);
 /// Shared normalized schema identity.
-pub const FINGERPRINT: &str = "45c8b89edfac48dc1ee02ca2f8099a523f38217fd20ebd1f8bbf9708a21ec7b3";
+pub const FINGERPRINT: &str = "a4c323edabb195fecd5f2bb32df8c98814638a6e19a4e21a873bb06f4cbf499b";
 /// Exact ordered stored codecs.
 pub const COLUMNS: &[StorageColumn] = &[
     StorageColumn {

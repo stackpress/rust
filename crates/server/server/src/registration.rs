@@ -43,6 +43,26 @@ impl StartupContext {
         self.listen(ListenerSpec::exact(event), action)
     }
 
+    /// Register only the literal request hook for source route-phase middleware parity.
+    ///
+    /// Registration, Listen and Route are allowed. Equal-priority Route hooks follow
+    /// earlier Listen hooks. The label records the actual startup phase; normal
+    /// plugin and caller provenance is retained. This does not reopen general operations.
+    ///
+    /// # Errors
+    /// Rejects Config and existing foundation identity/metadata/sequence errors.
+    #[track_caller]
+    pub fn on_request(&mut self, action: impl Handler + 'static) -> Result<ListenerId> {
+        // Only this literal lifecycle hook may be contributed after Listen has closed.
+        if self.stage == StartupStage::Config {
+            return Err(Error::invalid(
+                "request hook registration requires Registration, Listen or Route",
+            ));
+        }
+        let spec = ListenerSpec::exact("request").label(format!("request ({:?})", self.stage));
+        self.events.listen(self.spec(spec), action)
+    }
+
     /// Register an operation at an explicit signed priority.
     ///
     /// # Examples

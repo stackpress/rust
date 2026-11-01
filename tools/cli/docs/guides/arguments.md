@@ -39,5 +39,18 @@ Before emit, supported flags are `-v/--verbose`, `-f/--force`, and `-b/--bootstr
 event, target parsing uses [Lib argv grammar](../../../../crates/lib/docs/api/parsers.md), including
 its own `--` terminator, coercion, positional keys, and short-flag behavior.
 
+## Choose an environment file
+
+Pass the application's `config/develop.json` or `config/build.json` with `-b` before `emit`.
+The path is opened exactly as supplied, relative to the process working directory when relative;
+the CLI does not search for an environment or evaluate a TypeScript/Rust config module.
+
+Shared values and code values belong in the app's `src/config.rs`. The app builder appends that
+shared layer **before** the CLI-supplied ConfigLayers, then any explicit app overrides. The
+precedence is plugin section defaults → shared layer → `-b` file → explicit app code overrides.
+JSON cannot hold code values; keep templates and computed/environment-derived values in
+`src/config.rs`, using the existing typed APIs for executable bindings. See [application composition](application-binary.md) and the
+[sql-profile commands](../../../../examples/sql-profile/README.md#where-configuration-goes).
+
 You can now distinguish operator intent from operation data. See [Terminal
 reference](../api/terminal.md) for exact parser errors and accessors.

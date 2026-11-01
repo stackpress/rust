@@ -5,6 +5,7 @@ use std::collections::BTreeMap;
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value};
 use stackpress_framework_schema::Input;
+#[cfg(not(target_arch = "wasm32"))]
 use stackpress_lib::Result;
 
 /// The source's public, application and persisted API-session adapters.
@@ -51,7 +52,7 @@ pub struct ApiEndpoint {
     pub description: Option<String>,
     /// Optional source usage example.
     pub example: Option<String>,
-    /// The source method, including ALL; route compilation belongs to M2.
+    /// The source method, including ALL; the selected host compiles the route.
     pub method: String,
     /// The source route/capture expression.
     pub route: String,
@@ -76,7 +77,7 @@ pub struct ApiEndpoint {
 /// One source inline webhook subscription; transport selection remains explicit.
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq)]
 pub struct ApiWebhook {
-    /// Event observed at source priority -200 in the later webhook integration.
+    /// Event observed inline at source priority -200 after earlier handlers.
     pub event: String,
     /// Configured URI, with no API-added destination restriction.
     pub uri: String,
@@ -125,6 +126,7 @@ impl ApiConfig {
 }
 
 /// Preserve typed source input without adding security or scope-registry validation.
+#[cfg(not(target_arch = "wasm32"))]
 pub(crate) fn validate(_: &Option<ApiConfig>) -> Result<()> {
     // Host serde decoding supplies the representation boundary; later adapters own behavior.
     Ok(())

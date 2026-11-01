@@ -45,6 +45,47 @@
 //! # }
 //! ```
 
+// Aggregate renderer forwarders describe separate artifacts; no renderer is chosen implicitly.
+#[cfg(any(
+    all(
+        feature = "framework-aggregate-ssr",
+        feature = "framework-aggregate-hydrate"
+    ),
+    all(
+        feature = "framework-aggregate-ssr",
+        feature = "framework-aggregate-csr"
+    ),
+    all(
+        feature = "framework-aggregate-hydrate",
+        feature = "framework-aggregate-csr"
+    )
+))]
+compile_error!("select exactly one aggregate renderer per artifact");
+
+// Native registration/build-host selection cannot become a browser artifact through unification.
+#[cfg(all(
+    target_arch = "wasm32",
+    any(
+        feature = "framework-aggregate-hydrate",
+        feature = "framework-aggregate-csr"
+    ),
+    any(
+        feature = "framework-aggregate-native",
+        feature = "framework-aggregate-server-commands",
+        feature = "framework-aggregate-schema-client",
+        feature = "framework-aggregate-language",
+        feature = "framework-aggregate-csrf",
+        feature = "framework-aggregate-sql",
+        feature = "framework-aggregate-view",
+        feature = "framework-aggregate-session",
+        feature = "framework-aggregate-api",
+        feature = "framework-aggregate-admin",
+        feature = "framework-aggregate-full",
+        feature = "framework-aggregate-codegen"
+    )
+))]
+compile_error!("build native aggregate and browser UI as separate artifacts");
+
 #[cfg(feature = "framework-view")]
 pub use stackpress_framework_view as framework_view;
 #[cfg(feature = "idea")]
@@ -91,3 +132,23 @@ pub use stackpress_framework_sql as framework_sql;
 /// Generated role controls and optional build-host UI emission.
 #[cfg(feature = "framework-admin")]
 pub use stackpress_framework_admin as framework_admin;
+
+/// Source-parity identity/auth mechanisms, selected without registering a plugin.
+#[cfg(feature = "framework-session")]
+pub use stackpress_framework_session as framework_session;
+
+/// Explicit source-order framework composition; selecting a feature registers nothing.
+#[cfg(feature = "framework")]
+pub use stackpress_framework as framework;
+
+/// Independently selected API events, SQL adapters and public UI.
+#[cfg(feature = "framework-api")]
+pub use stackpress_framework_api as framework_api;
+
+/// Explicit CSRF token generation and validation, without an aggregate guard.
+#[cfg(feature = "framework-csrf")]
+pub use stackpress_framework_csrf as framework_csrf;
+
+/// Explicit email transport and supervised source hooks.
+#[cfg(feature = "framework-email")]
+pub use stackpress_framework_email as framework_email;

@@ -45,6 +45,7 @@ pub use builder::{
     BuildError, BuildResult, Server, ServerBuilder, StartupContext, StartupSpec, StartupStage,
 };
 pub use config::ConfigLayers;
+pub use config::ConfigPresence;
 pub use context::{DelegationError, HostContext, ServerInvocationExt};
 pub use output::OutputGuard;
 pub use plugin::{PluginDescriptor, PluginSpec};

@@ -1,4 +1,7 @@
 //! M0 source parity and ownership proofs, one integration binary.
+#[cfg(feature = "auth-server")]
+#[path = "main/account_registration.rs"]
+mod account_registration;
 #[cfg(feature = "server")]
 #[path = "main/host.rs"]
 mod host;
@@ -38,3 +41,7 @@ mod account_flows;
 #[cfg(feature = "leptos-ssr")]
 #[path = "main/account_ui.rs"]
 mod account_ui;
+
+#[cfg(all(feature = "auth-server", not(target_arch = "wasm32")))]
+#[path = "main/composite.rs"]
+mod composite;

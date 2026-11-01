@@ -9,6 +9,27 @@ use std::any::{TypeId, type_name};
 use std::collections::HashMap;
 use std::sync::Arc;
 
+/// Explicit top-level configuration keys, independent of their decoded values.
+///
+/// This answers the source `config.has(key)` question: null, false and empty objects
+/// are present; package defaults alone are absent. Layers merge keys without deleting
+/// them, so any accepted explicit occurrence remains present after later replacement.
+/// Read this through the existing startup, host or invocation `config::<T>()` accessors.
+pub struct ConfigPresence {
+    /// Only identities are retained, never a second copy of configuration payloads.
+    keys: std::collections::HashSet<String>,
+}
+
+impl ConfigPresence {
+    /// Whether an accepted explicit layer supplied this literal top-level key.
+    ///
+    /// Nested paths are not section identities: `view.engine` does not match `view`.
+    pub fn contains(&self, key: &str) -> bool {
+        // Value truthiness and defaults do not participate in source key presence.
+        self.keys.contains(key)
+    }
+}
+
 /// A validated input layer retains its actual external registration site.
 #[derive(Clone)]
 struct Layer {
@@ -361,6 +382,12 @@ impl Sections {
         // Finish all layering before decoding any section; bad roots/budgets prevent validator
         // effects.
         let (mut merged, last_layers) = self.merge_layers(layers)?;
+        // Preserve explicit key presence separately from decoded defaults/null values.
+        registry
+            .insert(Arc::new(ConfigPresence {
+                keys: last_layers.keys().cloned().collect(),
+            }))
+            .expect("configuration presence has one decoder-owned slot");
         // Consume each registered decoder once; a failed build never exposes a partial host.
         for section in self.0 {
             let value = merged

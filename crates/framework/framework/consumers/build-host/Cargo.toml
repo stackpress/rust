@@ -1,0 +1,14 @@
+[package]
+name = "slice11-build-host"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+[workspace]
+
+[dependencies]
+stackpress-framework = { path = "../..", default-features = false, features = ["codegen"] }
+stackpress-framework-admin = { path = "../../../framework-admin", default-features = false, features = ["codegen"] }
+stackpress-framework-schema = { path = "../../../framework-schema", default-features = false, features = ["codegen"] }
+stackpress-framework-sql = { path = "../../../framework-sql", default-features = false, features = ["codegen"] }
+

@@ -5,22 +5,26 @@ constructing actions performs no I/O. Call `ProfileActions::install()` before
 `AuthActions::install()` explicitly, or use the detached Store create definitions in an
 application migration. No session plugin invokes installation or maintenance.
 
-```rust,no_run
-use std::sync::Arc;
+<!-- example: server -->
+```rust
 use stackpress_framework_session::{
     columns::Record,
     storage::{AuthActions, ProfileActions, Result, StoreQuery},
 };
 use stackpress_sql::Engine;
+use std::sync::Arc;
 
-async fn account(engine: Arc<Engine>) -> Result<()> {
+pub async fn account(engine: Arc<Engine>) -> Result<()> {
     let profiles = ProfileActions::new(engine.clone(), "database-seed");
     let auth = AuthActions::new(engine, "database-seed");
     let input: Record = serde_json::from_value(serde_json::json!({
         "name": "Ada", "email": "ada@example.test", "secret": "hello"
-    })).unwrap();
+    }))
+    .unwrap();
     let profile = auth.signup(&input).await?;
-    let stored = profiles.find(&StoreQuery::eq("id", profile["id"].clone())).await?;
+    let stored = profiles
+        .find(&StoreQuery::eq("id", profile["id"].clone()))
+        .await?;
     assert!(stored.is_some());
     Ok(())
 }
@@ -81,11 +85,17 @@ Source behaviors intentionally retained:
   SQL writes only supplied fields. Empty text removed from a merged return can still be
   written by the original input. These returns are not a persisted-row acknowledgement.
 - `hasnt` currently compiles as `has`. JSON membership arrays form source OR groups.
-- Source literal ILIKE is retained on every dialect. SQLite rejects q/like searches;
-  the framework does not silently substitute LIKE. These source edges are owner questions.
+- G46 keeps ILIKE only on PostgreSQL. SQLite/MySQL use LIKE, relying on SQLite's default
+  ASCII case-insensitive matching and MySQL's default _ci collations.
 
 SQLite execution is proved in tests. PostgreSQL/MySQL DDL and insert rendering are checked;
 live backend acceptance and backend-specific JSON semantics are not claimed here. Raw SQL
 identifiers/JSON paths use the existing Rust SQL crate's checked/bound representation,
 a mechanics boundary rather than a new application admission policy. No native resource,
 DB seed, secret or full result becomes a browser snapshot automatically.
+
+## Evidence and G46 decisions
+
+[Schema/column vectors](../tests/main/records.rs), [real SQLite Actions](../tests/main/actions.rs), [codec challenges](../tests/main/storage.rs) and [exclusive-executor compile failure](../tests/ui-sql/exclusive_executor.rs) anchor the storage contract. [Storage API](api/storage.md) lists the public methods and shared providers.
+
+**Resolved under G46:** PostgreSQL uses ILIKE; SQLite/MySQL use LIKE. Auth native create-return and positive hasnt follow the original source, unchanged. The [decision register](source-behavior.md#owner-decisions-g46) records the source anchors and rendering/execution evidence.

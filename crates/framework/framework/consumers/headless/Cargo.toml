@@ -1,0 +1,14 @@
+[package]
+name = "slice11-headless"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+[workspace]
+
+[dependencies]
+stackpress-framework = { path = "../..", default-features = false, features = ["full"] }
+stackpress-server = { path = "../../../../server/server", default-features = false }
+stackpress-framework-session = { path = "../../../framework-session", default-features = false }
+stackpress-sql = { path = "../../../../sql/sql", default-features = false }
+tokio = { version = "=1.54.1", features = ["macros", "rt"] }

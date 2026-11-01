@@ -32,16 +32,26 @@
 //! ```
 
 pub mod config;
+#[cfg(not(target_arch = "wasm32"))]
 pub mod cors;
+#[cfg(not(target_arch = "wasm32"))]
 pub mod endpoints;
+#[cfg(not(target_arch = "wasm32"))]
 pub mod helpers;
+#[cfg(not(target_arch = "wasm32"))]
 pub mod pages;
+#[cfg(not(target_arch = "wasm32"))]
 pub mod plugin;
+#[cfg(not(target_arch = "wasm32"))]
 pub mod routes;
+#[cfg(not(target_arch = "wasm32"))]
 pub mod webhooks;
 
 pub use config::{ApiConfig, ApiEndpoint, ApiScope, ApiType, ApiWebhook, Cors};
+#[cfg(not(target_arch = "wasm32"))]
 pub use plugin::register;
+#[cfg(feature = "ui")]
+pub mod views;
 
 /// An explicitly selected, present API configuration; absence publishes no such service.
 ///

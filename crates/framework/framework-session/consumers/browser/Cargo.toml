@@ -1,0 +1,24 @@
+[package]
+name = "slice9-account-browser"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+[workspace]
+
+[lib]
+crate-type = ["cdylib"]
+
+[features]
+hydrate = ["leptos/hydrate", "stackpress/framework-session-leptos-hydrate"]
+csr = ["leptos/csr", "stackpress/framework-session-leptos-csr"]
+
+[dependencies]
+stackpress = { path = "../../../../..", default-features = false }
+leptos = { version = "=0.8.22", default-features = false }
+leptos_meta = { version = "=0.8.7", default-features = false }
+stackpress-framework-view = { path = "../../../framework-view", default-features = false }
+serde_json = "=1.0.154"
+wasm-bindgen = "=0.2.129"
+js-sys = "=0.3.106"
+web-sys = { version = "=0.3.106", default-features = false, features = ["Window", "Document", "HtmlElement"] }

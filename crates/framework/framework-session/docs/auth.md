@@ -1,32 +1,31 @@
-# Auth events and native processes (M2)
+# Auth events and native process details
 
 Select `auth-server` for `stackpress_framework_session::auth::{register, events, pages,
 AuthConfig, AuthSection, Environment, Hooks, templates, totp}`. This native-only feature
 includes `sql` and `server`. Default/browser graphs retain portable permissions/config
 without SQL, cryptography, transport or runtime services.
 
-`plugin::register` remains the independent identity constituent. The full source
-composite is coordinated at M4 in auth → email → identity order. Lane B owns email
+`plugin::register` remains the independent identity constituent. `composite::register` calls auth → email → identity in source order. The email crate owns
 registration and `email-send`; session never implements a second email transport.
-M3 adds [shared presentation props, forms and Leptos views](account.md).
+See [shared presentation props, forms and Leptos views](account.md).
 The optional `leptos-ssr` feature contributes their ordinary -100 view handlers.
 
 ## Registration and direct handlers
 
+<!-- example: server -->
 ```rust
 use stackpress_framework_session::{auth, plugin as identity};
 use stackpress_lib::Result;
 use stackpress_server::ServerBuilder;
 
-fn select(app: &mut ServerBuilder) -> Result<()> {
+pub fn select(app: &mut ServerBuilder) -> Result<()> {
     auth::register(app)?;
-    // Call Lane B's reviewed email registrar here at composite integration.
     identity::register(app)?;
     Ok(())
 }
 ```
 
-Select the outer ordinary function with `app.plugin("account", select)`. Constituents
+This example selects auth and identity only. Select the email registrar separately with an explicit email dependency, or use `composite::register` for the full group. Select the outer ordinary function with `app.plugin("account", select)`. Constituents
 call ordinary registrars, without nested plugin selections or route ownership. Several
 handlers can serve the same event/route; higher priority then registration order applies.
 A normal source return continues the chain; an explicit handler Abort stops that chain.
@@ -48,7 +47,7 @@ Optional adapters `events::{search, update}` implement the source `auth-search` 
 or provide the application's existing handlers for those events. The auth registrar
 neither selects a global SQL operation policy nor silently registers those extensions.
 `search` accepts `storage::StoreQuery`; `update` uses `id` plus patch fields, returning the
-first row or null. Existing source ILIKE/create-return/positive-hasnt behavior is retained.
+first row or null. G46 uses PostgreSQL ILIKE and SQLite/MySQL LIKE; create-return and positive-hasnt follow the original source, unchanged.
 
 ## Native resources and task ownership
 
@@ -141,3 +140,9 @@ Source traces and golden helpers are in `tests/auth-flows.json`, reproduced by
 exercise actual auth events. The external watchdog covers suspended hooks, nonawaiting
 parents, bind/queue, cancellation/reaping and nested owned work. No listener or live mail
 provider is needed for these finite proofs. See [storage](storage.md) for direct actions.
+
+## Evidence and next steps
+
+[Auth source traces](../tests/main/auth_flows/oracle.rs), [real events and missing modes](../tests/main/auth_flows/events.rs), [registration ordering](../tests/main/auth_flows/registration.rs) and [hook supervision](../tests/main/supervision.rs) anchor the sections above. [Configuration](guides/configuration.md) and [auth API](api/auth.md) provide lookup paths.
+
+**Resolved under G46:** email sign-in follows the original source, unchanged, including the shared auth-update response that can skip send. The [decision register](source-behavior.md#owner-decisions-g46) links the real-email oracle and all ten resolutions.

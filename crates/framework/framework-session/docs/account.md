@@ -1,4 +1,4 @@
-# Account processes and shared views (M3)
+# Account processes and shared view details
 
 `auth-server` exposes native `account` handlers and explicit generated-SQL-style events.
 `leptos-ssr` adds ordinary view handlers at priority **-100**. Select `leptos-hydrate` or
@@ -7,16 +7,15 @@ The default and native-identity-only features do not select a renderer or phone 
 
 ## Registration and direct use
 
+<!-- example: server -->
 ```rust
-use stackpress_framework_session::{account, auth, plugin as identity};
+use stackpress_framework_session::{account, composite};
 use stackpress_lib::Result;
 use stackpress_server::ServerBuilder;
 
-fn account_application(app: &mut ServerBuilder) -> Result<()> {
+pub fn account_application(app: &mut ServerBuilder) -> Result<()> {
     account::events::register(app)?; // optional explicit source SQL event adapters
-    auth::register(app)?;
-    // Select stackpress_framework_email::plugin::register here when email is wanted.
-    identity::register(app)?;
+    composite::register(app)?;
     Ok(())
 }
 ```
@@ -106,11 +105,17 @@ Writes retain source partial effects. Password change ignores returned per-row u
 errors, then flashes/redirects. Enrollment likewise retains its source post-write redirect.
 Removal's original generated profile-remove sees the already-loaded parent profile body
 and passes through: auth rows are removed but the profile remains active, while success is
-flashed. The original joined-handler proof records this interaction as a question for the
-owner; no fix is selected. No session revocation or new CSRF/reauth/global policy is added.
+flashed. G46 resolves this as intended; the joined-handler proof remains the source anchor.
+No session revocation or new CSRF/reauth/global policy is added. Under G46, optional phone on update retains the missing-input trim error, following the original source unchanged.
 
 Run the finite SQL-backed host with the recorder as required by the project workflow:
 `cargo run -p stackpress-framework-session --features leptos-ssr --example account_host -- <output>`.
 It renders all pages in three themes, invokes the real email-send JSON transport and exits.
 Browser verification fulfills every request in memory and starts no listener. Live email,
 installed-platform behavior and owner visual acceptance remain separate evidence.
+
+## Evidence and G46 decisions
+
+[Account traces](../tests/main/account_flows.rs), [real SQLite update/export/enrollment/removal](../tests/main/account_flows/sql.rs), [shared view tests](../tests/main/account_ui.rs), [route contributions](../tests/main/account_ui/registration.rs) and [browser matrix](../proofs/browser.cjs) anchor the process/UI behavior. Use [account API](api/account.md) or [views API](api/views.md) for lookup.
+
+**Resolved under G46:** account deletion is intended soft delete via @active, with the existing account flow keeping Profile. Optional phone on update and Moment admin dates follow the original source, unchanged. G44's optional phone-on-signup decision remains separate. The [decision register](source-behavior.md#owner-decisions-g46) records all ten resolutions.

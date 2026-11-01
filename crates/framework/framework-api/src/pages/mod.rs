@@ -39,7 +39,7 @@ impl Default for Environment {
 /// Register both ALL-method process routes directly, without installing their collaborators.
 ///
 /// The API plugin calls this inventory only for nonempty endpoints. Hosts select the session
-/// registrar and API SQL registrar separately; consent rendering is a later view contribution.
+/// registrar and API SQL registrar separately; consent rendering is a lower-priority view.
 /// # Errors
 /// Returns ordinary host route errors. No resources are acquired during registration.
 pub fn register(app: &mut ServerBuilder) -> Result<()> {
@@ -68,7 +68,7 @@ pub(crate) fn prepare() -> Vec<crate::routes::PreparedRoute> {
 }
 
 /// Preserve only the upstream truthy body / nonzero non-200 status entry guard.
-fn completed(response: &Response) -> bool {
+pub(crate) fn completed(response: &Response) -> bool {
     let body = match response.body() {
         Body::Empty => false,
         Body::Text(text) => !text.is_empty(),
@@ -82,7 +82,7 @@ fn completed(response: &Response) -> bool {
 }
 
 /// Source Boolean(value), with missing handled by the caller before reaching this function.
-fn truthy(value: &Value) -> bool {
+pub(crate) fn truthy(value: &Value) -> bool {
     match value {
         Value::Null => false,
         Value::Bool(value) => *value,

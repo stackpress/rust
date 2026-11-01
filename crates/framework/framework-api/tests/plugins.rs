@@ -93,7 +93,7 @@ async fn selected_plugin_and_direct_inventory_match_without_lookup_resources_at_
                 .listeners()
                 .filter(|listener| listener.plugin.as_deref() == Some("aggregate"))
                 .count(),
-            3
+            3 + usize::from(cfg!(feature = "ui-ssr"))
         );
     }
     // No mandatory store/JWT/Profile service is acquired at startup, even for protected routes.

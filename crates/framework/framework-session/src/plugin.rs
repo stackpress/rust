@@ -1,7 +1,7 @@
 //! Identity constituent: optional session config, me/authorize and conditional guard.
 //!
-//! Auth processes have their own registrar. The full auth/email/identity composite is
-//! wired at integration, using Lane B's registrar rather than a local transport substitute.
+//! Auth processes have their own registrar. `composite::register` groups auth/email/identity,
+//! while this identity-only entry point retains its standalone behavior and public path.
 
 use crate::{Service, SessionConfig, SessionPermission};
 use stackpress_lib::{

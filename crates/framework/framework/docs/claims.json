@@ -1,0 +1,1124 @@
+[
+  {
+    "id": "entry-order",
+    "page": "crates/framework/framework/README.md",
+    "statement": "The nine stages are server, schema, language, CSRF, SQL, view, session, API and admin.",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/src/native/mod.rs",
+        "contains": [
+          "observed(\"server\")",
+          "observed(\"admin\")",
+          "stackpress_framework_session::composite::register(app)?"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "entry-security",
+    "page": "crates/framework/framework/README.md",
+    "statement": "no global guard or route ownership arbitration",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/tests/cases/mod.rs",
+        "contains": [
+          "no_global_guard_and_missing_versus_empty_access",
+          "g42_all_matching_handlers_keep_priority_ties_and_abort"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "first-event",
+    "page": "crates/framework/framework/docs/getting-started.md",
+    "statement": "no Engine exists",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/consumers/headless/src/main.rs",
+        "contains": [
+          "service::<stackpress_sql::Engine>().is_err()"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "g47-application-config-placement",
+    "page": "crates/framework/framework/docs/getting-started.md",
+    "statement": "JSON files hold data and cannot hold code values",
+    "evidence": [
+      {
+        "path": "examples/sql-profile/src/lib.rs",
+        "contains": [
+          "app.config_layers(config::shared()?)?;",
+          "app.config_layers(layers)?;"
+        ]
+      },
+      {
+        "path": "examples/sql-profile/src/config.rs",
+        "contains": [
+          "pub(super) fn shared() -> Result<ConfigLayers>",
+          "layers.json(\"shared\""
+        ]
+      },
+      {
+        "path": "examples/sql-profile/tests/cases/configuration.rs",
+        "contains": [
+          "pub(crate) async fn configuration()",
+          "explicit-app-override",
+          "bad file must reject build"
+        ]
+      },
+      {
+        "path": "examples/sql-profile/config/develop.json",
+        "contains": ["target/sql-profile-develop.sqlite"]
+      },
+      {
+        "path": "examples/sql-profile/config/build.json",
+        "contains": ["target/sql-profile-build.sqlite"]
+      }
+    ]
+  },
+  {
+    "id": "startup-phase",
+    "page": "crates/framework/framework/docs/concepts.md",
+    "statement": "Config at priority 10",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/src/native/client.rs",
+        "contains": [
+          "StartupStage::Config",
+          ".priority(10)"
+        ]
+      },
+      {
+        "path": "crates/framework/framework/tests/cases/mod.rs",
+        "contains": [
+          "schema_priority_and_phase_publication_are_real"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "model-listen",
+    "page": "crates/framework/framework/docs/concepts.md",
+    "statement": "queue its actual listeners for Listen",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/tests/cases/catalog.rs",
+        "contains": [
+          "queued_account_registration_matches_source_listen_order"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-session/src/account/events.rs",
+        "contains": [
+          "pub fn register_listen",
+          "app.on_listen(listen)"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "registration-guide",
+    "page": "crates/framework/framework/docs/guides/registration.md",
+    "statement": "admin callback queues a Route callback",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/tests/cases/catalog.rs",
+        "contains": [
+          "fn first_admin",
+          "start.get(\"/first-admin\", public)?",
+          "compiled_catalog_and_api_sql_prepare_real_ordered_phases_once"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "binding-guide",
+    "page": "crates/framework/framework/docs/guides/commands.md",
+    "statement": "registration performs no command IO",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/src/native/commands.rs",
+        "contains": [
+          "pub fn bind",
+          "pub async fn invoke"
+        ]
+      },
+      {
+        "path": "crates/framework/framework/tests/cases/mod.rs",
+        "contains": [
+          "command_provider_is_lazy_and_errors_are_not_success"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "website-artifacts",
+    "page": "crates/framework/framework/docs/guides/website.md",
+    "statement": "Build native SSR and browser artifacts separately.",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/consumers/website/Cargo.toml",
+        "contains": [
+          "ssr =",
+          "hydrate =",
+          "csr ="
+        ]
+      },
+      {
+        "path": "crates/framework/framework/consumers/graphs.py",
+        "contains": [
+          "framework-aggregate-hydrate"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "website-presence",
+    "page": "crates/framework/framework/docs/guides/website.md",
+    "statement": "null, false and an empty object are present",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/tests/cases/view.rs",
+        "contains": [
+          "view_presence_and_development_route_hook"
+        ]
+      },
+      {
+        "path": "crates/framework/framework/src/native/view.rs",
+        "contains": [
+          "start.config::<ConfigPresence>()?.contains(\"view\")"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "packaging-timing-guide",
+    "page": "crates/framework/framework/docs/guides/website.md",
+    "statement": "Rust supplies supervision, not an npm package.json writer",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/src/native/view/packaging.rs",
+        "contains": [
+          "pub fn new",
+          "pub async fn drain",
+          "pub async fn shutdown"
+        ]
+      },
+      {
+        "path": "crates/framework/framework/tests/cases/view.rs",
+        "contains": [
+          "packaging_is_non_awaited_and_failure_is_supervised",
+          "packaging_shutdown_reaps_suspended_task_and_live_drain"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "codegen-guide",
+    "page": "crates/framework/framework/docs/guides/codegen.md",
+    "statement": "real schema emitter",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/src/native/commands/schema.rs",
+        "contains": [
+          "pub mod rust",
+          "stackpress_framework_schema::codegen::register(registry, schema)?"
+        ]
+      },
+      {
+        "path": "crates/framework/framework/consumers/build-host/src/main.rs",
+        "contains": [
+          "fn schema",
+          "report.is_current()"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "consumer-recipes",
+    "page": "crates/framework/framework/docs/guides/consumers.md",
+    "statement": "Each has its own workspace, checked-in lock and separate target.",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/consumers/run.py",
+        "contains": [
+          "KINDS =",
+          "consumer-aggregate-{kind}",
+          "--locked",
+          "--offline"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "direct-boundary",
+    "page": "crates/framework/framework/docs/guides/consumers.md",
+    "statement": "Source bridges still import this aggregate crate.",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/consumers/direct/Cargo.toml",
+        "contains": [
+          "stackpress-framework ="
+        ]
+      },
+      {
+        "path": "crates/framework/framework/consumers/support/native.rs",
+        "contains": [
+          "commands::register_server"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "api-index",
+    "page": "crates/framework/framework/docs/api/README.md",
+    "statement": "qualified native modules",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/src/lib.rs",
+        "contains": [
+          "pub use native::language",
+          "pub use native::{register, register_with}"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "catalog-client",
+    "page": "crates/framework/framework/docs/api/registration.md",
+    "statement": "nullable and required catalog lookup remain distinct",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/src/native/client.rs",
+        "contains": [
+          "compiled application client is unavailable"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "catalog-callbacks",
+    "page": "crates/framework/framework/docs/api/registration.md",
+    "statement": "no hidden deduplication",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/tests/cases/catalog.rs",
+        "contains": [
+          "empty_catalog_is_present_and_repeated_registration_preserves_native_error"
+        ]
+      },
+      {
+        "path": "crates/framework/framework/src/native/mod.rs",
+        "contains": [
+          "for model in client.models"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "registration-no-rollback",
+    "page": "crates/framework/framework/docs/api/registration.md",
+    "statement": "Earlier builder mutations are not rolled back.",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/src/native/mod.rs",
+        "contains": [
+          "fn select",
+          "listen(app)?",
+          "admin(app)?"
+        ]
+      },
+      {
+        "path": "crates/framework/framework/tests/cases/closeout.rs",
+        "contains": [
+          "aggregate_plus_constituent_preserves_duplicate_error"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "aggregate-features",
+    "page": "crates/framework/framework/docs/api/features.md",
+    "statement": "default = []",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/Cargo.toml",
+        "contains": [
+          "default = []",
+          "full = [\"server-commands\"",
+          "\"stackpress-framework-csrf/server\"",
+          "\"stackpress-framework-api/sql\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "facade-families",
+    "page": "crates/framework/framework/docs/api/features.md",
+    "statement": "Existing facade feature meanings are unchanged.",
+    "evidence": [
+      {
+        "path": "Cargo.toml",
+        "contains": [
+          "framework = [\"dep:stackpress-framework\"]",
+          "framework-api = [\"dep:stackpress-framework-api\"]",
+          "framework-csrf-server =",
+          "framework-email-server ="
+        ]
+      },
+      {
+        "path": "crates/framework/framework/consumers/graphs.py",
+        "contains": [
+          "--check"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "renderer-guards",
+    "page": "crates/framework/framework/docs/api/features.md",
+    "statement": "select exactly one aggregate renderer per artifact",
+    "evidence": [
+      {
+        "path": "src/lib.rs",
+        "contains": [
+          "select exactly one aggregate renderer per artifact",
+          "build native aggregate and browser UI as separate artifacts"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "config-roots",
+    "page": "crates/framework/framework/docs/api/configuration.md",
+    "statement": "claims only the typed roots needed",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/src/native/config.rs",
+        "contains": [
+          "app.config_section(\"server\"",
+          "app.config_section(\"client\"",
+          "app.config_section(\"database\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "explicit-presence",
+    "page": "crates/framework/framework/docs/api/configuration.md",
+    "statement": "Server defaults are not explicit presence",
+    "evidence": [
+      {
+        "path": "crates/server/server/src/config.rs",
+        "contains": [
+          "pub struct ConfigPresence",
+          "pub fn contains"
+        ]
+      },
+      {
+        "path": "crates/server/server/tests/config_presence.rs",
+        "contains": [
+          "explicit_presence_survives_value_replacement"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "generation-input",
+    "page": "crates/framework/framework/docs/api/configuration.md",
+    "statement": "short request option wins",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/tests/cases/commands.rs",
+        "contains": [
+          "native_options_and_generation_precedence"
+        ]
+      },
+      {
+        "path": "crates/framework/framework/src/native/commands/schema.rs",
+        "contains": [
+          "short.as_ref().or(input.as_ref())",
+          "env\n        .loader_cwd"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "bindings-reference",
+    "page": "crates/framework/framework/docs/api/commands.md",
+    "statement": "later binding of the same name replaces it",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/src/native/commands.rs",
+        "contains": [
+          "self.actions.insert",
+          "native command binding is unavailable"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "command-skip",
+    "page": "crates/framework/framework/docs/api/commands.md",
+    "statement": "Develop and build deliberately proceed",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/tests/cases/commands.rs",
+        "contains": [
+          "source_prior_status_modes_and_public_errors"
+        ]
+      },
+      {
+        "path": "crates/framework/framework/src/native/view.rs",
+        "contains": [
+          "Source Build ignores an earlier error"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "command-develop",
+    "page": "crates/framework/framework/docs/api/commands.md",
+    "statement": "| develop |",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/src/native/commands/server.rs",
+        "contains": [
+          "pub async fn develop"
+        ]
+      },
+      {
+        "path": "crates/framework/framework/tests/fixtures/source-commands.json",
+        "contains": [
+          "develop"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "command-emit",
+    "page": "crates/framework/framework/docs/api/commands.md",
+    "statement": "| emit |",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/src/native/commands/server.rs",
+        "contains": [
+          "pub async fn emit"
+        ]
+      },
+      {
+        "path": "crates/framework/framework/tests/fixtures/source-commands.json",
+        "contains": [
+          "emit"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "command-serve",
+    "page": "crates/framework/framework/docs/api/commands.md",
+    "statement": "| serve |",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/src/native/commands/server.rs",
+        "contains": [
+          "pub async fn serve"
+        ]
+      },
+      {
+        "path": "crates/framework/framework/tests/fixtures/source-commands.json",
+        "contains": [
+          "serve"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "command-generate",
+    "page": "crates/framework/framework/docs/api/commands.md",
+    "statement": "Missing tsconfig path",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/src/native/commands/schema.rs",
+        "contains": [
+          "pub async fn event",
+          "Missing tsconfig path"
+        ]
+      },
+      {
+        "path": "crates/framework/framework/tests/cases/commands.rs",
+        "contains": [
+          "source_prior_status_modes_and_public_errors"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "command-install",
+    "page": "crates/framework/framework/docs/api/commands.md",
+    "statement": "| install |",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/src/native/commands/sql.rs",
+        "contains": [
+          "pub async fn install"
+        ]
+      },
+      {
+        "path": "crates/framework/framework/tests/cases/sql.rs",
+        "contains": [
+          "real_sqlite_command_lifecycle_and_query"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "command-migrate",
+    "page": "crates/framework/framework/docs/api/commands.md",
+    "statement": "| migrate |",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/src/native/commands/sql.rs",
+        "contains": [
+          "pub fn migrate"
+        ]
+      },
+      {
+        "path": "crates/framework/framework/tests/cases/sql.rs",
+        "contains": [
+          "real_sqlite_command_lifecycle_and_query"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "command-purge",
+    "page": "crates/framework/framework/docs/api/commands.md",
+    "statement": "| purge |",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/src/native/commands/sql.rs",
+        "contains": [
+          "pub async fn purge"
+        ]
+      },
+      {
+        "path": "crates/framework/framework/tests/cases/sql.rs",
+        "contains": [
+          "real_sqlite_command_lifecycle_and_query"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "command-push",
+    "page": "crates/framework/framework/docs/api/commands.md",
+    "statement": "| push |",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/src/native/commands/sql.rs",
+        "contains": [
+          "pub async fn push"
+        ]
+      },
+      {
+        "path": "crates/framework/framework/tests/cases/sql.rs",
+        "contains": [
+          "real_sqlite_command_lifecycle_and_query"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "command-populate",
+    "page": "crates/framework/framework/docs/api/commands.md",
+    "statement": "| populate |",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/src/native/commands/sql.rs",
+        "contains": [
+          "pub async fn populate"
+        ]
+      },
+      {
+        "path": "crates/framework/framework/tests/cases/sql.rs",
+        "contains": [
+          "real_sqlite_command_lifecycle_and_query"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "command-uninstall",
+    "page": "crates/framework/framework/docs/api/commands.md",
+    "statement": "| uninstall |",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/src/native/commands/sql.rs",
+        "contains": [
+          "pub async fn uninstall"
+        ]
+      },
+      {
+        "path": "crates/framework/framework/tests/cases/sql.rs",
+        "contains": [
+          "real_sqlite_command_lifecycle_and_query"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "command-upgrade",
+    "page": "crates/framework/framework/docs/api/commands.md",
+    "statement": "| upgrade |",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/src/native/commands/sql.rs",
+        "contains": [
+          "pub async fn upgrade"
+        ]
+      },
+      {
+        "path": "crates/framework/framework/tests/cases/sql.rs",
+        "contains": [
+          "real_sqlite_command_lifecycle_and_query"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "command-query",
+    "page": "crates/framework/framework/docs/api/commands.md",
+    "statement": "owned QueryResult",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/src/native/commands/sql.rs",
+        "contains": [
+          "async fn query",
+          "SharedNative::new(result)"
+        ]
+      },
+      {
+        "path": "crates/framework/framework/tests/cases/sql.rs",
+        "contains": [
+          "real_sqlite_command_lifecycle_and_query"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "command-build",
+    "page": "crates/framework/framework/docs/api/commands.md",
+    "statement": "Build script results are not copied into event response.",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/src/native/view.rs",
+        "contains": [
+          "pub async fn build_event",
+          "build(&inv).await?"
+        ]
+      },
+      {
+        "path": "crates/framework/framework/tests/cases/view.rs",
+        "contains": [
+          "build_stages_and_empty_catalog"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "sql-transactions",
+    "page": "crates/framework/framework/docs/api/sql.md",
+    "statement": "revision insertion is after commit",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/src/native/commands/sql.rs",
+        "contains": [
+          "transaction(engine, &queries).await?",
+          "(history.insert)(root, &scripts.schema)?"
+        ]
+      },
+      {
+        "path": "crates/framework/framework/tests/cases/sql.rs",
+        "contains": [
+          "revision_operations_stay_lazy_and_direct_scripts_remain_independent"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "sql-order",
+    "page": "crates/framework/framework/docs/api/sql.md",
+    "statement": "uninstall reverses it",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/src/native/commands/sql.rs",
+        "contains": [
+          "for table in tables.iter().rev()",
+          "if_exists: true"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "language-helpers",
+    "page": "crates/framework/framework/docs/api/language.md",
+    "statement": "first %s replacement per Scalar",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/src/native/language.rs",
+        "contains": [
+          "pub enum Scalar",
+          "fn replace_first",
+          "pub fn translate"
+        ]
+      },
+      {
+        "path": "crates/framework/framework/tests/cases/language.rs",
+        "contains": [
+          "language_direct_helpers_and_falsy_configuration"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "language-nested",
+    "page": "crates/framework/framework/docs/api/language.md",
+    "statement": "Child Abort remains local",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/src/native/language.rs",
+        "contains": [
+          "url.set_query(None)",
+          "child.load().await?",
+          "let _ = inv.emit"
+        ]
+      },
+      {
+        "path": "crates/framework/framework/tests/cases/closeout.rs",
+        "contains": [
+          "concurrent_locale_dispatches_keep_request_and_response_state"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "view-render",
+    "page": "crates/framework/framework/docs/api/view.md",
+    "statement": "normalizes status",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/src/native/view.rs",
+        "contains": [
+          "pub async fn render",
+          "res.redirected()",
+          "req.data.has(&noview)"
+        ]
+      },
+      {
+        "path": "crates/framework/framework/tests/cases/view.rs",
+        "contains": [
+          "source_render_props_status_and_skips"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "view-build",
+    "page": "crates/framework/framework/docs/api/view.md",
+    "statement": "UTF-16",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/src/native/view.rs",
+        "contains": [
+          "contents.encode_utf16().take(100)",
+          "pub async fn build"
+        ]
+      },
+      {
+        "path": "crates/framework/framework/tests/cases/view.rs",
+        "contains": [
+          "build_path_truthiness_selects_only_source_stages"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "view-supervision",
+    "page": "crates/framework/framework/docs/api/view.md",
+    "statement": "shutdown().await",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/src/native/view/packaging.rs",
+        "contains": [
+          "state.jobs.abort_all()",
+          "let _joining = self.joining.lock().await"
+        ]
+      },
+      {
+        "path": "crates/framework/framework/tests/cases/view.rs",
+        "contains": [
+          "packaging_shutdown_reaps_suspended_task_and_live_drain"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "codegen-reference",
+    "page": "crates/framework/framework/docs/api/codegen.md",
+    "statement": "No generation runs at registration.",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/src/native/commands/schema.rs",
+        "contains": [
+          "pub struct Host",
+          "pub async fn provider",
+          "pub fn register"
+        ]
+      },
+      {
+        "path": "crates/framework/framework/tests/cases/codegen.rs",
+        "contains": [
+          "real_generation_and_provider_errors"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "source-parity",
+    "page": "crates/framework/framework/docs/source-behavior.md",
+    "statement": "G43 treats upstream logic as intentional.",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/proofs/coverage-map.json",
+        "contains": [
+          "SOURCE-LICENSE",
+          "SQLITE-TRUNCATE",
+          "S11-PGLITE"
+        ]
+      },
+      {
+        "path": "crates/framework/framework/tests/cases/mod.rs",
+        "contains": [
+          "no_global_guard_and_missing_versus_empty_access"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "question-account-delete-keeps-profile",
+    "page": "crates/framework/framework/docs/source-behavior.md",
+    "statement": "Account delete keeps Profile",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/docs/source-behavior.md",
+        "contains": [
+          "Account delete keeps profile"
+        ]
+      }
+    ],
+    "status": "resolved",
+    "decision": "G46"
+  },
+  {
+    "id": "question-sqlite-ilike",
+    "page": "crates/framework/framework/docs/source-behavior.md",
+    "statement": "SQLite ILIKE",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/docs/source-behavior.md",
+        "contains": [
+          "SQLite ILIKE"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-session/tests/main/actions.rs",
+        "contains": [
+          "g46_search_operators_follow_dialect_for_profile_and_auth",
+          "g46_sqlite_ascii_searches_execute_for_profile_and_auth"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-api/tests/sql.rs",
+        "contains": [
+          "g46_search_operators_follow_dialect_for_application_and_session",
+          "g46_sqlite_ascii_searches_execute_for_application_and_session"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-session/src/storage/statement.rs",
+        "contains": [
+          "DialectId::Postgres =>",
+          "DialectId::Sqlite | DialectId::Mysql => return Ok(query)"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-api/src/sql/adapter.rs",
+        "contains": [
+          "DialectId::Postgres =>",
+          "DialectId::Sqlite | DialectId::Mysql => return Ok(query)"
+        ]
+      }
+    ],
+    "status": "resolved",
+    "decision": "G46"
+  },
+  {
+    "id": "question-auth-create-return",
+    "page": "crates/framework/framework/docs/source-behavior.md",
+    "statement": "Auth create-return",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/docs/source-behavior.md",
+        "contains": [
+          "Auth create-return"
+        ]
+      }
+    ],
+    "status": "resolved",
+    "decision": "G46"
+  },
+  {
+    "id": "question-positive-hasnt",
+    "page": "crates/framework/framework/docs/source-behavior.md",
+    "statement": "Positive hasnt",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/docs/source-behavior.md",
+        "contains": [
+          "Positive hasnt"
+        ]
+      }
+    ],
+    "status": "resolved",
+    "decision": "G46"
+  },
+  {
+    "id": "question-optional-phone-on-update",
+    "page": "crates/framework/framework/docs/source-behavior.md",
+    "statement": "Optional phone on update",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/docs/source-behavior.md",
+        "contains": [
+          "Optional phone on update"
+        ]
+      }
+    ],
+    "status": "resolved",
+    "decision": "G46"
+  },
+  {
+    "id": "question-email-sign-in-skips-send",
+    "page": "crates/framework/framework/docs/source-behavior.md",
+    "statement": "Email sign-in skips send",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/docs/source-behavior.md",
+        "contains": [
+          "Email sign-in skips send"
+        ]
+      }
+    ],
+    "status": "resolved",
+    "decision": "G46"
+  },
+  {
+    "id": "question-moment-admin-dates",
+    "page": "crates/framework/framework/docs/source-behavior.md",
+    "statement": "Moment admin dates",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/docs/source-behavior.md",
+        "contains": [
+          "Moment admin dates"
+        ]
+      }
+    ],
+    "status": "resolved",
+    "decision": "G46"
+  },
+  {
+    "id": "question-s11-pglite",
+    "page": "crates/framework/framework/docs/source-behavior.md",
+    "statement": "PGlite",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/proofs/coverage-map.json",
+        "contains": [
+          "S11-PGLITE"
+        ]
+      }
+    ],
+    "status": "resolved",
+    "decision": "G46"
+  },
+  {
+    "id": "question-source-license",
+    "page": "crates/framework/framework/docs/source-behavior.md",
+    "statement": "MIT/Apache metadata",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/proofs/coverage-map.json",
+        "contains": [
+          "SOURCE-LICENSE"
+        ]
+      }
+    ],
+    "status": "resolved",
+    "decision": "G46"
+  },
+  {
+    "id": "question-sqlite-truncate",
+    "page": "crates/framework/framework/docs/source-behavior.md",
+    "statement": "SQLite purge/TRUNCATE",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/proofs/coverage-map.json",
+        "contains": [
+          "SQLITE-TRUNCATE"
+        ]
+      }
+    ],
+    "status": "resolved",
+    "decision": "G46"
+  },
+  {
+    "id": "evidence-gaps",
+    "page": "crates/framework/framework/docs/source-behavior.md",
+    "statement": "API-MATRIX",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/proofs/coverage-map.json",
+        "contains": [
+          "API-MATRIX",
+          "API-BUILD-HOST",
+          "EDGE-REPLAY"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "verification-runtime",
+    "page": "crates/framework/framework/docs/verification.md",
+    "statement": "352 cases plus two no-JS",
+    "evidence": [
+      {
+        "path": ".agents/specs/00001-stackpress-rust-foundation/tasks/00023-slice-11-rounds.md",
+        "contains": [
+          "352 session cases",
+          "96.75%",
+          "13 real cases"
+        ]
+      },
+      {
+        "path": "crates/framework/framework/proofs/session-browser.cjs",
+        "contains": [
+          "no-JS Light"
+        ]
+      }
+    ]
+  }
+]

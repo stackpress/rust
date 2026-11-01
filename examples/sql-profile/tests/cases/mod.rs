@@ -1,5 +1,6 @@
 //! App-owned fixtures and distinct behavioral proofs, without hidden database setup at startup.
 
+mod configuration;
 mod parity;
 mod storage;
 
@@ -10,6 +11,7 @@ use stackpress_server::{ConfigLayers, Server};
 use stackpress_sql::Engine;
 use stackpress_sql_sqlite::{SqliteDatabase, SqliteOptions};
 
+pub(super) use configuration::configuration;
 pub(super) use parity::{literals, parity};
 pub(super) use storage::{failures, setup, startup};
 

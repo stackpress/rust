@@ -5758,9 +5758,14 @@ version = "0.1.0"
 dependencies = [
  "serde",
  "serde_json",
+ "stackpress-framework",
  "stackpress-framework-admin",
+ "stackpress-framework-api",
+ "stackpress-framework-csrf",
+ "stackpress-framework-email",
  "stackpress-framework-language",
  "stackpress-framework-schema",
+ "stackpress-framework-session",
  "stackpress-framework-sql",
  "stackpress-framework-view",
  "stackpress-idea",
@@ -6118,6 +6123,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "stackpress-framework"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "stackpress-framework-api",
+ "stackpress-framework-csrf",
+ "stackpress-framework-schema",
+ "stackpress-framework-session",
+ "stackpress-framework-sql",
+ "stackpress-framework-view",
+ "stackpress-idea",
+ "stackpress-lib",
+ "stackpress-server",
+ "stackpress-sql",
+ "stackpress-sql-sqlite",
+ "tokio",
+ "trybuild",
+]
+
+[[package]]
 name = "stackpress-framework-admin"
 version = "0.1.0"
 dependencies = [
@@ -6135,13 +6161,19 @@ dependencies = [
 name = "stackpress-framework-api"
 version = "0.1.0"
 dependencies = [
+ "chrono",
+ "leptos",
  "reqwest",
  "serde",
  "serde_json",
+ "stackpress-framework-admin",
+ "stackpress-framework-csrf",
  "stackpress-framework-schema",
  "stackpress-framework-session",
  "stackpress-framework-sql",
+ "stackpress-framework-view",
  "stackpress-idea-parser",
+ "stackpress-leptos",
  "stackpress-lib",
  "stackpress-server",
  "stackpress-sql",

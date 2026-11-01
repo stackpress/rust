@@ -1,0 +1,80 @@
+{
+  "version": 1,
+  "files": {
+    "contracts/mod.rs": {
+      "owner": "aggregate",
+      "sha256": "a8cbfc2c0184276d99fbea84935b5ccccc4286a451c649e81f8246c6235d7916",
+      "bytes": 30
+    },
+    "contracts/note.rs": {
+      "owner": "framework-schema",
+      "sha256": "7dd663bfce6c2cef9eaa48f3ed45bf28ebbca92edd12932bc59dc68915351a2b",
+      "bytes": 6796
+    },
+    "contracts/public.rs": {
+      "owner": "framework-schema",
+      "sha256": "ea1e3a2b20bdb07269c10783a7cab2ebdae9d8379aba32dfb2bf2ae610daf57d",
+      "bytes": 20135
+    },
+    "metadata/mod.rs": {
+      "owner": "aggregate",
+      "sha256": "67d195b8df4a18d49f3a5893c5e46e4fabd6d4cf4d77422599a989a4daee5d0d",
+      "bytes": 28
+    },
+    "metadata/schema.rs": {
+      "owner": "framework-schema",
+      "sha256": "243bbcc3cabd1d79892c5b01595dc54abc9638a3efdb9fe9ed3eb152e8a9f715",
+      "bytes": 366
+    },
+    "metadata/ui.rs": {
+      "owner": "framework-schema",
+      "sha256": "6bad2df23b4607370c4f6ae753f7d0041c3c49b28815b4812eec135990154adb",
+      "bytes": 2032
+    },
+    "mod.rs": {
+      "owner": "aggregate",
+      "sha256": "caa3d46347a5732cc36acb26f42142cdfdf768beb2b42d897d77f3645ac532cb",
+      "bytes": 65
+    },
+    "stores/mod.rs": {
+      "owner": "aggregate",
+      "sha256": "d0a096e849ab0d76a4b2e94c27d51f63ed04f79937aba0937e4d43be1d1c75ba",
+      "bytes": 50
+    },
+    "stores/note.rs": {
+      "owner": "framework-sql",
+      "sha256": "d5e175d778f832e38ffb97f079ffb3973efcd0056f37062b98fbd223c0a8c3ff",
+      "bytes": 35180
+    },
+    "stores/operations.rs": {
+      "owner": "framework-sql",
+      "sha256": "8c2f07d9c6ea3d6b5823fdac0a34df22d1588ed16ae09660a5ad31afc7e6fd78",
+      "bytes": 24655
+    },
+    "stores/schema.rs": {
+      "owner": "framework-sql",
+      "sha256": "3c7ef5b88354b442c00cf0058b239f93435701be723ccc8468f245a8719c3b4c",
+      "bytes": 833
+    },
+    "ui/mod.rs": {
+      "owner": "aggregate",
+      "sha256": "ba0de0ee14303629c261deaace391e340cd8f7039589ca75668f5a6edef2f536",
+      "bytes": 29
+    },
+    "ui/note.rs": {
+      "owner": "framework-admin",
+      "sha256": "b555ca4b04c0400d20bab2e6fbb7892dfe86b84433bdf18c34fd242c5acb682f",
+      "bytes": 9589
+    },
+    "ui/pages.rs": {
+      "owner": "framework-admin",
+      "sha256": "a5c59c7049abbde020b7562b04b2ac365fb09503fe43a555f0f04d643b16b210",
+      "bytes": 10809
+    },
+    "ui/pages_host.rs": {
+      "owner": "framework-admin",
+      "sha256": "b9fad302bdb9404fa7a9db044e1bdd4ab317f8c57166dbf437cf02549e68bd26",
+      "bytes": 6835
+    }
+  }
+}
