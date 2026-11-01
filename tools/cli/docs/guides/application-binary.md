@@ -31,7 +31,19 @@ async fn entry() -> std::process::ExitCode {
 
 main_with reads one optional `-b` JSON file into layers; it cannot apply them to your private
 builder. `app.config_layers(layers)?` makes that policy explicit. You can append further
-code-derived overrides afterward. A bad argv/file returns before invoking the builder.
+code-derived overrides afterward. Invalid argv or an unreadable/malformed bootstrap file returns
+before invoking the builder; typed section values are decoded and validated during the build.
+
+For G47's shared/environment convention, put shared values and code values in the application's
+`src/config.rs`, and per-environment data in `config/develop.json` and `config/build.json`.
+Install the app-owned shared layer before the received layers: first
+`app.config_layers(config::shared()?)?`, then `app.config_layers(layers)?`. Append explicit app
+overrides last. Plugin section defaults stay below all three. This is existing append behaviour;
+no CLI or framework config API is added. JSON cannot hold templates or executable values;
+computed/environment-derived values and typed code bindings belong in `src/config.rs`.
+The [sql-profile builder](../../../../examples/sql-profile/src/lib.rs) and its
+[configuration proof](../../../../examples/sql-profile/tests/cases/configuration.rs) demonstrate
+the order; the [argument guide](arguments.md#choose-an-environment-file) explains file selection.
 
 ## Choose the entry seam
 

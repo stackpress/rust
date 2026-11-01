@@ -1,4 +1,0 @@
-{
-  "sqlite": { "path": "target/sql-profile.sqlite" },
-  "profiles": { "limit": 3 }
-}
