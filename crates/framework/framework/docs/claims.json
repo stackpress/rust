@@ -42,6 +42,43 @@
     ]
   },
   {
+    "id": "g47-application-config-placement",
+    "page": "crates/framework/framework/docs/getting-started.md",
+    "statement": "JSON files hold data and cannot hold code values",
+    "evidence": [
+      {
+        "path": "examples/sql-profile/src/lib.rs",
+        "contains": [
+          "app.config_layers(config::shared()?)?;",
+          "app.config_layers(layers)?;"
+        ]
+      },
+      {
+        "path": "examples/sql-profile/src/config.rs",
+        "contains": [
+          "pub(super) fn shared() -> Result<ConfigLayers>",
+          "layers.json(\"shared\""
+        ]
+      },
+      {
+        "path": "examples/sql-profile/tests/cases/configuration.rs",
+        "contains": [
+          "pub(crate) async fn configuration()",
+          "explicit-app-override",
+          "bad file must reject build"
+        ]
+      },
+      {
+        "path": "examples/sql-profile/config/develop.json",
+        "contains": ["target/sql-profile-develop.sqlite"]
+      },
+      {
+        "path": "examples/sql-profile/config/build.json",
+        "contains": ["target/sql-profile-build.sqlite"]
+      }
+    ]
+  },
+  {
     "id": "startup-phase",
     "page": "crates/framework/framework/docs/concepts.md",
     "statement": "Config at priority 10",

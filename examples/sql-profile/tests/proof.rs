@@ -9,7 +9,14 @@ use std::time::Duration;
 /// Every native scenario has a separate independent process deadline, even on synchronous deadlock.
 #[test]
 fn native_contract_under_watchdog() {
-    for scenario in ["parity", "literals", "startup", "setup", "failures"] {
+    for scenario in [
+        "parity",
+        "literals",
+        "startup",
+        "setup",
+        "failures",
+        "configuration",
+    ] {
         let mut child = Command::new(std::env::current_exe().unwrap());
         child
             .args(["--exact", "native_child", "--ignored", "--nocapture"])
@@ -37,6 +44,7 @@ async fn native_child() {
             "startup" => cases::startup().await,
             "setup" => cases::setup().await,
             "failures" => cases::failures().await,
+            "configuration" => cases::configuration().await,
             _ => panic!("unknown native scenario"),
         }
     };

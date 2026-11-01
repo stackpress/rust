@@ -38,6 +38,30 @@ pub async fn first_aggregate() -> std::result::Result<(), Box<dyn std::error::Er
 
 The assertion is your first success: the application event returns `ready` even though no Engine exists. `plugin` accepts the ordinary registrar, while the named async function handles the event. The last call closes the session hook lifecycle owned by this host; no authentication work was submitted.
 
+## Where config goes
+
+Use the G47 convention in the application crate:
+
+| Original Stackpress | Rust application location |
+| --- | --- |
+| `config/common.ts` | `src/config.rs`: shared values, templates, computed or environment-derived values and typed code bindings. |
+| `config/develop.ts` | `config/develop.json`: development data, passed with CLI `-b`. |
+| `config/build.ts` | `config/build.json`: build-environment data, passed with CLI `-b`. |
+
+JSON files hold data and cannot hold code values; those belong in `src/config.rs`. Precedence,
+lowest first: **plugin section defaults → shared `src/config.rs` layer → `-b` environment file →
+explicit app code overrides**. In the app build function, install the shared ConfigLayers before
+the CLI-supplied ConfigLayers, then append explicit overrides. The existing
+`ServerBuilder::config_layers` append order is sufficient; aggregate registration does not read
+these files or discover config code.
+
+The [converted sql-profile app](../../../../examples/sql-profile/README.md#where-configuration-goes)
+uses this order with separate SQLite paths and a shared result-limit fallback. Its
+[real-builder test](../../../../examples/sql-profile/tests/cases/configuration.rs) proves file
+loading, precedence and rejection. Follow the [typed-config guide](../../../server/server/docs/guides/typed-config.md#own-external-input-explicitly)
+for layer ownership or the [CLI argument guide](../../../../tools/cli/docs/guides/arguments.md#choose-an-environment-file)
+for the `-b` boundary. Paths are relative to the process working directory, not the config file.
+
 ## What the registration did
 
 `register` selected the compiled stages and queued their startup callbacks with an absent client catalog. The schema service's nullable lookup remains absent; registration does not invent a generated client or execute a command. Missing session/access/auth configuration does not add a global guard or auth routes.
