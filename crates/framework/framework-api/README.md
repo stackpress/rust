@@ -11,14 +11,16 @@ Unset gates are ignored/skipped. The [live-search guide](../framework-session/do
 specifies the localhost/port/identity restrictions, exact-name CREATE/DROP ownership and
 parent/admin watchdogs. No listener or public fixture API is added.
 
-PostgreSQL executes Application q/like and Session like with mixed ASCII case and counts,
+PostgreSQL and MySQL execute Application q/like and Session like with mixed ASCII case and counts,
 using the real Profile/Application/Session `install()` paths and source codecs. API Session
 ignores q, following its [source query contract](src/models/query.rs). This is direct-store
 evidence; the SQLite test additionally covers the registered application-search event.
 
-MySQL successfully creates the owned database, but Profile `install()` returns
-**Unsupported: dialect does not support transactional DDL plans** before seeding or searches.
-That opted-in case stays failing. The [SQL Engine contract](../../sql/sql/src/engine.rs) is
-preserved, with no hand-written schema or plan bypass. The exact owned database is dropped
-on this failure as well as on success. MySQL execution and arbitrary collation/Unicode,
-JSON-query, aggregate-provider or production-load behaviour are not established by these tests.
+G48 uses [explicit schema setup](../framework-sql/docs/api/setup.md): MySQL runs source
+install/upgrade statements in order, accepting non-atomic partial state; PostgreSQL/SQLite
+retain atomic setup. The ordinary [SQL Engine contract](../../sql/sql/src/engine.rs) and
+MySQL transaction-DDL refusal stay unchanged. Tests also execute real store upgrade,
+purge with `cascade=true` (forwarded only on PostgreSQL under G48) and dependency-ordered
+uninstall. Exact owned databases are dropped on success and
+failure. Arbitrary collation/Unicode, JSON-query, aggregate-provider or production-load
+behaviour is not established by these tests.

@@ -59,6 +59,29 @@ async fn scenario(engine: Arc<Engine>) -> support::TestResult<()> {
     assert_eq!(rows[0]["id"], "Alpha");
     query.like = record(json!({"id":"ALPHA"}));
     assert_eq!(auth.count(&query).await?, 1);
+    // G48 keeps real store alteration and explicit teardown on the same native setup policy.
+    let mut target = auth.store.create().definition()?;
+    target.fields.push(stackpress_sql::Field::new(
+        "g48_note",
+        stackpress_sql::SqlType::Integer,
+    ));
+    auth.upgrade(&target.create()).await?;
+    assert!(
+        auth.engine
+            .fetch(&stackpress_sql::Select::new(["g48_note"]).from("auth"))
+            .await
+            .is_ok()
+    );
+    auth.purge(true).await?;
+    auth.uninstall().await?;
+    let mut target = profile.store.create().definition()?;
+    target.fields.push(stackpress_sql::Field::new(
+        "g48_note",
+        stackpress_sql::SqlType::Integer,
+    ));
+    profile.upgrade(&target.create()).await?;
+    profile.purge(true).await?;
+    profile.uninstall().await?;
     Ok(())
 }
 fn main() {

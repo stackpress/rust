@@ -731,12 +731,12 @@
   {
     "id": "sql-transactions",
     "page": "crates/framework/framework/docs/api/sql.md",
-    "statement": "revision insertion is after commit",
+    "statement": "Revision insertion follows complete SQL success",
     "evidence": [
       {
         "path": "crates/framework/framework/src/native/commands/sql.rs",
         "contains": [
-          "transaction(engine, &queries).await?",
+          "stackpress_framework_sql::setup::execute(engine, &queries)",
           "(history.insert)(root, &scripts.schema)?"
         ]
       },
@@ -1122,9 +1122,28 @@
     ]
   },
   {
+    "id": "g48-mysql-related-purge",
+    "page": "crates/framework/framework/docs/source-behavior.md",
+    "statement": "Related MySQL catalogs therefore use child-first DELETE",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/src/native/commands/sql.rs",
+        "contains": ["let mysql_related", "table.foreign_keys.is_empty()", "stackpress_sql::Delete::new"]
+      },
+      {
+        "path": "crates/framework/framework/tests/live/cascade.rs",
+        "contains": ["1701", "sql::purge(engine, &scripts).await?", "related catalog purge passed with constraints retained"]
+      },
+      {
+        "path": "crates/framework/framework/tests/cases/sql.rs",
+        "contains": ["fn g48_catalog_purge_maps_backend_and_foreign_key_order"]
+      }
+    ]
+  },
+  {
     "id": "g46-live-owning-stores",
     "page": "crates/framework/framework/docs/source-behavior.md",
-    "statement": "now execute direct PostgreSQL ASCII searches",
+    "statement": "execute direct PostgreSQL/MySQL ASCII searches",
     "evidence": [
       {
         "path": "crates/framework/framework-session/tests/live_search.rs",
@@ -1136,7 +1155,7 @@
       },
       {
         "path": "crates/sql/sql/src/engine.rs",
-        "contains": ["dialect does not support transactional DDL plans"]
+        "contains": ["pub async fn execute_non_atomic", "with_plan_progress"]
       }
     ]
   }

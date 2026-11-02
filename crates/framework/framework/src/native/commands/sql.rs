@@ -17,7 +17,7 @@ use std::{path::Path, sync::Arc};
 pub struct Scripts {
     /// Statements in generated install order.
     pub install: Vec<Query>,
-    /// Statements in generated purge order.
+    /// Purge statements: create order, or child-first DELETE for related MySQL catalogs (G48).
     pub purge: Vec<Query>,
     /// Statements in generated uninstall order.
     pub uninstall: Vec<Query>,
@@ -27,6 +27,11 @@ pub struct Scripts {
 
 impl Scripts {
     /// Build real SQL from an app-owned catalog in its generated create order.
+    ///
+    /// PostgreSQL keeps TRUNCATE CASCADE; SQLite uses its accepted DELETE mapping.
+    /// MySQL omits CASCADE. InnoDB refuses TRUNCATE of referenced tables even when
+    /// empty, so related MySQL catalogs use DELETE in reverse create order (G48).
+    /// The catalog must therefore supply parents before children, as for creation.
     /// # Errors
     /// Preserves backend rendering errors before any Engine acquisition.
     pub fn from_tables(
@@ -37,7 +42,10 @@ impl Scripts {
         let mut install = Vec::new();
         let mut purge = Vec::new();
         let mut uninstall = Vec::new();
-        // Source install/purge use create order; uninstall uses its reverse.
+        // Use the typed catalog rather than retrying a partially applied TRUNCATE script.
+        let mysql_related = dialect == stackpress_sql::DialectId::Mysql
+            && tables.iter().any(|table| !table.foreign_keys.is_empty());
+        // Source install/purge use create order, except the owner-selected MySQL FK mapping.
         for table in tables {
             install.extend(
                 table
@@ -48,17 +56,28 @@ impl Scripts {
                     .iter()
                     .cloned(),
             );
-            // Coordinator ruling: accepted SQLite DELETE mapping; other dialects retain CASCADE.
-            purge.push(
-                stackpress_sql::TableCommand::Truncate {
-                    table: table.name.clone(),
-                    cascade: dialect != stackpress_sql::DialectId::Sqlite,
-                }
-                .render(dialect)
-                .map_err(Error::from_source)?,
-            );
+            if !mysql_related {
+                // G48 removes MySQL CASCADE at the caller; renderer capabilities are unchanged.
+                purge.push(
+                    stackpress_sql::TableCommand::Truncate {
+                        table: table.name.clone(),
+                        cascade: dialect == stackpress_sql::DialectId::Postgres,
+                    }
+                    .render(dialect)
+                    .map_err(Error::from_source)?,
+                );
+            }
         }
         for table in tables.iter().rev() {
+            if mysql_related {
+                // Clear children before parents without dropping constraints or changing session flags.
+                purge.push(
+                    stackpress_sql::Delete::new(table.name.as_str())
+                        .all_rows()
+                        .render(dialect)
+                        .map_err(Error::from_source)?,
+                );
+            }
             uninstall.push(
                 stackpress_sql::TableCommand::Drop {
                     table: table.name.clone(),
@@ -114,9 +133,9 @@ pub async fn transaction(engine: &Engine, queries: &[Query]) -> Result<()> {
     transaction.commit().await.map_err(Error::from_source)
 }
 
-/// Source install always uninstalls first, then installs in the same transaction.
+/// Source install uninstalls first, then installs; MySQL accepts implicit DDL commits (G48).
 /// # Errors
-/// Preserves SQL and revision-provider failures; revision insertion follows transaction completion.
+/// Preserves SQL and revision-provider failures; revision insertion follows complete setup success.
 pub async fn install(
     engine: &Engine,
     scripts: &Scripts,
@@ -128,7 +147,9 @@ pub async fn install(
         .chain(&scripts.install)
         .cloned()
         .collect();
-    transaction(engine, &queries).await?;
+    stackpress_framework_sql::setup::execute(engine, &queries)
+        .await
+        .map_err(Error::from_source)?;
     // A fresh source Revisions has an empty epoch cache, so size() is zero before insert.
     if let Some((root, history)) = revisions {
         (history.insert)(root, &scripts.schema)?;
@@ -136,18 +157,24 @@ pub async fn install(
     Ok(())
 }
 
-/// Source purge delegates all compiled purge statements in one caller-selected database transaction.
+/// Purge delegates compiled statements, including the G48 MySQL foreign-key DELETE mapping.
 /// # Errors
 /// Preserves native SQL/commit/rollback errors under the accepted dialect contract.
 pub async fn purge(engine: &Engine, scripts: &Scripts) -> Result<()> {
-    transaction(engine, &scripts.purge).await
+    stackpress_framework_sql::setup::execute(engine, &scripts.purge)
+        .await
+        .map(|_| ())
+        .map_err(Error::from_source)
 }
 
-/// Source uninstall delegates the compiled drop sequence in one transaction.
+/// Source uninstall delegates the compiled drop sequence, non-atomically on MySQL (G48).
 /// # Errors
 /// Preserves native SQL/commit/rollback errors; it does not delete revision history.
 pub async fn uninstall(engine: &Engine, scripts: &Scripts) -> Result<()> {
-    transaction(engine, &scripts.uninstall).await
+    stackpress_framework_sql::setup::execute(engine, &scripts.uninstall)
+        .await
+        .map(|_| ())
+        .map_err(Error::from_source)
 }
 
 /// Source push skips an absent revisions root, installs with fewer than two revisions,
@@ -237,7 +264,9 @@ pub async fn upgrade(
         return Err(Error::new(warning));
     }
     if !plan.queries.is_empty() {
-        transaction(engine, &plan.queries).await?;
+        stackpress_framework_sql::setup::execute(engine, &plan.queries)
+            .await
+            .map_err(Error::from_source)?;
     }
     Ok(())
 }

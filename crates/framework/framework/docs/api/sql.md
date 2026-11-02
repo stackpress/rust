@@ -25,8 +25,8 @@ All fallible functions return the original error without retrying. Here `root`/`
 | Function | Arguments / result / side effect |
 | --- | --- |
 | transaction | (&Engine, &[Query]) -> async Result<()>; begin, execute sequentially, commit; execution failure rolls back retaining rollback context. |
-| install | (&Engine, &Scripts, Option<(&str, &History)>) -> async Result<()>; uninstall+install one transaction; revision insertion is after commit, so its failure does not undo committed SQL. |
-| purge / uninstall | (&Engine, &Scripts) -> async Result<()>; corresponding statement sequence in one transaction. |
+| install | (&Engine, &Scripts, Option<(&str, &History)>) -> async Result<()>; uninstall then install; G48 permits MySQL partial progress, while PostgreSQL/SQLite use one transaction. Revision insertion follows complete SQL success. |
+| purge / uninstall | (&Engine, &Scripts) -> async Result<()>; corresponding source sequence, non-atomic on MySQL and atomic on PostgreSQL/SQLite. |
 | push | (&Engine, root, &History, force, scripts: impl FnOnce() -> Result<Arc<Scripts>> + Send) -> async Result<()>; lazy install/upgrade decision. |
 | populate | (&[serde_json::Value], &Invocation<'_>) -> async Result<()>; independent raw child responses, no Engine. |
 | migrate | (&Engine, root, destination, &History) -> Result<()>; create directory and write epoch.sql for nonempty plans, statements joined with semicolon/newline. |
@@ -59,7 +59,28 @@ pub async fn sqlite_transaction() -> Result<(), Box<dyn std::error::Error + Send
 }
 ```
 
-The [real SQLite lifecycle tests](../../tests/cases/sql.rs) cover command events, rollback, script skips, query output and revision laziness beyond this small transaction. Check the adapter's current constructors when integrating other backends; Postgres/MySQL dialect output is not proof of a live connection. Separate [session/API live tests](../../../framework-session/docs/live-search.md) now execute direct PostgreSQL source-store ASCII searches; MySQL source installation rejects transactional DDL before search. These do not establish aggregate live command-provider routing.
+The [real SQLite lifecycle tests](../../tests/cases/sql.rs) cover command events, rollback, script skips, query output and revision laziness beyond this small transaction. Separate [session/API live tests](../../../framework-session/docs/live-search.md) execute direct PostgreSQL/MySQL source-store ASCII searches. [Owned aggregate live tests](../../tests/live_setup.rs) execute the direct source commands, including one adjacent generated migration on both network backends, MySQL partial failures and PostgreSQL rollback. These finite calls do not establish live command-provider event routing.
+
+G48 uses stackpress_framework_sql::setup for source setup callers. The public transaction
+function remains atomic and still rejects MySQL transaction DDL. A non-atomic error retains
+the original SQL kind/display/cause plus plan_progress; cancellation and lost acknowledgements
+can leave effects. Source revision insertion occurs only after all setup statements succeed.
+G27's generated MigrationRunner remains SQLite-only: no new MySQL runner, target lock, drift
+detector or generated-workspace ledger is supplied. MySQL upgrades use the existing aggregate
+adjacent-migration command.
+
+G48 resolves MySQL purge after native ERROR 1064 for the source CASCADE spelling:
+`Scripts::from_tables` requests CASCADE only on PostgreSQL. Unrelated MySQL catalogs
+retain TRUNCATE in create order. InnoDB rejects TRUNCATE of referenced tables with
+ERROR 1701, so a MySQL catalog declaring foreign keys uses DELETE for its tables in
+reverse create order (children first). Supply parents before children, as for creation.
+The [live proof](../../tests/live/cascade.rs) records the native 1701 diagnostic,
+executes the actual purge, and checks that constraints still reject an orphan insert.
+It also executes unchanged PostgreSQL parent-first TRUNCATE CASCADE. No renderer
+capability, FOREIGN_KEY_CHECKS setting, runtime retry or drop/recreate is introduced.
+App-authored `Scripts` retain their explicit queries; the purge command executes them
+through the same setup selector. Standalone session/API actions already forward the
+cascade flag only on PostgreSQL; their live teardown now passes `true` to pin that rule.
 
 ## Accepted SQLite divergence
 

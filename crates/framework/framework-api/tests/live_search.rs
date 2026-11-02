@@ -63,6 +63,25 @@ async fn scenario(engine: Arc<Engine>) -> support::TestResult<()> {
     };
     assert_eq!(session.find_all(&ignored_q).await?[0]["id"], "s");
     assert_eq!(session.count(&ignored_q).await?, 1);
+    // G48 changes only setup selection; each real source action still owns its own teardown.
+    let mut target = session.store.create().definition()?;
+    target.fields.push(stackpress_sql::Field::new(
+        "g48_note",
+        stackpress_sql::SqlType::Integer,
+    ));
+    session.upgrade(&target.create()).await?;
+    session.purge(true).await?;
+    session.uninstall().await?;
+    let mut target = app.store.create().definition()?;
+    target.fields.push(stackpress_sql::Field::new(
+        "g48_note",
+        stackpress_sql::SqlType::Integer,
+    ));
+    app.upgrade(&target.create()).await?;
+    app.purge(true).await?;
+    app.uninstall().await?;
+    profile.purge(true).await?;
+    profile.uninstall().await?;
     Ok(())
 }
 fn main() {

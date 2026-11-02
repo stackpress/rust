@@ -57,7 +57,7 @@ Rust input contract. Use a native Date value for those values.
 | `remove`, `restore` | Source update(active=false/true). Restoring an inactive row needs an explicit inactive/all selector. No JWT revocation is added. |
 | `upsert[_in]` | Present ID takes precedence and returns null if not found. Auth then tries a nonempty token. Otherwise create. |
 | `batch` | Explicit transaction on one executor. Caught item errors cause rollback after all items. Status rows describe attempts even if rollback/commit fails. Missing update keys add an error item without setting rollback. |
-| `install`, `upgrade`, `purge`, `uninstall` | Explicit source maintenance through existing SQL plans; unsupported renderer/atomic-DDL operations fail under the SQL crate's existing mechanics. PostgreSQL cascade is retained; SQLite/MySQL ignore purge's cascade like source. |
+| `install`, `upgrade`, `purge`, `uninstall` | G48: explicit source install/upgrade is ordered and non-atomic on MySQL, atomic on PostgreSQL/SQLite. Ordinary transaction guarantees stay unchanged. Single-statement purge/uninstall keep their existing semantics; these standalone actions forward purge's cascade only on PostgreSQL. |
 | `signin`, `signup`, `assert` | Source password checks/errors, optional password comparison, consumed reload; signup creates profile/email/phone/username sequentially, preserving earlier writes after later failures. Missing phone succeeds under G44. |
 
 `StoreQuery` supplies `eq`, `ne`, `ge`, `le`, `like`, `has`, `hasnt`, `q`, `columns`, `sort`,
@@ -88,9 +88,9 @@ Source behaviors intentionally retained:
 - G46 keeps ILIKE only on PostgreSQL. SQLite/MySQL use LIKE, relying on SQLite's default
   ASCII case-insensitive matching and MySQL's default _ci collations.
 
-SQLite execution is proved in tests. [Live PostgreSQL searches](live-search.md) now execute
-Profile q/like and Auth-to-Profile like with source installation/codecs. MySQL connects but
-Profile install rejects transactional DDL before a search; the opted-in test remains failing.
+SQLite execution is proved in tests. [Live PostgreSQL/MySQL searches](live-search.md) execute
+Profile q/like and Auth-to-Profile like with actual source installation/codecs. G48 setup
+accepts MySQL partial DDL progress while retaining atomic PostgreSQL/SQLite execution.
 Arbitrary collations and backend-specific JSON-query semantics remain unverified. Raw SQL
 identifiers/JSON paths use the existing Rust SQL crate's checked/bound representation,
 a mechanics boundary rather than a new application admission policy. No native resource,

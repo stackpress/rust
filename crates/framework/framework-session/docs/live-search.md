@@ -34,18 +34,21 @@ timeout result. No listener is started; only the already-running local database 
 
 ## Current execution evidence
 
-PostgreSQL executes Profile q/like, Auth-to-Profile like, Application q/like and API Session
+Both PostgreSQL and MySQL execute Profile q/like, Auth-to-Profile like, Application q/like and API Session
 like successfully, including mixed ASCII case, ordered identities and counts. All tables use
 the stores' real `install()` paths and source codecs. API Session has no q search fields and
 continues to ignore q, as declared in its [query contract](../../framework-api/src/models/query.rs).
 The proof does not claim arbitrary Unicode matching, other collations, every JSON operator,
-schema upgrade or production-load acceptance.
+every possible schema upgrade or production-load acceptance. The same cases also exercise
+real store upgrade with a nullable integer column, purge with `cascade=true` and
+dependency-ordered uninstall. G48 omits MySQL CASCADE at these callers; PostgreSQL
+retains the flag and SQLite retains its DELETE mapping. These standalone actions
+do not discover or tear down other tables: the test uninstalls children before parents.
 
-MySQL connects and creates its owned database, but both executables stop at Profile
-`install()` with **Unsupported: dialect does not support transactional DDL plans**, before
-any source search. [Profile install](../src/storage/actions.rs) uses the existing
-[Engine plan contract](../../../sql/sql/src/engine.rs); MySQL does not offer transactional DDL.
-The test remains failing when opted in. No schema rewrite, manual table or sequential-plan
-bypass is substituted. MySQL search execution awaits the separately approved G48 setup work;
-this live-search task records the current refusal and does not implement that decision.
-All successful and failing cases confirm the drop of their exact owned database.
+G48 selects [explicit schema setup](../../framework-sql/docs/api/setup.md) for the actual
+store install/upgrade actions: MySQL executes the same statements in order outside a
+transaction and can retain partial state after failure; PostgreSQL/SQLite stay atomic.
+The ordinary Engine::execute_plan and MySQL transaction-DDL refusals remain unchanged.
+No handwritten table replaces source DDL. All successful and failing cases confirm the
+drop of their exact owned database. The [aggregate live setup proof](../../framework/tests/live_setup.rs)
+separately tests real adjacent generated upgrades, partial failures and cancellation.
