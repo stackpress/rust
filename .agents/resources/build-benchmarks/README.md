@@ -10,3 +10,6 @@ see counters and individual durations. No records means zero recorded attempts,
 not zero historical builds. Keep the `runs/` records when deleting Cargo targets.
 The recorder uses this directory in the main checkout for linked worktrees too.
 Tests use temporary stores and never add synthetic builds here.
+
+The `runs/` records are local-only: `.gitignore` excludes them (owner decision, 2026-11-03),
+so they stay on the machine that produced them and are not committed or pushed.

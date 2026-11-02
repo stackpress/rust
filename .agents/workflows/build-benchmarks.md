@@ -70,8 +70,8 @@ Git layout, or an isolated proof/test, pass `--store /absolute/path` **before**
 Each attempt owns `runs/<UTC timestamp>-<unique ID>.json` and a matching `.log`.
 The start record is written before execution and replaced atomically on finish.
 Unique files allow parallel agents to record without sharing a mutable counter.
-Keep these records when cleaning targets or worktrees. Include them in the
-owner's normal repository commit when requested; recording does not commit them.
+Keep these records when cleaning targets or worktrees. They are local-only:
+`.gitignore` excludes `runs/`, so they are never committed or pushed.
 Do not put credentials in command arguments or labels. Only selected build
 environment settings are recorded; output logs contain whatever the command emits.
 

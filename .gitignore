@@ -34,3 +34,9 @@ rustc-ice-*.txt
 # Python bytecode from example proof scripts
 __pycache__/
 *.pyc
+
+# macOS Finder metadata
+.DS_Store
+
+# Local build benchmark records written by .agents/scripts/build-benchmark.py
+.agents/resources/build-benchmarks/runs/

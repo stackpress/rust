@@ -1,3 +1,0 @@
-PASS native-build
-PASS hydrate-build
-PASS bindgen
