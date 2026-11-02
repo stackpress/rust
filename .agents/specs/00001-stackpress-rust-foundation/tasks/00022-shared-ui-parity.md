@@ -1,6 +1,6 @@
 # Shared UI source parity receipt
 
-Status: **Complete; awaiting coordinator verification**. Started at `99937b067683731828dee7236027dc151b609b97`, branch `trial/3-slice9-csrf-email`. This is the released four-item shared UI task. No commit, listener, install, delivery or API-adapter cleanup was performed.
+Status: **Merged follow-up complete; awaiting coordinator verification**. Original implementation started at 99937b0; the original sections below preserve its pre-merge evidence. Current results are in the merged verification follow-up at the end. Branch: trial/3-slice9-csrf-email. The coordinator committed/merged the original work; the implementer made no commit.
 
 ## Source and changes
 
@@ -31,7 +31,7 @@ Inventory: facade; framework-admin/view/session; email integration tests; genera
 
 Both generated-admin roots, shared/src/generated and generated-format, were regenerated only through the official tool and checked twice. Variant proofs restore all managed bytes. No generated Rust was hand-edited. The nullable RoleProof URL fixture uses actual generated field/span adapters; the fixture draft display subscribes to URL and exercised Switch fields.
 
-At this HEAD, api-checkpoint retains its existing generated SQL output and has no additional generated admin UI root. Its files, framework-api and framework-session remain unchanged. The separately merged API adapters are a later coordinator cleanup/integration point. No other trial branch was consulted.
+At the original 99937b0 base, api-checkpoint retains its existing generated SQL output and has no additional generated admin UI root. Its files, framework-api and framework-session remain unchanged. The separately merged API adapters are a later coordinator cleanup/integration point. No other trial branch was consulted.
 
 ## Distinct test-verified reviews
 
@@ -155,3 +155,43 @@ Store: `/Users/cblanquera/server/projects/stackpress/rust/.agents/resources/buil
 Closing receipt/scope/KB audit record: 20261031T021429.253729Z-8dab600494bf. Its final status and timings are in the store; publication fails if either audit changes the baseline. The ledger above contains 64 completed runs before that closing run.
 
 Earlier failed attempts were resolved before the final gate: old size guard; initial assertion/nullable fixture expectations; frozen consumer metadata and inherited package-version trials before the approved one-off offline preparation; missing cached Chromium in the first selected runtime; misplaced CSS bundle ownership; fixture draft subscriptions; removed Boolean presence assertions; Clippy unit-child syntax; and empty-text hydration whitespace. No failure was waived.
+
+## Merged verification follow-up
+
+Coordinator committed the original work as 883126e, then merged 16f5255 into this branch as 443dfc0e4e36bb770766d6f5a24a3f25b1b34978. This follow-up starts at that merged HEAD; G42–G48 were read. No implementer commit or branch merge was made.
+
+Failure: shared catalog field.url (stackpress.ui.field.url) was imported before API registered api.source.field.url. API definitions() rejected the second canonical registration before normalize(). Focused full-feature baseline 26004e9813ae reproduced the coordinator's failure. The initial selected-package command rejected unrelated workspace features (509007d04a07); the workspace-filtered retry used the exact accepted feature string.
+
+Decision: use the expressly authorized fallback. API codegen now excludes field.url alongside its existing input/switch/date replacements. Shared TextField adds a nullable presence selector (including Clear (empty)), sp-role wrapper and aria-describedby links that API InputField lacks. Both are native URL/String controls, but their SSR structures differ, so replacement does not meet the requested SSR/hydration equivalence. The comparison is native SSR; it is not claimed as an API browser proof. API's local URL registration/import/fixed type remain intact, as do SwitchField and its detail-link adapter. No renderer, runtime adapter or shared catalog changed.
+
+Regression: tests/url_roles.rs compares the actual normalized API logo/website descriptors against the shared URL binding obtained through the real shared registry/normalizer. Missing, Null, empty String and escaped URL String seeds retain their draft values; type/id/name/value attributes match; presence/wrapper/association differences are pinned. The final test plus the original normalization test fail under the old registration and pass under the fix (be01c2d8c250). Earlier fixture identity and HTML-attribute-order test helpers were corrected; no failure was waived.
+
+Distinct reviews: round 1 checked canonical registration and optional draft branches (red/green proof); round 2 kept composition API-owned and test helpers local, with no justified shared-crate extraction (95 API tests passed, 881eaee93896); round 3 checked comments, feature guards and Rustdoc, with no further edit justified (API Clippy -D warnings, six doctests and Rustdoc -D warnings, 2bde47a91d39). Safety review: owned Leptos test roots and safe Rust only; no registration-policy relaxation, global gate or runtime behavior change.
+
+Merged native gate d970dd109102 passed: fmt; both workspace Clippy selections -D warnings; default 941/941 (86 skipped), compatible features 991/991 (88 skipped), with tcp_watchdog excluded and nextest --test-threads 2; 966 workspace doctests; Rustdoc -D warnings; hydrate/CSR plus formatted browser Clippy -D warnings; no-default admin 2/2 and Leptos 8/8; minimal facade check. No-default Leptos retains its existing returns_focus dead-code warning; the strict Clippy selections are clean. The compatible feature string is the original gate selection documented above. API separately passed all 95 sql+codegen+ui-ssr tests and its six doctests/docs/lint check.
+
+Merged browser proofs: CRUD 8/8 (c5e03ccea419) and gallery 4/4 (1f123d1f3ead), both freshly rebuilt on this tree. Playwright 1.64.0 / cached Chromium 156.0.8078.4, fresh headless contexts, finite request processes and intercepted .invalid URLs; no listener or system Chrome. No captured errors or unexpected requests. The first gallery run timed out on the native corpus startup before any browser case (15587a1de209); the unchanged retry passed within the existing deadlines. Artifacts: CRUD d7ce99020b5a, gallery 69dad3077e80.
+
+Coverage 42b0120e86d9 passed separately for each crate: admin 2553/2916 (87.55%, 19 files), features codegen,format,ssr; leptos 5404/6245 (86.53%, 44 files), features ssr,rich,format,stream; api 3708/4146 (89.44%, 32 files), features sql,codegen,ui-ssr. Native executable-line scope, default tool filtering and no added exclusions; reports are private merge-followup/{admin,leptos,api}-coverage.json. rustc 1.96.0 / aarch64-apple-darwin / LLVM 22.1.2 / cargo-llvm-cov 0.8.6. Coverage tests use two threads. Native coverage and the 12 browser cases are separate evidence.
+
+Standalone formatted consumer compiled and passed Clippy -D warnings and generation check (4f64bc466d0c), including the direct Input/Switch/sticky-cell/RowActions example. Its existing Cargo.lock passed --locked --offline without refresh (ab09bda8144a): 234 registry tuples remain a root subset, SHA 08a84a3b736f20140420c7a0f8fe8d6b3c46f9a1f1a058e3e4b5b5726a85c349. Root bytes are unchanged. No update/generate-lockfile command or offline resolution was needed. The retained consumer target remains consumers/e4941338875b53b8fcb8. Both official admin roots were regenerated without differences and checked twice; current browser normal graphs are checked against this merged HEAD.
+
+Protected-scope audit f6f53067d0be passed and is repeated at closeout: root manifests/lock, framework-session, licences and .agents/context are unchanged against 443dfc0. All 699 registry tuples remain intact; root lock SHA 8687d9b425a56b3865918ba79bf211caa9bb4a9f17c40fdbbc64673a2574653e. Only API codegen/tests and this receipt changed. Final target 18,826,660 KiB (17.954502 GiB); overall periodically sampled effort peak 21.013557 GiB includes the original runs. Cap 24 GiB, guard 23.4; dependency artifacts retained, with only owned-package cleanup. KB is compared byte-for-byte with the merged baseline: 161 inherited errors, 28 warnings, not a clean KB result.
+
+The real generated-admin document still omits BASE and the original /styles/global.css/configured admin page-chrome chain (examples/generated-admin/web/src/render.rs:69). This file is byte-identical to merged HEAD; the separate follow-up remains outside this fix.
+
+Follow-up recorder ledger: 23 attempts including this closeout; full commands, failed attempts, IDs and timings are in the same persistent store and private merge-followup/benchmarks.json. Below: wall / observed Cargo build seconds (overlapping measures). Other record IDs: 509007d04a07:failed, 26004e9813ae:failed, 13001a3c4a31:failed, 8eb96598f628:failed, ccdbebebda2f:failed, 4190f67f0e4c:failed, d9bf033fda24:failed, ad25b34f94b8:passed, d7ce99020b5a:passed, 69dad3077e80:passed, 15587a1de209:failed, ab09bda8144a:passed, f6f53067d0be:passed.
+
+| Record | Evidence | Wall s | Cargo build s |
+| --- | --- | ---: | ---: |
+| be01c2d8c250 | URL final regression red green and round 1 | 22.979 | 13.850 |
+| 881eaee93896 | URL round 2 API responsibility regression suite | 4.724 | 0.520 |
+| 2bde47a91d39 | URL round 3 API lint Rustdoc and doctests | 70.284 | 58.080 |
+| d970dd109102 | full closing native gate | 692.390 | 364.120 |
+| c5e03ccea419 | CRUD browser | 91.786 | — |
+| 1f123d1f3ead | gallery browser retry after corpus startup timeout | 25.920 | — |
+| 4f64bc466d0c | standalone consumer compile | 30.793 | 16.260 |
+| ddc261cba39e | generation and browser graphs | 24.097 | 6.250 |
+| 42b0120e86d9 | admin Leptos API coverage gate | 62.766 | 43.480 |
+
+Closing receipt/scope/KB record: 20261102T222842.963806Z-22d9d1d8806c; its final status and timings are in the store after completion. No commits, listeners, installs, license changes or .agents/context edits were made.
