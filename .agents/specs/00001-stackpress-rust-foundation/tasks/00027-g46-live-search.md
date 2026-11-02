@@ -118,3 +118,7 @@ Store: `/Users/cblanquera/server/projects/stackpress/rust/.agents/resources/buil
 | 20261101T143815.497789Z-cc9c94d16570 | final 00027 receipt and 00028 design scope KB verification | passed / 0 | 2.79 | unavailable |
 
 The initial KB check found two missing task links introduced by the coordinator's commit (00025-tiny-template-generation.md and 00025-template-integration.md). The coordinator fixed them and corrected task numbering in 16f5255; they are not inherited errors in the final baseline. A separate baseline rerun was rejected before execution pending that correction. The recorded transition proves only those KB files changed and retains the original snapshot. Final record cc9c94d16570 confirms the canonical KB at **0 errors / 28 warnings** and the raw worktree at the unchanged **146 inherited sibling-layout errors / 28 warnings**, with zero task-link errors. It also rechecks both package docs, the aggregate ledger, 41 local receipt/design links, line caps, all eight database pairs, the exact 18-path combined handoff and unchanged 699 external entries. No commits, staging, installs, listener starts, role/global changes or unowned database cleanup occurred.
+
+## Coordinator verification
+
+Committed as `2cc9b41` and re-verified with the G48 gate (receipt 00029): the session/API live searches now pass on both MySQL and PostgreSQL after G48 setup, on the owner's local servers with owned throwaway databases only.
