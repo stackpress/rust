@@ -1970,6 +1970,7 @@ dependencies = [
  "stackpress-framework-csrf",
  "stackpress-framework-schema",
  "stackpress-framework-session",
+ "stackpress-framework-sql",
  "stackpress-framework-view",
  "stackpress-lib",
  "stackpress-server",

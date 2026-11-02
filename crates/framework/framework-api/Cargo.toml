@@ -45,7 +45,15 @@ stackpress-idea-parser = { path = "../../idea/idea-parser", optional = true }
 [dev-dependencies]
 stackpress-framework-session = { path = "../framework-session", features = ["server"] }
 stackpress-sql-sqlite = { path = "../../sql/sql-sqlite" }
+stackpress-sql-postgres = { path = "../../sql/sql-postgres" }
+stackpress-sql-mysql = { path = "../../sql/sql-mysql" }
 tokio = { version = "=1.54.1", features = ["macros", "rt-multi-thread", "sync", "time"] }
 
 [lints]
 workspace = true
+
+[[test]]
+name = "live_search"
+path = "tests/live_search.rs"
+harness = false
+required-features = ["sql"]

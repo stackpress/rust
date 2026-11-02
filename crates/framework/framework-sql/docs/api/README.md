@@ -1,5 +1,8 @@
 # Native API index
 
+Use [explicit schema setup](setup.md) for G48's non-atomic MySQL setup and atomic
+PostgreSQL/SQLite selection; ordinary transactions and the SQLite migration runner stay unchanged.
+
 See [runtime and emitted API](runtime.md) for the callable surface and [concepts](../concepts.md) for transaction/outcome semantics. The schema crate owns pure descriptor/DTO/query revision 3. Framework-sql's runtime compatibility constant remains 1; M2 adds native APIs inside `stores` without changing the selected pure shapes.
 
 Use [revisions and migrations](migrations.md) for immutable history, exact plan approvals, SQLite reconstruction and the app-owned operator commands.

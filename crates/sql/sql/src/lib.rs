@@ -92,6 +92,11 @@
 //! failure while retaining the original error and any rollback failure. The
 //! transaction method retains caller ownership and leaves completion to the caller.
 //! MySQL plans can be inspected but atomic plan execution is rejected up front.
+//! [`crate::Engine::execute_non_atomic`] is an explicit alternative: validate the full
+//! script, then submit statements in order outside a transaction without retrying.
+//! Errors retain [`crate::PlanProgress`] through [`crate::SqlError::plan_progress`].
+//! Earlier statements may remain applied after failure/cancellation; the failing
+//! statement can also have executed without its acknowledgement being received.
 //!
 //! # Validate before effects
 //!
@@ -155,7 +160,7 @@ pub use dml::{
 pub use engine::{
     Database, Engine, SqlFuture, Transaction, TransactionOptions, TransactionSession,
 };
-pub use error::{ErrorKind, Result, SqlError};
+pub use error::{ErrorKind, PlanProgress, Result, SqlError};
 pub use expr::{Compare, Expr, Selector};
 pub use identifier::{Identifier, TableRef};
 pub use json::{JsonPath, JsonPathOptions, JsonScalar, JsonSegment, JsonValue};

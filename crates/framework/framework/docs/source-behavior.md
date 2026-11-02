@@ -36,8 +36,19 @@ These describe what the current proof establishes; they do not imply another hos
 | EDGE-REPLAY | Owning source-edge tests remain current, but not every G46 account/API behaviour is reinvoked under aggregate registration. |
 | S11-WHATWG | No JS/serverless Request/Response/ReadableStream bridge. |
 | NODE-PACKAGING | No npm package.json writer; optional non-awaited app callback retains timing and supervision. Actual bundler/HMR/TTY/listener/process/filesystem integration stays app-owned. |
-| LIVE-PROVIDERS | Real finite SQLite and JSON mail do not establish live SMTP/SES/sendmail/Postgres/MySQL, remote acknowledgement or TCP/TLS flush. |
+| LIVE-PROVIDERS | Owning [session/API live tests](../../framework-session/docs/live-search.md) execute direct PostgreSQL/MySQL ASCII searches. [Aggregate live setup](../tests/live_setup.rs) proves direct adjacent generated upgrades and partial failure semantics, not live command-provider event routing, SMTP/SES/sendmail, remote delivery acknowledgement or TCP/TLS flush. |
 | INSTALLED-TAURI | Native/WASM compilation and Chromium replay do not establish installed desktop/mobile acceptance. |
 | JS-MECHANICS | No duplication of flat JS aliases, dynamic classes/imports, Node streams, TS/CJS/ESM/React/Vite/UnoCSS/reset assets. Qualified Rust owners and explicit bindings apply. |
+
+G48 selects explicit ordered non-atomic MySQL setup; PostgreSQL/SQLite keep atomic setup.
+Ordinary transactions and the generated SQLite-only MigrationRunner are unchanged. No
+generated MySQL runner, locking/drift protocol or generated-workspace ledger is added.
+G48 also resolves MySQL purge: omit CASCADE, which the server rejected with ERROR 1064.
+InnoDB rejects parent-table TRUNCATE with ERROR 1701 while a foreign key references it.
+Related MySQL catalogs therefore use child-first DELETE in reverse create order;
+unrelated catalogs keep TRUNCATE without CASCADE. PostgreSQL retains parent-first
+TRUNCATE CASCADE and SQLite retains its DELETE mapping. The general MySQL renderer
+still refuses CASCADE. The [SQL reference](api/sql.md) and [native proof](../tests/live/cascade.rs)
+pin the mapping and verify that foreign-key constraints remain active.
 
 The [verification page](verification.md) links exact current checks and historical accepted runtime scope. The aggregate adds no hardening beyond the source, and configuration absence remains developer-owned source behaviour.

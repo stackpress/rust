@@ -13,7 +13,7 @@ server-commands = ["native"]
 schema-client = ["native"]
 language = ["native"]
 csrf = ["native", "dep:stackpress-framework-csrf", "stackpress-framework-csrf/server"]
-sql = ["native", "dep:stackpress-sql"]
+sql = ["native", "dep:stackpress-sql", "dep:stackpress-framework-sql"]
 view = ["native", "dep:stackpress-framework-view", "dep:tokio"]
 codegen = ["schema-client", "dep:stackpress-idea", "dep:stackpress-framework-sql", "stackpress-framework-schema/codegen", "stackpress-framework-sql/codegen"]
 session = ["native", "dep:stackpress-framework-session", "stackpress-framework-session/auth-server"]
@@ -40,6 +40,15 @@ tokio = { version = "=1.54.1", default-features = false, features = ["rt", "sync
 tokio = { version = "=1.54.1", features = ["macros", "rt-multi-thread", "sync", "time"] }
 trybuild = "1"
 stackpress-sql-sqlite = { path = "../../sql/sql-sqlite", default-features = false }
+stackpress-sql-postgres = { path = "../../sql/sql-postgres", default-features = false }
+stackpress-sql-mysql = { path = "../../sql/sql-mysql", default-features = false }
+stackpress-framework-sql = { path = "../framework-sql", default-features = false, features = ["migrations"] }
+
+[[test]]
+name = "live_setup"
+path = "tests/live_setup.rs"
+harness = false
+required-features = ["full"]
 
 [lints]
 workspace = true

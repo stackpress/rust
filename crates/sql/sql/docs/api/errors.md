@@ -3,6 +3,13 @@
 `Result<T>` aliases `std::result::Result<T, SqlError>`. ErrorKind supports stable classification;
 SqlError preserves native and cleanup causes. Source: [error.rs](../../src/error.rs).
 
+`plan_progress() -> Option<&PlanProgress>` reports explicit non-atomic execution only:
+`acknowledged` is the completed successful prefix, `failed_index` is zero-based and
+`total` is the supplied statement count. Validation errors have zero acknowledgements;
+native failures preserve their original kind, display and cause. The failing statement
+may also have taken effect if its acknowledgement was lost. Cancellation returns no
+report. Ordinary atomic errors have no progress metadata; see [Engine](engine.md).
+
 ```rust
 use stackpress_sql::{ErrorKind, SqlError};
 use std::error::Error;

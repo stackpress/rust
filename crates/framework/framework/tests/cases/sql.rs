@@ -62,6 +62,72 @@ fn scripts() -> Scripts {
         .unwrap();
     Scripts::from_tables(&[table], DialectId::Sqlite, json!({"source":"schema"})).unwrap()
 }
+
+/// G48 changes callers, leaving the general MySQL CASCADE renderer refusal intact.
+#[test]
+fn g48_catalog_purge_maps_backend_and_foreign_key_order() {
+    use stackpress_sql::{ForeignKey, TableCommand};
+    let parent = Create::new("parent")
+        .add_field(Field::new("id", SqlType::Integer))
+        .primary_key(["id"])
+        .definition()
+        .unwrap();
+    let child = Create::new("child")
+        .add_field(Field::new("id", SqlType::Integer))
+        .add_field(Field::new("parent_id", SqlType::Integer))
+        .add_foreign_key(ForeignKey::new(
+            "child_parent",
+            ["parent_id"],
+            "parent",
+            ["id"],
+        ))
+        .definition()
+        .unwrap();
+    for (dialect, flat, related) in [
+        (
+            DialectId::Mysql,
+            vec!["TRUNCATE TABLE `parent`"],
+            vec!["DELETE FROM `child`", "DELETE FROM `parent`"],
+        ),
+        (
+            DialectId::Postgres,
+            vec!["TRUNCATE TABLE \"parent\" CASCADE"],
+            vec![
+                "TRUNCATE TABLE \"parent\" CASCADE",
+                "TRUNCATE TABLE \"child\" CASCADE",
+            ],
+        ),
+        (
+            DialectId::Sqlite,
+            vec!["DELETE FROM \"parent\""],
+            vec!["DELETE FROM \"parent\"", "DELETE FROM \"child\""],
+        ),
+    ] {
+        let single =
+            Scripts::from_tables(std::slice::from_ref(&parent), dialect, json!({})).unwrap();
+        assert_eq!(
+            single.purge.iter().map(|q| q.sql()).collect::<Vec<_>>(),
+            flat
+        );
+        let scripts =
+            Scripts::from_tables(&[parent.clone(), child.clone()], dialect, json!({})).unwrap();
+        assert_eq!(
+            scripts.purge.iter().map(|q| q.sql()).collect::<Vec<_>>(),
+            related
+        );
+        // Table creation stays parent-first and drops stay child-first on all three engines.
+        assert!(scripts.install[0].sql().contains("parent"));
+        assert!(scripts.uninstall[0].sql().contains("child"));
+    }
+    assert!(
+        TableCommand::Truncate {
+            table: "parent".into(),
+            cascade: true
+        }
+        .render(DialectId::Mysql)
+        .is_err()
+    );
+}
 /// Read finite plans from a provider-owned JSON file, keeping warning policy outside the provider.
 fn plans(root: &str, engine: &Engine) -> Result<Vec<Migration>> {
     let values: Vec<Value> =
