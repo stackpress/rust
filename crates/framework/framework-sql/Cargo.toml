@@ -9,7 +9,7 @@ publish.workspace = true
 [features]
 default = []
 server = ["dep:stackpress-lib", "dep:stackpress-server"]
-codegen = ["stackpress-framework-schema/codegen", "dep:stackpress-idea-transformer"]
+codegen = ["stackpress-framework-schema/codegen", "dep:stackpress-idea-transformer", "dep:stackpress-lib"]
 migrations = ["dep:sha2"]
 sqlite-maintenance = ["migrations", "dep:stackpress-sql-sqlite", "dep:tokio"]
 

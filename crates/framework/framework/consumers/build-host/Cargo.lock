@@ -1472,6 +1472,7 @@ dependencies = [
  "stackpress-framework-schema",
  "stackpress-idea-transformer",
  "stackpress-leptos",
+ "stackpress-lib",
 ]
 
 [[package]]
@@ -1484,6 +1485,7 @@ dependencies = [
  "sha2",
  "stackpress-idea-parser",
  "stackpress-idea-transformer",
+ "stackpress-lib",
  "time",
  "url",
 ]
@@ -1496,6 +1498,7 @@ dependencies = [
  "serde_json",
  "stackpress-framework-schema",
  "stackpress-idea-transformer",
+ "stackpress-lib",
  "stackpress-sql",
 ]
 
@@ -1524,6 +1527,7 @@ dependencies = [
  "serde_json",
  "sha2",
  "stackpress-idea-parser",
+ "stackpress-lib",
  "tempfile",
 ]
 

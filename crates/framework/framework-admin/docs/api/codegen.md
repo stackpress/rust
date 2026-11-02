@@ -17,3 +17,68 @@ Rust import mappings are trusted compiled application choices, checked lexically
 `ui/pages_host.rs` is a separate explicit native include, omitted from the pure UI aggregate. It registers selected actual generated operations and fixed page/API routes under the application's validated mount. It imports native server/data crates only in the native host. Applications must provide policy, transport, anti-forgery admission, error handling and SQLite lifecycle; generation does not grant authority.
 
 The [build-time registration reference](../../../framework-schema/docs/README.md) describes the separate schema/SQL/admin transform helpers, their partitions and dependency order.
+
+## Integrate the emitters
+
+Call the emitters while an ordinary registered transform owns the `ui` partition.
+The application's normalization and diagnostic map remain inputs to generation:
+
+```rust
+use stackpress_framework_admin::codegen::{emit_pages, emit_roles};
+use stackpress_framework_schema::{
+    Schema,
+    codegen::{DefinitionRegistry, DiagnosticMap, transform_error},
+};
+use stackpress_idea_transformer::{OutputPlan, Result};
+
+pub fn emit_selected_admin(
+    schema: &Schema,
+    definitions: &DefinitionRegistry,
+    diagnostics: &DiagnosticMap,
+    output: &mut OutputPlan,
+) -> Result<()> {
+    let ui = schema.project_ui().map_err(transform_error)?;
+    emit_roles(&ui, definitions, diagnostics, output)?;
+    emit_pages(schema, definitions, &["Profile"], output)
+}
+```
+
+This application function runs complete role/import preflight before emitting page
+adapters for Profile. Register real schema and SQL transforms before selecting
+`register_pages`; the application must verify actual generated SQL operations.
+For role-only generation, use `register` and omit `emit_pages`.
+
+| Input | Used by | Contract |
+| --- | --- | --- |
+| `ui: &UiSchema` | `emit_roles` | Revision-3 public projection; sensitive/private fields are excluded. |
+| `schema: &Schema` | `emit_pages` | The normalized schema that produced the role projection. |
+| `definitions: &DefinitionRegistry` | Both | The same checked component catalog and application policy used during normalization. |
+| `diagnostics: &DiagnosticMap` | `emit_roles` | Actual composed Idea coordinates or normalized JSON structural paths. |
+| `selected: &[&str]` | `emit_pages` | Ordered model names, at most 128 and without duplicates; absent models are omitted. |
+| `output: &mut OutputPlan` | Both | The current transform's granted `ui` partition; the ordinary managed writer installs it. |
+
+**Returns:** both emitters return `stackpress_idea_transformer::Result<()>` after
+contributing source to the plan. They do not install a root, open a database or
+start a host. Runtime registration still requires the application's explicit call.
+
+## Templates, errors and limits
+
+Rust structure lives in adjacent `templates/*.rs.tpl` assets using `[% %]`
+delimiters. Each emitter lazily compiles a used asset once within that call.
+Subsequent renders borrow fresh data and start independent lookup/work/output
+state. There is no global cache or runtime interpretation of schema text.
+
+An internal view model may occupy at most 8 MiB of compact encoded JSON, including
+keys, punctuation and escaping. Each rendered asset remains bounded to 1 MiB;
+the existing aggregate OutputPlan and formatted-artifact limits also remain 1 MiB.
+Descriptors, model/field counts and normalizer constraints retain their own limits.
+
+Template failures retain their authored static asset identity and concrete
+`stackpress_lib::TemplateError` kind/span beneath `SchemaError`. A template limit
+returns a direct emitter `TransformErrorKind::Limit`; Registry preserves its usual
+outer Callback context. Other schema failures keep the existing schema error policy.
+No rejected label, prop, template text or render data is included in these contexts.
+
+Read [change generated admin source](../guides/change-generated-source.md) for the
+maintainer workflow. [Generated native page-host registration](pages-host.md)
+documents the separate native include and ordinary plugin function contract.

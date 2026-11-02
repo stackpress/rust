@@ -1,0 +1,1 @@
+[%#?:qualified%]crate::generated::contracts::[%module%]::[%symbol%][%|%][%symbol%][%/?:qualified%]

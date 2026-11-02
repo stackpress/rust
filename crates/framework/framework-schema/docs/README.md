@@ -64,6 +64,22 @@ ownership and dependency contracts apply. Helpers add no second writer or dispat
 Role-only generation needs no SQL transform. Removed models emit no obsolete page mappings;
 no effective page models means no generated runtime Mount/registrar.
 
+## Maintain schema source templates
+
+Schema declarations, create/default preparation, public inputs/projections and typed queries use
+compiled-in [structural Rust templates](../src/codegen/templates). The normalization and emission
+layer still owns identifiers, types, policy decisions and Rust string-literal encoding. Templates
+receive checked values and pre-rendered fragments; inserted source is never parsed as a template.
+The `[%` / `%]` delimiters leave Rust braces and embedded `format!` syntax literal.
+
+The generic engine is [stackpress-lib's template API](../../../lib/docs/api/template.md).
+It adds no runtime template dependency to the default schema contract graph: the dependency is
+selected by `codegen`. Generator context data has a separate 16 MiB encoding budget because
+view models repeat descriptors and source fragments. OutputPlan's combined 1 MiB source cap and
+the writer's independent 1 MiB formatted cap still apply. Template failures retain their concrete
+cause and authored asset path; a template size failure retains `Limit` under the registry's
+existing callback error layer.
+
 See [admin code generation](../../framework-admin/docs/api/codegen.md) for catalog/emitter
 contracts and [runtime selection](../../framework-sql/docs/guides/select-plugins.md) for the
 separate ServerBuilder lifecycle. Runtime startup must never install, migrate or seed a database,

@@ -58,6 +58,48 @@ fn contribution_targets_and_aggregate_conflicts() {
     assert!(plan.finish_modules().is_err());
 }
 
+/// Reused rendering preserves first-seen partitions, interleaved declarations and one newline.
+#[test]
+fn module_templates_preserve_contribution_bytes_and_empty_selection() {
+    let mut plan = OutputPlan::default();
+    plan.begin(
+        "plugin",
+        &["server".into(), "contracts".into(), "metadata".into()],
+    );
+    // Interleaving distinguishes contribution order from the plan's sorted path storage.
+    for (partition, module) in [
+        ("server", "z"),
+        ("contracts", "b"),
+        ("server", "a"),
+        ("metadata", "schema"),
+        ("contracts", "a"),
+    ] {
+        plan.write(format!("{partition}/{module}.rs"), "").unwrap();
+        plan.contribute_module(partition, module).unwrap();
+    }
+    plan.end();
+    plan.finish_modules().unwrap();
+    for (path, expected) in [
+        (
+            "mod.rs",
+            "pub mod server;\npub mod contracts;\npub mod metadata;\n",
+        ),
+        ("server/mod.rs", "pub mod z;\npub mod a;\n"),
+        ("contracts/mod.rs", "pub mod b;\npub mod a;\n"),
+        ("metadata/mod.rs", "pub mod schema;\n"),
+    ] {
+        assert_eq!(plan.files[path], ("aggregate".into(), expected.into()));
+    }
+    // An app-owned aggregate remains exact when no selected plugin contributes modules.
+    let mut empty = OutputPlan::default();
+    empty
+        .insert("app", GeneratedFile::new("mod.rs", "// manual\n"))
+        .unwrap();
+    empty.finish_modules().unwrap();
+    assert_eq!(empty.files.len(), 1);
+    assert_eq!(empty.files["mod.rs"], ("app".into(), "// manual\n".into()));
+}
+
 /// Output limits protect aggregate bytes and the exact maximum file count.
 #[test]
 fn output_budget_boundaries() {

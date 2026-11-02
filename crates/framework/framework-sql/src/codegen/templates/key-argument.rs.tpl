@@ -1,0 +1,1 @@
+[%#?:simple%]&Key { [%member%]: key[%#?:string_key%].into()[%/?:string_key%] }[%|%]key[%/?:simple%]

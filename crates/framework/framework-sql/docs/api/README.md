@@ -7,3 +7,6 @@ Use [revisions and migrations](migrations.md) for immutable history, exact plan 
 See [explicit string storage length](storage-length.md) for G38 declarations, target facts, validation and format-3 migration compatibility.
 
 See the [native SQL plugin](plugin.md) for startup services, contribution bounds and errors.
+
+See [build-host code generation](codegen.md) for transform registration, source
+emission and storage definitions. Its `codegen` feature is independent of `server`.

@@ -5,3 +5,6 @@ Generate Leptos role wrappers from the frozen schema projection and keep public 
 Start with [getting started](getting-started.md), then read [concepts](concepts.md). Use [customizing a component](guides/customize-a-component.md) for app plugins and the [API index](api/README.md) for signatures and limits. The [generated admin example](../../../../examples/generated-admin/README.md) exercises the real three-model schema.
 
 Use [generated native page-host registration](api/pages-host.md) to migrate host wiring or compose the direct helpers.
+
+For generator maintenance, read [change generated admin source](guides/change-generated-source.md)
+to locate the structural templates and verify escaping, selection and output limits.

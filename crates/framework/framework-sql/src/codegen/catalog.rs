@@ -1,5 +1,10 @@
 //! Native immutable catalogs and finite include-view types, separate from frozen pure DTOs.
-use super::*;
+use serde_json::{Value, json};
+use stackpress_framework_schema::{Field, Model, Schema, ValueType};
+use stackpress_idea_transformer::TransformError;
+
+use super::templates::{Templates, column, literal, literals};
+use super::{codec, is_scalar, store_module};
 
 /// Resolve the exact owning/inverse scalar mapping already checked by schema normalization.
 fn mapping<'a>(
@@ -45,25 +50,39 @@ pub(super) fn emit(
     model: &Model,
     stored: &[&Field],
     public: &stackpress_framework_schema::UiSchema,
+    templates: &Templates,
     text: &mut String,
 ) -> stackpress_idea_transformer::Result<()> {
-    let name = &model.rust_name;
+    // Preserve field/relation checks before catalog rendering, then resolve finite views.
+    let fields = query_fields(schema, model, stored, public)?;
+    let relations = relation_specs(schema, model, public)?;
+    let active = model.fields.iter().find(|field| field.active);
+    templates.append(text, "SQL catalog template failed", include_str!("templates/catalog.rs.tpl"), &json!({
+        "model": model.rust_name, "table_literal": literal(&model.module),
+        "keys": literals(stored.iter().filter(|field| field.key).map(|field| field.name.as_str())),
+        "has_active": active.is_some(), "active_literal": active.map(|field| literal(&field.name)),
+        "fields": fields, "relations": relations,
+        "bounded": model.fields.iter().any(|field| field.storage_length.is_some()),
+    }))?;
+    let depths = view_depths(schema, model)?;
+    templates.append(
+        text,
+        "SQL views template failed",
+        include_str!("templates/views.rs.tpl"),
+        &json!({"model": model.rust_name, "depths": depths}),
+    )
+}
+
+/// Build query/codec flags from stored fields and the exact approved public model.
+fn query_fields(
+    schema: &Schema,
+    model: &Model,
+    stored: &[&Field],
+    public: &stackpress_framework_schema::UiSchema,
+) -> stackpress_idea_transformer::Result<Vec<Value>> {
     let public_model = public.models.iter().find(|item| item.id == model.name);
-    text.push_str("/// Exact immutable runtime metadata; it grants no transport authorization.\npub static SPEC: StoreSpec=StoreSpec {\n");
-    text.push_str(&format!(
-        "table:{:?},columns:COLUMNS,key:&{:?},active:{:?},fields:&[\n",
-        model.module,
-        stored
-            .iter()
-            .filter(|field| field.key)
-            .map(|field| field.name.as_str())
-            .collect::<Vec<_>>(),
-        model
-            .fields
-            .iter()
-            .find(|field| field.active)
-            .map(|field| field.name.as_str())
-    ));
+    // Serialize enum choices before interpolation, retaining the original serialization failures.
+    let mut fields = Vec::new();
     for field in stored.iter().filter(|field| is_scalar(field)) {
         let choices = if let ValueType::Enum(name) = &field.value_type {
             schema
@@ -82,7 +101,7 @@ pub(super) fn emit(
         };
         let choices = serde_json::to_string(&choices)
             .map_err(|cause| TransformError::from(std::io::Error::other(cause)))?;
-        let public = public_model.and_then(|model| {
+        let approved = public_model.and_then(|model| {
             model
                 .fields
                 .iter()
@@ -90,82 +109,80 @@ pub(super) fn emit(
         });
         let mut scalar_field = (*field).clone();
         scalar_field.multiple = false;
-        text.push_str(&format!("stackpress_framework_sql::stores::QueryField{{ storage:{},multiple:{},scalar:StorageCodec::{},choices:{:?},searchable:{},sortable:{},public_filter:{},public_sort:{},public_search:{} }},\n",storage(schema,field).trim_end().trim_end_matches(','),field.multiple,codec(schema,&scalar_field),choices,field.searchable&&field.value_type==ValueType::String,field.sortable||field.key,public.is_some_and(|field|field.filterable),public.is_some_and(|field|field.sortable),public.is_some_and(|field|field.searchable)));
+        // Start with the same column atoms; this known object receives only scalar metadata.
+        let mut data = column(schema, field);
+        data["multiple"] = json!(field.multiple);
+        data["scalar_codec"] = json!(codec(schema, &scalar_field));
+        data["choices_literal"] = json!(literal(&choices));
+        data["searchable"] = json!(field.searchable && field.value_type == ValueType::String);
+        data["sortable"] = json!(field.sortable || field.key);
+        data["public_filter"] = json!(approved.is_some_and(|field| field.filterable));
+        data["public_sort"] = json!(approved.is_some_and(|field| field.sortable));
+        data["public_search"] = json!(approved.is_some_and(|field| field.searchable));
+        fields.push(data);
     }
-    text.push_str("],relations:&[\n");
+    Ok(fields)
+}
+
+/// Resolve catalog relation atoms independently of finite-view type construction.
+fn relation_specs(
+    schema: &Schema,
+    model: &Model,
+    public: &stackpress_framework_schema::UiSchema,
+) -> stackpress_idea_transformer::Result<Vec<Value>> {
+    let public_model = public.models.iter().find(|item| item.id == model.name);
+    let mut relations = Vec::new();
     for field in model
         .fields
         .iter()
         .filter(|field| matches!(field.value_type, ValueType::Model(_)))
     {
         let (target, local, foreign) = mapping(schema, model, field)?;
-        text.push_str(&format!("stackpress_framework_sql::stores::RelationSpec{{name:{:?},target:{:?},local:{:?},foreign:{:?},many:{},required:{},public:{}}},\n",field.name,target.module,local.name,foreign.name,field.multiple,field.required,public_model.is_some_and(|model|model.fields.iter().any(|item|item.wire_name==field.name&&item.readable))));
+        relations.push(json!({
+            "name_literal": literal(&field.name), "target_literal": literal(&target.module),
+            "local_literal": literal(&local.name), "foreign_literal": literal(&foreign.name),
+            "many": field.multiple, "required": field.required,
+            "public": public_model.is_some_and(|model| model.fields.iter().any(|item| item.wire_name == field.name && item.readable)),
+        }));
     }
-    let bounds = if model
-        .fields
-        .iter()
-        .any(|field| field.storage_length.is_some())
-    {
-        "Self::storage_bounds(&value).map_err(|cause|DataError::new(\"stored storage length validation failed\").with_kind(DataErrorKind::Decode).with_cause(cause))?;"
-    } else {
-        ""
-    };
-    text.push_str(&format!("],decode:decode_value,project:project_value}};\n/// Validate through the actual owned model before bounded JSON enters the include arena.\nfn decode_value(row:Row)->DataResult<serde_json::Value>{{stackpress_framework_schema::to_bounded_value(&{name}Store::decode(row)?).map_err(stackpress_framework_sql::stores::validation)}}\n/// Project the actual model through the compiled app policy; no stored field is echoed implicitly.\nfn project_value(value:serde_json::Value)->DataResult<serde_json::Value>{{let row:_Stored=serde_json::from_value(value).map_err(stackpress_framework_sql::codec_error)?;stackpress_framework_schema::to_bounded_value(&row.project().map_err(stackpress_framework_sql::stores::projection_error)?).map_err(stackpress_framework_sql::stores::validation)}}\nimpl {name}Store {{\n/// Strict owned decode, including checked nested fields and stored validation.\npub fn decode(row:Row)->DataResult<_Stored>{{let value:_Stored=stackpress_framework_sql::decode(row,COLUMNS)?;{bounds}value.validate().map_err(|cause|DataError::new(\"stored value validation failed\").with_kind(DataErrorKind::Decode).with_cause(cause))?;Ok(value)}}\n}}\n"));
-    // Four explicitly finite depth types encode the depth-three contract without recursive models.
-    for depth in 0..=3 {
+    Ok(relations)
+}
+
+/// Prepare four bounded depth groups; templates own all path and container syntax.
+fn view_depths(schema: &Schema, model: &Model) -> stackpress_idea_transformer::Result<Vec<Value>> {
+    // Finite types keep the original depth order and trusted/public alternation.
+    let mut depths = Vec::new();
+    for depth in 0usize..=3 {
+        let mut views = Vec::new();
         for is_public in [false, true] {
-            let prefix = if is_public { "Public" } else { "" };
-            let row = if is_public {
-                format!("crate::generated::contracts::public::Public{name}")
-            } else {
-                "_Stored".into()
-            };
-            text.push_str(&format!("/// Finite depth-{depth} {} include result; omission means Unloaded.\n#[derive(Clone,Debug,PartialEq,serde::Serialize,serde::Deserialize)]\n#[serde(deny_unknown_fields)]\npub struct {prefix}View{depth} {{\n/// Fully owned {} row.\npub row:{row},\n",if is_public{"projected"}else{"trusted"},if is_public{"approved public"}else{"stored"}));
+            let mut fields = Vec::new();
             if depth > 0 {
                 for field in model.fields.iter().filter(|field| {
                     matches!(field.value_type, ValueType::Model(_))
                         && (!is_public || field.access.readable && !field.access.sensitive)
                 }) {
                     let (target, _, _) = mapping(schema, model, field)?;
-                    let target =
-                        format!("super::{}::{prefix}View{}", store_module(target), depth - 1);
-                    let target = if field.multiple {
-                        format!("Vec<{target}>")
-                    } else if !field.required {
-                        format!("Option<{target}>")
-                    } else {
-                        target
-                    };
-                    text.push_str(&format!("/// Explicit eager {:?} relation.\n#[serde(rename={:?},default)]\npub {}:Loaded<{}>,\n",field.name,crate::stores::relation_member(&field.name),view_field(field),target));
+                    fields.push(json!({
+                        "name_literal": literal(&field.name), "relation_literal": literal(crate::stores::relation_member(&field.name)),
+                        "member": view_field(field), "store": store_module(target), "multiple": field.multiple, "optional": !field.required,
+                    }));
                 }
             }
-            text.push_str("}\n");
+            views.push(json!({
+                "public": is_public, "prefix": if is_public { "Public" } else { "" },
+                "audience": if is_public { "projected" } else { "trusted" },
+                "row_description": if is_public { "approved public" } else { "stored" }, "fields": fields,
+            }));
         }
-        text.push_str(&format!("impl View{depth} {{\n/// Recursively project each loaded node, retaining unloaded/empty/absent distinctions.\npub fn project(self)->DataResult<PublicView{depth}> {{Ok(PublicView{depth} {{row:self.row.project().map_err(stackpress_framework_sql::stores::projection_error)?,\n"));
-        if depth > 0 {
-            for field in model.fields.iter().filter(|field| {
-                matches!(field.value_type, ValueType::Model(_))
-                    && field.access.readable
-                    && !field.access.sensitive
-            }) {
-                let expression = if field.multiple {
-                    "values.into_iter().map(|value|value.project()).collect::<DataResult<Vec<_>>>()"
-                } else if !field.required {
-                    "values.map(|value|value.project()).transpose()"
-                } else {
-                    "values.project()"
-                };
-                text.push_str(&format!(
-                    "{}:self.{}.try_map(|values|{})?,\n",
-                    view_field(field),
-                    view_field(field),
-                    expression
-                ));
-            }
-        }
-        text.push_str("})}\n}\n");
+        let projection_fields = if depth > 0 {
+            model.fields.iter().filter(|field| matches!(field.value_type, ValueType::Model(_)) && field.access.readable && !field.access.sensitive)
+                .map(|field| json!({"member": view_field(field), "multiple": field.multiple, "optional": !field.required})).collect::<Vec<_>>()
+        } else {
+            Vec::new()
+        };
+        depths.push(json!({"value": depth, "previous": depth.saturating_sub(1), "views": views, "projection_fields": projection_fields}));
     }
-    Ok(())
+    Ok(depths)
 }
 
 /// The base record owns `row`; an underscore-prefixed Rust member cannot collide with source names.

@@ -7,3 +7,8 @@ M2 executes generated CRUD, queries, relations and selected handlers on SQLite. 
 The accepted shared changes are recorded in the [upsert proposal](m2-upsert-proposal.md) and [executor-limit proposal](m2-executor-limits-proposal.md). Those proposal pages preserve the original reasoning, not current milestone status. The coordinator's M2 receipt records final verification.
 
 Use [framework selection and migration](guides/select-plugins.md) for function plugins, typed setup, composition and direct alternatives.
+
+Build tools use the [`codegen` API](api/codegen.md) to emit stores and selected host
+handlers. For source-generation changes, follow [changing generated Rust
+source](guides/change-generated-source.md), including the literal, limit and byte
+compatibility contracts.
