@@ -199,3 +199,38 @@ Closing receipt/scope/KB record: 20261102T222842.963806Z-22d9d1d8806c; its final
 ## Coordinator verification
 
 Committed as `883126e`, merged with trial/3 `16f5255` as `443dfc0` (no file overlap), and fixed in `9aa70eb` after the first coordinator gate exposed a `field.url` duplicate between the shared catalog and API's source URL mapping under feature unification (API now excludes the shared component, like input/switch/date; regression `framework-api/tests/url_roles.rs`). Independent fresh-target gate `/private/tmp/ui-verify/run.sh` on `9aa70eb`, 2026-11-03, exit 0: Cargo.lock identical to trial/3; fmt; both workspace Clippy selections; default 941 passed / 86 skipped; compatible features 991 passed / 88 skipped; doctests and Rustdoc -D warnings; hydrate/CSR browser Clippy; no-default admin 2/2 and Leptos 8/8; coordinator tcp_watchdog 1/1; generated-admin crud build plus 8 browser configurations (two mounts, hydrate/CSR, 1280/375) and gallery build and browser proofs, with the tree unchanged afterwards. Known follow-ups: the real generated-admin document omits BASE and the source admin page-chrome stylesheet chain (`examples/generated-admin/web/src/render.rs:69`); one gallery corpus timeout passed on unchanged retry during the worker's gate. Merge into trial/3 waits for the concurrent template-engine session to commit its uncommitted `framework-admin` codegen edits.
+
+## Template-engine merge
+
+2026-11-03: merged latest trial/3 fb34284 into verified e8ffa62 as `0e0b196` (parents e8ffa62/fb34284), using the requested message and Co-Authored-By trailer. This includes d32c9c6's structural template migration, e888100's benchmark-ignore change, and dc54a1e's G46/G48 work. The earlier uncommitted e888100 merge was replaced with this latest merge before the closing gate. No push.
+
+The sole conflict was admin/codegen/table.rs. Kept trial/3's Renderer/Asset::Table emitter; passed encoded module, ordered identity literals and has_identity in JSON; added the conditional sticky action cell and erased-unit sticky heading in table.rs.tpl. Keyless output never looks up action-only data. Two real-normalizer regressions cover composite-key order and public-key omission/lazy context. No engine rewrite, API/permission change, hardening or shared helper extraction. Complexity, responsibility and comment/consistency reviews found no further justified edit; the focused regressions, 125-test suite and full gates verify the result. The three resolution paths were staged explicitly; the merge retains the already staged incoming tree.
+
+Official generation covers both generated-admin roots, all 56 files including manifests: **byte-identical to e8ffa62**, no differences to explain. Each root passed --check twice, repeated at closeout. The latest template/codegen selection passed 125/125 (59 skipped), including all 19 lib template tests and admin/schema/SQL suites.
+
+Closing gate: fmt; both workspace Clippy selections -D warnings; default 986/986 (88 skipped, 90.814 s execution); compatible features 1037/1037 (92 skipped, 76.442 s); 970 workspace doctests; Rustdoc -D warnings; no-default admin 2/2 and Leptos 8/8; separate hydrate/CSR and formatted admin browser Clippy; minimal facade check. API separately passed 96/96 (8 skipped), six doctests, Clippy and Rustdoc. Same feature string as the prior closing gate; all nextest runs use two threads and workspace runs exclude tcp_watchdog. Opt-in live database tests remain skipped; this gate does not claim new live-server evidence. The inherited no-default returns_focus warning remains; strict Clippy selections are clean.
+
+Fresh browser proofs: CRUD 8/8, gallery 4/4; cached Playwright 1.64.0 / Chromium 156.0.8078.4, fresh headless contexts, intercepted .invalid requests and finite native processes; no listener, system Chrome, captured errors or unexpected requests. Both mounts, hydrate/CSR and 1280px/375px at 200% pass. Narrow screenshot inspection confirms opaque sticky masking. Real product output still omits BASE and the source /styles/global.css/configured page-chrome chain at examples/generated-admin/web/src/render.rs:69; that queued follow-up is unchanged.
+
+Fresh coverage (9c3c327641d2): admin 2602/2942 = 88.44% (20 files; codegen,format,ssr); leptos 5404/6245 = 86.53% (44 files; ssr,rich,format,stream); api 3709/4147 = 89.44% (32 files; sql,codegen,ui-ssr). Native executable-line scope, standard tool filtering and no added exclusions; rustc 1.96.0 / aarch64-apple-darwin / LLVM 22.1.2 / cargo-llvm-cov 0.8.6. Initial report 14d3d6c88f93 mixed obsolete emitter mappings and is discarded. Recorded cargo clean for the three measured packages plus supported cargo llvm-cov clean --workspace instrumentation cleanup preceded the accepted rerun; every final mapped source range fits the current file. Reports: private template-merge/{admin,leptos,api}-coverage.json. Native coverage and browser evidence remain separate.
+
+Standalone consumer passed generation, direct Input/Switch/sticky-cell/RowActions compilation, fmt and Clippy -D warnings. Existing consumer Cargo.lock needed no refresh (cd1861bc8ce9): 234 tuples remain a root subset, SHA 08a84a3b736f20140420c7a0f8fe8d6b3c46f9a1f1a058e3e4b5b5726a85c349. Six browser normal graphs match e8ffa62 (ad725ba1e6f0). Root lock bytes match fb34284; all 699 external tuples match e8ffa62. No new dependency/tuple, update or generate-lockfile. Protected-scope audits a0906e148e8b/ad09d5b09524 pass: resolution bytes exact; licences, icons and .agents/context unchanged.
+
+All Cargo/proof/clean commands are recorder-wrapped; resolving commands use --locked --offline. Warm absolute target/slice9b, jobs 2, sccache, incremental off, dev debug 0. Owned-package/coverage cleanup retained dependency artifacts. Periodic effort peak **22.374744 GiB**, final 11,007,440 KiB (10.497513 GiB); cap 24 GiB, guard 23.4. KB retains 146 inherited errors and 34 warnings, compared with the latest merged baseline while normalizing only this receipt's existing line-count advisory; not a clean KB result. This section appends evidence without replacing history.
+
+Recorder ledger below: wall seconds / observed Cargo build subtotal (overlapping measures). Full commands and all attempts remain in the persistent store and private template-merge/benchmarks.json.
+
+| Record | Evidence | Wall s | Cargo build s |
+| --- | --- | ---: | ---: |
+| 629ae5c82aba | Latest regeneration and exact parity | 23.903 | 11.090 |
+| b33bf362710d | Lib template + admin/schema/SQL suites | 49.658 | 16.640 |
+| 4bf84468a08b | Closing workspace gate + API | 963.159 | 465.920 |
+| c12ce1b607dd | CRUD artifacts | 22.829 | 12.220 |
+| 55acf7511037 | CRUD browser | 72.096 | — |
+| 1e95e700936f | Gallery artifacts | 19.451 | 14.970 |
+| 0dd184249f90 | Gallery browser | 24.525 | — |
+| a6eab98eb805 | Standalone consumer | 17.427 | 7.110 |
+| 9c3c327641d2 | Clean current-source coverage | 93.067 | 66.190 |
+| 811c7cc3d6b2 | Final scope, regeneration, parity and fmt | 20.962 | 6.140 |
+
+Earlier e888100 proofs: 6b3d2398f014, 4fc02efb9b1b, 25b38341452a, 66279cf45a1f; superseded by the latest-tree gate. Latest baseline ebb39d24123f; precommit scope ad09d5b09524. Receipt/KB closeout record: 20261103T001141.045232Z-fe7099207321; its final status/timings are in the store after completion. The receipt is committed separately after the merge.
