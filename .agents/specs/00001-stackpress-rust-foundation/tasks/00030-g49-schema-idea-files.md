@@ -295,3 +295,8 @@ Exact repository changes at this checkpoint:
 - `.agents/specs/00001-stackpress-rust-foundation/tasks/00030-g49-schema-parity-findings.md` — all reported comparison differences; 373 lines retained together to preserve coherent verbatim review.
 
 No Rust source, test, existing documentation, manifest, lock, facade or historical Agent record changed. Stop here for the aggregate filename/alias ruling, API projection approval and classification of parity differences.
+
+
+## Coordinator verification
+
+Committed as `9be543c` (29 files: shipped `framework-session/schema.idea` and `framework/stackpress.idea`, idea-transformer `PackageLoader`, aggregate catalog/`package_loader`, docs, regenerated aggregate consumer Note UI fixture, receipts 00030/00031). Independent fresh-target gate `/private/tmp/g49-verify/run.sh`, 2026-11-03, exit 0: Cargo.lock identical to `2abc9f1`; fmt; default and full-feature Clippy -D warnings; default 993 passed / 89 skipped; full 1,115 passed / 96 skipped; coordinator tcp_watchdog; doctests and Rustdoc -D warnings; aggregate `graphs.py --check`, all eight `consumers/run.py` consumers and `build-host -- --check` freshness (which fails on the previous main, confirming the fixed drift); session/aggregate docs checks and proofs ledger; tree clean. Merged into main.
