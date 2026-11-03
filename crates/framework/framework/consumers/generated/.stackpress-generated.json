@@ -63,8 +63,8 @@
     },
     "ui/note.rs": {
       "owner": "framework-admin",
-      "sha256": "b555ca4b04c0400d20bab2e6fbb7892dfe86b84433bdf18c34fd242c5acb682f",
-      "bytes": 9589
+      "sha256": "d03d6ffc3758ee80f98981c8d3336d871bc6fbb09d14b0413fef98b3a77f45e4",
+      "bytes": 9851
     },
     "ui/pages.rs": {
       "owner": "framework-admin",

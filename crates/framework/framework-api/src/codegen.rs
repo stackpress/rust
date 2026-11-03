@@ -1,7 +1,7 @@
 //! Build-host composition of the API Idea input and the public external Profile catalog.
 //!
-//! Rust has no package-relative dynamic Idea import resolver. This composition resolves
-//! the one source session import through ProfileSchema, without copying its declaration.
+//! The existing external Profile projection remains until the G50 generated-model release.
+//! Package-source acquisition is available independently through the Idea PackageLoader.
 use stackpress_framework_schema::{
     Schema, SchemaResult, ValueType,
     codegen::{
@@ -15,7 +15,7 @@ use stackpress_idea_parser::{CompileInputs, SchemaConfig};
 mod source_compat;
 
 /// Exact owned upstream API schema, including its management metadata.
-pub const SOURCE: &str = include_str!("../schema.idea");
+pub const SOURCE: &str = crate::SCHEMA_SOURCE;
 /// Register the shared approved CUID definition in an otherwise app-owned catalog.
 pub fn definitions() -> SchemaResult<DefinitionRegistry> {
     let mut registry = DefinitionRegistry::standard().with_provider(cuid_definition())?;

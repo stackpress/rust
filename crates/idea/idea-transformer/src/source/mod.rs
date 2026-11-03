@@ -5,6 +5,7 @@
 
 mod memory;
 mod native;
+mod package;
 pub(crate) use native::open_regular;
 mod paths;
 
@@ -13,6 +14,7 @@ use std::path::{Path, PathBuf};
 
 pub use memory::MemoryLoader;
 pub use native::ProjectLoader;
+pub use package::PackageLoader;
 
 /// Canonical loader identity used for caching, graph edges and active-stack cycle detection.
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]

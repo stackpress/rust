@@ -89,3 +89,13 @@ render snapshot contents.
 
 Related: [ProjectLoader](project-loader.md), [MemoryLoader](memory-loader.md),
 [load errors](errors.md#2-loaderror), [composition](composition.md).
+
+## 4. Compiled package sources
+
+`PackageLoader<L: SourceLoader>` decorates an explicit fallback loader.
+`new(fallback)` performs no IO; `with_source(name, &'static str)` returns the updated
+loader or LoadError for an invalid/duplicate bare name or unsupported extension.
+SourceLoader acquisition returns a bounded owned snapshot with a canonical virtual
+identity. Exact registered bare names win; explicit app paths keep the fallback rules.
+There is no alias API or global catalog. Follow the
+[package import guide](../guides/package-imports.md) for examples and embedded-relative rules.

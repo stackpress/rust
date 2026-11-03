@@ -92,6 +92,27 @@ pub mod rust {
     pub use stackpress_framework_schema::codegen::{DefinitionRegistry, NormalizeOptions};
     pub use stackpress_idea::{GenerateRequest, GenerationMode, generate, parser, transformer};
 
+    /// Add the three shipped package sources to an explicit application source loader.
+    ///
+    /// Imports are `stackpress/stackpress.idea`, `stackpress-api/schema.idea` and
+    /// `stackpress-session/schema.idea`. This build-host catalog selects no runtime plugin.
+    /// # Errors
+    /// Preserves invalid/duplicate catalog registration errors from PackageLoader.
+    pub fn package_loader<L: transformer::SourceLoader>(
+        fallback: L,
+    ) -> std::result::Result<transformer::PackageLoader<L>, transformer::LoadError> {
+        transformer::PackageLoader::new(fallback)
+            .with_source("stackpress/stackpress.idea", crate::SCHEMA_SOURCE)?
+            .with_source(
+                "stackpress-api/schema.idea",
+                stackpress_framework_api::SCHEMA_SOURCE,
+            )?
+            .with_source(
+                "stackpress-session/schema.idea",
+                stackpress_framework_session::SCHEMA_SOURCE,
+            )
+    }
+
     /// Statically selected build-host callbacks; dynamic TS modules become Rust functions.
     pub struct Host {
         /// Construct each run's independent registry, normally using register below.
@@ -121,7 +142,9 @@ pub mod rust {
             path(&inv.config::<ServerOptions>()?.0, "cwd"),
             &env.cwd.to_string_lossy(),
         )?;
-        let loader = transformer::ProjectLoader::new(cwd).map_err(Error::from_source)?;
+        let loader =
+            package_loader(transformer::ProjectLoader::new(cwd).map_err(Error::from_source)?)
+                .map_err(Error::from_source)?;
         let workspace =
             transformer::OutputWorkspace::new(&options.build).map_err(Error::from_source)?;
         let registry = (host.registry)().map_err(Error::from_source)?;

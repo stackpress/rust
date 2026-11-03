@@ -784,5 +784,24 @@
         "contains": ["created owned database", "drop confirmed:", "Duration::from_secs(30)", "Duration::from_secs(10)"]
       }
     ]
+  },
+  {
+    "id": "g49-shipped-package-source",
+    "page": "crates/framework/framework-session/docs/api/storage.md",
+    "statement": "stackpress_framework_session::SCHEMA_SOURCE",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/src/lib.rs",
+        "contains": [
+          "pub const SCHEMA_SOURCE"
+        ]
+      },
+      {
+        "path": "crates/framework/framework/tests/package_sources.rs",
+        "contains": [
+          "direct_session_import_and_immutable_redeclaration_follow_g19"
+        ]
+      }
+    ]
   }
 ]

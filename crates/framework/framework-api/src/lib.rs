@@ -32,6 +32,8 @@
 //! ```
 
 pub mod config;
+/// Exact shipped upstream API Idea source, including its session package import.
+pub const SCHEMA_SOURCE: &str = include_str!("../schema.idea");
 #[cfg(not(target_arch = "wasm32"))]
 pub mod cors;
 #[cfg(not(target_arch = "wasm32"))]

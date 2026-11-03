@@ -195,9 +195,14 @@ pub fn table(
             .into_iter()
             .map(|control| view! { <TableCell>{control}</TableCell> })
             .collect_view();
-        rendered.push(view! { <TableRow row_key=key.clone()>{cells}</TableRow> });
+        let action = stackpress_framework_admin::row_actions::detail_action("note", &["id"], &seed);
+        rendered.push(view! { <TableRow row_key=key.clone()>{cells}<TableCell sticky_right=true>{action}</TableCell></TableRow> });
     }
-    let headers = vec![view! { <TableHeader>{"title"}</TableHeader> }].collect_view();
+    let headers = vec![
+        view! { <TableHeader>{"title"}</TableHeader> },
+        view! { <TableHeader sticky=true sticky_right=true>{().into_any()}</TableHeader> },
+    ]
+    .collect_view();
     let rows = rendered.collect_view();
     Ok(view! { <Table caption="Note"><TableHead><TableRow row_key="header">{headers}</TableRow></TableHead><TableGroup>{rows}</TableGroup></Table> }.into_any())
 }

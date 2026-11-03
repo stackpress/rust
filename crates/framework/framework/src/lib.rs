@@ -9,6 +9,9 @@
 
 #[cfg(all(feature = "native", not(target_arch = "wasm32")))]
 mod native;
+
+/// Exact shipped upstream aggregate Idea source; import as `stackpress/stackpress.idea`.
+pub const SCHEMA_SOURCE: &str = include_str!("../stackpress.idea");
 #[cfg(all(feature = "language", not(target_arch = "wasm32")))]
 pub use native::language;
 #[cfg(all(feature = "view", not(target_arch = "wasm32")))]
