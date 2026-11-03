@@ -1,6 +1,6 @@
 # Input
 
-Controlled native text input. Source: [controls.rs](../../src/components/controls.rs).
+Controlled native input; the default type is text. Source: [controls.rs](../../src/components/controls.rs).
 
 ```rust
 use stackpress_leptos::{components::Input, leptos::prelude::*};
@@ -18,6 +18,7 @@ conversion indicated below.
 | Prop | Type | Default / meaning |
 | --- | --- | --- |
 | `id` | `String` via Into | Required unique native DOM ID. |
+| `input_type` | `String` via Into | `"text"`; forwarded as the native type, for example `"url"` or `"email"`. |
 | `name` | `String` via Into | Required form key. |
 | `value` | `RwSignal<String>` | Required controlled root-owned value. |
 | `described_by` | `Signal<String>` via Into | Empty; space-separated help/error IDs. |

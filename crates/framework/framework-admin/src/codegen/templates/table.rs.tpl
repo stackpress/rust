@@ -17,11 +17,14 @@ pub fn table(rows: &[(String, super::super::contracts::public::[%public_type%])]
         let instance = format!("{instance}-row-{identity}");
         let mut controls = Vec::new();
 [%#@:controls control%][%control%][%/@:controls%]        let cells = controls.into_iter().map(|control| view! { <TableCell>{control}</TableCell> }).collect_view();
-        rendered.push(view! { <TableRow row_key=key.clone()>{cells}</TableRow> });
-    }
+[%#?:has_identity%]        let action = stackpress_framework_admin::row_actions::detail_action([%module_literal%], &[[%#@:identity key%][%#!:@first%], [%/!:@first%][%key%][%/@:identity%]], &seed);
+        rendered.push(view! { <TableRow row_key=key.clone()>{cells}<TableCell sticky_right=true>{action}</TableCell></TableRow> });
+[%|%]        rendered.push(view! { <TableRow row_key=key.clone()>{cells}</TableRow> });
+[%/?:has_identity%]    }
     let headers = vec![
 [%#@:headers header%]view! { <TableHeader>{[%header.literal%]}</TableHeader> },
-[%/@:headers%]    ].collect_view();
+[%/@:headers%][%#?:has_identity%]view! { <TableHeader sticky=true sticky_right=true>{().into_any()}</TableHeader> },
+[%/?:has_identity%]    ].collect_view();
     let rows = rendered.collect_view();
     Ok(view! { <Table caption=[%caption_literal%]><TableHead><TableRow row_key="header">{headers}</TableRow></TableHead><TableGroup>{rows}</TableGroup></Table> }.into_any())
 }

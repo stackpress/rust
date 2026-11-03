@@ -36,6 +36,7 @@ model RoleProof {
   metadata Object? @field.metadata @list.text
   score Integer? @field.rating({ max 5 }) @list.text
   slug String? @field.slug @list.text
+  site String? @field.url @span.url
   sensitive String? @default("ADMIN_PRIVATE_DEFAULT_SENTINEL") @field.input
   hostOnly String?
 }

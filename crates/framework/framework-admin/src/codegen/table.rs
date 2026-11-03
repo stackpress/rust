@@ -26,6 +26,14 @@ pub(super) fn source(
     if selected.is_empty() {
         return Ok(String::new());
     }
+    let public = public_type(&model.id)?;
+    let module = stackpress_framework_schema::codegen::portable_name(&model.id)?;
+    // Preserve source key order and encode Rust literals outside the template engine.
+    let identity: Vec<_> = model
+        .key
+        .iter()
+        .map(|name| super::templates::literal(name))
+        .collect();
     // Resolve each selected adapter before serializing the minimal table context.
     let controls = selected
         .iter()
@@ -47,7 +55,9 @@ pub(super) fn source(
     renderer.render(
         Asset::Table,
         &serde_json::json!({
-            "public_type": public_type(&model.id)?, "controls": controls, "headers": headers,
+            "public_type": public, "controls": controls, "headers": headers,
+            "module_literal": super::templates::literal(&module),
+            "has_identity": !identity.is_empty(), "identity": identity,
             "caption_literal": super::templates::literal(&model.label),
         }),
     )

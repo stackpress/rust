@@ -20,12 +20,14 @@ pub const SOURCE: &str = include_str!("../schema.idea");
 pub fn definitions() -> SchemaResult<DefinitionRegistry> {
     let mut registry = DefinitionRegistry::standard().with_provider(cuid_definition())?;
     // Select shared canonical controls, then fill only the source-specific role shapes.
+    // The shared URL field adds nullable presence controls absent from the source API form;
+    // keep its local mapping, like input/switch/date, without registering the name twice.
     for component in stackpress_framework_admin::codegen::components()
         .into_iter()
         .filter(|component| {
             !matches!(
                 component.definition.name.as_str(),
-                "field.input" | "field.switch" | "view.date"
+                "field.input" | "field.switch" | "field.url" | "view.date"
             )
         })
     {

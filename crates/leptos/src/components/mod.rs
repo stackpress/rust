@@ -15,6 +15,7 @@ pub const BASE_STYLES: &str = include_str!("styles.css");
 mod controls;
 mod display_values;
 mod icons;
+pub use icons::ChevronRight;
 mod inputs;
 mod presentation;
 pub use display_values::{

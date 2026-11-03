@@ -12,6 +12,9 @@ mod sql;
 
 mod oauth;
 
+#[cfg(all(feature = "codegen", feature = "ui-ssr"))]
+mod url_roles;
+
 #[cfg(feature = "ui-ssr")]
 mod consent;
 #[cfg(all(feature = "ui-ssr", feature = "sql"))]

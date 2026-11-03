@@ -21,6 +21,7 @@ pub fn components() -> Vec<Component> {
     let mut result = Vec::new();
     for (name, symbol) in [
         ("field.input", "TextField"),
+        ("field.url", "TextField"),
         ("field.textarea", "TextareaField"),
         ("field.checkbox", "CheckboxField"),
         ("field.switch", "SwitchField"),
@@ -51,6 +52,11 @@ pub fn components() -> Vec<Component> {
             }
             if matches!(symbol, "TextField" | "TextareaField") {
                 props.push(prop("read_only", PropType::Boolean));
+            }
+            // Native type is part of the selected component, not an inferred schema validator.
+            if name == "field.url" {
+                props.push(prop("input_type", PropType::String));
+                fixed.insert("input_type".into(), "url".into());
             }
             if symbol == "SelectField" {
                 props.push(prop("searchable", PropType::Boolean));

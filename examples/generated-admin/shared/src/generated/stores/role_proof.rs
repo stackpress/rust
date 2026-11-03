@@ -10,7 +10,7 @@ use stackpress_framework_sql::{
 use stackpress_sql::{Insert, Row, Select, TableDefinition};
 const _: () = assert!(stackpress_framework_sql::CONTRACT_REVISION == 1);
 /// Shared normalized schema identity.
-pub const FINGERPRINT: &str = "6fd7b32e8beb5934f1b3849c0980fe073093aa29d7ed1f222a0165e986627b43";
+pub const FINGERPRINT: &str = "2abf1ddea99a3f8f98d849653499d21a196ecf6c611cfe47edd7c155e07d6df4";
 /// Exact ordered stored codecs.
 pub const COLUMNS: &[StorageColumn] = &[
     StorageColumn {
@@ -70,6 +70,13 @@ pub const COLUMNS: &[StorageColumn] = &[
         nonempty: false,
     },
     StorageColumn {
+        wire: "site",
+        column: "site",
+        codec: StorageCodec::Text,
+        required: false,
+        nonempty: false,
+    },
+    StorageColumn {
         wire: "sensitive",
         column: "sensitive",
         codec: StorageCodec::Text,
@@ -113,6 +120,9 @@ impl RoleProofStore {
         table = table.add_field(field);
         // Preserve declared nullability and explicit character length in storage.
         let field = stackpress_sql::Field::new("slug", stackpress_sql::SqlType::Text);
+        table = table.add_field(field);
+        // Preserve declared nullability and explicit character length in storage.
+        let field = stackpress_sql::Field::new("site", stackpress_sql::SqlType::Text);
         table = table.add_field(field);
         // Preserve declared nullability and explicit character length in storage.
         let field = stackpress_sql::Field::new("sensitive", stackpress_sql::SqlType::Text);
@@ -237,6 +247,23 @@ pub static SPEC: StoreSpec = StoreSpec {
             storage: StorageColumn {
                 wire: "slug",
                 column: "slug",
+                codec: StorageCodec::Text,
+                required: false,
+                nonempty: false,
+            },
+            multiple: false,
+            scalar: StorageCodec::Text,
+            choices: "[]",
+            searchable: false,
+            sortable: false,
+            public_filter: false,
+            public_sort: false,
+            public_search: false,
+        },
+        stackpress_framework_sql::stores::QueryField {
+            storage: StorageColumn {
+                wire: "site",
+                column: "site",
                 codec: StorageCodec::Text,
                 required: false,
                 nonempty: false,
@@ -441,6 +468,9 @@ pub enum Filter {
     /// Typed "slug" predicate.
     #[serde(rename = "slug")]
     Slug(stackpress_framework_schema::Predicate<String>),
+    /// Typed "site" predicate.
+    #[serde(rename = "site")]
+    Site(stackpress_framework_schema::Predicate<String>),
     /// Typed "sensitive" predicate.
     #[serde(rename = "sensitive")]
     Sensitive(stackpress_framework_schema::Predicate<String>),
@@ -677,6 +707,13 @@ const MUTABLE_COLUMNS: &[StorageColumn] = &[
     StorageColumn {
         wire: "slug",
         column: "slug",
+        codec: StorageCodec::Text,
+        required: false,
+        nonempty: false,
+    },
+    StorageColumn {
+        wire: "site",
+        column: "site",
         codec: StorageCodec::Text,
         required: false,
         nonempty: false,

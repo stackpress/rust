@@ -5,3 +5,23 @@
 .sp-dialog::backdrop { position: fixed; inset: 0; }
 /* A modal blocks background user scrolling; nested dialogs keep the same lock. */
 :root:has(.sp-dialog:modal), body:has(.sp-dialog:modal) { overflow: hidden; overscroll-behavior: none; }
+
+/* Trailing action cells retain an opaque surface while their table scrolls horizontally. */
+.sp-sticky-right {
+  position:sticky;
+  right:0;
+  background:var(--sp-bg,Canvas);
+  z-index:2;
+}
+th.sp-sticky-right.sp-sticky {
+  top:0;
+  z-index:3;
+}
+.sp-root .sp-row-detail {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:2px;
+  background:var(--info,#1474fc);
+  color:#fff;
+}

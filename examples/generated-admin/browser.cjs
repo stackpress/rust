@@ -13,6 +13,15 @@ async function catalog(page) {
   const draft = () => page.locator('#proof-draft').evaluate(node => JSON.parse(node.textContent));
   const settle = () => page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
   assert.equal((await draft()).score, 0);
+  assert.equal(await page.locator('#proof-field-site').evaluate(node=>node.type),'url');
+  assert.equal(await page.locator('#proof-field-site').inputValue(),'https://example.invalid');
+  await page.locator('#proof-field-site').fill('https://changed.invalid/path'); await settle();
+  assert.equal((await draft()).site,'https://changed.invalid/path');
+  // The styled switch still publishes native changes into the generated Boolean draft.
+  await page.locator('#proof-field-flag').check(); await settle();
+  assert.equal((await draft()).flag,true);
+  await page.locator('#proof-field-flag').uncheck(); await settle();
+  assert.equal((await draft()).flag,false);
   await m3.rating(page,'proof-field-score');
   await page.locator('#proof-field-zero-0').press('End'); await settle();
   assert.equal((await draft()).zero, 10);
@@ -78,7 +87,7 @@ async function catalog(page) {
   assert.equal(await page.locator('#project-field-tags-3-value').getAttribute('type'),'hidden');
   assert.equal(await page.locator('#project-field-tags [id$="-up"],#project-field-tags [id$="-down"]').count(),0);
   assert.equal(await page.locator('table caption').textContent(),'Task');
-  assert.deepEqual(await page.locator('thead th[scope=col]').allTextContents(),['title','done','note','priority']);
+  assert.deepEqual(await page.locator('thead th[scope=col]').allTextContents(),['title','done','note','priority','']);
   assert.equal(await page.locator('tbody tr').count(),1);
   assert.equal(await page.evaluate(() => typeof window.pwned), 'undefined');
 }

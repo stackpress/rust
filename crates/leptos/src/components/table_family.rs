@@ -79,14 +79,20 @@ pub fn TableHeader(
     /// Optional sticky header within its own scrolling region.
     #[prop(optional)]
     sticky: bool,
+    /// Stick this trailing header to the scrolling region's right edge.
+    #[prop(optional)]
+    sticky_right: bool,
     /// Header content.
     children: Children,
 ) -> impl IntoView {
-    view! {<th scope=scope.token() colspan=colspan.clamp(1,100) rowspan=rowspan.min(100) class:sp-sticky=sticky>{children()}</th>}
+    view! {<th scope=scope.token() colspan=colspan.clamp(1,100) rowspan=rowspan.min(100) class:sp-sticky=sticky class:sp-sticky-right=sticky_right>{children()}</th>}
 }
 /// Explicit data cell with bounded spans.
 #[component]
 pub fn TableCell(
+    /// Stick this trailing data cell to the scrolling region's right edge.
+    #[prop(optional)]
+    sticky_right: bool,
     /// Native column span.
     #[prop(default = 1)]
     colspan: u16,
@@ -96,7 +102,7 @@ pub fn TableCell(
     /// Escaped/semantic cell content.
     children: Children,
 ) -> impl IntoView {
-    view! {<td colspan=colspan.clamp(1,100) rowspan=rowspan.min(100)>{children()}</td>}
+    view! {<td colspan=colspan.clamp(1,100) rowspan=rowspan.min(100) class:sp-sticky-right=sticky_right>{children()}</td>}
 }
 /// Invisible width ruler inside a cell, preserving the source TableRule contract.
 /// This decorative element contributes a bounded minimum width without adding a row.

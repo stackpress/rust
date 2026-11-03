@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const path = require('node:path');
 const textareaPayload = '\n</textarea><script>globalThis.pwned=1</script>&"\'\u2028';
 const ordinaryNotes = 'Review the release notes.\nShare feedback with the team.';
-const ids = ['core-text','core-notes','core-password','core-check','core-switch','core-radio-zero','core-radio-fr','core-select','core-multiple'];
+const ids = ['core-text','core-url','core-notes','core-password','core-check','core-switch','core-radio-zero','core-radio-fr','core-select','core-multiple'];
 const state = async page => {
   await page.locator('#core-inspect').evaluate(node => node.click());
   await page.evaluate(() => new Promise(resolve => requestAnimationFrame(resolve)));
@@ -59,7 +59,20 @@ exports.controls = async (page, mode) => {
   assert.deepEqual(await page.locator('#safety-form').evaluate(node=>[...new FormData(node)]),[['safety-notes',safetyValue]]);
   if(mode==='hydrate')assert.equal(await page.locator('#safety-notes').evaluate(node=>node===window.earlySafety),true);
   assert.equal(await page.locator('#safety-samples script,#safety-samples img,#safety-samples iframe').count(),0);
+  assert.equal(await page.locator('#core-url').evaluate(node=>node.type),'url');
+  assert.equal(await page.locator('#core-url').inputValue(),'https://example.invalid');
   assert.equal(await page.getByRole('switch',{name:'Enable reminders'}).count(),1);
+  const toggleStyle=await page.locator('#core-switch').evaluate(node=>{
+    const track=node.nextElementSibling;
+    return {type:node.type,track:getComputedStyle(track,'::before').width,thumb:getComputedStyle(track,'::after').width,opacity:getComputedStyle(node).opacity};
+  });
+  assert.deepEqual(toggleStyle,{type:'checkbox',track:'52px',thumb:'22px',opacity:'0'});
+  // A native-size crop keeps the source track and thumb available for visual review.
+  if(process.env.GALLERY_OUTPUT_DIR) {
+    const mount=new URL(page.url()).pathname.startsWith('/demo/v1/')?'mounted':'root';
+    await page.locator('#core-switch').locator('..').screenshot({path:path.join(process.env.GALLERY_OUTPUT_DIR,'screenshots',`${mount}-${mode}-switch.png`)});
+  }
+
   assert.equal(await page.getByRole('group',{name:'Delivery mode'}).count(),1);
   assert.equal(await page.getByRole('progressbar',{name:'Progress',exact:true}).count(),1);
   assert.equal(await page.getByRole('table',{name:'Read-only values',exact:true}).count(),1);
@@ -95,6 +108,10 @@ exports.controls = async (page, mode) => {
   assert.equal(await page.locator('#core-password').inputValue(),'Transient 雪'); await reveal.click();
   await page.locator('#core-check').uncheck(); await page.locator('#core-check').focus(); await page.keyboard.press('Space');
   assert.equal((await state(page)).checked,true);
+  await page.locator('#core-switch').uncheck();
+  // The source wrapping label keeps the entire visible track clickable beyond the overlay.
+  await page.locator('label.sp-switch').filter({has:page.locator('#core-switch')}).click({position:{x:60,y:12}});
+  assert.equal((await state(page)).enabled,true);
   await page.locator('#core-switch').uncheck(); await page.locator('#core-switch').focus(); await page.keyboard.press('Space');
   assert.equal((await state(page)).enabled,true); assert.equal(await page.locator('#core-switch').getAttribute('aria-checked'),'true');
   await page.locator('#core-radio-zero').check(); await page.locator('#core-radio-zero').focus(); await page.keyboard.press('ArrowDown');

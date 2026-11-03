@@ -5,6 +5,7 @@ Canonical definitions remain in the app-owned registry. Schema owns aliases and 
 | Canonical selection | Adapter and public value | Additional props / bounds |
 | --- | --- | --- |
 | `field.input` | `TextField`, scalar String | `placeholder: String`, `read_only: Boolean` |
+| `field.url` | `TextField`, scalar String | Fixed native `input_type: "url"`; the same adapter preserves the string draft |
 | `field.textarea` | `TextareaField`, scalar String | `read_only: Boolean` |
 | `field.checkbox`, `field.switch` | `CheckboxField`, `SwitchField`, Boolean | Exact false remains supplied |
 | `field.select` | `SelectField`, finite string enum | `placeholder: String` in native mode, `searchable: Boolean`; searchable chooses `ComboboxField` over the same local enum; supplying placeholder with searchable is diagnosed because the current combobox API has no placeholder; no endpoint |
@@ -22,7 +23,7 @@ Select options are bounded to 100 unique values, each at most 1024 bytes; the re
 
 Collection row identity belongs to the UI controller and is never serialized into domain data. Add/edit/remove/reorder retain stable keys within the current collection; explicit replacement through the draft rebuilds the collection. Metadata JSON objects have no semantic ordering, while their editable rows retain order for the current mount.
 
-Missing and Null have an empty presentation without being rewritten. Choosing Value initializes an empty array/object, empty string, false, numeric lower bound, or zero rating as appropriate. An edit publishes exact concrete values. Invalid initial shapes fail visibly; invalid intermediate metadata preserves the accepted snapshot and reports the error. The app must validate generated public inputs before any operation.
+Missing and Null have an empty presentation without being rewritten, except rendered Boolean filters: their unchecked state supplies false, matching the source hidden zero. Choosing Value initializes an empty array/object, empty string, false, numeric lower bound, or zero rating as appropriate. An edit publishes exact concrete values. Invalid initial shapes fail visibly; invalid intermediate metadata preserves the accepted snapshot and reports the error. The app must validate generated public inputs before any operation.
 
 List selections also generate the model's [table function](codegen.md). It uses the exact selected display adapter for each column rather than converting every value to plain text.
 
@@ -50,4 +51,4 @@ Typing changes only the editing presentation. Enter or blur attempts a checked c
 
 The page's `PendingEdits` context blocks submission until all formatted values are committed or canceled. Programmatic Draft resets are checked and do not emit user commits. Null, Missing, false and zero retain their existing meanings. When an operation reports a generic `invalid` issue, the submitted public snapshot is checked against client-checkable public rules to recover specific wording. Unavailable host rules retain the safe fallback.
 
-Create/copy hides the presence selector for required non-null fields. Nullable fields can select “Clear (empty)” or “Set value”; filters and patches can omit values, with patch omission labeled “Leave unchanged”. Public rule messages are preferred for validation errors, with specific public-descriptor fallbacks. Result links use a public name/title/label or readable identity values.
+Create/copy hides the presence selector for required non-null fields. Nullable fields can select “Clear (empty)” or “Set value”; Boolean filters render one control with hidden `0` and checked `1`, without a presence selector; other filters and patches can omit values, with patch omission labeled “Leave unchanged”. Public rule messages are preferred for validation errors, with specific public-descriptor fallbacks. Result links use a public name/title/label or readable identity values.

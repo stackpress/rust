@@ -6,6 +6,80 @@ use stackpress_framework_schema::SchemaErrorKind;
 use stackpress_lib::template::{TemplateError, TemplateErrorKind};
 use std::error::Error;
 
+/// Normalize real composite keys, optionally leaving them outside the public projection.
+fn table_source(expose_keys: bool) -> String {
+    use stackpress_framework_schema::{FieldAccess, Schema, codegen::DefinitionRegistry};
+    let config = stackpress_idea_parser::parse(
+        "table-actions.idea",
+        "model Example { tenant String @id id String @id name String @list.string }",
+        &Default::default(),
+    )
+    .unwrap();
+    let mut definitions = DefinitionRegistry::standard();
+    for name in ["tenant", "id", "name"] {
+        definitions = definitions
+            .with_field_policy(
+                "Example",
+                name,
+                FieldAccess {
+                    readable: name == "name" || expose_keys,
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+    }
+    let definitions = crate::codegen::register_components(definitions, vec![]).unwrap();
+    let model = Schema::normalize(&config, &definitions, Default::default())
+        .unwrap()
+        .project_ui()
+        .unwrap()
+        .models
+        .remove(0);
+    assert_eq!(model.key.is_empty(), !expose_keys);
+    super::super::table::source(
+        &mut Renderer::new().unwrap(),
+        &model,
+        &model.fields,
+        &definitions,
+    )
+    .unwrap()
+}
+
+/// Table actions retain schema key order and the source's empty sticky heading.
+#[test]
+fn table_actions_preserve_ordered_keys_and_empty_heading() {
+    let source = table_source(true);
+    assert!(source.contains("detail_action(\"example\", &[\"tenant\", \"id\"], &seed)"));
+    assert!(source.contains("<TableCell sticky_right=true>{action}</TableCell>"));
+    assert!(
+        source.contains("<TableHeader sticky=true sticky_right=true>{().into_any()}</TableHeader>")
+    );
+    // The generated DOM key remains independent of the DTO keys used by detail_action.
+    assert!(source.contains("format!(\"{byte:02x}\")"));
+}
+
+/// Keyless tables omit both action slots without looking up selected-only context.
+#[test]
+fn keyless_tables_do_not_read_action_context() {
+    let actual = table_source(false);
+    assert!(!actual.contains("detail_action"));
+    assert!(!actual.contains("sticky_right"));
+    // The template also remains lazy when selected-only keys are entirely absent.
+    let source = Renderer::new()
+        .unwrap()
+        .render(
+            Asset::Table,
+            &json!({
+                "public_type": "PublicExample", "controls": [], "headers": [],
+                "caption_literal": literal("Examples"), "has_identity": false,
+            }),
+        )
+        .unwrap();
+    assert!(!source.contains("detail_action"));
+    assert!(!source.contains("sticky_right"));
+    assert!(source.contains("<TableRow row_key=key.clone()>{cells}</TableRow>"));
+}
+
 /// Exercise the production engine options with arbitrary small boundary-test source.
 fn render(
     asset: &'static str,
