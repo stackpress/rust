@@ -1,0 +1,8 @@
+error[E0119]: conflicting implementations of trait `SessionModels` for type `Family`
+  --> tests/source-ui/duplicate_family.rs:10:1
+   |
+ 6 | impl SessionModels for Family {
+   | ----------------------------- first implementation here
+...
+10 | impl SessionModels for Family {
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ conflicting implementation for `Family`

@@ -6,3 +6,11 @@ mod plugin;
 #[cfg(feature = "codegen")]
 #[path = "main/codegen.rs"]
 mod codegen;
+
+#[cfg(all(
+    feature = "codegen",
+    feature = "sqlite-maintenance",
+    not(target_arch = "wasm32")
+))]
+#[path = "main/source_models/mod.rs"]
+mod source_models;

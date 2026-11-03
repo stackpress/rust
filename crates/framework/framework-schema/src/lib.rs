@@ -2,7 +2,8 @@
 //!
 //! The optional `codegen` feature interprets finalized Idea config and emits Rust before
 //! application compilation. Default features expose portable values, validation and public
-//! descriptors only. Selected unsupported storage/security/validation semantics fail explicitly.
+//! descriptors; native targets also expose source-model contracts without host dependencies.
+//! Selected unsupported storage/security/validation semantics fail explicitly.
 
 use std::error::Error;
 use std::fmt;
@@ -18,6 +19,10 @@ pub const CONTRACT_REVISION: u32 = 3;
 /// Native built-in value providers; requires the explicit `providers` feature.
 #[cfg(all(feature = "providers", not(target_arch = "wasm32")))]
 pub mod providers;
+
+/// Native source-model contracts, independent of any executable generator or SQL adapter.
+#[cfg(not(target_arch = "wasm32"))]
+pub mod source;
 
 mod query;
 pub use query::{NullOrder, Predicate, Sort, SortDirection, check_include, query_budget};

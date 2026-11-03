@@ -1,0 +1,19 @@
+error: future cannot be sent between threads safely
+  --> tests/source-ui/non_send_implementation.rs:39:10
+   |
+39 |     ) -> Result<Record, DataError> {
+   |          ^^^^^^^^^^^^^^^^^^^^^^^^^ future returned by `create_in` is not `Send`
+   |
+   = help: within `impl Future<Output = Result<Vec<(std::string::String, support::Value)>, DataError>>`, the trait `Send` is not implemented for `Rc<()>`
+note: future is not `Send` as this value is used across an await
+  --> tests/source-ui/non_send_implementation.rs:41:50
+   |
+40 |         let non_send = Rc::new(());
+   |             -------- has type `Rc<()>` which is not `Send`
+41 |         let result = self.0.create_in(db, input).await;
+   |                                                  ^^^^^ await occurs here, with `non_send` maybe used later
+note: required by a bound in `stackpress_framework_sql::source::SourceActions::create_in::{anon_assoc#0}`
+  --> src/source/actions.rs
+   |
+   |     ) -> impl Future<Output = ActionResult<Self, ActionRecord<Self>>> + Send + 'a;
+   |                                                                         ^^^^ required by this bound in `SourceActions::create_in::{anon_assoc#0}`
