@@ -1,0 +1,534 @@
+//! Generated M0 contract probe, not the production source-model emitter.
+use crate::support;
+use stackpress_framework_sql::source::*;
+
+/// Metadata comes from this probe's real composed and normalized declarations.
+pub enum ProfileSpec {}
+impl support::Spec for ProfileSpec {
+    fn describe() -> stackpress_framework_schema::Model {
+        serde_json::from_str("{\"name\":\"Profile\",\"rust_name\":\"Profile\",\"module\":\"profile\",\"fields\":[{\"name\":\"id\",\"rust_name\":\"id\",\"column\":\"id\",\"value_type\":{\"kind\":\"String\"},\"required\":true,\"multiple\":false,\"key\":true,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":{\"provider\":\"cuid\",\"args\":[],\"revision\":\"cuid2-3.3.0\"},\"rules\":[],\"documentation\":{\"label\":\"ID\",\"description\":\"Unique generated identifier.\",\"examples\":[\"pjfdz7tg8bcf7e2lig3iuej3\"],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"ID\"]},{\"name\":\"id\",\"value\":true},{\"name\":\"default\",\"value\":[\"cuid()\"]},{\"name\":\"list.clip\",\"value\":[{\"length\":10,\"hellip\":true}]},{\"name\":\"view.string\",\"value\":true},{\"name\":\"description\",\"value\":[\"Unique generated identifier.\"]},{\"name\":\"examples\",\"value\":[\"pjfdz7tg8bcf7e2lig3iuej3\"]}]},{\"name\":\"image\",\"rust_name\":\"image\",\"column\":\"image\",\"value_type\":{\"kind\":\"String\"},\"required\":false,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":null,\"rules\":[],\"documentation\":{\"label\":\"Image\",\"description\":\"Profile image URL.\",\"examples\":[\"https://example.com/image.jpg\"],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Image\"]},{\"name\":\"field.url\",\"value\":true},{\"name\":\"list.image\",\"value\":[{\"width\":20,\"height\":20}]},{\"name\":\"view.image\",\"value\":[{\"width\":100,\"height\":100}]},{\"name\":\"description\",\"value\":[\"Profile image URL.\"]},{\"name\":\"examples\",\"value\":[\"https://example.com/image.jpg\"]}]},{\"name\":\"name\",\"rust_name\":\"name\",\"column\":\"name\",\"value_type\":{\"kind\":\"String\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":true,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":true,\"value_rule\":null,\"rules\":[{\"code\":\"required\",\"args\":[],\"client_checkable\":true,\"message\":\"Name is required\",\"definition_revision\":\"1\"}],\"documentation\":{\"label\":\"Name\",\"description\":\"Full name (first middle last).\",\"examples\":[\"John Doe\"],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Name\"]},{\"name\":\"searchable\",\"value\":true},{\"name\":\"field.input\",\"value\":[{\"type\":\"text\"}]},{\"name\":\"is.required\",\"value\":[\"Name is required\"]},{\"name\":\"list.string\",\"value\":true},{\"name\":\"view.string\",\"value\":true},{\"name\":\"description\",\"value\":[\"Full name (first middle last).\"]},{\"name\":\"examples\",\"value\":[\"John Doe\"]}]},{\"name\":\"type\",\"rust_name\":\"type_\",\"column\":\"type_\",\"value_type\":{\"kind\":\"String\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":\"person\",\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":null,\"rules\":[{\"code\":\"required\",\"args\":[],\"client_checkable\":true,\"message\":\"Type is required\",\"definition_revision\":\"1\"}],\"documentation\":{\"label\":\"Type\",\"description\":\"Type of profile (ie. person, company, etc.).\",\"examples\":[\"person\"],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Type\"]},{\"name\":\"default\",\"value\":[\"person\"]},{\"name\":\"field.input\",\"value\":[{\"type\":\"text\"}]},{\"name\":\"is.required\",\"value\":[\"Type is required\"]},{\"name\":\"filter.input\",\"value\":[{\"type\":\"text\"}]},{\"name\":\"list.lowercase\",\"value\":true},{\"name\":\"view.lowercase\",\"value\":true},{\"name\":\"description\",\"value\":[\"Type of profile (ie. person, company, etc.).\"]},{\"name\":\"examples\",\"value\":[\"person\"]}]},{\"name\":\"tags\",\"rust_name\":\"tags\",\"column\":\"tags\",\"value_type\":{\"kind\":\"String\"},\"required\":true,\"multiple\":true,\"key\":false,\"default\":[],\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":null,\"rules\":[],\"documentation\":{\"label\":\"Tags\",\"description\":\"Abritrary tags for general use.\",\"examples\":[[\"top buyer\",\"verified\",\"moderator\"]],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Tags\"]},{\"name\":\"default\",\"value\":[[]]},{\"name\":\"field.taglist\",\"value\":true},{\"name\":\"list.taglist\",\"value\":[{\"warning\":true,\"pill\":true,\"className\":\"frui-mr-md\"}]},{\"name\":\"view.taglist\",\"value\":[{\"warning\":true,\"pill\":true,\"className\":\"frui-mr-md\"}]},{\"name\":\"description\",\"value\":[\"Abritrary tags for general use.\"]},{\"name\":\"examples\",\"value\":[[\"top buyer\",\"verified\",\"moderator\"]]}]},{\"name\":\"references\",\"rust_name\":\"references\",\"column\":\"references\",\"value_type\":{\"kind\":\"Object\"},\"required\":false,\"multiple\":false,\"key\":false,\"default\":{},\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":null,\"rules\":[],\"documentation\":{\"label\":\"References\",\"description\":\"Arbitrary key/value references for general use.\",\"examples\":[{\"fbid\":\"abc123\"}],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"References\"]},{\"name\":\"default\",\"value\":[{}]},{\"name\":\"field.metadata\",\"value\":[{\"add\":\"Add Reference\"}]},{\"name\":\"view.metadata\",\"value\":[{\"className\":\"frui-pt-md frui-pr-md frui-pb-md frui-pl-md\"}]},{\"name\":\"description\",\"value\":[\"Arbitrary key/value references for general use.\"]},{\"name\":\"examples\",\"value\":[{\"fbid\":\"abc123\"}]}]},{\"name\":\"active\",\"rust_name\":\"active\",\"column\":\"active\",\"value_type\":{\"kind\":\"Boolean\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":true,\"nonempty\":false,\"active\":true,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":null,\"rules\":[],\"documentation\":{\"label\":\"Active\",\"description\":\"Special flag to indicate active rows. Inactive rows are not shown in the list view, but can be viewed in the detail view.\",\"examples\":[true],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Active\"]},{\"name\":\"default\",\"value\":[true]},{\"name\":\"active\",\"value\":true},{\"name\":\"filter.switch\",\"value\":true},{\"name\":\"view.yesno\",\"value\":true},{\"name\":\"description\",\"value\":[\"Special flag to indicate active rows. Inactive rows are not shown in the list view, but can be viewed in the detail view.\"]},{\"name\":\"examples\",\"value\":[true]}]},{\"name\":\"created\",\"rust_name\":\"created\",\"column\":\"created\",\"value_type\":{\"kind\":\"Datetime\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":true,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":{\"provider\":\"now\",\"args\":[],\"revision\":\"1\"},\"rules\":[],\"documentation\":{\"label\":\"Created\",\"description\":\"Generated timestamp when row was created.\",\"examples\":[\"2025-10-01T12:00:00Z\"],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Created\"]},{\"name\":\"default\",\"value\":[\"now()\"]},{\"name\":\"sortable\",\"value\":true},{\"name\":\"span.datetime\",\"value\":true},{\"name\":\"list.date\",\"value\":[\"m d, Y h:iA\"]},{\"name\":\"view.date\",\"value\":[\"m d, Y h:iA\"]},{\"name\":\"description\",\"value\":[\"Generated timestamp when row was created.\"]},{\"name\":\"examples\",\"value\":[\"2025-10-01T12:00:00Z\"]}]},{\"name\":\"updated\",\"rust_name\":\"updated\",\"column\":\"updated\",\"value_type\":{\"kind\":\"Datetime\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":true,\"timestamp\":true,\"generated\":false,\"input_required\":false,\"value_rule\":{\"provider\":\"now\",\"args\":[],\"revision\":\"1\"},\"rules\":[],\"documentation\":{\"label\":\"Updated\",\"description\":\"Generated timestamp that is updated whenever the row has changed.\",\"examples\":[\"2025-10-01T12:00:00Z\"],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Updated\"]},{\"name\":\"default\",\"value\":[\"now()\"]},{\"name\":\"timestamp\",\"value\":true},{\"name\":\"sortable\",\"value\":true},{\"name\":\"span.datetime\",\"value\":true},{\"name\":\"list.date\",\"value\":[\"m d, Y h:iA\"]},{\"name\":\"view.date\",\"value\":[\"m d, Y h:iA\"]},{\"name\":\"description\",\"value\":[\"Generated timestamp that is updated whenever the row has changed.\"]},{\"name\":\"examples\",\"value\":[\"2025-10-01T12:00:00Z\"]}]},{\"name\":\"auth\",\"rust_name\":\"auth\",\"column\":\"auth\",\"value_type\":{\"kind\":\"Model\",\"name\":\"Auth\"},\"required\":true,\"multiple\":true,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":null,\"rules\":[],\"documentation\":{\"label\":\"Authentications\",\"description\":null,\"examples\":[],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Authentications\"]}]},{\"name\":\"applications\",\"rust_name\":\"applications\",\"column\":\"applications\",\"value_type\":{\"kind\":\"Model\",\"name\":\"Application\"},\"required\":true,\"multiple\":true,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":null,\"rules\":[],\"documentation\":{\"label\":\"Applications\",\"description\":null,\"examples\":[],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Applications\"]}]},{\"name\":\"sessions\",\"rust_name\":\"sessions\",\"column\":\"sessions\",\"value_type\":{\"kind\":\"Model\",\"name\":\"Session\"},\"required\":true,\"multiple\":true,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":null,\"rules\":[],\"documentation\":{\"label\":\"Sessions\",\"description\":null,\"examples\":[],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Sessions\"]}]},{\"name\":\"roles\",\"rust_name\":\"roles\",\"column\":\"roles\",\"value_type\":{\"kind\":\"Boolean\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":true,\"value_rule\":null,\"rules\":[],\"documentation\":{\"label\":null,\"description\":null,\"examples\":[],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[]}],\"documentation\":{\"label\":null,\"description\":null,\"examples\":[],\"display\":\"{{name}}\",\"icon\":\"user\",\"labels\":[\"Profile\",\"Profiles\"]},\"query\":[],\"attributes\":[{\"name\":\"labels\",\"value\":[\"Profile\",\"Profiles\"]},{\"name\":\"display\",\"value\":[\"{{name}}\"]},{\"name\":\"icon\",\"value\":[\"user\"]}]}").expect("validated probe metadata")
+    }
+}
+/// Each generated model associates its own schema, exact store and action implementation.
+pub type Profile = support::Model<ProfileSpec, ProfileRole>;
+pub type ProfileSchema = support::Schema<ProfileSpec>;
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Id> for ProfileSchema {
+    type FieldValue = String;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("id")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("id".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Id> for ProfileSchema { type Declaration = stackpress_framework_schema::source::StringType; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Image> for ProfileSchema {
+    type FieldValue = Option<String>;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("image")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("image".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Image> for ProfileSchema { type Declaration = stackpress_framework_schema::source::Nullable<stackpress_framework_schema::source::StringType>; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Name> for ProfileSchema {
+    type FieldValue = String;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("name")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("name".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Name> for ProfileSchema { type Declaration = stackpress_framework_schema::source::StringType; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Type> for ProfileSchema {
+    type FieldValue = String;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("type")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("type".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Type> for ProfileSchema { type Declaration = stackpress_framework_schema::source::StringType; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Tags> for ProfileSchema {
+    type FieldValue = Vec<String>;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("tags")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("tags".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Tags> for ProfileSchema { type Declaration = stackpress_framework_schema::source::List<stackpress_framework_schema::source::StringType>; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::References> for ProfileSchema {
+    type FieldValue = Option<stackpress_framework_schema::source::Record>;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("references")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("references".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::References> for ProfileSchema { type Declaration = stackpress_framework_schema::source::Nullable<stackpress_framework_schema::source::ObjectType>; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Active> for ProfileSchema {
+    type FieldValue = bool;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("active")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("active".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Active> for ProfileSchema { type Declaration = stackpress_framework_schema::source::BooleanType; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Created> for ProfileSchema {
+    type FieldValue = stackpress_framework_schema::source::Date;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("created")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("created".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Created> for ProfileSchema { type Declaration = stackpress_framework_schema::source::DatetimeType; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Updated> for ProfileSchema {
+    type FieldValue = stackpress_framework_schema::source::Date;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("updated")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("updated".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Updated> for ProfileSchema { type Declaration = stackpress_framework_schema::source::DatetimeType; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Auth> for ProfileSchema {
+    type FieldValue = Vec<stackpress_framework_schema::source::Record>;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("auth")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("auth".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Auth> for ProfileSchema { type Declaration = stackpress_framework_schema::source::List<stackpress_framework_schema::source::AuthType>; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Applications> for ProfileSchema {
+    type FieldValue = Vec<stackpress_framework_schema::source::Record>;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("applications")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("applications".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Applications> for ProfileSchema { type Declaration = stackpress_framework_schema::source::List<stackpress_framework_schema::source::ApplicationType>; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Sessions> for ProfileSchema {
+    type FieldValue = Vec<stackpress_framework_schema::source::Record>;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("sessions")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("sessions".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Sessions> for ProfileSchema { type Declaration = stackpress_framework_schema::source::List<stackpress_framework_schema::source::SessionType>; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Roles> for ProfileSchema {
+    type FieldValue = bool;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("roles")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("roles".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Roles> for ProfileSchema { type Declaration = stackpress_framework_schema::source::BooleanType; }
+
+/// Metadata comes from this probe's real composed and normalized declarations.
+pub enum ApplicationSpec {}
+impl support::Spec for ApplicationSpec {
+    fn describe() -> stackpress_framework_schema::Model {
+        serde_json::from_str("{\"name\":\"Application\",\"rust_name\":\"Application\",\"module\":\"application\",\"fields\":[{\"name\":\"id\",\"rust_name\":\"id\",\"column\":\"id\",\"value_type\":{\"kind\":\"String\"},\"required\":true,\"multiple\":false,\"key\":true,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":{\"provider\":\"cuid\",\"args\":[],\"revision\":\"cuid2-3.3.0\"},\"rules\":[],\"documentation\":{\"label\":\"ID\",\"description\":\"Unique generated identifier.\",\"examples\":[\"tg8bcf7e2lig3iuej3dz7pjf\"],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"ID\"]},{\"name\":\"id\",\"value\":true},{\"name\":\"default\",\"value\":[\"cuid()\"]},{\"name\":\"list.string\",\"value\":true},{\"name\":\"view.string\",\"value\":true},{\"name\":\"description\",\"value\":[\"Unique generated identifier.\"]},{\"name\":\"examples\",\"value\":[\"tg8bcf7e2lig3iuej3dz7pjf\"]}]},{\"name\":\"profileId\",\"rust_name\":\"profile_id\",\"column\":\"profile_id\",\"value_type\":{\"kind\":\"String\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":true,\"value_rule\":null,\"rules\":[{\"code\":\"required\",\"args\":[],\"client_checkable\":true,\"message\":\"Profile is required\",\"definition_revision\":\"1\"}],\"documentation\":{\"label\":\"Profile\",\"description\":\"The profile author of this application.\",\"examples\":[\"pjfdz7tg8bcf7e2lig3iuej3\"],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Profile\"]},{\"name\":\"field.relation\",\"value\":[{\"id\":\"id\",\"search\":\"/admin/profile/search?json&q={{query}}\",\"template\":\"{{name}}\"}]},{\"name\":\"is.required\",\"value\":[\"Profile is required\"]},{\"name\":\"filter.relation\",\"value\":[{\"id\":\"id\",\"search\":\"/admin/profile/search?json&q={{query}}\",\"template\":\"{{name}}\"}]},{\"name\":\"list.template\",\"value\":[{\"template\":\"{{profile.name}}\"}]},{\"name\":\"view.template\",\"value\":[{\"template\":\"{{profile.name}}\"}]},{\"name\":\"description\",\"value\":[\"The profile author of this application.\"]},{\"name\":\"examples\",\"value\":[\"pjfdz7tg8bcf7e2lig3iuej3\"]}]},{\"name\":\"name\",\"rust_name\":\"name\",\"column\":\"name\",\"value_type\":{\"kind\":\"String\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":true,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":true,\"value_rule\":null,\"rules\":[{\"code\":\"required\",\"args\":[],\"client_checkable\":true,\"message\":\"Name is required\",\"definition_revision\":\"1\"}],\"documentation\":{\"label\":\"Name\",\"description\":\"Arbitrary name of the application. Used in 3-legged OAuth flows.\",\"examples\":[\"My Awesome App\"],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Name\"]},{\"name\":\"searchable\",\"value\":true},{\"name\":\"field.input\",\"value\":[{\"type\":\"text\"}]},{\"name\":\"is.required\",\"value\":[\"Name is required\"]},{\"name\":\"list.string\",\"value\":true},{\"name\":\"view.string\",\"value\":true},{\"name\":\"description\",\"value\":[\"Arbitrary name of the application. Used in 3-legged OAuth flows.\"]},{\"name\":\"examples\",\"value\":[\"My Awesome App\"]}]},{\"name\":\"logo\",\"rust_name\":\"logo\",\"column\":\"logo\",\"value_type\":{\"kind\":\"String\"},\"required\":false,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":null,\"rules\":[],\"documentation\":{\"label\":\"Image\",\"description\":\"Logo image URL of the application. Used in 3-legged OAuth flows.\",\"examples\":[\"https://example.com/logo.png\"],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Image\"]},{\"name\":\"field.url\",\"value\":true},{\"name\":\"list.image\",\"value\":[20,20]},{\"name\":\"view.image\",\"value\":[100,100]},{\"name\":\"description\",\"value\":[\"Logo image URL of the application. Used in 3-legged OAuth flows.\"]},{\"name\":\"examples\",\"value\":[\"https://example.com/logo.png\"]}]},{\"name\":\"website\",\"rust_name\":\"website\",\"column\":\"website\",\"value_type\":{\"kind\":\"String\"},\"required\":false,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":true,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":null,\"rules\":[],\"documentation\":{\"label\":\"Website\",\"description\":\"Arbitrary website URL of the application. Used in 3-legged OAuth flows.\",\"examples\":[],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Website\"]},{\"name\":\"searchable\",\"value\":true},{\"name\":\"field.url\",\"value\":true},{\"name\":\"list.link\",\"value\":[{\"target\":\"blank\"}]},{\"name\":\"view.link\",\"value\":[{\"target\":\"blank\"}]},{\"name\":\"description\",\"value\":[\"Arbitrary website URL of the application. Used in 3-legged OAuth flows.\"]}]},{\"name\":\"secret\",\"rust_name\":\"secret\",\"column\":\"secret\",\"value_type\":{\"kind\":\"String\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":{\"provider\":\"cuid\",\"args\":[],\"revision\":\"cuid2-3.3.0\"},\"rules\":[],\"documentation\":{\"label\":\"Secret\",\"description\":\"Generated unique hash needed to perform write operations (POST, PUT, DELETE, etc.)\",\"examples\":[\"bcf7e2lig3iuej3tg8dz7pjf\"],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Secret\"]},{\"name\":\"default\",\"value\":[\"cuid()\"]},{\"name\":\"list.string\",\"value\":true},{\"name\":\"view.string\",\"value\":true},{\"name\":\"description\",\"value\":[\"Generated unique hash needed to perform write operations (POST, PUT, DELETE, etc.)\"]},{\"name\":\"examples\",\"value\":[\"bcf7e2lig3iuej3tg8dz7pjf\"]}]},{\"name\":\"scopes\",\"rust_name\":\"scopes\",\"column\":\"scopes\",\"value_type\":{\"kind\":\"String\"},\"required\":true,\"multiple\":true,\"key\":false,\"default\":[],\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":null,\"rules\":[],\"documentation\":{\"label\":\"Scopes\",\"description\":\"API scopes that this application can request. This is mapped with endpoints.\",\"examples\":[[\"commerce\",\"location\",\"account\"]],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Scopes\"]},{\"name\":\"default\",\"value\":[[]]},{\"name\":\"field.taglist\",\"value\":true},{\"name\":\"list.taglist\",\"value\":[{\"warning\":true,\"pill\":true,\"className\":\"frui-mr-md\"}]},{\"name\":\"view.taglist\",\"value\":[{\"warning\":true,\"pill\":true,\"className\":\"frui-mr-md\"}]},{\"name\":\"description\",\"value\":[\"API scopes that this application can request. This is mapped with endpoints.\"]},{\"name\":\"examples\",\"value\":[[\"commerce\",\"location\",\"account\"]]}]},{\"name\":\"active\",\"rust_name\":\"active\",\"column\":\"active\",\"value_type\":{\"kind\":\"Boolean\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":true,\"nonempty\":false,\"active\":true,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":null,\"rules\":[],\"documentation\":{\"label\":\"Active\",\"description\":\"Special flag to indicate active rows. Inactive rows are not shown in the list view, but can be viewed in the detail view.\",\"examples\":[true],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Active\"]},{\"name\":\"default\",\"value\":[true]},{\"name\":\"active\",\"value\":true},{\"name\":\"filter.switch\",\"value\":true},{\"name\":\"view.yesno\",\"value\":true},{\"name\":\"description\",\"value\":[\"Special flag to indicate active rows. Inactive rows are not shown in the list view, but can be viewed in the detail view.\"]},{\"name\":\"examples\",\"value\":[true]}]},{\"name\":\"expires\",\"rust_name\":\"expires\",\"column\":\"expires\",\"value_type\":{\"kind\":\"Datetime\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":true,\"timestamp\":false,\"generated\":false,\"input_required\":true,\"value_rule\":null,\"rules\":[{\"code\":\"required\",\"args\":[],\"client_checkable\":true,\"message\":\"Expires is required\",\"definition_revision\":\"1\"}],\"documentation\":{\"label\":\"Expires\",\"description\":\"Expiration date of the application. After this date, the application will not be able to perform any operations.\",\"examples\":[\"2025-12-31T23:59:59Z\"],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Expires\"]},{\"name\":\"sortable\",\"value\":true},{\"name\":\"field.datetime\",\"value\":true},{\"name\":\"is.required\",\"value\":[\"Expires is required\"]},{\"name\":\"list.date\",\"value\":[\"m d, Y h:iA\"]},{\"name\":\"view.date\",\"value\":[\"m d, Y h:iA\"]},{\"name\":\"description\",\"value\":[\"Expiration date of the application. After this date, the application will not be able to perform any operations.\"]},{\"name\":\"examples\",\"value\":[\"2025-12-31T23:59:59Z\"]}]},{\"name\":\"created\",\"rust_name\":\"created\",\"column\":\"created\",\"value_type\":{\"kind\":\"Datetime\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":true,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":{\"provider\":\"now\",\"args\":[],\"revision\":\"1\"},\"rules\":[],\"documentation\":{\"label\":\"Created\",\"description\":\"Generated timestamp when row was created.\",\"examples\":[\"2025-10-01T12:00:00Z\"],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Created\"]},{\"name\":\"default\",\"value\":[\"now()\"]},{\"name\":\"sortable\",\"value\":true},{\"name\":\"list.date\",\"value\":[\"m d, Y h:iA\"]},{\"name\":\"view.date\",\"value\":[\"m d, Y h:iA\"]},{\"name\":\"description\",\"value\":[\"Generated timestamp when row was created.\"]},{\"name\":\"examples\",\"value\":[\"2025-10-01T12:00:00Z\"]}]},{\"name\":\"updated\",\"rust_name\":\"updated\",\"column\":\"updated\",\"value_type\":{\"kind\":\"Datetime\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":true,\"timestamp\":true,\"generated\":false,\"input_required\":false,\"value_rule\":{\"provider\":\"now\",\"args\":[],\"revision\":\"1\"},\"rules\":[],\"documentation\":{\"label\":\"Updated\",\"description\":\"Generated timestamp that is updated whenever the row has changed.\",\"examples\":[\"2025-10-01T12:00:00Z\"],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Updated\"]},{\"name\":\"default\",\"value\":[\"now()\"]},{\"name\":\"timestamp\",\"value\":true},{\"name\":\"sortable\",\"value\":true},{\"name\":\"list.date\",\"value\":[\"m d, Y h:iA\"]},{\"name\":\"view.date\",\"value\":[\"m d, Y h:iA\"]},{\"name\":\"description\",\"value\":[\"Generated timestamp that is updated whenever the row has changed.\"]},{\"name\":\"examples\",\"value\":[\"2025-10-01T12:00:00Z\"]}]},{\"name\":\"session\",\"rust_name\":\"session\",\"column\":\"session\",\"value_type\":{\"kind\":\"Model\",\"name\":\"Session\"},\"required\":true,\"multiple\":true,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":null,\"rules\":[],\"documentation\":{\"label\":\"Sessions\",\"description\":null,\"examples\":[],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Sessions\"]}]},{\"name\":\"profile\",\"rust_name\":\"profile\",\"column\":\"profile\",\"value_type\":{\"kind\":\"Model\",\"name\":\"Profile\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":{\"local\":\"profileId\",\"foreign\":\"id\",\"inverse\":null},\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":null,\"rules\":[],\"documentation\":{\"label\":null,\"description\":null,\"examples\":[],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"relation\",\"value\":[{\"local\":\"profileId\",\"foreign\":\"id\"}]}]}],\"documentation\":{\"label\":null,\"description\":null,\"examples\":[],\"display\":\"{{name}}\",\"icon\":\"laptop\",\"labels\":[\"App\",\"Apps\"]},\"query\":[\"*\",\"profile.*\"],\"attributes\":[{\"name\":\"labels\",\"value\":[\"App\",\"Apps\"]},{\"name\":\"display\",\"value\":[\"{{name}}\"]},{\"name\":\"icon\",\"value\":[\"laptop\"]},{\"name\":\"query\",\"value\":[\"*\",\"profile.*\"]}]}").expect("validated probe metadata")
+    }
+}
+/// Each generated model associates its own schema, exact store and action implementation.
+pub type Application = support::Model<ApplicationSpec, ApplicationRole>;
+pub type ApplicationSchema = support::Schema<ApplicationSpec>;
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Id> for ApplicationSchema {
+    type FieldValue = String;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("id")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("id".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Id> for ApplicationSchema { type Declaration = stackpress_framework_schema::source::StringType; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::ProfileId> for ApplicationSchema {
+    type FieldValue = String;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("profileId")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("profileId".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::ProfileId> for ApplicationSchema { type Declaration = stackpress_framework_schema::source::StringType; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Name> for ApplicationSchema {
+    type FieldValue = String;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("name")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("name".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Name> for ApplicationSchema { type Declaration = stackpress_framework_schema::source::StringType; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Logo> for ApplicationSchema {
+    type FieldValue = Option<String>;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("logo")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("logo".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Logo> for ApplicationSchema { type Declaration = stackpress_framework_schema::source::Nullable<stackpress_framework_schema::source::StringType>; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Website> for ApplicationSchema {
+    type FieldValue = Option<String>;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("website")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("website".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Website> for ApplicationSchema { type Declaration = stackpress_framework_schema::source::Nullable<stackpress_framework_schema::source::StringType>; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Secret> for ApplicationSchema {
+    type FieldValue = String;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("secret")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("secret".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Secret> for ApplicationSchema { type Declaration = stackpress_framework_schema::source::StringType; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Scopes> for ApplicationSchema {
+    type FieldValue = Vec<String>;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("scopes")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("scopes".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Scopes> for ApplicationSchema { type Declaration = stackpress_framework_schema::source::List<stackpress_framework_schema::source::StringType>; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Active> for ApplicationSchema {
+    type FieldValue = bool;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("active")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("active".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Active> for ApplicationSchema { type Declaration = stackpress_framework_schema::source::BooleanType; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Expires> for ApplicationSchema {
+    type FieldValue = stackpress_framework_schema::source::Date;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("expires")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("expires".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Expires> for ApplicationSchema { type Declaration = stackpress_framework_schema::source::DatetimeType; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Created> for ApplicationSchema {
+    type FieldValue = stackpress_framework_schema::source::Date;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("created")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("created".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Created> for ApplicationSchema { type Declaration = stackpress_framework_schema::source::DatetimeType; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Updated> for ApplicationSchema {
+    type FieldValue = stackpress_framework_schema::source::Date;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("updated")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("updated".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Updated> for ApplicationSchema { type Declaration = stackpress_framework_schema::source::DatetimeType; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Session> for ApplicationSchema {
+    type FieldValue = Vec<stackpress_framework_schema::source::Record>;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("session")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("session".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Session> for ApplicationSchema { type Declaration = stackpress_framework_schema::source::List<stackpress_framework_schema::source::SessionType>; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Profile> for ApplicationSchema {
+    type FieldValue = stackpress_framework_schema::source::Record;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("profile")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("profile".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Profile> for ApplicationSchema { type Declaration = stackpress_framework_schema::source::ProfileType; }
+
+/// Metadata comes from this probe's real composed and normalized declarations.
+pub enum SessionSpec {}
+impl support::Spec for SessionSpec {
+    fn describe() -> stackpress_framework_schema::Model {
+        serde_json::from_str("{\"name\":\"Session\",\"rust_name\":\"Session\",\"module\":\"session\",\"fields\":[{\"name\":\"id\",\"rust_name\":\"id\",\"column\":\"id\",\"value_type\":{\"kind\":\"String\"},\"required\":true,\"multiple\":false,\"key\":true,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":{\"provider\":\"cuid\",\"args\":[],\"revision\":\"cuid2-3.3.0\"},\"rules\":[],\"documentation\":{\"label\":\"ID\",\"description\":\"Unique generated identifier.\",\"examples\":[\"7e2lig3iuej3bcftg8dz7pjf\"],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"ID\"]},{\"name\":\"id\",\"value\":true},{\"name\":\"default\",\"value\":[\"cuid()\"]},{\"name\":\"list.string\",\"value\":true},{\"name\":\"view.string\",\"value\":true},{\"name\":\"description\",\"value\":[\"Unique generated identifier.\"]},{\"name\":\"examples\",\"value\":[\"7e2lig3iuej3bcftg8dz7pjf\"]}]},{\"name\":\"applicationId\",\"rust_name\":\"application_id\",\"column\":\"application_id\",\"value_type\":{\"kind\":\"String\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":true,\"value_rule\":null,\"rules\":[{\"code\":\"required\",\"args\":[],\"client_checkable\":true,\"message\":\"App is required\",\"definition_revision\":\"1\"}],\"documentation\":{\"label\":\"App\",\"description\":\"Application this session belongs to.\",\"examples\":[\"tg8bcf7e2lig3iuej3dz7pjf\"],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"App\"]},{\"name\":\"field.relation\",\"value\":[{\"id\":\"id\",\"search\":\"/admin/application/search?json\",\"template\":\"{{name}}\"}]},{\"name\":\"is.required\",\"value\":[\"App is required\"]},{\"name\":\"filter.relation\",\"value\":[{\"id\":\"id\",\"search\":\"/admin/application/search?json\",\"template\":\"{{name}}\"}]},{\"name\":\"list.template\",\"value\":[{\"template\":\"{{application.name}}\"}]},{\"name\":\"view.template\",\"value\":[{\"template\":\"{{application.name}}\"}]},{\"name\":\"description\",\"value\":[\"Application this session belongs to.\"]},{\"name\":\"examples\",\"value\":[\"tg8bcf7e2lig3iuej3dz7pjf\"]}]},{\"name\":\"profileId\",\"rust_name\":\"profile_id\",\"column\":\"profile_id\",\"value_type\":{\"kind\":\"String\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":true,\"value_rule\":null,\"rules\":[{\"code\":\"required\",\"args\":[],\"client_checkable\":true,\"message\":\"Profile is required\",\"definition_revision\":\"1\"}],\"documentation\":{\"label\":\"Profile\",\"description\":\"Profile this session belongs to.\",\"examples\":[\"pjfdz7tg8bcf7e2lig3iuej3\"],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Profile\"]},{\"name\":\"field.relation\",\"value\":[{\"id\":\"id\",\"search\":\"/admin/profile/search?json&q={{query}}\",\"template\":\"{{name}}\"}]},{\"name\":\"is.required\",\"value\":[\"Profile is required\"]},{\"name\":\"filter.relation\",\"value\":[{\"id\":\"id\",\"search\":\"/admin/profile/search?json&q={{query}}\",\"template\":\"{{name}}\"}]},{\"name\":\"list.template\",\"value\":[{\"template\":\"{{profile.name}}\"}]},{\"name\":\"view.template\",\"value\":[{\"template\":\"{{profile.name}}\"}]},{\"name\":\"description\",\"value\":[\"Profile this session belongs to.\"]},{\"name\":\"examples\",\"value\":[\"pjfdz7tg8bcf7e2lig3iuej3\"]}]},{\"name\":\"secret\",\"rust_name\":\"secret\",\"column\":\"secret\",\"value_type\":{\"kind\":\"String\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":{\"provider\":\"cuid\",\"args\":[],\"revision\":\"cuid2-3.3.0\"},\"rules\":[],\"documentation\":{\"label\":\"Secret\",\"description\":\"Generated unique hash needed to perform write operations (POST, PUT, DELETE, etc.)\",\"examples\":[\"lig3iuej37e2bcftg8dz7pjf\"],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Secret\"]},{\"name\":\"default\",\"value\":[\"cuid()\"]},{\"name\":\"list.string\",\"value\":true},{\"name\":\"view.string\",\"value\":true},{\"name\":\"description\",\"value\":[\"Generated unique hash needed to perform write operations (POST, PUT, DELETE, etc.)\"]},{\"name\":\"examples\",\"value\":[\"lig3iuej37e2bcftg8dz7pjf\"]}]},{\"name\":\"scopes\",\"rust_name\":\"scopes\",\"column\":\"scopes\",\"value_type\":{\"kind\":\"String\"},\"required\":true,\"multiple\":true,\"key\":false,\"default\":[],\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":null,\"rules\":[],\"documentation\":{\"label\":\"Scopes\",\"description\":\"API scopes that this session can request. This is mapped with endpoints.\",\"examples\":[[\"commerce\",\"location\",\"account\"]],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Scopes\"]},{\"name\":\"default\",\"value\":[[]]},{\"name\":\"field.taglist\",\"value\":true},{\"name\":\"list.taglist\",\"value\":[{\"warning\":true,\"pill\":true,\"className\":\"frui-mr-md\"}]},{\"name\":\"view.taglist\",\"value\":[{\"warning\":true,\"pill\":true,\"className\":\"frui-mr-md\"}]},{\"name\":\"description\",\"value\":[\"API scopes that this session can request. This is mapped with endpoints.\"]},{\"name\":\"examples\",\"value\":[[\"commerce\",\"location\",\"account\"]]}]},{\"name\":\"active\",\"rust_name\":\"active\",\"column\":\"active\",\"value_type\":{\"kind\":\"Boolean\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":true,\"nonempty\":false,\"active\":true,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":null,\"rules\":[],\"documentation\":{\"label\":\"Active\",\"description\":\"Special flag to indicate active rows. Inactive rows are not shown in the list view, but can be viewed in the detail view.\",\"examples\":[true],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Active\"]},{\"name\":\"default\",\"value\":[true]},{\"name\":\"active\",\"value\":true},{\"name\":\"filter.switch\",\"value\":true},{\"name\":\"view.yesno\",\"value\":true},{\"name\":\"description\",\"value\":[\"Special flag to indicate active rows. Inactive rows are not shown in the list view, but can be viewed in the detail view.\"]},{\"name\":\"examples\",\"value\":[true]}]},{\"name\":\"expires\",\"rust_name\":\"expires\",\"column\":\"expires\",\"value_type\":{\"kind\":\"Datetime\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":true,\"timestamp\":false,\"generated\":false,\"input_required\":true,\"value_rule\":null,\"rules\":[{\"code\":\"required\",\"args\":[],\"client_checkable\":true,\"message\":\"Expires is required\",\"definition_revision\":\"1\"}],\"documentation\":{\"label\":\"Expires\",\"description\":\"Expiration date of the session. After this date, the session will not be able to perform any operations.\",\"examples\":[\"2025-12-31T23:59:59Z\"],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Expires\"]},{\"name\":\"sortable\",\"value\":true},{\"name\":\"field.datetime\",\"value\":true},{\"name\":\"is.required\",\"value\":[\"Expires is required\"]},{\"name\":\"list.date\",\"value\":[\"m d, Y h:iA\"]},{\"name\":\"view.date\",\"value\":[\"m d, Y h:iA\"]},{\"name\":\"description\",\"value\":[\"Expiration date of the session. After this date, the session will not be able to perform any operations.\"]},{\"name\":\"examples\",\"value\":[\"2025-12-31T23:59:59Z\"]}]},{\"name\":\"created\",\"rust_name\":\"created\",\"column\":\"created\",\"value_type\":{\"kind\":\"Datetime\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":true,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":{\"provider\":\"now\",\"args\":[],\"revision\":\"1\"},\"rules\":[],\"documentation\":{\"label\":\"Created\",\"description\":\"Generated timestamp when row was created.\",\"examples\":[\"2025-10-01T12:00:00Z\"],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Created\"]},{\"name\":\"default\",\"value\":[\"now()\"]},{\"name\":\"sortable\",\"value\":true},{\"name\":\"list.date\",\"value\":[\"m d, Y h:iA\"]},{\"name\":\"view.date\",\"value\":[\"m d, Y h:iA\"]},{\"name\":\"description\",\"value\":[\"Generated timestamp when row was created.\"]},{\"name\":\"examples\",\"value\":[\"2025-10-01T12:00:00Z\"]}]},{\"name\":\"updated\",\"rust_name\":\"updated\",\"column\":\"updated\",\"value_type\":{\"kind\":\"Datetime\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":true,\"timestamp\":true,\"generated\":false,\"input_required\":false,\"value_rule\":{\"provider\":\"now\",\"args\":[],\"revision\":\"1\"},\"rules\":[],\"documentation\":{\"label\":\"Updated\",\"description\":\"Generated timestamp that is updated whenever the row has changed.\",\"examples\":[\"2025-10-01T12:00:00Z\"],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Updated\"]},{\"name\":\"default\",\"value\":[\"now()\"]},{\"name\":\"timestamp\",\"value\":true},{\"name\":\"sortable\",\"value\":true},{\"name\":\"list.date\",\"value\":[\"m d, Y h:iA\"]},{\"name\":\"view.date\",\"value\":[\"m d, Y h:iA\"]},{\"name\":\"description\",\"value\":[\"Generated timestamp that is updated whenever the row has changed.\"]},{\"name\":\"examples\",\"value\":[\"2025-10-01T12:00:00Z\"]}]},{\"name\":\"application\",\"rust_name\":\"application\",\"column\":\"application\",\"value_type\":{\"kind\":\"Model\",\"name\":\"Application\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":{\"local\":\"applicationId\",\"foreign\":\"id\",\"inverse\":null},\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":null,\"rules\":[],\"documentation\":{\"label\":null,\"description\":null,\"examples\":[],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"relation\",\"value\":[{\"local\":\"applicationId\",\"foreign\":\"id\"}]}]},{\"name\":\"profile\",\"rust_name\":\"profile\",\"column\":\"profile\",\"value_type\":{\"kind\":\"Model\",\"name\":\"Profile\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":{\"local\":\"profileId\",\"foreign\":\"id\",\"inverse\":null},\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":null,\"rules\":[],\"documentation\":{\"label\":null,\"description\":null,\"examples\":[],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"relation\",\"value\":[{\"local\":\"profileId\",\"foreign\":\"id\"}]}]}],\"documentation\":{\"label\":null,\"description\":null,\"examples\":[],\"display\":\"{{profile.name}}\",\"icon\":\"coffee\",\"labels\":[\"Session\",\"Sessions\"]},\"query\":[\"*\",\"profile.*\",\"application.*\"],\"attributes\":[{\"name\":\"labels\",\"value\":[\"Session\",\"Sessions\"]},{\"name\":\"display\",\"value\":[\"{{profile.name}}\"]},{\"name\":\"icon\",\"value\":[\"coffee\"]},{\"name\":\"query\",\"value\":[\"*\",\"profile.*\",\"application.*\"]}]}").expect("validated probe metadata")
+    }
+}
+/// Each generated model associates its own schema, exact store and action implementation.
+pub type Session = support::Model<SessionSpec, ApiSessionRole>;
+pub type SessionSchema = support::Schema<SessionSpec>;
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Id> for SessionSchema {
+    type FieldValue = String;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("id")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("id".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Id> for SessionSchema { type Declaration = stackpress_framework_schema::source::StringType; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::ApplicationId> for SessionSchema {
+    type FieldValue = String;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("applicationId")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("applicationId".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::ApplicationId> for SessionSchema { type Declaration = stackpress_framework_schema::source::StringType; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::ProfileId> for SessionSchema {
+    type FieldValue = String;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("profileId")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("profileId".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::ProfileId> for SessionSchema { type Declaration = stackpress_framework_schema::source::StringType; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Secret> for SessionSchema {
+    type FieldValue = String;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("secret")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("secret".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Secret> for SessionSchema { type Declaration = stackpress_framework_schema::source::StringType; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Scopes> for SessionSchema {
+    type FieldValue = Vec<String>;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("scopes")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("scopes".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Scopes> for SessionSchema { type Declaration = stackpress_framework_schema::source::List<stackpress_framework_schema::source::StringType>; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Active> for SessionSchema {
+    type FieldValue = bool;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("active")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("active".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Active> for SessionSchema { type Declaration = stackpress_framework_schema::source::BooleanType; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Expires> for SessionSchema {
+    type FieldValue = stackpress_framework_schema::source::Date;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("expires")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("expires".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Expires> for SessionSchema { type Declaration = stackpress_framework_schema::source::DatetimeType; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Created> for SessionSchema {
+    type FieldValue = stackpress_framework_schema::source::Date;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("created")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("created".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Created> for SessionSchema { type Declaration = stackpress_framework_schema::source::DatetimeType; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Updated> for SessionSchema {
+    type FieldValue = stackpress_framework_schema::source::Date;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("updated")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("updated".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Updated> for SessionSchema { type Declaration = stackpress_framework_schema::source::DatetimeType; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Application> for SessionSchema {
+    type FieldValue = stackpress_framework_schema::source::Record;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("application")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("application".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Application> for SessionSchema { type Declaration = stackpress_framework_schema::source::ApplicationType; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Profile> for SessionSchema {
+    type FieldValue = stackpress_framework_schema::source::Record;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("profile")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("profile".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Profile> for SessionSchema { type Declaration = stackpress_framework_schema::source::ProfileType; }
+
+/// Metadata comes from this probe's real composed and normalized declarations.
+pub enum AuthSpec {}
+impl support::Spec for AuthSpec {
+    fn describe() -> stackpress_framework_schema::Model {
+        serde_json::from_str("{\"name\":\"Auth\",\"rust_name\":\"Auth\",\"module\":\"auth\",\"fields\":[{\"name\":\"id\",\"rust_name\":\"id\",\"column\":\"id\",\"value_type\":{\"kind\":\"String\"},\"required\":true,\"multiple\":false,\"key\":true,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":{\"provider\":\"cuid\",\"args\":[],\"revision\":\"cuid2-3.3.0\"},\"rules\":[],\"documentation\":{\"label\":\"ID\",\"description\":\"Unique generated identifier.\",\"examples\":[\"dz7tg8bcf7e2lig3iuej3pjf\"],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"ID\"]},{\"name\":\"id\",\"value\":true},{\"name\":\"default\",\"value\":[\"cuid()\"]},{\"name\":\"list.clip\",\"value\":[{\"length\":10,\"hellip\":true}]},{\"name\":\"view.string\",\"value\":true},{\"name\":\"description\",\"value\":[\"Unique generated identifier.\"]},{\"name\":\"examples\",\"value\":[\"dz7tg8bcf7e2lig3iuej3pjf\"]}]},{\"name\":\"profileId\",\"rust_name\":\"profile_id\",\"column\":\"profile_id\",\"value_type\":{\"kind\":\"String\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":true,\"value_rule\":null,\"rules\":[{\"code\":\"required\",\"args\":[],\"client_checkable\":true,\"message\":\"Profile is required\",\"definition_revision\":\"1\"}],\"documentation\":{\"label\":\"Profile\",\"description\":\"Profile this auth belongs to.\",\"examples\":[\"pjfdz7tg8bcf7e2lig3iuej3\"],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Profile\"]},{\"name\":\"field.relation\",\"value\":[{\"id\":\"id\",\"search\":\"/admin/profile/search?json&q={{query}}\",\"template\":\"{{name}}\"}]},{\"name\":\"is.required\",\"value\":[\"Profile is required\"]},{\"name\":\"filter.relation\",\"value\":[{\"id\":\"id\",\"search\":\"/admin/profile/search?json&q={{query}}\",\"template\":\"{{name}}\"}]},{\"name\":\"list.template\",\"value\":[{\"template\":\"{{profile.name}}\"}]},{\"name\":\"view.template\",\"value\":[{\"template\":\"{{profile.name}}\"}]},{\"name\":\"description\",\"value\":[\"Profile this auth belongs to.\"]},{\"name\":\"examples\",\"value\":[\"pjfdz7tg8bcf7e2lig3iuej3\"]}]},{\"name\":\"type\",\"rust_name\":\"type_\",\"column\":\"type_\",\"value_type\":{\"kind\":\"String\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":\"username\",\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":null,\"rules\":[{\"code\":\"required\",\"args\":[],\"client_checkable\":true,\"message\":\"Type is required\",\"definition_revision\":\"1\"}],\"documentation\":{\"label\":\"Type\",\"description\":\"Type of authentication method (username, email, phone).\",\"examples\":[\"username\"],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Type\"]},{\"name\":\"default\",\"value\":[\"username\"]},{\"name\":\"field.input\",\"value\":[{\"type\":\"text\"}]},{\"name\":\"is.required\",\"value\":[\"Type is required\"]},{\"name\":\"filter.input\",\"value\":[{\"type\":\"text\"}]},{\"name\":\"list.string\",\"value\":true},{\"name\":\"view.string\",\"value\":true},{\"name\":\"description\",\"value\":[\"Type of authentication method (username, email, phone).\"]},{\"name\":\"examples\",\"value\":[\"username\"]}]},{\"name\":\"token\",\"rust_name\":\"token\",\"column\":\"token\",\"value_type\":{\"kind\":\"String\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":true,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":true,\"value_rule\":null,\"rules\":[{\"code\":\"required\",\"args\":[],\"client_checkable\":true,\"message\":\"Token is required\",\"definition_revision\":\"1\"},{\"code\":\"cge\",\"args\":[5],\"client_checkable\":true,\"message\":\"Must be at least 5 characters\",\"definition_revision\":\"1\"}],\"documentation\":{\"label\":\"Token\",\"description\":\"The actual username, email, or phone (depending on type)\",\"examples\":[\"john@doe.com\"],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Token\"]},{\"name\":\"unique\",\"value\":true},{\"name\":\"encrypted\",\"value\":true},{\"name\":\"field.input\",\"value\":[{\"type\":\"text\"}]},{\"name\":\"is.required\",\"value\":[\"Token is required\"]},{\"name\":\"is.cge\",\"value\":[5,\"Must be at least 5 characters\"]},{\"name\":\"list.string\",\"value\":true},{\"name\":\"view.string\",\"value\":true},{\"name\":\"description\",\"value\":[\"The actual username, email, or phone (depending on type)\"]},{\"name\":\"examples\",\"value\":[\"john@doe.com\"]}]},{\"name\":\"secret\",\"rust_name\":\"secret\",\"column\":\"secret\",\"value_type\":{\"kind\":\"String\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":true,\"value_rule\":null,\"rules\":[{\"code\":\"required\",\"args\":[],\"client_checkable\":true,\"message\":\"Secret is required\",\"definition_revision\":\"1\"}],\"documentation\":{\"label\":\"Secret\",\"description\":\"Password used to verify.\",\"examples\":[\"s3cr3t P@ssw0rd\"],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":true,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Secret\"]},{\"name\":\"hashed\",\"value\":true},{\"name\":\"secret\",\"value\":true},{\"name\":\"field.password\",\"value\":true},{\"name\":\"is.required\",\"value\":[\"Secret is required\"]},{\"name\":\"description\",\"value\":[\"Password used to verify.\"]},{\"name\":\"examples\",\"value\":[\"s3cr3t P@ssw0rd\"]}]},{\"name\":\"verified\",\"rust_name\":\"verified\",\"column\":\"verified\",\"value_type\":{\"kind\":\"Boolean\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":false,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":null,\"rules\":[{\"code\":\"required\",\"args\":[],\"client_checkable\":true,\"message\":\"Verified is required\",\"definition_revision\":\"1\"}],\"documentation\":{\"label\":\"Verified\",\"description\":\"Indicates if the type has been verified (email, phone, etc.).\",\"examples\":[true],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Verified\"]},{\"name\":\"default\",\"value\":[false]},{\"name\":\"field.switch\",\"value\":true},{\"name\":\"is.required\",\"value\":[\"Verified is required\"]},{\"name\":\"filter.switch\",\"value\":true},{\"name\":\"list.yesno\",\"value\":true},{\"name\":\"view.yesno\",\"value\":true},{\"name\":\"description\",\"value\":[\"Indicates if the type has been verified (email, phone, etc.).\"]},{\"name\":\"examples\",\"value\":[true]}]},{\"name\":\"consumed\",\"rust_name\":\"consumed\",\"column\":\"consumed\",\"value_type\":{\"kind\":\"Datetime\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":true,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":{\"provider\":\"now\",\"args\":[],\"revision\":\"1\"},\"rules\":[],\"documentation\":{\"label\":\"Last Used\",\"description\":\"Timestamp when this auth was last used.\",\"examples\":[\"2025-10-01T12:00:00Z\"],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Last Used\"]},{\"name\":\"default\",\"value\":[\"now()\"]},{\"name\":\"sortable\",\"value\":true},{\"name\":\"list.date\",\"value\":[\"m d, Y h:iA\"]},{\"name\":\"view.date\",\"value\":[\"m d, Y h:iA\"]},{\"name\":\"description\",\"value\":[\"Timestamp when this auth was last used.\"]},{\"name\":\"examples\",\"value\":[\"2025-10-01T12:00:00Z\"]}]},{\"name\":\"active\",\"rust_name\":\"active\",\"column\":\"active\",\"value_type\":{\"kind\":\"Boolean\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":true,\"nonempty\":false,\"active\":true,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":null,\"rules\":[],\"documentation\":{\"label\":\"Active\",\"description\":\"Special flag to indicate active rows. Inactive rows are not shown in the list view, but can be viewed in the detail view.\",\"examples\":[true],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Active\"]},{\"name\":\"default\",\"value\":[true]},{\"name\":\"active\",\"value\":true},{\"name\":\"filter.switch\",\"value\":true},{\"name\":\"view.yesno\",\"value\":true},{\"name\":\"description\",\"value\":[\"Special flag to indicate active rows. Inactive rows are not shown in the list view, but can be viewed in the detail view.\"]},{\"name\":\"examples\",\"value\":[true]}]},{\"name\":\"created\",\"rust_name\":\"created\",\"column\":\"created\",\"value_type\":{\"kind\":\"Datetime\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":true,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":{\"provider\":\"now\",\"args\":[],\"revision\":\"1\"},\"rules\":[],\"documentation\":{\"label\":\"Created\",\"description\":\"Generated timestamp when row was created.\",\"examples\":[\"2025-10-01T12:00:00Z\"],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Created\"]},{\"name\":\"default\",\"value\":[\"now()\"]},{\"name\":\"sortable\",\"value\":true},{\"name\":\"list.date\",\"value\":[\"m d, Y h:iA\"]},{\"name\":\"view.date\",\"value\":[\"m d, Y h:iA\"]},{\"name\":\"description\",\"value\":[\"Generated timestamp when row was created.\"]},{\"name\":\"examples\",\"value\":[\"2025-10-01T12:00:00Z\"]}]},{\"name\":\"updated\",\"rust_name\":\"updated\",\"column\":\"updated\",\"value_type\":{\"kind\":\"Datetime\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":true,\"timestamp\":true,\"generated\":false,\"input_required\":false,\"value_rule\":{\"provider\":\"now\",\"args\":[],\"revision\":\"1\"},\"rules\":[],\"documentation\":{\"label\":\"Updated\",\"description\":\"Generated timestamp that is updated whenever the row has changed.\",\"examples\":[\"2025-10-01T12:00:00Z\"],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Updated\"]},{\"name\":\"default\",\"value\":[\"now()\"]},{\"name\":\"timestamp\",\"value\":true},{\"name\":\"sortable\",\"value\":true},{\"name\":\"list.date\",\"value\":[\"m d, Y h:iA\"]},{\"name\":\"view.date\",\"value\":[\"m d, Y h:iA\"]},{\"name\":\"description\",\"value\":[\"Generated timestamp that is updated whenever the row has changed.\"]},{\"name\":\"examples\",\"value\":[\"2025-10-01T12:00:00Z\"]}]},{\"name\":\"profile\",\"rust_name\":\"profile\",\"column\":\"profile\",\"value_type\":{\"kind\":\"Model\",\"name\":\"Profile\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":{\"local\":\"profileId\",\"foreign\":\"id\",\"inverse\":null},\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":null,\"rules\":[],\"documentation\":{\"label\":null,\"description\":null,\"examples\":[],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"relation\",\"value\":[{\"local\":\"profileId\",\"foreign\":\"id\"}]}]}],\"documentation\":{\"label\":null,\"description\":null,\"examples\":[],\"display\":\"{{token}}\",\"icon\":\"lock\",\"labels\":[\"Auth\",\"Auth\"]},\"query\":[\"*\",\"profile.*\"],\"attributes\":[{\"name\":\"labels\",\"value\":[\"Auth\",\"Auth\"]},{\"name\":\"display\",\"value\":[\"{{token}}\"]},{\"name\":\"icon\",\"value\":[\"lock\"]},{\"name\":\"query\",\"value\":[\"*\",\"profile.*\"]}]}").expect("validated probe metadata")
+    }
+}
+/// Each generated model associates its own schema, exact store and action implementation.
+pub type Auth = support::Model<AuthSpec, AuthRole>;
+pub type AuthSchema = support::Schema<AuthSpec>;
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Id> for AuthSchema {
+    type FieldValue = String;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("id")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("id".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Id> for AuthSchema { type Declaration = stackpress_framework_schema::source::StringType; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::ProfileId> for AuthSchema {
+    type FieldValue = String;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("profileId")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("profileId".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::ProfileId> for AuthSchema { type Declaration = stackpress_framework_schema::source::StringType; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Type> for AuthSchema {
+    type FieldValue = String;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("type")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("type".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Type> for AuthSchema { type Declaration = stackpress_framework_schema::source::StringType; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Token> for AuthSchema {
+    type FieldValue = String;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("token")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("token".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Token> for AuthSchema { type Declaration = stackpress_framework_schema::source::StringType; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Secret> for AuthSchema {
+    type FieldValue = String;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("secret")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("secret".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Secret> for AuthSchema { type Declaration = stackpress_framework_schema::source::StringType; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Verified> for AuthSchema {
+    type FieldValue = bool;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("verified")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("verified".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Verified> for AuthSchema { type Declaration = stackpress_framework_schema::source::BooleanType; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Consumed> for AuthSchema {
+    type FieldValue = stackpress_framework_schema::source::Date;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("consumed")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("consumed".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Consumed> for AuthSchema { type Declaration = stackpress_framework_schema::source::DatetimeType; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Active> for AuthSchema {
+    type FieldValue = bool;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("active")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("active".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Active> for AuthSchema { type Declaration = stackpress_framework_schema::source::BooleanType; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Created> for AuthSchema {
+    type FieldValue = stackpress_framework_schema::source::Date;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("created")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("created".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Created> for AuthSchema { type Declaration = stackpress_framework_schema::source::DatetimeType; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Updated> for AuthSchema {
+    type FieldValue = stackpress_framework_schema::source::Date;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("updated")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("updated".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Updated> for AuthSchema { type Declaration = stackpress_framework_schema::source::DatetimeType; }
+impl stackpress_framework_schema::source::SourceField<stackpress_framework_schema::source::Profile> for AuthSchema {
+    type FieldValue = stackpress_framework_schema::source::Record;
+    fn read(record: &stackpress_framework_schema::source::Record) -> Option<Self::FieldValue> {
+        <Self::FieldValue as stackpress_framework_schema::source::NativeField>::read(record.get("profile")?)
+    }
+    fn write(record: &mut stackpress_framework_schema::source::Record, value: Self::FieldValue) {
+        record.insert("profile".into(), stackpress_framework_schema::source::NativeField::value(value));
+    }
+}
+impl stackpress_framework_schema::source::SourceDeclaration<stackpress_framework_schema::source::Profile> for AuthSchema { type Declaration = stackpress_framework_schema::source::ProfileType; }
+
+
+/// A single inherited Profile/Auth family with explicit cross-model native equality.
+pub struct Family;
+impl SessionModels for Family { type Profile=Profile; type Auth=Auth; }
+impl ApiModels for Family { type Application=Application; type Session=Session; }
+

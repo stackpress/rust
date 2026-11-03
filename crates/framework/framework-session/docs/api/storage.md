@@ -118,6 +118,15 @@ AuthActions adds `with_options(engine, ActionOptions)`, `make(engine, Option<Str
 
 ## Shared provider paths
 
+The native mechanics now live in `stackpress_framework_schema::source` (`source` feature):
+Value/Record, Date conversion, Column coercion and SourceCodecs. Session's existing public
+columns/codecs paths re-export them or retain their original error wrapper. Shared source
+SQL scalar conversion and ActionError live in `stackpress_framework_sql::source` (`source`
+feature); `storage::{ActionError,Result}` retain the old names and field/cause behavior.
+The [native record proof](../../../framework-schema/tests/source_graph.rs) pins Date,
+missing/null and nested insertion order; existing session storage tests exercise the same
+helpers through the unchanged public API. No model generation or plugin rewiring occurs.
+
 The stable native helpers are `stackpress_framework_schema::providers::{cuid,CuidGenerator,BuiltinProviders,encrypt,decrypt,hash}` under schema/providers. With codegen too, `providers::cuid_definition()` is the explicit DefinitionRegistry provider entry. These shared helpers are also used by API; session's source codecs re-export encrypt/decrypt/hash. [Provider source](../../../framework-schema/src/providers/mod.rs) and [provider tests](../../../framework-schema/src/providers/tests.rs) contain CUID2 and original Node codec vectors.
 
 CUID2 uses SHA3-512, ring randomness, a native fingerprint, clock and atomic counter. Source secret hashing uses SHAKE256(32-byte hex); source token storage uses AES-256-CBC/PKCS7 with key=first32 characters of base64 SHA256(seed), IV=first16 of that key, ciphertext=hex. There is no integrity envelope or Argon2 migration. Deterministic equality/uniqueness and consumed-Date challenges are pinned by [codec/SQL tests](../../tests/main/storage.rs). Native date/calendar/parser range limits are documented in [direct storage](../storage.md).

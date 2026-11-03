@@ -9,7 +9,7 @@ publish.workspace = true
 [features]
 default = []
 native = ["dep:stackpress-lib", "dep:base64", "dep:jsonwebtoken", "dep:stackpress-framework-schema", "dep:time"]
-sql = ["native", "dep:stackpress-sql", "dep:stackpress-framework-sql"]
+sql = ["native", "dep:stackpress-sql", "dep:stackpress-framework-sql", "stackpress-framework-sql/source"]
 server = ["native", "dep:stackpress-lib", "dep:stackpress-server"]
 leptos = ["dep:leptos", "dep:leptos_meta", "dep:stackpress-leptos", "dep:stackpress-framework-view", "dep:phonenumber"]
 leptos-ssr = ["leptos", "auth-server", "stackpress-leptos/ssr", "stackpress-framework-view/leptos-ssr"]
@@ -35,7 +35,7 @@ phonenumber = { version = "=0.3.10", default-features = false, optional = true }
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 # SSR and browser need identical initial phone formatting; native identity alone stays unchanged.
 phonenumber = { version = "=0.3.10", default-features = false, optional = true }
-stackpress-framework-schema = { path = "../framework-schema", features = ["providers"], optional = true }
+stackpress-framework-schema = { path = "../framework-schema", features = ["providers", "source"], optional = true }
 base64 = { version = "=0.22.1", default-features = false, features = ["alloc"], optional = true }
 jsonwebtoken = { version = "=11.1.0", default-features = false, features = ["rust_crypto"], optional = true }
 time = { version = "=0.3.55", default-features = false, features = ["formatting", "parsing"], optional = true }
@@ -53,7 +53,7 @@ ring = { version = "=0.17.14", default-features = false, features = ["std"], opt
 [dev-dependencies]
 stackpress-framework-email = { path = "../framework-email", features = ["server"] }
 tokio = { version = "1", features = ["macros", "rt-multi-thread", "sync", "time"] }
-stackpress-framework-schema = { path = "../framework-schema", features = ["providers"] }
+stackpress-framework-schema = { path = "../framework-schema", features = ["providers", "source"] }
 stackpress-sql = { path = "../../sql/sql" }
 stackpress-sql-sqlite = { path = "../../sql/sql-sqlite" }
 stackpress-sql-postgres = { path = "../../sql/sql-postgres" }

@@ -1,7 +1,8 @@
 //! A Send container cannot implement an action method whose suspended state contains Rc.
+use stackpress_framework_sql::source::ActionError;
 #[path = "../main/source_models/support.rs"]
 mod support;
-use stackpress_framework_sql::{DataError, DataSession, source::*};
+use stackpress_framework_sql::{DataSession, source::*};
 use stackpress_sql::{Create, Engine};
 use std::{rc::Rc, sync::Arc};
 use support::{Query, Record};
@@ -15,7 +16,7 @@ macro_rules! reads {
             &'a self,
             db: &'a mut DataSession<'db>,
             query: &'a Query,
-        ) -> Result<$output, DataError> {
+        ) -> Result<$output, ActionError> {
             self.0.$name(db, query).await
         }
     };
@@ -36,7 +37,7 @@ impl SourceActions for Bad {
         &'a self,
         db: &'a mut DataSession<'db>,
         input: &'a Record,
-    ) -> Result<Record, DataError> {
+    ) -> Result<Record, ActionError> {
         let non_send = Rc::new(());
         let result = self.0.create_in(db, input).await;
         drop(non_send);
@@ -53,29 +54,29 @@ impl SourceActions for Bad {
         db: &'a mut DataSession<'db>,
         query: &'a Query,
         input: &'a mut Record,
-    ) -> Result<Vec<Record>, DataError> {
+    ) -> Result<Vec<Record>, ActionError> {
         self.0.update_in(db, query, input).await
     }
     async fn upsert_in<'a, 'db: 'a>(
         &'a self,
         db: &'a mut DataSession<'db>,
         input: &'a mut Record,
-    ) -> Result<Option<Record>, DataError> {
+    ) -> Result<Option<Record>, ActionError> {
         self.0.upsert_in(db, input).await
     }
     async fn batch(&self, inputs: &mut [Record], mode: BatchMode) -> Vec<Self::BatchStatus> {
         self.0.batch(inputs, mode).await
     }
-    async fn install(&self) -> Result<(), DataError> {
+    async fn install(&self) -> Result<(), ActionError> {
         self.0.install().await
     }
-    async fn upgrade(&self, to: Option<&Create>) -> Result<(), DataError> {
+    async fn upgrade(&self, to: Option<&Create>) -> Result<(), ActionError> {
         self.0.upgrade(to).await
     }
-    async fn purge(&self, cascade: bool) -> Result<(), DataError> {
+    async fn purge(&self, cascade: bool) -> Result<(), ActionError> {
         self.0.purge(cascade).await
     }
-    async fn uninstall(&self) -> Result<(), DataError> {
+    async fn uninstall(&self) -> Result<(), ActionError> {
         self.0.uninstall().await
     }
 }

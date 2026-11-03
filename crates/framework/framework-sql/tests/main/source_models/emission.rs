@@ -7,17 +7,12 @@ use stackpress_lib::{TemplateEngine, TemplateOptions};
 use std::{error::Error, path::Path};
 
 /// Put primitive type names, encoded metadata and role choices into actual Rust structure.
-fn emit_probe(schema: &Schema, semantics: EmissionSemantics) -> String {
+pub(super) fn emit_probe(schema: &SourceGraph, semantics: EmissionSemantics) -> String {
     assert_eq!(semantics, EmissionSemantics::Source);
     let models: Vec<_> = schema
         .models()
         .iter()
         .map(|model| {
-            let id = model
-                .fields
-                .iter()
-                .find(|field| field.name == "id")
-                .unwrap();
             // The probe supports these roles only; an unknown role must not become a default.
             let role = match model.name.as_str() {
                 "Profile" => "ProfileRole",
@@ -30,9 +25,9 @@ fn emit_probe(schema: &Schema, semantics: EmissionSemantics) -> String {
             let metadata = format!("{:?}", serde_json::to_string(model).unwrap());
             serde_json::json!({
                 "name": model.rust_name,
-                "id_type": rust_type(schema, id).unwrap(),
                 "json": metadata,
                 "role": role,
+                "witnesses":emit_source_witnesses(model).unwrap(),
             })
         })
         .collect();
@@ -43,7 +38,7 @@ fn emit_probe(schema: &Schema, semantics: EmissionSemantics) -> String {
     .unwrap()
     .render(
         include_str!("model.rs.tpl"),
-        &serde_json::json!({"models":models,"api":true}),
+        &serde_json::json!({"models":models,"api":schema.models().iter().any(|m|m.name=="Application"),"family":schema.models()[0].fields.len()>5}),
     )
     .unwrap()
 }
@@ -52,11 +47,12 @@ fn emit_probe(schema: &Schema, semantics: EmissionSemantics) -> String {
 #[test]
 fn structural_source_emitter_default_and_extended_family() {
     for (extended, name) in [(false, "default"), (true, "app")] {
-        let schema = schema(extended);
+        let schema = super::source_schema(extended);
         let source = emit_probe(&schema, EmissionSemantics::Source);
+        assert!(source.contains("pub type Profile = support::Model"));
+        assert!(source.contains("pub type Session = support::Model"));
         assert!(source.contains("impl SessionModels for Family"));
-        assert!(source.contains("impl ApiModels for Family"));
-        assert!(source.contains("type Id = String"));
+        assert!(source.contains("type FieldValue = String"));
         assert_eq!(source.contains("nickname"), extended);
         assert_eq!(source, emit_probe(&schema, EmissionSemantics::Source));
         if let Ok(root) = std::env::var("G50_PROBE_OUT") {
@@ -101,7 +97,20 @@ fn session_only_external_reverse_links_remain_declarations() {
     assert!(text.contains("Session"));
     assert!(!graph.config.model.contains_key("Application"));
     assert!(!graph.config.model.contains_key("Session"));
-    // Semantic normalization of external relations is explicitly M1 work, not hidden tables.
+    let source = Schema::normalize_source(
+        &graph.config,
+        NormalizeOptions::default(),
+        &["Application", "Session"],
+    )
+    .unwrap();
+    assert_eq!(source.models().len(), 2);
+    let emitted = emit_probe(&source, EmissionSemantics::Source);
+    assert!(emitted.contains("impl SessionModels for Family"));
+    assert!(!emitted.contains("impl ApiModels for Family"));
+    if let Ok(root) = std::env::var("G50_PROBE_OUT") {
+        std::fs::create_dir_all(&root).unwrap();
+        std::fs::write(Path::new(&root).join("session-only.rs"), emitted).unwrap();
+    }
 }
 
 /// Legacy and explicit Typed emission must be byte-identical for all owned partitions.

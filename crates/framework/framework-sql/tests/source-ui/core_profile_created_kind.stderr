@@ -1,0 +1,20 @@
+error[E0271]: type mismatch resolving `<Schema<ProfileSpec> as SourceDeclaration<Created>>::Declaration == DatetimeType`
+ --> tests/source-ui/native/profile_created_kind.rs
+  |
+  | impl SessionModels for Family { type Profile=Profile; type Auth=Auth; }
+  |                                              ^^^^^^^ type mismatch resolving `<Schema<ProfileSpec> as SourceDeclaration<Created>>::Declaration == DatetimeType`
+  |
+note: expected this to be `DatetimeType`
+ --> tests/source-ui/native/profile_created_kind.rs
+  |
+  | ...> for ProfileSchema { type Declaration = stackpress_framework_schema::source::DateType; }
+  |                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  = note: required for `<<Family as stackpress_framework_sql::source::SessionModels>::Profile as SourceModel>::Schema` to implement `ProfileFields`
+note: required by a bound in `stackpress_framework_sql::source::SessionModels::Profile`
+ --> src/source/mod.rs
+  |
+  |     type Profile: SourceModel<
+  |          ------- required by a bound in this associated type
+  |             Role = ProfileRole,
+  |             Schema: ProfileFields,
+  |                     ^^^^^^^^^^^^^ required by this bound in `SessionModels::Profile`

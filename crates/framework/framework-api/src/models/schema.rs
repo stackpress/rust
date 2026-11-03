@@ -190,10 +190,7 @@ impl<M: ModelKind> Schema<M> {
 }
 /// Millisecond native clock; no provider, database or listener is acquired.
 pub(crate) fn now() -> i64 {
-    match std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH) {
-        Ok(value) => value.as_millis() as i64,
-        Err(value) => -(value.duration().as_millis() as i64),
-    }
+    stackpress_framework_schema::source::now()
 }
 /// Exact stored source fields; API secrets use String, never the Auth secret hash codec.
 fn column(name: &'static str) -> Column {

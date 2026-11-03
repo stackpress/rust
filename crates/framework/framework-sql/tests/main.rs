@@ -9,6 +9,7 @@ mod codegen;
 
 #[cfg(all(
     feature = "codegen",
+    feature = "source",
     feature = "sqlite-maintenance",
     not(target_arch = "wasm32")
 ))]

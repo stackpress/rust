@@ -1,8 +1,8 @@
-error[E0119]: conflicting implementations of trait `SessionModels` for type `Family`
-  --> tests/source-ui/duplicate_family.rs:10:1
+error[E0119]: conflicting implementations of trait `stackpress_framework_sql::source::SessionModels` for type `Family`
+  --> tests/source-ui/duplicate_family.rs:12:1
    |
- 6 | impl SessionModels for Family {
+ 8 | impl SessionModels for Family {
    | ----------------------------- first implementation here
 ...
-10 | impl SessionModels for Family {
+12 | impl SessionModels for Family {
    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ conflicting implementation for `Family`

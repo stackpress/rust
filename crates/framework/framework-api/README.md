@@ -36,3 +36,10 @@ declarations. The aggregate catalog additionally resolves `stackpress/stackpress
 application extensions. API codegen's existing external Profile adaptation remains until
 the separately gated G50 generated-model work; composition does not yet replace these
 hand-written runtime models or promise full source-model generation.
+
+The native [source-model mechanics](../framework-schema/docs/source-models.md) now live
+in framework-schema (`source` feature); `models::{Value,Record,Column,Kind}` re-export
+those exact types. Source action errors are shared at `stackpress_framework_sql::source::ActionError`
+and retain the existing API/session paths. The unchanged SQLite and opt-in live suites
+exercise the extracted codecs. This extraction does not change the runtime model catalog
+or API's existing Typed codegen adapter; source generation is a separately released stage.

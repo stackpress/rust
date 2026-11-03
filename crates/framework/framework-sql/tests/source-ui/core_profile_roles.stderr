@@ -1,0 +1,45 @@
+error[E0271]: type mismatch resolving `<Schema<ProfileSpec> as SourceDeclaration<Roles>>::Declaration == List<StringType>`
+ --> tests/source-ui/native/profile_roles.rs
+  |
+  | impl SessionModels for Family { type Profile=Profile; type Auth=Auth; }
+  |                                              ^^^^^^^ type mismatch resolving `<Schema<ProfileSpec> as SourceDeclaration<Roles>>::Declaration == List<StringType>`
+  |
+note: expected this to be `stackpress_framework_schema::source::List<StringType>`
+ --> tests/source-ui/native/profile_roles.rs
+  |
+  | ... for ProfileSchema { type Declaration = stackpress_framework_schema::source::BooleanType; }
+  |                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  = note: expected struct `stackpress_framework_schema::source::List<StringType>`
+               found enum `BooleanType`
+  = note: required for `<<Family as stackpress_framework_sql::source::SessionModels>::Profile as SourceModel>::Schema` to implement `ProfileFields`
+note: required by a bound in `stackpress_framework_sql::source::SessionModels::Profile`
+ --> src/source/mod.rs
+  |
+  |     type Profile: SourceModel<
+  |          ------- required by a bound in this associated type
+  |             Role = ProfileRole,
+  |             Schema: ProfileFields,
+  |                     ^^^^^^^^^^^^^ required by this bound in `SessionModels::Profile`
+
+error[E0271]: type mismatch resolving `<Schema<ProfileSpec> as SourceField<Roles>>::FieldValue == Vec<String>`
+ --> tests/source-ui/native/profile_roles.rs
+  |
+  | impl SessionModels for Family { type Profile=Profile; type Auth=Auth; }
+  |                                              ^^^^^^^ type mismatch resolving `<Schema<ProfileSpec> as SourceField<Roles>>::FieldValue == Vec<String>`
+  |
+note: expected this to be `Vec<std::string::String>`
+ --> tests/source-ui/native/profile_roles.rs
+  |
+  |     type FieldValue = bool;
+  |                       ^^^^
+  = note: expected struct `Vec<std::string::String>`
+               found type `bool`
+  = note: required for `<<Family as stackpress_framework_sql::source::SessionModels>::Profile as SourceModel>::Schema` to implement `ProfileFields`
+note: required by a bound in `stackpress_framework_sql::source::SessionModels::Profile`
+ --> src/source/mod.rs
+  |
+  |     type Profile: SourceModel<
+  |          ------- required by a bound in this associated type
+  |             Role = ProfileRole,
+  |             Schema: ProfileFields,
+  |                     ^^^^^^^^^^^^^ required by this bound in `SessionModels::Profile`

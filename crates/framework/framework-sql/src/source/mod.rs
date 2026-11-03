@@ -2,13 +2,13 @@
 //!
 //! No server, default model, ambient transaction or registration is selected here. Generated
 //! implementations own metadata/query/codec policy; handwritten plugins keep their flows.
-//! Source errors/statuses remain associated types, rather than strict public DTO envelopes.
+//! Standalone errors/statuses remain associated types; framework families share ActionError.
 //!
-//! This native-only module needs no optional feature. An API family inherits its session
+//! The `source` feature selects native family bounds and mechanics. An API family inherits its session
 //! family, including the very same Profile type. This is a type equality, not a runtime lookup:
 //!
 //! ```
-//! # #[cfg(not(target_arch = "wasm32"))] {
+//! # #[cfg(all(not(target_arch = "wasm32"), feature = "source"))] {
 //! use stackpress_framework_sql::source::{ApiModels, SessionModels, SourceModel};
 //!
 //! fn profile_name<M: ApiModels>() -> String {
@@ -17,12 +17,24 @@
 //! # }
 //! ```
 
-use stackpress_framework_schema::source::{Id, SourceField, SourceSchema};
+use stackpress_framework_schema::source::SourceSchema;
+#[cfg(feature = "source")]
+use stackpress_framework_schema::source::{
+    ApplicationFields, AuthFields, ProfileFields, SessionFields,
+};
 use stackpress_sql::{Alter, Create, Delete, DialectId, Engine, Insert, Select, SqlValue, Update};
 use std::{error::Error, sync::Arc};
 
+#[cfg(feature = "source")]
+mod error;
+#[cfg(feature = "source")]
+pub use error::{ActionError, Result as SourceResult};
 mod actions;
+#[cfg(feature = "source")]
+mod values;
 pub use actions::{ActionQuery, ActionRecord, ActionResult, SourceActions};
+#[cfg(feature = "source")]
+pub use values::to_sql_value;
 
 /// Native generated store: pure SQL preparation and codecs, with no hidden engine or IO.
 pub trait SourceStore: Send + Sync + Sized + 'static {
@@ -102,27 +114,34 @@ pub trait SourceModel: Send + Sync + 'static {
     }
 }
 
-/// Minimal source session role family; ID types are checked from generated field accessors.
-///
-/// This M0 boundary does not freeze the complete core-role inventory. Before M1 the
-/// generator must add witnesses for the remaining role fields; it must not infer them
-/// from JSON or erase incompatible app overrides. No concrete default family is supplied.
+/// A native family shares the schema owner's Value/Record and this owner's ActionError.
+/// Wrong core declarations fail through the generated field witnesses, without repair.
+#[cfg(feature = "source")]
 pub trait SessionModels: Send + Sync + 'static {
-    /// Application's generated Profile (the entire schema, not a scalar projection).
-    type Profile: SourceModel<Role = ProfileRole, Schema: SourceField<Id, FieldValue = String>>;
-    /// Application's generated Auth, preserving source storage codecs.
-    type Auth: SourceModel<Role = AuthRole, Schema: SourceField<Id, FieldValue = String>>;
+    /// Complete generated Profile, including application extensions.
+    type Profile: SourceModel<
+            Role = ProfileRole,
+            Schema: ProfileFields,
+            Store: SourceStore<Error = ActionError>,
+        >;
+    /// Complete generated Auth with the very same native record and error family.
+    type Auth: SourceModel<Role = AuthRole, Schema: AuthFields, Store: SourceStore<Error = ActionError>>;
 }
-
-/// API composition inherits exactly one Profile/Auth family, so Profile cannot diverge.
-///
-/// API's source imports session models; API/aggregate families therefore supply all four.
-/// Session-only families implement only SessionModels and need no hidden API tables.
+/// API inherits exactly one Profile/Auth family; session-only implementations need no API tables.
+#[cfg(feature = "source")]
 pub trait ApiModels: SessionModels {
-    /// Application's generated Application model.
-    type Application: SourceModel<Role = ApplicationRole, Schema: SourceField<Id, FieldValue = String>>;
-    /// Application's generated API Session model (distinct from the JWT session type).
-    type Session: SourceModel<Role = ApiSessionRole, Schema: SourceField<Id, FieldValue = String>>;
+    /// Complete generated Application.
+    type Application: SourceModel<
+            Role = ApplicationRole,
+            Schema: ApplicationFields,
+            Store: SourceStore<Error = ActionError>,
+        >;
+    /// Complete generated API Session (distinct from JWT identity).
+    type Session: SourceModel<
+            Role = ApiSessionRole,
+            Schema: SessionFields,
+            Store: SourceStore<Error = ActionError>,
+        >;
 }
 
 /// Generated Profile role; a marker, not a handwritten model or table definition.

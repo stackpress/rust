@@ -1,19 +1,19 @@
 error: lifetime may not live long enough
-  --> tests/source-ui/escaping_executor.rs:15:5
+  --> tests/source-ui/escaping_executor.rs:16:5
    |
-10 | fn escape<'a>(
+11 | fn escape<'a>(
    |           -- lifetime `'a` defined here
 ...
-15 |     actions.find_in(db, query)
+16 |     actions.find_in(db, query)
    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^ returning this value requires that `'a` must outlive `'static`
    |
-help: consider changing `impl Future<Output = Result<Option<Vec<(std::string::String, support::Value)>>, DataError>> + Send + 'static`'s explicit `'static` bound to the lifetime of argument `db`
+help: consider changing `impl Future<Output = Result<Option<indexmap::map::IndexMap<std::string::String, stackpress_framework_schema::source::Value>>, ActionError>> + Send + 'static`'s explicit `'static` bound to the lifetime of argument `db`
    |
-14 - ) -> impl Future<Output = Result<Option<support::Record>, DataError>> + Send + 'static {
-14 + ) -> impl Future<Output = Result<Option<support::Record>, DataError>> + Send + 'a {
+15 - ) -> impl Future<Output = Result<Option<support::Record>, ActionError>> + Send + 'static {
+15 + ) -> impl Future<Output = Result<Option<support::Record>, ActionError>> + Send + 'a {
    |
 help: alternatively, add an explicit `'static` bound to this reference
    |
-12 -     db: &'a mut DataSession<'a>,
-12 +     db: &'static mut DataSession<'static>,
+13 -     db: &'a mut DataSession<'a>,
+13 +     db: &'static mut DataSession<'static>,
    |

@@ -2,7 +2,7 @@
 
 use super::{Record, Value, get};
 use stackpress_framework_schema::{ValueType, source::SourceSchema};
-use stackpress_framework_sql::{DataError, source::SourceStore};
+use stackpress_framework_sql::source::{ActionError, SourceStore};
 use stackpress_sql::{
     Alter, Create, Delete, DialectId, Expr, Field, Insert, Select, SqlType, SqlValue, Update,
 };
@@ -18,16 +18,17 @@ pub struct Store<S: SourceSchema<Value = Value, Record = Record>> {
 /// Resolve native probe data into typed SQL binds; rich Dates remain distinct before/after IO.
 fn value(value: &Value) -> SqlValue {
     match value {
-        Value::Text(value) => value.clone().into(),
-        Value::Integer(value) | Value::Date(value) => (*value).into(),
+        Value::String(value) => value.clone().into(),
+        Value::Number(value) => value.as_i64().unwrap().into(),
+        Value::Date { millis, .. } => (*millis).into(),
         Value::Bool(value) => (*value).into(),
-        Value::Null => SqlValue::Null,
+        _ => SqlValue::Null,
     }
 }
 impl<S: SourceSchema<Value = Value, Record = Record>> SourceStore for Store<S> {
     type Schema = S;
     type Query = Query;
-    type Error = DataError;
+    type Error = ActionError;
     fn new(seed: String, offset_minutes: i32) -> Self {
         Self {
             schema: S::new(seed, offset_minutes),
@@ -36,9 +37,9 @@ impl<S: SourceSchema<Value = Value, Record = Record>> SourceStore for Store<S> {
     fn schema(&self) -> &S {
         &self.schema
     }
-    fn query(&self, input: &Record) -> Result<Query, DataError> {
+    fn query(&self, input: &Record) -> Result<Query, ActionError> {
         Ok(Query(match get(input, "id") {
-            Some(Value::Text(id)) => Some(id.clone()),
+            Some(Value::String(id)) => Some(id.clone()),
             _ => None,
         }))
     }
@@ -60,20 +61,20 @@ impl<S: SourceSchema<Value = Value, Record = Record>> SourceStore for Store<S> {
         }
         table.primary_key(["id"])
     }
-    fn alter(&self, _to: Option<&Create>) -> Result<Alter, DataError> {
+    fn alter(&self, _to: Option<&Create>) -> Result<Alter, ActionError> {
         Ok(Alter::new(S::describe().module))
     }
-    fn scalarize(&self, input: &Record) -> Result<Vec<(String, SqlValue)>, DataError> {
+    fn scalarize(&self, input: &Record) -> Result<Vec<(String, SqlValue)>, ActionError> {
         Ok(S::describe()
             .fields
             .iter()
             .filter_map(|field| get(input, &field.name).map(|v| (field.column.clone(), value(v))))
             .collect())
     }
-    fn unscalarize(&self, input: &Record) -> Result<Record, DataError> {
+    fn unscalarize(&self, input: &Record) -> Result<Record, ActionError> {
         Ok(input.clone())
     }
-    fn select(&self, query: &Query, _dialect: DialectId) -> Result<Select, DataError> {
+    fn select(&self, query: &Query, _dialect: DialectId) -> Result<Select, ActionError> {
         let model = S::describe();
         let select = Select::new(model.fields.iter().map(|f| f.column.clone())).from(model.module);
         Ok(if let Some(id) = &query.0 {
@@ -82,7 +83,7 @@ impl<S: SourceSchema<Value = Value, Record = Record>> SourceStore for Store<S> {
             select
         })
     }
-    fn insert(&self, input: &Record, _dialect: DialectId) -> Result<Insert, DataError> {
+    fn insert(&self, input: &Record, _dialect: DialectId) -> Result<Insert, ActionError> {
         let cells = self.scalarize(input)?;
         Ok(Insert::new(S::describe().module)
             .columns(cells.iter().map(|(name, _)| name.clone()))
@@ -93,9 +94,9 @@ impl<S: SourceSchema<Value = Value, Record = Record>> SourceStore for Store<S> {
         query: &Query,
         input: &mut Record,
         _dialect: DialectId,
-    ) -> Result<Update, DataError> {
+    ) -> Result<Update, ActionError> {
         // The exclusive input borrow carries observable mutation through a suspended call.
-        input.retain(|(name, _)| name != "id");
+        input.retain(|name, _| name != "id");
         let mut update = Update::new(S::describe().module);
         for (column, value) in self.scalarize(input)? {
             update = update.set(column, value);
@@ -106,7 +107,7 @@ impl<S: SourceSchema<Value = Value, Record = Record>> SourceStore for Store<S> {
             update.all_rows()
         })
     }
-    fn delete(&self, query: &Query, _dialect: DialectId) -> Result<Delete, DataError> {
+    fn delete(&self, query: &Query, _dialect: DialectId) -> Result<Delete, ActionError> {
         let delete = Delete::new(S::describe().module);
         Ok(if let Some(id) = &query.0 {
             delete.and_where(Expr::eq("id", id.clone()))
