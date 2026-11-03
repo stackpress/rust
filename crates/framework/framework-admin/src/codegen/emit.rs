@@ -1,11 +1,12 @@
-//! Validate complete public input before contributing escaped Rust source to the writer.
+//! Preflight public descriptors, then render structural role templates into the UI-owned plan.
 
 use super::bindings::{import, locate, validate_binding};
+use super::templates::{Asset, Renderer, source_error};
 use std::collections::BTreeSet;
 
 use stackpress_framework_schema::{
     Role, RoleBinding, SchemaError, SchemaErrorKind, SchemaResult, UiField, UiModel, UiSchema,
-    codegen::{DefinitionRegistry, DiagnosticMap, portable_name, transform_error},
+    codegen::{DefinitionRegistry, DiagnosticMap, portable_name},
 };
 use stackpress_idea_transformer::{OutputPlan, Result};
 
@@ -21,13 +22,15 @@ const UI_CONTRACT_REVISION: u32 = 3;
 /// Refuses revision/name collisions, unavailable/missing/invalid imports, incompatible native
 /// controls, oversized descriptors, and output ownership failures. Semantic errors retain
 /// Idea byte positions or normalized-JSON structural paths through `diagnostics`.
+/// Template failures retain an authored asset identity and concrete engine cause. A template
+/// output limit keeps the direct emitter's Limit category beneath registry callback context.
 pub fn emit_roles(
     ui: &UiSchema,
     definitions: &DefinitionRegistry,
     diagnostics: &DiagnosticMap,
     output: &mut OutputPlan,
 ) -> Result<()> {
-    let files = prepare(ui, definitions, diagnostics).map_err(transform_error)?;
+    let files = prepare(ui, definitions, diagnostics).map_err(source_error)?;
     // Publish contributions only after every model and import passed preflight.
     for (module, text) in files {
         output.write(format!("ui/{module}.rs"), text)?;
@@ -52,6 +55,8 @@ fn prepare(
     if ui.models.len() + ui.fieldsets.len() > 128 {
         return Err(invalid("UI model budget exceeded"));
     }
+    // Compilation is invocation-local; each used asset is reused across every selected model.
+    let mut renderer = Renderer::new()?;
     let mut modules = BTreeSet::new();
     let mut files = Vec::new();
     for (kind, model) in ui
@@ -108,13 +113,17 @@ fn prepare(
                 }
             }
         }
-        files.push((module, model_source(model, &fields, definitions)?));
+        files.push((
+            module,
+            model_source(&mut renderer, model, &fields, definitions)?,
+        ));
     }
     Ok(files)
 }
 
 /// Emit literals only through Rust's escaped Debug-string spelling; source names are checked.
 fn model_source(
+    renderer: &mut Renderer,
     model: &UiModel,
     fields: &[UiField],
     definitions: &DefinitionRegistry,
@@ -128,14 +137,7 @@ fn model_source(
             .iter()
             .any(|binding| crate::draft::admitted(field, binding.role))
     });
-    let imports = if rendering {
-        "use leptos::prelude::*;\nuse stackpress_framework_admin::{Draft, RoleContext};\nuse stackpress_framework_schema::{Role, SchemaError, SchemaErrorKind, SchemaResult, UiField};\n"
-    } else {
-        "use stackpress_framework_schema::{SchemaError, SchemaErrorKind, SchemaResult, UiField};\n"
-    };
-    let mut text = format!(
-        "//! Generated public role wrappers; handwritten adapters remain outside this partition.\n{imports}/// Decode only approved field descriptors; imports and source positions stay tool-only.\npub fn descriptors() -> SchemaResult<Vec<UiField>> {{ serde_json::from_str({json:?}).map_err(|cause| SchemaError::new(SchemaErrorKind::Codec, \"public role descriptor decoding failed\").with_cause(cause)) }}\n"
-    );
+    let mut roles = Vec::new();
     for role in [
         Role::Field,
         Role::Filter,
@@ -143,6 +145,7 @@ fn model_source(
         Role::Span,
         Role::View,
     ] {
+        // Preserve admission and role order before rendering any source structure.
         let selected: Vec<_> = fields
             .iter()
             .filter(|field| crate::draft::admitted(field, role))
@@ -157,28 +160,37 @@ fn model_source(
         if selected.is_empty() {
             continue;
         }
-        let name = role_name(role);
-        text.push_str(&format!(
-            "/// Render the explicitly selected {name} controls for one caller-owned instance.\n"
-        ));
-        if matches!(role, Role::List | Role::View) {
-            let public = public_type(&model.id)?;
-            text.push_str(&format!("pub fn {name}(value: &super::super::contracts::public::{public}, instance: &str) -> SchemaResult<AnyView> {{\nlet seed = stackpress_framework_schema::to_bounded_value(value)?;\nlet fields = descriptors()?;\nlet draft = Draft::new(&fields, &seed, Role::{role:?})?;\n"));
+        let typed_input = matches!(role, Role::List | Role::View);
+        let public = if typed_input {
+            public_type(&model.id)?
         } else {
-            text.push_str(&format!("pub fn {name}(draft: &Draft, instance: &str) -> SchemaResult<AnyView> {{\nlet fields = descriptors()?;\n"));
-        }
-        text.push_str("let mut controls = Vec::new();\n");
-        for (field, binding) in selected {
-            text.push_str(&control_source(field, binding, role, definitions, true)?);
-        }
-        text.push_str("Ok(controls.collect_view().into_any())\n}\n");
+            String::new()
+        };
+        // Child fragments come from the actual shared control template, never a formatter.
+        let controls = selected
+            .into_iter()
+            .map(|(field, binding)| {
+                control_source(renderer, field, binding, role, definitions, true)
+            })
+            .collect::<SchemaResult<Vec<_>>>()?;
+        roles.push(serde_json::json!({
+            "name": role_name(role), "variant": format!("{role:?}"),
+            "typed_input": typed_input, "public_type": public, "controls": controls,
+        }));
     }
-    text.push_str(&super::table::source(model, fields, definitions)?);
-    Ok(text)
+    let table = super::table::source(renderer, model, fields, definitions)?;
+    renderer.render(
+        Asset::Roles,
+        &serde_json::json!({
+            "rendering": rendering, "fields_literal": super::templates::literal(&json),
+            "roles": roles, "has_table": !table.is_empty(), "table": table,
+        }),
+    )
 }
 
 /// Build one literal field context and a statically resolved component invocation.
 pub(super) fn control_source(
+    renderer: &mut Renderer,
     field: &UiField,
     binding: &RoleBinding,
     role: Role,
@@ -186,23 +198,16 @@ pub(super) fn control_source(
     labeled: bool,
 ) -> SchemaResult<String> {
     let import = import(binding, definitions)?;
-    let member = &field.wire_name;
-    let name = role_name(role);
-    let mut text = format!(
-        "{{\n// This exact field was approved by the app before normalization.\nlet field = fields.iter().find(|field| field.wire_name == {member:?}).cloned().ok_or_else(|| SchemaError::new(SchemaErrorKind::Invalid, \"missing generated field descriptor\"))?;\nlet value = draft.get({member:?}).ok_or_else(|| SchemaError::new(SchemaErrorKind::Invalid, \"missing generated draft field\"))?;\nlet context = RoleContext {{ id: format!(\"{{}}-{name}-{{}}\", instance, {member:?}), field, role: Role::{role:?}, value }};\n"
-    );
-    // Model display roles label each value so multiple selected fields cannot run together.
-    // Both the label and the component props remain escaped data in the generated view.
-    if labeled && matches!(role, Role::List | Role::View) {
-        text.push_str(&format!("let label = context.text_prop(\"label\", &context.field.label);\ncontrols.push(view! {{ <div class=\"sp-role-value\"><span class=\"sp-role-label\">{{label}} \": \"</span><{}::{} context/></div> }}.into_any());\n", import.module, import.symbol));
-    } else {
-        text.push_str(&format!(
-            "controls.push(view! {{ <{}::{} context/> }}.into_any());\n",
-            import.module, import.symbol
-        ));
-    }
-    text.push_str("}\n");
-    Ok(text)
+    // Labels and props are inert descriptor data; only checked imports enter source positions.
+    renderer.render(
+        Asset::Control,
+        &serde_json::json!({
+            "wire_literal": super::templates::literal(&field.wire_name),
+            "role_name": role_name(role), "role_variant": format!("{role:?}"),
+            "component_module": import.module, "component_symbol": import.symbol,
+            "labeled": labeled && matches!(role, Role::List | Role::View),
+        }),
+    )
 }
 
 /// Match schema's conventional public type spelling without accepting emitted type fragments.

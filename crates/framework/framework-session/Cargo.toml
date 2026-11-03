@@ -56,11 +56,19 @@ tokio = { version = "1", features = ["macros", "rt-multi-thread", "sync", "time"
 stackpress-framework-schema = { path = "../framework-schema", features = ["providers"] }
 stackpress-sql = { path = "../../sql/sql" }
 stackpress-sql-sqlite = { path = "../../sql/sql-sqlite" }
+stackpress-sql-postgres = { path = "../../sql/sql-postgres" }
+stackpress-sql-mysql = { path = "../../sql/sql-mysql" }
 trybuild = "1"
 tempfile = "3"
 
 [lints]
 workspace = true
+
+[[test]]
+name = "live_search"
+path = "tests/live_search.rs"
+harness = false
+required-features = ["sql"]
 
 [[example]]
 name = "account_host"

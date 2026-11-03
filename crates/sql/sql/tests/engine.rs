@@ -6,6 +6,9 @@ use std::future::Future;
 use std::sync::{Arc, Mutex};
 use std::task::{Context, Poll, Waker};
 
+#[path = "engine/non_atomic.rs"]
+mod non_atomic;
+
 /// Observable calls at the core/driver boundary.
 #[derive(Default)]
 struct Calls {

@@ -23,6 +23,17 @@
 //! exposes the supplied-IO HTTP/1 host as `server_http_host`; `server-http-host-tls`
 //! also selects its Rustls integration. None is selected by default.
 //!
+//! Build-time text templates are also available directly and through the lib namespace:
+//! ```
+//! use stackpress::{TemplateEngine, TemplateResult};
+//! let engine = TemplateEngine::default();
+//! let source: TemplateResult<String> = engine.render_pairs("Vec<{{ty}}>", &[("ty", "String")]);
+//! assert_eq!(source?, "Vec<String>");
+//! assert_eq!(stackpress::template::render("ok", &serde_json::json!({}))?, "ok");
+//! assert_eq!(stackpress::lib::template::render("ok", &serde_json::json!({}))?, "ok");
+//! # Ok::<(), stackpress::TemplateError>(())
+//! ```
+//!
 //! # Examples
 //!
 //! ```
@@ -105,7 +116,9 @@ pub use stackpress_lib::{
     Method, MethodPattern, Nest, ParseLimits, PathSegment, Priority, PublicError, Request,
     RequestBuilder, RequestView, Resolution, Response, ResponseEnvelope, ResponseView, Result,
     Route, SameSite, Session, SessionRevision, SessionValue, SharedNative, SourceLocation,
-    SourceSpan, Status, Timestamp, Value, handler, with_unknown_host,
+    SourceSpan, Status, Template, TemplateEngine, TemplateError, TemplateErrorKind, TemplateHelper,
+    TemplateLimits, TemplateOptions, TemplateResult, Timestamp, Value, handler, template,
+    with_unknown_host,
 };
 #[cfg(feature = "server")]
 pub use stackpress_server as server;

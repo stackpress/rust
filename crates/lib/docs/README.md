@@ -34,6 +34,7 @@ links to exact API details.
 | Parse query, command, JSON, or multipart input | [Parsing input](guides/parsing-input.md) |
 | Return public errors and inspect diagnostics | [Errors and diagnostics](guides/errors-and-diagnostics.md) |
 | Register plugins through ordered startup work | [Startup with task queues](guides/startup-with-task-queues.md) |
+| Generate source using strict text templates | [Render build templates](guides/render-build-templates.md) |
 
 ## Returning to the API
 

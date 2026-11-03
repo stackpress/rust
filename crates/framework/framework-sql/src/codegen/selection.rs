@@ -1,5 +1,9 @@
 //! Default selected projections have a distinct checked type and never widen field exposure.
-use super::*;
+use serde_json::json;
+use stackpress_framework_schema::{Model, Schema, ValueType};
+use stackpress_idea_transformer::TransformError;
+
+use super::templates::{Templates, key_records, literals};
 /// Compile approved default selection and its exact required relation prefixes before output publication.
 pub(super) fn paths(
     schema: &Schema,
@@ -66,47 +70,13 @@ pub(super) fn paths(
 pub(super) fn emit(
     schema: &Schema,
     model: &Model,
+    templates: &Templates,
     text: &mut String,
 ) -> stackpress_idea_transformer::Result<()> {
-    let name = &model.rust_name;
+    // Path checking remains the same schema-owned step, before source rendering.
     let (selected, includes) = paths(schema, model)?;
-    text.push_str(&format!(
-        r#"
-/// Owned app-default field selection, distinct from full rows and full eager views.
-/// The private payload can only be built from a recursively projected checked View3.
-#[derive(Clone,Debug,PartialEq,serde::Serialize)]
-#[serde(transparent)]
-pub struct Selected(serde_json::Value);
-impl Selected{{
-/// Borrow the already validated selected object; no loading or SQL occurs.
-pub fn value(&self)->&serde_json::Value{{&self.0}}
-}}
-impl View3{{
-/// Apply approved @query paths after recursive public projection, never as an exposure grant.
-pub fn select_default(self)->DataResult<Selected>{{
-let public=self.project()?;
-Ok(Selected(stackpress_framework_sql::projection::select(&public,&{selected:?},{fallback})?))
-}}
-}}
-impl {name}s {{
-/// Build the exact fixed detail query for both pure preflight and executing public search.
-fn detail_query(key:&Key)->Query{{
-let mut query=Query{{take:1,includes:vec![{includes}],..Default::default()}};
-"#,
-        fallback = model.query.is_empty(),
-        includes = includes
-            .iter()
-            .map(|path| format!("{path:?}.into()"))
-            .collect::<Vec<_>>()
-            .join(",")
-    ));
-    for field in model.fields.iter().filter(|field| field.key) {
-        text.push_str(&format!(
-            "query.filters.push(Filter::{}(stackpress_framework_schema::Predicate::Eq({})));\n",
-            variant(field),
-            copy_key(field, &format!("key.{}", field.rust_name))
-        ));
-    }
-    text.push_str("query\n}\n/// Codegen support: check the exact public detail query and executor budgets before BEGIN.\n#[doc(hidden)]\npub fn preflight_detail(engine:&stackpress_sql::Engine,key:&Key)->DataResult<()> {\nlet query=Self::detail_query(key);\nstackpress_framework_sql::stores::preflight_public_search(&super::schema::catalog(),&SPEC,&ReadQuery::from_typed(&query)?,engine.dialect(),engine.limits())\n}\n/// Load the fixed app-default includes/projection using a complete identity.\n/// Explicit relation defaults require the caller's transaction, like ordinary eager search.\npub async fn detail(db:&mut DataSession<'_>,key:&Key)->DataResult<Option<Selected>> {\nlet query=Self::detail_query(key);\nlet page=stackpress_framework_sql::stores::search(db,&super::schema::catalog(),&SPEC,ReadQuery::from_typed(&query)?,Exposure::Public,Visibility::Active,RelationLimits::default()).await?;\nlet row=page.rows.into_iter().next().map(|row|serde_json::from_value::<View3>(row).map_err(stackpress_framework_sql::codec_error)).transpose()?;\nrow.map(|row|row.select_default()).transpose()\n}\n}\n");
-    Ok(())
+    templates.append(text, "SQL selection template failed", include_str!("templates/selection.rs.tpl"), &json!({
+        "model": model.rust_name, "selected": literals(selected.iter().map(String::as_str)),
+        "includes": literals(includes.iter().map(String::as_str)), "fallback": model.query.is_empty(), "keys": key_records(model),
+    }))
 }

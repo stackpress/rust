@@ -1,7 +1,8 @@
 //! Typed nested create inputs and a single bounded host-preparation pass.
 
-use super::{rust_type, transform_error};
+use super::{rust_type, source, transform_error};
 use crate::{Field, Model, Schema, ValueType};
+use serde_json::json;
 use stackpress_idea_transformer::Result;
 
 /// Use nested create inputs at the wire boundary; stored fieldsets are output values only.
@@ -15,43 +16,51 @@ fn input_type(schema: &Schema, field: &Field) -> crate::SchemaResult<String> {
             .iter()
             .find(|model| model.name == *name)
             .expect("checked fieldset");
-        ty = ty.replace(
-            &format!("super::{}::{}", model.module, model.rust_name),
-            &format!("super::{}::Create{}", model.module, model.rust_name),
-        );
+        let stored = source::type_fragment(
+            "super::[%module%]::[%name%]",
+            &[("module", &model.module), ("name", &model.rust_name)],
+        )?;
+        let create = source::type_fragment(
+            "super::[%module%]::Create[%name%]",
+            &[("module", &model.module), ("name", &model.rust_name)],
+        )?;
+        ty = ty.replace(&stored, &create);
     }
     Ok(ty)
 }
-/// Convert one supplied nonnullable input to its stored type, charging before it is retained.
-fn supplied(field: &Field) -> String {
-    if let ValueType::Fieldset(_) = &field.value_type {
-        let prepare = if field.multiple {
-            "if value.len()>1024{return Err(SchemaError::new(SchemaErrorKind::Limit,\"list element budget exceeded\"));} value.into_iter().map(|input|input.prepare_bounded(context,budget)).collect::<stackpress_framework_schema::SchemaResult<Vec<_>>>()?"
-        } else {
-            "value.prepare_bounded(context,budget)?"
-        };
-        format!("{{budget.container({:?})?;{prepare}}}", field.name)
-    } else {
-        format!("{{budget.charge({:?},&value)?;value}}", field.name)
-    }
+
+/// Convert one supplied nonnullable input, charging before a stored value is retained.
+fn supplied(field: &Field) -> Result<String> {
+    source::generate(
+        "templates/create-supplied.rs.tpl",
+        include_str!("templates/create-supplied.rs.tpl"),
+        &json!({
+            "nested":matches!(field.value_type,ValueType::Fieldset(_)),
+            "multiple":field.multiple,"wire":source::string_literal(&field.name),
+        }),
+    )
 }
-/// Resolve the typed default source. Private literals stay host-owned rather than entering browser files.
+
+/// Resolve the typed default source without publishing private literals into browser files.
 fn missing(schema: &Schema, model: &Model, field: &Field) -> Result<String> {
     let raw = if let Some(value) = &field.default {
-        if field.access.publish_default
+        // The existing app policy alone decides whether a literal may be embedded.
+        let published = field.access.publish_default
             && !field.access.sensitive
-            && super::projection::public_literal(schema, field, value) == *value
-        {
-            format!(
-                "serde_json::from_str::<serde_json::Value>({:?}).map_err(|cause|SchemaError::new(SchemaErrorKind::Codec,\"literal default decoding failed\").with_cause(cause))?",
-                value.to_string()
-            )
+            && super::projection::public_literal(schema, field, value) == *value;
+        let literal = if published {
+            source::string_literal(&value.to_string())
         } else {
-            format!(
-                "context.providers.ok_or_else(||SchemaError::new(SchemaErrorKind::Unsupported,\"explicit host defaults are required\"))?.generate({:?},&[])?",
-                format!("default:{}.{}", model.name, field.name)
-            )
-        }
+            String::new()
+        };
+        source::generate(
+            "templates/create-default-literal.rs.tpl",
+            include_str!("templates/create-default-literal.rs.tpl"),
+            &json!({
+                "published":published,"literal":literal,
+                "provider":source::string_literal(&format!("default:{}.{}",model.name,field.name)),
+            }),
+        )?
     } else if let Some(rule) = &field.value_rule {
         let rule = serde_json::to_string(rule).map_err(|cause| {
             transform_error(
@@ -64,94 +73,66 @@ fn missing(schema: &Schema, model: &Model, field: &Field) -> Result<String> {
         })?;
         let kind =
             serde_json::to_string(&field.value_type).expect("checked provider type serialization");
-        format!(
-            "serde_json::from_str::<stackpress_framework_schema::ValueRule>({rule:?}).map_err(|cause|SchemaError::new(SchemaErrorKind::Codec,\"value rule decoding failed\").with_cause(cause))?.resolve_for(&serde_json::from_str::<stackpress_framework_schema::ValueType>({kind:?}).map_err(|cause|SchemaError::new(SchemaErrorKind::Codec,\"provider type decoding failed\").with_cause(cause))?,context)?"
-        )
+        source::generate(
+            "templates/create-default-rule.rs.tpl",
+            include_str!("templates/create-default-rule.rs.tpl"),
+            &json!({
+                "rule":source::string_literal(&rule),"kind":source::string_literal(&kind),
+            }),
+        )?
     } else {
-        return Ok(if field.required {
-            "return Err(SchemaError::new(SchemaErrorKind::Invalid,\"required create field is missing\"))".into()
-        } else {
-            "None".into()
-        });
+        return source::generate(
+            "templates/create-default-absent.rs.tpl",
+            include_str!("templates/create-default-absent.rs.tpl"),
+            &json!({"required":field.required}),
+        );
     };
+    // Decode the selected default through the same required scalar/nested input shape.
     let ty = input_type(schema, field).map_err(transform_error)?;
     let mut scalar = field.clone();
     scalar.required = true;
-    let convert = supplied(&scalar);
-    let resolved = format!(
-        "{{let raw={raw};stackpress_framework_schema::check_json(&raw)?;if raw.is_null() {{ {} }} else {{let value:{ty}=serde_json::from_value(raw).map_err(|cause|SchemaError::new(SchemaErrorKind::Codec,\"default value decoding failed\").with_cause(cause))?;{} }} }}",
-        if field.required {
-            "return Err(SchemaError::new(SchemaErrorKind::Invalid,\"required default is null\"));"
-        } else {
-            "None"
-        },
-        if field.required {
-            convert
-        } else {
-            format!("Some({convert})")
-        }
-    );
-    Ok(resolved)
+    let convert = supplied(&scalar)?;
+    source::generate(
+        "templates/create-default-resolve.rs.tpl",
+        include_str!("templates/create-default-resolve.rs.tpl"),
+        &json!({
+            "raw":raw,"ty":ty,"required":field.required,"convert":convert,
+        }),
+    )
 }
-/// Emit the same create/default contract for models and all acyclic embedded values.
+
+/// Prepare checked view models; the structural template owns declarations and input branches.
 pub(super) fn emit(schema: &Schema, model: &Model) -> Result<String> {
-    let mut text = format!(
-        "/// Create input preserving omitted, null and supplied values at every embedded depth.\n#[derive(Clone,Debug,Default,serde::Serialize,serde::Deserialize)]\n#[serde(deny_unknown_fields)]\npub struct Create{} {{\n",
-        model.rust_name
-    );
+    let mut fields = Vec::new();
     for field in &model.fields {
         if field.generated || matches!(field.value_type, ValueType::Model(_)) {
             continue;
         }
         let ty = input_type(schema, field).map_err(transform_error)?;
-        text.push_str(&format!("/// Explicit create input; omission consults the declared host/literal source.\n#[serde(rename={:?},default,skip_serializing_if=\"stackpress_framework_schema::Input::is_missing\")]\npub {}:stackpress_framework_schema::Input<{ty}>,\n",field.name,field.rust_name));
+        fields.push(
+            json!({"wire":source::string_literal(&field.name),"member":field.rust_name,"ty":ty}),
+        );
     }
-    text.push_str(&format!("}}\nimpl Create{} {{\n/// Prepare using no ambient clock or provider.\npub fn prepare(self)->stackpress_framework_schema::SchemaResult<{}> {{self.prepare_with(&stackpress_framework_schema::ValueContext::default())}}\n/// Fill defaults exactly once and validate all nested business rules once before effects.\npub fn prepare_with(self,context:&stackpress_framework_schema::ValueContext<'_>)->stackpress_framework_schema::SchemaResult<{}> {{let mut budget=stackpress_framework_schema::PreparationBudget::default();let value=self.prepare_bounded(context,&mut budget)?;value.validate_with(context,false)?;Ok(value)}}\n/// Internal cross-module composition shares the caller's aggregate budget; validation follows once.\npub(crate) fn prepare_bounded(self,context:&stackpress_framework_schema::ValueContext<'_>,budget:&mut stackpress_framework_schema::PreparationBudget)->stackpress_framework_schema::SchemaResult<{}> {{use stackpress_framework_schema::{{Input,SchemaError,SchemaErrorKind}};let _=context;Ok({} {{\n",model.rust_name,model.rust_name,model.rust_name,model.rust_name,model.rust_name));
+    let mut values = Vec::new();
     for field in &model.fields {
         if matches!(field.value_type, ValueType::Model(_)) {
             continue;
         }
+        // Generated fields resolve only Missing; caller-supplied null never consults defaults.
         let missing = missing(schema, model, field)?;
-        if field.generated {
-            text.push_str(&format!(
-                "// Generated values cannot be supplied by the caller.\n{}:{missing},\n",
-                field.rust_name
-            ));
-            continue;
-        }
-        let convert = supplied(field);
-        let supplied = if field.required {
-            convert
+        let convert = if field.generated {
+            String::new()
         } else {
-            format!("Some({convert})")
+            supplied(field)?
         };
-        let null = if field.required {
-            "return Err(SchemaError::new(SchemaErrorKind::Invalid,\"required create field is null\"))"
-        } else {
-            "None"
-        };
-        text.push_str(&format!("// Explicit null never falls through to a literal or host default.\n{}:match self.{} {{Input::Missing=>{missing},Input::Null=>{null},Input::Value(value)=>{supplied}}},\n",field.rust_name,field.rust_name));
+        values.push(json!({"member":field.rust_name,"generated":field.generated,
+            "missing":missing,"convert":convert,"required":field.required}));
     }
-    text.push_str("}) } }\n");
-    // Emit only fully qualified symbols, so empty/all-generated shapes need no lint allowances.
-    text = text
-        .replace(
-            "use stackpress_framework_schema::{Input,SchemaError,SchemaErrorKind};",
-            "",
-        )
-        .replace(
-            "SchemaError::",
-            "stackpress_framework_schema::SchemaError::",
-        )
-        .replace(
-            "SchemaErrorKind::",
-            "stackpress_framework_schema::SchemaErrorKind::",
-        );
-    for variant in ["Missing", "Null", "Value"] {
-        text = text.replace(
-            &format!("Input::{variant}"),
-            &format!("stackpress_framework_schema::Input::{variant}"),
-        );
-    }
-    Ok(text)
+    source::generate(
+        "templates/create.rs.tpl",
+        include_str!("templates/create.rs.tpl"),
+        &json!({
+            "name":model.rust_name,"fields":fields,"values":values,
+        }),
+    )
 }

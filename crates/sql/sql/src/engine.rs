@@ -3,7 +3,10 @@
 use std::future::Future;
 use std::pin::Pin;
 
-use crate::{DialectId, Query, QueryLimits, QueryPlan, QueryResult, Render, Result, Row, SqlError};
+use crate::{
+    DialectId, PlanProgress, Query, QueryLimits, QueryPlan, QueryResult, Render, Result, Row,
+    SqlError,
+};
 
 /// A driver future that can cross executor threads without widening borrowed lifetimes.
 ///
@@ -542,6 +545,59 @@ impl Engine {
         };
         // Commit only after every statement has returned a complete owned outcome.
         transaction.commit().await?;
+        Ok(results)
+    }
+
+    /// Execute an explicit ordered script outside a transaction, without retries.
+    ///
+    /// Every query is validated before any adapter IO. Empty scripts return no results.
+    /// Successful results follow input order. Failure stops the script and retains
+    /// [`SqlError::plan_progress`]; acknowledged statements may already be durable.
+    /// The failing statement can have taken effect without an acknowledgement.
+    /// Cancellation returns no report and does not roll back earlier effects.
+    /// Use [`Self::execute_plan`] when atomic DDL execution is required.
+    ///
+    /// # Errors
+    /// Preserves the original validation/adapter kind, display and cause, adding only
+    /// progress counts. No transaction, rollback, retry or connection affinity is implied.
+    ///
+    /// # Examples
+    /// ```no_run
+    /// use stackpress_sql::{Engine, Query, QueryResult, Result};
+    /// async fn explicit_script(engine: &Engine, queries: &[Query]) -> Result<Vec<QueryResult>> {
+    ///     engine.execute_non_atomic(queries).await
+    /// }
+    /// ```
+    pub async fn execute_non_atomic(&self, queries: &[Query]) -> Result<Vec<QueryResult>> {
+        // Validate the entire script before submitting even its first statement.
+        for (index, query) in queries.iter().enumerate() {
+            query
+                .render(self.dialect())
+                .and_then(|query| query.validate(self.limits))
+                .map_err(|error| {
+                    error.with_plan_progress(PlanProgress {
+                        acknowledged: 0,
+                        failed_index: index,
+                        total: queries.len(),
+                    })
+                })?;
+        }
+        let mut results = Vec::with_capacity(queries.len());
+        // Await complete owned results in source order; no transaction can undo this prefix.
+        for (index, query) in queries.iter().enumerate() {
+            let result = self
+                .database
+                .run(query.clone(), self.limits)
+                .await
+                .map_err(|error| {
+                    error.with_plan_progress(PlanProgress {
+                        acknowledged: index,
+                        failed_index: index,
+                        total: queries.len(),
+                    })
+                })?;
+            results.push(result);
+        }
         Ok(results)
     }
 

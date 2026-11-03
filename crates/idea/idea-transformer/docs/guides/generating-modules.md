@@ -35,6 +35,11 @@ fn main() -> Result<()> {
 The plan now has three claims: the plugin module, its partition index, and the root index.
 Claims iterate in path order; index declarations retain callback/contribution order. A
 contribution without its matching owned file fails planning rather than emitting a dangling module.
+The aggregate owner compiles its [module template](../../src/plan/modules.rs.tpl) once per plan
+and reuses it for each partition and the root. It emits one final newline for both single-module
+and multiple-module indexes. Interleaved contributions preserve first-seen partition order in
+the root and contribution order within each partition; an empty selection leaves supplied
+aggregate files intact.
 
 ## Choose the root renderer
 

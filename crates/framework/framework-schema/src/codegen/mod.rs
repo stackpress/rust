@@ -41,6 +41,7 @@ mod inputs;
 mod metadata;
 mod projection;
 mod query;
+mod source;
 /// Lowerable direct-config budgets; hard ceilings apply even if callers raise them.
 #[derive(Clone, Copy, Debug)]
 pub struct NormalizeOptions {

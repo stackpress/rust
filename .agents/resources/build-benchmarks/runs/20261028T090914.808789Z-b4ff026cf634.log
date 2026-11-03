@@ -1,3 +1,0 @@
-PASS ios-init-help
-PASS ios-init
-PASS ios-build; options service exited

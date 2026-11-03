@@ -6138,6 +6138,8 @@ dependencies = [
  "stackpress-lib",
  "stackpress-server",
  "stackpress-sql",
+ "stackpress-sql-mysql",
+ "stackpress-sql-postgres",
  "stackpress-sql-sqlite",
  "tokio",
  "trybuild",
@@ -6154,6 +6156,7 @@ dependencies = [
  "stackpress-idea-parser",
  "stackpress-idea-transformer",
  "stackpress-leptos",
+ "stackpress-lib",
  "tempfile",
 ]
 
@@ -6177,6 +6180,8 @@ dependencies = [
  "stackpress-lib",
  "stackpress-server",
  "stackpress-sql",
+ "stackpress-sql-mysql",
+ "stackpress-sql-postgres",
  "stackpress-sql-sqlite",
  "tokio",
 ]
@@ -6235,6 +6240,7 @@ dependencies = [
  "sha3",
  "stackpress-idea-parser",
  "stackpress-idea-transformer",
+ "stackpress-lib",
  "time",
  "url",
 ]
@@ -6263,6 +6269,8 @@ dependencies = [
  "stackpress-lib",
  "stackpress-server",
  "stackpress-sql",
+ "stackpress-sql-mysql",
+ "stackpress-sql-postgres",
  "stackpress-sql-sqlite",
  "tempfile",
  "time",
@@ -6336,6 +6344,7 @@ dependencies = [
  "serde_json",
  "sha2 0.10.9",
  "stackpress-idea-parser",
+ "stackpress-lib",
  "tempfile",
 ]
 

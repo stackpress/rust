@@ -1,4 +1,8 @@
 //! Schema/contract matrix: actual checked types, business outcomes, diagnostics and disclosure.
+#[cfg(feature = "codegen")]
+#[path = "template_codegen/mod.rs"]
+mod template_codegen;
+
 use serde_json::{Value, json};
 use stackpress_framework_schema::*;
 

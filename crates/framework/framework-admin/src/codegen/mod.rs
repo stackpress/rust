@@ -8,6 +8,7 @@ mod catalog;
 mod emit;
 mod pages;
 mod table;
+mod templates;
 pub use catalog::{Component, components, register_components};
 pub use emit::emit_roles;
 pub use pages::emit_pages;

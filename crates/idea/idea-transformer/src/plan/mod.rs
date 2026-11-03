@@ -182,7 +182,7 @@ impl OutputPlan {
 
     /// Render all module declarations once, using only already validated plugin-owned files.
     pub(crate) fn finish_modules(&mut self) -> Result<()> {
-        let mut partitions: Vec<(String, String)> = Vec::new();
+        let mut partitions: Vec<(String, Vec<String>)> = Vec::new();
         for item in &self.contributions {
             // A declaration alone cannot create a dangling module or borrow another owner.
             let path = format!("{}/{}.rs", item.partition, item.module);
@@ -200,27 +200,44 @@ impl OutputPlan {
                 .iter()
                 .position(|(part, _)| part == &item.partition);
             let index = index.unwrap_or_else(|| {
-                partitions.push((item.partition.clone(), String::new()));
+                partitions.push((item.partition.clone(), Vec::new()));
                 partitions.len() - 1
             });
-            partitions[index]
-                .1
-                .push_str(&format!("pub mod {};\n", item.module));
+            partitions[index].1.push(item.module.clone());
         }
         // Empty selections leave app-supplied aggregates intact instead of inventing a module.
         if !partitions.is_empty() {
-            let mut root = String::new();
-            for (partition, contents) in partitions {
-                root.push_str(&format!("pub mod {partition};\n"));
+            let template = stackpress_lib::TemplateEngine::default()
+                .compile(include_str!("modules.rs.tpl"))
+                .map_err(module_template_error)?;
+            let mut root = Vec::new();
+            for (partition, modules) in partitions {
+                root.push(partition.clone());
+                let contents = template
+                    .render(&serde_json::json!({"modules":modules}))
+                    .map_err(module_template_error)?;
                 self.insert(
                     "aggregate",
                     GeneratedFile::new(format!("{partition}/mod.rs"), contents),
                 )?;
             }
-            self.insert("aggregate", GeneratedFile::new("mod.rs", root))?;
+            let source = template
+                .render(&serde_json::json!({"modules":root}))
+                .map_err(module_template_error)?;
+            self.insert("aggregate", GeneratedFile::new("mod.rs", source))?;
         }
         Ok(())
     }
+}
+
+/// Preserve the public writer-limit category if a local template budget fails first.
+fn module_template_error(cause: stackpress_lib::TemplateError) -> TransformError {
+    let kind = if cause.kind() == stackpress_lib::TemplateErrorKind::Limit {
+        crate::TransformErrorKind::Limit
+    } else {
+        crate::TransformErrorKind::Callback
+    };
+    TransformError::caused(kind, "module template rendering failed", cause)
 }
 
 /// Accept conservative Rust module identifiers without injecting reserved keywords.

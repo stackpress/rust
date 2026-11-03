@@ -761,5 +761,28 @@
     ],
     "status": "resolved",
     "decision": "G46"
+  },
+  {
+    "id": "g46-live-source-search",
+    "page": "crates/framework/framework-session/docs/live-search.md",
+    "statement": "Both PostgreSQL and MySQL execute Profile q/like",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/tests/live_search.rs",
+        "contains": ["profile.install().await?", "auth.install().await?", "Profile q/like search", "Auth-to-Profile like search"]
+      },
+      {
+        "path": "crates/framework/framework-api/tests/live_search.rs",
+        "contains": ["app.install().await?", "session.install().await?", "Application q/like search", "Session like search", "does-not-match"]
+      },
+      {
+        "path": "crates/sql/sql/src/engine.rs",
+        "contains": ["pub async fn execute_non_atomic", "with_plan_progress"]
+      },
+      {
+        "path": "crates/framework/framework-session/tests/live/support.rs",
+        "contains": ["created owned database", "drop confirmed:", "Duration::from_secs(30)", "Duration::from_secs(10)"]
+      }
+    ]
   }
 ]

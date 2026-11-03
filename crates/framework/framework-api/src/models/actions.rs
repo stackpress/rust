@@ -236,14 +236,16 @@ impl<M: ModelKind> Actions<M> {
         self.create_in(db, input).await.map(Some)
     }
 
-    /// Explicit table installation; this never runs implicitly during plugin startup.
+    /// Explicit table installation; MySQL accepts partial DDL progress under G48.
     pub async fn install(&self) -> Result<()> {
-        self.engine
-            .execute_plan(&self.store.create().render(self.engine.dialect())?)
-            .await?;
+        stackpress_framework_sql::setup::execute_plan(
+            &self.engine,
+            &self.store.create().render(self.engine.dialect())?,
+        )
+        .await?;
         Ok(())
     }
-    /// Explicit source-to-target alteration, with unsupported SQL mechanics reported by SQL.
+    /// Explicit alteration; MySQL runs in order without atomic rollback (G48).
     pub async fn upgrade(&self, to: &Create) -> Result<()> {
         if let Some(plan) = self
             .store
@@ -252,13 +254,13 @@ impl<M: ModelKind> Actions<M> {
             .diff(&to.definition()?)?
             .render(self.engine.dialect())?
         {
-            self.engine.execute_plan(&plan).await?;
+            stackpress_framework_sql::setup::execute_plan(&self.engine, &plan).await?;
         }
         Ok(())
     }
     /// Explicit source purge; SQLite's DELETE truncation already applies declared FK cascade.
     pub async fn purge(&self, cascade: bool) -> Result<()> {
-        // Source cascade matters only to PostgreSQL; SQLite/MySQL ignore this flag.
+        // G48 omits MySQL CASCADE; PostgreSQL retains it and SQLite uses DELETE.
         let command = stackpress_sql::TableCommand::Truncate {
             table: M::TABLE.into(),
             cascade: cascade && self.engine.dialect() == stackpress_sql::DialectId::Postgres,

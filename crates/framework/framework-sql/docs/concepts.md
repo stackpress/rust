@@ -1,5 +1,11 @@
 # Executors, projections and acknowledgements
 
+Store generation runs in the build tool under the `codegen` feature. The app owns
+normalization, definition registries and operation selection. SQL templates receive
+checked metadata and encoded Rust literals; they emit source without executing it.
+See the [code-generation API](api/codegen.md) and [source maintenance
+guide](guides/change-generated-source.md) for that boundary.
+
 `DataSession` borrows either an app-owned Engine or one exclusive Transaction. It captures no alternate pool and cannot be cloned or registered as a service. Limits come from the selected executor; a transaction keeps the copy frozen at begin. A single pooled statement is independent. Counts plus rows, eager includes and batches require one explicit transaction; SQLite's snapshot is the proved multi-statement contract.
 
 Stored records, public records, eager views and default selections are distinct. `View0` through `View3` are finite owned types. Each edge is `Loaded::Unloaded` or `Loaded::Loaded(value)`, where optional `None` and an empty collection retain their usual meaning. Public projection is applied at every loaded node. `Selected` has a private payload and serializes the approved `@query` paths. With no source `@query`, detail falls back to the approved base row; an explicit selection with no approved paths produces an empty object. A selection never grants exposure. Detail resolves keys through the public query allowlist; a wholly private key is refused there, while trusted get_key remains available. A host exposing such a model can select get or implement its own authorized detail workflow.

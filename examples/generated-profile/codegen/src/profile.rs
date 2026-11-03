@@ -5,10 +5,11 @@
 
 use stackpress_idea::parser::SchemaConfig;
 use stackpress_idea::transformer::{
-    GeneratedFile, Registry, Result as GenerateResult, TransformInputs, TransformSelection,
+    GeneratedFile, Registry, Result as GenerateResult, TransformError, TransformInputs,
+    TransformSelection,
 };
 #[cfg(feature = "profiles")]
-use stackpress_idea::transformer::{OutputPlan, TransformContext, TransformError, TransformSpec};
+use stackpress_idea::transformer::{OutputPlan, TransformContext, TransformSpec};
 
 use crate::selection;
 
@@ -55,18 +56,17 @@ fn emit_profile(context: &TransformContext<'_>, plan: &mut OutputPlan) -> Genera
             "profile-demo requires exactly Profile { id String name String }",
         ));
     }
-    let mut contract = String::from("//! Public model fields generated from schema.idea.\n\n");
-    contract.push_str("/// Public profile data; generated from the declared model.\n");
-    contract
-        .push_str("#[derive(Debug, serde::Deserialize, serde::Serialize)]\npub struct Profile {\n");
-    for column in &model.columns {
-        // Names are validated above, so no arbitrary identifier/source interpolation is possible.
-        contract.push_str(&format!(
-            "    /// Public {} field.\n    pub {}: String,\n",
-            column.name, column.name
-        ));
-    }
-    contract.push_str("}\n");
+    // Only the exact checked demo names reach the structural field loop.
+    let fields: Vec<_> = model
+        .columns
+        .iter()
+        .map(|column| column.name.as_str())
+        .collect();
+    let contract = source(
+        "templates/contract.rs.tpl",
+        include_str!("templates/contract.rs.tpl"),
+        &serde_json::json!({"fields":fields}),
+    )?;
     // The runtime source is an explicitly declared immutable template snapshot for this plan.
     plan.write("contracts/profile.rs", contract)?;
     plan.write("server/profile.rs", context.input("templates/profile.rs")?)?;
@@ -95,32 +95,39 @@ fn supported_profile(model: &stackpress_idea::parser::ModelConfig) -> bool {
 
 /// Own the aggregate registry and compile-time selection/revision checks.
 pub(crate) fn aggregate(schema: &SchemaConfig) -> GenerateResult<Vec<GeneratedFile>> {
-    let mut source = format!(
-        "//! Generated module registry; regenerate instead of editing.\n\n\
-         const _: () = assert!({}crate::selection::ENABLED);\n\
-         const _: () = assert!(crate::selection::REVISION == {});\n\n",
-        if selection::ENABLED { "" } else { "!" },
-        selection::REVISION,
-    );
     let present = selection::ENABLED && schema.model.contains_key("Profile");
-    if present {
-        source.push_str("/// Public data without host dependencies.\npub mod contracts {\n");
-        source.push_str("    /// Model Profile.\n    pub mod profile;\n}\n");
-        source.push_str("/// Native capability implementation.\npub mod server {\n");
-        source.push_str("    /// In-memory profiles plugin.\n    pub mod profile;\n}\n\n");
-    }
-    source.push_str("/// Register the selected generated contributions.\n");
-    source.push_str("///\n/// # Errors\n/// Returns plugin/host registration failures.\n");
-    source.push_str("pub fn register(app: &mut stackpress_server::ServerBuilder) ");
-    source.push_str("-> stackpress_lib::Result<()> {\n");
-    // Removing the model removes both the module declarations and their registration references.
-    if present {
-        source.push_str("    app.plugin(\"profiles\", server::profile::register)?;\n");
-    } else {
-        source.push_str("    let _ = app;\n");
-    }
-    source.push_str("    Ok(())\n}\n");
+    let source = source(
+        "templates/aggregate.rs.tpl",
+        include_str!("templates/aggregate.rs.tpl"),
+        &serde_json::json!({
+            "enabled":selection::ENABLED, "revision":selection::REVISION, "present":present,
+        }),
+    )?;
     Ok(vec![GeneratedFile::new("mod.rs", source)])
+}
+
+/// Render immutable build assets without interpreting inserted source or changing writer limits.
+fn source(asset: &'static str, template: &str, data: &serde_json::Value) -> GenerateResult<String> {
+    let render = || {
+        let engine = stackpress_lib::TemplateEngine::new(stackpress_lib::TemplateOptions {
+            delimiters: ["[%".into(), "%]".into()],
+            ..Default::default()
+        })?;
+        engine.render(template, data)
+    };
+    render().map_err(|cause: stackpress_lib::TemplateError| {
+        let kind = if cause.kind() == stackpress_lib::TemplateErrorKind::Limit {
+            stackpress_idea::transformer::TransformErrorKind::Limit
+        } else {
+            stackpress_idea::transformer::TransformErrorKind::Callback
+        };
+        TransformError::with_source(
+            kind,
+            format!("profile source template failed: {asset}"),
+            cause,
+        )
+        .unwrap_or_else(|error| error)
+    })
 }
 
 /// Snapshot the compiled generator's assets before any transform callback runs.

@@ -1,14 +1,24 @@
 //! Deterministic native store and explicit operation generation from the app-owned registry.
 //! Contracts/metadata remain owned by the schema transform; all output here stays in stores.
+//!
+//! The `codegen` feature is a build-host capability. Checked metadata and encoded
+//! literals populate SQL-owned source templates; rendering never executes them.
+use serde_json::json;
 use stackpress_framework_schema::{Field, Model, Schema, ValueType};
 use stackpress_idea_transformer::{OutputPlan, TransformError};
+use templates::{Templates, column, literal, literals};
 mod bounds;
 mod catalog;
 mod conflicts;
 mod operations;
 mod queries;
 mod selection;
+mod templates;
 mod writes;
+
+#[cfg(test)]
+#[path = "codegen/tests.rs"]
+mod tests;
 
 /// Register a build-tool store transform after the explicit schema transform.
 ///
@@ -29,7 +39,11 @@ pub fn register(
     )
 }
 
-/// Emit strict native stores, finite eager views and explicitly selected named handlers.
+/// Emit strict native stores and finite eager views without named host handlers.
+///
+/// # Errors
+/// Returns schema/storage failures, concrete template failures and output-plan
+/// ownership or resource refusals. Template resource failures retain `Limit`.
 pub fn emit_stores(
     schema: &Schema,
     output: &mut OutputPlan,
@@ -44,6 +58,14 @@ pub fn emit_stores(
     )
 }
 /// Emit selected native capabilities with real winning Idea coordinates (or JSON structural paths).
+///
+/// `with_operations` additionally emits host handlers for explicit app registration.
+/// Schema diagnostics annotate model/projection failures; template failures retain
+/// their static asset identity and concrete cause.
+///
+/// # Errors
+/// Returns schema/storage/projection failures, concrete template failures and
+/// output-plan ownership or resource refusals. A registry may wrap these as callbacks.
 pub fn emit_stores_with_diagnostics(
     schema: &Schema,
     output: &mut OutputPlan,
@@ -57,6 +79,8 @@ pub fn emit_stores_with_diagnostics(
         .project_ui()
         .map_err(stackpress_framework_schema::codegen::transform_error)?;
     let definitions = storage_definitions(schema)?;
+    // Construct one renderer after existing schema validation, before emitting any file.
+    let templates = Templates::new()?;
     for (model, definition) in schema.models().iter().zip(&definitions) {
         let stored: Vec<_> = model
             .fields
@@ -71,27 +95,24 @@ pub fn emit_stores_with_diagnostics(
                 diagnostics,
             ));
         }
-        let mut text = format!(
-            "//! Explicit generated {} store; every operation borrows its executor.\nuse crate::generated::contracts::{}::{{{} as _Stored,Create{} as _Create}};\nuse crate::generated::contracts::public::{{{}Key as Key,Patch{} as Patch}};\nuse stackpress_framework_sql::{{DataError,DataErrorKind,DataResult,DataSession,StorageColumn,StorageCodec}};\nuse stackpress_framework_sql::stores::{{Exposure,Loaded,Page,ReadQuery,RelationLimits,StoreSpec,Visibility}};\nuse stackpress_sql::{{Insert,Row,Select,TableDefinition}};\nconst _: ()=assert!(stackpress_framework_sql::CONTRACT_REVISION=={});\n/// Shared normalized schema identity.\npub const FINGERPRINT:&str={:?};\n/// Exact ordered stored codecs.\npub const COLUMNS:&[StorageColumn]=&[\n",
-            model.rust_name,
-            model.module,
-            model.rust_name,
-            model.rust_name,
-            model.rust_name,
-            model.rust_name,
-            crate::CONTRACT_REVISION,
-            fingerprint
-        );
-        for field in &stored {
-            text.push_str(&storage(schema, field));
-        }
-        text.push_str("];\n");
-        table(definition, model, &mut text)?;
-        bounds::emit(model, &mut text);
-        catalog::emit(schema, model, &stored, &public, &mut text)?;
-        queries::emit(schema, model, &stored, &mut text)?;
-        writes::emit(schema, model, &stored, &mut text)?;
-        selection::emit(schema, model, &mut text).map_err(|cause| {
+        let columns: Vec<_> = stored.iter().map(|field| column(schema, field)).collect();
+        let mut text = templates.render(
+            "SQL store-header template failed",
+            include_str!("codegen/templates/store-header.rs.tpl"),
+            &json!({
+                "model": model.rust_name, "module": model.module,
+                "revision": crate::CONTRACT_REVISION,
+                "fingerprint_literal": literal(&fingerprint), "columns": columns,
+                "has_relations": model.fields.iter().any(|field| matches!(field.value_type, ValueType::Model(_))),
+            }),
+        )?;
+        // Preserve the original phase order: later failures never publish earlier file claims.
+        table(definition, model, &templates, &mut text)?;
+        bounds::emit(model, &templates, &mut text)?;
+        catalog::emit(schema, model, &stored, &public, &templates, &mut text)?;
+        queries::emit(schema, model, &stored, &templates, &mut text)?;
+        writes::emit(schema, model, &stored, &templates, &mut text)?;
+        selection::emit(schema, model, &templates, &mut text).map_err(|cause| {
             store_error(
                 model,
                 "default selected storage projection is unsupported",
@@ -99,42 +120,39 @@ pub fn emit_stores_with_diagnostics(
                 diagnostics,
             )
         })?;
-        conflicts::emit(schema, model, &mut text)?;
-        if !model
-            .fields
-            .iter()
-            .any(|field| matches!(field.value_type, ValueType::Model(_)))
-        {
-            text = text.replace("Exposure,Loaded,Page", "Exposure,Page");
-        }
+        conflicts::emit(schema, model, &templates, &mut text)?;
         output.write(format!("stores/{}.rs", store_module(model)), text)?;
         output.contribute_module("stores", &store_module(model))?;
     }
-    let mut text = String::from(
-        "//! Explicit generated table installation and immutable native store catalog.\n/// Build every declared table definition; importing never installs one.\npub fn definition()->stackpress_framework_sql::DataResult<Vec<stackpress_sql::TableDefinition>> { Ok(vec![\n",
-    );
-    for model in schema.models() {
-        text.push_str(&format!(
-            "super::{}::{}Store::table()?,\n",
-            store_module(model),
-            model.rust_name
-        ));
-    }
-    text.push_str("]) }\n/// Return the finite generated catalog; it owns no executor or mutable cache.\npub fn catalog()->Vec<&'static stackpress_framework_sql::stores::StoreSpec> { vec![\n");
-    for model in schema.models() {
-        text.push_str(&format!("&super::{}::SPEC,\n", store_module(model)));
-    }
-    text.push_str("] }\n/// Supply explicit MySQL target facts and check the entire managed catalog before rendering.\npub fn mysql_definition(collation:&str,page_bytes:u32)->stackpress_framework_sql::DataResult<Vec<stackpress_sql::TableDefinition>> {stackpress_framework_sql::ddl_policy::mysql_definitions(definition()?,collation,page_bytes)}\n");
+    // The aggregate owns actual source loops; this context contains checked model names only.
+    let models: Vec<_> = schema
+        .models()
+        .iter()
+        .map(|model| {
+            json!({
+                "store": store_module(model), "name": model.rust_name,
+            })
+        })
+        .collect();
+    let text = templates.render(
+        "SQL schema template failed",
+        include_str!("codegen/templates/schema.rs.tpl"),
+        &json!({"models": models}),
+    )?;
     output.write("stores/schema.rs", text)?;
     output.contribute_module("stores", "schema")?;
     if with_operations {
-        operations::emit(schema, output)?;
+        operations::emit(schema, &templates, output)?;
     }
     Ok(())
 }
 
 /// Explicitly select host-only named handler output in addition to the native stores.
 /// The consuming app must select framework-sql/server and register its chosen operations.
+///
+/// # Errors
+/// Returns the same schema, template and output-plan failures as [`emit_stores`],
+/// plus policy/fieldset failures from the selected host handler generation.
 pub fn emit_stores_with_operations(
     schema: &Schema,
     output: &mut OutputPlan,
@@ -153,47 +171,63 @@ pub fn emit_stores_with_operations(
 fn table(
     definition: &stackpress_sql::TableDefinition,
     model: &Model,
+    templates: &Templates,
     text: &mut String,
 ) -> stackpress_idea_transformer::Result<()> {
-    text.push_str(&format!("/// Pure inspectable table, query and codec functions.\npub struct {}Store;\nimpl {}Store {{\n/// Build the checked storage definition; installation is always explicit.\npub fn table() -> DataResult<TableDefinition> {{\nlet mut table = stackpress_sql::Create::new({:?});\n",model.rust_name,model.rust_name,model.module));
-    for field in &definition.fields {
-        let kind = match field.data_type {
-            stackpress_sql::SqlType::Integer => "Integer",
-            stackpress_sql::SqlType::Boolean => "Boolean",
-            stackpress_sql::SqlType::Real => "Real",
-            stackpress_sql::SqlType::Varchar => "Varchar",
-            stackpress_sql::SqlType::Text => "Text",
-            _ => return Err(TransformError::new("generated storage type is unsupported")),
-        };
-        let nullable = if field.nullable { "" } else { ".not_null()" };
-        let length = match field.length {
-            Some(stackpress_sql::Length::Size(n)) => {
-                format!(".length(stackpress_sql::Length::Size({n}))")
-            }
-            None => String::new(),
-            _ => {
-                return Err(TransformError::new(
-                    "generated storage length is unsupported",
-                ));
-            }
-        };
-        text.push_str(&format!("// Preserve declared nullability and explicit character length in storage.\nlet field = stackpress_sql::Field::new({:?}, stackpress_sql::SqlType::{kind}){nullable}{length};\ntable = table.add_field(field);\n",field.name));
-    }
-    text.push_str(&format!(
-        "table = table.primary_key({:?});\n",
-        definition.primary
-    ));
-    for index in &definition.indexes {
-        text.push_str(&format!("// Storage constraints/indexes are authoritative; UI hints cannot replace them.\ntable = table.add_index(stackpress_sql::Index::new({:?}, {:?}){});\n",index.name,index.columns,if index.unique {".unique()"}else{""}));
-    }
-    for key in &definition.foreign_keys {
-        text.push_str(&format!("// Explicit owning FK; reverse collections have no column.\nlet mut foreign = stackpress_sql::ForeignKey::new({:?}, {:?}, {:?}, {:?});\nforeign.on_delete = stackpress_sql::ReferentialAction::Restrict;\ntable = table.add_foreign_key(foreign);\n",key.name,key.columns,key.table,key.foreign_columns));
-    }
-    if definition.mysql_storage.is_some() {
-        text.push_str("table = table.require_mysql_target();\n");
-    }
-    text.push_str("Ok(table.definition()?)\n}\n}\n");
-    Ok(())
+    // Validate type/length in the original field order before supplying language atoms.
+    let fields = definition
+        .fields
+        .iter()
+        .map(|field| {
+            let kind = match field.data_type {
+                stackpress_sql::SqlType::Integer => "Integer",
+                stackpress_sql::SqlType::Boolean => "Boolean",
+                stackpress_sql::SqlType::Real => "Real",
+                stackpress_sql::SqlType::Varchar => "Varchar",
+                stackpress_sql::SqlType::Text => "Text",
+                _ => return Err(TransformError::new("generated storage type is unsupported")),
+            };
+            let length = match field.length {
+                Some(stackpress_sql::Length::Size(n)) => Some(n),
+                None => None,
+                _ => {
+                    return Err(TransformError::new(
+                        "generated storage length is unsupported",
+                    ));
+                }
+            };
+            Ok(json!({
+                "name_literal": literal(&field.name), "kind": kind,
+                "not_null": !field.nullable, "has_length": length.is_some(), "length": length,
+            }))
+        })
+        .collect::<stackpress_idea_transformer::Result<Vec<_>>>()?;
+    let indexes: Vec<_> = definition
+        .indexes
+        .iter()
+        .map(|index| {
+            json!({
+                "name_literal": literal(&index.name), "unique": index.unique,
+                "columns": literals(index.columns.iter().map(String::as_str)),
+            })
+        })
+        .collect();
+    let foreign_keys: Vec<_> = definition
+        .foreign_keys
+        .iter()
+        .map(|key| {
+            json!({
+                "name_literal": literal(&key.name), "table_literal": literal(&key.table),
+                "columns": literals(key.columns.iter().map(String::as_str)),
+                "foreign_columns": literals(key.foreign_columns.iter().map(String::as_str)),
+            })
+        })
+        .collect();
+    templates.append(text, "SQL table template failed", include_str!("codegen/templates/table.rs.tpl"), &json!({
+        "model": model.rust_name, "table_literal": literal(&model.module),
+        "fields": fields, "primary": literals(definition.primary.iter().map(String::as_str)),
+        "indexes": indexes, "foreign_keys": foreign_keys, "mysql_target": definition.mysql_storage.is_some(),
+    }))
 }
 
 /// Choose an explicit strict storage codec; lists/fieldsets are one JSON column.
@@ -225,40 +259,44 @@ fn codec(schema: &Schema, field: &Field) -> &'static str {
     }
 }
 
-/// One generated static column literal, shared by storage, query and patch catalogs.
-fn storage(schema: &Schema, field: &Field) -> String {
-    format!(
-        "StorageColumn {{wire:{:?},column:{:?},codec:StorageCodec::{},required:{},nonempty:{}}},\n",
-        field.name,
-        field.column,
-        codec(schema, field),
-        field.required,
-        field.nonempty
-    )
-}
 /// Scalar Rust type independent of list wrapping, using exact checked schema contract types.
-fn scalar(schema: &Schema, field: &Field) -> stackpress_idea_transformer::Result<String> {
-    Ok(match &field.value_type {
-        ValueType::String => "String".into(),
-        ValueType::Integer => "i64".into(),
-        ValueType::Boolean => "bool".into(),
-        ValueType::Number => "stackpress_framework_schema::FiniteNumber".into(),
-        ValueType::Date => "stackpress_framework_schema::DateValue".into(),
-        ValueType::Time => "stackpress_framework_schema::TimeValue".into(),
-        ValueType::Datetime => "stackpress_framework_schema::DatetimeValue".into(),
+fn scalar(
+    schema: &Schema,
+    field: &Field,
+    templates: &Templates,
+) -> stackpress_idea_transformer::Result<String> {
+    // Qualified enum paths are source structure; fixed primitive names are checked atoms.
+    let data = match &field.value_type {
+        ValueType::String => json!({"qualified": false, "symbol": "String"}),
+        ValueType::Integer => json!({"qualified": false, "symbol": "i64"}),
+        ValueType::Boolean => json!({"qualified": false, "symbol": "bool"}),
+        ValueType::Number => {
+            json!({"qualified": false, "symbol": "stackpress_framework_schema::FiniteNumber"})
+        }
+        ValueType::Date => {
+            json!({"qualified": false, "symbol": "stackpress_framework_schema::DateValue"})
+        }
+        ValueType::Time => {
+            json!({"qualified": false, "symbol": "stackpress_framework_schema::TimeValue"})
+        }
+        ValueType::Datetime => {
+            json!({"qualified": false, "symbol": "stackpress_framework_schema::DatetimeValue"})
+        }
         ValueType::Enum(name) => {
             let enumeration = schema
                 .enums()
                 .iter()
                 .find(|item| item.name == *name)
                 .ok_or_else(|| TransformError::new("enum missing from checked schema"))?;
-            format!(
-                "crate::generated::contracts::{}::{}",
-                enumeration.module, enumeration.rust_name
-            )
+            json!({"qualified": true, "module": enumeration.module, "symbol": enumeration.rust_name})
         }
         _ => return Err(TransformError::new("query scalar is unsupported")),
-    })
+    };
+    templates.render(
+        "SQL scalar-type template failed",
+        include_str!("codegen/templates/scalar-type.rs.tpl"),
+        &data,
+    )
 }
 /// Native predicate families exclude objects, embedded records and model references.
 fn is_scalar(field: &Field) -> bool {
@@ -288,31 +326,38 @@ fn variant(field: &Field) -> String {
     }
 }
 /// Preserve legacy convenient scalar keys while complete-key functions serve every identity shape.
-fn key_argument(model: &Model) -> (String, String) {
+fn key_argument(
+    model: &Model,
+    templates: &Templates,
+) -> stackpress_idea_transformer::Result<(String, String)> {
     let keys: Vec<_> = model.fields.iter().filter(|field| field.key).collect();
-    if keys.len() == 1 {
-        let field = keys[0];
-        let ty = match field.value_type {
-            ValueType::String => Some("&str"),
-            ValueType::Integer => Some("i64"),
-            _ => None,
-        };
-        if let Some(ty) = ty {
-            return (
-                ty.into(),
-                format!(
-                    "&Key{{{}:{}}}",
-                    field.rust_name,
-                    if field.value_type == ValueType::Integer {
-                        "key"
-                    } else {
-                        "key.into()"
-                    }
-                ),
-            );
-        }
-    }
-    ("&Key".into(), "key".into())
+    // Only the original String/Integer singleton convenience signatures are retained.
+    let simple = keys
+        .first()
+        .copied()
+        .filter(|_| keys.len() == 1)
+        .and_then(|field| {
+            let ty = match field.value_type {
+                ValueType::String => "&str",
+                ValueType::Integer => "i64",
+                _ => return None,
+            };
+            Some((field, ty))
+        });
+    let (ty, data) = if let Some((field, ty)) = simple {
+        (
+            ty,
+            json!({"simple": true, "member": field.rust_name, "string_key": field.value_type == ValueType::String}),
+        )
+    } else {
+        ("&Key", json!({"simple": false}))
+    };
+    let expression = templates.render(
+        "SQL key-argument template failed",
+        include_str!("codegen/templates/key-argument.rs.tpl"),
+        &data,
+    )?;
+    Ok((ty.into(), expression))
 }
 
 /// Escape only aggregate filenames; normalized source modules cannot start with underscore.
@@ -345,17 +390,6 @@ fn constraint_name(
     stackpress_framework_schema::codegen::portable_name(&candidate)
         .map_err(stackpress_framework_schema::codegen::transform_error)
 }
-/// Avoid cloning Copy scalars while retaining exact owned string/enum/canonical temporal identities.
-fn copy_key(field: &Field, expression: &str) -> String {
-    if matches!(
-        field.value_type,
-        ValueType::Integer | ValueType::Boolean | ValueType::Number
-    ) {
-        expression.into()
-    } else {
-        format!("{expression}.clone()")
-    }
-}
 /// Attach the model's winning source position without inventing coordinates for normalized JSON.
 fn store_error(
     model: &Model,
@@ -379,6 +413,10 @@ fn store_error(
 /// Build the exact generated storage definitions without importing generated app source.
 ///
 /// This is tool-only metadata; it never installs tables, writes revisions or opens a database.
+///
+/// # Errors
+/// Returns missing key/relation, invalid storage-length or portable-name errors,
+/// SQL definition failures and incompatible foreign-key storage widths.
 pub fn storage_definitions(
     schema: &Schema,
 ) -> stackpress_idea_transformer::Result<Vec<stackpress_sql::TableDefinition>> {
@@ -501,6 +539,10 @@ fn storage_definition(
 
 /// Build generated MySQL DDL with explicit app-owned target facts and catalog validation.
 /// The returned definitions remain render-only; importing them performs no IO.
+///
+/// # Errors
+/// Returns [`storage_definitions`] failures and unsupported MySQL target facts,
+/// storage widths or catalog/index constraints, retaining the DDL policy cause.
 pub fn mysql_storage_definitions(
     schema: &Schema,
     collation: &str,

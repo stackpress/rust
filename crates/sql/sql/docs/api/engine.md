@@ -68,6 +68,7 @@ output collection, native arity, admission, and shutdown belong to the adapter.
 | `execute(&self, query)` | `&(impl Render + Sync)` | Render/validate/run one statement. |
 | `fetch(&self, query)` | `&(impl Render + Sync)` | Run one statement and keep only its rows. |
 | `execute_plan(&self, plan)` | `&QueryPlan` | Validate all members, own one transaction, then commit. |
+| `execute_non_atomic(&self, queries)` | `&[Query]` | Validate the entire script before IO; execute in order outside a transaction, stop on the first failure. |
 | `begin(&self)` | none | Acquire one exclusive ordinary transaction. |
 | `close(&self)` | none | Reject new work and wait for leases through the adapter. |
 
@@ -80,6 +81,17 @@ Plan validation precedes acquisition. Transactional-DDL capability is required, 
 rejected. The first statement failure rolls back and preserves primary plus cleanup failure;
 success commits before return. A commit error/cancellation can leave an unknown outcome.
 Budgets are per statement, and the outcome vector retains all member results.
+
+`execute_non_atomic` returns the same ordered `Result<Vec<QueryResult>>`, including an
+empty vector for empty input. It is the explicit G48 primitive for MySQL source setup;
+`execute_plan` and ordinary MySQL transaction-DDL refusals remain unchanged. Validation
+errors have zero effects. Execution errors can leave an applied prefix, and the failing
+statement can have executed without a received acknowledgement. No connection affinity,
+rollback or retry is implied. [SqlError::plan_progress](errors.md) reports acknowledged
+count, failed zero-based index and total, while retaining the original kind, display and
+cause. Cancellation returns no report. The [executor tests](../../tests/engine/non_atomic.rs)
+pin ordering, complete preflight, errors and cancellation; aggregate live tests prove
+actual MySQL partial state and PostgreSQL atomic setup.
 
 No write is retried. Cancellation can lose observation of already-executed work. close may be
 re-awaited after cancellation under the Database contract; an adapter's Drop is not an awaited

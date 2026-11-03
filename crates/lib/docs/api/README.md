@@ -24,6 +24,7 @@ authoritative declarations.
 | [Headers and body](headers-and-body.md) | Headers, Body | Multi-value fields and buffered representations |
 | [Status](status.md) | Status; status::CODES | Application code/message catalog |
 | [Error](error.md) | Error, ErrorKind, Result, PublicError, SourceLocation, SourceSpan, InvocationFrame | Public failure data and developer diagnostics |
+| [Templates](template.md) | TemplateEngine, Template, TemplateOptions, TemplateLimits, TemplateHelper, TemplateError/Kind/Result; template::render | Strict build-time text rendering |
 
 ## Example conventions
 

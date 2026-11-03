@@ -1,39 +1,41 @@
 //! Host-only length guards retain private declaration arguments outside browser contracts.
-use super::*;
+use serde_json::json;
+use stackpress_framework_schema::Model;
+
+use super::templates::{Templates, literal};
 
 /// Emit guards only for annotated models; null and unchanged patches retain their semantics.
-pub(super) fn emit(model: &Model, text: &mut String) {
+pub(super) fn emit(
+    model: &Model,
+    templates: &Templates,
+    text: &mut String,
+) -> stackpress_idea_transformer::Result<()> {
+    // Use ordered metadata and explicit flags; absent declarations render no source at all.
     let fields: Vec<_> = model
         .fields
         .iter()
-        .filter(|field| field.storage_length.is_some())
+        .filter_map(|field| {
+            field.storage_length.map(|length| {
+                json!({
+                    "member": field.rust_name, "required": field.required, "length": length,
+                })
+            })
+        })
         .collect();
-    if fields.is_empty() {
-        return;
-    }
-    text.push_str(&format!("impl {}Store {{\n/// Enforce host storage declarations, including redacted private fields.\nfn storage_bounds(value:&_Stored)->DataResult<()> {{\n", model.rust_name));
-    for field in &fields {
-        let length = field.storage_length.expect("filtered declaration");
-        let check = format!(
-            "if text.chars().count()>{length}usize {{return Err(DataError::new(\"declared storage length exceeded\"));}}\n"
-        );
-        if field.required {
-            text.push_str(&format!("let text=&value.{};\n{check}", field.rust_name));
-        } else {
-            text.push_str(&format!(
-                "if value.{}.as_ref().is_some_and(|text|text.chars().count()>{length}usize) {{return Err(DataError::new(\"declared storage length exceeded\"));}}\n",
-                field.rust_name
-            ));
-        }
-    }
-    if !fields.iter().any(|field| !field.key && !field.generated) {
-        text.push_str("Ok(())\n}\n}\n");
-        return;
-    }
-    text.push_str("Ok(())\n}\n/// Check supplied encoded patch values before any write is submitted.\nfn patch_bounds(values:&[(String,stackpress_sql::SqlValue)])->DataResult<()> {\nfor (column,value) in values {match column.as_str() {\n");
-    for field in fields.iter().filter(|field| !field.key && !field.generated) {
-        let length = field.storage_length.expect("filtered declaration");
-        text.push_str(&format!("{:?}=>{{if let stackpress_sql::SqlValue::Text(text)=value && text.chars().count()>{length}usize {{return Err(DataError::new(\"declared storage length exceeded\"));}}}},\n", field.column));
-    }
-    text.push_str("_=>{}\n}}\nOk(())\n}\n}\n");
+    let patch_fields: Vec<_> = model
+        .fields
+        .iter()
+        .filter(|field| !field.key && !field.generated)
+        .filter_map(|field| {
+            field.storage_length.map(|length| {
+                json!({
+                    "column_literal": literal(&field.column), "length": length,
+                })
+            })
+        })
+        .collect();
+    templates.append(text, "SQL bounds template failed", include_str!("templates/bounds.rs.tpl"), &json!({
+        "model": model.rust_name, "bounded": !fields.is_empty(), "patch_bounded": !patch_fields.is_empty(),
+        "fields": fields, "patch_fields": patch_fields,
+    }))
 }

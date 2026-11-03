@@ -6,7 +6,7 @@ The mandatory full-workspace nextest gate executes `examples/generated-profile/c
 
 The [coordinated workflow](../../../workflows/coordinated-crate-development.md) says: “Work discovered inside a task becomes a side quest ... It stays `proposed` until the owner approves its scope.”
 
-Recommendation: authorize the behavior-preserving test-only change in [the prepared patch](/private/tmp/issue14-m2-harness.patch). Seed independent locks from the repository lock, resolve local membership via offline metadata, assert exact external identity/source/checksum tuples, and put disposable consumers beneath the supplied task target. Keep all existing consumer assertions and locked compilation. No runtime/public API changes. Rerun this fixture and the full nextest gate; retain the completed workspace Clippy/doctest evidence unless source changes justify repeating it. Include the test-only crate in coverage accounting.
+Recommendation: authorize the behavior-preserving test-only change in the prepared patch (`/private/tmp/issue14-m2-harness.patch`, temporary artifact, since removed). Seed independent locks from the repository lock, resolve local membership via offline metadata, assert exact external identity/source/checksum tuples, and put disposable consumers beneath the supplied task target. Keep all existing consumer assertions and locked compilation. No runtime/public API changes. Rerun this fixture and the full nextest gate; retain the completed workspace Clippy/doctest evidence unless source changes justify repeating it. Include the test-only crate in coverage accounting.
 
 The patch is prepared outside the repository; the existing test has not been edited. Other authorized M2 work can continue while this decision is pending.
 

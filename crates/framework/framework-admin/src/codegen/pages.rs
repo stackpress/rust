@@ -1,8 +1,9 @@
 //! Generated typed page adapters and explicit host route/operation selection.
 use super::emit::{control_source, public_type};
+use super::templates::{Asset, Renderer, literal, source_error};
+use serde_json::{Value, json};
 use stackpress_framework_schema::{
-    Role, Schema, SchemaResult, UiModel,
-    codegen::{DefinitionRegistry, transform_error},
+    Role, Schema, SchemaResult, UiModel, codegen::DefinitionRegistry,
 };
 use stackpress_idea_transformer::{OutputPlan, Result};
 
@@ -14,6 +15,8 @@ use stackpress_idea_transformer::{OutputPlan, Result};
 ///
 /// # Errors
 /// Refuses duplicate selections/private identities and preserves schema/generator causes.
+/// Template failures identify their static asset; source limits preserve the direct Limit
+/// category. The registry continues to add its ordinary outer Callback context.
 pub fn emit_pages(
     schema: &Schema,
     definitions: &DefinitionRegistry,
@@ -26,41 +29,18 @@ pub fn emit_pages(
             "invalid or duplicate admin model selection",
         ));
     }
-    let ui = schema.project_ui().map_err(transform_error)?;
-    // Select import tokens before embedding any untrusted labels or props into source.
-    let controls = ui
+    let ui = schema.project_ui().map_err(source_error)?;
+    // Import selection depends only on admitted fields, never on embedded label text.
+    let has_controls = ui
         .models
         .iter()
         .filter(|model| selected.contains(&model.id.as_str()))
-        .any(|model| {
-            model.fields.iter().any(|field| {
-                field.roles.iter().any(|binding| {
-                    binding.role == Role::Field && crate::draft::admitted(field, Role::Field)
-                })
-            })
-        });
-    let present = schema
-        .models()
-        .iter()
-        .any(|model| selected.contains(&model.name.as_str()));
-    let context_import = if controls { "RoleContext," } else { "" };
-    let role_import = if controls { "Role," } else { "" };
-    let mut pure = format!(
-        "//! Generated public page adapters; imports register nothing.\nuse leptos::prelude::*;\nuse stackpress_framework_admin::{{{context_import}Draft,pages::{{Action,Form,PageSpec}}}};\nuse stackpress_framework_schema::{{{role_import}SchemaError,SchemaErrorKind,SchemaResult}};\n"
-    );
-    let operation_import = if present { "Operation," } else { "" };
-    let (start, marker, builder, mount) = if present {
-        ("start", "marker", "builder", "mount")
-    } else {
-        ("_start", "_marker", "_builder", "_mount")
-    };
-    let mut host = format!(
-        "//! Explicit native compiled admin registration.\nuse stackpress_framework_sql::operations::{{{operation_import}Registration,StartupContext,Result}};\n/// Select the actual generated operation handlers; no handwritten operation substitute.\npub fn operations({start}:&mut StartupContext,{marker}:&mut Registration)->Result<()> {{\n"
-    );
-    let mut routes = format!(
-        "/// Register fixed routes beneath a previously validated application mount.\npub fn routes({builder}:&mut stackpress_server::ServerBuilder,{mount}:&str)->stackpress_lib::Result<()> {{\n"
-    );
+        .any(|model| has_role(model, Role::Field));
+    let mut renderer = Renderer::new().map_err(source_error)?;
     let mut models = Vec::new();
+    let mut pages = Vec::new();
+    let mut hosts = Vec::new();
+    let mut route_models = Vec::new();
     for name in selected {
         // A reduced schema removes the old model's adapters and registrations in one install.
         let Some(model) = schema.models().iter().find(|model| model.name == *name) else {
@@ -83,138 +63,101 @@ pub fn emit_pages(
         let module = &model.module;
         let soft = model.fields.iter().any(|field| field.active);
         models.push((module.clone(), model.name.clone()));
-        pure.push_str(
-            &model_source(module, projected, soft, definitions).map_err(transform_error)?,
+        pages.push(
+            model_data(&mut renderer, module, projected, soft, definitions)
+                .map_err(source_error)?,
         );
-        // SQL owns its reserved aggregate-module escape; route names remain source-owned.
-        let native_module = if matches!(module.as_str(), "schema" | "operations") {
-            format!("_{module}")
-        } else {
-            module.clone()
-        };
-        let optional = if soft {
-            ",Operation::Remove,Operation::Restore"
-        } else {
-            ""
-        };
-        host.push_str(&format!("crate::generated::stores::operations::{native_module}::register(start,marker,{module:?},&[Operation::Get,Operation::Detail,Operation::Search,Operation::Create,Operation::Update,Operation::Batch{optional}])?;\n"));
-        for action in [
+        hosts.push(json!({
+            "module_literal": literal(module), "native_module": native_module(module),
+            "store_type": model.rust_name.clone() + "s", "soft_remove": soft,
+        }));
+        // These finite action inventories retain source ordering and soft-delete selection.
+        let page_actions: Vec<_> = [
             "search", "detail", "create", "update", "copy", "remove", "restore", "import",
-        ] {
-            if !soft && matches!(action, "remove" | "restore") {
-                continue;
-            }
-            routes.push_str(&format!(
-                "builder.get(&format!(\"{{mount}}{module}/{action}\"),crate::host::page)?;\n"
-            ));
-        }
-        routes.push_str(&format!(
-            "builder.get(&format!(\"{{mount}}{module}/export\"),crate::host::transfer::export)?;\n"
-        ));
-        for action in ["preview", "confirm"] {
-            routes.push_str(&format!("builder.post(&format!(\"{{mount}}api/{module}/{action}\"),crate::host::transfer::import)?;\n"));
-        }
-        for action in [
+        ]
+        .into_iter()
+        .filter(|action| soft || !matches!(*action, "remove" | "restore"))
+        .collect();
+        let api_actions: Vec<_> = [
             "search", "get", "detail", "create", "update", "remove", "restore",
-        ] {
-            if !soft && matches!(action, "remove" | "restore") {
-                continue;
-            }
-            routes.push_str(&format!(
-                "builder.post(&format!(\"{{mount}}api/{module}/{action}\"),crate::host::api)?;\n"
-            ));
-        }
+        ]
+        .into_iter()
+        .filter(|action| soft || !matches!(*action, "remove" | "restore"))
+        .collect();
+        route_models.push(json!({
+            "module": module, "page_actions": page_actions,
+            "import_actions": ["preview", "confirm"], "api_actions": api_actions,
+        }));
     }
-    pure.push_str(&dispatch(&models));
-    host.push_str("Ok(())}\n");
-    routes.push_str("Ok(())}\n");
-    host.push_str(&routes);
-    if !models.is_empty() {
-        // The same compiler-owned inventory backs direct and plugin registration. Emit no
-        // registrar for an empty/removed selection: there is no runtime contribution to own.
-        host.push_str(include_str!("pages_host.rs.in"));
-        host.push('\n');
-        host.push_str(
-            &routes
-                .replace(
-                    "/// Register fixed routes beneath a previously validated application mount.",
-                    "/// Mount the selected mappings during the existing Route phase.",
-                )
-                .replace(
-                    "pub fn routes(builder:&mut stackpress_server::ServerBuilder",
-                    "fn mount_routes(builder:&mut StartupContext",
-                ),
-        );
-    }
-    // Native conflict checks use the actual generated store, including inactive identities.
-    host.push_str(if models.is_empty(){"/// No import model is selected.\npub async fn import_exists(_:&str,_:&mut stackpress_framework_sql::DataSession<'_>,_:serde_json::Value)->stackpress_framework_sql::DataResult<bool>{Err(stackpress_framework_sql::DataError::new(\"admin import unavailable\"))}\n"}else{"/// Authorized import preview only: existence, never a private row projection.\npub async fn import_exists(module:&str,db:&mut stackpress_framework_sql::DataSession<'_>,value:serde_json::Value)->stackpress_framework_sql::DataResult<bool>{match module{\n"});
-    for (module, _) in &models {
-        let native = if matches!(module.as_str(), "schema" | "operations") {
-            format!("_{module}")
-        } else {
-            module.clone()
-        };
-        host.push_str(&format!("{module:?}=>{{let key=serde_json::from_value(value).map_err(stackpress_framework_sql::codec_error)?;Ok(crate::generated::stores::{native}::{}::get_maintenance(db,&key,stackpress_framework_sql::stores::Visibility::All).await?.is_some())}},\n",schema.models().iter().find(|m|m.module==*module).expect("selected model").rust_name.clone()+"s"));
-    }
-    if !models.is_empty() {
-        host.push_str(
-            "_=>Err(stackpress_framework_sql::DataError::new(\"admin import unavailable\"))}}\n",
-        );
-    }
-    // Contribute only after every selected model passed; the writer owns final publication.
+    // Every selected model and control passed before either final file reaches the writer.
+    let dispatch = dispatch(&mut renderer, &models).map_err(source_error)?;
+    let pure = renderer
+        .render(
+            Asset::Pages,
+            &json!({
+                "has_controls": has_controls, "models": pages, "dispatch": dispatch,
+            }),
+        )
+        .map_err(source_error)?;
+    let present = !models.is_empty();
+    let direct_routes = routes(&mut renderer, &route_models, false).map_err(source_error)?;
+    let (registration, mounted_routes) = if present {
+        // A removed selection has no registrar, service claim, or private Route helper.
+        (
+            renderer
+                .render(Asset::Registration, &json!({}))
+                .map_err(source_error)?,
+            routes(&mut renderer, &route_models, true).map_err(source_error)?,
+        )
+    } else {
+        (String::new(), String::new())
+    };
+    let host = renderer
+        .render(
+            Asset::Host,
+            &json!({
+                "has_models": present, "models": hosts, "direct_routes": direct_routes,
+                "registration": registration, "mounted_routes": mounted_routes,
+            }),
+        )
+        .map_err(source_error)?;
     output.write("ui/pages.rs", pure)?;
     output.contribute_module("ui", "pages")?;
     output.write("ui/pages_host.rs", host)?;
     Ok(())
 }
 
-/// Keep typed codecs, field-role composition and public table/detail renderers centered per model.
-fn model_source(
+/// Keep SQL's reserved aggregate-module escape separate from source-template rendering.
+fn native_module(module: &str) -> String {
+    if matches!(module, "schema" | "operations") {
+        format!("_{module}")
+    } else {
+        module.into()
+    }
+}
+
+/// Check one explicit public capability without substituting a different role.
+fn has_role(model: &UiModel, role: Role) -> bool {
+    model.fields.iter().any(|field| {
+        field
+            .roles
+            .iter()
+            .any(|binding| binding.role == role && crate::draft::admitted(field, role))
+    })
+}
+
+/// Prepare one minimal model context; literals remain data and controls share one template.
+fn model_data(
+    renderer: &mut Renderer,
     module: &str,
     model: &UiModel,
     soft: bool,
     definitions: &DefinitionRegistry,
-) -> SchemaResult<String> {
+) -> SchemaResult<Value> {
     let public = public_type(&model.id)?;
     let name = public.strip_prefix("Public").expect("public type prefix");
-    let spec = serde_json::json!({"module":module,"model":model,"soft_remove":soft}).to_string();
-    let has_controls = model.fields.iter().any(|field| {
-        field.roles.iter().any(|binding| {
-            binding.role == Role::Field && crate::draft::admitted(field, Role::Field)
-        })
-    });
-    let form_locals = if has_controls {
-        "let draft=&form.draft;let instance=&form.instance;let mut fields=super::super::MODEL::descriptors()?;\n// Related scope can add a disabled constraint, never enable a forbidden field.\nif let Some(locked)=&form.locked {for field in &mut fields {if &field.wire_name==locked {for binding in &mut field.roles {if binding.role==Role::Field {binding.props.insert(\"disabled\".into(),true.into());}}}}}\nlet mut controls=Vec::<AnyView>::new();\n".replace("MODEL",module)
-    } else {
-        "let _=form;let controls=Vec::<AnyView>::new();\n".into()
-    };
-    let mut source = format!(
-        r#"
-/// Typed adapters for one explicitly selected public model.
-pub mod {module} {{
-use super::*;
-/// Decode only the approved revision-3 model specification.
-pub fn spec()->SchemaResult<PageSpec> {{serde_json::from_str({spec:?}).map_err(codec)}}
-/// Decode through the actual generated public create/patch DTOs.
-pub fn input(action:Action,value:serde_json::Value)->SchemaResult<serde_json::Value> {{
-if action==Action::Update {{serde_json::to_value(serde_json::from_value::<super::super::super::contracts::public::PublicPatch{name}>(value).map_err(codec)?).map_err(codec)}}
-else {{serde_json::to_value(serde_json::from_value::<super::super::super::contracts::public::PublicCreate{name}>(value).map_err(codec)?).map_err(codec)}}
-}}
-/// Validate all supplied import members through the actual generated create contract.
-pub fn validate_import(value:serde_json::Value,context:&stackpress_framework_schema::ValueContext<'_>)->SchemaResult<Vec<stackpress_framework_schema::FieldIssue>> {{
-let input:super::super::super::contracts::public::PublicCreate{name}=serde_json::from_value(value).map_err(codec)?;
-Ok(input.validate_create(context)?.issues)
-}}
-/// Validate the actual generated query type before sending its envelope.
-pub fn query(value:serde_json::Value)->SchemaResult<serde_json::Value> {{
-let query:super::super::super::contracts::public::{name}Query=serde_json::from_value(value).map_err(codec)?;
-query.validate()?;serde_json::to_value(query).map_err(codec)
-}}
-/// Compose selected field adapters; updates cannot edit the stored identity.
-pub fn form(form:Form)->SchemaResult<AnyView> {{
-{form_locals}
-"#
-    );
+    let spec = json!({"module":module,"model":model,"soft_remove":soft}).to_string();
+    let mut controls = Vec::new();
     for field in &model.fields {
         let Some(binding) = field
             .roles
@@ -226,134 +169,118 @@ pub fn form(form:Form)->SchemaResult<AnyView> {{
         if !crate::draft::admitted(field, Role::Field) {
             continue;
         }
-        if model.key.contains(&field.wire_name) {
-            source.push_str("if form.action!=Action::Update {\n");
-        }
-        source.push_str(&control_source(
-            field,
-            binding,
-            Role::Field,
-            definitions,
-            false,
-        )?);
-        if model.key.contains(&field.wire_name) {
-            source.push_str("}\n");
-        }
+        controls.push(json!({
+            "key_guard": model.key.contains(&field.wire_name),
+            "body": control_source(renderer, field, binding, Role::Field, definitions, false)?,
+        }));
     }
-    source.push_str("Ok(controls.collect_view().into_any())}\n");
-    if model.fields.iter().any(|field| {
-        field.roles.iter().any(|binding| {
-            binding.role == Role::Filter && crate::draft::admitted(field, Role::Filter)
-        })
-    }) {
-        source.push_str(&format!("/// Compose the explicitly selected filter roles.\npub fn filters(draft:&Draft,instance:&str)->SchemaResult<AnyView>{{super::super::{module}::filter(draft,instance)}}\n"));
-    } else {
-        source.push_str("/// This page has no selected filter controls.\npub fn filters(_:&Draft,_:&str)->SchemaResult<AnyView>{Ok(Vec::<AnyView>::new().collect_view().into_any())}\n");
-    }
-    if model.fields.iter().any(|field| {
-        field
-            .roles
-            .iter()
-            .any(|binding| binding.role == Role::List && crate::draft::admitted(field, Role::List))
-    }) {
-        source.push_str(&format!(r#"
-/// Render actual public rows through their typed DTO and selected list adapters.
-pub fn table(value:&serde_json::Value,instance:&str)->SchemaResult<AnyView> {{
-let spec=spec()?;let mut rows=Vec::new();
-for value in value.get("rows").and_then(serde_json::Value::as_array).ok_or_else(unavailable)? {{
-let row=value.get("row").unwrap_or(value);let key=stackpress_framework_admin::pages::key(&spec,row)?;
-let typed:super::super::super::contracts::public::{public}=serde_json::from_value(row.clone()).map_err(codec)?;
-rows.push((key.to_string(),typed));
-}}super::super::{module}::table(&rows,instance)
-}}
-"#));
-    } else {
-        source.push_str("/// No list role was selected.\npub fn table(_: &serde_json::Value,_:&str)->SchemaResult<AnyView>{Err(unavailable())}\n");
-    }
-    if model.fields.iter().any(|field| {
-        field
-            .roles
-            .iter()
-            .any(|binding| binding.role == Role::View && crate::draft::admitted(field, Role::View))
-    }) {
-        source.push_str(&format!("/// Render actual public detail through its typed DTO and selected view adapters.\npub fn detail(value:&serde_json::Value,instance:&str)->SchemaResult<AnyView>{{let typed:super::super::super::contracts::public::{public}=serde_json::from_value(value.clone()).map_err(codec)?;super::super::{module}::view(&typed,instance)}}\n"));
-    } else {
-        source.push_str("/// No view role was selected.\npub fn detail(_: &serde_json::Value,_:&str)->SchemaResult<AnyView>{Err(unavailable())}\n");
-    }
-    source.push_str("/// Keep the concrete codec cause private under one adapter context.\nfn codec(cause:serde_json::Error)->SchemaError {SchemaError::new(SchemaErrorKind::Codec,\"public admin codec failed\").with_cause(cause)}\n}\n");
-    Ok(source)
+    Ok(json!({
+        "module": module, "type_name": name, "public_type": public,
+        "spec_literal": literal(&spec), "has_controls": has_role(model, Role::Field),
+        "has_filter": has_role(model, Role::Filter), "has_list": has_role(model, Role::List),
+        "has_view": has_role(model, Role::View), "controls": controls,
+    }))
+}
+
+/// Render identical direct/private route bodies without rewriting already emitted Rust.
+fn routes(renderer: &mut Renderer, models: &[Value], private: bool) -> SchemaResult<String> {
+    renderer.render(
+        Asset::Routes,
+        &json!({
+            "private": private, "has_models": !models.is_empty(), "models": models,
+        }),
+    )
+}
+
+/// Turn finite authored signature atoms into records, never formatted declarations or calls.
+fn adapter(name: &str, parameters: &[(&str, &str)], result: &str, arguments: &[&str]) -> Value {
+    let parameters: Vec<_> = parameters
+        .iter()
+        .map(|(name, ty)| json!({"name": name, "ty": ty}))
+        .collect();
+    json!({"name": name, "parameters": parameters, "result": result, "arguments": arguments})
 }
 
 /// Generate the same closed dispatch table for shared UI and native host callers.
-fn dispatch(models: &[(String, String)]) -> String {
-    let modules: Vec<_> = models.iter().map(|(module, _)| module).collect();
-    let mut source = format!(
-        "/// Explicit compiled page modules in navigation order.\npub const MODELS:&[&str]=&{modules:?};\n"
-    );
-    if models.is_empty() {
-        source.push_str("/// No page model is selected.\npub fn identity(_: &str)->Option<(&'static str,&'static str)>{None}\n");
-    } else {
-        source.push_str("/// Resolve only compiler-owned static model identities.\npub fn identity(module:&str)->Option<(&'static str,&'static str)>{match module {\n");
-        for (module, name) in models {
-            source.push_str(&format!("{module:?}=>Some(({module:?},{name:?})),\n"));
-        }
-        source.push_str("_=>None}}\n");
-    }
-    for (name, args, result, call) in [
-        ("spec", "module:&str", "PageSpec", "spec()"),
-        (
+fn dispatch(renderer: &mut Renderer, models: &[(String, String)]) -> SchemaResult<String> {
+    let identities: Vec<_> = models
+        .iter()
+        .map(|(module, name)| {
+            json!({
+                "module": module, "module_literal": literal(module), "name_literal": literal(name),
+            })
+        })
+        .collect();
+    // Signatures remain compiler-authored; templates own separators, unused names and calls.
+    let adapters = [
+        adapter("spec", &[("module", "&str")], "PageSpec", &[]),
+        adapter(
             "input",
-            "module:&str,action:Action,value:serde_json::Value",
+            &[
+                ("module", "&str"),
+                ("action", "Action"),
+                ("value", "serde_json::Value"),
+            ],
             "serde_json::Value",
-            "input(action,value)",
+            &["action", "value"],
         ),
-        (
+        adapter(
             "query",
-            "module:&str,value:serde_json::Value",
+            &[("module", "&str"), ("value", "serde_json::Value")],
             "serde_json::Value",
-            "query(value)",
+            &["value"],
         ),
-        (
+        adapter(
             "validate_import",
-            "module:&str,value:serde_json::Value,context:&stackpress_framework_schema::ValueContext<'_>",
+            &[
+                ("module", "&str"),
+                ("value", "serde_json::Value"),
+                ("context", "&stackpress_framework_schema::ValueContext<'_>"),
+            ],
             "Vec<stackpress_framework_schema::FieldIssue>",
-            "validate_import(value,context)",
+            &["value", "context"],
         ),
-        ("form", "module:&str,form:Form", "AnyView", "form(form)"),
-        (
+        adapter(
+            "form",
+            &[("module", "&str"), ("form", "Form")],
+            "AnyView",
+            &["form"],
+        ),
+        adapter(
             "filters",
-            "module:&str,draft:&Draft,instance:&str",
+            &[
+                ("module", "&str"),
+                ("draft", "&Draft"),
+                ("instance", "&str"),
+            ],
             "AnyView",
-            "filters(draft,instance)",
+            &["draft", "instance"],
         ),
-        (
+        adapter(
             "table",
-            "module:&str,value:&serde_json::Value,instance:&str",
+            &[
+                ("module", "&str"),
+                ("value", "&serde_json::Value"),
+                ("instance", "&str"),
+            ],
             "AnyView",
-            "table(value,instance)",
+            &["value", "instance"],
         ),
-        (
+        adapter(
             "detail",
-            "module:&str,value:&serde_json::Value,instance:&str",
+            &[
+                ("module", "&str"),
+                ("value", "&serde_json::Value"),
+                ("instance", "&str"),
+            ],
             "AnyView",
-            "detail(value,instance)",
+            &["value", "instance"],
         ),
-    ] {
-        if models.is_empty() {
-            let args = args
-                .split(',')
-                .map(|arg| format!("_:{}", arg.split_once(':').expect("fixed signature").1))
-                .collect::<Vec<_>>()
-                .join(",");
-            source.push_str(&format!("/// This adapter is unavailable without a selected model.\npub fn {name}({args})->SchemaResult<{result}>{{Err(unavailable())}}\n"));
-        } else {
-            source.push_str(&format!("/// Dispatch only to an explicitly generated typed adapter.\npub fn {name}({args})->SchemaResult<{result}>{{match module{{\n"));
-            for (module, _) in models {
-                source.push_str(&format!("{module:?}=>{module}::{call},\n"));
-            }
-            source.push_str("_=>Err(unavailable())}}\n");
-        }
-    }
-    source.push_str("/// Missing model/role is unavailable; never substitute another operation.\nfn unavailable()->SchemaError {SchemaError::new(SchemaErrorKind::Invalid,\"admin model or role unavailable\")}\n");
-    source
+    ];
+    renderer.render(
+        Asset::Dispatch,
+        &json!({
+            "has_models": !models.is_empty(), "models": identities, "adapters": adapters,
+        }),
+    )
 }

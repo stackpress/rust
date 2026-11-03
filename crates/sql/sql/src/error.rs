@@ -17,6 +17,20 @@ use std::fmt;
 /// ```
 pub type Result<T> = std::result::Result<T, SqlError>;
 
+/// Observed progress of an explicitly non-atomic ordered execution.
+///
+/// Acknowledged statements may already be durable. The failing statement can also
+/// have taken effect if its acknowledgement was lost; this is not rollback evidence.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct PlanProgress {
+    /// Statements whose complete successful result was received before this failure.
+    pub acknowledged: usize,
+    /// Zero-based input index that failed validation or execution.
+    pub failed_index: usize,
+    /// Number of statements supplied by the caller.
+    pub total: usize,
+}
+
 /// Stable classification; callers should not parse driver messages.
 ///
 /// # Examples
@@ -233,6 +247,8 @@ pub struct SqlError {
     source: Option<Box<dyn Error + Send + Sync>>,
     /// A secondary explicit rollback failure; the primary kind/source remain intact.
     cleanup: Option<Box<SqlError>>,
+    /// Allocate only on non-atomic errors, keeping downstream error envelopes compact.
+    progress: Option<Box<PlanProgress>>,
 }
 
 impl fmt::Debug for SqlError {
@@ -271,6 +287,7 @@ impl SqlError {
             message,
             source: None,
             cleanup: None,
+            progress: None,
         }
     }
 
@@ -303,6 +320,7 @@ impl SqlError {
             message,
             source: Some(Box::new(source)),
             cleanup: None,
+            progress: None,
         }
     }
 
@@ -327,6 +345,21 @@ impl SqlError {
     /// ```
     pub fn kind(&self) -> ErrorKind {
         self.kind
+    }
+
+    /// Inspect non-atomic execution progress without formatting native details.
+    ///
+    /// Validation failures report zero acknowledgements. Execution failures retain
+    /// the acknowledged prefix, not a guarantee about the failing statement. A
+    /// cancelled future returns no report; callers must reconcile its unknown effects.
+    pub fn plan_progress(&self) -> Option<&PlanProgress> {
+        self.progress.as_deref()
+    }
+
+    /// Attach observed progress while retaining the original kind, display and cause.
+    pub(crate) fn with_plan_progress(mut self, progress: PlanProgress) -> Self {
+        self.progress = Some(Box::new(progress));
+        self
     }
 
     /// Retain a secondary cleanup failure without replacing the primary native cause.

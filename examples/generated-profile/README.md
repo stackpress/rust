@@ -51,6 +51,10 @@ The codegen tool composes sources through a `ProjectLoader` rooted at the app, t
 `stackpress_idea::generate` wrapper resolves typed references and plans the selected transforms.
 [codegen/src/profile.rs](codegen/src/profile.rs) owns the Profile mapping and its declared
 runtime-template snapshot. The CLI host owns path options, diagnostics and the awaited worker.
+The [contract](codegen/src/templates/contract.rs.tpl) and
+[aggregate](codegen/src/templates/aggregate.rs.tpl) are readable structural templates compiled
+into the codegen host. Checked names and selection flags are data; inserted source stays inert.
+The unchanged runtime implementation is a separately declared snapshot, without template evaluation.
 
 ## Split a schema into files
 

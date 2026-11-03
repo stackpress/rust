@@ -47,6 +47,7 @@ pub mod request;
 pub mod response;
 pub mod session;
 pub mod status;
+pub mod template;
 
 pub use body::Body;
 pub use data::{
@@ -68,3 +69,7 @@ pub use request::{LoadResult, LoadState, Request, RequestBuilder, RequestView, w
 pub use response::{DeliveryState, Response, ResponseEnvelope, ResponseView};
 pub use session::{CookieOptions, Priority, SameSite, Session, SessionRevision, SessionValue};
 pub use status::Status;
+pub use template::{
+    Template, TemplateEngine, TemplateError, TemplateErrorKind, TemplateHelper, TemplateLimits,
+    TemplateOptions, TemplateResult,
+};
