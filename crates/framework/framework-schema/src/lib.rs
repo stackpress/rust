@@ -12,6 +12,8 @@ use serde::{Deserialize, Serialize};
 
 #[cfg(feature = "codegen")]
 pub mod codegen;
+mod source_catalog;
+pub use source_catalog::{SourceCatalog, SourceQuery, SourceRelation};
 
 /// Generated schema contract, including explicit optional string storage length (G38).
 pub const CONTRACT_REVISION: u32 = 3;

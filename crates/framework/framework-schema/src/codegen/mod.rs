@@ -41,6 +41,11 @@ mod inputs;
 mod metadata;
 mod source_graph;
 pub use source_graph::SourceGraph;
+mod source_roles;
+pub use source_roles::source_definitions;
+mod source_catalog;
+mod source_emit;
+pub use source_emit::emit_source_contracts;
 mod witnesses;
 pub use witnesses::emit_source_witnesses;
 mod projection;
@@ -564,8 +569,8 @@ pub use emit::{emit_contracts, rust_type};
 
 /// Compiled generator semantics, independent of runtime request/config selection.
 ///
-/// Existing emitters remain Typed. Source is explicit and refuses emission until the
-/// source schema/runtime implementation is released; it never silently emits strict DTOs.
+/// Existing emitters remain Typed. Source uses the separately normalized [`SourceGraph`]
+/// and [`emit_source_contracts`]; a Typed `Schema` cannot supply source semantics.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub enum EmissionSemantics {
     /// Existing validated typed contracts and their unchanged public policy.
@@ -578,8 +583,8 @@ pub enum EmissionSemantics {
 /// Select contract semantics explicitly without changing existing emitter call sites.
 ///
 /// # Errors
-/// Source currently returns Unsupported before touching OutputPlan. M0 proves its contract
-/// with a separate structural probe; full source preparation/emission belongs to M1/M2.
+/// Source returns Unsupported before touching OutputPlan: use [`emit_source_contracts`]
+/// with a [`SourceGraph`] instead. This prevents a lossy Typed projection becoming source.
 pub fn emit_contracts_with_semantics(
     schema: &Schema,
     output: &mut stackpress_idea_transformer::OutputPlan,
@@ -588,7 +593,7 @@ pub fn emit_contracts_with_semantics(
     match semantics {
         EmissionSemantics::Typed => emit_contracts(schema, output),
         EmissionSemantics::Source => Err(transform_error(unsupported(
-            "source model contract emission is not implemented in G50 M0",
+            "source contracts require SourceGraph input",
         ))),
     }
 }

@@ -6226,6 +6226,16 @@ name = "stackpress-framework-language"
 version = "0.1.0"
 
 [[package]]
+name = "stackpress-framework-models"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "stackpress-framework-schema",
+ "stackpress-idea-parser",
+ "stackpress-idea-transformer",
+]
+
+[[package]]
 name = "stackpress-framework-schema"
 version = "0.1.0"
 dependencies = [
