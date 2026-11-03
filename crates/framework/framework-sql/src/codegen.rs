@@ -16,6 +16,30 @@ mod selection;
 mod templates;
 mod writes;
 
+/// Shared compiled selection; runtime server features do not select generator semantics.
+pub use stackpress_framework_schema::codegen::EmissionSemantics;
+
+/// Select native store semantics while leaving existing typed entry points unchanged.
+///
+/// # Errors
+/// Source returns Unsupported without publishing partial files until G50 M2's source
+/// action/store emitter is released. It must not fall back to strict OperationPolicy handlers.
+pub fn emit_stores_with_semantics(
+    schema: &Schema,
+    output: &mut OutputPlan,
+    semantics: EmissionSemantics,
+) -> stackpress_idea_transformer::Result<()> {
+    match semantics {
+        EmissionSemantics::Typed => emit_stores(schema, output),
+        EmissionSemantics::Source => Err(stackpress_framework_schema::codegen::transform_error(
+            stackpress_framework_schema::SchemaError::new(
+                stackpress_framework_schema::SchemaErrorKind::Unsupported,
+                "source model store emission is not implemented in G50 M0",
+            ),
+        )),
+    }
+}
+
 #[cfg(test)]
 #[path = "codegen/tests.rs"]
 mod tests;

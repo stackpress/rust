@@ -40,6 +40,10 @@ pub mod projection;
 pub mod setup;
 pub mod stores;
 
+/// Native source-model/store/action contracts; strict generated stores remain independent.
+#[cfg(not(target_arch = "wasm32"))]
+pub mod source;
+
 /// Runtime contract revision checked by emitted code.
 pub const CONTRACT_REVISION: u32 = 1;
 /// Fallible domain/storage operation retaining original typed causes.

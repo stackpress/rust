@@ -6,6 +6,10 @@ package. The final native app imports generated runtime files; the browser impor
 contracts and UI. Neither needs the generator, parser, Idea Registry or these helpers.
 Pure schema/language contracts and reusable Leptos remain support libraries.
 
+G50 adds native-only [`source`](../src/source.rs) contracts without selecting a
+generator or concrete framework model. See the [source-model API reference](../../framework-sql/docs/api/source-models.md)
+for owned records, typed role access, executor ownership and the M0 emission limit.
+
 ## Registration reference
 
 Every helper has the same signature:

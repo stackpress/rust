@@ -1,5 +1,8 @@
 # Native API index
 
+See [native source-model contracts](source-models.md) for G50's additive native
+schema/store/action/family boundary and the explicit M0 source-emission limit.
+
 Use [explicit schema setup](setup.md) for G48's non-atomic MySQL setup and atomic
 PostgreSQL/SQLite selection; ordinary transactions and the SQLite migration runner stay unchanged.
 

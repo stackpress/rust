@@ -557,6 +557,37 @@ mod emit;
 mod names;
 pub use diagnostics::{DiagnosticLocation, DiagnosticMap};
 pub use emit::{emit_contracts, rust_type};
+
+/// Compiled generator semantics, independent of runtime request/config selection.
+///
+/// Existing emitters remain Typed. Source is explicit and refuses emission until the
+/// source schema/runtime implementation is released; it never silently emits strict DTOs.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub enum EmissionSemantics {
+    /// Existing validated typed contracts and their unchanged public policy.
+    #[default]
+    Typed,
+    /// Source-compatible native model contracts (G50 staged implementation).
+    Source,
+}
+
+/// Select contract semantics explicitly without changing existing emitter call sites.
+///
+/// # Errors
+/// Source currently returns Unsupported before touching OutputPlan. M0 proves its contract
+/// with a separate structural probe; full source preparation/emission belongs to M1/M2.
+pub fn emit_contracts_with_semantics(
+    schema: &Schema,
+    output: &mut stackpress_idea_transformer::OutputPlan,
+    semantics: EmissionSemantics,
+) -> stackpress_idea_transformer::Result<()> {
+    match semantics {
+        EmissionSemantics::Typed => emit_contracts(schema, output),
+        EmissionSemantics::Source => Err(transform_error(unsupported(
+            "source model contract emission is not implemented in G50 M0",
+        ))),
+    }
+}
 pub use names::portable_name;
 use names::{member_name, type_name};
 
