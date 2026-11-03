@@ -8,7 +8,10 @@ Pure schema/language contracts and reusable Leptos remain support libraries.
 
 G50 adds native-only [`source`](../src/source.rs) contracts without selecting a
 generator or concrete framework model. See the [source-model API reference](../../framework-sql/docs/api/source-models.md)
-for owned records, typed role access, executor ownership and the M0 emission limit.
+for owned records, typed role access, executor ownership and the staged emission limit.
+The opt-in `source` feature selects shared native values, Date/coercion/codecs and providers.
+See [native source normalization](source-models.md) for the complete shipped graph and
+explicit external references; existing Typed normalization and output remain unchanged.
 
 ## Registration reference
 

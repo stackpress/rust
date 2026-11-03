@@ -5,7 +5,7 @@ use crate::columns::Value;
 use stackpress_framework_schema::SchemaResult;
 
 /// Insertion-ordered source record; missing/null and observable JSON/CSV order are retained.
-pub type Record = stackpress_lib::DataMap<String, Value>;
+pub use stackpress_framework_schema::source::Record;
 
 /// Immutable model columns and source seed; defaults are generated per access.
 #[derive(Clone, Debug)]
@@ -154,7 +154,7 @@ impl RecordSchema {
 
 /// Native clock in milliseconds, without acquiring an external host service.
 pub(crate) fn now() -> i64 {
-    (time::OffsetDateTime::now_utc().unix_timestamp_nanos() / 1_000_000) as i64
+    stackpress_framework_schema::source::now()
 }
 
 /// One shared metadata definition prevents Auth/Profile equivalent columns from diverging.

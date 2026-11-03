@@ -8,6 +8,7 @@ publish.workspace = true
 
 [features]
 default = []
+source = ["providers", "dep:stackpress-lib", "time/std", "serde_json/preserve_order"]
 providers = ["dep:sha3", "dep:ring", "dep:aes", "dep:cbc", "dep:base64"]
 codegen = ["dep:stackpress-idea-parser", "dep:stackpress-idea-transformer", "dep:stackpress-lib", "dep:sha2"]
 

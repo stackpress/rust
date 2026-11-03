@@ -1,7 +1,7 @@
 //! Source Application and persisted API Session records (separate from browser JWTs).
 //!
 //! Missing fields, explicit null and native Date values remain distinct. The merged
-//! session package owns their common column codecs and the external Profile descriptor.
+//! schema package owns their common native values/codecs; session retains Profile metadata.
 #[cfg(feature = "sql")]
 mod actions;
 #[cfg(feature = "sql")]
@@ -16,7 +16,7 @@ mod store;
 pub use schema::{
     ApplicationModel, ApplicationSchema, ModelKind, Schema, SessionModel, SessionSchema,
 };
-pub use stackpress_framework_session::columns::{
+pub use stackpress_framework_schema::source::{
     Column, Kind, Record, Value, date, date_with_display,
 };
 /// Full or projected source Application, without converting missing keys to null.

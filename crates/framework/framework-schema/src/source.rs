@@ -1,12 +1,13 @@
 //! Native generated-schema boundary; source records are not converted through strict JSON DTOs.
 //!
-//! A generated family chooses its owned value/record types. This permits native Dates,
-//! missing/null and insertion order without a build-host dependency in the runtime graph.
+//! Low-level implementations associate owned value/record types; framework role families
+//! require the shared native Value/Record. Dates, missing/null and insertion order survive
+//! without a build-host dependency in the runtime graph.
 //! These contracts add no validation policy; implementations preserve source preparation,
 //! errors, defaults and storage codecs. No concrete framework models are supplied here.
 //!
-//! This module is native-only and needs no optional feature. A generated implementation
-//! supplies the record and the field witness together, rather than a second role DTO:
+//! Low-level traits are native-only. The `source` feature adds reusable mechanics and
+//! complete core-field bounds. Generated accessors use the actual record, not a second DTO:
 //!
 //! ```
 //! # #[cfg(not(target_arch = "wasm32"))] {
@@ -69,8 +70,344 @@ pub trait SourceField<Name>: SourceSchema {
     fn write(record: &mut Self::Record, value: Self::FieldValue);
 }
 
-/// Name marker for a model's string identity, shared by the session/API family contract.
-///
-/// Further role markers can be added without making records into fixed DTOs. The emitter
-/// must derive their implementations from composed declarations, not handwritten models.
+/// Exact source field name `id`; generated declarations supply its type.
 pub enum Id {}
+/// Exact source field name `image`; generated declarations supply its type.
+pub enum Image {}
+/// Exact source field name `name`; generated declarations supply its type.
+pub enum Name {}
+/// Exact source field name `type`; generated declarations supply its type.
+pub enum Type {}
+/// Exact source field name `roles`; generated declarations supply its type.
+pub enum Roles {}
+/// Exact source field name `tags`; generated declarations supply its type.
+pub enum Tags {}
+/// Exact source field name `references`; generated declarations supply its type.
+pub enum References {}
+/// Exact source field name `active`; generated declarations supply its type.
+pub enum Active {}
+/// Exact source field name `created`; generated declarations supply its type.
+pub enum Created {}
+/// Exact source field name `updated`; generated declarations supply its type.
+pub enum Updated {}
+/// Exact source field name `auth`; generated declarations supply its type.
+pub enum Auth {}
+/// Exact source field name `applications`; generated declarations supply its type.
+pub enum Applications {}
+/// Exact source field name `sessions`; generated declarations supply its type.
+pub enum Sessions {}
+/// Exact source field name `profileId`; generated declarations supply its type.
+pub enum ProfileId {}
+/// Exact source field name `token`; generated declarations supply its type.
+pub enum Token {}
+/// Exact source field name `secret`; generated declarations supply its type.
+pub enum Secret {}
+/// Exact source field name `verified`; generated declarations supply its type.
+pub enum Verified {}
+/// Exact source field name `consumed`; generated declarations supply its type.
+pub enum Consumed {}
+/// Exact source field name `profile`; generated declarations supply its type.
+pub enum Profile {}
+/// Exact source field name `logo`; generated declarations supply its type.
+pub enum Logo {}
+/// Exact source field name `website`; generated declarations supply its type.
+pub enum Website {}
+/// Exact source field name `scopes`; generated declarations supply its type.
+pub enum Scopes {}
+/// Exact source field name `expires`; generated declarations supply its type.
+pub enum Expires {}
+/// Exact source field name `session`; generated declarations supply its type.
+pub enum Session {}
+/// Exact source field name `applicationId`; generated declarations supply its type.
+pub enum ApplicationId {}
+/// Exact source field name `application`; generated declarations supply its type.
+pub enum Application {}
+#[cfg(feature = "source")]
+mod codecs;
+#[cfg(feature = "source")]
+mod columns;
+#[cfg(feature = "source")]
+mod dates;
+#[cfg(feature = "source")]
+mod value;
+#[cfg(feature = "source")]
+pub use codecs::{SourceCodecs, date_string};
+#[cfg(feature = "source")]
+pub use columns::{Column, Kind, as_date, date, date_with_display, string, to_json, truthy};
+#[cfg(feature = "source")]
+pub use dates::{date_millis, date_text, iso};
+#[cfg(feature = "source")]
+pub use value::Value;
+/// Insertion-ordered native source fields; absence and explicit null are distinct.
+#[cfg(feature = "source")]
+pub type Record = stackpress_lib::DataMap<String, Value>;
+/// Source Date.toString range failure; legacy session wrappers retain their error type.
+#[cfg(feature = "source")]
+#[derive(Debug)]
+pub struct DateError(pub &'static str);
+#[cfg(feature = "source")]
+impl std::fmt::Display for DateError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.0)
+    }
+}
+#[cfg(feature = "source")]
+impl std::error::Error for DateError {}
+/// Native source clock, without a process-global provider or timezone.
+#[cfg(feature = "source")]
+pub fn now() -> i64 {
+    (time::OffsetDateTime::now_utc().unix_timestamp_nanos() / 1_000_000) as i64
+}
+
+#[cfg(feature = "source")]
+mod fields;
+#[cfg(feature = "source")]
+pub use fields::{Date, NativeField};
+#[cfg(feature = "source")]
+mod declarations;
+#[cfg(feature = "source")]
+pub use declarations::*;
+#[cfg(feature = "source")]
+mod providers;
+#[cfg(feature = "source")]
+pub use providers::default_value;
+
+/// Generated Profile core contract, including stored fields and source relation reads.
+#[cfg(feature = "source")]
+pub trait ProfileFields:
+    SourceSchema<Value = Value, Record = Record>
+    + SourceField<Id, FieldValue = String>
+    + SourceDeclaration<Id, Declaration = StringType>
+    + SourceField<Image, FieldValue = Option<String>>
+    + SourceDeclaration<Image, Declaration = Nullable<StringType>>
+    + SourceField<Name, FieldValue = String>
+    + SourceDeclaration<Name, Declaration = StringType>
+    + SourceField<Type, FieldValue = String>
+    + SourceDeclaration<Type, Declaration = StringType>
+    + SourceField<Roles, FieldValue = Vec<String>>
+    + SourceDeclaration<Roles, Declaration = List<StringType>>
+    + SourceField<Tags, FieldValue = Vec<String>>
+    + SourceDeclaration<Tags, Declaration = List<StringType>>
+    + SourceField<References, FieldValue = Option<Record>>
+    + SourceDeclaration<References, Declaration = Nullable<ObjectType>>
+    + SourceField<Active, FieldValue = bool>
+    + SourceDeclaration<Active, Declaration = BooleanType>
+    + SourceField<Created, FieldValue = Date>
+    + SourceDeclaration<Created, Declaration = DatetimeType>
+    + SourceField<Updated, FieldValue = Date>
+    + SourceDeclaration<Updated, Declaration = DatetimeType>
+    + SourceField<Auth, FieldValue = Vec<Record>>
+    + SourceDeclaration<Auth, Declaration = List<AuthType>>
+    + SourceField<Applications, FieldValue = Vec<Record>>
+    + SourceDeclaration<Applications, Declaration = List<ApplicationType>>
+    + SourceField<Sessions, FieldValue = Vec<Record>>
+    + SourceDeclaration<Sessions, Declaration = List<SessionType>>
+{
+}
+#[cfg(feature = "source")]
+impl<S> ProfileFields for S where
+    S: SourceSchema<Value = Value, Record = Record>
+        + SourceField<Id, FieldValue = String>
+        + SourceDeclaration<Id, Declaration = StringType>
+        + SourceField<Image, FieldValue = Option<String>>
+        + SourceDeclaration<Image, Declaration = Nullable<StringType>>
+        + SourceField<Name, FieldValue = String>
+        + SourceDeclaration<Name, Declaration = StringType>
+        + SourceField<Type, FieldValue = String>
+        + SourceDeclaration<Type, Declaration = StringType>
+        + SourceField<Roles, FieldValue = Vec<String>>
+        + SourceDeclaration<Roles, Declaration = List<StringType>>
+        + SourceField<Tags, FieldValue = Vec<String>>
+        + SourceDeclaration<Tags, Declaration = List<StringType>>
+        + SourceField<References, FieldValue = Option<Record>>
+        + SourceDeclaration<References, Declaration = Nullable<ObjectType>>
+        + SourceField<Active, FieldValue = bool>
+        + SourceDeclaration<Active, Declaration = BooleanType>
+        + SourceField<Created, FieldValue = Date>
+        + SourceDeclaration<Created, Declaration = DatetimeType>
+        + SourceField<Updated, FieldValue = Date>
+        + SourceDeclaration<Updated, Declaration = DatetimeType>
+        + SourceField<Auth, FieldValue = Vec<Record>>
+        + SourceDeclaration<Auth, Declaration = List<AuthType>>
+        + SourceField<Applications, FieldValue = Vec<Record>>
+        + SourceDeclaration<Applications, Declaration = List<ApplicationType>>
+        + SourceField<Sessions, FieldValue = Vec<Record>>
+        + SourceDeclaration<Sessions, Declaration = List<SessionType>>
+{
+}
+
+/// Generated Auth core contract, including stored fields and source relation reads.
+#[cfg(feature = "source")]
+pub trait AuthFields:
+    SourceSchema<Value = Value, Record = Record>
+    + SourceField<Id, FieldValue = String>
+    + SourceDeclaration<Id, Declaration = StringType>
+    + SourceField<ProfileId, FieldValue = String>
+    + SourceDeclaration<ProfileId, Declaration = StringType>
+    + SourceField<Type, FieldValue = String>
+    + SourceDeclaration<Type, Declaration = StringType>
+    + SourceField<Token, FieldValue = String>
+    + SourceDeclaration<Token, Declaration = StringType>
+    + SourceField<Secret, FieldValue = String>
+    + SourceDeclaration<Secret, Declaration = StringType>
+    + SourceField<Verified, FieldValue = bool>
+    + SourceDeclaration<Verified, Declaration = BooleanType>
+    + SourceField<Consumed, FieldValue = Date>
+    + SourceDeclaration<Consumed, Declaration = DatetimeType>
+    + SourceField<Active, FieldValue = bool>
+    + SourceDeclaration<Active, Declaration = BooleanType>
+    + SourceField<Created, FieldValue = Date>
+    + SourceDeclaration<Created, Declaration = DatetimeType>
+    + SourceField<Updated, FieldValue = Date>
+    + SourceDeclaration<Updated, Declaration = DatetimeType>
+    + SourceField<Profile, FieldValue = Record>
+    + SourceDeclaration<Profile, Declaration = ProfileType>
+{
+}
+#[cfg(feature = "source")]
+impl<S> AuthFields for S where
+    S: SourceSchema<Value = Value, Record = Record>
+        + SourceField<Id, FieldValue = String>
+        + SourceDeclaration<Id, Declaration = StringType>
+        + SourceField<ProfileId, FieldValue = String>
+        + SourceDeclaration<ProfileId, Declaration = StringType>
+        + SourceField<Type, FieldValue = String>
+        + SourceDeclaration<Type, Declaration = StringType>
+        + SourceField<Token, FieldValue = String>
+        + SourceDeclaration<Token, Declaration = StringType>
+        + SourceField<Secret, FieldValue = String>
+        + SourceDeclaration<Secret, Declaration = StringType>
+        + SourceField<Verified, FieldValue = bool>
+        + SourceDeclaration<Verified, Declaration = BooleanType>
+        + SourceField<Consumed, FieldValue = Date>
+        + SourceDeclaration<Consumed, Declaration = DatetimeType>
+        + SourceField<Active, FieldValue = bool>
+        + SourceDeclaration<Active, Declaration = BooleanType>
+        + SourceField<Created, FieldValue = Date>
+        + SourceDeclaration<Created, Declaration = DatetimeType>
+        + SourceField<Updated, FieldValue = Date>
+        + SourceDeclaration<Updated, Declaration = DatetimeType>
+        + SourceField<Profile, FieldValue = Record>
+        + SourceDeclaration<Profile, Declaration = ProfileType>
+{
+}
+
+/// Generated Application core contract, including stored fields and source relation reads.
+#[cfg(feature = "source")]
+pub trait ApplicationFields:
+    SourceSchema<Value = Value, Record = Record>
+    + SourceField<Id, FieldValue = String>
+    + SourceDeclaration<Id, Declaration = StringType>
+    + SourceField<ProfileId, FieldValue = String>
+    + SourceDeclaration<ProfileId, Declaration = StringType>
+    + SourceField<Name, FieldValue = String>
+    + SourceDeclaration<Name, Declaration = StringType>
+    + SourceField<Logo, FieldValue = Option<String>>
+    + SourceDeclaration<Logo, Declaration = Nullable<StringType>>
+    + SourceField<Website, FieldValue = Option<String>>
+    + SourceDeclaration<Website, Declaration = Nullable<StringType>>
+    + SourceField<Secret, FieldValue = String>
+    + SourceDeclaration<Secret, Declaration = StringType>
+    + SourceField<Scopes, FieldValue = Vec<String>>
+    + SourceDeclaration<Scopes, Declaration = List<StringType>>
+    + SourceField<Active, FieldValue = bool>
+    + SourceDeclaration<Active, Declaration = BooleanType>
+    + SourceField<Expires, FieldValue = Date>
+    + SourceDeclaration<Expires, Declaration = DatetimeType>
+    + SourceField<Created, FieldValue = Date>
+    + SourceDeclaration<Created, Declaration = DatetimeType>
+    + SourceField<Updated, FieldValue = Date>
+    + SourceDeclaration<Updated, Declaration = DatetimeType>
+    + SourceField<Session, FieldValue = Vec<Record>>
+    + SourceDeclaration<Session, Declaration = List<SessionType>>
+    + SourceField<Profile, FieldValue = Record>
+    + SourceDeclaration<Profile, Declaration = ProfileType>
+{
+}
+#[cfg(feature = "source")]
+impl<S> ApplicationFields for S where
+    S: SourceSchema<Value = Value, Record = Record>
+        + SourceField<Id, FieldValue = String>
+        + SourceDeclaration<Id, Declaration = StringType>
+        + SourceField<ProfileId, FieldValue = String>
+        + SourceDeclaration<ProfileId, Declaration = StringType>
+        + SourceField<Name, FieldValue = String>
+        + SourceDeclaration<Name, Declaration = StringType>
+        + SourceField<Logo, FieldValue = Option<String>>
+        + SourceDeclaration<Logo, Declaration = Nullable<StringType>>
+        + SourceField<Website, FieldValue = Option<String>>
+        + SourceDeclaration<Website, Declaration = Nullable<StringType>>
+        + SourceField<Secret, FieldValue = String>
+        + SourceDeclaration<Secret, Declaration = StringType>
+        + SourceField<Scopes, FieldValue = Vec<String>>
+        + SourceDeclaration<Scopes, Declaration = List<StringType>>
+        + SourceField<Active, FieldValue = bool>
+        + SourceDeclaration<Active, Declaration = BooleanType>
+        + SourceField<Expires, FieldValue = Date>
+        + SourceDeclaration<Expires, Declaration = DatetimeType>
+        + SourceField<Created, FieldValue = Date>
+        + SourceDeclaration<Created, Declaration = DatetimeType>
+        + SourceField<Updated, FieldValue = Date>
+        + SourceDeclaration<Updated, Declaration = DatetimeType>
+        + SourceField<Session, FieldValue = Vec<Record>>
+        + SourceDeclaration<Session, Declaration = List<SessionType>>
+        + SourceField<Profile, FieldValue = Record>
+        + SourceDeclaration<Profile, Declaration = ProfileType>
+{
+}
+
+/// Generated Session core contract, including stored fields and source relation reads.
+#[cfg(feature = "source")]
+pub trait SessionFields:
+    SourceSchema<Value = Value, Record = Record>
+    + SourceField<Id, FieldValue = String>
+    + SourceDeclaration<Id, Declaration = StringType>
+    + SourceField<ApplicationId, FieldValue = String>
+    + SourceDeclaration<ApplicationId, Declaration = StringType>
+    + SourceField<ProfileId, FieldValue = String>
+    + SourceDeclaration<ProfileId, Declaration = StringType>
+    + SourceField<Secret, FieldValue = String>
+    + SourceDeclaration<Secret, Declaration = StringType>
+    + SourceField<Scopes, FieldValue = Vec<String>>
+    + SourceDeclaration<Scopes, Declaration = List<StringType>>
+    + SourceField<Active, FieldValue = bool>
+    + SourceDeclaration<Active, Declaration = BooleanType>
+    + SourceField<Expires, FieldValue = Date>
+    + SourceDeclaration<Expires, Declaration = DatetimeType>
+    + SourceField<Created, FieldValue = Date>
+    + SourceDeclaration<Created, Declaration = DatetimeType>
+    + SourceField<Updated, FieldValue = Date>
+    + SourceDeclaration<Updated, Declaration = DatetimeType>
+    + SourceField<Application, FieldValue = Record>
+    + SourceDeclaration<Application, Declaration = ApplicationType>
+    + SourceField<Profile, FieldValue = Record>
+    + SourceDeclaration<Profile, Declaration = ProfileType>
+{
+}
+#[cfg(feature = "source")]
+impl<S> SessionFields for S where
+    S: SourceSchema<Value = Value, Record = Record>
+        + SourceField<Id, FieldValue = String>
+        + SourceDeclaration<Id, Declaration = StringType>
+        + SourceField<ApplicationId, FieldValue = String>
+        + SourceDeclaration<ApplicationId, Declaration = StringType>
+        + SourceField<ProfileId, FieldValue = String>
+        + SourceDeclaration<ProfileId, Declaration = StringType>
+        + SourceField<Secret, FieldValue = String>
+        + SourceDeclaration<Secret, Declaration = StringType>
+        + SourceField<Scopes, FieldValue = Vec<String>>
+        + SourceDeclaration<Scopes, Declaration = List<StringType>>
+        + SourceField<Active, FieldValue = bool>
+        + SourceDeclaration<Active, Declaration = BooleanType>
+        + SourceField<Expires, FieldValue = Date>
+        + SourceDeclaration<Expires, Declaration = DatetimeType>
+        + SourceField<Created, FieldValue = Date>
+        + SourceDeclaration<Created, Declaration = DatetimeType>
+        + SourceField<Updated, FieldValue = Date>
+        + SourceDeclaration<Updated, Declaration = DatetimeType>
+        + SourceField<Application, FieldValue = Record>
+        + SourceDeclaration<Application, Declaration = ApplicationType>
+        + SourceField<Profile, FieldValue = Record>
+        + SourceDeclaration<Profile, Declaration = ProfileType>
+{
+}

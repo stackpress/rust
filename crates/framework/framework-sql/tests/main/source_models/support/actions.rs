@@ -3,8 +3,8 @@
 use super::{Query, Record, Value, decode, get, put};
 use stackpress_framework_schema::source::SourceSchema;
 use stackpress_framework_sql::{
-    DataError, DataSession,
-    source::{BatchMode, SourceActions, SourceStore},
+    DataSession,
+    source::{ActionError, BatchMode, SourceActions, SourceStore},
 };
 use stackpress_sql::{Create, Delete, Engine};
 use std::sync::Arc;
@@ -18,12 +18,12 @@ impl<T> SourceActions for Actions<T>
 where
     T: SourceStore<
             Query = Query,
-            Error = DataError,
+            Error = ActionError,
             Schema: SourceSchema<Value = Value, Record = Record>,
         >,
 {
     type Store = T;
-    type BatchStatus = Result<Record, DataError>;
+    type BatchStatus = Result<Record, ActionError>;
     fn new(engine: Arc<Engine>, store: T) -> Self {
         Self { engine, store }
     }
@@ -37,7 +37,7 @@ where
         &'a self,
         db: &'a mut DataSession<'db>,
         input: &'a Record,
-    ) -> Result<Record, DataError> {
+    ) -> Result<Record, ActionError> {
         db.execute(&self.store.insert(input, db.dialect())?).await?;
         Ok(input.clone())
     }
@@ -45,14 +45,14 @@ where
         &'a self,
         db: &'a mut DataSession<'db>,
         query: &'a Query,
-    ) -> Result<Option<Record>, DataError> {
+    ) -> Result<Option<Record>, ActionError> {
         Ok(self.find_all_in(db, query).await?.into_iter().next())
     }
     async fn find_all_in<'a, 'db: 'a>(
         &'a self,
         db: &'a mut DataSession<'db>,
         query: &'a Query,
-    ) -> Result<Vec<Record>, DataError> {
+    ) -> Result<Vec<Record>, ActionError> {
         Ok(db
             .fetch(&self.store.select(query, db.dialect())?)
             .await?
@@ -64,7 +64,7 @@ where
         &'a self,
         db: &'a mut DataSession<'db>,
         query: &'a Query,
-    ) -> Result<u64, DataError> {
+    ) -> Result<u64, ActionError> {
         Ok(self.find_all_in(db, query).await?.len() as u64)
     }
     async fn update_in<'a, 'db: 'a>(
@@ -72,7 +72,7 @@ where
         db: &'a mut DataSession<'db>,
         query: &'a Query,
         input: &'a mut Record,
-    ) -> Result<Vec<Record>, DataError> {
+    ) -> Result<Vec<Record>, ActionError> {
         let mut rows = self.find_all_in(db, query).await?;
         for row in &mut rows {
             for (name, value) in input.iter() {
@@ -91,7 +91,7 @@ where
         &'a self,
         db: &'a mut DataSession<'db>,
         query: &'a Query,
-    ) -> Result<Vec<Record>, DataError> {
+    ) -> Result<Vec<Record>, ActionError> {
         let rows = self.find_all_in(db, query).await?;
         db.execute(&self.store.delete(query, db.dialect())?).await?;
         Ok(rows)
@@ -100,8 +100,8 @@ where
         &'a self,
         db: &'a mut DataSession<'db>,
         input: &'a mut Record,
-    ) -> Result<Option<Record>, DataError> {
-        if let Some(Value::Text(id)) = get(input, "id") {
+    ) -> Result<Option<Record>, ActionError> {
+        if let Some(Value::String(id)) = get(input, "id") {
             let query = Query(Some(id.clone()));
             if self.find_in(db, &query).await?.is_none() {
                 return Ok(None);
@@ -115,17 +115,25 @@ where
         &'a self,
         db: &'a mut DataSession<'db>,
         query: &'a Query,
-    ) -> Result<Vec<Record>, DataError> {
-        self.update_in(db, query, &mut vec![("active".into(), Value::Bool(false))])
-            .await
+    ) -> Result<Vec<Record>, ActionError> {
+        self.update_in(
+            db,
+            query,
+            &mut Record::from_iter([("active".into(), Value::Bool(false))]),
+        )
+        .await
     }
     async fn restore_in<'a, 'db: 'a>(
         &'a self,
         db: &'a mut DataSession<'db>,
         query: &'a Query,
-    ) -> Result<Vec<Record>, DataError> {
-        self.update_in(db, query, &mut vec![("active".into(), Value::Bool(true))])
-            .await
+    ) -> Result<Vec<Record>, ActionError> {
+        self.update_in(
+            db,
+            query,
+            &mut Record::from_iter([("active".into(), Value::Bool(true))]),
+        )
+        .await
     }
     async fn batch(&self, inputs: &mut [Record], mode: BatchMode) -> Vec<Self::BatchStatus> {
         let Ok(mut transaction) = self.engine.begin().await else {
@@ -153,24 +161,24 @@ where
         }
         results
     }
-    async fn install(&self) -> Result<(), DataError> {
+    async fn install(&self) -> Result<(), ActionError> {
         let plan = self.store.create().render(self.engine.dialect())?;
         stackpress_framework_sql::setup::execute_plan(&self.engine, &plan).await?;
         Ok(())
     }
-    async fn upgrade(&self, to: Option<&Create>) -> Result<(), DataError> {
+    async fn upgrade(&self, to: Option<&Create>) -> Result<(), ActionError> {
         // Only empty adjacent alters are in the M0 mechanics corpus; source migration work is M2.
         let alter = self.store.alter(to)?;
         let _ = alter;
         Ok(())
     }
-    async fn purge(&self, _cascade: bool) -> Result<(), DataError> {
+    async fn purge(&self, _cascade: bool) -> Result<(), ActionError> {
         self.engine
             .execute(&Delete::new(T::Schema::describe().module).all_rows())
             .await?;
         Ok(())
     }
-    async fn uninstall(&self) -> Result<(), DataError> {
+    async fn uninstall(&self) -> Result<(), ActionError> {
         self.engine
             .execute(&self.engine.drop_table(T::Schema::describe().module))
             .await?;

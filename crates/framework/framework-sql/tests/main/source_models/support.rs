@@ -13,32 +13,14 @@ pub use actions::Actions;
 mod store;
 pub use store::{Query, Store};
 
-/// A real native Date is distinct from the same textual epoch; no reserved JSON member.
-#[derive(Clone, Debug, PartialEq)]
-pub enum Value {
-    Text(String),
-    Integer(i64),
-    Bool(bool),
-    Date(i64),
-    Null,
-}
-/// Insertion-ordered owned records let lifetime tests retain extension columns and Dates.
-pub type Record = Vec<(String, Value)>;
-
-/// Read one literal member, without discarding unknown columns or guessing Date strings.
+pub use stackpress_framework_schema::source::{Record, Value};
+/// Borrow one member without conflating absence and explicit null.
 pub fn get<'a>(record: &'a Record, name: &str) -> Option<&'a Value> {
-    record
-        .iter()
-        .find(|(key, _)| key == name)
-        .map(|(_, value)| value)
+    record.get(name)
 }
-/// Updating a member preserves its existing position; new fields append.
+/// Insertion-ordered replacement keeps existing field positions.
 pub fn put(record: &mut Record, name: &str, value: Value) {
-    if let Some((_, current)) = record.iter_mut().find(|(key, _)| key == name) {
-        *current = value;
-    } else {
-        record.push((name.into(), value));
-    }
+    record.insert(name.into(), value);
 }
 
 /// Primitive witnesses used by the generated ID accessor, including the wrong-type control.
@@ -50,33 +32,31 @@ pub trait IdValue: Clone + Send + Sync + 'static {
 }
 impl IdValue for String {
     fn read(value: &Value) -> Option<Self> {
-        if let Value::Text(value) = value {
+        if let Value::String(value) = value {
             Some(value.clone())
         } else {
             None
         }
     }
     fn value(self) -> Value {
-        Value::Text(self)
+        Value::String(self)
     }
 }
 impl IdValue for i64 {
     fn read(value: &Value) -> Option<Self> {
-        if let Value::Integer(value) = value {
-            Some(*value)
+        if let Value::Number(value) = value {
+            value.as_i64()
         } else {
             None
         }
     }
     fn value(self) -> Value {
-        Value::Integer(self)
+        Value::from(self)
     }
 }
 
 /// Structural emitter supplies all metadata and the declared ID type, never a fixed Profile list.
 pub trait Spec: Send + Sync + 'static {
-    /// Actual declared ID primitive, so family mismatches are compiler-visible.
-    type Id: IdValue;
     /// Complete normalized metadata for this small probe's supported declarations.
     fn describe() -> Metadata;
 }
@@ -84,7 +64,6 @@ pub trait Spec: Send + Sync + 'static {
 /// Compile-only fixture has no runtime table; emitted specs are used for actual IO proofs.
 pub struct CompileSpec<T>(PhantomData<T>);
 impl<T: IdValue> Spec for CompileSpec<T> {
-    type Id = T;
     fn describe() -> Metadata {
         Metadata {
             name: "CompileOnly".into(),
@@ -130,13 +109,16 @@ impl<S: Spec> SourceSchema for Schema<S> {
             .iter()
             .filter_map(|field| {
                 if field.timestamp {
-                    Some((field.name.clone(), Value::Date(now)))
+                    Some((
+                        field.name.clone(),
+                        stackpress_framework_schema::source::date(now),
+                    ))
                 } else {
                     field.default.as_ref().map(|value| {
                         (
                             field.name.clone(),
                             match value {
-                                serde_json::Value::String(value) => Value::Text(value.clone()),
+                                serde_json::Value::String(value) => Value::String(value.clone()),
                                 serde_json::Value::Bool(value) => Value::Bool(*value),
                                 _ => Value::Null,
                             },
@@ -153,8 +135,8 @@ impl<S: Spec> SourceSchema for Schema<S> {
         let fields = S::describe().fields;
         let filtered = input
             .iter()
-            .filter(|(name, _)| fields.iter().any(|f| f.name == *name))
-            .cloned()
+            .filter(|(name, _)| fields.iter().any(|f| f.name == **name))
+            .map(|(name, value)| (name.clone(), value.clone()))
             .collect();
         if populate {
             self.populate(&filtered)
@@ -175,7 +157,7 @@ impl<S: Spec> SourceSchema for Schema<S> {
             .iter()
             .filter(|f| f.required && (required || get(input, &f.name).is_some()))
             .filter(|f| get(input, &f.name).is_none_or(|value| *value == Value::Null))
-            .map(|f| (f.name.clone(), Value::Text("required probe field".into())))
+            .map(|f| (f.name.clone(), Value::String("required probe field".into())))
             .collect();
         (!errors.is_empty()).then_some(errors)
     }
@@ -186,13 +168,15 @@ impl<S: Spec> SourceSchema for Schema<S> {
         self.filter(input, false)
     }
 }
-impl<S: Spec> SourceField<Id> for Schema<S> {
-    type FieldValue = S::Id;
-    fn read(record: &Record) -> Option<S::Id> {
-        S::Id::read(get(record, "id")?)
+// CompileSpec is used only by the lifetime/Send controls. Composed model accessors are
+// structurally emitted from their actual fields, rather than inherited from this fixture.
+impl<T: IdValue> SourceField<Id> for Schema<CompileSpec<T>> {
+    type FieldValue = T;
+    fn read(record: &Record) -> Option<T> {
+        T::read(record.get("id")?)
     }
-    fn write(record: &mut Record, value: S::Id) {
-        put(record, "id", value.value());
+    fn write(record: &mut Record, value: T) {
+        record.insert("id".into(), value.value());
     }
 }
 
@@ -216,18 +200,18 @@ pub fn decode(row: stackpress_sql::Row, model: &Metadata) -> Record {
                 .find(|field| field.column == *column)
                 .unwrap();
             let value = match value {
-                stackpress_sql::SqlValue::Text(value) => Value::Text(value.clone()),
+                stackpress_sql::SqlValue::Text(value) => Value::String(value.clone()),
                 stackpress_sql::SqlValue::Integer(value)
                     if field.value_type == ValueType::Datetime =>
                 {
-                    Value::Date(*value)
+                    stackpress_framework_schema::source::date(*value)
                 }
                 stackpress_sql::SqlValue::Integer(value)
                     if field.value_type == ValueType::Boolean =>
                 {
                     Value::Bool(*value != 0)
                 }
-                stackpress_sql::SqlValue::Integer(value) => Value::Integer(*value),
+                stackpress_sql::SqlValue::Integer(value) => Value::from(*value),
                 stackpress_sql::SqlValue::Bool(value) => Value::Bool(*value),
                 _ => Value::Null,
             };

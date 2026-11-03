@@ -384,7 +384,7 @@
     "statement": "insertion-ordered `stackpress_lib::DataMap`",
     "evidence": [
       {
-        "path": "crates/framework/framework-session/src/columns/schema.rs",
+        "path": "crates/framework/framework-schema/src/source.rs",
         "contains": [
           "pub type Record = stackpress_lib::DataMap<String, Value>;"
         ]
@@ -802,6 +802,16 @@
           "direct_session_import_and_immutable_redeclaration_follow_g19"
         ]
       }
+    ]
+  },
+  {
+    "id": "g50-shared-native-source-mechanics",
+    "page": "crates/framework/framework-session/docs/api/storage.md",
+    "statement": "The native mechanics now live in",
+    "evidence": [
+      {"path": "crates/framework/framework-session/src/columns/mod.rs", "contains": ["pub use stackpress_framework_schema::source::"]},
+      {"path": "crates/framework/framework-session/src/storage/mod.rs", "contains": ["SourceResult as Result"]},
+      {"path": "crates/framework/framework-schema/tests/source_graph.rs", "contains": ["shared_native_record_retains_dates_null_absence_and_nested_order"]}
     ]
   }
 ]

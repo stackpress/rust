@@ -1,0 +1,41 @@
+error[E0271]: type mismatch resolving `<Schema<ApplicationSpec> as SourceDeclaration<Expires>>::Declaration == DatetimeType`
+ --> tests/source-ui/native/application_expires.rs
+  |
+  | impl ApiModels for Family { type Application=Application; type Session=Session; }
+  |                                              ^^^^^^^^^^^ type mismatch resolving `<Schema<ApplicationSpec> as SourceDeclaration<Expires>>::Declaration == DatetimeType`
+  |
+note: expected this to be `DatetimeType`
+ --> tests/source-ui/native/application_expires.rs
+  |
+  | ... ApplicationSchema { type Declaration = stackpress_framework_schema::source::StringType; }
+  |                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  = note: required for `<<Family as stackpress_framework_sql::source::ApiModels>::Application as SourceModel>::Schema` to implement `ApplicationFields`
+note: required by a bound in `stackpress_framework_sql::source::ApiModels::Application`
+ --> src/source/mod.rs
+  |
+  |     type Application: SourceModel<
+  |          ----------- required by a bound in this associated type
+  |             Role = ApplicationRole,
+  |             Schema: ApplicationFields,
+  |                     ^^^^^^^^^^^^^^^^^ required by this bound in `ApiModels::Application`
+
+error[E0271]: type mismatch resolving `<Schema<ApplicationSpec> as SourceField<Expires>>::FieldValue == Date`
+ --> tests/source-ui/native/application_expires.rs
+  |
+  | impl ApiModels for Family { type Application=Application; type Session=Session; }
+  |                                              ^^^^^^^^^^^ type mismatch resolving `<Schema<ApplicationSpec> as SourceField<Expires>>::FieldValue == Date`
+  |
+note: expected this to be `stackpress_framework_schema::source::Date`
+ --> tests/source-ui/native/application_expires.rs
+  |
+  |     type FieldValue = String;
+  |                       ^^^^^^
+  = note: required for `<<Family as stackpress_framework_sql::source::ApiModels>::Application as SourceModel>::Schema` to implement `ApplicationFields`
+note: required by a bound in `stackpress_framework_sql::source::ApiModels::Application`
+ --> src/source/mod.rs
+  |
+  |     type Application: SourceModel<
+  |          ----------- required by a bound in this associated type
+  |             Role = ApplicationRole,
+  |             Schema: ApplicationFields,
+  |                     ^^^^^^^^^^^^^^^^^ required by this bound in `ApiModels::Application`

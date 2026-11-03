@@ -176,25 +176,7 @@ impl<M: ModelKind> Store<M> {
 
     /// Source toSqlValue conversion after column encoding, with nullable image/references.
     pub fn to_sql_value(&self, name: &str, value: &Value) -> Result<SqlValue> {
-        let Some(column) = self.column(name) else {
-            return Ok(if value.is_null() {
-                SqlValue::Null
-            } else {
-                SqlValue::Text(columns::string(value))
-            });
-        };
-        if column.nullable && value.is_null() {
-            return Ok(SqlValue::Null);
-        }
-        Ok(match column.kind {
-            Kind::Boolean => SqlValue::Bool(columns::truthy(value)),
-            Kind::Date => SqlValue::Text(columns::iso(columns::date_millis(value, self.offset))?),
-            _ => SqlValue::Text(if value.is_null() {
-                String::new()
-            } else {
-                columns::string(value)
-            }),
-        })
+        stackpress_framework_sql::source::to_sql_value(self.column(name), value, self.offset)
     }
 
     /// Adapt RETURNING to the renderer's native capability; source MySQL ignores this request.

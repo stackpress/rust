@@ -29,7 +29,6 @@ mod watchdog;
 /// Metadata is derived from a real composed app extension, without a handwritten field catalog.
 struct ProfileSpec;
 impl support::Spec for ProfileSpec {
-    type Id = String;
     fn describe() -> Model {
         schema(true)
             .models()
@@ -40,6 +39,15 @@ impl support::Spec for ProfileSpec {
     }
 }
 type Profile = support::Model<ProfileSpec, ProfileRole>;
+impl SourceField<Id> for support::Schema<ProfileSpec> {
+    type FieldValue = String;
+    fn read(record: &Record) -> Option<String> {
+        record.get("id")?.as_str().map(str::to_owned)
+    }
+    fn write(record: &mut Record, value: String) {
+        record.insert("id".into(), value.into());
+    }
+}
 
 /// Exactly the first armed operation pauses before native submission; other calls can reenter.
 #[derive(Default)]
@@ -106,13 +114,16 @@ impl TransactionSession for PausedTx {
 
 /// Native Date and input insertion order survive ownership; neither is flattened to JSON text.
 fn input(id: &str) -> Record {
-    vec![
-        ("id".into(), Value::Text(id.into())),
-        ("nickname".into(), Value::Text("app column".into())),
-        ("name".into(), Value::Text("Ada".into())),
-        ("created".into(), Value::Date(42)),
+    Record::from_iter([
+        ("id".into(), Value::String(id.into())),
+        ("nickname".into(), Value::String("app column".into())),
+        ("name".into(), Value::String("Ada".into())),
+        (
+            "created".into(),
+            stackpress_framework_schema::source::date(42),
+        ),
         ("active".into(), Value::Bool(true)),
-    ]
+    ])
 }
 
 /// All potentially blocking mechanics run under the external process owner, including its control.
@@ -173,12 +184,12 @@ async fn exercise() {
             .defaults_at(77)
             .unwrap()
             .iter()
-            .find(|(n, _)| n == "created")
+            .find(|(n, _)| *n == "created")
             .unwrap()
             .1,
-        Value::Date(77)
+        &stackpress_framework_schema::source::date(77)
     );
-    assert!(description.assert(&Vec::new(), true).is_some());
+    assert!(description.assert(&Record::new(), true).is_some());
     assert!(description.assert(&input("one"), true).is_none());
     assert_eq!(
         description.serialize(&input("one"), false).unwrap(),
@@ -195,8 +206,11 @@ async fn exercise() {
         Some("key".into())
     );
     assert!(
-        <support::Schema<ProfileSpec> as SourceField<Id>>::read(&vec![("id".into(), Value::Null)])
-            .is_none()
+        <support::Schema<ProfileSpec> as SourceField<Id>>::read(&Record::from_iter([(
+            "id".into(),
+            Value::Null
+        )]))
+        .is_none()
     );
     actions.install().await.unwrap();
     let row = support::send(actions.create(&input("one"))).await.unwrap();
@@ -206,18 +220,21 @@ async fn exercise() {
     let read = support::send(actions.find(&query)).await.unwrap().unwrap();
     assert_eq!(
         support::get(&read, "nickname"),
-        Some(&Value::Text("app column".into()))
+        Some(&Value::String("app column".into()))
     );
-    assert_eq!(support::get(&read, "created"), Some(&Value::Date(42)));
+    assert_eq!(
+        support::get(&read, "created"),
+        Some(&stackpress_framework_schema::source::date(42))
+    );
     assert_eq!(support::send(actions.count(&query)).await.unwrap(), 1);
     assert_eq!(
         support::send(actions.find_all(&query)).await.unwrap().len(),
         1
     );
-    let mut update = vec![
-        ("id".into(), Value::Text("ignored write key".into())),
-        ("nickname".into(), Value::Text("updated".into())),
-    ];
+    let mut update = Record::from_iter([
+        ("id".into(), Value::String("ignored write key".into())),
+        ("nickname".into(), Value::String("updated".into())),
+    ]);
     assert_eq!(
         support::send(actions.update(&query, &mut update))
             .await
@@ -234,10 +251,10 @@ async fn exercise() {
         support::send(actions.restore(&query)).await.unwrap().len(),
         1
     );
-    let mut upsert = vec![
-        ("id".into(), Value::Text("one".into())),
-        ("nickname".into(), Value::Text("upsert".into())),
-    ];
+    let mut upsert = Record::from_iter([
+        ("id".into(), Value::String("one".into())),
+        ("nickname".into(), Value::String("upsert".into())),
+    ]);
     assert!(
         support::send(actions.upsert(&mut upsert))
             .await
@@ -254,13 +271,14 @@ async fn exercise() {
             .await
             .unwrap();
         let borrowed = Query(Some("borrowed".into()));
-        let mut changes = vec![("nickname".into(), Value::Text("transaction only".into()))];
+        let mut changes =
+            Record::from_iter([("nickname".into(), Value::String("transaction only".into()))]);
         let changed = support::send(actions.update_in(&mut db, &borrowed, &mut changes))
             .await
             .unwrap();
         assert_eq!(
             support::get(&changed[0], "nickname"),
-            Some(&Value::Text("transaction only".into()))
+            Some(&Value::String("transaction only".into()))
         );
         support::send(actions.find_in(&mut db, &query))
             .await
@@ -268,7 +286,10 @@ async fn exercise() {
             .unwrap()
     };
     transaction.rollback().await.unwrap();
-    assert_eq!(support::get(&owned, "created"), Some(&Value::Date(42)));
+    assert_eq!(
+        support::get(&owned, "created"),
+        Some(&stackpress_framework_schema::source::date(42))
+    );
     assert!(
         actions
             .find(&Query(Some("borrowed".into())))

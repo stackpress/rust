@@ -1,0 +1,35 @@
+error[E0271]: type mismatch resolving `<Schema<AuthSpec> as SourceDeclaration<Verified>>::Declaration == BooleanType`
+ --> tests/source-ui/native/auth_verified.rs
+  |
+  | impl SessionModels for Family { type Profile=Profile; type Auth=Auth; }
+  |                                                                 ^^^^ type mismatch resolving `<Schema<AuthSpec> as SourceDeclaration<Verified>>::Declaration == BooleanType`
+  |
+note: expected this to be `BooleanType`
+ --> tests/source-ui/native/auth_verified.rs
+  |
+  | ...ed> for AuthSchema { type Declaration = stackpress_framework_schema::source::StringType; }
+  |                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  = note: required for `<<Family as stackpress_framework_sql::source::SessionModels>::Auth as SourceModel>::Schema` to implement `AuthFields`
+note: required by a bound in `stackpress_framework_sql::source::SessionModels::Auth`
+ --> src/source/mod.rs
+  |
+  |     type Auth: SourceModel<Role = AuthRole, Schema: AuthFields, Store: SourceStore<Error = ActionError>>;
+  |                                                     ^^^^^^^^^^ required by this bound in `SessionModels::Auth`
+
+error[E0271]: type mismatch resolving `<Schema<AuthSpec> as SourceField<Verified>>::FieldValue == bool`
+ --> tests/source-ui/native/auth_verified.rs
+  |
+  | impl SessionModels for Family { type Profile=Profile; type Auth=Auth; }
+  |                                                                 ^^^^ type mismatch resolving `<Schema<AuthSpec> as SourceField<Verified>>::FieldValue == bool`
+  |
+note: expected this to be `bool`
+ --> tests/source-ui/native/auth_verified.rs
+  |
+  |     type FieldValue = String;
+  |                       ^^^^^^
+  = note: required for `<<Family as stackpress_framework_sql::source::SessionModels>::Auth as SourceModel>::Schema` to implement `AuthFields`
+note: required by a bound in `stackpress_framework_sql::source::SessionModels::Auth`
+ --> src/source/mod.rs
+  |
+  |     type Auth: SourceModel<Role = AuthRole, Schema: AuthFields, Store: SourceStore<Error = ActionError>>;
+  |                                                     ^^^^^^^^^^ required by this bound in `SessionModels::Auth`

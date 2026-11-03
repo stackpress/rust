@@ -1,16 +1,16 @@
 error[E0271]: type mismatch resolving `<Schema<CompileSpec<i64>> as SourceField<Id>>::FieldValue == String`
- --> tests/source-ui/wrong_core_type.rs:7:20
+ --> tests/source-ui/wrong_core_type.rs:7:17
   |
-7 |     type Profile = support::Model<support::CompileSpec<i64>, ProfileRole>;
-  |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ type mismatch resolving `<Schema<CompileSpec<i64>> as SourceField<Id>>::FieldValue == String`
+7 |     string_id::<support::Schema<support::CompileSpec<i64>>>();
+  |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ type mismatch resolving `<Schema<CompileSpec<i64>> as SourceField<Id>>::FieldValue == String`
   |
 note: expected this to be `std::string::String`
  --> tests/source-ui/../main/source_models/support.rs
   |
-  |     type FieldValue = S::Id;
-  |                       ^^^^^
-note: required by a bound in `stackpress_framework_sql::source::SessionModels::Profile`
- --> src/source/mod.rs
+  |     type FieldValue = T;
+  |                       ^
+note: required by a bound in `string_id`
+ --> tests/source-ui/wrong_core_type.rs:5:33
   |
-  |     type Profile: SourceModel<Role = ProfileRole, Schema: SourceField<Id, FieldValue = String>>;
-  |                                                                           ^^^^^^^^^^^^^^^^^^^ required by this bound in `SessionModels::Profile`
+5 | fn string_id<S: SourceField<Id, FieldValue = String>>() {}
+  |                                 ^^^^^^^^^^^^^^^^^^^ required by this bound in `string_id`

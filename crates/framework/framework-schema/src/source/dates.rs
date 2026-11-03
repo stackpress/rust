@@ -1,7 +1,7 @@
 //! Explicit source Date conversion without process-wide timezone mutation.
 
-use crate::columns::Value;
-use stackpress_framework_schema::{SchemaError, SchemaErrorKind, SchemaResult};
+use super::Value;
+use crate::{SchemaError, SchemaErrorKind, SchemaResult};
 use time::{
     OffsetDateTime, PrimitiveDateTime, UtcOffset,
     format_description::{self, well_known::Rfc3339},
@@ -83,7 +83,7 @@ pub fn date_text(millis: i64, offset: i32) -> SchemaResult<String> {
 }
 
 /// Canonical native Date wire/storage representation, always including milliseconds.
-pub(crate) fn iso(millis: i64) -> SchemaResult<String> {
+pub fn iso(millis: i64) -> SchemaResult<String> {
     let date = instant(millis)?;
     Ok(format!(
         "{:04}-{:02}-{:02}T{:02}:{:02}:{:02}.{:03}Z",

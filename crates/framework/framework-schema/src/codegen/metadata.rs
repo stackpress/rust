@@ -401,7 +401,11 @@ fn args(value: &AttributeValue) -> SchemaResult<Vec<Value>> {
     }
 }
 /// Read plain descriptive values as data only.
-fn document(doc: &mut Documentation, name: &str, value: &AttributeValue) -> SchemaResult<bool> {
+pub(super) fn document(
+    doc: &mut Documentation,
+    name: &str,
+    value: &AttributeValue,
+) -> SchemaResult<bool> {
     if !matches!(
         name,
         "label" | "description" | "examples" | "display" | "icon" | "labels"
@@ -452,7 +456,7 @@ fn strings(value: &AttributeValue) -> SchemaResult<Vec<String>> {
         .collect()
 }
 /// Retain flags and method arguments without evaluating foreign metadata.
-fn attribute(name: &str, value: &AttributeValue) -> Attribute {
+pub(super) fn attribute(name: &str, value: &AttributeValue) -> Attribute {
     Attribute {
         name: name.into(),
         value: match value {
