@@ -1,0 +1,27 @@
+[package]
+name = "stackpress-framework-models"
+description = "Generated default source schemas for the Stackpress framework"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[features]
+default = []
+generate = ["stackpress-framework-schema/codegen", "dep:stackpress-idea-parser", "dep:stackpress-idea-transformer"]
+
+[dependencies]
+stackpress-framework-schema = { path = "../framework-schema", features = ["source"] }
+stackpress-idea-parser = { path = "../../idea/idea-parser", optional = true }
+stackpress-idea-transformer = { path = "../../idea/idea-transformer", optional = true }
+
+[dev-dependencies]
+serde_json = "1"
+
+[[bin]]
+name = "framework-models-generate"
+path = "src/bin/generate.rs"
+required-features = ["generate"]
+
+[lints]
+workspace = true

@@ -171,6 +171,17 @@ pub use declarations::*;
 mod providers;
 #[cfg(feature = "source")]
 pub use providers::default_value;
+#[cfg(feature = "source")]
+mod schema;
+#[cfg(feature = "source")]
+pub use schema::{SourceColumn, SourceRecordSchema};
+
+/// Stable support path for generated source; applications need no direct codec dependency.
+#[cfg(feature = "source")]
+#[doc(hidden)]
+pub mod __private {
+    pub use serde_json;
+}
 
 /// Generated Profile core contract, including stored fields and source relation reads.
 #[cfg(feature = "source")]

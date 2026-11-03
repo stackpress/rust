@@ -7,7 +7,7 @@ use stackpress_idea_parser::{AttributeValue, SchemaConfig, TypeConfig};
 use std::collections::BTreeSet;
 
 /// Source-normalized metadata, kept distinct from the Typed emitter's Schema input.
-/// This prevents an unimplemented source emitter from silently emitting strict DTOs.
+/// This prevents a source emitter from silently receiving strict DTO metadata.
 ///
 /// ```compile_fail,E0308
 /// use stackpress_framework_schema::{Schema,codegen::NormalizeOptions};
@@ -37,8 +37,8 @@ impl Schema {
     /// Normalize a composed source graph without rewriting its attributes or query paths.
     ///
     /// External model names are explicitly declared virtual references, never synthesized
-    /// tables. Source role arguments stay exact in `attributes`; they are not resolved through
-    /// Typed component definitions. Source emission is still separately refused.
+    /// tables. Source role arguments stay exact in `attributes` and resolve through the
+    /// metadata-only [`super::source_definitions`] catalog, without selecting renderers.
     ///
     /// ```
     /// use stackpress_framework_schema::{Schema, codegen::NormalizeOptions};
@@ -80,9 +80,10 @@ impl Schema {
             fieldsets: Vec::new(),
             enums: Vec::new(),
         };
+        let definitions = super::source_definitions()?;
         let mut modules = BTreeSet::new();
         for declaration in config.model.values() {
-            let model = normalize_model(declaration, config, &external)?;
+            let model = normalize_model(declaration, config, &external, &definitions)?;
             if !modules.insert(model.module.clone()) {
                 return Err(invalid("declaration name collision"));
             }
@@ -107,6 +108,7 @@ fn normalize_model(
     declaration: &TypeConfig,
     config: &SchemaConfig,
     external: &BTreeSet<&str>,
+    definitions: &super::DefinitionRegistry,
 ) -> SchemaResult<Model> {
     let mut model = Model {
         name: declaration.name.clone(),
@@ -133,7 +135,7 @@ fn normalize_model(
     }
     let mut names = BTreeSet::new();
     for column in &declaration.columns {
-        let field = normalize_field(column, config, external)?;
+        let field = normalize_field(column, config, external, definitions)?;
         if !names.insert(field.column.clone()) {
             return Err(invalid("field name collision"));
         }
@@ -227,6 +229,7 @@ fn normalize_field(
     column: &stackpress_idea_parser::ColumnConfig,
     config: &SchemaConfig,
     external: &BTreeSet<&str>,
+    definitions: &super::DefinitionRegistry,
 ) -> SchemaResult<Field> {
     let column_name = portable_name(&column.name)?;
     let value_type = match column.column_type.as_str() {
@@ -276,6 +279,15 @@ fn normalize_field(
         }
         normalize_attribute(&mut field, name, value)?;
     }
+    // Source bindings retain all supplied presentation values, independently of Typed policy.
+    for (name, value) in &column.attributes {
+        if ["field.", "filter.", "span.", "list.", "view."]
+            .iter()
+            .any(|prefix| name.starts_with(prefix))
+        {
+            field.roles.push(definitions.role(name, value)?);
+        }
+    }
     field.input_required = field.required
         && field.default.is_none()
         && field.value_rule.is_none()
@@ -319,12 +331,32 @@ fn normalize_attribute(field: &mut Field, name: &str, value: &AttributeValue) ->
                 _ => field.default = Some(args[0].clone()),
             }
         }
-        name if name.starts_with("is.") => super::assertions::normalize(
-            field,
-            &name[3..],
-            value,
-            &super::DefinitionRegistry::standard(),
-        )?,
+        name if name.starts_with("is.") => {
+            super::assertions::normalize(
+                field,
+                &name[3..],
+                value,
+                &super::DefinitionRegistry::standard(),
+            )?;
+            // Source dictionary defaults differ from Typed's generic diagnostic. Keep an
+            // explicit custom message unchanged, even when it equals the Typed fallback.
+            let rule = field
+                .rules
+                .last_mut()
+                .expect("normalization appended an assertion");
+            let default = match rule.code.as_str() {
+                "required" => Some((0, "Value is required.")),
+                "cge" => Some((1, "Must be greater than or equal to {{arg}} characters.")),
+                _ => None,
+            };
+            if let Some((arity, message)) = default {
+                let has_message =
+                    matches!(value, AttributeValue::Array(args) if args.len() > arity);
+                if !has_message {
+                    rule.message = message.into();
+                }
+            }
+        }
         // Source presentation arguments deliberately remain in their exact private
         // attribute form; these are not Typed/public resolved component bindings.
         _ => {}
