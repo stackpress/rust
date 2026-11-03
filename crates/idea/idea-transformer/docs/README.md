@@ -27,6 +27,7 @@ the detailed API contracts.
 | I want to… | Read |
 | --- | --- |
 | Load imports and resolve their surviving references | [Compose sources](guides/composing-sources.md) |
+| Import sources shipped by selected Cargo packages | [Package imports](guides/package-imports.md) |
 | Register a generator with contracts and declared input | [Register transforms](guides/registering-transforms.md) |
 | Build module indexes without sharing file mutation | [Generate modules](guides/generating-modules.md) |
 | Check freshness, install output, and remove stale files | [Check and install](guides/checking-and-installing.md) |

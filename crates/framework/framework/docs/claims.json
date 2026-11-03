@@ -1158,5 +1158,25 @@
         "contains": ["pub async fn execute_non_atomic", "with_plan_progress"]
       }
     ]
+  },
+  {
+    "id": "g49-shipped-package-source",
+    "page": "crates/framework/framework/docs/guides/codegen.md",
+    "statement": "stackpress/stackpress.idea",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/src/native/commands/schema.rs",
+        "contains": [
+          "pub fn package_loader",
+          "package_loader(transformer::ProjectLoader::new(cwd)"
+        ]
+      },
+      {
+        "path": "crates/framework/framework/tests/cases/codegen.rs",
+        "contains": [
+          "generate_provider_uses_shipped_catalog_for_nested_application_sources"
+        ]
+      }
+    ]
   }
 ]

@@ -36,6 +36,17 @@ Add SQL and app-owned view transforms as needed; their existing prerequisites an
 
 ## Bridge a generate event
 
+The package ships the original `stackpress.idea` as `stackpress_framework::SCHEMA_SOURCE`.
+Use `rust::package_loader(ProjectLoader::new(project_root)?)?` for direct source composition.
+It registers `stackpress/stackpress.idea`, `stackpress-api/schema.idea` and
+`stackpress-session/schema.idea`; there is no `stackpress/schema.idea` alias.
+The generate provider uses the same catalog, so imports work from nested application files.
+A mutable local model declaration adds fields under the existing G19 merge rules;
+an immutable `!` local is replaced by the imported declaration.
+[Catalog tests](../../tests/package_sources.rs) and the
+[real provider test](../../tests/cases/codegen.rs) pin this behavior.
+These source-resolution proofs do not implement G50's generated framework models.
+
 To invoke generation through a native event, publish `rust::Host` (registry callback, aggregate-module callback and output mode), Environment and configuration, then bind `generate` to `rust::provider`. The event first applies source skip/input/tsconfig rules. The provider uses the real existing loader/registry/output workspace and preserves their errors. [Generation API](../api/codegen.md) separates those two layers.
 
 This consumer proves Note generation and freshness, not full built-in API regeneration through the aggregate. That remains the named API-BUILD-HOST evidence gap; [the API checkpoint tool](../../../../../examples/api-checkpoint/tool/src/main.rs) has its own evidence. Runtime/browser codegen absence is checked in the [consumer graph proof](../../consumers/graphs.py).

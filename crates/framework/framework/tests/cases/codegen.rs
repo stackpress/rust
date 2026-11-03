@@ -123,3 +123,75 @@ async fn real_generation_and_provider_errors() {
     let mut duplicate = registry().unwrap();
     assert!(rust::register(&mut duplicate, schema, None, None).is_err());
 }
+
+/// This finite source capture proves provider wiring, not G50 model generation.
+fn capture_packages(
+    config: &stackpress_idea::parser::SchemaConfig,
+) -> stackpress_idea::transformer::Result<Vec<GeneratedFile>> {
+    let source = serde_json::to_string(config).map_err(|cause| {
+        stackpress_idea::transformer::TransformError::from(std::io::Error::other(cause))
+    })?;
+    Ok(vec![GeneratedFile::new("schema.json", source)])
+}
+
+/// Acquisition/composition does not require selected code emitters or a database.
+fn capture_registry() -> stackpress_idea::transformer::Result<Registry> {
+    Ok(Registry::new())
+}
+
+#[tokio::test]
+async fn generate_provider_uses_shipped_catalog_for_nested_application_sources() {
+    let root = super::sql::Fixture::new();
+    std::fs::create_dir_all(root.0.join("nested")).unwrap();
+    let entry = root.0.join("nested/schema.idea");
+    std::fs::write(
+        &entry,
+        "use \"stackpress/stackpress.idea\"\nmodel Profile { nickname String? }",
+    )
+    .unwrap();
+    let build = root.0.join("generated");
+    let mut app = application(
+        json!({"server":{"cwd":root.0},"client":{"tsconfig":"source.json","build":build},"cli":{"idea":entry}}),
+    );
+    app.on_config(task(|start: &mut StartupContext| {
+        Box::pin(async move {
+            let mut bindings = Bindings::default();
+            bindings.bind("generate", rust::provider);
+            start.register(Arc::new(bindings))?;
+            start.register(Arc::new(rust::Host {
+                registry: capture_registry,
+                aggregates: capture_packages,
+                mode: rust::GenerationMode::Install,
+            }))?;
+            Ok(Flow::Continue)
+        })
+    }))
+    .unwrap();
+    let host = app.build().await.unwrap();
+    assert!(!build.exists(), "no registration-time generation");
+    assert_eq!(
+        host.resolve("generate", json!({}))
+            .await
+            .unwrap()
+            .response
+            .code,
+        Some(200)
+    );
+    let schema: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(build.join("schema.json")).unwrap()).unwrap();
+    assert_eq!(schema["model"].as_object().unwrap().len(), 4);
+    assert!(
+        schema["model"]["Profile"]["columns"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|field| field["name"] == "nickname")
+    );
+    assert!(
+        schema["model"]["Auth"]["columns"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|field| field["name"] == "token" && field["attributes"]["encrypted"] == true)
+    );
+}

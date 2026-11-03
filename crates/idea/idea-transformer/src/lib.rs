@@ -16,7 +16,8 @@ mod source;
 
 pub use compose::{ComposedSchema, Composer, CompositionLimits, ImportEdge};
 pub use source::{
-    LoadError, LoadedSource, MemoryLoader, ProjectLoader, SourceId, SourceKind, SourceLoader,
+    LoadError, LoadedSource, MemoryLoader, PackageLoader, ProjectLoader, SourceId, SourceKind,
+    SourceLoader,
 };
 pub use stackpress_idea_parser::Reference;
 

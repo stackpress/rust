@@ -47,3 +47,5 @@ pub mod views;
 /// Optional native view registration/projection, separate from browser-only forms.
 #[cfg(all(feature = "leptos-ssr", not(target_arch = "wasm32")))]
 pub mod presentation;
+/// Exact shipped upstream session Idea source, including Profile/Auth management metadata.
+pub const SCHEMA_SOURCE: &str = include_str!("../schema.idea");

@@ -24,3 +24,15 @@ purge with `cascade=true` (forwarded only on PostgreSQL under G48) and dependenc
 uninstall. Exact owned databases are dropped on success and
 failure. Arbitrary collation/Unicode, JSON-query, aggregate-provider or production-load
 behaviour is not established by these tests.
+
+## Shipped Idea source
+
+The original `schema.idea` is available as `stackpress_framework_api::SCHEMA_SOURCE`;
+`codegen::SOURCE` remains an alias. Applications import `stackpress-api/schema.idea`
+through the opt-in [package loader](../../idea/idea-transformer/docs/guides/package-imports.md).
+That source imports `stackpress-session/schema.idea`, retaining the complete Profile/Auth
+declarations. The aggregate catalog additionally resolves `stackpress/stackpress.idea`.
+[Composition tests](../framework/tests/package_sources.rs) prove nested imports and G19
+application extensions. API codegen's existing external Profile adaptation remains until
+the separately gated G50 generated-model work; composition does not yet replace these
+hand-written runtime models or promise full source-model generation.

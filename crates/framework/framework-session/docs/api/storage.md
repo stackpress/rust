@@ -14,6 +14,12 @@ With `auth-server`, `account::events::register(&mut ServerBuilder) -> stackpress
 
 ## Schemas and values
 
+The package ships the original `schema.idea` as `stackpress_framework_session::SCHEMA_SOURCE`.
+The build-host package catalog resolves `use "stackpress-session/schema.idea"` from
+application Idea files. The [aggregate catalog proof](../../../framework/tests/package_sources.rs)
+checks imports and G19 field extension. This is source composition; the current native
+schemas below remain hand-written until the separately gated G50 generation work.
+
 The stable API composition path is `stackpress_framework_session::profile::ProfileSchema`. Auth/Profile schemas dereference to RecordSchema; `model()` returns an owned seed-free shared Model, including Profile's Auth/Application/Session metadata. It does not add reverse eager joins to ProfileStore. [Descriptor and column tests](../../tests/main/records.rs) anchor these contracts.
 
 <!-- example: direct -->
