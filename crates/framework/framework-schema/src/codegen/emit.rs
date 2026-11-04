@@ -8,6 +8,9 @@ use stackpress_idea_transformer::{OutputPlan, Result};
 /// Resolve one field's Rust type without introducing native dependencies into contracts.
 pub fn rust_type(schema: &Schema, field: &Field) -> SchemaResult<String> {
     let mut name = match &field.value_type {
+        ValueType::Unknown => {
+            return Err(invalid("Typed emission does not support source Unknown"));
+        }
         ValueType::String => "String".into(),
         ValueType::Integer => "i64".into(),
         ValueType::Boolean => "bool".into(),

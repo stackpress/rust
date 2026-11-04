@@ -1,64 +1,80 @@
-# Native source-model contracts
+# Native source models, stores and actions
 
-`stackpress_framework_schema::source` and `stackpress_framework_sql::source` define
-the native contracts for G50 generated framework models. Low-level traits need no
-optional feature; `source` selects the shared native mechanics and complete family bounds.
-Both modules are absent on `wasm32`. They supply no default models,
-handlers, engine, database setup or runtime model selection.
+With `source`, `stackpress_framework_sql::source` supplies `NativeStore`, `NativeActions`,
+`StoreQuery`, `SourceStatement` and the shared `ActionError`/`SourceResult`, backed by the
+schema owner's native Value/ordered Record. Dates, missing/null and application-added
+members survive without a strict JSON DTO. Native source modules are absent on wasm32.
+No model, engine, route policy or registrar is selected merely by importing this module.
 
-The [schema module](../../../framework-schema/src/source.rs) owns `SourceSchema`
-and `SourceField<Name>`. Standalone implementations associate owned values/records;
-framework families require its shared native `Value` and ordered `Record`. Dates and extension fields
-therefore need no intermediate strict JSON DTO. `new(seed, offset_minutes)` only
-constructs codec state. Defaults, filtering, assertions and serialization are
-explicit methods; the contract does not implement their source semantics.
+`SourceModel` associates one schema, store, actions and role. `SessionModels` supplies
+Profile/Auth; `ApiModels` inherits exactly that Profile and adds Application/Session.
+Generated witnesses reject wrong core declarations without repairing overrides.
+[Compiler cases](../../tests/source-ui) pin field/declaration and family mismatches.
+The [generated default package](../../../framework-models/README.md) supplies concrete
+models without depending on session/API plugins.
 
-The [SQL module](../../src/source/mod.rs) associates each `SourceModel` with its
-exact schema, store, actions and role. `SourceStore` prepares queries/DDL and
-codecs without holding an engine. `SourceModel::actions` constructs immutable
-actions from an application-owned `Arc<Engine>`. No query runs at construction.
+## Generate and use
 
-`SessionModels` supplies Profile/Auth. `ApiModels: SessionModels` adds
-Application/Session and inherits that exact Profile type. Role markers and
-all 48 core-field witnesses reject incompatible declarations without repairing overrides.
-`ProfileFields`/`AuthFields`/`ApplicationFields`/`SessionFields` fix Value/Record equality;
-stores share `source::ActionError` and `SourceResult`. Generic cross-model transfer therefore
-needs no JSON conversion or per-model error adapter. See the compiled examples in the modules'
-Rustdoc and the [negative compiler cases](../../tests/source-ui).
+With `codegen`, call schema `emit_source_contracts(&SourceGraph, plan)` and SQL
+`emit_source_stores(&SourceGraph, plan)` in the same managed output plan. The structural
+SQL templates emit ordinary per-model Model/Store/Actions types and the applicable family.
+Schema and SQL module names escape infrastructure collisions independently of physical
+SQL column/table spelling. Typed emitters and existing generated output remain unchanged.
+The old semantics selector refuses Source when passed a Typed Schema; it never falls back.
+See [normalization](../../../framework-schema/docs/source-models.md) for source types,
+assertions, enums/fieldsets, external references and native codecs.
 
-## Actions and executor ownership
+`NativeStore::new(seed, offset_minutes)` constructs immutable metadata/codec state without
+IO or defaults. `NativeStore::from_schema` keeps explicit application providers.
+`SourceModel::actions(Arc<Engine>, seed, offset)` attaches an application-owned executor.
+Pooled calls and their `_in` counterparts use the same action implementation. Borrowed
+calls retain the exact exclusive DataSession borrow until completion/cancellation; only
+the caller commits/rolls back. Returned records own their contents. No model/config lock
+is held across await. [Generated ownership tests](../../../framework-models/tests/ownership.rs)
+suspend the actual SQLite provider, reenter the same actions, cancel a borrowed read and
+reuse its transaction under an external watchdog with a forced-kill control.
 
-[`SourceActions`](../../src/source/actions.rs) requires `Send` futures for CRUD,
-batch and setup. Pooled CRUD methods forward to the same `_in` implementation
-using a temporary `DataSession::pooled`. Borrowed methods retain the exact
-exclusive executor/input borrow until completion or cancellation; only the caller
-finishes a borrowed transaction. Returned records own their contents. Dropping a
-future releases its Rust borrow; it is not evidence of rollback or remote outcome.
+## Query, results and maintenance
 
-Implementations must not hold a model/config lock across await. The trait cannot
-statically exclude every `Send` lock guard. The immutable-state
-[SQLite ownership proof](../../tests/main/source_models/ownership.rs) suspends a
-real provider, re-enters the same actions, cancels a borrowed call, then reuses
-its executor. An external process watchdog includes a forced-kill control.
-That proof covers the provided mechanics implementation, not arbitrary downstream
-implementations or the later generated source codecs.
+`StoreQuery` preserves source q/eq/ne/ge/le/like/has/hasnt/sort/columns/skip/take.
+Missing paging defaults to take=50/skip=0; zero take is unlimited. Unrepresentable native
+paging fails explicitly. Nested maps and arrays flatten to indexed source paths.
+Terminal relation/unknown-child selectors retain the last source selector and can fail
+at SQL execution. Positive `hasnt`, active=-1 and native interpolation follow upstream.
+G46 uses ILIKE only on PostgreSQL; SQLite/MySQL use LIKE. Inherent native store methods
+return `SourceStatement`, which renders that spelling. The generic SourceStore trait
+returns bare lower SQL ASTs; wrap them in SourceStatement when rendering directly.
 
-## Explicit emission selection
+Actions implement original preparation, ordered uniqueness checks, create-return behavior,
+timestamp input mutation, ID-first upsert, physical deletion and @active removal/restoration.
+`batch_values` retains dynamic null/primitive inputs; per-item statuses describe attempts.
+It continues after caught errors, then rolls back, keeping those statuses. A missing update
+selector is a status without an exception. A cancelled future alone proves no remote outcome.
+[SQLite/source oracles](../../../framework-models/tests/sql.rs),
+[app extensions](../../../framework-models/tests/extensions.rs) and the
+[live replay](../../../framework-models/tests/live_search.rs) pin the observable branches.
 
-With `codegen`, schema's `emit_contracts_with_semantics` and SQL's
-`emit_stores_with_semantics` take `EmissionSemantics::{Typed, Source}`.
-`Typed` is the default and delegates to the existing emitters. At M0, `Source`
-returns `SchemaErrorKind::Unsupported` without adding files. It never falls back
-to typed handlers. Full source emitters and default families are later stages; no existing
-Typed emitter's behavior changes here. [Source normalization](../../../framework-schema/docs/source-models.md)
-now retains the complete shipped four-model graph, including all 51 attribute names.
+Installation/upgrades use the accepted G48 setup selector: MySQL ordered non-atomic DDL
+with native error progress; PostgreSQL/SQLite atomic plans. Ordinary Engine transactions
+are unchanged. Purge retains PostgreSQL CASCADE, SQLite DELETE and MySQL child-first DELETE
+for cascade requests, without changing FOREIGN_KEY_CHECKS. The native adapter's accepted
+SQL type contract still governs physical DDL: Date/Time/Datetime use canonical DateTime text,
+character declarations use Varchar and floating storage uses Real. Source metadata retains
+the original distinctions; this is not a promise of byte-identical driver DDL.
 
-The [test-only structural template](../../tests/main/source_models/model.rs.tpl)
-emits typed witnesses and default/app-extended family probes from the complete source graph.
-The separate finite ownership corpus uses the shared native Value/Record/error. Its helper
-SQL codec stores probe Dates as integers and does not implement full
-Stackpress source preparation, hashing, encryption, query or batch semantics.
-The [emission tests](../../tests/main/source_models/emission.rs) also compose the
-actual shipped session input, keeping Application/Session links external and
-generating no hidden API models. Source-mode normalization explicitly accepts those external
-names. Production source schema/store/action emission and plugin rewiring remain gated.
+## Ordinary source events
+
+With `server` as well as `source`, `source::register::<Model>` queues the source event
+inventory during Listen; each generated module also exposes `register`. This registrar
+binds NativeActions to the emitted model schema. Arbitrary custom action implementations
+use direct traits rather than being substituted by this native adapter.
+`SourceEnvironment` is an explicit native service carrying seed/Date offset; Engine is
+an explicit shared service. Registration/startup performs no SQL; absent Engine and
+already-completed responses skip just as the source does. Ten event suffixes are available
+where model capabilities permit: batch/create/detail/get/purge/remove/restore/search/update/upsert.
+[Event tests](../../../framework-models/tests/events.rs) prove default selectors, errors,
+request mutation, equal-priority order, duplicate composition and earlier Abort.
+
+Constituent callbacks remain independently usable under G42. This registrar supplies no
+global guard, OperationPolicy, default-deny or route arbitration. The existing Typed
+`plugin::register` keeps its own contract. Concrete session/API plugin rewiring is M3.

@@ -1,0 +1,882 @@
+[
+  {
+    "name": "required",
+    "canonical": "required",
+    "message": "Value is required.",
+    "args": [
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 300,
+    "omitted": false
+  },
+  {
+    "name": "ne",
+    "canonical": "ne",
+    "message": "Must not be empty.",
+    "args": [
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 318,
+    "omitted": false
+  },
+  {
+    "name": "unique",
+    "canonical": "unique",
+    "message": "Already exists.",
+    "args": [
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 336,
+    "omitted": true
+  },
+  {
+    "name": "eq",
+    "canonical": "eq",
+    "message": "Must be equal to {{arg}}.",
+    "args": [
+      {
+        "required": true,
+        "types": [
+          "string",
+          "number",
+          "boolean"
+        ]
+      },
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 354,
+    "omitted": false
+  },
+  {
+    "name": "neq",
+    "canonical": "neq",
+    "message": "Must not be equal to {{arg}}.",
+    "args": [
+      {
+        "required": true,
+        "types": [
+          "string",
+          "number"
+        ]
+      },
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 379,
+    "omitted": false
+  },
+  {
+    "name": "option",
+    "canonical": "option",
+    "message": "Must be a valid option.",
+    "args": [
+      {
+        "required": true,
+        "types": [
+          "string[]",
+          "number[]"
+        ]
+      },
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 404,
+    "omitted": false
+  },
+  {
+    "name": "regex",
+    "canonical": "regex",
+    "message": "Invalid format.",
+    "args": [
+      {
+        "required": true,
+        "types": [
+          "string"
+        ]
+      },
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 429,
+    "omitted": false
+  },
+  {
+    "name": "date",
+    "canonical": "date",
+    "message": "Must be a valid date.",
+    "args": [
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 454,
+    "omitted": false
+  },
+  {
+    "name": "future",
+    "canonical": "future",
+    "message": "Must be a future date.",
+    "args": [
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 472,
+    "omitted": false
+  },
+  {
+    "name": "past",
+    "canonical": "past",
+    "message": "Must be a past date.",
+    "args": [
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 490,
+    "omitted": false
+  },
+  {
+    "name": "present",
+    "canonical": "present",
+    "message": "Must be within the present date.",
+    "args": [
+      {
+        "required": false,
+        "types": [
+          "null"
+        ]
+      },
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 508,
+    "omitted": false
+  },
+  {
+    "name": "gt",
+    "canonical": "gt",
+    "message": "Must be greater than {{arg}}.",
+    "args": [
+      {
+        "required": true,
+        "types": [
+          "number"
+        ]
+      },
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 533,
+    "omitted": false
+  },
+  {
+    "name": "ge",
+    "canonical": "ge",
+    "message": "Must be greater than or equal to {{arg}}.",
+    "args": [
+      {
+        "required": true,
+        "types": [
+          "number"
+        ]
+      },
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 558,
+    "omitted": false
+  },
+  {
+    "name": "lt",
+    "canonical": "lt",
+    "message": "Must be less than {{arg}}.",
+    "args": [
+      {
+        "required": true,
+        "types": [
+          "number"
+        ]
+      },
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 583,
+    "omitted": false
+  },
+  {
+    "name": "le",
+    "canonical": "le",
+    "message": "Must be less than or equal to {{arg}}.",
+    "args": [
+      {
+        "required": true,
+        "types": [
+          "number"
+        ]
+      },
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 608,
+    "omitted": false
+  },
+  {
+    "name": "ceq",
+    "canonical": "ceq",
+    "message": "Must be {{arg}} characters.",
+    "args": [
+      {
+        "required": true,
+        "types": [
+          "number"
+        ]
+      },
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 633,
+    "omitted": false
+  },
+  {
+    "name": "cgt",
+    "canonical": "cgt",
+    "message": "Must be greater than {{arg}} characters.",
+    "args": [
+      {
+        "required": true,
+        "types": [
+          "number"
+        ]
+      },
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 658,
+    "omitted": false
+  },
+  {
+    "name": "cge",
+    "canonical": "cge",
+    "message": "Must be greater than or equal to {{arg}} characters.",
+    "args": [
+      {
+        "required": true,
+        "types": [
+          "number"
+        ]
+      },
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 683,
+    "omitted": false
+  },
+  {
+    "name": "clt",
+    "canonical": "clt",
+    "message": "Must be less than {{arg}} characters.",
+    "args": [
+      {
+        "required": true,
+        "types": [
+          "number"
+        ]
+      },
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 708,
+    "omitted": false
+  },
+  {
+    "name": "cle",
+    "canonical": "cle",
+    "message": "Must be less than or equal to {{arg}} characters.",
+    "args": [
+      {
+        "required": true,
+        "types": [
+          "number"
+        ]
+      },
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 733,
+    "omitted": false
+  },
+  {
+    "name": "weq",
+    "canonical": "weq",
+    "message": "Must be {{arg}} words.",
+    "args": [
+      {
+        "required": true,
+        "types": [
+          "number"
+        ]
+      },
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 758,
+    "omitted": true
+  },
+  {
+    "name": "wgt",
+    "canonical": "wgt",
+    "message": "Must be greater than {{arg}} words.",
+    "args": [
+      {
+        "required": true,
+        "types": [
+          "number"
+        ]
+      },
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 783,
+    "omitted": false
+  },
+  {
+    "name": "wge",
+    "canonical": "wge",
+    "message": "Must be greater than or equal to {{arg}} words.",
+    "args": [
+      {
+        "required": true,
+        "types": [
+          "number"
+        ]
+      },
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 808,
+    "omitted": false
+  },
+  {
+    "name": "wlt",
+    "canonical": "wlt",
+    "message": "Must be less than {{arg}} words.",
+    "args": [
+      {
+        "required": true,
+        "types": [
+          "number"
+        ]
+      },
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 833,
+    "omitted": false
+  },
+  {
+    "name": "wle",
+    "canonical": "wle",
+    "message": "Must be less than or equal to {{arg}} words.",
+    "args": [
+      {
+        "required": true,
+        "types": [
+          "number"
+        ]
+      },
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 858,
+    "omitted": false
+  },
+  {
+    "name": "lowercase",
+    "canonical": "lowercase",
+    "message": "Must be all lowercase characters.",
+    "args": [
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 883,
+    "omitted": false
+  },
+  {
+    "name": "uppercase",
+    "canonical": "uppercase",
+    "message": "Must be all uppercase characters.",
+    "args": [
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 901,
+    "omitted": false
+  },
+  {
+    "name": "slug",
+    "canonical": "slug",
+    "message": "Must only contain lowercase letters, numbers, underscores, and hyphens.",
+    "args": [
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 919,
+    "omitted": false
+  },
+  {
+    "name": "cc",
+    "canonical": "cc",
+    "message": "Must be a valid credit card number.",
+    "args": [
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 937,
+    "omitted": false
+  },
+  {
+    "name": "color",
+    "canonical": "color",
+    "message": "Must be a valid color format.",
+    "args": [
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 955,
+    "omitted": false
+  },
+  {
+    "name": "email",
+    "canonical": "email",
+    "message": "Must be a valid email address.",
+    "args": [
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 973,
+    "omitted": false
+  },
+  {
+    "name": "hex",
+    "canonical": "hex",
+    "message": "Must be a valid hex value.",
+    "args": [
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 991,
+    "omitted": false
+  },
+  {
+    "name": "price",
+    "canonical": "price",
+    "message": "Must be a valid price format.",
+    "args": [
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 1009,
+    "omitted": false
+  },
+  {
+    "name": "url",
+    "canonical": "url",
+    "message": "Must be a valid URL.",
+    "args": [
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 1027,
+    "omitted": false
+  },
+  {
+    "name": "string",
+    "canonical": "string",
+    "message": "Must be a string.",
+    "args": [
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 1045,
+    "omitted": true
+  },
+  {
+    "name": "boolean",
+    "canonical": "boolean",
+    "message": "Must be a boolean.",
+    "args": [
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 1063,
+    "omitted": true
+  },
+  {
+    "name": "number",
+    "canonical": "number",
+    "message": "Must be a number.",
+    "args": [
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 1081,
+    "omitted": true
+  },
+  {
+    "name": "float",
+    "canonical": "float",
+    "message": "Must be a valid float number.",
+    "args": [
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 1099,
+    "omitted": true
+  },
+  {
+    "name": "integer",
+    "canonical": "integer",
+    "message": "Must be a valid integer format.",
+    "args": [
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 1117,
+    "omitted": true
+  },
+  {
+    "name": "object",
+    "canonical": "object",
+    "message": "Must be an object.",
+    "args": [
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 1135,
+    "omitted": true
+  },
+  {
+    "name": "notempty",
+    "canonical": "ne",
+    "message": "Must not be empty.",
+    "args": [
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 1154,
+    "omitted": false
+  },
+  {
+    "name": "pattern",
+    "canonical": "regex",
+    "message": "Invalid format.",
+    "args": [
+      {
+        "required": true,
+        "types": [
+          "string"
+        ]
+      },
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 1155,
+    "omitted": false
+  },
+  {
+    "name": "gte",
+    "canonical": "ge",
+    "message": "Must be greater than or equal to {{arg}}.",
+    "args": [
+      {
+        "required": true,
+        "types": [
+          "number"
+        ]
+      },
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 1156,
+    "omitted": false
+  },
+  {
+    "name": "lte",
+    "canonical": "le",
+    "message": "Must be less than or equal to {{arg}}.",
+    "args": [
+      {
+        "required": true,
+        "types": [
+          "number"
+        ]
+      },
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 1157,
+    "omitted": false
+  },
+  {
+    "name": "cgte",
+    "canonical": "cge",
+    "message": "Must be greater than or equal to {{arg}} characters.",
+    "args": [
+      {
+        "required": true,
+        "types": [
+          "number"
+        ]
+      },
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 1158,
+    "omitted": false
+  },
+  {
+    "name": "clte",
+    "canonical": "cle",
+    "message": "Must be less than or equal to {{arg}} characters.",
+    "args": [
+      {
+        "required": true,
+        "types": [
+          "number"
+        ]
+      },
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 1159,
+    "omitted": false
+  },
+  {
+    "name": "wgte",
+    "canonical": "wge",
+    "message": "Must be greater than or equal to {{arg}} words.",
+    "args": [
+      {
+        "required": true,
+        "types": [
+          "number"
+        ]
+      },
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 1160,
+    "omitted": false
+  },
+  {
+    "name": "wlte",
+    "canonical": "wle",
+    "message": "Must be less than or equal to {{arg}} words.",
+    "args": [
+      {
+        "required": true,
+        "types": [
+          "number"
+        ]
+      },
+      {
+        "required": false,
+        "types": [
+          "string"
+        ]
+      }
+    ],
+    "sourceLine": 1161,
+    "omitted": false
+  }
+]

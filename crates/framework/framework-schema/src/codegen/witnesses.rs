@@ -18,28 +18,27 @@ pub fn emit_source_witnesses(model: &Model) -> SchemaResult<String> {
             &field.name[1..]
         );
         let scalar = match field.value_type {
-            ValueType::String => "String",
+            ValueType::Unknown => "stackpress_framework_schema::source::Value",
+            ValueType::String | ValueType::Enum(_) => "String",
             ValueType::Boolean => "bool",
             ValueType::Integer => "i64",
-            ValueType::Object | ValueType::Model(_) => {
+            ValueType::Object | ValueType::Model(_) | ValueType::Fieldset(_) => {
                 "stackpress_framework_schema::source::Record"
             }
             ValueType::Date | ValueType::Time | ValueType::Datetime => {
                 "stackpress_framework_schema::source::Date"
             }
             ValueType::Number => "f64",
-            _ => {
-                return Err(super::unsupported(
-                    "source core witness type is not implemented",
-                ));
-            }
         };
         let declaration = match &field.value_type {
+            ValueType::Unknown => "UnknownType",
             ValueType::String => "StringType",
             ValueType::Integer => "IntegerType",
             ValueType::Number => "NumberType",
             ValueType::Boolean => "BooleanType",
             ValueType::Object => "ObjectType",
+            ValueType::Enum(_) => "EnumType",
+            ValueType::Fieldset(_) => "FieldsetType",
             ValueType::Date => "DateType",
             ValueType::Time => "TimeType",
             ValueType::Datetime => "DatetimeType",
@@ -50,11 +49,6 @@ pub fn emit_source_witnesses(model: &Model) -> SchemaResult<String> {
                 "Session" => "SessionType",
                 _ => "OtherModelType",
             },
-            _ => {
-                return Err(super::unsupported(
-                    "source core declaration is not implemented",
-                ));
-            }
         };
         let mut declaration = format!("stackpress_framework_schema::source::{declaration}");
         if field.multiple {

@@ -1,8 +1,6 @@
 //! Native schema execution over generated columns; no model names or field-name policy.
-use super::{Column, Record, Value, default_value, string, to_json};
-use crate::{
-    Field, SchemaResult, ValueContext, ValueProviders, check_rule, providers::BuiltinProviders,
-};
+use super::{Column, Record, Value, default_value};
+use crate::{Field, SchemaResult, ValueProviders, providers::BuiltinProviders};
 use std::sync::Arc;
 
 /// One generated storage column and its complete source metadata.
@@ -12,19 +10,30 @@ pub struct SourceColumn {
     codec: Column,
     /// Exact composed field, including assertions, defaults, roles and source attributes.
     pub field: Field,
+    /// Immutable sibling definitions; no global model registry or runtime import.
+    pub(super) catalog: Arc<crate::SourceCatalog>,
 }
 impl SourceColumn {
     /// Pair a generated codec with its exact source declaration.
     pub fn new(codec: Column, field: Field) -> Self {
-        Self { codec, field }
+        Self {
+            codec,
+            field,
+            catalog: Arc::default(),
+        }
+    }
+    /// Bind emitted sibling enum/fieldset definitions for direct column use as well as schemas.
+    pub fn with_catalog(mut self, catalog: Arc<crate::SourceCatalog>) -> Self {
+        self.catalog = catalog;
+        self
     }
     /// Exact source field name, independent of its SQL/member spelling.
-    pub fn name(&self) -> &'static str {
-        self.codec.name
+    pub fn name(&self) -> &str {
+        &self.field.name
     }
     /// Generated SQL column identity.
-    pub fn sql(&self) -> &'static str {
-        self.codec.sql
+    pub fn sql(&self) -> &str {
+        &self.field.column
     }
     /// Source conversion family, selected from the declaration and codec attributes.
     pub fn kind(&self) -> super::Kind {
@@ -42,7 +51,7 @@ impl SourceColumn {
         storage: bool,
         offset: i32,
     ) -> SchemaResult<Option<Value>> {
-        self.codec.serialize(value, seed, storage, offset)
+        super::coercion::convert(self, value, seed, storage, offset, true)
     }
     /// Decode using source readback behavior, including hash retention and native Dates.
     pub fn unserialize(
@@ -52,7 +61,7 @@ impl SourceColumn {
         storage: bool,
         offset: i32,
     ) -> SchemaResult<Option<Value>> {
-        self.codec.unserialize(value, seed, storage, offset)
+        super::coercion::convert(self, value, seed, storage, offset, false)
     }
     /// Resolve a getter default with an explicit clock, provider and local Date offset.
     pub fn defaults_at(
@@ -61,6 +70,21 @@ impl SourceColumn {
         providers: &dyn ValueProviders,
         offset: i32,
     ) -> SchemaResult<Option<Value>> {
+        if self.field.default.is_none()
+            && self.field.value_rule.is_none()
+            && let Some(schema) = self.embedded(String::new(), offset)
+        {
+            let record: SchemaResult<Record> = schema
+                .columns
+                .iter()
+                .filter_map(|column| match column.defaults_at(now, providers, offset) {
+                    Ok(Some(value)) => Some(Ok((column.name().into(), value))),
+                    Ok(None) => None,
+                    Err(error) => Some(Err(error)),
+                })
+                .collect();
+            return record.map(|record| Some(Value::Object(record)));
+        }
         let Some(value) = default_value(&self.field, now, providers)? else {
             return Ok(None);
         };
@@ -73,60 +97,51 @@ impl SourceColumn {
     }
     /// Assert the source base shape first, then implicit required and ordered refinements.
     pub fn assert(&self, value: Option<&Value>) -> Option<String> {
-        if let Some(error) = self.codec.assert(value) {
-            return Some(error);
+        self.assert_at(value, super::now(), 0)
+    }
+    /// Test time-relative rules using an explicit native clock and local offset.
+    pub fn assert_at(&self, value: Option<&Value>, now: i64, offset: i32) -> Option<String> {
+        super::checks::assert(&self.field, value, &self.codec, now, offset, &self.catalog)
+    }
+    /// Preserve nested fieldset error records instead of flattening them into one message.
+    pub fn assert_value_at(&self, value: Option<&Value>, now: i64, offset: i32) -> Option<Value> {
+        if let Some(schema) = self.embedded(String::new(), offset) {
+            let empty = Record::new();
+            let input = value.and_then(Value::as_object).unwrap_or(&empty);
+            return schema.assert_at(input, false, now).map(Value::Object);
         }
-        // Nullable source shapes return before refinements; false is a present Boolean.
-        if !self.field.required && value.is_none_or(Value::is_null) {
+        self.assert_at(value, now, offset).map(Value::String)
+    }
+    /// G51 uniqueness is action-owned. An explicit rule retains its original/custom message;
+    /// a storage-only @unique uses the source generated action's unpunctuated diagnostic.
+    pub fn uniqueness_error(&self, value: &Value) -> String {
+        self.field
+            .rules
+            .iter()
+            .find(|rule| rule.code == "unique")
+            .map(|rule| super::checks::message(&self.field, rule, value))
+            .unwrap_or_else(|| "Already exists".into())
+    }
+    /// Borrow the unchanged legacy scalar codec for shared primitive conversions.
+    pub(super) fn codec(&self) -> &Column {
+        &self.codec
+    }
+    /// Resolve an embedded schema lazily, avoiding recursive construction/default calls.
+    pub(super) fn embedded(&self, seed: String, offset: i32) -> Option<SourceRecordSchema> {
+        let crate::ValueType::Fieldset(name) = &self.field.value_type else {
             return None;
-        }
-        let value = value?;
-        if !self.field.multiple
-            && self.field.required
-            && !self.field.rules.iter().any(|rule| rule.code == "required")
-            && string(value).is_empty()
-        {
-            return Some("Value is required.".into());
-        }
-        for rule in &self.field.rules {
-            // Zod string lengths count UTF-16 units, unlike the separate Typed validator.
-            let valid = match rule.code.as_str() {
-                "required" => !value.is_null() && !string(value).is_empty(),
-                "cge" => value.as_str().is_some_and(|text| {
-                    text.encode_utf16().count() as f64 >= rule.args[0].as_f64().unwrap_or(0.0)
-                }),
-                _ => to_json(value).is_ok_and(|value| {
-                    check_rule(rule, &value, &ValueContext::default(), false).unwrap_or(false)
-                }),
-            };
-            if !valid {
-                let label = self
-                    .field
-                    .documentation
-                    .label
-                    .as_deref()
-                    .unwrap_or(&self.field.name);
-                let mut message = rule
-                    .message
-                    .replace("{{name}}", &self.field.name)
-                    .replace("{{label}}", label);
-                // Source shape.ts substitutes the first three args; String(undefined) is
-                // the literal "undefined". It never interpolates the rejected input value.
-                for index in 0..3 {
-                    let arg = rule
-                        .args
-                        .get(index)
-                        .map(|value| string(&Value::from(value.clone())))
-                        .unwrap_or_else(|| "undefined".into());
-                    if index == 0 {
-                        message = message.replace("{{arg}}", &arg);
-                    }
-                    message = message.replace(&format!("{{{{arg{}}}}}", index + 1), &arg);
-                }
-                return Some(message);
-            }
-        }
-        None
+        };
+        let model = self
+            .catalog
+            .fieldsets
+            .iter()
+            .find(|model| model.name == *name)?;
+        Some(SourceRecordSchema::from_metadata(
+            model,
+            self.catalog.clone(),
+            seed,
+            offset,
+        ))
     }
 }
 
@@ -143,6 +158,63 @@ pub struct SourceRecordSchema {
     providers: Arc<dyn ValueProviders>,
 }
 impl SourceRecordSchema {
+    /// Bind generated sibling enum/fieldset definitions without any provider or database IO.
+    pub fn with_catalog(mut self, catalog: crate::SourceCatalog) -> Self {
+        let catalog = Arc::new(catalog);
+        for column in &mut self.columns {
+            column.catalog = catalog.clone();
+        }
+        self
+    }
+    /// Build a nested schema from emitted metadata, with no handwritten field inventory.
+    pub fn from_metadata(
+        model: &crate::Model,
+        catalog: Arc<crate::SourceCatalog>,
+        seed: String,
+        offset: i32,
+    ) -> Self {
+        let columns = model
+            .fields
+            .iter()
+            .filter(|field| !matches!(field.value_type, crate::ValueType::Model(_)))
+            .map(|field| {
+                let kind = match field.value_type {
+                    crate::ValueType::String if field.multiple => super::Kind::Strings,
+                    crate::ValueType::String
+                        if field.attributes.iter().any(|attr| attr.name == "encrypted") =>
+                    {
+                        super::Kind::Token
+                    }
+                    crate::ValueType::String
+                        if field.attributes.iter().any(|attr| attr.name == "hashed") =>
+                    {
+                        super::Kind::Secret
+                    }
+                    crate::ValueType::Boolean => super::Kind::Boolean,
+                    crate::ValueType::Date
+                    | crate::ValueType::Time
+                    | crate::ValueType::Datetime => super::Kind::Date,
+                    crate::ValueType::Object | crate::ValueType::Fieldset(_) => super::Kind::Object,
+                    _ => super::Kind::String,
+                };
+                let mut column = SourceColumn::new(
+                    Column {
+                        name: "",
+                        sql: "",
+                        kind,
+                        nullable: !field.required && !field.multiple,
+                        required_message: None,
+                        minimum: None,
+                        default: None,
+                    },
+                    field.clone(),
+                );
+                column.catalog = catalog.clone();
+                column
+            })
+            .collect();
+        Self::new(columns, seed, offset)
+    }
     /// Borrow the immutable generated column inventory.
     pub fn columns(&self) -> &[SourceColumn] {
         &self.columns
@@ -211,14 +283,18 @@ impl SourceRecordSchema {
     }
     /// Return only the first source error per selected field, in declaration order.
     pub fn assert(&self, input: &Record, required: bool) -> Option<Record> {
+        self.assert_at(input, required, super::now())
+    }
+    /// Assert with a supplied clock for reproducible future/past/present rules.
+    pub fn assert_at(&self, input: &Record, required: bool, now: i64) -> Option<Record> {
         let errors: Record = self
             .columns
             .iter()
             .filter(|column| required || input.contains_key(column.name()))
             .filter_map(|column| {
                 column
-                    .assert(input.get(column.name()))
-                    .map(|error| (column.name().into(), Value::String(error)))
+                    .assert_value_at(input.get(column.name()), now, self.offset)
+                    .map(|error| (column.name().into(), error))
             })
             .collect();
         (!errors.is_empty()).then_some(errors)
@@ -243,7 +319,26 @@ impl SourceRecordSchema {
                     column.unserialize(input.get(name), &self.seed, storage, self.offset)
                 };
                 match result {
-                    Ok(Some(value)) => Some(Ok((name.into(), value))),
+                    Ok(Some(value)) => {
+                        // Original schema.ts JSON.stringify wraps fieldset-column serialization
+                        // again. Keep that source storage spelling rather than silently fixing it.
+                        let value = if encode
+                            && matches!(column.field.value_type, crate::ValueType::Fieldset(_))
+                        {
+                            serde_json::to_string(&value)
+                                .map(Value::String)
+                                .map_err(|cause| {
+                                    crate::SchemaError::new(
+                                        crate::SchemaErrorKind::Codec,
+                                        "fieldset schema encoding failed",
+                                    )
+                                    .with_cause(cause)
+                                })
+                        } else {
+                            Ok(value)
+                        };
+                        Some(value.map(|value| (name.into(), value)))
+                    }
                     Ok(None) => None,
                     Err(error) => Some(Err(error)),
                 }

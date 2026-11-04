@@ -47,6 +47,17 @@ impl CuidGenerator {
         if !(2..=32).contains(&length) {
             return Err(error("invalid CUID2 length"));
         }
+        Self::with_source_length(length)
+    }
+    /// Original init accepts 0/1 despite documenting a two-character minimum.
+    /// Keep that source-default seam separate from the existing checked native constructor.
+    pub(super) fn with_source_length(length: usize) -> SchemaResult<Self> {
+        if length > 32 {
+            return Err(SchemaError::from_source_message(
+                SchemaErrorKind::Codec,
+                format!("Length must be between 2 and 32. Received: {length}"),
+            ));
+        }
         let fingerprint = hash36(&entropy(32)?).chars().take(32).collect();
         let counter = (random_fraction()? * 476_782_367.0).floor() as u64;
         Ok(Self {
@@ -115,8 +126,8 @@ pub(super) fn format_id(
         "{first}{}",
         hash36(&input)
             .chars()
-            .skip(1)
-            .take(length - 1)
+            .skip(usize::from(length != 0))
+            .take(if length == 0 { 1 } else { length - 1 })
             .collect::<String>()
     )
 }
@@ -170,4 +181,48 @@ fn random_fraction() -> SchemaResult<f64> {
 /// Keep rejected input and native entropy internals out of diagnostics.
 fn error(context: &'static str) -> SchemaError {
     SchemaError::new(SchemaErrorKind::Codec, context)
+}
+
+#[cfg(test)]
+mod source_lengths {
+    use super::*;
+    #[test]
+    fn original_parameterized_zero_one_and_maximum_vectors() {
+        let fixture: serde_json::Value =
+            serde_json::from_str(include_str!("cuid-lengths.json")).unwrap();
+        for row in fixture["vectors"].as_array().unwrap() {
+            let length = row["length"].as_u64().unwrap() as usize;
+            if let Some(expected) = row["value"].as_str() {
+                assert_eq!(
+                    format_id(
+                        1700000000123,
+                        &"i".repeat(length),
+                        1,
+                        "source-test",
+                        'n',
+                        length
+                    ),
+                    expected
+                );
+                assert_eq!(
+                    CuidGenerator::with_source_length(length)
+                        .unwrap()
+                        .generate()
+                        .unwrap()
+                        .len(),
+                    expected.len()
+                );
+            } else {
+                assert_eq!(
+                    CuidGenerator::with_source_length(length)
+                        .err()
+                        .unwrap()
+                        .to_string(),
+                    row["error"].as_str().unwrap()
+                );
+            }
+        }
+        assert!(CuidGenerator::with_length(0).is_err());
+        assert!(CuidGenerator::with_length(1).is_err());
+    }
 }

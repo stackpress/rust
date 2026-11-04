@@ -7,6 +7,10 @@ use std::{fmt, ops::Index};
 #[derive(Clone, Debug, PartialEq, Deserialize)]
 #[serde(untagged)]
 pub enum Value {
+    /// Native nonfinite numeric codec result; JSON.stringify emits null, but validation
+    /// must still distinguish this number from an explicit nullable null. JSON never decodes it.
+    #[serde(skip)]
+    NonFinite(f64),
     /// Explicit native Date, skipped by JSON decoding; hosts construct it with `date`.
     #[serde(skip)]
     Date {
@@ -32,6 +36,7 @@ impl Serialize for Value {
     /// Match JSON.stringify: native Dates become UTC ISO text; ordinary objects stay objects.
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         match self {
+            Self::NonFinite(_) => serializer.serialize_none(),
             Self::Date { millis, .. } => super::dates::iso(*millis)
                 .map_err(serde::ser::Error::custom)?
                 .serialize(serializer),
@@ -87,10 +92,10 @@ impl Value {
     }
     /// Read the finite numeric representation.
     pub fn as_f64(&self) -> Option<f64> {
-        if let Self::Number(value) = self {
-            value.as_f64()
-        } else {
-            None
+        match self {
+            Self::Number(value) => value.as_f64(),
+            Self::NonFinite(value) => Some(*value),
+            _ => None,
         }
     }
     /// Read a Boolean without source truthiness coercion.

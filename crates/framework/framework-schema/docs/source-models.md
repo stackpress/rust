@@ -70,21 +70,44 @@ entry point, with an official finite `--check` command. [Its native oracle suite
 proves original Node column/default/crypto behavior and all four core-field families. Extra
 app fields use the same generator. Session-only output retains declared external links.
 
-`Schema::normalize`, `emit_contracts` and Typed emitted bytes retain their existing behavior.
-The compatibility selector `emit_contracts_with_semantics(&Schema, ..., Source)` refuses a
-Typed Schema input: use `emit_source_contracts` with a SourceGraph. SQL stores/actions/events,
-DDL and concrete UI renderers/client binding remain the separately released M2/M3 work.
-Source codecs cover the shipped String/Boolean/Hash/Datetime/String[] inventory plus native
-Date/Time scalars. Literal defaults pass through the source getter's unserialization step;
-for example, a Boolean literal string `"false"` is truthy, and a Datetime literal zero becomes
-a native Date. Provider defaults retain their provider result. The extended independent
-consumer and [native tests](../../framework-models/tests/native.rs) pin these distinctions.
+## Extended source schemas
 
-The emitter refuses numeric scalar codecs, lists other than String[], assertions beyond
-required/cge, and explicit assertions on list elements. Parameterized `cuid(n)` and
-`nanoid()`/`nanoid(n)` defaults normalize but are not emitted yet. Terminal relation query
-selectors (rather than scalar paths or wildcards) and a model whose module is `catalog`
-also fail before any output is added. None occurs in the shipped four-model graph. The
-[refusal matrix](../tests/source_emission.rs) pins these boundaries; no construct is
-silently filtered. Enum and fieldset definitions are refused earlier, during source
-normalization. Output remains subject to the existing finite writer budget.
+`Schema::normalize`, `emit_contracts` and Typed emitted bytes keep their existing behavior.
+The compatibility selector refuses a Typed Schema with Source semantics; pass a
+`SourceGraph` to `emit_source_contracts`. Source normalization and emission support
+Integer/Number/Float, every scalar/list family, enums, embedded fieldsets, terminal relation
+selectors and model names that collide with generator infrastructure. Generated catalog
+and module names are escaped independently from SQL identifiers: a field `type` remains
+SQL `type`. [Extension tests](../tests/source_extensions.rs),
+[emission tests](../tests/source_emission.rs) and the
+[compiled extended application](../../framework-models/tests/extensions.rs) pin these cases.
+
+Every original assertion dictionary name/alias and authored message is retained. G51
+explicitly makes broken or omitted rules work as named, including value eq/neq, regex,
+word count, type checks, price/JCB card regexes and zero-valued numeric bounds. Character
+cgt/clt are exclusive; exactly-N strings now fail. Character counts use UTF-16 units and
+word counts retain literal-space splitting. Lists validate items in order. Database
+uniqueness belongs to actions, so schema assertions alone cannot prove it.
+The [dictionary and boundary matrix](../tests/source_extensions.rs) and captured
+[original dictionary](../src/codegen/source-assertions.json) pin names/messages and the G51
+exception. Unknown assertion names and invalid arguments fail normalization.
+
+Defaults include `nanoid()`, `nanoid(n)`, `cuid()` and `cuid(n)` through the existing explicit
+provider mechanism. Ring supplies randomness; deterministic original byte/hash vectors
+pin both algorithms. Source CUID init accepts lengths zero/one (returning two/one characters)
+and rejects lengths above 32; the public checked `CuidGenerator::with_length` remains 2–32.
+No provider runs at normalization or registration. `number_step` shares the original numeric
+step inference with native SQL DDL family selection. Source number spelling, non-finite
+values and ECMAScript whitespace conversion are tested separately from Typed coercion.
+
+Original conversion order remains observable: fieldset schema encoding wraps the column's
+JSON again, fieldset lists assert the fieldset rather than each item, nullable scalars
+bypass assertions, and source literal defaults pass through unserialization. Date offsets
+and clocks stay explicit. These behaviors have original Node oracles in
+[source extension tests](../tests/source_extensions/oracles.rs); they are not new DTO rules.
+
+[SQL source stores/actions/events](../../framework-sql/docs/api/source-models.md) consume
+these exact descriptors and the immutable catalog. The default package emits all four
+models, while session-only source generation explicitly declares Application/Session links
+external and emits no hidden API models. UI/role metadata is complete; concrete UI rendering
+and session/API plugin binding remain M3 work. Output keeps the existing finite writer budget.

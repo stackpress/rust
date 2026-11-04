@@ -19,42 +19,20 @@ pub fn emit_source_contracts(graph: &SourceGraph, output: &mut OutputPlan) -> Re
     // later unsupported declaration. Metadata values enter only encoded Rust literals.
     let metadata = graph.catalog().map_err(transform_error)?;
     let mut prepared = Vec::new();
-    for model in graph.models() {
-        if model.module == "catalog" {
-            return Err(transform_error(super::invalid(
-                "source catalog name collision",
-            )));
-        }
+    let mut catalog_module = "catalog".to_owned();
+    while graph
+        .models()
+        .iter()
+        .chain(graph.fieldsets())
+        .any(|model| model.module == catalog_module)
+    {
+        catalog_module.insert(0, '_');
+    }
+    for model in graph.models().iter().chain(graph.fieldsets()) {
         let mut columns = Vec::new();
         for field in &model.fields {
             if matches!(field.value_type, ValueType::Model(_)) {
                 continue;
-            }
-            if field.multiple && !field.rules.is_empty() {
-                return Err(transform_error(unsupported(
-                    "source list-item assertion emission is not implemented",
-                )));
-            }
-            if field
-                .default
-                .as_ref()
-                .and_then(serde_json::Value::as_str)
-                .is_some_and(unsupported_default_call)
-            {
-                return Err(transform_error(unsupported(
-                    "source default call emission is not implemented for this provider",
-                )));
-            }
-            // M1 implements the complete shipped assertion set; never approximate another
-            // selected source assertion with the independent Typed validator's behavior.
-            if field
-                .rules
-                .iter()
-                .any(|rule| !matches!(rule.code.as_str(), "required" | "cge"))
-            {
-                return Err(transform_error(unsupported(
-                    "source assertion emission is not implemented for this rule",
-                )));
             }
             columns.push(json!({
                 "name": source::string_literal(&field.name),
@@ -69,15 +47,15 @@ pub fn emit_source_contracts(graph: &SourceGraph, output: &mut OutputPlan) -> Re
             include_str!("templates/source-model.rs.tpl"),
             &json!({
                 "name": model.rust_name, "model": source::string_literal(&metadata),
-                "columns": columns, "witnesses": emit_source_witnesses(model).map_err(transform_error)?,
+                "catalog_module":catalog_module, "columns": columns, "witnesses": emit_source_witnesses(model).map_err(transform_error)?,
             }),
         )?;
-        prepared.push((model.module.clone(), text));
+        prepared.push((source_module(model).to_owned(), text));
     }
     let models: Vec<_> = graph
         .models()
         .iter()
-        .map(|model| json!({"module": model.module}))
+        .map(|model| json!({"module":source_module(model)}))
         .collect();
     let catalog = source::generate(
         "templates/source-catalog.rs.tpl",
@@ -93,42 +71,25 @@ pub fn emit_source_contracts(graph: &SourceGraph, output: &mut OutputPlan) -> Re
         output.write(format!("source/{module}.rs"), text)?;
         output.contribute_module("source", &module)?;
     }
-    output.write("source/catalog.rs", catalog)?;
-    output.contribute_module("source", "catalog")
-}
-
-/// Recognize only the original generator's remaining built-in call spellings, not expressions.
-fn unsupported_default_call(value: &str) -> bool {
-    if value == "nanoid()" {
-        return true;
-    }
-    ["cuid(", "nanoid("].iter().any(|prefix| {
-        value
-            .strip_prefix(prefix)
-            .and_then(|value| value.strip_suffix(')'))
-            .is_some_and(|length| {
-                !length.is_empty() && length.bytes().all(|digit| digit.is_ascii_digit())
-            })
-    })
+    output.write(format!("source/{catalog_module}.rs"), catalog)?;
+    output.contribute_module("source", &catalog_module)
 }
 
 /// Select codecs from declarations/attributes, never from framework field names.
 fn codec(field: &Field) -> SchemaResult<&'static str> {
-    if field.multiple {
-        return if field.value_type == ValueType::String {
-            Ok("Strings")
-        } else {
-            Err(unsupported(
-                "source list codec is not implemented for this type",
-            ))
-        };
+    if field.multiple && field.value_type == ValueType::String {
+        return Ok("Strings");
     }
     Ok(match field.value_type {
         ValueType::String if field.attributes.iter().any(|a| a.name == "encrypted") => "Token",
         ValueType::String if field.attributes.iter().any(|a| a.name == "hashed") => "Secret",
-        ValueType::String => "String",
+        ValueType::Unknown
+        | ValueType::String
+        | ValueType::Enum(_)
+        | ValueType::Integer
+        | ValueType::Number => "String",
         ValueType::Boolean => "Boolean",
-        ValueType::Object => "Object",
+        ValueType::Object | ValueType::Fieldset(_) => "Object",
         ValueType::Date | ValueType::Time | ValueType::Datetime => "Date",
         _ => {
             return Err(unsupported(
@@ -147,4 +108,14 @@ fn encoding_error(cause: serde_json::Error) -> stackpress_idea_transformer::Tran
         )
         .with_cause(cause),
     )
+}
+
+/// Generated Rust module identity, independent of the SQL table spelling.
+/// A model named Source cannot produce source::source under warning-clean app builds.
+pub fn source_module(model: &crate::Model) -> &str {
+    if model.module == "source" {
+        "_source"
+    } else {
+        &model.module
+    }
 }

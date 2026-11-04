@@ -107,7 +107,17 @@ fn existing_value_provider_mechanism() {
             .len(),
         24
     );
-    assert!(providers.generate("cuid", &[json!(1)]).is_err());
+    // Source init accepts length one despite its maximum-only diagnostic wording.
+    assert_eq!(
+        providers
+            .generate("cuid", &[json!(1)])
+            .unwrap()
+            .as_str()
+            .unwrap()
+            .len(),
+        1
+    );
+    assert!(providers.generate("cuid", &[json!(33)]).is_err());
     assert!(providers.generate("other", &[]).is_err());
     assert!(providers.validate("remote", &json!(null), &[]).is_err());
     assert!(rule.resolve_for(&ValueType::Integer, &context).is_err());

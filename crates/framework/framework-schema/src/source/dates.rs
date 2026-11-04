@@ -10,11 +10,16 @@ use time::{
 /// Decode a source Date input to milliseconds; invalid text uses the source epoch fallback.
 /// Numeric inputs are milliseconds. Naive strings use the host-supplied local UTC offset.
 pub fn date_millis(value: &Value, offset: i32) -> i64 {
+    parsed_date(value, offset).unwrap_or(0)
+}
+
+/// Keep invalid input separate from a valid epoch-zero value during named date assertions.
+pub(super) fn parsed_date(value: &Value, offset: i32) -> Option<i64> {
     if let Some(millis) = super::as_date(value) {
-        return millis;
+        return Some(millis);
     }
     if let Some(number) = value.as_f64() {
-        return number as i64;
+        return number.is_finite().then_some(number as i64);
     }
     let text = super::string(value);
     // V8 Date.parse treats short numeric strings as month/year spellings, unlike
@@ -29,21 +34,22 @@ pub fn date_millis(value: &Value, offset: i32) -> i64 {
             32..=49 => (2000 + number, 1),
             50..=99 => (1900 + number, 1),
             100..=9999 => (number, 1),
-            _ => return 0,
+            _ => return None,
         };
         if let Ok(month) = time::Month::try_from(month)
             && let Ok(date) = time::Date::from_calendar_date(year, month, 1)
         {
             let seconds = offset.checked_mul(60).unwrap_or_default();
-            return date
-                .midnight()
-                .assume_offset(UtcOffset::from_whole_seconds(seconds).unwrap_or(UtcOffset::UTC))
-                .unix_timestamp()
-                * 1000;
+            return Some(
+                date.midnight()
+                    .assume_offset(UtcOffset::from_whole_seconds(seconds).unwrap_or(UtcOffset::UTC))
+                    .unix_timestamp()
+                    * 1000,
+            );
         }
     }
     if let Ok(date) = OffsetDateTime::parse(&text, &Rfc3339) {
-        return (date.unix_timestamp_nanos() / 1_000_000) as i64;
+        return Some((date.unix_timestamp_nanos() / 1_000_000) as i64);
     }
     // Source SQL text is naive local time. ISO date-only is UTC, matching Date.parse.
     for pattern in [
@@ -55,15 +61,15 @@ pub fn date_millis(value: &Value, offset: i32) -> i64 {
             && let Some(seconds) = offset.checked_mul(60)
             && let Ok(zone) = UtcOffset::from_whole_seconds(seconds)
         {
-            return (date.assume_offset(zone).unix_timestamp_nanos() / 1_000_000) as i64;
+            return Some((date.assume_offset(zone).unix_timestamp_nanos() / 1_000_000) as i64);
         }
     }
     if let Ok(format) = format_description::parse_borrowed::<2>("[year]-[month]-[day]")
         && let Ok(date) = time::Date::parse(&text, &format)
     {
-        return date.midnight().assume_utc().unix_timestamp() * 1000;
+        return Some(date.midnight().assume_utc().unix_timestamp() * 1000);
     }
-    0
+    None
 }
 
 /// Match Date.toISOString's date combined with Date.toTimeString's local time.

@@ -1,0 +1,97 @@
+[
+  {
+    "input": "0x10000000000000000",
+    "value": 18446744073709552000,
+    "nonFinite": null
+  },
+  {
+    "input": "0xffffffffffffffffffffffff",
+    "value": 7.922816251426434e+28,
+    "nonFinite": null
+  },
+  {
+    "input": "0b1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+    "value": 1.2676506002282294e+30,
+    "nonFinite": null
+  },
+  {
+    "input": "0o7777777777777777777777777777777777777777",
+    "value": 1.329227995784916e+36,
+    "nonFinite": null
+  },
+  {
+    "input": "inf",
+    "value": 0,
+    "nonFinite": null
+  },
+  {
+    "input": "Inf",
+    "value": 0,
+    "nonFinite": null
+  },
+  {
+    "input": "infinity",
+    "value": 0,
+    "nonFinite": null
+  },
+  {
+    "input": "INFINITY",
+    "value": 0,
+    "nonFinite": null
+  },
+  {
+    "input": "+Infinity",
+    "value": null,
+    "nonFinite": "Infinity"
+  },
+  {
+    "input": "-Infinity",
+    "value": null,
+    "nonFinite": "-Infinity"
+  },
+  {
+    "input": "1e309",
+    "value": null,
+    "nonFinite": "Infinity"
+  },
+  {
+    "input": "-0",
+    "value": 0,
+    "nonFinite": null
+  },
+  {
+    "input": "  1  ",
+    "value": 1,
+    "nonFinite": null
+  },
+  {
+    "input": "1",
+    "value": 0,
+    "nonFinite": null
+  },
+  {
+    "input": "﻿1",
+    "value": 1,
+    "nonFinite": null
+  },
+  {
+    "input": ".5",
+    "value": 0.5,
+    "nonFinite": null
+  },
+  {
+    "input": "1.",
+    "value": 1,
+    "nonFinite": null
+  },
+  {
+    "input": "1e+2",
+    "value": 100,
+    "nonFinite": null
+  },
+  {
+    "input": "0xg1",
+    "value": 0,
+    "nonFinite": null
+  }
+]

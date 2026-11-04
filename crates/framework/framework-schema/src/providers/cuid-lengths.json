@@ -1,0 +1,32 @@
+{
+  "time": 1700000000123,
+  "first": "n",
+  "counter": 1,
+  "fingerprint": "source-test",
+  "vectors": [
+    {
+      "length": 0,
+      "value": "nx"
+    },
+    {
+      "length": 1,
+      "value": "n"
+    },
+    {
+      "length": 2,
+      "value": "nf"
+    },
+    {
+      "length": 24,
+      "value": "nxclg926865al7dixh0cme0t"
+    },
+    {
+      "length": 32,
+      "value": "n6el0snqlutwzqvxgpyvaqqusa45ocpt"
+    },
+    {
+      "length": 33,
+      "error": "Length must be between 2 and 32. Received: 33"
+    }
+  ]
+}

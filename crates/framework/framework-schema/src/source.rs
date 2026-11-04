@@ -37,6 +37,14 @@ pub trait SourceSchema: Send + Sync + Sized + 'static {
     fn new(seed: String, offset_minutes: i32) -> Self;
     /// Full generated metadata, not a projection onto framework-required core fields.
     fn describe() -> Model;
+    /// Complete emitted siblings for joins, enums and embedded schemas. Standalone manual
+    /// implementations default to their one model; generated implementations override it.
+    fn catalog() -> crate::SourceCatalog {
+        crate::SourceCatalog {
+            models: vec![Self::describe()],
+            ..crate::SourceCatalog::default()
+        }
+    }
     /// Borrow the native storage seed; never publish schema instances in browser snapshots.
     fn seed(&self) -> &str;
     /// Explicit source Date conversion offset; no process-global timezone is implied.
@@ -171,6 +179,14 @@ pub use declarations::*;
 mod providers;
 #[cfg(feature = "source")]
 pub use providers::default_value;
+#[cfg(feature = "source")]
+mod checks;
+#[cfg(feature = "source")]
+mod coercion;
+#[cfg(feature = "source")]
+mod number;
+#[cfg(feature = "source")]
+pub use number::step as number_step;
 #[cfg(feature = "source")]
 mod schema;
 #[cfg(feature = "source")]
@@ -422,3 +438,8 @@ impl<S> SessionFields for S where
         + SourceDeclaration<Profile, Declaration = ProfileType>
 {
 }
+
+#[cfg(feature = "source")]
+mod text;
+#[cfg(feature = "source")]
+pub use text::{number_text, trim};

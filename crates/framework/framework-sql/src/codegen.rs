@@ -13,8 +13,10 @@ mod conflicts;
 mod operations;
 mod queries;
 mod selection;
+mod source;
 mod templates;
 mod writes;
+pub use source::emit_source_stores;
 
 /// Shared compiled selection; runtime server features do not select generator semantics.
 pub use stackpress_framework_schema::codegen::EmissionSemantics;
@@ -22,8 +24,8 @@ pub use stackpress_framework_schema::codegen::EmissionSemantics;
 /// Select native store semantics while leaving existing typed entry points unchanged.
 ///
 /// # Errors
-/// Source returns Unsupported without publishing partial files until G50 M2's source
-/// action/store emitter is released. It must not fall back to strict OperationPolicy handlers.
+/// Source refuses a Typed Schema input: use [`emit_source_stores`] with a SourceGraph.
+/// It never falls back to strict OperationPolicy handlers.
 pub fn emit_stores_with_semantics(
     schema: &Schema,
     output: &mut OutputPlan,
@@ -34,7 +36,7 @@ pub fn emit_stores_with_semantics(
         EmissionSemantics::Source => Err(stackpress_framework_schema::codegen::transform_error(
             stackpress_framework_schema::SchemaError::new(
                 stackpress_framework_schema::SchemaErrorKind::Unsupported,
-                "source model store emission is not implemented in G50 M0",
+                "source store emission requires SourceGraph; use emit_source_stores",
             ),
         )),
     }
@@ -280,6 +282,7 @@ fn codec(schema: &Schema, field: &Field) -> &'static str {
         ValueType::Number => "Real",
         ValueType::Object | ValueType::Fieldset(_) => "Json",
         ValueType::Model(_) => "Json",
+        ValueType::Unknown => "Text",
     }
 }
 

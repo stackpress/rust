@@ -1,10 +1,10 @@
-# Default generated framework schemas
+# Default generated framework models
 
 `stackpress-framework-models` contains the native source schemas generated from the shipped
 `stackpress/stackpress.idea` → `stackpress-api/schema.idea` →
-`stackpress-session/schema.idea` graph. It currently exports `ProfileSchema`, `AuthSchema`,
-`ApplicationSchema` and `SessionSchema`. Store/action/event generation and plugin binding
-belong to the later G50 stages; importing this package registers nothing.
+`stackpress-session/schema.idea` graph. It exports the four Schema/Model/Store/Actions families and `Models` from checked-in
+generated output. Importing this package registers nothing. Session/API plugin binding
+remains M3 work.
 
 ```rust
 # #[cfg(not(target_arch = "wasm32"))] {
@@ -30,8 +30,8 @@ policy. Source schemas are absent on wasm32; browser UI integration is a later s
 [Native tests](tests/native.rs) check the original Node column and crypto vectors, every
 core accessor, defaults, partial assertions, filter/populate and codec phases. [Generator
 controls](tests/generation.rs) prove check-only drift rejection and app extension. Defaults
-and schemas depend on the lower schema source runtime, without session/API/server/Idea
-runtime dependencies. `serde_json` is a test dependency; emitted code uses the stable
+and schemas depend on the lower schema source runtime, without session/API/Idea runtime dependencies. Server is selected only by the optional
+`server` feature. `serde_json` is a test dependency; emitted code uses the stable
 `stackpress_framework_schema::source::__private::serde_json` support path.
 
 ## Regenerate and check
@@ -44,7 +44,7 @@ cargo run -p stackpress-framework-models --features generate --bin framework-mod
 ```
 
 The finite tool uses the public `Schema::normalize_source` and
-`codegen::emit_source_contracts` APIs with the existing `PackageLoader`, `Registry` and
+`codegen::emit_source_contracts` and SQL `codegen::emit_source_stores` APIs with the existing `PackageLoader`, `Registry` and
 `OutputWorkspace`. Checked-in files beneath `src/generated/` and their managed manifest
 are generated output: never edit them by hand. `--check` reports stale output and writes
 nothing. `--output <path>` selects another managed root; `--input <file>` replaces the
@@ -58,11 +58,47 @@ compiles a Profile `nickname String?` default with only the schema runtime depen
 Session-only generation explicitly declares Application/Session external, retaining their
 links without generating hidden API models or tables.
 
-The M1 source codec inventory covers the shipped scalar/list types: String, Boolean, Hash,
-Datetime and String[]. The [source runtime guide](../framework-schema/docs/source-models.md)
-lists the refused constructs outside that inventory and the distinction between normalization
-and emission. Typed emitters and their existing generated applications are
-unchanged. Source `@hashed` uses SHAKE256 and `@encrypted` uses the existing deterministic
-AES-CBC format; these are the original storage codecs, separate from password hashing in
-authentication flows. Concrete renderers, SQL execution and model-family plugin wiring are
-not supplied by this M1 package.
+## Native stores and optional events
+
+The [SQL source guide](../framework-sql/docs/api/source-models.md) describes NativeStore,
+NativeActions, SourceStatement and pooled/exclusively borrowed action signatures. The
+public `ProfileModel`, `AuthModel`, `ApplicationModel`, `SessionModel` and `Models` paths
+are generated-family conveniences. `generated::stores::<model>::register` is available
+only with `server`; an application emitting this output declares its own `server` feature
+forwarding `stackpress-framework-sql/server`. No default feature installs a handler.
+
+```rust
+# #[cfg(not(target_arch = "wasm32"))] {
+use stackpress_framework_models::{ProfileStore, Models};
+use stackpress_framework_sql::source::{ApiModels, StoreQuery};
+
+fn family<T: ApiModels>() {}
+family::<Models>();
+let store = ProfileStore::new("explicit-seed".into(), 0);
+assert_eq!(store.table(), "profile");
+let query = StoreQuery::eq("id", "application-owned-id");
+let _ = store.select(&query, stackpress_sql::DialectId::Sqlite)?;
+# }
+# Ok::<(), stackpress_framework_sql::source::ActionError>(())
+```
+
+[SQLite and original SQL oracles](tests/sql.rs) prove source CRUD/query/results/batch and
+setup behavior. [Live opt-in tests](tests/live_search.rs) execute generated Profile/Auth
+and Application/Session search on owned MySQL/PostgreSQL throwaway databases; unset URLs
+report skipped, never passed. The same scenario pins MySQL partial DDL progress,
+PostgreSQL/SQLite rollback, adjacent upgrade and foreign-key purge.
+[Events](tests/events.rs) prove source skips/order/errors without a global guard.
+[Ownership tests](tests/ownership.rs) prove generated action reentrancy and cancellation
+under a parent watchdog, including a forced-kill control.
+
+The [maintained extended app](tests/extended/schema.idea) adds a Profile column, enums,
+fieldsets, every list family and collision-prone model names. Its output is generated by
+the same tool; [extension tests](tests/extensions.rs) execute the added column/uniqueness
+and pin source conversion quirks. Source schema validation follows G51's named-rule repairs,
+including exclusive cgt/clt, while preserving original messages. `@hashed` uses SHAKE256 and
+`@encrypted` deterministic AES-CBC, independently of authentication password hashing.
+The [schema guide](../framework-schema/docs/source-models.md) lists conversion/provider
+boundaries. The accepted lower SQL type mapping governs physical DDL; complete source
+metadata does not imply identical driver DDL spellings. Unknown columns are deliberately
+omitted by the original SQL setup helper. Concrete renderers and plugin-family binding
+are not supplied at this stage. Typed generated applications remain byte-stable.

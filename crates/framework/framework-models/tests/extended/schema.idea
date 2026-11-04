@@ -1,0 +1,32 @@
+use "stackpress/stackpress.idea"
+
+enum Mood { ON "on" OFF "off" }
+type Address { label String zip Integer }
+
+model Profile {
+  nickname String? @default("application") @is.unique
+  mood Mood @default("on")
+  address Address?
+}
+model Catalog { id String @id unknowns Unknown[] }
+model Lists {
+  id String @id
+  whole Number
+  fractional Float @step(0.01)
+  dates Datetime[]
+  numbers Number[]
+  floats Float[]
+  integers Integer[]
+  flags Boolean[]
+  objects Hash[]
+  moods Mood[]
+  addresses Address[]
+}
+model Native { id String @id }
+model Source { id String @id }
+model Stores { id String @id }
+model Family { id String @id }
+model Keyed { key String @id }
+model Keyless { value String? @default("fallback") }
+model NativeRecord { id String @id }
+model Runtime { id String @id }

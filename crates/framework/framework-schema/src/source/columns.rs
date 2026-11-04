@@ -282,6 +282,7 @@ pub fn truthy(value: &Value) -> bool {
         Value::Null => false,
         Value::Bool(value) => *value,
         Value::Number(value) => value.as_f64() != Some(0.0),
+        Value::NonFinite(value) => !value.is_nan() && *value != 0.0,
         Value::String(value) => !value.is_empty(),
         _ => true,
     }
@@ -290,6 +291,15 @@ pub fn truthy(value: &Value) -> bool {
 /// Source String conversion, using JSON.stringify for plain objects and array toString.
 pub fn string(value: &Value) -> String {
     match value {
+        Value::NonFinite(value) => {
+            if value.is_nan() {
+                "NaN".into()
+            } else if value.is_sign_negative() {
+                "-Infinity".into()
+            } else {
+                "Infinity".into()
+            }
+        }
         Value::String(value) => value.clone(),
         Value::Date { millis, display } => display.clone().unwrap_or_else(|| {
             super::date_string(*millis, 0, "Coordinated Universal Time")

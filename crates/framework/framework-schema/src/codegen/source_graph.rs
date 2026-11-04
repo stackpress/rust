@@ -19,10 +19,22 @@ use std::collections::BTreeSet;
 /// ```
 #[derive(Clone, Debug, PartialEq)]
 pub struct SourceGraph {
+    pub(super) tables: Vec<SourceTable>,
+    pub(super) types: Vec<SourceType>,
     models: Vec<Model>,
+    fieldsets: Vec<Model>,
+    enums: Vec<Enumeration>,
     external_models: Vec<String>,
 }
 impl SourceGraph {
+    /// Source embedded schemas; no table is synthesized for a fieldset.
+    pub fn fieldsets(&self) -> &[Model] {
+        &self.fieldsets
+    }
+    /// Exact source enum choices, without imposing Typed's homogeneous-value policy.
+    pub fn enums(&self) -> &[Enumeration] {
+        &self.enums
+    }
     /// Complete source models in composed catalog order, including every private attribute.
     pub fn models(&self) -> &[Model] {
         &self.models
@@ -69,12 +81,6 @@ impl Schema {
         {
             return Err(invalid("external model must be distinct and undeclared"));
         }
-        // No enum/fieldset approximation: each source construct needs its own native emission.
-        if !config.r#enum.is_empty() || !config.r#type.is_empty() {
-            return Err(super::unsupported(
-                "source enum/fieldset normalization is not implemented",
-            ));
-        }
         let mut schema = Self {
             models: Vec::new(),
             fieldsets: Vec::new(),
@@ -82,6 +88,24 @@ impl Schema {
         };
         let definitions = super::source_definitions()?;
         let mut modules = BTreeSet::new();
+        for (name, variants) in &config.r#enum {
+            schema.enums.push(Enumeration {
+                name: name.clone(),
+                rust_name: type_name(name)?,
+                module: portable_name(name)?,
+                variants: variants
+                    .iter()
+                    .map(|(key, value)| (key.clone(), value.clone()))
+                    .collect(),
+            });
+        }
+        for declaration in config.r#type.values() {
+            let fieldset = normalize_model(declaration, config, &external, &definitions)?;
+            if !modules.insert(fieldset.module.clone()) {
+                return Err(invalid("declaration name collision"));
+            }
+            schema.fieldsets.push(fieldset);
+        }
         for declaration in config.model.values() {
             let model = normalize_model(declaration, config, &external, &definitions)?;
             if !modules.insert(model.module.clone()) {
@@ -93,8 +117,36 @@ impl Schema {
         for model in &schema.models {
             check_relations(&schema, model, &external)?;
         }
+        // The existing finite embedded-graph check is a Rust generation/resource boundary;
+        // model relations remain cyclic and are never traversed as eager embedded schemas.
+        let mut remaining = 100_000;
+        for fieldset in &schema.fieldsets {
+            schema.check_embedded(fieldset, &mut Vec::new(), &mut remaining)?;
+        }
         Ok(SourceGraph {
+            tables: config
+                .model
+                .values()
+                .map(|m| SourceTable {
+                    model: m.name.clone(),
+                    name: source_sql_name(&m.name),
+                })
+                .collect(),
+            types: config
+                .model
+                .values()
+                .chain(config.r#type.values())
+                .flat_map(|model| {
+                    model.columns.iter().map(|field| SourceType {
+                        model: model.name.clone(),
+                        field: field.name.clone(),
+                        name: field.column_type.clone(),
+                    })
+                })
+                .collect(),
             models: schema.models,
+            fieldsets: schema.fieldsets,
+            enums: schema.enums,
             external_models: external_models
                 .iter()
                 .map(|name| (*name).to_owned())
@@ -144,7 +196,7 @@ fn normalize_model(
     // Wildcards retain their spelling; validate only the traversed declaration prefix.
     for path in &model.query {
         let mut current = declaration;
-        let segments: Vec<_> = path.split('.').collect();
+        let segments: Vec<_> = path.split(':').next().unwrap_or(path).split('.').collect();
         if segments.len() > 8 {
             return Err(limit());
         }
@@ -161,6 +213,7 @@ fn normalize_model(
                 current = config
                     .model
                     .get(&column.column_type)
+                    .or_else(|| config.r#type.get(&column.column_type))
                     .ok_or_else(|| invalid("query path traverses unresolved target"))?;
             }
         }
@@ -233,6 +286,7 @@ fn normalize_field(
 ) -> SchemaResult<Field> {
     let column_name = portable_name(&column.name)?;
     let value_type = match column.column_type.as_str() {
+        "Unknown" => ValueType::Unknown,
         "String" | "Text" => ValueType::String,
         "Integer" => ValueType::Integer,
         "Boolean" => ValueType::Boolean,
@@ -241,6 +295,8 @@ fn normalize_field(
         "Date" => ValueType::Date,
         "Time" => ValueType::Time,
         "Datetime" => ValueType::Datetime,
+        name if config.r#enum.contains_key(name) => ValueType::Enum(name.into()),
+        name if config.r#type.contains_key(name) => ValueType::Fieldset(name.into()),
         name if config.model.contains_key(name) || external.contains(name) => {
             ValueType::Model(name.into())
         }
@@ -249,7 +305,7 @@ fn normalize_field(
     let mut field = Field {
         name: column.name.clone(),
         rust_name: member_name(&column_name),
-        column: column_name,
+        column: source_sql_name(&column.name),
         value_type,
         storage_length: None,
         required: column.required,
@@ -328,38 +384,72 @@ fn normalize_attribute(field: &mut Field, name: &str, value: &AttributeValue) ->
                         revision: "1".into(),
                     })
                 }
+                Some(call) => {
+                    if let Some(rule) = provider_call(call)? {
+                        field.value_rule = Some(rule)
+                    } else {
+                        field.default = Some(args[0].clone())
+                    }
+                }
                 _ => field.default = Some(args[0].clone()),
             }
         }
         name if name.starts_with("is.") => {
-            super::assertions::normalize(
-                field,
-                &name[3..],
-                value,
-                &super::DefinitionRegistry::standard(),
-            )?;
-            // Source dictionary defaults differ from Typed's generic diagnostic. Keep an
-            // explicit custom message unchanged, even when it equals the Typed fallback.
-            let rule = field
-                .rules
-                .last_mut()
-                .expect("normalization appended an assertion");
-            let default = match rule.code.as_str() {
-                "required" => Some((0, "Value is required.")),
-                "cge" => Some((1, "Must be greater than or equal to {{arg}} characters.")),
-                _ => None,
-            };
-            if let Some((arity, message)) = default {
-                let has_message =
-                    matches!(value, AttributeValue::Array(args) if args.len() > arity);
-                if !has_message {
-                    rule.message = message.into();
-                }
-            }
+            super::source_assertions::normalize(field, &name[3..], value)?;
         }
         // Source presentation arguments deliberately remain in their exact private
         // attribute form; these are not Typed/public resolved component bindings.
         _ => {}
     }
     Ok(())
+}
+
+/// Recognize only the original generator's decimal length calls, never arbitrary expressions.
+fn provider_call(call: &str) -> SchemaResult<Option<ValueRule>> {
+    for provider in ["cuid", "nanoid"] {
+        let Some(arguments) = call
+            .strip_prefix(provider)
+            .and_then(|value| value.strip_prefix('('))
+            .and_then(|value| value.strip_suffix(')'))
+        else {
+            continue;
+        };
+        let args = if arguments.is_empty() && provider == "nanoid" {
+            Vec::new()
+        } else if !arguments.is_empty() && arguments.bytes().all(|byte| byte.is_ascii_digit()) {
+            vec![serde_json::Value::from(arguments.parse::<u64>().map_err(
+                |_| invalid("provider length exceeds native representation"),
+            )?)]
+        } else {
+            continue;
+        };
+        return Ok(Some(ValueRule {
+            provider: provider.into(),
+            args,
+            revision: if provider == "cuid" {
+                "cuid2-3.3.0"
+            } else {
+                "nanoid-5.1.6"
+            }
+            .into(),
+        }));
+    }
+    Ok(None)
+}
+
+/// Original helpers.ts snakerize: SQL identifiers do not acquire Rust keyword suffixes.
+fn source_sql_name(name: &str) -> String {
+    let name = name.trim_matches('_');
+    let mut result = String::new();
+    let mut previous = None;
+    for c in name.chars() {
+        if previous.is_some_and(|p: char| p.is_ascii_lowercase())
+            && (c.is_ascii_uppercase() || c.is_ascii_digit())
+        {
+            result.push('_')
+        }
+        result.push(c.to_ascii_lowercase());
+        previous = Some(c);
+    }
+    result
 }
