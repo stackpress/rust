@@ -6,6 +6,7 @@ use serde_json::Value;
 /// Check one scalar family without coercion or ambient defaults.
 pub fn value_matches(kind: &ValueType, value: &Value) -> bool {
     match kind {
+        ValueType::Unknown => false,
         ValueType::String => value.as_str().is_some_and(|s| s.len() <= 1024 * 1024),
         ValueType::Integer => value.as_i64().is_some(),
         ValueType::Boolean => value.is_boolean(),

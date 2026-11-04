@@ -6,20 +6,36 @@
 
 mod crypto;
 mod cuid;
+mod nanoid;
 use crate::{SchemaError, SchemaErrorKind, SchemaResult, ValueProviders};
 pub use crypto::{decrypt, encrypt, hash};
 pub use cuid::{CuidGenerator, cuid};
+pub use nanoid::{NANOID_ALPHABET, nanoid, nanoid_with_length};
 use serde_json::Value;
 
 /// Opt-in built-in provider for the schema `cuid()` default, without implicit host policy.
 #[derive(Default)]
 pub struct BuiltinProviders;
 impl ValueProviders for BuiltinProviders {
-    /// Generate exactly the source no-argument cuid default; unknown names stay explicit errors.
+    /// Generate source CUID/nanoid defaults with optional lengths; unknown names remain errors.
     fn generate(&self, name: &str, args: &[Value]) -> SchemaResult<Value> {
-        // A source cuid() is not a generic option bag; reject arguments rather than ignore them.
-        if name == "cuid" && args.is_empty() {
-            return cuid().map(Value::String);
+        match (name, args) {
+            ("cuid", []) => return cuid().map(Value::String),
+            ("nanoid", []) => return nanoid().map(Value::String),
+            ("cuid" | "nanoid", [length]) => {
+                if let Some(length) = length
+                    .as_u64()
+                    .and_then(|length| usize::try_from(length).ok())
+                {
+                    return if name == "cuid" {
+                        CuidGenerator::with_source_length(length)?.generate()
+                    } else {
+                        nanoid_with_length(length)
+                    }
+                    .map(Value::String);
+                }
+            }
+            _ => {}
         }
         Err(SchemaError::new(
             SchemaErrorKind::Unsupported,

@@ -13,7 +13,7 @@ use serde::{Deserialize, Serialize};
 #[cfg(feature = "codegen")]
 pub mod codegen;
 mod source_catalog;
-pub use source_catalog::{SourceCatalog, SourceQuery, SourceRelation};
+pub use source_catalog::{SourceCatalog, SourceQuery, SourceRelation, SourceTable, SourceType};
 
 /// Generated schema contract, including explicit optional string storage length (G38).
 pub const CONTRACT_REVISION: u32 = 3;
@@ -65,13 +65,13 @@ pub enum SchemaErrorKind {
     Codec,
 }
 
-/// Safe schema diagnostic; input values and private causes never enter Display.
+/// Typed diagnostics use authored context; native source providers may preserve their original message.
 #[derive(Debug)]
 pub struct SchemaError {
     /// Semantic category chosen by the failing boundary.
     kind: SchemaErrorKind,
     /// Independently authored context, without rejected data.
-    context: &'static str,
+    context: std::borrow::Cow<'static, str>,
     /// Optional original typed codec/source cause.
     cause: Option<Box<dyn Error + Send + Sync>>,
     /// Logical location independent of private rejected values.
@@ -86,12 +86,20 @@ impl SchemaError {
     pub fn new(kind: SchemaErrorKind, context: &'static str) -> Self {
         Self {
             kind,
-            context,
+            context: std::borrow::Cow::Borrowed(context),
             cause: None,
             path: Vec::new(),
             #[cfg(feature = "codegen")]
             location: None,
         }
+    }
+
+    /// Preserve an original native source-provider diagnostic without changing Typed construction.
+    #[cfg(all(feature = "providers", not(target_arch = "wasm32")))]
+    pub(crate) fn from_source_message(kind: SchemaErrorKind, message: String) -> Self {
+        let mut error = Self::new(kind, "source provider failed");
+        error.context = std::borrow::Cow::Owned(message);
+        error
     }
 
     /// Retain the original concrete cause beneath distinct safe context.
@@ -131,7 +139,7 @@ impl SchemaError {
 impl fmt::Display for SchemaError {
     /// Display exactly one explanation, leaving source traversal explicit.
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.write_str(self.context)
+        f.write_str(&self.context)
     }
 }
 
@@ -177,7 +185,7 @@ pub struct Model {
     pub name: String,
     /// Portable Rust type name.
     pub rust_name: String,
-    /// Portable module and SQL table name.
+    /// Portable Rust module. Typed SQL shares it; SourceCatalog retains original source SQL spelling.
     pub module: String,
     /// Finite ordered fields, including virtual relations.
     pub fields: Vec<Field>,
@@ -268,6 +276,8 @@ fn storage_length<'de, D: serde::Deserializer<'de>>(decoder: D) -> Result<Option
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "kind", content = "name")]
 pub enum ValueType {
+    /// Source-only identity codec; Typed normalization does not accept Unknown declarations.
+    Unknown,
     /// Unchanged UTF-8 text.
     String,
     /// Exact signed 64-bit integer.

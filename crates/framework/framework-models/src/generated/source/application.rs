@@ -1,7 +1,7 @@
 //! Generated source schema; regenerate from the composed Idea graph, never edit.
 use stackpress_framework_schema::{
     Model, SchemaResult,
-    source::{Column, Kind, Record, SourceColumn, SourceRecordSchema, SourceSchema, Value},
+    source::{Column, Kind, Record, SourceColumn, SourceSchema as SourceSchemaContract, Value},
 };
 
 /// Complete source metadata, including relations, UI props and private attributes.
@@ -12,6 +12,7 @@ pub fn describe() -> Model {
 /// Generate storage columns in declaration order; relation fields remain metadata only.
 pub fn columns() -> Vec<SourceColumn> {
     let model = describe();
+    let catalog = std::sync::Arc::new(super::catalog::describe());
     let codecs = vec![
         Column {
             name: "id",
@@ -123,14 +124,14 @@ pub fn columns() -> Vec<SourceColumn> {
                 .find(|field| field.name == codec.name)
                 .expect("generated column has source field")
                 .clone();
-            SourceColumn::new(codec, field)
+            SourceColumn::new(codec, field).with_catalog(catalog.clone())
         })
         .collect()
 }
 
 /// Owned source schema state; construction performs no defaults, database or plugin IO.
 #[derive(Clone)]
-pub struct ApplicationSchema(SourceRecordSchema);
+pub struct ApplicationSchema(stackpress_framework_schema::source::SourceRecordSchema);
 
 impl ApplicationSchema {
     /// Use an explicit application provider; seed and clock offset remain immutable.
@@ -147,14 +148,23 @@ impl ApplicationSchema {
     }
 }
 
-impl SourceSchema for ApplicationSchema {
+impl SourceSchemaContract for ApplicationSchema {
     type Value = Value;
     type Record = Record;
     fn new(seed: String, offset_minutes: i32) -> Self {
-        Self(SourceRecordSchema::new(columns(), seed, offset_minutes))
+        Self(
+            stackpress_framework_schema::source::SourceRecordSchema::new(
+                columns(),
+                seed,
+                offset_minutes,
+            ),
+        )
     }
     fn describe() -> Model {
         describe()
+    }
+    fn catalog() -> stackpress_framework_schema::SourceCatalog {
+        super::catalog::describe()
     }
     fn seed(&self) -> &str {
         self.0.seed()

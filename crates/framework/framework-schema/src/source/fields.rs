@@ -96,3 +96,12 @@ impl<T: NativeField> NativeField for Option<T> {
         self.map(T::value).unwrap_or(Value::Null)
     }
 }
+
+impl NativeField for Value {
+    fn read(value: &Value) -> Option<Self> {
+        Some(value.clone())
+    }
+    fn value(self) -> Value {
+        self
+    }
+}

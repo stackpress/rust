@@ -22,6 +22,10 @@ impl SourceGraph {
             queries.push(query(self, model)?);
         }
         Ok(SourceCatalog {
+            tables: self.tables.clone(),
+            types: self.types.clone(),
+            fieldsets: self.fieldsets().to_vec(),
+            enums: self.enums().to_vec(),
             models: self.models().to_vec(),
             external_models: self.external_models().to_vec(),
             relations,
@@ -98,7 +102,12 @@ fn expand<'a>(
     paths: &mut Vec<String>,
 ) -> SchemaResult<()> {
     let mut prefix = String::new();
-    let segments: Vec<_> = selector.split('.').collect();
+    let segments: Vec<_> = selector
+        .split(':')
+        .next()
+        .unwrap_or(selector)
+        .split('.')
+        .collect();
     for (index, segment) in segments.iter().enumerate() {
         // Wildcards select stored members in declaration order, excluding virtual edges.
         if *segment == "*" {
@@ -117,18 +126,22 @@ fn expand<'a>(
             .find(|field| field.name == *segment)
             .ok_or_else(|| invalid("unknown source query member"))?;
         if index + 1 == segments.len() {
-            if matches!(field.value_type, ValueType::Model(_)) {
-                return Err(invalid("source query requires scalar or wildcard"));
-            }
-            paths.push(format!("{prefix}{}", field.name));
+            // A terminal relation is retained as the original selected expression. The SQL
+            // store owns its source path/column behavior, including any driver failure.
+            paths.push(if selector.contains(':') {
+                selector.into()
+            } else {
+                format!("{prefix}{}", field.name)
+            });
         } else {
             // A relation lookup consumes one bounded selector segment, not another query.
-            let ValueType::Model(name) = &field.value_type else {
+            let (ValueType::Model(name) | ValueType::Fieldset(name)) = &field.value_type else {
                 return Err(invalid("source query cannot traverse scalar"));
             };
             model = graph
                 .models()
                 .iter()
+                .chain(graph.fieldsets())
                 .find(|model| model.name == *name)
                 .ok_or_else(|| invalid("source query target is external"))?;
             prefix.push_str(segment);

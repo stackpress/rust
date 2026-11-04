@@ -1,12 +1,24 @@
 //! Complete generated native catalog metadata, separate from public UI projections.
-use crate::Model;
+use crate::{Enumeration, Model};
 use serde::{Deserialize, Serialize};
 
 /// Private source graph retained by a generated native model package.
 ///
 /// This is descriptive metadata, not an executable SQL store or a browser publication.
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize)]
 pub struct SourceCatalog {
+    /// Original SQL table spellings, independent of Rust keyword/module escaping.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub tables: Vec<SourceTable>,
+    /// Exact source type spellings, retaining String/Text and Number/Float SQL distinctions.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub types: Vec<SourceType>,
+    /// Source fieldsets, stored inside JSON columns rather than hidden tables.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub fieldsets: Vec<Model>,
+    /// Exact enum names/choices used by source column shapes.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub enums: Vec<Enumeration>,
     /// Models in composed source order, with every attribute and presentation binding.
     pub models: Vec<Model>,
     /// Declared external references; none is synthesized into a model/table.
@@ -47,4 +59,24 @@ pub struct SourceQuery {
     pub selectors: Vec<String>,
     /// Scalar paths in selector/declaration order, with wildcards expanded once per path.
     pub paths: Vec<String>,
+}
+
+/// Exact declared source type independently of its shared native value family.
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct SourceType {
+    /// Model or fieldset declaration name.
+    pub model: String,
+    /// Exact field name.
+    pub field: String,
+    /// Original scalar/enum/fieldset/model spelling, without the list/nullable suffix.
+    pub name: String,
+}
+
+/// SQL identity produced by the original schema snakerize helper, separate from Rust modules.
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct SourceTable {
+    /// Exact source model name.
+    pub model: String,
+    /// Original SQL table spelling.
+    pub name: String,
 }

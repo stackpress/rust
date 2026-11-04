@@ -69,6 +69,8 @@ pub trait SourceStore: Send + Sync + Sized + 'static {
         input: &<Self::Schema as SourceSchema>::Record,
     ) -> Result<<Self::Schema as SourceSchema>::Record, Self::Error>;
     /// Build source selectors, active policy and joins for the selected dialect.
+    /// This trait returns a bare SQL AST. With `source`, render it through `SourceStatement` for
+    /// G46 PostgreSQL ILIKE spelling; native actions already use that wrapper.
     fn select(&self, query: &Self::Query, dialect: DialectId) -> Result<Select, Self::Error>;
     /// Build an insert with the original dialect return behavior.
     fn insert(
@@ -164,3 +166,56 @@ pub enum BatchMode {
     #[default]
     Upsert,
 }
+
+#[cfg(feature = "source")]
+mod statement;
+#[cfg(feature = "source")]
+pub use statement::SourceStatement;
+#[cfg(feature = "source")]
+mod store;
+#[cfg(feature = "source")]
+pub use store::NativeStore;
+#[cfg(feature = "source")]
+mod query;
+#[cfg(feature = "source")]
+pub use query::StoreSelector;
+#[cfg(feature = "source")]
+mod query_input;
+#[cfg(feature = "source")]
+pub use query_input::StoreQuery;
+#[cfg(feature = "source")]
+mod membership;
+#[cfg(feature = "source")]
+mod native_actions;
+#[cfg(feature = "source")]
+mod predicates;
+#[cfg(feature = "source")]
+mod select;
+#[cfg(feature = "source")]
+mod text;
+#[cfg(feature = "source")]
+pub use native_actions::NativeActions;
+
+#[cfg(feature = "source")]
+mod batch;
+#[cfg(feature = "source")]
+mod native_contracts;
+#[cfg(feature = "source")]
+pub use batch::BatchStatus;
+
+#[cfg(all(feature = "source", feature = "server"))]
+mod event_defaults;
+#[cfg(all(feature = "source", feature = "server"))]
+mod events;
+#[cfg(all(feature = "source", feature = "server"))]
+pub use events::{Event, SourceEnvironment, action, register};
+/// Stable support paths for generated registrars; no direct server dependency is required by apps.
+#[cfg(all(feature = "source", feature = "server"))]
+#[doc(hidden)]
+pub mod __private {
+    pub use stackpress_lib::Result as ServerResult;
+    pub use stackpress_server::ServerBuilder;
+}
+
+#[cfg(feature = "source")]
+mod maintenance;

@@ -248,35 +248,29 @@ fn session_only_retains_external_links_without_hidden_api_output() {
 }
 
 #[test]
-fn unsupported_emission_fails_before_any_file_is_contributed() {
-    let config = config_for("model Good { id String } model Bad { id Integer }");
-    let graph = Schema::normalize_source(&config, NormalizeOptions::default(), &[]).unwrap();
-    let mut output = OutputPlan::default();
-    let error = emit_source_contracts(&graph, &mut output).unwrap_err();
-    let cause = std::error::Error::source(&error)
-        .unwrap()
-        .downcast_ref::<stackpress_framework_schema::SchemaError>()
-        .unwrap();
-    assert_eq!(cause.kind(), SchemaErrorKind::Unsupported);
-    assert!(cause.to_string().contains("source scalar codec"));
-    assert!(output.files().next().is_none());
-    let unsupported = config_for("model Entry { id String title String @is.url }");
-    let graph = Schema::normalize_source(&unsupported, NormalizeOptions::default(), &[]).unwrap();
-    assert!(emit_source_contracts(&graph, &mut output).is_err());
-    assert!(output.files().next().is_none());
-    let bad = config_for("model Broken @query(\"missing\") { id String }");
-    assert_eq!(
-        Schema::normalize_source(&bad, NormalizeOptions::default(), &[])
-            .unwrap_err()
-            .kind(),
-        SchemaErrorKind::Invalid
-    );
+fn unresolved_source_type_and_query_paths_fail_before_emission() {
+    for (input, kind) in [
+        (
+            "model Entry { value MissingType }",
+            SchemaErrorKind::Unsupported,
+        ),
+        (
+            "model Broken @query(\"missing\") { id String }",
+            SchemaErrorKind::Invalid,
+        ),
+    ] {
+        assert_eq!(
+            Schema::normalize_source(&config_for(input), NormalizeOptions::default(), &[])
+                .unwrap_err()
+                .kind(),
+            kind
+        );
+    }
 }
 
 #[test]
-fn normalized_but_unemittable_constructs_are_explicit_before_output() {
-    // Exhaust the source emitter's unsupported scalar/list/provider branches. None occurs
-    // in the shipped four-model graph; accepted metadata is not silently executed as Typed.
+fn formerly_unemittable_source_constructs_now_emit_without_filtering() {
+    // Every M1 refusal is an M2 requirement, emitted through the source path rather than Typed.
     for field in [
         "value Integer",
         "value Number",
@@ -297,15 +291,10 @@ fn normalized_but_unemittable_constructs_are_explicit_before_output() {
         "value String @default(\"cuid(8)\")",
     ] {
         let config = config_for(&format!("model Entry {{ {field} }}"));
-        let graph = Schema::normalize_source(&config, NormalizeOptions::default(), &[]).unwrap();
-        let mut output = OutputPlan::default();
-        assert!(
-            emit_source_contracts(&graph, &mut output).is_err(),
-            "{field}"
-        );
-        assert!(output.files().next().is_none(), "{field}");
+        let output = plan(&config);
+        assert!(output.files().next().is_some(), "{field}");
     }
-    // Each normalizable unsupported assertion family (including aliases) has a control.
+    // Every dictionary family/alias reaches emitted metadata and native source rules.
     for field in [
         "value String @is.ne",
         "value String @is.notempty",
@@ -350,22 +339,14 @@ fn normalized_but_unemittable_constructs_are_explicit_before_output() {
         "value Datetime @is.present",
     ] {
         let config = config_for(&format!("model Entry {{ {field} }}"));
-        let graph = Schema::normalize_source(&config, NormalizeOptions::default(), &[]).unwrap();
-        let mut output = OutputPlan::default();
-        assert!(
-            emit_source_contracts(&graph, &mut output).is_err(),
-            "{field}"
-        );
-        assert!(output.files().next().is_none(), "{field}");
+        let output = plan(&config);
+        assert!(output.files().next().is_some(), "{field}");
     }
     for input in [
         "model Catalog { value String }",
         "model Profile { id String @id auth Auth[] } model Auth @query(\"profile\") { id String @id profileId String profile Profile @relation({local \"profileId\" foreign \"id\"}) }",
     ] {
-        let graph =
-            Schema::normalize_source(&config_for(input), NormalizeOptions::default(), &[]).unwrap();
-        let mut output = OutputPlan::default();
-        assert!(emit_source_contracts(&graph, &mut output).is_err());
-        assert!(output.files().next().is_none());
+        let output = plan(&config_for(input));
+        assert!(output.files().next().is_some());
     }
 }

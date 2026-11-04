@@ -1,4 +1,4 @@
-//! A minimal structural emitter proves trait implementations; production source emission stays gated.
+//! Minimal M0 contract probes plus independent production source emission checks.
 
 use super::schema;
 use stackpress_framework_schema::{Schema, SchemaError, SchemaErrorKind, codegen::*};
@@ -107,6 +107,45 @@ fn session_only_external_reverse_links_remain_declarations() {
     let emitted = emit_probe(&source, EmissionSemantics::Source);
     assert!(emitted.contains("impl SessionModels for Family"));
     assert!(!emitted.contains("impl ApiModels for Family"));
+    // Production schema/store emission uses the same external graph, not the M0 probe template.
+    let mut registry = Registry::new();
+    registry
+        .add(
+            TransformSpec::new("native").owns(&["source", "stores"]),
+            |context: &TransformContext<'_>, plan: &mut OutputPlan| {
+                let source = Schema::normalize_source(
+                    context.schema(),
+                    NormalizeOptions::default(),
+                    &["Application", "Session"],
+                )
+                .unwrap();
+                emit_source_contracts(&source, plan)?;
+                stackpress_framework_sql::codegen::emit_source_stores(&source, plan)
+            },
+        )
+        .unwrap();
+    let plan = registry.plan(&graph.config, vec![]).unwrap();
+    let paths = plan
+        .files()
+        .map(|(path, _, _)| path.to_owned())
+        .collect::<Vec<_>>();
+    assert!(paths.iter().any(|path| path == "stores/profile.rs"));
+    assert!(
+        !paths
+            .iter()
+            .any(|path| path.contains("application.rs") || path.contains("session.rs"))
+    );
+    let temporary = tempfile::tempdir().unwrap();
+    // macOS aliases /var through /private/var; the output writer requires real ancestors.
+    let temporary_root = temporary.path().canonicalize().unwrap();
+    let destination = std::env::var_os("G50_NATIVE_PROBE_OUT")
+        .map(std::path::PathBuf::from)
+        .unwrap_or_else(|| temporary_root.join("generated"));
+    stackpress_idea_transformer::OutputWorkspace::new(destination)
+        .unwrap()
+        .install(plan)
+        .unwrap();
+
     if let Ok(root) = std::env::var("G50_PROBE_OUT") {
         std::fs::create_dir_all(&root).unwrap();
         std::fs::write(Path::new(&root).join("session-only.rs"), emitted).unwrap();

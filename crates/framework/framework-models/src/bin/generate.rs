@@ -13,7 +13,8 @@ use std::path::{Path, PathBuf};
 fn emit(context: &TransformContext<'_>, output: &mut OutputPlan) -> Result<()> {
     let graph = Schema::normalize_source(context.schema(), NormalizeOptions::default(), &[])
         .map_err(transform_error)?;
-    emit_source_contracts(&graph, output)
+    emit_source_contracts(&graph, output)?;
+    stackpress_framework_sql::codegen::emit_source_stores(&graph, output)
 }
 
 /// Resolve the package catalog without importing the session/API plugins as dependencies.
@@ -63,7 +64,10 @@ fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
         .compose("schema.idea")?
         .config;
     let mut registry = Registry::new();
-    registry.add(TransformSpec::new("source-models").owns(&["source"]), emit)?;
+    registry.add(
+        TransformSpec::new("source-models").owns(&["source", "stores"]),
+        emit,
+    )?;
     let plan = registry.plan(&config, Vec::new())?;
     let workspace = OutputWorkspace::new(destination)?;
     let report = if check {

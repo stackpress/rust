@@ -8,6 +8,8 @@ pub trait SourceDeclaration<Name>: SourceSchema {
     /// Exact declaration family, including nullable/list and target identity.
     type Declaration: Send + Sync + 'static;
 }
+/// Source Unknown identity, never repaired into a core concrete field type.
+pub enum UnknownType {}
 /// Source text (String/Text have the same plugin-visible type).
 pub enum StringType {}
 /// Source integer.
@@ -18,6 +20,10 @@ pub enum NumberType {}
 pub enum BooleanType {}
 /// Source object (Hash/Object/Json).
 pub enum ObjectType {}
+/// A declared enum is distinct from an unrestricted core String declaration.
+pub enum EnumType {}
+/// An embedded fieldset is distinct from an unrestricted core Hash declaration.
+pub enum FieldsetType {}
 /// Source calendar Date, distinct from Datetime even though both use native Dates.
 pub enum DateType {}
 /// Source Time.

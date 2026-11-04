@@ -1,0 +1,369 @@
+{
+  "zodVersion": "4.3.6",
+  "converted": [
+    {
+      "serializeNonFinite": null,
+      "unserializeNonFinite": null,
+      "input": null,
+      "serialize": 0,
+      "unserialize": 0
+    },
+    {
+      "serializeNonFinite": null,
+      "unserializeNonFinite": null,
+      "input": false,
+      "serialize": 0,
+      "unserialize": 0
+    },
+    {
+      "serializeNonFinite": null,
+      "unserializeNonFinite": null,
+      "input": true,
+      "serialize": 1,
+      "unserialize": 1
+    },
+    {
+      "serializeNonFinite": null,
+      "unserializeNonFinite": null,
+      "input": 0,
+      "serialize": 0,
+      "unserialize": 0
+    },
+    {
+      "serializeNonFinite": null,
+      "unserializeNonFinite": null,
+      "input": -1,
+      "serialize": -1,
+      "unserialize": -1
+    },
+    {
+      "serializeNonFinite": null,
+      "unserializeNonFinite": null,
+      "input": 1.5,
+      "serialize": 1.5,
+      "unserialize": 1.5
+    },
+    {
+      "serializeNonFinite": null,
+      "unserializeNonFinite": null,
+      "input": "2",
+      "serialize": 2,
+      "unserialize": 2
+    },
+    {
+      "serializeNonFinite": null,
+      "unserializeNonFinite": null,
+      "input": "",
+      "serialize": 0,
+      "unserialize": 0
+    },
+    {
+      "serializeNonFinite": null,
+      "unserializeNonFinite": null,
+      "input": "x",
+      "serialize": 0,
+      "unserialize": 0
+    },
+    {
+      "serializeNonFinite": null,
+      "unserializeNonFinite": null,
+      "input": "0x10",
+      "serialize": 16,
+      "unserialize": 16
+    },
+    {
+      "serializeNonFinite": null,
+      "unserializeNonFinite": null,
+      "input": "0b11",
+      "serialize": 3,
+      "unserialize": 3
+    },
+    {
+      "serializeNonFinite": null,
+      "unserializeNonFinite": null,
+      "input": "0o10",
+      "serialize": 8,
+      "unserialize": 8
+    },
+    {
+      "serializeNonFinite": "Infinity",
+      "unserializeNonFinite": "Infinity",
+      "input": "Infinity",
+      "serialize": null,
+      "unserialize": null
+    },
+    {
+      "serializeNonFinite": "-Infinity",
+      "unserializeNonFinite": "-Infinity",
+      "input": "-Infinity",
+      "serialize": null,
+      "unserialize": null
+    },
+    {
+      "serializeNonFinite": null,
+      "unserializeNonFinite": null,
+      "input": "NaN",
+      "serialize": 0,
+      "unserialize": 0
+    },
+    {
+      "serializeNonFinite": null,
+      "unserializeNonFinite": null,
+      "input": [],
+      "serialize": 0,
+      "unserialize": 0
+    },
+    {
+      "serializeNonFinite": null,
+      "unserializeNonFinite": null,
+      "input": [
+        1
+      ],
+      "serialize": 1,
+      "unserialize": 1
+    },
+    {
+      "serializeNonFinite": null,
+      "unserializeNonFinite": null,
+      "input": [
+        "2"
+      ],
+      "serialize": 2,
+      "unserialize": 2
+    },
+    {
+      "serializeNonFinite": null,
+      "unserializeNonFinite": null,
+      "input": [
+        null
+      ],
+      "serialize": 0,
+      "unserialize": 0
+    },
+    {
+      "serializeNonFinite": null,
+      "unserializeNonFinite": null,
+      "input": {},
+      "serialize": 0,
+      "unserialize": 0
+    },
+    {
+      "serializeNonFinite": null,
+      "unserializeNonFinite": null,
+      "input": {
+        "x": 1
+      },
+      "serialize": 0,
+      "unserialize": 0
+    },
+    {
+      "serializeNonFinite": null,
+      "unserializeNonFinite": null,
+      "input": {
+        "nativeDate": 42
+      },
+      "serialize": 42,
+      "unserialize": 42
+    }
+  ],
+  "shapes": [
+    {
+      "type": "Number",
+      "attrs": {},
+      "rules": [],
+      "min": "0",
+      "max": "0",
+      "step": 1,
+      "expression": "z.number().min(0).step(1)",
+      "results": [
+        {
+          "value": -1,
+          "error": "Too small: expected number to be >=0"
+        },
+        {
+          "value": 0,
+          "error": null
+        },
+        {
+          "value": 0.1,
+          "error": "Invalid number: must be a multiple of 1"
+        },
+        {
+          "value": 1,
+          "error": null
+        },
+        {
+          "value": 1.5,
+          "error": "Invalid number: must be a multiple of 1"
+        },
+        {
+          "value": 2,
+          "error": null
+        },
+        {
+          "value": "1",
+          "error": "Invalid input: expected number, received string"
+        },
+        {
+          "value": null,
+          "error": "Invalid input: expected number, received null"
+        },
+        {
+          "value": 100000000000000000000,
+          "error": null
+        }
+      ]
+    },
+    {
+      "type": "Integer",
+      "attrs": {},
+      "rules": [],
+      "min": "0",
+      "max": "0",
+      "step": 1,
+      "expression": "z.int().min(0).step(1)",
+      "results": [
+        {
+          "value": -1,
+          "error": "Too small: expected number to be >=0"
+        },
+        {
+          "value": 0,
+          "error": null
+        },
+        {
+          "value": 0.1,
+          "error": "Invalid input: expected int, received number"
+        },
+        {
+          "value": 1,
+          "error": null
+        },
+        {
+          "value": 1.5,
+          "error": "Invalid input: expected int, received number"
+        },
+        {
+          "value": 2,
+          "error": null
+        },
+        {
+          "value": "1",
+          "error": "Invalid input: expected number, received string"
+        },
+        {
+          "value": null,
+          "error": "Invalid input: expected number, received null"
+        },
+        {
+          "value": 100000000000000000000,
+          "error": "Too big: expected int to be <=9007199254740991"
+        }
+      ]
+    },
+    {
+      "type": "Float",
+      "attrs": {
+        "min": -100,
+        "step": 0.1
+      },
+      "rules": [],
+      "min": "-100",
+      "max": "0",
+      "step": 0.1,
+      "expression": "z.number().min(-100).max(0).step(0.1)",
+      "results": [
+        {
+          "value": -1,
+          "error": null
+        },
+        {
+          "value": 0,
+          "error": null
+        },
+        {
+          "value": 0.1,
+          "error": "Too big: expected number to be <=0"
+        },
+        {
+          "value": 1,
+          "error": "Too big: expected number to be <=0"
+        },
+        {
+          "value": 1.5,
+          "error": "Too big: expected number to be <=0"
+        },
+        {
+          "value": 2,
+          "error": "Too big: expected number to be <=0"
+        },
+        {
+          "value": "1",
+          "error": "Invalid input: expected number, received string"
+        },
+        {
+          "value": null,
+          "error": "Invalid input: expected number, received null"
+        },
+        {
+          "value": 100000000000000000000,
+          "error": "Too big: expected number to be <=0"
+        }
+      ]
+    },
+    {
+      "type": "Number",
+      "attrs": {},
+      "rules": [
+        {
+          "name": "gt",
+          "args": [
+            0
+          ]
+        }
+      ],
+      "min": "Infinity",
+      "max": "0",
+      "step": 1,
+      "expression": "z.number().min(Infinity).step(1)",
+      "results": [
+        {
+          "value": -1,
+          "error": "Too small: expected number to be >=Infinity"
+        },
+        {
+          "value": 0,
+          "error": "Too small: expected number to be >=Infinity"
+        },
+        {
+          "value": 0.1,
+          "error": "Too small: expected number to be >=Infinity"
+        },
+        {
+          "value": 1,
+          "error": "Too small: expected number to be >=Infinity"
+        },
+        {
+          "value": 1.5,
+          "error": "Too small: expected number to be >=Infinity"
+        },
+        {
+          "value": 2,
+          "error": "Too small: expected number to be >=Infinity"
+        },
+        {
+          "value": "1",
+          "error": "Invalid input: expected number, received string"
+        },
+        {
+          "value": null,
+          "error": "Invalid input: expected number, received null"
+        },
+        {
+          "value": 100000000000000000000,
+          "error": "Too small: expected number to be >=Infinity"
+        }
+      ]
+    }
+  ]
+}

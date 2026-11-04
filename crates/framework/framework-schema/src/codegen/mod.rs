@@ -41,11 +41,12 @@ mod inputs;
 mod metadata;
 mod source_graph;
 pub use source_graph::SourceGraph;
+mod source_assertions;
 mod source_roles;
 pub use source_roles::source_definitions;
 mod source_catalog;
 mod source_emit;
-pub use source_emit::emit_source_contracts;
+pub use source_emit::{emit_source_contracts, source_module};
 mod witnesses;
 pub use witnesses::emit_source_witnesses;
 mod projection;
@@ -456,6 +457,7 @@ fn validate_default(
         return Ok(());
     }
     let valid = match &field.value_type {
+        ValueType::Unknown => false,
         ValueType::String => {
             value.is_string()
                 && (!field.nonempty || value.as_str().is_some_and(|value| !value.is_empty()))

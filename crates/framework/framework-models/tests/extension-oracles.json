@@ -1,0 +1,334 @@
+{
+  "sourceCommit": "a71d683051ba8350fdd12d6b5a33f268fdcc285f",
+  "zodVersion": "4.3.6",
+  "rows": [
+    {
+      "value": {},
+      "scalarSerialize": "{}",
+      "scalarUnserialize": {},
+      "scalarAssert": null,
+      "listSerialize": "[]",
+      "listUnserialize": [],
+      "listAssert": null,
+      "schemaSerialize": {
+        "address": "\"{}\"",
+        "addresses": "\"[]\""
+      },
+      "schemaRoundtrip": {
+        "address": {},
+        "addresses": []
+      }
+    },
+    {
+      "value": null,
+      "scalarSerialize": null,
+      "scalarUnserialize": null,
+      "scalarAssert": null,
+      "listSerialize": "[]",
+      "listUnserialize": [],
+      "listAssert": null,
+      "schemaSerialize": {
+        "address": "null",
+        "addresses": "\"[]\""
+      },
+      "schemaRoundtrip": {
+        "address": {},
+        "addresses": []
+      }
+    },
+    {
+      "value": "bad",
+      "scalarSerialize": "{}",
+      "scalarUnserialize": {},
+      "scalarAssert": null,
+      "listSerialize": "[]",
+      "listUnserialize": [],
+      "listAssert": null,
+      "schemaSerialize": {
+        "address": "\"{}\"",
+        "addresses": "\"[]\""
+      },
+      "schemaRoundtrip": {
+        "address": {},
+        "addresses": []
+      }
+    },
+    {
+      "value": "{\"label\":\"123\",\"zip\":\"8\"}",
+      "scalarSerialize": "{\"label\":123,\"zip\":8}",
+      "scalarUnserialize": {
+        "label": "123",
+        "zip": 8
+      },
+      "scalarAssert": null,
+      "listSerialize": "[]",
+      "listUnserialize": [],
+      "listAssert": null,
+      "schemaSerialize": {
+        "address": "\"{\\\"label\\\":123,\\\"zip\\\":8}\"",
+        "addresses": "\"[]\""
+      },
+      "schemaRoundtrip": {
+        "address": {},
+        "addresses": []
+      }
+    },
+    {
+      "value": {
+        "label": "123",
+        "zip": "8"
+      },
+      "scalarSerialize": "{\"label\":123,\"zip\":8}",
+      "scalarUnserialize": {
+        "label": "123",
+        "zip": 8
+      },
+      "scalarAssert": {
+        "zip": "Invalid input: expected number, received string"
+      },
+      "listSerialize": "[]",
+      "listUnserialize": [],
+      "listAssert": {
+        "zip": "Invalid input: expected number, received string"
+      },
+      "schemaSerialize": {
+        "address": "\"{\\\"label\\\":123,\\\"zip\\\":8}\"",
+        "addresses": "\"[]\""
+      },
+      "schemaRoundtrip": {
+        "address": {},
+        "addresses": []
+      }
+    },
+    {
+      "value": {
+        "label": "",
+        "zip": "bad"
+      },
+      "scalarSerialize": "{\"label\":\"\",\"zip\":0}",
+      "scalarUnserialize": {
+        "label": "",
+        "zip": 0
+      },
+      "scalarAssert": {
+        "label": "Value is required.",
+        "zip": "Invalid input: expected number, received string"
+      },
+      "listSerialize": "[]",
+      "listUnserialize": [],
+      "listAssert": {
+        "label": "Value is required.",
+        "zip": "Invalid input: expected number, received string"
+      },
+      "schemaSerialize": {
+        "address": "\"{\\\"label\\\":\\\"\\\",\\\"zip\\\":0}\"",
+        "addresses": "\"[]\""
+      },
+      "schemaRoundtrip": {
+        "address": {},
+        "addresses": []
+      }
+    },
+    {
+      "value": [
+        {
+          "label": "abc",
+          "zip": 2
+        }
+      ],
+      "scalarSerialize": "{}",
+      "scalarUnserialize": {},
+      "scalarAssert": null,
+      "listSerialize": "[\"{\\\"label\\\":\\\"abc\\\",\\\"zip\\\":2}\"]",
+      "listUnserialize": [
+        {
+          "label": "abc",
+          "zip": 2
+        }
+      ],
+      "listAssert": null,
+      "schemaSerialize": {
+        "address": "\"{}\"",
+        "addresses": "\"[\\\"{\\\\\\\"label\\\\\\\":\\\\\\\"abc\\\\\\\",\\\\\\\"zip\\\\\\\":2}\\\"]\""
+      },
+      "schemaRoundtrip": {
+        "address": {},
+        "addresses": []
+      }
+    },
+    {
+      "value": [
+        null,
+        {},
+        false
+      ],
+      "scalarSerialize": "{}",
+      "scalarUnserialize": {},
+      "scalarAssert": null,
+      "listSerialize": "[\"{}\",\"{}\",\"{}\"]",
+      "listUnserialize": [
+        {},
+        {},
+        {}
+      ],
+      "listAssert": null,
+      "schemaSerialize": {
+        "address": "\"{}\"",
+        "addresses": "\"[\\\"{}\\\",\\\"{}\\\",\\\"{}\\\"]\""
+      },
+      "schemaRoundtrip": {
+        "address": {},
+        "addresses": []
+      }
+    },
+    {
+      "value": 42,
+      "scalarSerialize": "{}",
+      "scalarUnserialize": {},
+      "scalarAssert": null,
+      "listSerialize": "[]",
+      "listUnserialize": [],
+      "listAssert": null,
+      "schemaSerialize": {
+        "address": "\"{}\"",
+        "addresses": "\"[]\""
+      },
+      "schemaRoundtrip": {
+        "address": {},
+        "addresses": []
+      }
+    }
+  ],
+  "sqlValues": [
+    {
+      "value": "[1,2]",
+      "integer": 0,
+      "float": 0,
+      "boolean": true,
+      "date": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "value": "1.5xyz",
+      "integer": 1,
+      "float": 1.5,
+      "boolean": true,
+      "date": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "value": "0x10",
+      "integer": 16,
+      "float": 0,
+      "boolean": true,
+      "date": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "value": "Infinity",
+      "integer": 0,
+      "float": null,
+      "boolean": true,
+      "date": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "value": "false",
+      "integer": 0,
+      "float": 0,
+      "boolean": true,
+      "date": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "value": null,
+      "integer": 0,
+      "float": 0,
+      "boolean": false,
+      "date": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "value": 0,
+      "integer": 0,
+      "float": 0,
+      "boolean": false,
+      "date": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "value": 1.5,
+      "integer": 1,
+      "float": 1.5,
+      "boolean": true,
+      "date": "1970-01-01T00:00:00.001Z"
+    }
+  ],
+  "enums": [
+    {
+      "options": {
+        "ON": "on",
+        "OFF": "off"
+      },
+      "results": [
+        {
+          "value": "on",
+          "error": null
+        },
+        {
+          "value": "off",
+          "error": null
+        },
+        {
+          "value": 1,
+          "error": "Invalid option: expected one of \"on\"|\"off\""
+        },
+        {
+          "value": 2,
+          "error": "Invalid option: expected one of \"on\"|\"off\""
+        },
+        {
+          "value": "1",
+          "error": "Invalid option: expected one of \"on\"|\"off\""
+        },
+        {
+          "value": "unknown",
+          "error": "Invalid option: expected one of \"on\"|\"off\""
+        },
+        {
+          "value": null,
+          "error": "Invalid option: expected one of \"on\"|\"off\""
+        }
+      ]
+    },
+    {
+      "options": {
+        "ONE": 1,
+        "TWO": 2
+      },
+      "results": [
+        {
+          "value": "on",
+          "error": "Invalid option: expected one of 1|2"
+        },
+        {
+          "value": "off",
+          "error": "Invalid option: expected one of 1|2"
+        },
+        {
+          "value": 1,
+          "error": null
+        },
+        {
+          "value": 2,
+          "error": null
+        },
+        {
+          "value": "1",
+          "error": "Invalid option: expected one of 1|2"
+        },
+        {
+          "value": "unknown",
+          "error": "Invalid option: expected one of 1|2"
+        },
+        {
+          "value": null,
+          "error": "Invalid option: expected one of 1|2"
+        }
+      ]
+    }
+  ]
+}
