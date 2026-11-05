@@ -66,8 +66,8 @@ the original distinctions; this is not a promise of byte-identical driver DDL.
 
 With `server` as well as `source`, `source::register::<Model>` queues the source event
 inventory during Listen; each generated module also exposes `register`. This registrar
-binds NativeActions to the emitted model schema. Arbitrary custom action implementations
-use direct traits rather than being substituted by this native adapter.
+uses the model's actual associated SourceActions. Batch-capable event adapters implement
+SourceEventActions, retaining dynamic primitive/null batch rows and source statuses.
 `SourceEnvironment` is an explicit native service carrying seed/Date offset; Engine is
 an explicit shared service. Registration/startup performs no SQL; absent Engine and
 already-completed responses skip just as the source does. Ten event suffixes are available
@@ -77,4 +77,7 @@ request mutation, equal-priority order, duplicate composition and earlier Abort.
 
 Constituent callbacks remain independently usable under G42. This registrar supplies no
 global guard, OperationPolicy, default-deny or route arbitration. The existing Typed
-`plugin::register` keeps its own contract. Concrete session/API plugin rewiring is M3.
+`plugin::register` keeps its own contract. Session/API generic registrars select the same family; generated model callbacks remain
+independently selectable. source::register defaults to JSON Date serialization.
+source::register_with(app, ResponseValues::Native) explicitly retains native Dates for
+nested auth/account processes; the application host owns their final wire projection.

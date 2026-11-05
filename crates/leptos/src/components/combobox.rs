@@ -95,6 +95,32 @@ impl ComboboxState {
     pub fn active(self) -> Option<usize> {
         self.active.get()
     }
+    /// Replace checked choices without remounting the input or losing its query and open state.
+    ///
+    /// Successful replacement cancels pending acquisition and invalidates its completions,
+    /// clears keyboard activity, and retains the exact query and selected machine value.
+    /// # Errors
+    /// Rejects an absent or disabled retained selection before mutating any controller state.
+    pub fn replace_options(self, options: SelectOptions) -> Result<(), ControlError> {
+        if let Some(selected) = self.selected.get_untracked()
+            && !options
+                .entries()
+                .iter()
+                .any(|option| option.value == selected && !option.disabled)
+        {
+            return Err(ControlError);
+        }
+        let opened = self.open.get_untracked();
+        // Batch cancellation and restoration so a visible native popover never closes between
+        // them. The existing input/selection stay mounted while only its option list changes.
+        batch(move || {
+            self.cancel();
+            self.options.set(options);
+            self.active.set(None);
+            self.open.set(opened);
+        });
+        Ok(())
+    }
     /// Literal case-insensitive label filtering, capped by validated option data.
     pub fn matching(self) -> Vec<(usize, super::SelectOption)> {
         let query = self.query.get().to_lowercase();

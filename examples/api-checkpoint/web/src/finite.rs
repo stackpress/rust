@@ -1,6 +1,7 @@
 //! One real buffered HTTP request per process; every database and cookie belongs to the caller.
 use serde::{Deserialize, Serialize};
 use serde_json::json;
+use stackpress_framework_sql::source::SourceModel;
 use stackpress_lib::{Error, Result};
 use stackpress_sql::Engine;
 use std::{collections::BTreeMap, path::PathBuf, sync::Arc};
@@ -142,9 +143,15 @@ async fn execute(input: Input, engine: Arc<Engine>) -> Result<Output> {
 }
 /// Real owner Profile and API actions/default providers populate related management data.
 async fn populate(engine: Arc<Engine>) -> Result<()> {
-    let profile = stackpress_framework_session::storage::ProfileActions::new(engine.clone(), "");
-    let apps = stackpress_framework_api::models::ApplicationActions::new(engine.clone(), "");
-    let sessions = stackpress_framework_api::models::SessionActions::new(engine, "");
+    let profile =
+        crate::generated::stores::profile::ProfileModel::actions(engine.clone(), String::new(), 0);
+    let apps = crate::generated::stores::application::ApplicationModel::actions(
+        engine.clone(),
+        String::new(),
+        0,
+    );
+    let sessions =
+        crate::generated::stores::session::SessionModel::actions(engine, String::new(), 0);
     profile.install().await.map_err(Error::from_source)?;
     apps.install().await.map_err(Error::from_source)?;
     sessions.install().await.map_err(Error::from_source)?;

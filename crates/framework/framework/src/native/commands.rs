@@ -3,6 +3,9 @@
 #[cfg(feature = "schema-client")]
 pub mod schema;
 pub mod server;
+/// Finite source client generation; runtime plugin selection never enables this capability.
+#[cfg(feature = "codegen")]
+pub mod source_client;
 #[cfg(feature = "sql")]
 pub mod sql;
 

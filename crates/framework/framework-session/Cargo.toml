@@ -8,8 +8,8 @@ publish.workspace = true
 
 [features]
 default = []
-native = ["dep:stackpress-lib", "dep:base64", "dep:jsonwebtoken", "dep:stackpress-framework-schema", "dep:time"]
-sql = ["native", "dep:stackpress-sql", "dep:stackpress-framework-sql", "stackpress-framework-sql/source"]
+native = ["dep:stackpress-framework-models", "dep:stackpress-lib", "dep:base64", "dep:jsonwebtoken", "dep:stackpress-framework-schema", "dep:time"]
+sql = ["stackpress-framework-models/sql", "native", "dep:stackpress-sql", "dep:stackpress-framework-sql", "stackpress-framework-sql/source"]
 server = ["native", "dep:stackpress-lib", "dep:stackpress-server"]
 leptos = ["dep:leptos", "dep:leptos_meta", "dep:stackpress-leptos", "dep:stackpress-framework-view", "dep:phonenumber"]
 leptos-ssr = ["leptos", "auth-server", "stackpress-leptos/ssr", "stackpress-framework-view/leptos-ssr"]
@@ -33,6 +33,7 @@ wasm-bindgen-futures = { version = "=0.4.79", default-features = false, optional
 phonenumber = { version = "=0.3.10", default-features = false, optional = true }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+stackpress-framework-models = { path = "../framework-models", default-features = false, optional = true }
 # SSR and browser need identical initial phone formatting; native identity alone stays unchanged.
 phonenumber = { version = "=0.3.10", default-features = false, optional = true }
 stackpress-framework-schema = { path = "../framework-schema", features = ["providers", "source"], optional = true }

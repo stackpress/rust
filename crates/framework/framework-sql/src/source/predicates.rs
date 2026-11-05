@@ -1,5 +1,5 @@
 //! Source filter order, bound values, implicit active predicate and positive hasnt behavior.
-use super::membership::{flatten, membership};
+use super::membership::{flatten, flatten_has, membership};
 use super::text::source_text;
 use super::{NativeStore, SourceResult as Result, StoreQuery};
 use stackpress_framework_schema::source::{Record, SourceSchema, Value};
@@ -61,8 +61,14 @@ impl<S: SourceSchema<Value = Value, Record = Record>> NativeStore<S> {
         }
         // These source helpers bypass the ordinary scalar selector lookup. An unknown
         // column therefore reaches the database instead of silently widening the query.
-        for map in [&query.has, &query.hasnt] {
-            for (expression, value) in flatten(map) {
+        for (map, require_all) in [(&query.has, true), (&query.hasnt, false)] {
+            // G53 fixes only has arrays. Positive hasnt retains source index flattening.
+            let values = if require_all {
+                flatten_has(map)
+            } else {
+                flatten(map)
+            };
+            for (expression, value) in values {
                 let (column, json) = expression.split_once(':').unwrap_or((&expression, ""));
                 let identifier = Identifier::qualified(column.split('.'));
                 let json = json
@@ -76,7 +82,12 @@ impl<S: SourceSchema<Value = Value, Record = Record>> NativeStore<S> {
                     .map(|value| membership(identifier.clone(), &json, value, dialect))
                     .collect::<Result<Vec<_>>>()?;
                 if !members.is_empty() {
-                    filters.push(Expr::any(members));
+                    // Keep the exact scalar AST; several has values must all be present.
+                    filters.push(if require_all && members.len() > 1 {
+                        Expr::all(members)
+                    } else {
+                        Expr::any(members)
+                    });
                 }
             }
         }

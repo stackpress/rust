@@ -1,6 +1,7 @@
 //! Auth constituent selection, separate from the identity and Lane B email registrars.
 
 use super::{AuthSection, Hooks, events, pages};
+use stackpress_framework_sql::source::SessionModels;
 use stackpress_lib::{Flow, Result};
 use stackpress_server::{ServerBuilder, StartupContext};
 use std::sync::Arc;
@@ -32,9 +33,13 @@ use std::sync::Arc;
 /// # Errors
 /// Preserves existing duplicate typed-section/service and registration errors.
 pub fn register(app: &mut ServerBuilder) -> Result<()> {
+    register_with::<stackpress_framework_models::Models>(app)
+}
+/// Select auth over the application's generated Profile/Auth family; routes and guards stay source-owned.
+pub fn register_with<M: SessionModels>(app: &mut ServerBuilder) -> Result<()> {
     app.config_section("auth", AuthSection::default(), |_| Ok(()))?;
     app.on_config(configure)?;
-    app.on_listen(listen)?;
+    app.on_listen(listen::<M>)?;
     app.on_route(routes)?;
     Ok(())
 }
@@ -44,9 +49,9 @@ async fn configure(start: &mut StartupContext) -> Result<Flow> {
     Ok(Flow::Continue)
 }
 /// Source auth listener order is independent of the auth route config gate.
-async fn listen(start: &mut StartupContext) -> Result<Flow> {
-    start.on("auth-signup", events::signup)?;
-    start.on("auth-signin", events::signin)?;
+async fn listen<M: SessionModels>(start: &mut StartupContext) -> Result<Flow> {
+    start.on("auth-signup", events::signup_with::<M>)?;
+    start.on("auth-signin", events::signin_with::<M>)?;
     start.on("auth-signout", events::signout)?;
     Ok(Flow::Continue)
 }

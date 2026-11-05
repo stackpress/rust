@@ -9,7 +9,7 @@
         "contains": [
           "observed(\"server\")",
           "observed(\"admin\")",
-          "stackpress_framework_session::composite::register(app)?"
+          "unwrap_or(stackpress_framework_session::composite::register)"
         ]
       }
     ]
@@ -70,11 +70,15 @@
       },
       {
         "path": "examples/sql-profile/config/develop.json",
-        "contains": ["target/sql-profile-develop.sqlite"]
+        "contains": [
+          "target/sql-profile-develop.sqlite"
+        ]
       },
       {
         "path": "examples/sql-profile/config/build.json",
-        "contains": ["target/sql-profile-build.sqlite"]
+        "contains": [
+          "target/sql-profile-build.sqlite"
+        ]
       }
     ]
   },
@@ -113,7 +117,7 @@
         "path": "crates/framework/framework-session/src/account/events.rs",
         "contains": [
           "pub fn register_listen",
-          "app.on_listen(listen)"
+          "app.on_listen(listen::<M>)"
         ]
       }
     ]
@@ -948,14 +952,14 @@
         ]
       },
       {
-        "path": "crates/framework/framework-session/src/storage/statement.rs",
+        "path": "crates/framework/framework-sql/src/source/statement.rs",
         "contains": [
           "DialectId::Postgres =>",
           "DialectId::Sqlite | DialectId::Mysql => return Ok(query)"
         ]
       },
       {
-        "path": "crates/framework/framework-api/src/sql/adapter.rs",
+        "path": "crates/framework/framework-sql/src/source/statement.rs",
         "contains": [
           "DialectId::Postgres =>",
           "DialectId::Sqlite | DialectId::Mysql => return Ok(query)"
@@ -1128,15 +1132,25 @@
     "evidence": [
       {
         "path": "crates/framework/framework/src/native/commands/sql.rs",
-        "contains": ["let mysql_related", "table.foreign_keys.is_empty()", "stackpress_sql::Delete::new"]
+        "contains": [
+          "let mysql_related",
+          "table.foreign_keys.is_empty()",
+          "stackpress_sql::Delete::new"
+        ]
       },
       {
         "path": "crates/framework/framework/tests/live/cascade.rs",
-        "contains": ["1701", "sql::purge(engine, &scripts).await?", "related catalog purge passed with constraints retained"]
+        "contains": [
+          "1701",
+          "sql::purge(engine, &scripts).await?",
+          "related catalog purge passed with constraints retained"
+        ]
       },
       {
         "path": "crates/framework/framework/tests/cases/sql.rs",
-        "contains": ["fn g48_catalog_purge_maps_backend_and_foreign_key_order"]
+        "contains": [
+          "fn g48_catalog_purge_maps_backend_and_foreign_key_order"
+        ]
       }
     ]
   },
@@ -1147,15 +1161,27 @@
     "evidence": [
       {
         "path": "crates/framework/framework-session/tests/live_search.rs",
-        "contains": ["profile.install().await?", "auth.install().await?", "Auth-to-Profile like search"]
+        "contains": [
+          "profile.install().await?",
+          "auth.install().await?",
+          "Auth-to-Profile like search"
+        ]
       },
       {
         "path": "crates/framework/framework-api/tests/live_search.rs",
-        "contains": ["app.install().await?", "session.install().await?", "Application q/like search", "Session like search"]
+        "contains": [
+          "app.install().await?",
+          "session.install().await?",
+          "Application q/like search",
+          "Session like search"
+        ]
       },
       {
         "path": "crates/sql/sql/src/engine.rs",
-        "contains": ["pub async fn execute_non_atomic", "with_plan_progress"]
+        "contains": [
+          "pub async fn execute_non_atomic",
+          "with_plan_progress"
+        ]
       }
     ]
   },
@@ -1175,6 +1201,28 @@
         "path": "crates/framework/framework/tests/cases/codegen.rs",
         "contains": [
           "generate_provider_uses_shipped_catalog_for_nested_application_sources"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "g50-compiled-family-bindings",
+    "page": "crates/framework/framework/docs/guides/registration.md",
+    "statement": "CompiledClient's empty FrameworkBindings",
+    "evidence": [
+      {
+        "path": "crates/framework/framework/src/native/mod.rs",
+        "contains": [
+          "pub struct FrameworkBindings",
+          "pub bindings: FrameworkBindings"
+        ]
+      },
+      {
+        "path": "crates/framework/framework/consumers/support/source_family.rs",
+        "contains": [
+          "framework::register_with",
+          "App Source",
+          "source-account-export"
         ]
       }
     ]

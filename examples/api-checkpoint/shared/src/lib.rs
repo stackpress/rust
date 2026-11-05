@@ -1,10 +1,4 @@
-//! Pure selected API contracts/UI; native tool stores never enter this shared module.
-#[path = "../../tool/generated/contracts/mod.rs"]
-#[allow(
-    missing_docs,
-    reason = "generated aggregate modules are owned by the writer"
-)]
-pub mod contracts;
+//! Portable source API UI only; native descriptors/stores never enter this shared module.
 #[path = "../../tool/generated/ui/mod.rs"]
 #[allow(
     missing_docs,

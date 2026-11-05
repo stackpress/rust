@@ -13,6 +13,17 @@ use serde::{Deserialize, Serialize};
 #[cfg(feature = "codegen")]
 pub mod codegen;
 mod source_catalog;
+mod source_number;
+mod source_ui;
+pub use source_ui::SourceUiCatalog;
+
+/// Stable support imports used by generated portable code; applications need no direct edge.
+#[doc(hidden)]
+pub mod __private {
+    pub use crate::source_number::number as source_number;
+    pub use crate::source_number::number_text as source_number_text;
+    pub use serde_json;
+}
 pub use source_catalog::{SourceCatalog, SourceQuery, SourceRelation, SourceTable, SourceType};
 
 /// Generated schema contract, including explicit optional string storage length (G38).

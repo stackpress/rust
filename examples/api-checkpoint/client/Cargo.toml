@@ -9,6 +9,8 @@ publish = false
 crate-type = ["cdylib", "rlib"]
 [features]
 default = []
+# Reused by the aggregate browser artifact, which owns the exported entry points.
+aggregate-browser = []
 hydrate = ["stackpress-framework-api/ui-hydrate"]
 csr = ["stackpress-framework-api/ui-csr"]
 [dependencies]

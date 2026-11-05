@@ -12,6 +12,7 @@ Use `stackpress-framework-session` to read a cookie JWT, check configured permis
 | Set configuration and native resources | [Configuration](docs/guides/configuration.md) |
 | Reuse signup, signin, password, OTP, link and 2FA processes | [Authentication](docs/guides/authentication.md) |
 | Own signup hooks and shutdown | [Hooks](docs/guides/hooks.md) |
+| Extend the generated Profile/Auth family | [Generated models](docs/source-models.md) |
 | Store Auth/Profile records and run maintenance | [Storage](docs/storage.md) |
 | Load, update, export or remove an account | [Account processes](docs/account.md) |
 | Render SSR and hydrate or mount the shared UI | [Shared UI](docs/guides/shared-ui.md) |

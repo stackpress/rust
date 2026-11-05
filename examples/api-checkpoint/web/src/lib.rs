@@ -2,7 +2,12 @@
 //! JWT identity, API model events and process routes are selected independently; consent
 //! renders consent and selected generated management over an explicitly supplied Engine.
 use stackpress_framework_api::pages;
+use stackpress_framework_sql::source::SourceModel;
 pub mod finite;
+/// Native generated family, compiled from the same complete package composition as the tool.
+#[allow(dead_code, unexpected_cfgs)]
+#[path = "../../tool/generated/mod.rs"]
+pub mod generated;
 #[path = "../../shared/src/lib.rs"]
 pub mod shared;
 use stackpress_lib::{Flow, Result, queue::task};
@@ -15,12 +20,13 @@ use std::sync::Arc;
 /// Preserves each constituent's registration errors.
 pub fn register(app: &mut ServerBuilder) -> Result<()> {
     stackpress_framework_session::plugin::register(app)?;
-    stackpress_framework_api::sql::register(app)?;
-    stackpress_framework_api::register(app)?;
-    stackpress_framework_api::views::admin::register(
+    stackpress_framework_api::sql::register_with::<generated::stores::family::Models>(app)?;
+    stackpress_framework_api::register_with::<generated::stores::family::Models>(app)?;
+    stackpress_framework_api::views::admin::register_with::<generated::stores::family::Models>(
         app,
         shared::management(),
         Default::default(),
+        &["application", "session"],
     )?;
     assets(app)?;
     app.route_with(
@@ -82,16 +88,16 @@ async fn profiles(
 ) -> Result<Flow> {
     use stackpress_server::ServerInvocationExt;
     let engine = inv.shared_service::<Engine>()?;
-    let actions = stackpress_framework_session::storage::ProfileActions::new(engine, "");
-    let query = stackpress_framework_session::storage::StoreQuery {
+    let actions = generated::stores::profile::ProfileModel::actions(engine, String::new(), 0);
+    let query = stackpress_framework_sql::source::StoreQuery {
         q: req
             .data
             .get("q")
             .and_then(stackpress_lib::Value::as_str)
-            .map(str::to_owned),
+            .map(|value| value.to_owned().into()),
         ..Default::default()
     };
-    // Preserve the selected source store's backend errors, including SQLite's ILIKE limit.
+    // Preserve the selected generated store's backend errors and source envelope.
     let rows = match actions.find_all(&query).await {
         Ok(rows) => rows,
         Err(error) => {

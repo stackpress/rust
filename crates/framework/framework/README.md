@@ -25,3 +25,12 @@ Pick the task you need now; the reference pages contain signatures and detailed 
 The nine stages are server, schema, language, CSRF, SQL, view, session, API and admin. Session itself composes auth → email → identity. `default = []`; `full` selects the runtime stages without choosing a database connector, renderer or code generator. Native command execution remains application-owned.
 
 The [source ledger](proofs/coverage-map.json) maps inventory/export/risk rows to tests and named limits. [Doc claims](docs/claims.json) link these pages to current source and tests; [the checker](docs/check.py) also compiles exact Markdown examples outside the repository using unchanged consumer locks. See [verification](docs/verification.md) for the evidence boundary.
+
+## Application-generated source families
+
+The [source-client recipe](docs/guides/registration.md#generate-an-extended-source-client)
+uses the shipped Idea imports and the public source emitter. CompiledClient.bindings
+selects monomorphized session/API registrars for the actual application family, while
+model listeners remain in SQL Listen and generated admin stays last. The default facade
+and no-feature graphs are unchanged. Native schemas/stores/client stay separate from
+portable UI in SSR/hydrate/CSR artifacts; no codec state or native provider enters a seed.

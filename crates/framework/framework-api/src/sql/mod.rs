@@ -22,4 +22,4 @@ pub mod defaults;
 mod events;
 pub use crate::models::{ApplicationActions, ApplicationStore, SessionActions, SessionStore};
 pub use adapter::SourceStatement;
-pub use events::{Event, action, register};
+pub use events::{Event, action, register, register_with};

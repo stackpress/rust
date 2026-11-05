@@ -1,5 +1,5 @@
 //! Generated actions reenter and cancel against a real adapter under a parent process deadline.
-#![cfg(not(target_arch = "wasm32"))]
+#![cfg(all(feature = "sql", not(target_arch = "wasm32")))]
 use stackpress_framework_models::ProfileModel;
 use stackpress_framework_schema::source::Record;
 use stackpress_framework_sql::{

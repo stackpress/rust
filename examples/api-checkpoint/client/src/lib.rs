@@ -164,8 +164,14 @@ mod browser {
         )));
     }
     /// Mount one explicit root; the returned disposer drops resources and all pending lookups.
-    #[wasm_bindgen]
+    #[cfg_attr(not(feature = "aggregate-browser"), wasm_bindgen)]
     pub fn start() -> Result<js_sys::Function, JsValue> {
+        start_with_ui(super::shared::management())
+    }
+    /// Reuse the same transport and ownership with an application's compiled source UI.
+    pub fn start_with_ui(
+        ui: stackpress_framework_api::views::management::Ui,
+    ) -> Result<js_sys::Function, JsValue> {
         let document = web_sys::window()
             .and_then(|window| window.document())
             .ok_or_else(|| JsValue::from_str("document missing"))?;
@@ -190,7 +196,7 @@ mod browser {
                 view! {<ApiOauthPage page/>}.into_any()
             } else if let Some(page) = management {
                 relations();
-                view!{<ManagementPage page ui=super::shared::management() submit=Callback::new(submit) search=Callback::new(search)/>}.into_any()
+                view!{<ManagementPage page ui submit=Callback::new(submit) search=Callback::new(search)/>}.into_any()
             } else {
                 view! {<p role="alert">"Page seed missing"</p>}.into_any()
             }
@@ -208,3 +214,7 @@ mod browser {
         Ok(dispose.into_js_value().unchecked_into())
     }
 }
+
+/// The aggregate browser recipe reuses the exact API transport and disposer.
+#[cfg(target_arch = "wasm32")]
+pub use browser::{start, start_with_ui};

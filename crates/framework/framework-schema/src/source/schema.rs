@@ -35,6 +35,15 @@ impl SourceColumn {
     pub fn sql(&self) -> &str {
         &self.field.column
     }
+    /// Resolve this generated field's source default with the ordinary native clock/provider.
+    /// This retains the former column convenience path without its name-based default catalog.
+    pub fn defaults(&self) -> SchemaResult<Option<Value>> {
+        self.defaults_at(super::now(), &BuiltinProviders, 0)
+    }
+    /// Source Date formatting convenience, independent of this column's declared scalar kind.
+    pub fn serialize_date(&self, millis: i64, offset: i32) -> SchemaResult<Value> {
+        Ok(Value::String(super::date_text(millis, offset)?))
+    }
     /// Source conversion family, selected from the declaration and codec attributes.
     pub fn kind(&self) -> super::Kind {
         self.codec.kind

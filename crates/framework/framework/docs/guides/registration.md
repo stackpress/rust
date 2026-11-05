@@ -32,6 +32,10 @@ fn describe() -> Vec<Model> {
 }
 
 static CLIENT: CompiledClient = CompiledClient {
+    bindings: stackpress_framework::FrameworkBindings {
+        session: None,
+        api: None,
+    },
     build: "docs-account-v1",
     describe,
     models: &[CompiledModel {
@@ -74,3 +78,19 @@ This is a finite registration example, not a storage implementation: it never ex
 Call ordinary registrars directly when you need explicit composition. Keep the source order when parity is the goal, including session's composite and admin last. The [direct consumer implementation](../../consumers/support/native.rs) calls config, server commands, client, language, CSRF, SQL/model callbacks, view, session, API and generated admin individually; its inventory is compared with the aggregate.
 
 Direct source adapters for server/schema/language/view live in this crate, so that consumer still imports the aggregate crate while bypassing `register_with`. Independent CSRF/session/API registrars remain in their own crates. Do not select the aggregate and then re-register those same constituents: existing duplicate-section errors are preserved, with no rollback of earlier builder mutations. See [registration lookup](../api/registration.md).
+
+## Generate an extended source client
+
+The build-host-only `commands::source_client::emit` accepts SourceGraph, source UI
+definitions, Options and OutputPlan. One transform owns source/stores/ui/client. Options
+selects compiled session/API registrar paths and an application admin callback; missing
+bindings remain absent in emitted code. A supplied CompiledClient's empty FrameworkBindings
+retains the aggregate's generated-default session/API registrars.
+
+The [maintained source input](../../consumers/build-host/source.idea) imports
+stackpress/stackpress.idea and appends Profile.nickname. [Build-host](../../consumers/build-host/src/main.rs)
+emits its native schemas/stores/client separately from portable UI. Its generated family
+reaches [real auth/CRUD/joins/admin/export handlers](../../consumers/support/source_family.rs).
+Schema generation opens no database; the application explicitly installs or migrates any
+extension DDL. Catalog order follows G19 composition; SQL model listeners precede session,
+API and final generated admin callbacks. Existing Typed generation is unchanged.

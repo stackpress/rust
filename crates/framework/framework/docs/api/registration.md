@@ -45,6 +45,7 @@ Callbacks are invoked once per model entry per aggregate registration when their
 
 | Type / field | Contract |
 | --- | --- |
+| CompiledClient.bindings | FrameworkBindings with optional session/API Register callbacks; Default contains None. Empty callbacks retain existing default registrars. |
 | CompiledClient.models | Static ordered slice of CompiledModel entries. |
 | CompiledClient.build | Static build identity for inspection, not an import path. |
 | CompiledClient.describe | fn() -> Vec<framework_schema::Model>; evaluated explicitly, not during startup. |

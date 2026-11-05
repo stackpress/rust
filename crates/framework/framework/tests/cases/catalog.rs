@@ -35,6 +35,10 @@ fn second_admin(app: &mut ServerBuilder) -> Result<()> {
     }))
 }
 static CATALOG: CompiledClient = CompiledClient {
+    bindings: stackpress_framework::FrameworkBindings {
+        session: None,
+        api: None,
+    },
     build: "m0-proof",
     describe,
     models: &[
@@ -118,6 +122,10 @@ async fn compiled_catalog_and_api_sql_prepare_real_ordered_phases_once() {
 #[tokio::test]
 async fn queued_account_registration_matches_source_listen_order() {
     static ACCOUNT: CompiledClient = CompiledClient {
+        bindings: stackpress_framework::FrameworkBindings {
+            session: None,
+            api: None,
+        },
         build: "immediate-account-boundary",
         describe,
         models: &[CompiledModel {
@@ -151,6 +159,10 @@ async fn queued_account_registration_matches_source_listen_order() {
 #[tokio::test]
 async fn empty_catalog_is_present_and_repeated_registration_preserves_native_error() {
     static EMPTY: CompiledClient = CompiledClient {
+        bindings: stackpress_framework::FrameworkBindings {
+            session: None,
+            api: None,
+        },
         build: "empty",
         describe: Vec::new,
         models: &[],

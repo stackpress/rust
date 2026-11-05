@@ -12,7 +12,7 @@ pub struct StoreQuery {
     pub q: Option<Value>,
     /// Requested source paths; defaults to all base columns.
     pub columns: Vec<String>,
-    /// Equal values; active=-1 explicitly removes the implicit active=true predicate.
+    /// One equal value per field (G53); active=-1 removes the implicit active predicate.
     pub eq: Record,
     /// Not-equal values; nested maps and arrays retain source index-path flattening.
     pub ne: Record,
@@ -22,7 +22,7 @@ pub struct StoreQuery {
     pub le: Record,
     /// Contains-search values; % and _ retain SQL wildcard semantics.
     pub like: Record,
-    /// JSON-array membership.
+    /// JSON-array membership; every requested value must be present (G53).
     pub has: Record,
     /// Source currently compiles this as membership too, preserved deliberately.
     pub hasnt: Record,
@@ -128,4 +128,34 @@ fn paging(value: Option<&Value>, default: u64) -> Result<u64> {
         "paging cannot be represented as a native nonnegative integer",
         Record::new(),
     ))
+}
+
+impl StoreQuery {
+    /// Transfer a query to another generated store without JSON-erasing native Dates.
+    /// Missing q remains missing; explicit null and insertion order are retained.
+    pub fn to_record(&self) -> Record {
+        let mut record = Record::new();
+        if let Some(q) = &self.q {
+            record.insert("q".into(), q.clone());
+        }
+        record.insert(
+            "columns".into(),
+            Value::Array(self.columns.iter().cloned().map(Value::String).collect()),
+        );
+        for (name, map) in [
+            ("eq", &self.eq),
+            ("ne", &self.ne),
+            ("ge", &self.ge),
+            ("le", &self.le),
+            ("like", &self.like),
+            ("has", &self.has),
+            ("hasnt", &self.hasnt),
+            ("sort", &self.sort),
+        ] {
+            record.insert(name.into(), Value::Object(map.clone()));
+        }
+        record.insert("skip".into(), self.skip.into());
+        record.insert("take".into(), self.take.into());
+        record
+    }
 }

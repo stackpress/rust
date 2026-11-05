@@ -195,6 +195,8 @@ mod select;
 mod text;
 #[cfg(feature = "source")]
 pub use native_actions::NativeActions;
+#[cfg(feature = "source")]
+pub use text::source_text;
 
 #[cfg(feature = "source")]
 mod batch;
@@ -208,7 +210,10 @@ mod event_defaults;
 #[cfg(all(feature = "source", feature = "server"))]
 mod events;
 #[cfg(all(feature = "source", feature = "server"))]
-pub use events::{Event, SourceEnvironment, action, register};
+pub use events::{
+    Event, ResponseValues, SourceEnvironment, SourceEventActions, action, action_with, register,
+    register_with,
+};
 /// Stable support paths for generated registrars; no direct server dependency is required by apps.
 #[cfg(all(feature = "source", feature = "server"))]
 #[doc(hidden)]

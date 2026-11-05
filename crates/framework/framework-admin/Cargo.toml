@@ -8,6 +8,8 @@ publish.workspace = true
 
 [features]
 default = []
+source = ["dep:stackpress-lib"]
+source-ssr = ["source", "ssr", "dep:chrono"]
 format = ["stackpress-leptos/format"]
 ssr = ["stackpress-leptos/ssr"]
 hydrate = ["stackpress-leptos/hydrate"]
@@ -22,6 +24,9 @@ stackpress-idea-transformer = { path = "../../idea/idea-transformer", optional =
 leptos = { version = "=0.8.22", default-features = false }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+chrono = { version = "=0.4.45", default-features = false, features = ["clock"], optional = true }
 
 [dev-dependencies]
 tempfile = "3"

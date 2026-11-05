@@ -51,9 +51,11 @@ fn original_column_goldens() {
                 Err(_) => json!({"error":true}),
             };
             assert_eq!(
-                actual, case[name],
+                actual,
+                case[name],
                 "{} {} {name} input={input:?}",
-                schema.name, column.name
+                schema.name,
+                column.name()
             );
         }
         assert_eq!(
@@ -64,7 +66,7 @@ fn original_column_goldens() {
             case["assert"],
             "{} {} assertion input={input:?}",
             schema.name,
-            column.name
+            column.name()
         );
     }
 }

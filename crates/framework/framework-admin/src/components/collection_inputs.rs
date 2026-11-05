@@ -77,7 +77,7 @@ pub fn TextListField(
     let control = if context.bool_prop("tags", false) {
         view! { <TagList id label list disabled error/> }.into_any()
     } else {
-        view! { <TextList id label list disabled error/> }.into_any()
+        view! { <TextList id label list disabled error add_label=context.text_prop("add","Add row")/> }.into_any()
     };
     view! { <div class="sp-role">{control}{state}</div> }.into_any()
 }
@@ -139,7 +139,7 @@ pub fn MetadataField(
     );
     let state = presence(&context);
     view! { <div class="sp-role"><MetadataInput id=context.id.clone() label=context.text_prop("label",&context.field.label)
-        list disabled=context.bool_prop("disabled",false) error/>{state}</div> }.into_any()
+        list disabled=context.bool_prop("disabled",false) error add_label=context.text_prop("add","Add row")/>{state}</div> }.into_any()
 }
 
 #[cfg(test)]

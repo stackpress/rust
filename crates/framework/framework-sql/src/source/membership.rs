@@ -4,18 +4,29 @@ use stackpress_framework_schema::source::{Record, Value};
 use stackpress_sql::{DialectId, Expr, Identifier, JsonPath, JsonScalar, Select, Selector};
 /// Source flatten traverses plain nested objects, including array indices as the original flatten(..., true) does.
 pub(super) fn flatten(value: &Record) -> Record {
+    flatten_values(value, true)
+}
+
+/// G53 keeps each has array on its list column; all other filters retain source indices.
+pub(super) fn flatten_has(value: &Record) -> Record {
+    flatten_values(value, false)
+}
+
+/// Objects always supply path segments; only the source mode expands array indices.
+fn flatten_values(value: &Record, indexed_arrays: bool) -> Record {
     let mut result = Record::new();
     for (name, value) in value {
         if let Value::Object(object) = value {
-            for (child, value) in flatten(object) {
+            for (child, value) in flatten_values(object, indexed_arrays) {
                 result.insert(format!("{name}.{child}"), value);
             }
-        } else if let Value::Array(values) = value {
+        } else if indexed_arrays && let Value::Array(values) = value {
             // Source store/select.ts passes flatten(..., true): indices become path segments.
             for (index, value) in values.iter().enumerate() {
-                for (child, value) in
-                    flatten(&Record::from_iter([(index.to_string(), value.clone())]))
-                {
+                for (child, value) in flatten_values(
+                    &Record::from_iter([(index.to_string(), value.clone())]),
+                    true,
+                ) {
                     result.insert(format!("{name}.{child}"), value);
                 }
             }

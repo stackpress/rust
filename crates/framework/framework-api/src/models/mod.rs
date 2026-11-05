@@ -34,8 +34,6 @@ pub type SessionExtended = Record;
 #[cfg(feature = "sql")]
 pub use actions::{Actions, ApplicationActions, SessionActions};
 #[cfg(feature = "sql")]
-pub(crate) use query::source_text;
-#[cfg(feature = "sql")]
 pub use query::{StoreQuery, StoreSelector};
 #[cfg(feature = "sql")]
 pub use stackpress_framework_session::storage::{ActionError, BatchMode, BatchStatus, Result};

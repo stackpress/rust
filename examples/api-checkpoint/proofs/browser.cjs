@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const cp = require('node:child_process');
 const assert = require('node:assert/strict');
+assert.equal(process.env.API_PLAYWRIGHT,'/Users/cblanquera/.npm/_npx/e41f203b7505f1fb/node_modules/playwright','use the approved cached Playwright path');
 const { chromium } = require(process.env.API_PLAYWRIGHT);
 const mode = process.env.API_BROWSER_MODE || 'hydrate';
 // Local layout diagnostic only; the final gate never sets API_REVIEW_ONLY.
@@ -54,7 +55,11 @@ let browser;
         if(target.pathname==='/return' || target.pathname==='/auth/signin')return fulfill(200,{'content-type':'text/html'},'<!doctype html><p>Application continuation</p>');
         if(target.pathname==='/fixtures/application-logo.svg')return fulfill(200,{'content-type':'image/svg+xml'},fs.readFileSync('examples/api-checkpoint/proofs/application-logo.svg'));
         if(target.pathname==='/logo.png' || target.pathname==='/favicon.ico')return fulfill(200,{'content-type':'image/svg+xml'},'<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 50 50"><rect width="50" height="50" rx="8" fill="#64748b"/><text x="10" y="34" font-size="28" fill="white">S</text></svg>');
-        if(target.pathname==='/assets/api-checkpoint.js')return fulfill(200,{'content-type':'text/javascript'},fs.readFileSync('examples/api-checkpoint/client/api-checkpoint.js'));
+        if(target.pathname==='/assets/api-checkpoint.js') {
+          const original=fs.readFileSync('examples/api-checkpoint/client/api-checkpoint.js','utf8');
+          const script=process.env.API_AGGREGATE_ASSET==='1' ? original.replace("import init, { start } from './pkg/api_checkpoint_client.js';", "import init, { start_api as start } from './pkg/slice11_website.js';") : original;
+          return fulfill(200,{'content-type':'text/javascript'},script);
+        }
         if(target.pathname.startsWith('/assets/pkg/')) {
           const file=path.join(process.env.API_WASM_DIR,mode,'pkg',path.basename(target.pathname));
           return fulfill(200,{'content-type':file.endsWith('.wasm')?'application/wasm':'text/javascript'},fs.readFileSync(file));

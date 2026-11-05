@@ -67,6 +67,7 @@ dependencies = [
  "stackpress-framework-api",
  "stackpress-framework-schema",
  "stackpress-framework-session",
+ "stackpress-framework-sql",
  "stackpress-framework-view",
  "stackpress-leptos",
  "stackpress-lib",
@@ -3231,11 +3232,13 @@ checksum = "6ce2be8dc25455e1f91df71bfa12ad37d7af1092ae736f3a6cd0e37bc7810596"
 name = "stackpress-framework-admin"
 version = "0.1.0"
 dependencies = [
+ "chrono",
  "leptos",
  "serde",
  "serde_json",
  "stackpress-framework-schema",
  "stackpress-leptos",
+ "stackpress-lib",
 ]
 
 [[package]]
@@ -3249,6 +3252,7 @@ dependencies = [
  "serde_json",
  "stackpress-framework-admin",
  "stackpress-framework-csrf",
+ "stackpress-framework-models",
  "stackpress-framework-schema",
  "stackpress-framework-session",
  "stackpress-framework-sql",
@@ -3273,6 +3277,14 @@ dependencies = [
 [[package]]
 name = "stackpress-framework-language"
 version = "0.1.0"
+
+[[package]]
+name = "stackpress-framework-models"
+version = "0.1.0"
+dependencies = [
+ "stackpress-framework-schema",
+ "stackpress-framework-sql",
+]
 
 [[package]]
 name = "stackpress-framework-schema"
@@ -3300,6 +3312,7 @@ dependencies = [
  "regex",
  "serde",
  "serde_json",
+ "stackpress-framework-models",
  "stackpress-framework-schema",
  "stackpress-framework-sql",
  "stackpress-lib",
@@ -3315,6 +3328,8 @@ dependencies = [
  "serde",
  "serde_json",
  "stackpress-framework-schema",
+ "stackpress-lib",
+ "stackpress-server",
  "stackpress-sql",
 ]
 

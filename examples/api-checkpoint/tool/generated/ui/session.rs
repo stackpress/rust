@@ -1,881 +1,488 @@
-//! Generated public role wrappers; handwritten adapters remain outside this partition.
+//! Generated portable source roles; regenerate from the application's composed Idea input.
 use leptos::prelude::*;
-use stackpress_framework_admin::{Draft, RoleContext};
-use stackpress_framework_schema::{Role, SchemaError, SchemaErrorKind, SchemaResult, UiField};
-/// Decode only approved field descriptors; imports and source positions stay tool-only.
-pub fn descriptors() -> SchemaResult<Vec<UiField>> {
-    serde_json::from_str("[{\"id\":\"Session.id\",\"wire_name\":\"id\",\"label\":\"ID\",\"value_type\":{\"value\":{\"kind\":\"String\"},\"multiple\":false,\"choices\":[]},\"required\":true,\"input_required\":false,\"readable\":true,\"writable\":true,\"sensitive\":false,\"nullable\":false,\"default\":\"HostGenerated\",\"validation\":[],\"filterable\":true,\"searchable\":false,\"sortable\":false,\"roles\":[{\"role\":\"list\",\"component\":\"stackpress.ui.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"view\",\"component\":\"stackpress.ui.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":true}],\"relation\":null},{\"id\":\"Session.applicationId\",\"wire_name\":\"applicationId\",\"label\":\"App\",\"value_type\":{\"value\":{\"kind\":\"String\"},\"multiple\":false,\"choices\":[]},\"required\":true,\"input_required\":true,\"readable\":true,\"writable\":true,\"sensitive\":false,\"nullable\":false,\"default\":\"None\",\"validation\":[{\"code\":\"required\",\"args\":[],\"client_checkable\":true,\"message\":\"App is required\",\"definition_revision\":\"1\"}],\"filterable\":true,\"searchable\":false,\"sortable\":false,\"roles\":[{\"role\":\"field\",\"component\":\"api.source.field.relation\",\"props\":{\"id\":\"id\",\"search\":\"/admin/application/search?json\",\"template\":\"{{name}}\"},\"definition_revision\":\"source-1\",\"available\":true},{\"role\":\"filter\",\"component\":\"api.source.field.relation\",\"props\":{\"id\":\"id\",\"search\":\"/admin/application/search?json\",\"template\":\"{{name}}\"},\"definition_revision\":\"source-1\",\"available\":true},{\"role\":\"list\",\"component\":\"api.source.view.template\",\"props\":{\"template\":\"{{application.name}}\"},\"definition_revision\":\"source-1\",\"available\":true},{\"role\":\"view\",\"component\":\"api.source.view.template\",\"props\":{\"template\":\"{{application.name}}\"},\"definition_revision\":\"source-1\",\"available\":true}],\"relation\":null},{\"id\":\"Session.profileId\",\"wire_name\":\"profileId\",\"label\":\"Profile\",\"value_type\":{\"value\":{\"kind\":\"String\"},\"multiple\":false,\"choices\":[]},\"required\":true,\"input_required\":true,\"readable\":true,\"writable\":true,\"sensitive\":false,\"nullable\":false,\"default\":\"None\",\"validation\":[{\"code\":\"required\",\"args\":[],\"client_checkable\":true,\"message\":\"Profile is required\",\"definition_revision\":\"1\"}],\"filterable\":true,\"searchable\":false,\"sortable\":false,\"roles\":[{\"role\":\"field\",\"component\":\"api.source.field.relation\",\"props\":{\"id\":\"id\",\"search\":\"/admin/profile/search?json&q={{query}}\",\"template\":\"{{name}}\"},\"definition_revision\":\"source-1\",\"available\":true},{\"role\":\"filter\",\"component\":\"api.source.field.relation\",\"props\":{\"id\":\"id\",\"search\":\"/admin/profile/search?json&q={{query}}\",\"template\":\"{{name}}\"},\"definition_revision\":\"source-1\",\"available\":true},{\"role\":\"list\",\"component\":\"api.source.view.template\",\"props\":{\"template\":\"{{profile.name}}\"},\"definition_revision\":\"source-1\",\"available\":true},{\"role\":\"view\",\"component\":\"api.source.view.template\",\"props\":{\"template\":\"{{profile.name}}\"},\"definition_revision\":\"source-1\",\"available\":true}],\"relation\":null},{\"id\":\"Session.secret\",\"wire_name\":\"secret\",\"label\":\"Secret\",\"value_type\":{\"value\":{\"kind\":\"String\"},\"multiple\":false,\"choices\":[]},\"required\":true,\"input_required\":false,\"readable\":true,\"writable\":true,\"sensitive\":false,\"nullable\":false,\"default\":\"HostGenerated\",\"validation\":[],\"filterable\":false,\"searchable\":false,\"sortable\":false,\"roles\":[{\"role\":\"list\",\"component\":\"stackpress.ui.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"view\",\"component\":\"stackpress.ui.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":true}],\"relation\":null},{\"id\":\"Session.scopes\",\"wire_name\":\"scopes\",\"label\":\"Scopes\",\"value_type\":{\"value\":{\"kind\":\"String\"},\"multiple\":true,\"choices\":[]},\"required\":true,\"input_required\":false,\"readable\":true,\"writable\":true,\"sensitive\":false,\"nullable\":false,\"default\":{\"Literal\":[]},\"validation\":[],\"filterable\":false,\"searchable\":false,\"sortable\":false,\"roles\":[{\"role\":\"field\",\"component\":\"stackpress.ui.field.tags\",\"props\":{\"tags\":true},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"list\",\"component\":\"api.source.view.tags\",\"props\":{\"className\":\"frui-mr-md\",\"pill\":true,\"warning\":true},\"definition_revision\":\"source-1\",\"available\":true},{\"role\":\"view\",\"component\":\"api.source.view.tags\",\"props\":{\"className\":\"frui-mr-md\",\"pill\":true,\"warning\":true},\"definition_revision\":\"source-1\",\"available\":true}],\"relation\":null},{\"id\":\"Session.active\",\"wire_name\":\"active\",\"label\":\"Active\",\"value_type\":{\"value\":{\"kind\":\"Boolean\"},\"multiple\":false,\"choices\":[]},\"required\":true,\"input_required\":false,\"readable\":true,\"writable\":true,\"sensitive\":false,\"nullable\":false,\"default\":{\"Literal\":true},\"validation\":[],\"filterable\":true,\"searchable\":false,\"sortable\":false,\"roles\":[{\"role\":\"filter\",\"component\":\"api.source.field.switch\",\"props\":{},\"definition_revision\":\"source-1\",\"available\":true},{\"role\":\"view\",\"component\":\"stackpress.ui.view.yesno\",\"props\":{},\"definition_revision\":\"1\",\"available\":true}],\"relation\":null},{\"id\":\"Session.expires\",\"wire_name\":\"expires\",\"label\":\"Expires\",\"value_type\":{\"value\":{\"kind\":\"Datetime\"},\"multiple\":false,\"choices\":[]},\"required\":true,\"input_required\":true,\"readable\":true,\"writable\":true,\"sensitive\":false,\"nullable\":false,\"default\":\"None\",\"validation\":[{\"code\":\"required\",\"args\":[],\"client_checkable\":true,\"message\":\"Expires is required\",\"definition_revision\":\"1\"}],\"filterable\":false,\"searchable\":false,\"sortable\":true,\"roles\":[{\"role\":\"field\",\"component\":\"stackpress.ui.field.datetime\",\"props\":{},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"list\",\"component\":\"api.source.view.date\",\"props\":{\"format\":\"m d, Y h:iA\"},\"definition_revision\":\"source-1\",\"available\":true},{\"role\":\"view\",\"component\":\"api.source.view.date\",\"props\":{\"format\":\"m d, Y h:iA\"},\"definition_revision\":\"source-1\",\"available\":true}],\"relation\":null},{\"id\":\"Session.created\",\"wire_name\":\"created\",\"label\":\"Created\",\"value_type\":{\"value\":{\"kind\":\"Datetime\"},\"multiple\":false,\"choices\":[]},\"required\":true,\"input_required\":false,\"readable\":true,\"writable\":true,\"sensitive\":false,\"nullable\":false,\"default\":\"HostGenerated\",\"validation\":[],\"filterable\":false,\"searchable\":false,\"sortable\":true,\"roles\":[{\"role\":\"list\",\"component\":\"api.source.view.date\",\"props\":{\"format\":\"m d, Y h:iA\"},\"definition_revision\":\"source-1\",\"available\":true},{\"role\":\"view\",\"component\":\"api.source.view.date\",\"props\":{\"format\":\"m d, Y h:iA\"},\"definition_revision\":\"source-1\",\"available\":true}],\"relation\":null},{\"id\":\"Session.updated\",\"wire_name\":\"updated\",\"label\":\"Updated\",\"value_type\":{\"value\":{\"kind\":\"Datetime\"},\"multiple\":false,\"choices\":[]},\"required\":true,\"input_required\":false,\"readable\":true,\"writable\":false,\"sensitive\":false,\"nullable\":false,\"default\":\"HostGenerated\",\"validation\":[],\"filterable\":false,\"searchable\":false,\"sortable\":true,\"roles\":[{\"role\":\"list\",\"component\":\"api.source.view.date\",\"props\":{\"format\":\"m d, Y h:iA\"},\"definition_revision\":\"source-1\",\"available\":true},{\"role\":\"view\",\"component\":\"api.source.view.date\",\"props\":{\"format\":\"m d, Y h:iA\"},\"definition_revision\":\"source-1\",\"available\":true}],\"relation\":null},{\"id\":\"Session.application\",\"wire_name\":\"application\",\"label\":\"application\",\"value_type\":{\"value\":{\"kind\":\"Model\",\"name\":\"Application\"},\"multiple\":false,\"choices\":[]},\"required\":true,\"input_required\":false,\"readable\":true,\"writable\":false,\"sensitive\":false,\"nullable\":false,\"default\":\"None\",\"validation\":[],\"filterable\":false,\"searchable\":false,\"sortable\":false,\"roles\":[],\"relation\":{\"target\":\"Application\",\"many\":false,\"mapping\":{\"local\":\"applicationId\",\"foreign\":\"id\",\"inverse\":\"session\"},\"lookup\":null}},{\"id\":\"Session.profile\",\"wire_name\":\"profile\",\"label\":\"profile\",\"value_type\":{\"value\":{\"kind\":\"Model\",\"name\":\"Profile\"},\"multiple\":false,\"choices\":[]},\"required\":true,\"input_required\":false,\"readable\":true,\"writable\":false,\"sensitive\":false,\"nullable\":false,\"default\":\"None\",\"validation\":[],\"filterable\":false,\"searchable\":false,\"sortable\":false,\"roles\":[],\"relation\":{\"target\":\"Profile\",\"many\":false,\"mapping\":{\"local\":\"profileId\",\"foreign\":\"id\",\"inverse\":null},\"lookup\":null}}]").map_err(|cause| SchemaError::new(SchemaErrorKind::Codec, "public role descriptor decoding failed").with_cause(cause))
+use stackpress_framework_admin::RoleContext;
+use stackpress_framework_schema::Role;
+use stackpress_framework_schema::{SchemaResult, UiField, UiModel};
+
+use stackpress_framework_admin::Draft;
+use stackpress_framework_schema::__private::serde_json;
+/// Only portable presentation metadata; no native descriptors or providers.
+pub fn model() -> UiModel {
+    serde_json::from_str("{\"id\":\"Session\",\"label\":\"Session\",\"fields\":[{\"id\":\"Session.id\",\"wire_name\":\"id\",\"label\":\"ID\",\"value_type\":{\"value\":{\"kind\":\"String\"},\"multiple\":false,\"choices\":[]},\"required\":true,\"input_required\":false,\"readable\":true,\"writable\":false,\"sensitive\":false,\"nullable\":false,\"default\":\"HostGenerated\",\"validation\":[],\"filterable\":false,\"searchable\":false,\"sortable\":false,\"roles\":[{\"role\":\"list\",\"component\":\"stackpress.ui.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"view\",\"component\":\"stackpress.ui.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":true}],\"relation\":null},{\"id\":\"Session.applicationId\",\"wire_name\":\"applicationId\",\"label\":\"App\",\"value_type\":{\"value\":{\"kind\":\"String\"},\"multiple\":false,\"choices\":[]},\"required\":true,\"input_required\":true,\"readable\":true,\"writable\":true,\"sensitive\":false,\"nullable\":false,\"default\":\"None\",\"validation\":[],\"filterable\":true,\"searchable\":false,\"sortable\":false,\"roles\":[{\"role\":\"field\",\"component\":\"stackpress.source.field.relation\",\"props\":{\"id\":\"id\",\"search\":\"/admin/application/search?json\",\"template\":\"{{name}}\"},\"definition_revision\":\"source-1\",\"available\":true},{\"role\":\"filter\",\"component\":\"stackpress.source.field.relation\",\"props\":{\"id\":\"id\",\"search\":\"/admin/application/search?json\",\"template\":\"{{name}}\"},\"definition_revision\":\"source-1\",\"available\":true},{\"role\":\"list\",\"component\":\"stackpress.source.view.template\",\"props\":{\"template\":\"{{application.name}}\"},\"definition_revision\":\"source-1\",\"available\":true},{\"role\":\"view\",\"component\":\"stackpress.source.view.template\",\"props\":{\"template\":\"{{application.name}}\"},\"definition_revision\":\"source-1\",\"available\":true}],\"relation\":null},{\"id\":\"Session.profileId\",\"wire_name\":\"profileId\",\"label\":\"Profile\",\"value_type\":{\"value\":{\"kind\":\"String\"},\"multiple\":false,\"choices\":[]},\"required\":true,\"input_required\":true,\"readable\":true,\"writable\":true,\"sensitive\":false,\"nullable\":false,\"default\":\"None\",\"validation\":[],\"filterable\":true,\"searchable\":false,\"sortable\":false,\"roles\":[{\"role\":\"field\",\"component\":\"stackpress.source.field.relation\",\"props\":{\"id\":\"id\",\"search\":\"/admin/profile/search?json&q={{query}}\",\"template\":\"{{name}}\"},\"definition_revision\":\"source-1\",\"available\":true},{\"role\":\"filter\",\"component\":\"stackpress.source.field.relation\",\"props\":{\"id\":\"id\",\"search\":\"/admin/profile/search?json&q={{query}}\",\"template\":\"{{name}}\"},\"definition_revision\":\"source-1\",\"available\":true},{\"role\":\"list\",\"component\":\"stackpress.source.view.template\",\"props\":{\"template\":\"{{profile.name}}\"},\"definition_revision\":\"source-1\",\"available\":true},{\"role\":\"view\",\"component\":\"stackpress.source.view.template\",\"props\":{\"template\":\"{{profile.name}}\"},\"definition_revision\":\"source-1\",\"available\":true}],\"relation\":null},{\"id\":\"Session.secret\",\"wire_name\":\"secret\",\"label\":\"Secret\",\"value_type\":{\"value\":{\"kind\":\"String\"},\"multiple\":false,\"choices\":[]},\"required\":true,\"input_required\":false,\"readable\":true,\"writable\":false,\"sensitive\":false,\"nullable\":false,\"default\":\"HostGenerated\",\"validation\":[],\"filterable\":false,\"searchable\":false,\"sortable\":false,\"roles\":[{\"role\":\"list\",\"component\":\"stackpress.ui.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"view\",\"component\":\"stackpress.ui.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":true}],\"relation\":null},{\"id\":\"Session.scopes\",\"wire_name\":\"scopes\",\"label\":\"Scopes\",\"value_type\":{\"value\":{\"kind\":\"String\"},\"multiple\":true,\"choices\":[]},\"required\":true,\"input_required\":false,\"readable\":true,\"writable\":true,\"sensitive\":false,\"nullable\":false,\"default\":{\"Literal\":[]},\"validation\":[],\"filterable\":false,\"searchable\":false,\"sortable\":false,\"roles\":[{\"role\":\"field\",\"component\":\"stackpress.ui.field.tags\",\"props\":{\"tags\":true},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"list\",\"component\":\"stackpress.source.view.tags\",\"props\":{\"className\":\"frui-mr-md\",\"pill\":true,\"warning\":true},\"definition_revision\":\"source-1\",\"available\":true},{\"role\":\"view\",\"component\":\"stackpress.source.view.tags\",\"props\":{\"className\":\"frui-mr-md\",\"pill\":true,\"warning\":true},\"definition_revision\":\"source-1\",\"available\":true}],\"relation\":null},{\"id\":\"Session.active\",\"wire_name\":\"active\",\"label\":\"Active\",\"value_type\":{\"value\":{\"kind\":\"Boolean\"},\"multiple\":false,\"choices\":[]},\"required\":true,\"input_required\":false,\"readable\":true,\"writable\":false,\"sensitive\":false,\"nullable\":false,\"default\":\"None\",\"validation\":[],\"filterable\":true,\"searchable\":false,\"sortable\":false,\"roles\":[{\"role\":\"filter\",\"component\":\"stackpress.ui.field.switch\",\"props\":{},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"view\",\"component\":\"stackpress.ui.view.yesno\",\"props\":{},\"definition_revision\":\"1\",\"available\":true}],\"relation\":null},{\"id\":\"Session.expires\",\"wire_name\":\"expires\",\"label\":\"Expires\",\"value_type\":{\"value\":{\"kind\":\"Datetime\"},\"multiple\":false,\"choices\":[]},\"required\":true,\"input_required\":true,\"readable\":true,\"writable\":true,\"sensitive\":false,\"nullable\":false,\"default\":\"None\",\"validation\":[],\"filterable\":false,\"searchable\":false,\"sortable\":true,\"roles\":[{\"role\":\"field\",\"component\":\"stackpress.ui.field.datetime\",\"props\":{},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"list\",\"component\":\"stackpress.source.view.date\",\"props\":{\"format\":\"m d, Y h:iA\"},\"definition_revision\":\"source-1\",\"available\":true},{\"role\":\"view\",\"component\":\"stackpress.source.view.date\",\"props\":{\"format\":\"m d, Y h:iA\"},\"definition_revision\":\"source-1\",\"available\":true}],\"relation\":null},{\"id\":\"Session.created\",\"wire_name\":\"created\",\"label\":\"Created\",\"value_type\":{\"value\":{\"kind\":\"Datetime\"},\"multiple\":false,\"choices\":[]},\"required\":true,\"input_required\":false,\"readable\":true,\"writable\":false,\"sensitive\":false,\"nullable\":false,\"default\":\"HostGenerated\",\"validation\":[],\"filterable\":false,\"searchable\":false,\"sortable\":true,\"roles\":[{\"role\":\"list\",\"component\":\"stackpress.source.view.date\",\"props\":{\"format\":\"m d, Y h:iA\"},\"definition_revision\":\"source-1\",\"available\":true},{\"role\":\"view\",\"component\":\"stackpress.source.view.date\",\"props\":{\"format\":\"m d, Y h:iA\"},\"definition_revision\":\"source-1\",\"available\":true}],\"relation\":null},{\"id\":\"Session.updated\",\"wire_name\":\"updated\",\"label\":\"Updated\",\"value_type\":{\"value\":{\"kind\":\"Datetime\"},\"multiple\":false,\"choices\":[]},\"required\":true,\"input_required\":false,\"readable\":true,\"writable\":false,\"sensitive\":false,\"nullable\":false,\"default\":\"HostGenerated\",\"validation\":[],\"filterable\":false,\"searchable\":false,\"sortable\":true,\"roles\":[{\"role\":\"list\",\"component\":\"stackpress.source.view.date\",\"props\":{\"format\":\"m d, Y h:iA\"},\"definition_revision\":\"source-1\",\"available\":true},{\"role\":\"view\",\"component\":\"stackpress.source.view.date\",\"props\":{\"format\":\"m d, Y h:iA\"},\"definition_revision\":\"source-1\",\"available\":true}],\"relation\":null},{\"id\":\"Session.application\",\"wire_name\":\"application\",\"label\":\"application\",\"value_type\":{\"value\":{\"kind\":\"Model\",\"name\":\"Application\"},\"multiple\":false,\"choices\":[]},\"required\":true,\"input_required\":false,\"readable\":false,\"writable\":false,\"sensitive\":false,\"nullable\":false,\"default\":\"None\",\"validation\":[],\"filterable\":false,\"searchable\":false,\"sortable\":false,\"roles\":[],\"relation\":{\"target\":\"Application\",\"many\":false,\"mapping\":{\"local\":\"applicationId\",\"foreign\":\"id\",\"inverse\":null},\"lookup\":null}},{\"id\":\"Session.profile\",\"wire_name\":\"profile\",\"label\":\"profile\",\"value_type\":{\"value\":{\"kind\":\"Model\",\"name\":\"Profile\"},\"multiple\":false,\"choices\":[]},\"required\":true,\"input_required\":false,\"readable\":false,\"writable\":false,\"sensitive\":false,\"nullable\":false,\"default\":\"None\",\"validation\":[],\"filterable\":false,\"searchable\":false,\"sortable\":false,\"roles\":[],\"relation\":{\"target\":\"Profile\",\"many\":false,\"mapping\":{\"local\":\"profileId\",\"foreign\":\"id\",\"inverse\":null},\"lookup\":null}}],\"key\":[\"id\"],\"query_fields\":[\"applicationId\",\"profileId\",\"active\"],\"default_selection\":[\"*\",\"profile.*\",\"application.*\"],\"operations\":[]}").expect("generated source UI descriptor")
 }
-/// Render the explicitly selected field controls for one caller-owned instance.
+/// Source field order and props, detached from private metadata.
+pub fn descriptors() -> SchemaResult<Vec<UiField>> {
+    Ok(model().fields)
+}
+
+/// Render the source-selected field roles for this instance.
 pub fn field(draft: &Draft, instance: &str) -> SchemaResult<AnyView> {
     let fields = descriptors()?;
-    let mut controls = Vec::new();
+
+    let mut controls = Vec::<AnyView>::new();
     {
-        // This exact field was approved by the app before normalization.
         let field = fields
             .iter()
             .find(|field| field.wire_name == "applicationId")
-            .cloned()
-            .ok_or_else(|| {
-                SchemaError::new(
-                    SchemaErrorKind::Invalid,
-                    "missing generated field descriptor",
-                )
-            })?;
-        let value = draft.get("applicationId").ok_or_else(|| {
-            SchemaError::new(SchemaErrorKind::Invalid, "missing generated draft field")
-        })?;
+            .expect("generated role field")
+            .clone();
+        let value = draft
+            .get("applicationId")
+            .expect("source role admitted draft");
         let context = RoleContext {
-            id: format!("{}-field-{}", instance, "applicationId"),
+            id: format!("{instance}-field-{}", "applicationId"),
             field,
             role: Role::Field,
             value,
         };
         controls.push(
-            view! { <stackpress_framework_api::views::roles::RelationField context/> }.into_any(),
+            view! {<stackpress_framework_admin::source::roles::RelationField context />}.into_any(),
         );
     }
     {
-        // This exact field was approved by the app before normalization.
         let field = fields
             .iter()
             .find(|field| field.wire_name == "profileId")
-            .cloned()
-            .ok_or_else(|| {
-                SchemaError::new(
-                    SchemaErrorKind::Invalid,
-                    "missing generated field descriptor",
-                )
-            })?;
-        let value = draft.get("profileId").ok_or_else(|| {
-            SchemaError::new(SchemaErrorKind::Invalid, "missing generated draft field")
-        })?;
+            .expect("generated role field")
+            .clone();
+        let value = draft.get("profileId").expect("source role admitted draft");
         let context = RoleContext {
-            id: format!("{}-field-{}", instance, "profileId"),
+            id: format!("{instance}-field-{}", "profileId"),
             field,
             role: Role::Field,
             value,
         };
         controls.push(
-            view! { <stackpress_framework_api::views::roles::RelationField context/> }.into_any(),
+            view! {<stackpress_framework_admin::source::roles::RelationField context />}.into_any(),
         );
     }
     {
-        // This exact field was approved by the app before normalization.
         let field = fields
             .iter()
             .find(|field| field.wire_name == "scopes")
-            .cloned()
-            .ok_or_else(|| {
-                SchemaError::new(
-                    SchemaErrorKind::Invalid,
-                    "missing generated field descriptor",
-                )
-            })?;
-        let value = draft.get("scopes").ok_or_else(|| {
-            SchemaError::new(SchemaErrorKind::Invalid, "missing generated draft field")
-        })?;
+            .expect("generated role field")
+            .clone();
+        let value = draft.get("scopes").expect("source role admitted draft");
         let context = RoleContext {
-            id: format!("{}-field-{}", instance, "scopes"),
+            id: format!("{instance}-field-{}", "scopes"),
             field,
             role: Role::Field,
             value,
         };
         controls.push(
-            view! { <stackpress_framework_admin::components::TextListField context/> }.into_any(),
+            view! {<stackpress_framework_admin::components::TextListField context />}.into_any(),
         );
     }
     {
-        // This exact field was approved by the app before normalization.
         let field = fields
             .iter()
             .find(|field| field.wire_name == "expires")
-            .cloned()
-            .ok_or_else(|| {
-                SchemaError::new(
-                    SchemaErrorKind::Invalid,
-                    "missing generated field descriptor",
-                )
-            })?;
-        let value = draft.get("expires").ok_or_else(|| {
-            SchemaError::new(SchemaErrorKind::Invalid, "missing generated draft field")
-        })?;
+            .expect("generated role field")
+            .clone();
+        let value = draft.get("expires").expect("source role admitted draft");
         let context = RoleContext {
-            id: format!("{}-field-{}", instance, "expires"),
+            id: format!("{instance}-field-{}", "expires"),
             field,
             role: Role::Field,
             value,
         };
         controls.push(
-            view! { <stackpress_framework_admin::components::TemporalField context/> }.into_any(),
+            view! {<stackpress_framework_admin::components::TemporalField context />}.into_any(),
         );
     }
     Ok(controls.collect_view().into_any())
 }
-/// Render the explicitly selected filter controls for one caller-owned instance.
+
+/// Render the source-selected filter roles for this instance.
 pub fn filter(draft: &Draft, instance: &str) -> SchemaResult<AnyView> {
     let fields = descriptors()?;
-    let mut controls = Vec::new();
+
+    let mut controls = Vec::<AnyView>::new();
     {
-        // This exact field was approved by the app before normalization.
         let field = fields
             .iter()
             .find(|field| field.wire_name == "applicationId")
-            .cloned()
-            .ok_or_else(|| {
-                SchemaError::new(
-                    SchemaErrorKind::Invalid,
-                    "missing generated field descriptor",
-                )
-            })?;
-        let value = draft.get("applicationId").ok_or_else(|| {
-            SchemaError::new(SchemaErrorKind::Invalid, "missing generated draft field")
-        })?;
+            .expect("generated role field")
+            .clone();
+        let value = draft
+            .get("applicationId")
+            .expect("source role admitted draft");
         let context = RoleContext {
-            id: format!("{}-filter-{}", instance, "applicationId"),
+            id: format!("{instance}-filter-{}", "applicationId"),
             field,
             role: Role::Filter,
             value,
         };
         controls.push(
-            view! { <stackpress_framework_api::views::roles::RelationField context/> }.into_any(),
+            view! {<stackpress_framework_admin::source::roles::RelationField context />}.into_any(),
         );
     }
     {
-        // This exact field was approved by the app before normalization.
         let field = fields
             .iter()
             .find(|field| field.wire_name == "profileId")
-            .cloned()
-            .ok_or_else(|| {
-                SchemaError::new(
-                    SchemaErrorKind::Invalid,
-                    "missing generated field descriptor",
-                )
-            })?;
-        let value = draft.get("profileId").ok_or_else(|| {
-            SchemaError::new(SchemaErrorKind::Invalid, "missing generated draft field")
-        })?;
+            .expect("generated role field")
+            .clone();
+        let value = draft.get("profileId").expect("source role admitted draft");
         let context = RoleContext {
-            id: format!("{}-filter-{}", instance, "profileId"),
+            id: format!("{instance}-filter-{}", "profileId"),
             field,
             role: Role::Filter,
             value,
         };
         controls.push(
-            view! { <stackpress_framework_api::views::roles::RelationField context/> }.into_any(),
+            view! {<stackpress_framework_admin::source::roles::RelationField context />}.into_any(),
         );
     }
     {
-        // This exact field was approved by the app before normalization.
         let field = fields
             .iter()
             .find(|field| field.wire_name == "active")
-            .cloned()
-            .ok_or_else(|| {
-                SchemaError::new(
-                    SchemaErrorKind::Invalid,
-                    "missing generated field descriptor",
-                )
-            })?;
-        let value = draft.get("active").ok_or_else(|| {
-            SchemaError::new(SchemaErrorKind::Invalid, "missing generated draft field")
-        })?;
+            .expect("generated role field")
+            .clone();
+        let value = draft.get("active").expect("source role admitted draft");
         let context = RoleContext {
-            id: format!("{}-filter-{}", instance, "active"),
+            id: format!("{instance}-filter-{}", "active"),
             field,
             role: Role::Filter,
             value,
         };
         controls.push(
-            view! { <stackpress_framework_api::views::roles::SwitchField context/> }.into_any(),
+            view! {<stackpress_framework_admin::source::roles::SwitchField context />}.into_any(),
         );
     }
     Ok(controls.collect_view().into_any())
 }
-/// Render the explicitly selected list controls for one caller-owned instance.
-pub fn list(
-    value: &super::super::contracts::public::PublicSession,
-    instance: &str,
-) -> SchemaResult<AnyView> {
-    let seed = stackpress_framework_schema::to_bounded_value(value)?;
+
+/// Render the source-selected span roles for this instance.
+pub fn span(draft: &Draft, instance: &str) -> SchemaResult<AnyView> {
+    let _ = (draft, instance);
+
+    let controls = Vec::<AnyView>::new();
+    Ok(controls.collect_view().into_any())
+}
+
+/// Render the source-selected list roles for this instance.
+pub fn list_cells(value: &serde_json::Value, instance: &str) -> SchemaResult<Vec<AnyView>> {
+    let value_row = value;
+
     let fields = descriptors()?;
-    let draft = Draft::new(&fields, &seed, Role::List)?;
-    let mut controls = Vec::new();
+    let draft = Draft::new(&fields, value, Role::List)?;
+    let draft = &draft;
+
+    let mut controls = Vec::<AnyView>::new();
     {
-        // This exact field was approved by the app before normalization.
         let field = fields
             .iter()
             .find(|field| field.wire_name == "id")
-            .cloned()
-            .ok_or_else(|| {
-                SchemaError::new(
-                    SchemaErrorKind::Invalid,
-                    "missing generated field descriptor",
-                )
-            })?;
-        let value = draft.get("id").ok_or_else(|| {
-            SchemaError::new(SchemaErrorKind::Invalid, "missing generated draft field")
-        })?;
+            .expect("generated role field")
+            .clone();
+        let value = draft.get("id").expect("source role admitted draft");
         let context = RoleContext {
-            id: format!("{}-list-{}", instance, "id"),
+            id: format!("{instance}-list-{}", "id"),
             field,
             role: Role::List,
             value,
         };
-        let label = context.text_prop("label", &context.field.label);
-        controls.push(view! { <div class="sp-role-value"><span class="sp-role-label">{label} ": "</span><stackpress_framework_admin::components::TextView context/></div> }.into_any());
+        controls
+            .push(view! {<stackpress_framework_admin::components::TextView context />}.into_any());
     }
     {
-        // This exact field was approved by the app before normalization.
         let field = fields
             .iter()
             .find(|field| field.wire_name == "applicationId")
-            .cloned()
-            .ok_or_else(|| {
-                SchemaError::new(
-                    SchemaErrorKind::Invalid,
-                    "missing generated field descriptor",
-                )
-            })?;
-        let value = draft.get("applicationId").ok_or_else(|| {
-            SchemaError::new(SchemaErrorKind::Invalid, "missing generated draft field")
-        })?;
+            .expect("generated role field")
+            .clone();
+        let value = draft
+            .get("applicationId")
+            .expect("source role admitted draft");
         let context = RoleContext {
-            id: format!("{}-list-{}", instance, "applicationId"),
+            id: format!("{instance}-list-{}", "applicationId"),
             field,
             role: Role::List,
             value,
         };
-        let label = context.text_prop("label", &context.field.label);
-        controls.push(view! { <div class="sp-role-value"><span class="sp-role-label">{label} ": "</span><stackpress_framework_api::views::roles::TemplateView context/></div> }.into_any());
+        let row = value_row.clone();
+        controls.push(
+            view! {<stackpress_framework_admin::source::roles::TemplateView context row/>}
+                .into_any(),
+        );
     }
     {
-        // This exact field was approved by the app before normalization.
         let field = fields
             .iter()
             .find(|field| field.wire_name == "profileId")
-            .cloned()
-            .ok_or_else(|| {
-                SchemaError::new(
-                    SchemaErrorKind::Invalid,
-                    "missing generated field descriptor",
-                )
-            })?;
-        let value = draft.get("profileId").ok_or_else(|| {
-            SchemaError::new(SchemaErrorKind::Invalid, "missing generated draft field")
-        })?;
+            .expect("generated role field")
+            .clone();
+        let value = draft.get("profileId").expect("source role admitted draft");
         let context = RoleContext {
-            id: format!("{}-list-{}", instance, "profileId"),
+            id: format!("{instance}-list-{}", "profileId"),
             field,
             role: Role::List,
             value,
         };
-        let label = context.text_prop("label", &context.field.label);
-        controls.push(view! { <div class="sp-role-value"><span class="sp-role-label">{label} ": "</span><stackpress_framework_api::views::roles::TemplateView context/></div> }.into_any());
+        let row = value_row.clone();
+        controls.push(
+            view! {<stackpress_framework_admin::source::roles::TemplateView context row/>}
+                .into_any(),
+        );
     }
     {
-        // This exact field was approved by the app before normalization.
         let field = fields
             .iter()
             .find(|field| field.wire_name == "secret")
-            .cloned()
-            .ok_or_else(|| {
-                SchemaError::new(
-                    SchemaErrorKind::Invalid,
-                    "missing generated field descriptor",
-                )
-            })?;
-        let value = draft.get("secret").ok_or_else(|| {
-            SchemaError::new(SchemaErrorKind::Invalid, "missing generated draft field")
-        })?;
+            .expect("generated role field")
+            .clone();
+        let value = draft.get("secret").expect("source role admitted draft");
         let context = RoleContext {
-            id: format!("{}-list-{}", instance, "secret"),
+            id: format!("{instance}-list-{}", "secret"),
             field,
             role: Role::List,
             value,
         };
-        let label = context.text_prop("label", &context.field.label);
-        controls.push(view! { <div class="sp-role-value"><span class="sp-role-label">{label} ": "</span><stackpress_framework_admin::components::TextView context/></div> }.into_any());
+        controls
+            .push(view! {<stackpress_framework_admin::components::TextView context />}.into_any());
     }
     {
-        // This exact field was approved by the app before normalization.
         let field = fields
             .iter()
             .find(|field| field.wire_name == "scopes")
-            .cloned()
-            .ok_or_else(|| {
-                SchemaError::new(
-                    SchemaErrorKind::Invalid,
-                    "missing generated field descriptor",
-                )
-            })?;
-        let value = draft.get("scopes").ok_or_else(|| {
-            SchemaError::new(SchemaErrorKind::Invalid, "missing generated draft field")
-        })?;
+            .expect("generated role field")
+            .clone();
+        let value = draft.get("scopes").expect("source role admitted draft");
         let context = RoleContext {
-            id: format!("{}-list-{}", instance, "scopes"),
+            id: format!("{instance}-list-{}", "scopes"),
             field,
             role: Role::List,
             value,
         };
-        let label = context.text_prop("label", &context.field.label);
-        controls.push(view! { <div class="sp-role-value"><span class="sp-role-label">{label} ": "</span><stackpress_framework_api::views::roles::TagsView context/></div> }.into_any());
+        controls.push(
+            view! {<stackpress_framework_admin::source::roles::TagsView context />}.into_any(),
+        );
     }
     {
-        // This exact field was approved by the app before normalization.
         let field = fields
             .iter()
             .find(|field| field.wire_name == "expires")
-            .cloned()
-            .ok_or_else(|| {
-                SchemaError::new(
-                    SchemaErrorKind::Invalid,
-                    "missing generated field descriptor",
-                )
-            })?;
-        let value = draft.get("expires").ok_or_else(|| {
-            SchemaError::new(SchemaErrorKind::Invalid, "missing generated draft field")
-        })?;
+            .expect("generated role field")
+            .clone();
+        let value = draft.get("expires").expect("source role admitted draft");
         let context = RoleContext {
-            id: format!("{}-list-{}", instance, "expires"),
+            id: format!("{instance}-list-{}", "expires"),
             field,
             role: Role::List,
             value,
         };
-        let label = context.text_prop("label", &context.field.label);
-        controls.push(view! { <div class="sp-role-value"><span class="sp-role-label">{label} ": "</span><stackpress_framework_api::views::roles::DateView context/></div> }.into_any());
+        controls.push(
+            view! {<stackpress_framework_admin::source::roles::DateView context />}.into_any(),
+        );
     }
     {
-        // This exact field was approved by the app before normalization.
         let field = fields
             .iter()
             .find(|field| field.wire_name == "created")
-            .cloned()
-            .ok_or_else(|| {
-                SchemaError::new(
-                    SchemaErrorKind::Invalid,
-                    "missing generated field descriptor",
-                )
-            })?;
-        let value = draft.get("created").ok_or_else(|| {
-            SchemaError::new(SchemaErrorKind::Invalid, "missing generated draft field")
-        })?;
+            .expect("generated role field")
+            .clone();
+        let value = draft.get("created").expect("source role admitted draft");
         let context = RoleContext {
-            id: format!("{}-list-{}", instance, "created"),
+            id: format!("{instance}-list-{}", "created"),
             field,
             role: Role::List,
             value,
         };
-        let label = context.text_prop("label", &context.field.label);
-        controls.push(view! { <div class="sp-role-value"><span class="sp-role-label">{label} ": "</span><stackpress_framework_api::views::roles::DateView context/></div> }.into_any());
+        controls.push(
+            view! {<stackpress_framework_admin::source::roles::DateView context />}.into_any(),
+        );
     }
     {
-        // This exact field was approved by the app before normalization.
         let field = fields
             .iter()
             .find(|field| field.wire_name == "updated")
-            .cloned()
-            .ok_or_else(|| {
-                SchemaError::new(
-                    SchemaErrorKind::Invalid,
-                    "missing generated field descriptor",
-                )
-            })?;
-        let value = draft.get("updated").ok_or_else(|| {
-            SchemaError::new(SchemaErrorKind::Invalid, "missing generated draft field")
-        })?;
+            .expect("generated role field")
+            .clone();
+        let value = draft.get("updated").expect("source role admitted draft");
         let context = RoleContext {
-            id: format!("{}-list-{}", instance, "updated"),
+            id: format!("{instance}-list-{}", "updated"),
             field,
             role: Role::List,
             value,
         };
-        let label = context.text_prop("label", &context.field.label);
-        controls.push(view! { <div class="sp-role-value"><span class="sp-role-label">{label} ": "</span><stackpress_framework_api::views::roles::DateView context/></div> }.into_any());
+        controls.push(
+            view! {<stackpress_framework_admin::source::roles::DateView context />}.into_any(),
+        );
     }
-    Ok(controls.collect_view().into_any())
+    Ok(controls)
 }
-/// Render the explicitly selected view controls for one caller-owned instance.
-pub fn view(
-    value: &super::super::contracts::public::PublicSession,
-    instance: &str,
-) -> SchemaResult<AnyView> {
-    let seed = stackpress_framework_schema::to_bounded_value(value)?;
+/// Render source list controls outside a table.
+pub fn list(value: &serde_json::Value, instance: &str) -> SchemaResult<AnyView> {
+    Ok(list_cells(value, instance)?.collect_view().into_any())
+}
+
+/// Render the source-selected view roles for this instance.
+pub fn view(value: &serde_json::Value, instance: &str) -> SchemaResult<AnyView> {
+    let value_row = value;
+
     let fields = descriptors()?;
-    let draft = Draft::new(&fields, &seed, Role::View)?;
-    let mut controls = Vec::new();
+    let draft = Draft::new(&fields, value, Role::View)?;
+    let draft = &draft;
+
+    let mut controls = Vec::<AnyView>::new();
     {
-        // This exact field was approved by the app before normalization.
         let field = fields
             .iter()
             .find(|field| field.wire_name == "id")
-            .cloned()
-            .ok_or_else(|| {
-                SchemaError::new(
-                    SchemaErrorKind::Invalid,
-                    "missing generated field descriptor",
-                )
-            })?;
-        let value = draft.get("id").ok_or_else(|| {
-            SchemaError::new(SchemaErrorKind::Invalid, "missing generated draft field")
-        })?;
+            .expect("generated role field")
+            .clone();
+        let value = draft.get("id").expect("source role admitted draft");
         let context = RoleContext {
-            id: format!("{}-view-{}", instance, "id"),
+            id: format!("{instance}-view-{}", "id"),
             field,
             role: Role::View,
             value,
         };
-        let label = context.text_prop("label", &context.field.label);
-        controls.push(view! { <div class="sp-role-value"><span class="sp-role-label">{label} ": "</span><stackpress_framework_admin::components::TextView context/></div> }.into_any());
+        controls
+            .push(view! {<stackpress_framework_admin::components::TextView context />}.into_any());
     }
     {
-        // This exact field was approved by the app before normalization.
         let field = fields
             .iter()
             .find(|field| field.wire_name == "applicationId")
-            .cloned()
-            .ok_or_else(|| {
-                SchemaError::new(
-                    SchemaErrorKind::Invalid,
-                    "missing generated field descriptor",
-                )
-            })?;
-        let value = draft.get("applicationId").ok_or_else(|| {
-            SchemaError::new(SchemaErrorKind::Invalid, "missing generated draft field")
-        })?;
+            .expect("generated role field")
+            .clone();
+        let value = draft
+            .get("applicationId")
+            .expect("source role admitted draft");
         let context = RoleContext {
-            id: format!("{}-view-{}", instance, "applicationId"),
+            id: format!("{instance}-view-{}", "applicationId"),
             field,
             role: Role::View,
             value,
         };
-        let label = context.text_prop("label", &context.field.label);
-        controls.push(view! { <div class="sp-role-value"><span class="sp-role-label">{label} ": "</span><stackpress_framework_api::views::roles::TemplateView context/></div> }.into_any());
+        let row = value_row.clone();
+        controls.push(
+            view! {<stackpress_framework_admin::source::roles::TemplateView context row/>}
+                .into_any(),
+        );
     }
     {
-        // This exact field was approved by the app before normalization.
         let field = fields
             .iter()
             .find(|field| field.wire_name == "profileId")
-            .cloned()
-            .ok_or_else(|| {
-                SchemaError::new(
-                    SchemaErrorKind::Invalid,
-                    "missing generated field descriptor",
-                )
-            })?;
-        let value = draft.get("profileId").ok_or_else(|| {
-            SchemaError::new(SchemaErrorKind::Invalid, "missing generated draft field")
-        })?;
+            .expect("generated role field")
+            .clone();
+        let value = draft.get("profileId").expect("source role admitted draft");
         let context = RoleContext {
-            id: format!("{}-view-{}", instance, "profileId"),
+            id: format!("{instance}-view-{}", "profileId"),
             field,
             role: Role::View,
             value,
         };
-        let label = context.text_prop("label", &context.field.label);
-        controls.push(view! { <div class="sp-role-value"><span class="sp-role-label">{label} ": "</span><stackpress_framework_api::views::roles::TemplateView context/></div> }.into_any());
+        let row = value_row.clone();
+        controls.push(
+            view! {<stackpress_framework_admin::source::roles::TemplateView context row/>}
+                .into_any(),
+        );
     }
     {
-        // This exact field was approved by the app before normalization.
         let field = fields
             .iter()
             .find(|field| field.wire_name == "secret")
-            .cloned()
-            .ok_or_else(|| {
-                SchemaError::new(
-                    SchemaErrorKind::Invalid,
-                    "missing generated field descriptor",
-                )
-            })?;
-        let value = draft.get("secret").ok_or_else(|| {
-            SchemaError::new(SchemaErrorKind::Invalid, "missing generated draft field")
-        })?;
+            .expect("generated role field")
+            .clone();
+        let value = draft.get("secret").expect("source role admitted draft");
         let context = RoleContext {
-            id: format!("{}-view-{}", instance, "secret"),
+            id: format!("{instance}-view-{}", "secret"),
             field,
             role: Role::View,
             value,
         };
-        let label = context.text_prop("label", &context.field.label);
-        controls.push(view! { <div class="sp-role-value"><span class="sp-role-label">{label} ": "</span><stackpress_framework_admin::components::TextView context/></div> }.into_any());
+        controls
+            .push(view! {<stackpress_framework_admin::components::TextView context />}.into_any());
     }
     {
-        // This exact field was approved by the app before normalization.
         let field = fields
             .iter()
             .find(|field| field.wire_name == "scopes")
-            .cloned()
-            .ok_or_else(|| {
-                SchemaError::new(
-                    SchemaErrorKind::Invalid,
-                    "missing generated field descriptor",
-                )
-            })?;
-        let value = draft.get("scopes").ok_or_else(|| {
-            SchemaError::new(SchemaErrorKind::Invalid, "missing generated draft field")
-        })?;
+            .expect("generated role field")
+            .clone();
+        let value = draft.get("scopes").expect("source role admitted draft");
         let context = RoleContext {
-            id: format!("{}-view-{}", instance, "scopes"),
+            id: format!("{instance}-view-{}", "scopes"),
             field,
             role: Role::View,
             value,
         };
-        let label = context.text_prop("label", &context.field.label);
-        controls.push(view! { <div class="sp-role-value"><span class="sp-role-label">{label} ": "</span><stackpress_framework_api::views::roles::TagsView context/></div> }.into_any());
+        controls.push(
+            view! {<stackpress_framework_admin::source::roles::TagsView context />}.into_any(),
+        );
     }
     {
-        // This exact field was approved by the app before normalization.
         let field = fields
             .iter()
             .find(|field| field.wire_name == "active")
-            .cloned()
-            .ok_or_else(|| {
-                SchemaError::new(
-                    SchemaErrorKind::Invalid,
-                    "missing generated field descriptor",
-                )
-            })?;
-        let value = draft.get("active").ok_or_else(|| {
-            SchemaError::new(SchemaErrorKind::Invalid, "missing generated draft field")
-        })?;
+            .expect("generated role field")
+            .clone();
+        let value = draft.get("active").expect("source role admitted draft");
         let context = RoleContext {
-            id: format!("{}-view-{}", instance, "active"),
+            id: format!("{instance}-view-{}", "active"),
             field,
             role: Role::View,
             value,
         };
-        let label = context.text_prop("label", &context.field.label);
-        controls.push(view! { <div class="sp-role-value"><span class="sp-role-label">{label} ": "</span><stackpress_framework_admin::components::BooleanView context/></div> }.into_any());
+        controls.push(
+            view! {<stackpress_framework_admin::components::BooleanView context />}.into_any(),
+        );
     }
     {
-        // This exact field was approved by the app before normalization.
         let field = fields
             .iter()
             .find(|field| field.wire_name == "expires")
-            .cloned()
-            .ok_or_else(|| {
-                SchemaError::new(
-                    SchemaErrorKind::Invalid,
-                    "missing generated field descriptor",
-                )
-            })?;
-        let value = draft.get("expires").ok_or_else(|| {
-            SchemaError::new(SchemaErrorKind::Invalid, "missing generated draft field")
-        })?;
+            .expect("generated role field")
+            .clone();
+        let value = draft.get("expires").expect("source role admitted draft");
         let context = RoleContext {
-            id: format!("{}-view-{}", instance, "expires"),
+            id: format!("{instance}-view-{}", "expires"),
             field,
             role: Role::View,
             value,
         };
-        let label = context.text_prop("label", &context.field.label);
-        controls.push(view! { <div class="sp-role-value"><span class="sp-role-label">{label} ": "</span><stackpress_framework_api::views::roles::DateView context/></div> }.into_any());
+        controls.push(
+            view! {<stackpress_framework_admin::source::roles::DateView context />}.into_any(),
+        );
     }
     {
-        // This exact field was approved by the app before normalization.
         let field = fields
             .iter()
             .find(|field| field.wire_name == "created")
-            .cloned()
-            .ok_or_else(|| {
-                SchemaError::new(
-                    SchemaErrorKind::Invalid,
-                    "missing generated field descriptor",
-                )
-            })?;
-        let value = draft.get("created").ok_or_else(|| {
-            SchemaError::new(SchemaErrorKind::Invalid, "missing generated draft field")
-        })?;
+            .expect("generated role field")
+            .clone();
+        let value = draft.get("created").expect("source role admitted draft");
         let context = RoleContext {
-            id: format!("{}-view-{}", instance, "created"),
+            id: format!("{instance}-view-{}", "created"),
             field,
             role: Role::View,
             value,
         };
-        let label = context.text_prop("label", &context.field.label);
-        controls.push(view! { <div class="sp-role-value"><span class="sp-role-label">{label} ": "</span><stackpress_framework_api::views::roles::DateView context/></div> }.into_any());
+        controls.push(
+            view! {<stackpress_framework_admin::source::roles::DateView context />}.into_any(),
+        );
     }
     {
-        // This exact field was approved by the app before normalization.
         let field = fields
             .iter()
             .find(|field| field.wire_name == "updated")
-            .cloned()
-            .ok_or_else(|| {
-                SchemaError::new(
-                    SchemaErrorKind::Invalid,
-                    "missing generated field descriptor",
-                )
-            })?;
-        let value = draft.get("updated").ok_or_else(|| {
-            SchemaError::new(SchemaErrorKind::Invalid, "missing generated draft field")
-        })?;
+            .expect("generated role field")
+            .clone();
+        let value = draft.get("updated").expect("source role admitted draft");
         let context = RoleContext {
-            id: format!("{}-view-{}", instance, "updated"),
+            id: format!("{instance}-view-{}", "updated"),
             field,
             role: Role::View,
             value,
         };
-        let label = context.text_prop("label", &context.field.label);
-        controls.push(view! { <div class="sp-role-value"><span class="sp-role-label">{label} ": "</span><stackpress_framework_api::views::roles::DateView context/></div> }.into_any());
+        controls.push(
+            view! {<stackpress_framework_admin::source::roles::DateView context />}.into_any(),
+        );
     }
     Ok(controls.collect_view().into_any())
-}
-/// Render at most 100 public rows through selected list adapters.
-/// Caller-supplied unique nonempty keys (at most 128 bytes) retain row identity.
-/// Invalid row identities fail before constructing any controls.
-pub fn table(
-    rows: &[(String, super::super::contracts::public::PublicSession)],
-    instance: &str,
-) -> SchemaResult<AnyView> {
-    use stackpress_leptos::components::{
-        Table, TableCell, TableGroup, TableHead, TableHeader, TableRow,
-    };
-    let mut keys = std::collections::BTreeSet::new();
-    if rows.len() > 100
-        || rows
-            .iter()
-            .any(|(key, _)| key.is_empty() || key.len() > 128 || !keys.insert(key))
-    {
-        return Err(SchemaError::new(
-            SchemaErrorKind::Invalid,
-            "invalid public table row identities",
-        ));
-    }
-    let fields = descriptors()?;
-    let mut rendered = Vec::new();
-    for (key, value) in rows {
-        let seed = stackpress_framework_schema::to_bounded_value(value)?;
-        let draft = Draft::new(&fields, &seed, Role::List)?;
-        // Hex encoding is injective and cannot collide with role/field delimiters.
-        let identity: String = key
-            .as_bytes()
-            .iter()
-            .map(|byte| format!("{byte:02x}"))
-            .collect();
-        let instance = format!("{instance}-row-{identity}");
-        let mut controls = Vec::new();
-        {
-            // This exact field was approved by the app before normalization.
-            let field = fields
-                .iter()
-                .find(|field| field.wire_name == "id")
-                .cloned()
-                .ok_or_else(|| {
-                    SchemaError::new(
-                        SchemaErrorKind::Invalid,
-                        "missing generated field descriptor",
-                    )
-                })?;
-            let value = draft.get("id").ok_or_else(|| {
-                SchemaError::new(SchemaErrorKind::Invalid, "missing generated draft field")
-            })?;
-            let context = RoleContext {
-                id: format!("{}-list-{}", instance, "id"),
-                field,
-                role: Role::List,
-                value,
-            };
-            controls.push(
-                view! { <stackpress_framework_admin::components::TextView context/> }.into_any(),
-            );
-        }
-        {
-            // This exact field was approved by the app before normalization.
-            let field = fields
-                .iter()
-                .find(|field| field.wire_name == "applicationId")
-                .cloned()
-                .ok_or_else(|| {
-                    SchemaError::new(
-                        SchemaErrorKind::Invalid,
-                        "missing generated field descriptor",
-                    )
-                })?;
-            let value = draft.get("applicationId").ok_or_else(|| {
-                SchemaError::new(SchemaErrorKind::Invalid, "missing generated draft field")
-            })?;
-            let context = RoleContext {
-                id: format!("{}-list-{}", instance, "applicationId"),
-                field,
-                role: Role::List,
-                value,
-            };
-            controls.push(
-                view! { <stackpress_framework_api::views::roles::TemplateView context/> }
-                    .into_any(),
-            );
-        }
-        {
-            // This exact field was approved by the app before normalization.
-            let field = fields
-                .iter()
-                .find(|field| field.wire_name == "profileId")
-                .cloned()
-                .ok_or_else(|| {
-                    SchemaError::new(
-                        SchemaErrorKind::Invalid,
-                        "missing generated field descriptor",
-                    )
-                })?;
-            let value = draft.get("profileId").ok_or_else(|| {
-                SchemaError::new(SchemaErrorKind::Invalid, "missing generated draft field")
-            })?;
-            let context = RoleContext {
-                id: format!("{}-list-{}", instance, "profileId"),
-                field,
-                role: Role::List,
-                value,
-            };
-            controls.push(
-                view! { <stackpress_framework_api::views::roles::TemplateView context/> }
-                    .into_any(),
-            );
-        }
-        {
-            // This exact field was approved by the app before normalization.
-            let field = fields
-                .iter()
-                .find(|field| field.wire_name == "secret")
-                .cloned()
-                .ok_or_else(|| {
-                    SchemaError::new(
-                        SchemaErrorKind::Invalid,
-                        "missing generated field descriptor",
-                    )
-                })?;
-            let value = draft.get("secret").ok_or_else(|| {
-                SchemaError::new(SchemaErrorKind::Invalid, "missing generated draft field")
-            })?;
-            let context = RoleContext {
-                id: format!("{}-list-{}", instance, "secret"),
-                field,
-                role: Role::List,
-                value,
-            };
-            controls.push(
-                view! { <stackpress_framework_admin::components::TextView context/> }.into_any(),
-            );
-        }
-        {
-            // This exact field was approved by the app before normalization.
-            let field = fields
-                .iter()
-                .find(|field| field.wire_name == "scopes")
-                .cloned()
-                .ok_or_else(|| {
-                    SchemaError::new(
-                        SchemaErrorKind::Invalid,
-                        "missing generated field descriptor",
-                    )
-                })?;
-            let value = draft.get("scopes").ok_or_else(|| {
-                SchemaError::new(SchemaErrorKind::Invalid, "missing generated draft field")
-            })?;
-            let context = RoleContext {
-                id: format!("{}-list-{}", instance, "scopes"),
-                field,
-                role: Role::List,
-                value,
-            };
-            controls.push(
-                view! { <stackpress_framework_api::views::roles::TagsView context/> }.into_any(),
-            );
-        }
-        {
-            // This exact field was approved by the app before normalization.
-            let field = fields
-                .iter()
-                .find(|field| field.wire_name == "expires")
-                .cloned()
-                .ok_or_else(|| {
-                    SchemaError::new(
-                        SchemaErrorKind::Invalid,
-                        "missing generated field descriptor",
-                    )
-                })?;
-            let value = draft.get("expires").ok_or_else(|| {
-                SchemaError::new(SchemaErrorKind::Invalid, "missing generated draft field")
-            })?;
-            let context = RoleContext {
-                id: format!("{}-list-{}", instance, "expires"),
-                field,
-                role: Role::List,
-                value,
-            };
-            controls.push(
-                view! { <stackpress_framework_api::views::roles::DateView context/> }.into_any(),
-            );
-        }
-        {
-            // This exact field was approved by the app before normalization.
-            let field = fields
-                .iter()
-                .find(|field| field.wire_name == "created")
-                .cloned()
-                .ok_or_else(|| {
-                    SchemaError::new(
-                        SchemaErrorKind::Invalid,
-                        "missing generated field descriptor",
-                    )
-                })?;
-            let value = draft.get("created").ok_or_else(|| {
-                SchemaError::new(SchemaErrorKind::Invalid, "missing generated draft field")
-            })?;
-            let context = RoleContext {
-                id: format!("{}-list-{}", instance, "created"),
-                field,
-                role: Role::List,
-                value,
-            };
-            controls.push(
-                view! { <stackpress_framework_api::views::roles::DateView context/> }.into_any(),
-            );
-        }
-        {
-            // This exact field was approved by the app before normalization.
-            let field = fields
-                .iter()
-                .find(|field| field.wire_name == "updated")
-                .cloned()
-                .ok_or_else(|| {
-                    SchemaError::new(
-                        SchemaErrorKind::Invalid,
-                        "missing generated field descriptor",
-                    )
-                })?;
-            let value = draft.get("updated").ok_or_else(|| {
-                SchemaError::new(SchemaErrorKind::Invalid, "missing generated draft field")
-            })?;
-            let context = RoleContext {
-                id: format!("{}-list-{}", instance, "updated"),
-                field,
-                role: Role::List,
-                value,
-            };
-            controls.push(
-                view! { <stackpress_framework_api::views::roles::DateView context/> }.into_any(),
-            );
-        }
-        let cells = controls
-            .into_iter()
-            .map(|control| view! { <TableCell>{control}</TableCell> })
-            .collect_view();
-        rendered.push(view! { <TableRow row_key=key.clone()>{cells}</TableRow> });
-    }
-    let headers = vec![
-        view! { <TableHeader>{"ID"}</TableHeader> },
-        view! { <TableHeader>{"App"}</TableHeader> },
-        view! { <TableHeader>{"Profile"}</TableHeader> },
-        view! { <TableHeader>{"Secret"}</TableHeader> },
-        view! { <TableHeader>{"Scopes"}</TableHeader> },
-        view! { <TableHeader>{"Expires"}</TableHeader> },
-        view! { <TableHeader>{"Created"}</TableHeader> },
-        view! { <TableHeader>{"Updated"}</TableHeader> },
-    ]
-    .collect_view();
-    let rows = rendered.collect_view();
-    Ok(view! { <Table caption="Session"><TableHead><TableRow row_key="header">{headers}</TableRow></TableHead><TableGroup>{rows}</TableGroup></Table> }.into_any())
 }

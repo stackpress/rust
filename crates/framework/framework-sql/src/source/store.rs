@@ -73,6 +73,8 @@ impl<S: SourceSchema<Value = Value, Record = Record>> NativeStore<S> {
     /// Source DDL including defaults, unique/index metadata and owning foreign keys.
     pub fn create(&self) -> Create {
         let mut create = Create::new(self.table());
+        let mut unique = Vec::new();
+        let mut indexes = Vec::new();
         for column in self.record.columns() {
             let f = &column.field;
             if f.value_type == ValueType::Unknown {
@@ -140,7 +142,7 @@ impl<S: SourceSchema<Value = Value, Record = Record>> NativeStore<S> {
             }
             create = create.add_field(field);
             if f.unique {
-                create = create.add_index(
+                unique.push(
                     Index::new(format!("{}_{}_unique", self.table(), f.column), [&f.column])
                         .unique(),
                 );
@@ -151,11 +153,16 @@ impl<S: SourceSchema<Value = Value, Record = Record>> NativeStore<S> {
                     .iter()
                     .any(|a| a.name.starts_with("filter.") || a.name.starts_with("span."))
             {
-                create = create.add_index(Index::new(
+                indexes.push(Index::new(
                     format!("{}_{}_index", self.table(), f.column),
                     [&f.column],
                 ));
             }
+        }
+        // Upstream store/create.ts groups every unique key before ordinary indexes,
+        // preserving declaration order within each group (including extended models).
+        for index in unique.into_iter().chain(indexes) {
+            create = create.add_index(index);
         }
         let keys = self
             .model
