@@ -460,8 +460,12 @@ async fn predicates_sort_projection_join_and_maintenance() {
     query.ge = record(json!({"name":"A"}));
     query.le = record(json!({"name":"Z"}));
     query.like = record(json!({"name":"d"}));
-    assert_eq!(profile.find_all(&query).await.unwrap().len(), 1);
+    // Source flatten(eq, true) makes array entries indexed-path AND predicates.
+    assert!(profile.find_all(&query).await.unwrap().is_empty());
     query.like.clear();
+    assert!(profile.find_all(&query).await.unwrap().is_empty());
+    // Keep the independent scalar comparisons exercised after the contradictory array.
+    query.eq = record(json!({"id":"p1"}));
     assert_eq!(profile.find_all(&query).await.unwrap().len(), 1);
     auth.create(&record(
         json!({"id":"a1","profileId":"p1","token":"identifier","secret":"hello"}),
@@ -513,7 +517,10 @@ async fn predicates_sort_projection_join_and_maintenance() {
         has: record(json!({"tags":["blue","green"]})),
         ..Default::default()
     };
-    assert_eq!(profile.find_all(&membership).await.unwrap().len(), 2);
+    // G53 requires every requested value: no row has both blue and green.
+    assert!(profile.find_all(&membership).await.unwrap().is_empty());
+    membership.has = record(json!({"tags":["red","green"]}));
+    assert_eq!(profile.find_all(&membership).await.unwrap()[0]["id"], "p3");
     membership.has = record(json!({"unknown":"red"}));
     assert!(profile.find_all(&membership).await.is_err());
     let extra = record(json!({"id":"nulls","name":"Nulls","references":{"flags":[null,true,0]}}));

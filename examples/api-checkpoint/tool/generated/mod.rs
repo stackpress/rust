@@ -1,4 +1,3 @@
-pub mod contracts;
-pub mod metadata;
+pub mod source;
 pub mod stores;
 pub mod ui;

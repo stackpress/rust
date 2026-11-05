@@ -34,12 +34,30 @@ pub(super) enum Asset {
     Routes,
     /// Fixed function-based native plugin registration.
     Registration,
+    /// Native-record-independent source roles.
+    SourceRoles,
+    /// Compiled source page dispatch.
+    SourcePages,
+    /// Source page host catalog (application owns actual route registration).
+    SourceHost,
 }
 
 impl Asset {
     /// Resolve a static error identity together with its checked-in structural template.
     fn definition(self) -> (&'static str, &'static str) {
         match self {
+            Self::SourceRoles => (
+                "admin/source-roles.rs.tpl",
+                include_str!("templates/source-roles.rs.tpl"),
+            ),
+            Self::SourcePages => (
+                "admin/source-pages.rs.tpl",
+                include_str!("templates/source-pages.rs.tpl"),
+            ),
+            Self::SourceHost => (
+                "admin/source-host.rs.tpl",
+                include_str!("templates/source-host.rs.tpl"),
+            ),
             Self::Roles => ("admin/roles.rs.tpl", include_str!("templates/roles.rs.tpl")),
             Self::Control => (
                 "admin/control.rs.tpl",

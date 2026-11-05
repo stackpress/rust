@@ -188,7 +188,7 @@ async fn g46_sqlite_ascii_searches_execute_for_application_and_session() {
 fn source_model_columns_defaults_provider_and_plaintext_codecs() {
     for (schema, names) in [
         (
-            ApplicationSchema::new().columns.clone(),
+            ApplicationSchema::new().columns().to_vec(),
             vec![
                 "id",
                 "profileId",
@@ -204,7 +204,7 @@ fn source_model_columns_defaults_provider_and_plaintext_codecs() {
             ],
         ),
         (
-            SessionSchema::new().columns.clone(),
+            SessionSchema::new().columns().to_vec(),
             vec![
                 "id",
                 "applicationId",
@@ -219,18 +219,21 @@ fn source_model_columns_defaults_provider_and_plaintext_codecs() {
         ),
     ] {
         assert_eq!(
-            schema.iter().map(|column| column.name).collect::<Vec<_>>(),
+            schema
+                .iter()
+                .map(|column| column.name())
+                .collect::<Vec<_>>(),
             names
         );
         assert_eq!(
             schema
                 .iter()
-                .find(|column| column.name == "secret")
+                .find(|column| column.name() == "secret")
                 .unwrap()
-                .kind,
+                .kind(),
             Kind::String
         );
-        assert!(!schema.iter().any(|column| column.name == "profile"));
+        assert!(!schema.iter().any(|column| column.name() == "profile"));
     }
     let schema = ApplicationSchema::new();
     let first = schema.defaults_at(1234).unwrap();
@@ -431,6 +434,11 @@ async fn source_filters_sort_paging_membership_and_sqlite_like_search() {
         take: 1,
         ..Default::default()
     };
+    // Source select.ts:567–570 flattens arrays to indexed paths. Scalar id.0
+    // and id.1 resolve to the same stored id, producing AND, never an OR group.
+    assert!(f.app.find(&query).await.unwrap().is_none());
+    assert_eq!(f.app.count(&query).await.unwrap(), 0);
+    query.eq.shift_remove("id");
     assert_eq!(f.app.find(&query).await.unwrap().unwrap()["id"], "b");
     assert_eq!(f.app.count(&query).await.unwrap(), 2);
     query.skip = 1;
@@ -796,10 +804,10 @@ async fn generated_event_errors_missing_database_and_g42_chain() -> Result<()> {
 }
 #[test]
 #[cfg(feature = "codegen")]
-fn full_idea_normalization_retains_management_fields_and_external_profile() {
+fn full_idea_normalization_retains_management_fields_and_composed_profile() {
     let definitions = stackpress_framework_api::codegen::definitions().unwrap();
     let schema = stackpress_framework_api::codegen::normalize(&definitions).unwrap();
-    assert_eq!(schema.models().len(), 3);
+    assert_eq!(schema.models().len(), 4);
     for name in ["Application", "Session"] {
         let model = schema
             .models()
@@ -812,9 +820,25 @@ fn full_idea_normalization_retains_management_fields_and_external_profile() {
             .find(|field| field.name == "secret")
             .unwrap();
         assert!(!secret.access.sensitive);
-        assert!(secret.access.readable);
+        // Source catalogs do not use Typed DTO read grants. The original declares
+        // @list.string/@view.string on both secrets (schema.idea:61,167).
+        let ui = schema.project_source_ui(&definitions).unwrap();
+        let public = ui.models.iter().find(|model| model.id == name).unwrap();
+        let public_secret = public
+            .fields
+            .iter()
+            .find(|field| field.wire_name == "secret")
+            .unwrap();
+        assert!(
+            public_secret
+                .roles
+                .iter()
+                .any(|binding| binding.role == stackpress_framework_schema::Role::View)
+        );
         assert_eq!(secret.value_rule.as_ref().unwrap().provider, "cuid");
-        assert!(model.query.contains(&"profile.name".into()));
+        // Preserve source @query("*" "profile.*" ...), rather than the old
+        // Typed adapter's expanded synthetic Profile field list.
+        assert!(model.query.contains(&"profile.*".into()));
     }
 }
 

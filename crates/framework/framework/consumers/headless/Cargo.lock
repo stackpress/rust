@@ -1985,6 +1985,7 @@ dependencies = [
  "reqwest",
  "serde",
  "serde_json",
+ "stackpress-framework-models",
  "stackpress-framework-schema",
  "stackpress-framework-session",
  "stackpress-framework-sql",
@@ -2022,6 +2023,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "stackpress-framework-models"
+version = "0.1.0"
+dependencies = [
+ "stackpress-framework-schema",
+ "stackpress-framework-sql",
+]
+
+[[package]]
 name = "stackpress-framework-schema"
 version = "0.1.0"
 dependencies = [
@@ -2052,6 +2061,7 @@ dependencies = [
  "serde_json",
  "stackpress-framework-csrf",
  "stackpress-framework-email",
+ "stackpress-framework-models",
  "stackpress-framework-schema",
  "stackpress-framework-sql",
  "stackpress-lib",
@@ -2068,6 +2078,8 @@ dependencies = [
  "serde",
  "serde_json",
  "stackpress-framework-schema",
+ "stackpress-lib",
+ "stackpress-server",
  "stackpress-sql",
 ]
 

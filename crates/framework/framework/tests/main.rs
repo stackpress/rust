@@ -2,3 +2,6 @@
 #![cfg(all(feature = "full", not(target_arch = "wasm32")))]
 
 mod cases;
+#[cfg(feature = "codegen")]
+#[path = "cases/generated_family.rs"]
+mod generated_family;

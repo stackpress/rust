@@ -25,6 +25,10 @@ uninstall. Exact owned databases are dropped on success and
 failure. Arbitrary collation/Unicode, JSON-query, aggregate-provider or production-load
 behaviour is not established by these tests.
 
+`eq` takes one value per field (G53). Arrays are misuse and retain the original indexed-path semantics: `{"eq":{"id":["a","b"]}}`
+produces indexed-path AND predicates rather than an OR group. The [maintained SQL test](tests/sql.rs)
+pins that behavior against upstream `stackpress-sql/src/transform/store/select.ts:567–570`.
+
 ## Shipped Idea source
 
 The original `schema.idea` is available as `stackpress_framework_api::SCHEMA_SOURCE`;
@@ -33,13 +37,8 @@ through the opt-in [package loader](../../idea/idea-transformer/docs/guides/pack
 That source imports `stackpress-session/schema.idea`, retaining the complete Profile/Auth
 declarations. The aggregate catalog additionally resolves `stackpress/stackpress.idea`.
 [Composition tests](../framework/tests/package_sources.rs) prove nested imports and G19
-application extensions. API codegen's existing external Profile adaptation remains until
-the separately gated G50 generated-model work; composition does not yet replace these
-hand-written runtime models or promise full source-model generation.
-
-The native [source-model mechanics](../framework-schema/docs/source-models.md) now live
-in framework-schema (`source` feature); `models::{Value,Record,Column,Kind}` re-export
-those exact types. Source action errors are shared at `stackpress_framework_sql::source::ActionError`
-and retain the existing API/session paths. The unchanged SQLite and opt-in live suites
-exercise the extracted codecs. This extraction does not change the runtime model catalog
-or API's existing Typed codegen adapter; source generation is a separately released stage.
+application extensions. [Generated families](docs/source-models.md) now replace the old
+three-model Typed projection: config()/normalize() retain the full four-model composition,
+and register_with<M> binds the application's generated family. Existing schema/store paths
+remain constructor adapters over generated defaults. Portable UI and native schemas/stores
+are emitted into separate partitions by the [checkpoint tool](../../../examples/api-checkpoint/tool/src/main.rs).

@@ -4,28 +4,12 @@ use super::{Hooks, bridge as b};
 use crate::{
     Service,
     columns::{self, Record, Value},
-    storage::AuthActions,
 };
 use serde_json::json;
+use stackpress_framework_sql::source::SessionModels;
 use stackpress_lib::{Flow, Invocation, Request, Response, Result};
 use stackpress_server::ServerInvocationExt;
-use stackpress_sql::Engine;
 
-/// Create source Actions lazily, at invocation rather than registrar/startup time.
-pub(crate) fn actions(inv: &Invocation<'_>) -> Result<AuthActions> {
-    let environment = b::environment(inv);
-    let password = b::optional_config(inv)?
-        .as_ref()
-        .map(|config| config.password.clone());
-    let mut actions = AuthActions::make(
-        inv.shared_service::<Engine>()?,
-        environment.database_seed,
-        password,
-    );
-    // Source Date parsing and consumed.toString must use one host timezone throughout.
-    actions.store.schema.offset = environment.offset_minutes;
-    Ok(actions)
-}
 /// Normalize optional phone input per G44 and the source's ASCII-digit/separator grammar.
 pub fn normalize_phone(phone: Option<&str>) -> Option<String> {
     let phone = b::trim(phone?);
@@ -44,12 +28,16 @@ pub fn normalize_phone(phone: Option<&str>) -> Option<String> {
 /// then remove exactly email/phone/username secrets. No global/page guard is added.
 /// # Errors
 /// Propagates native host/data failures; source Action errors become the public response.
-pub async fn signup(req: &mut Request, res: &mut Response, inv: Invocation<'_>) -> Result<Flow> {
+pub async fn signup_with<M: SessionModels>(
+    req: &mut Request,
+    res: &mut Response,
+    inv: Invocation<'_>,
+) -> Result<Flow> {
     let roles = b::optional_config(&inv)?
         .as_ref()
         .map(|config| config.roles.clone())
         .unwrap_or_default();
-    let actions = actions(&inv)?;
+    let actions = super::bindings::actions::<M>(&inv)?;
     // Spread defaults first so every supplied request member has the source precedence.
     let mut input = Record::from_iter([("roles".into(), Value::from(json!(roles)))]);
     input.extend(b::input(req)?);
@@ -100,11 +88,15 @@ pub async fn signup(req: &mut Request, res: &mut Response, inv: Invocation<'_>) 
 /// Source signin preserves truthy password and strict `2fa !== false` flags.
 /// # Errors
 /// Action failures become source public errors; late config/session/host failures propagate.
-pub async fn signin(req: &mut Request, res: &mut Response, inv: Invocation<'_>) -> Result<Flow> {
+pub async fn signin_with<M: SessionModels>(
+    req: &mut Request,
+    res: &mut Response,
+    inv: Invocation<'_>,
+) -> Result<Flow> {
     // Boolean(password) is source truthiness; the page may force it, but this reusable event does not.
     let kind = b::text(req, "type", "username")?;
     let password = columns::truthy(&b::get(req, "password", true.into())?);
-    let mut result = match actions(&inv)?
+    let mut result = match super::bindings::actions::<M>(&inv)?
         .signin(&kind, &b::input(req)?, password)
         .await
     {
@@ -252,4 +244,13 @@ pub(crate) fn consumed_text(inv: &Invocation<'_>, consumed: &Value) -> Result<St
         .map_err(|cause| stackpress_lib::Error::new("Date display failed").with_cause(cause));
     }
     Ok(columns::string(consumed))
+}
+
+/// Existing source signup path, selecting the checked-in generated default family.
+pub async fn signup(req: &mut Request, res: &mut Response, inv: Invocation<'_>) -> Result<Flow> {
+    signup_with::<stackpress_framework_models::Models>(req, res, inv).await
+}
+/// Existing source signin path, selecting the same generated default family as signup.
+pub async fn signin(req: &mut Request, res: &mut Response, inv: Invocation<'_>) -> Result<Flow> {
+    signin_with::<stackpress_framework_models::Models>(req, res, inv).await
 }

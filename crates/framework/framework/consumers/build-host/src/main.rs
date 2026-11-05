@@ -65,6 +65,30 @@ fn root(_: &rust::parser::SchemaConfig) -> Result<Vec<GeneratedFile>> {
     Ok(Vec::new())
 }
 
+/// One source graph drives native models/client plus a separate portable UI partition.
+fn source(context: &TransformContext<'_>, output: &mut OutputPlan) -> Result<()> {
+    use stackpress_framework::commands::source_client::{self, Binding, Options};
+    let graph = Schema::normalize_source(context.schema(), Default::default(), &[])
+        .map_err(transform_error)?;
+    let definitions =
+        stackpress_framework_admin::codegen::source_definitions().map_err(transform_error)?;
+    let mut options = Options::new("g50-app-profile", "crate::framework");
+    options.native_results = vec!["Profile".into(), "Auth".into()];
+    options.session = Some(Binding {
+        path: "stackpress_framework_session::composite::register_with".into(),
+        feature: None,
+    });
+    options.api = Some(Binding {
+        path: "stackpress_framework_api::register_with".into(),
+        feature: Some("api".into()),
+    });
+    options.admin = Some(Binding {
+        path: "super::super::admin".into(),
+        feature: Some("ssr".into()),
+    });
+    source_client::emit(&graph, &definitions, &options, output)
+}
+
 /// Explicit generation/check operation, with no runtime consumer or process listener.
 fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
     let base = Path::new(env!("CARGO_MANIFEST_DIR"));
@@ -77,10 +101,31 @@ fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
         rust::GenerationMode::Install
     };
     let report = rust::generate(
-        rust::GenerateRequest::new("schema.idea", root, mode),
+        // The existing Typed fixture is a read-only regression in G50 M3. Only
+        // the separate generated-source output below may be installed by this tool.
+        rust::GenerateRequest::new("schema.idea", root, rust::GenerationMode::Check),
         ProjectLoader::new(base)?,
         &registry,
         &OutputWorkspace::new(base.parent().expect("consumer parent").join("generated"))?,
+    )?;
+    assert!(
+        report.is_current(),
+        "the existing Typed consumer fixture is stale"
+    );
+    let mut source_registry = Registry::new();
+    source_registry.add(
+        TransformSpec::new("source-client").owns(&["source", "stores", "ui", "client"]),
+        source,
+    )?;
+    let report = rust::generate(
+        rust::GenerateRequest::new("source.idea", root, mode),
+        rust::package_loader(ProjectLoader::new(base)?)?,
+        &source_registry,
+        &OutputWorkspace::new(
+            base.parent()
+                .expect("consumer parent")
+                .join("generated-source"),
+        )?,
     )?;
     if mode == rust::GenerationMode::Check {
         assert!(report.is_current());

@@ -15,6 +15,17 @@ use stackpress_server::ServerBuilder;
 /// Ordinary compiled registration, also usable independently of this aggregate.
 pub type Register = fn(&mut ServerBuilder) -> Result<()>;
 
+/// Application-generated specializations selected at the original plugin stages.
+/// Empty bindings retain the existing generated-default constituents. Data listeners
+/// remain the catalog's SQL-phase callbacks; these bindings never add a second inventory.
+#[derive(Clone, Copy, Debug, Default)]
+pub struct FrameworkBindings {
+    /// Auth → email → identity composition specialized to the app's SessionModels family.
+    pub session: Option<Register>,
+    /// API process registration over that family's ApiModels contract.
+    pub api: Option<Register>,
+}
+
 /// One statically linked model family, retaining source catalog order.
 pub struct CompiledModel {
     /// Application model identity; never used to import executable code.
@@ -27,6 +38,8 @@ pub struct CompiledModel {
 
 /// Build-time application catalog replacing dynamic generated-client imports.
 pub struct CompiledClient {
+    /// Compiled plugin collaborators; no runtime loader or ambient model registry.
+    pub bindings: FrameworkBindings,
     /// Ordered compiled model families; missing methods remain `None`.
     pub models: &'static [CompiledModel],
     /// Build identity for inspection, not a runtime module lookup string.
@@ -136,12 +149,18 @@ fn select(app: &mut ServerBuilder, catalog: Option<&'static CompiledClient>) -> 
     #[cfg(feature = "session")]
     {
         observed("session");
-        stackpress_framework_session::composite::register(app)?;
+        let register = catalog
+            .and_then(|client| client.bindings.session)
+            .unwrap_or(stackpress_framework_session::composite::register);
+        register(app)?;
     }
     #[cfg(feature = "api")]
     {
         observed("api");
-        stackpress_framework_api::register(app)?;
+        let register = catalog
+            .and_then(|client| client.bindings.api)
+            .unwrap_or(stackpress_framework_api::register);
+        register(app)?;
     }
     #[cfg(feature = "admin")]
     {

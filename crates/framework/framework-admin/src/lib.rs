@@ -23,3 +23,7 @@ pub mod search;
 
 pub mod presentation;
 pub mod transfer;
+
+/// Source-authored presentation, selected independently of the Typed adapters.
+#[cfg(feature = "source")]
+pub mod source;

@@ -2,6 +2,9 @@
 #[cfg(feature = "auth-server")]
 #[path = "main/account_registration.rs"]
 mod account_registration;
+#[cfg(feature = "auth-server")]
+#[path = "main/generated_family.rs"]
+mod generated_family;
 #[cfg(feature = "server")]
 #[path = "main/host.rs"]
 mod host;

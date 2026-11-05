@@ -7,12 +7,13 @@ rust-version.workspace = true
 publish.workspace = true
 
 [features]
-default = []
-server = ["stackpress-framework-sql/server"]
-generate = ["stackpress-framework-sql/codegen", "stackpress-framework-schema/codegen", "dep:stackpress-idea-parser", "dep:stackpress-idea-transformer"]
+default = ["sql"]
+sql = ["dep:stackpress-framework-sql"]
+server = ["sql", "stackpress-framework-sql/server"]
+generate = ["sql", "stackpress-framework-sql/codegen", "stackpress-framework-schema/codegen", "dep:stackpress-idea-parser", "dep:stackpress-idea-transformer"]
 
 [dependencies]
-stackpress-framework-sql = { path = "../framework-sql", features = ["source"] }
+stackpress-framework-sql = { path = "../framework-sql", features = ["source"], optional = true }
 stackpress-framework-schema = { path = "../framework-schema", features = ["source"] }
 stackpress-idea-parser = { path = "../../idea/idea-parser", optional = true }
 stackpress-idea-transformer = { path = "../../idea/idea-transformer", optional = true }
@@ -40,3 +41,4 @@ workspace = true
 name = "live_search"
 path = "tests/live_search.rs"
 harness = false
+required-features = ["sql"]

@@ -28,6 +28,9 @@ pub fn CollectionFieldset<T>(
     /// Native legend text.
     #[prop(into)]
     label: String,
+    /// Application-authored add action; existing callers retain the exact current label.
+    #[prop(default = "Add row".into(), into)]
+    add_label: String,
     /// Typed root-owned collection, not index-keyed values.
     list: RwSignal<BoundedList<T>>,
     /// Application factory for one empty/default typed row.
@@ -106,7 +109,7 @@ where
                         // The final add disables Add; the new Remove remains an enabled target.
                         pending_focus.set(Some(format!("{added_prefix}-{key}-remove")));
                     }
-                }>"Add row"</button>
+                }>{add_label}</button>
         </fieldset>
     }.into_any()
 }
@@ -120,6 +123,9 @@ pub fn TextList(
     /// Native legend text.
     #[prop(into)]
     label: String,
+    /// Optional authored add action; ordinary shared callers keep `Add row`.
+    #[prop(default = "Add row".into(), into)]
+    add_label: String,
     /// Controlled typed rows, retaining empty/zero strings.
     list: RwSignal<BoundedList<String>>,
     /// Native disabled flag.
@@ -150,7 +156,7 @@ pub fn TextList(
                 }/>
         }.into_any()
     });
-    view! {<div class="sp-collection-inline"><CollectionFieldset id label list create=Callback::new(|()|String::new()) render disabled error/></div>}
+    view! {<div class="sp-collection-inline"><CollectionFieldset id label add_label list create=Callback::new(|()|String::new()) render disabled error/></div>}
 }
 
 /// Read by stable key so edits/reorders never capture a stale cloned initial row.
@@ -173,6 +179,9 @@ pub fn MetadataInput(
     /// Native legend.
     #[prop(into)]
     label: String,
+    /// Optional authored add action; ordinary shared callers keep `Add row`.
+    #[prop(default = "Add row".into(), into)]
+    add_label: String,
     /// Root-owned metadata entries.
     list: RwSignal<BoundedList<MetadataEntry>>,
     /// Native disabled flag.
@@ -211,5 +220,5 @@ pub fn MetadataInput(
             }
         }).collect_view().into_any()
     });
-    view! {<div class="sp-collection-inline"><CollectionFieldset id label list create=Callback::new(|()|MetadataEntry::default()) render disabled error/></div>}
+    view! {<div class="sp-collection-inline"><CollectionFieldset id label add_label list create=Callback::new(|()|MetadataEntry::default()) render disabled error/></div>}
 }

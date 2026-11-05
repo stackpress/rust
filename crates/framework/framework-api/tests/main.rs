@@ -8,6 +8,8 @@ mod proof;
 mod webhooks;
 
 #[cfg(feature = "sql")]
+mod generated_family;
+#[cfg(feature = "sql")]
 mod sql;
 
 mod oauth;

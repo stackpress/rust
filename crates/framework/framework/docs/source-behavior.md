@@ -31,8 +31,8 @@ These describe what the current proof establishes; they do not imply another hos
 
 | Name | Boundary |
 | --- | --- |
-| API-MATRIX | The separate API stdio host has no aggregate injection seam. Its 26 generated-management/consent/native-navigation browser cases are not claimed through the aggregate website. |
-| API-BUILD-HOST | Note generation/freshness is exercised; full built-in API regeneration through the aggregate build-host is not replayed. |
+| API-MATRIX | All 13 original scenarios per mode replay against standalone and aggregate hydrate/CSR bundles. The stdio backend still uses direct API registrars; the separate aggregate source-family SQLite proof covers registered auth/CRUD/joins/admin/export. Not every native edge is replayed through aggregate registration in the browser matrix. |
+| API-BUILD-HOST | Closed in G50 M3: the build-host generates and checks the complete four-model source client with Profile.nickname, alongside the unchanged Typed Note fixture. |
 | EDGE-REPLAY | Owning source-edge tests remain current, but not every G46 account/API behaviour is reinvoked under aggregate registration. |
 | S11-WHATWG | No JS/serverless Request/Response/ReadableStream bridge. |
 | NODE-PACKAGING | No npm package.json writer; optional non-awaited app callback retains timing and supervision. Actual bundler/HMR/TTY/listener/process/filesystem integration stays app-owned. |
@@ -52,3 +52,13 @@ still refuses CASCADE. The [SQL reference](api/sql.md) and [native proof](../tes
 pin the mapping and verify that foreign-key constraints remain active.
 
 The [verification page](verification.md) links exact current checks and historical accepted runtime scope. The aggregate adds no hardening beyond the source, and configuration absence remains developer-owned source behaviour.
+
+## Generated model integration
+
+G50 selects compiled SourceModel families over the complete shipped Idea graph. The
+aggregate's session/API binding callbacks use the same generated Profile type as model
+listeners; portable source UI is a separate partition. Source index creation groups all
+unique keys before ordinary keys, and Session foreign keys follow application then
+profile declaration order. Existing installations are not changed by generation.
+The [source client consumer](../consumers/support/source_family.rs) proves the appended
+Profile column through registered auth, CRUD, API joins, admin and ordered export.

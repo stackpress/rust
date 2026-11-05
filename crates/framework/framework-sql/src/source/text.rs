@@ -2,7 +2,7 @@
 use stackpress_framework_schema::source::{Value, number_text};
 /// JS query interpolation/computed-property keys differ from the column JSON codec.
 /// Arrays join, null entries are empty and objects use their ordinary object spelling.
-pub(crate) fn source_text(value: &Value, offset: i32) -> String {
+pub fn source_text(value: &Value, offset: i32) -> String {
     match value {
         Value::String(value) => value.clone(),
         Value::Object(_) => "[object Object]".into(),

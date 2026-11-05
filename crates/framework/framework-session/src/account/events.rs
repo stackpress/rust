@@ -3,18 +3,22 @@
 //! These are ordinary application-selected events. No Engine means pass-through;
 //! they neither install schemas nor add authorization/transactions/global guards.
 use super::*;
-use crate::storage::{AuthActions, StoreQuery};
+use crate::storage::{AccountActions, PasswordConfig, StoreQuery};
 use serde_json::json;
+use stackpress_framework_sql::source::{SessionModels, SourceActions, SourceStore};
 use stackpress_lib::Flow;
 use stackpress_sql::Engine;
 
 /// Source generated events use database.seed default empty, unlike AuthActions.make's abc123.
-fn actions(inv: &Invocation<'_>) -> Option<AuthActions> {
+fn actions<M: SessionModels>(inv: &Invocation<'_>) -> Option<AccountActions<M>> {
     let engine = inv.shared_service::<Engine>().ok()?;
     let env = b::environment(inv);
-    let mut actions = AuthActions::new(engine, env.database_seed.unwrap_or_default());
-    actions.store.schema.offset = env.offset_minutes;
-    Some(actions)
+    Some(AccountActions::new(
+        engine,
+        env.database_seed.unwrap_or_default(),
+        env.offset_minutes,
+        PasswordConfig::default(),
+    ))
 }
 /// ID validation precedes IO; false/zero are retained rather than truthy-rejected.
 fn checked_id(req: &Request, res: &mut Response) -> Result<Option<Value>> {
@@ -36,7 +40,7 @@ fn checked_id(req: &Request, res: &mut Response) -> Result<Option<Value>> {
 /// Source generated create returns its original create-row codec branch.
 /// # Errors
 /// Action failures become public responses; native input/host errors propagate.
-pub async fn auth_create(
+pub async fn auth_create_with<M: SessionModels>(
     req: &mut Request,
     res: &mut Response,
     inv: Invocation<'_>,
@@ -44,10 +48,10 @@ pub async fn auth_create(
     if b::completed(res) {
         return Ok(Flow::Continue);
     }
-    let Some(actions) = actions(&inv) else {
+    let Some(actions) = actions::<M>(&inv) else {
         return Ok(Flow::Continue);
     };
-    match actions.create(&b::input(req)?).await {
+    match actions.auth().create(&b::input(req)?).await {
         Ok(row) => b::results(res, Value::Object(row))?,
         Err(error) => b::action_error(res, error)?,
     }
@@ -56,7 +60,7 @@ pub async fn auth_create(
 /// Source generated search adapter with original filters, columns and missing-engine behavior.
 /// # Errors
 /// Preserves decoding/action errors; no page or global policy is applied.
-pub async fn auth_search(
+pub async fn auth_search_with<M: SessionModels>(
     req: &mut Request,
     res: &mut Response,
     inv: Invocation<'_>,
@@ -64,11 +68,18 @@ pub async fn auth_search(
     if b::completed(res) {
         return Ok(Flow::Continue);
     }
-    let Some(actions) = actions(&inv) else {
+    let Some(actions) = actions::<M>(&inv) else {
         return Ok(Flow::Continue);
     };
     let query: StoreQuery = serde_json::from_value(serde_json::to_value(b::input(req)?)?)?;
-    match actions.find_all(&query).await {
+    let auth = actions.auth();
+    // Keep the existing String-q decoder before transferring to the app's query type.
+    let query = auth.store().query(&query.native().to_record());
+    let rows = match query {
+        Ok(query) => auth.find_all(&query).await,
+        Err(error) => Err(error),
+    };
+    match rows {
         Ok(rows) => b::results(
             res,
             Value::Array(rows.into_iter().map(Value::Object).collect()),
@@ -80,7 +91,7 @@ pub async fn auth_search(
 /// Source generated update validates ID, writes aggregate input and returns its first pre-read row.
 /// # Errors
 /// Preserves source action/response failures, including partial writes.
-pub async fn auth_update(
+pub async fn auth_update_with<M: SessionModels>(
     req: &mut Request,
     res: &mut Response,
     inv: Invocation<'_>,
@@ -88,16 +99,21 @@ pub async fn auth_update(
     if b::completed(res) {
         return Ok(Flow::Continue);
     }
-    let Some(actions) = actions(&inv) else {
+    let Some(actions) = actions::<M>(&inv) else {
         return Ok(Flow::Continue);
     };
     let Some(id) = checked_id(req, res)? else {
         return Ok(Flow::Continue);
     };
-    match actions
-        .update(&StoreQuery::eq("id", id), &mut b::input(req)?)
-        .await
-    {
+    let auth = actions.auth();
+    let query = auth
+        .store()
+        .query(&StoreQuery::eq("id", id).native().to_record());
+    let rows = match query {
+        Ok(query) => auth.update(&query, &mut b::input(req)?).await,
+        Err(error) => Err(error),
+    };
+    match rows {
         Ok(rows) => first(res, rows)?,
         Err(error) => b::action_error(res, error)?,
     }
@@ -106,7 +122,7 @@ pub async fn auth_update(
 /// Source generated removal selects only ID; extra request fields do not add predicates.
 /// # Errors
 /// Preserves source action errors and native response failures.
-pub async fn auth_remove(
+pub async fn auth_remove_with<M: SessionModels>(
     req: &mut Request,
     res: &mut Response,
     inv: Invocation<'_>,
@@ -114,13 +130,21 @@ pub async fn auth_remove(
     if b::completed(res) {
         return Ok(Flow::Continue);
     }
-    let Some(actions) = actions(&inv) else {
+    let Some(actions) = actions::<M>(&inv) else {
         return Ok(Flow::Continue);
     };
     let Some(id) = checked_id(req, res)? else {
         return Ok(Flow::Continue);
     };
-    match actions.remove(&StoreQuery::eq("id", id)).await {
+    let auth = actions.auth();
+    let query = auth
+        .store()
+        .query(&StoreQuery::eq("id", id).native().to_record());
+    let rows = match query {
+        Ok(query) => auth.remove(&query).await,
+        Err(error) => Err(error),
+    };
+    match rows {
         Ok(rows) => first(res, rows)?,
         Err(error) => b::action_error(res, error)?,
     }
@@ -129,7 +153,7 @@ pub async fn auth_remove(
 /// Profile detail preserves eq extensions, selected columns, ID validation and Not Found error.
 /// # Errors
 /// Missing/invalid ID is source 400; missing row is authored 404; native failures propagate.
-pub async fn profile_detail(
+pub async fn profile_detail_with<M: SessionModels>(
     req: &mut Request,
     res: &mut Response,
     inv: Invocation<'_>,
@@ -137,7 +161,7 @@ pub async fn profile_detail(
     if b::completed(res) {
         return Ok(Flow::Continue);
     }
-    let Some(actions) = actions(&inv) else {
+    let Some(actions) = actions::<M>(&inv) else {
         return Ok(Flow::Continue);
     };
     let Some(id) = checked_id(req, res)? else {
@@ -163,22 +187,16 @@ pub async fn profile_detail(
             .map(|column| column.as_str().unwrap().into())
             .collect();
     }
-    match actions.profile().find(&query).await {
+    let profile = actions.profile();
+    let query = profile.store().query(&query.native().to_record());
+    let row = match query {
+        Ok(query) => profile.find(&query).await,
+        Err(error) => Err(error),
+    };
+    match row {
         Ok(Some(row)) => {
-            // SQL selector order defines the generated source record insertion order.
-            let selectors = actions.profile().store.selectors(&query.columns);
-            let mut ordered = stackpress_lib::DataMap::new();
-            for selector in selectors {
-                if let Some(value) = row.get(&selector.field) {
-                    ordered.insert(selector.field, b::native(value.clone())?);
-                }
-            }
-            for (key, value) in row {
-                if !ordered.contains_key(&key) {
-                    ordered.insert(key, b::native(value)?);
-                }
-            }
-            res.results_value(stackpress_lib::Value::Object(ordered))?;
+            // The generated store retains SQL selector and nested-field insertion order.
+            b::results(res, Value::Object(row))?;
         }
         Ok(None) => {
             b::error(res, "Not Found", json!({}))?;
@@ -191,7 +209,7 @@ pub async fn profile_detail(
 /// Update source profile fields after ID admission; the original full input remains the patch.
 /// # Errors
 /// Preserves source action/native failures without a new policy or transaction.
-pub async fn profile_update(
+pub async fn profile_update_with<M: SessionModels>(
     req: &mut Request,
     res: &mut Response,
     inv: Invocation<'_>,
@@ -199,17 +217,21 @@ pub async fn profile_update(
     if b::completed(res) {
         return Ok(Flow::Continue);
     }
-    let Some(actions) = actions(&inv) else {
+    let Some(actions) = actions::<M>(&inv) else {
         return Ok(Flow::Continue);
     };
     let Some(id) = checked_id(req, res)? else {
         return Ok(Flow::Continue);
     };
-    match actions
-        .profile()
-        .update(&StoreQuery::eq("id", id), &mut b::input(req)?)
-        .await
-    {
+    let profile = actions.profile();
+    let query = profile
+        .store()
+        .query(&StoreQuery::eq("id", id).native().to_record());
+    let rows = match query {
+        Ok(query) => profile.update(&query, &mut b::input(req)?).await,
+        Err(error) => Err(error),
+    };
+    match rows {
         Ok(rows) => first(res, rows)?,
         Err(error) => b::action_error(res, error)?,
     }
@@ -218,7 +240,7 @@ pub async fn profile_update(
 /// Soft-remove a profile using the source ID-only generated event filter.
 /// # Errors
 /// Preserves source action and response errors.
-pub async fn profile_remove(
+pub async fn profile_remove_with<M: SessionModels>(
     req: &mut Request,
     res: &mut Response,
     inv: Invocation<'_>,
@@ -226,13 +248,21 @@ pub async fn profile_remove(
     if b::completed(res) {
         return Ok(Flow::Continue);
     }
-    let Some(actions) = actions(&inv) else {
+    let Some(actions) = actions::<M>(&inv) else {
         return Ok(Flow::Continue);
     };
     let Some(id) = checked_id(req, res)? else {
         return Ok(Flow::Continue);
     };
-    match actions.profile().remove(&StoreQuery::eq("id", id)).await {
+    let profile = actions.profile();
+    let query = profile
+        .store()
+        .query(&StoreQuery::eq("id", id).native().to_record());
+    let rows = match query {
+        Ok(query) => profile.remove(&query).await,
+        Err(error) => Err(error),
+    };
+    match rows {
         Ok(rows) => first(res, rows)?,
         Err(error) => b::action_error(res, error)?,
     }
@@ -252,14 +282,14 @@ fn first(res: &mut Response, rows: Vec<Record>) -> Result<()> {
 // One inventory expands over both host registration surfaces. A macro avoids allocating
 // erased adapter handlers or changing the immediate API's callback/error order.
 macro_rules! account_events {
-    ($target:expr) => {
-        $target.on("auth-search", auth_search)?;
-        $target.on("auth-update", auth_update)?;
-        $target.on("auth-create", auth_create)?;
-        $target.on("auth-remove", auth_remove)?;
-        $target.on("profile-detail", profile_detail)?;
-        $target.on("profile-update", profile_update)?;
-        $target.on("profile-remove", profile_remove)?;
+    ($target:expr, $family:ty) => {
+        $target.on("auth-search", auth_search_with::<$family>)?;
+        $target.on("auth-update", auth_update_with::<$family>)?;
+        $target.on("auth-create", auth_create_with::<$family>)?;
+        $target.on("auth-remove", auth_remove_with::<$family>)?;
+        $target.on("profile-detail", profile_detail_with::<$family>)?;
+        $target.on("profile-update", profile_update_with::<$family>)?;
+        $target.on("profile-remove", profile_remove_with::<$family>)?;
     };
 }
 
@@ -268,7 +298,13 @@ macro_rules! account_events {
 /// # Errors
 /// Preserves normal registration errors and multiple-handler cooperation.
 pub fn register(app: &mut stackpress_server::ServerBuilder) -> Result<()> {
-    account_events!(app);
+    register_with::<stackpress_framework_models::Models>(app)
+}
+
+/// Register the seven immediate account events over the application's generated family.
+/// No schema, engine, policy or global guard is installed.
+pub fn register_with<M: SessionModels>(app: &mut stackpress_server::ServerBuilder) -> Result<()> {
+    account_events!(app, M);
     Ok(())
 }
 
@@ -280,11 +316,40 @@ pub fn register(app: &mut stackpress_server::ServerBuilder) -> Result<()> {
 /// # Errors
 /// Preserves startup registration errors; handler-registration failures surface during build.
 pub fn register_listen(app: &mut stackpress_server::ServerBuilder) -> Result<()> {
-    app.on_listen(listen)
+    register_listen_with::<stackpress_framework_models::Models>(app)
+}
+
+/// Queue the application's account family at the same source Listen phase.
+pub fn register_listen_with<M: SessionModels>(
+    app: &mut stackpress_server::ServerBuilder,
+) -> Result<()> {
+    app.on_listen(listen::<M>)
 }
 
 /// Expand the shared inventory only when the existing host reaches Listen.
-async fn listen(start: &mut stackpress_server::StartupContext) -> Result<Flow> {
-    account_events!(start);
+async fn listen<M: SessionModels>(start: &mut stackpress_server::StartupContext) -> Result<Flow> {
+    account_events!(start, M);
     Ok(Flow::Continue)
 }
+
+// Keep direct callback paths alongside their generic counterparts. The inventory
+// above remains the only registrar list; these wrappers select the generated defaults.
+macro_rules! default_event {
+    ($name:ident, $generic:ident) => {
+        /// Direct account callback over the shipped generated default model family.
+        pub async fn $name(
+            req: &mut Request,
+            res: &mut Response,
+            inv: Invocation<'_>,
+        ) -> Result<Flow> {
+            $generic::<stackpress_framework_models::Models>(req, res, inv).await
+        }
+    };
+}
+default_event!(auth_create, auth_create_with);
+default_event!(auth_search, auth_search_with);
+default_event!(auth_update, auth_update_with);
+default_event!(auth_remove, auth_remove_with);
+default_event!(profile_detail, profile_detail_with);
+default_event!(profile_update, profile_update_with);
+default_event!(profile_remove, profile_remove_with);

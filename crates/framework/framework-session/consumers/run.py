@@ -29,8 +29,11 @@ def main():
     """Resolve new locks only under the coordinator's one-time grant; all proofs stay locked/offline."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--reconcile-locks', action='store_true')
+    parser.add_argument('--refresh-locks', action='store_true', help='approved root-seeded workspace-edge refresh for native consumers')
     parser.add_argument('--only', choices=['direct', 'facade', 'plugin', 'disabled', 'browser'])
     args = parser.parse_args()
+    if args.refresh_locks and (not args.reconcile_locks or args.only not in ['direct', 'facade', 'plugin']):
+        parser.error('--refresh-locks requires --reconcile-locks and one approved native --only selection')
     base = Path(__file__).resolve().parent
     root = base.parents[3]
     target = Path(os.environ['CARGO_TARGET_DIR']).resolve()
@@ -43,12 +46,14 @@ def main():
         env = {**os.environ, 'CARGO_TARGET_DIR': str(target/f'consumer-session-{kind}')}
         if args.reconcile_locks:
             # Exactly one offline resolution is authorized for each new manifest, never root.
-            assert not lock.exists(), f'already reconciled: {lock}'
+            assert not lock.exists() or args.refresh_locks, f'already reconciled: {lock}'
+            before = registry(lock.read_bytes()) if lock.exists() else set()
             lock.write_bytes(root_lock)
             run(['cargo', 'tree', '--manifest-path', str(manifest), '--offline', '-e', 'normal', '--depth', '1'], env)
             assert registry(lock.read_bytes()) <= external, 'new registry tuple; stop for coordinator'
             assert (root/'Cargo.lock').read_bytes() == root_lock, 'root lock changed'
-            print(f'LOCK {kind}: registry tuples are a workspace subset; root lock unchanged', flush=True)
+            after = registry(lock.read_bytes())
+            print(f'LOCK {kind}: {len(after)} registry tuples are a workspace subset; root lock unchanged; delta +{len(after-before)}/-{len(before-after)}', flush=True)
             continue
         flags = ['--manifest-path', str(manifest), '--locked', '--offline']
         graph = subprocess.check_output(['cargo', 'tree', *flags, '-e', 'normal', '--prefix', 'none'], env=env, text=True)

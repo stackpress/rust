@@ -1,5 +1,5 @@
 //! Maintained generated app extension/collision fixture; source files are regenerated, never edited.
-#![cfg(not(target_arch = "wasm32"))]
+#![cfg(all(feature = "sql", not(target_arch = "wasm32")))]
 #[allow(missing_docs)]
 #[path = "extended/generated/mod.rs"]
 pub mod extended;

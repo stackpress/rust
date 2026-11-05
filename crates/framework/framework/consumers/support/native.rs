@@ -17,6 +17,9 @@ use std::sync::{
     atomic::{AtomicUsize, Ordering},
 };
 
+#[path = "source_family.rs"]
+pub mod source_family;
+
 /// This application's generated Note capabilities explicitly allow its finite local calls.
 struct LocalPolicy;
 impl OperationPolicy for LocalPolicy {
@@ -54,6 +57,10 @@ fn describe() -> Vec<Model> {
 
 /// Application-owned immutable model catalog; missing callbacks remain absent.
 static CLIENT: framework::CompiledClient = framework::CompiledClient {
+    bindings: framework::FrameworkBindings {
+        session: None,
+        api: None,
+    },
     build: "slice11-private-client-v1",
     describe,
     models: &[
@@ -168,6 +175,7 @@ async fn resolve(server: &Server, name: &str, input: Value) -> Result<Value> {
 pub async fn prove(
     use_direct: bool,
 ) -> std::result::Result<Value, Box<dyn std::error::Error + Send + Sync>> {
+    source_family::prove(use_direct).await?;
     let directory = tempfile::tempdir()?;
     let engine = Arc::new(Engine::new(
         SqliteDatabase::open(

@@ -64,7 +64,10 @@ fn attribute<'a>(html: &'a str, name: &str) -> &'a str {
 fn api_url_fields_keep_their_adapter_until_shared_markup_is_equivalent() {
     // This failed at registry composition on 443dfc0, before either control could render.
     let registry = codegen::definitions().unwrap();
-    let ui = codegen::normalize(&registry).unwrap().project_ui().unwrap();
+    let ui = codegen::normalize(&registry)
+        .unwrap()
+        .project_source_ui(&registry)
+        .unwrap();
     let application = ui
         .models
         .iter()
@@ -84,7 +87,7 @@ fn api_url_fields_keep_their_adapter_until_shared_markup_is_equivalent() {
             .iter()
             .find(|binding| binding.role == Role::Field)
             .unwrap();
-        assert_eq!(binding.component, "api.source.field.url");
+        assert_eq!(binding.component, "stackpress.source.field.url");
         assert_eq!(binding.props["type"], "url");
         assert!(field.nullable);
         for seed in [

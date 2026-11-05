@@ -17,7 +17,9 @@ pub use native::language;
 #[cfg(all(feature = "view", not(target_arch = "wasm32")))]
 pub use native::view;
 #[cfg(all(feature = "native", not(target_arch = "wasm32")))]
-pub use native::{CompiledClient, CompiledModel, Register, client, commands, config};
+pub use native::{
+    CompiledClient, CompiledModel, FrameworkBindings, Register, client, commands, config,
+};
 #[cfg(all(
     not(target_arch = "wasm32"),
     any(

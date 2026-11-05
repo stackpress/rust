@@ -87,10 +87,27 @@ pub async fn scenario(engine: Arc<Engine>) -> TestResult<()> {
     app.install().await?;
     session.install().await?;
     for (id, name) in [("p1", "Ada"), ("p2", "Bert"), ("p3", "ADAM")] {
+        let tags = if id == "p3" {
+            json!(["red", "blue"])
+        } else {
+            json!(["red"])
+        };
         profile
-            .create(&record(json!({"id":id,"name":name})))
+            .create(&record(json!({"id":id,"name":name,"tags":tags})))
             .await?;
     }
+    println!("stage: G53 generated multi-value has requires all values");
+    let all = StoreQuery {
+        has: record(json!({"tags":["red","blue"]})),
+        ..Default::default()
+    };
+    assert_eq!(profile.find_all(&all).await?[0]["id"], "p3");
+    assert_eq!(profile.count(&all).await?, 1);
+    let missing = StoreQuery {
+        has: record(json!({"tags":["red","missing"]})),
+        ..Default::default()
+    };
+    assert_eq!(profile.count(&missing).await?, 0);
     let mut query = StoreQuery {
         q: Some("ad".into()),
         sort: record(json!({"id":"ASC"})),

@@ -10,6 +10,8 @@ pub use config::{
     AuthConfig, AuthEmailConfig, AuthMenuConfig, AuthSection, Environment, RandomFraction,
 };
 #[cfg(feature = "auth-server")]
+mod bindings;
+#[cfg(feature = "auth-server")]
 pub(crate) mod bridge;
 #[cfg(feature = "auth-server")]
 pub mod events;
@@ -22,7 +24,7 @@ pub use hooks::Hooks;
 #[cfg(feature = "auth-server")]
 mod plugin;
 #[cfg(feature = "auth-server")]
-pub use plugin::register;
+pub use plugin::{register, register_with};
 #[cfg(feature = "auth-server")]
 pub mod templates;
 #[cfg(feature = "auth-server")]
@@ -41,11 +43,13 @@ pub struct AuthSchema(RecordSchema);
 impl AuthSchema {
     /// Direct source constructor uses the caller's database seed, including an empty seed.
     pub fn new(seed: impl Into<String>) -> Self {
-        Self(RecordSchema::new("Auth", seed.into()))
+        Self(RecordSchema::from_generated::<
+            stackpress_framework_models::AuthSchema,
+        >(seed.into(), 0))
     }
     /// Select the host's local UTC offset for Date column conversions.
     pub fn with_offset_minutes(mut self, offset: i32) -> Self {
-        self.0.offset = offset;
+        self.0 = self.0.with_offset_minutes(offset);
         self
     }
     /// Own the underlying schema for native store composition.

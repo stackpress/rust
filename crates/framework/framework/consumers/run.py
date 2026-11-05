@@ -69,8 +69,12 @@ def main():
     """Resolve each new lock once; all later executions are locked and offline."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--resolve', action='store_true')
+    parser.add_argument('--refresh-locks', action='store_true',
+                        help='approved workspace-edge refresh, seeded from the unchanged root lock')
     parser.add_argument('--only', choices=KINDS)
     args = parser.parse_args()
+    if args.refresh_locks and not args.resolve:
+        parser.error('--refresh-locks requires --resolve and explicit coordinator authorization')
     target = Path(os.environ['CARGO_TARGET_DIR']).resolve()
     root_lock = (ROOT/'Cargo.lock').read_bytes()
     for kind in [args.only] if args.only else KINDS:
@@ -78,17 +82,20 @@ def main():
         lock = manifest.with_name('Cargo.lock')
         env = {**os.environ, 'CARGO_TARGET_DIR': str(target/f'consumer-aggregate-{kind}')}
         if args.resolve:
-            if lock.exists():
+            if lock.exists() and not args.refresh_locks:
                 assert registry(lock.read_bytes()) <= registry(root_lock)
                 assert (ROOT/'Cargo.lock').read_bytes() == root_lock
                 print(f'LOCK {kind}: already resolved, preserved without a Cargo command', flush=True)
                 continue
+            before = registry(lock.read_bytes()) if lock.exists() else set()
             lock.write_bytes(root_lock)
             run(['cargo', 'tree', '--manifest-path', str(manifest), '--offline', '-e', 'normal', '--depth', '1'], env)
             # This assertion immediately follows the sole unlocked offline command.
             assert registry(lock.read_bytes()) <= registry(root_lock), 'new external tuple: stop'
             assert (ROOT/'Cargo.lock').read_bytes() == root_lock, 'root lock mutated: stop'
-            print(f'LOCK {kind}: registry subset; root bytes unchanged', flush=True)
+            after = registry(lock.read_bytes())
+            print(f'LOCK {kind}: registry subset ({len(after)}); root bytes unchanged; '
+                  f'consumer tuple delta +{len(after-before)}/-{len(before-after)}', flush=True)
             continue
         flags = ['--manifest-path', str(manifest), '--locked', '--offline']
         artifacts = target/'aggregate-artifacts'

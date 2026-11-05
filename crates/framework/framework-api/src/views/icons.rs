@@ -10,6 +10,7 @@ pub(super) fn named(name: &str) -> Option<AnyView> {
     let name = match name {
         "user" | "user-round" => "user",
         "key" => "key",
+        "lock" => "lock",
         "globe" => "globe",
         "laptop" => "laptop",
         "coffee" => "coffee",
@@ -55,6 +56,8 @@ fn glyph(name: &str) -> AnyView {
         "menu" => view!{<path d="M4 5h16" />
   <path d="M4 12h16" />
   <path d="M4 19h16" />}.into_any(),
+        "lock"=>view!{<rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+  <path d="M7 11V7a5 5 0 0 1 10 0v4" />}.into_any(),
         "key"=>view!{<path d="m2 21 9.6-9.6" /> <path d="m7.5 15.5 2.3 2.3a1 1 0 0 1 0 1.4l-2.1 2.1a1 1 0 0 1-1.4 0L4 19" /> <circle cx="15.5" cy="7.5" r="5.5" />}.into_any(),
         "globe"=>view!{<circle cx="12" cy="12" r="10" /> <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" /> <path d="M2 12h20" />}.into_any(),
         "laptop"=>view!{<path d="M18 5a2 2 0 0 1 2 2v8.526a2 2 0 0 0 .212.897l1.068 2.127a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45l1.068-2.127A2 2 0 0 0 4 15.526V7a2 2 0 0 1 2-2z" /> <path d="M20.054 15.987H3.946" />}.into_any(),

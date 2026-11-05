@@ -32,8 +32,14 @@ use stackpress_server::ServerBuilder;
 /// # Errors
 /// Propagates the constituents' existing config/service/registration failures.
 pub fn register(app: &mut ServerBuilder) -> Result<()> {
+    register_with::<stackpress_framework_models::Models>(app)
+}
+/// Same auth→email→identity source composite with the application's generated model family.
+pub fn register_with<M: stackpress_framework_sql::source::SessionModels>(
+    app: &mut ServerBuilder,
+) -> Result<()> {
     // Keep source contribution order through Config, Listen and Route startup phases.
-    crate::auth::register(app)?;
+    crate::auth::register_with::<M>(app)?;
     stackpress_framework_email::plugin::register(app)?;
     crate::plugin::register(app)?;
     Ok(())

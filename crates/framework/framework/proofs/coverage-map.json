@@ -222,11 +222,10 @@
       "evidence": [
         "crates/framework/framework/tests/cases/codegen.rs#real_generation_and_provider_errors",
         "examples/api-checkpoint/tool/src/main.rs",
-        "crates/framework/framework-api/schema.idea"
+        "crates/framework/framework-api/schema.idea",
+        "crates/framework/framework/consumers/build-host/src/main.rs"
       ],
-      "limitations": [
-        "API-BUILD-HOST"
-      ]
+      "limitations": []
     },
     {
       "source": "package.json",
@@ -522,7 +521,8 @@
         "crates/framework/framework/proofs/session-browser.cjs",
         "crates/framework/framework-session/tests/main.rs",
         "crates/framework/framework-api/tests/sql.rs",
-        "crates/framework/framework-api/tests/management.rs"
+        "crates/framework/framework-api/tests/management.rs",
+        "examples/api-checkpoint/proofs/browser.cjs#API_AGGREGATE_ASSET"
       ],
       "limitations": [
         "EDGE-REPLAY",
@@ -535,7 +535,9 @@
         "crates/framework/framework/tests/cases/catalog.rs#compiled_catalog_and_api_sql_prepare_real_ordered_phases_once",
         "crates/framework/framework/tests/cases/catalog.rs#empty_catalog_is_present_and_repeated_registration_preserves_native_error",
         "crates/framework/framework/tests/cases/mod.rs#absent_client_and_config_need_no_engine_or_startup_io",
-        "crates/framework/framework/tests/ui/catalog_borrow.rs"
+        "crates/framework/framework/tests/ui/catalog_borrow.rs",
+        "crates/framework/framework/consumers/support/source_family.rs",
+        "crates/framework/framework/proofs/source-browser.cjs"
       ],
       "limitations": [
         "JS-MECHANICS"
@@ -548,7 +550,9 @@
         "crates/framework/framework/tests/ui/no_serialize.rs",
         "crates/framework/framework/consumers/support/native.rs",
         "crates/framework/framework/proofs/session-browser.cjs",
-        "crates/framework/framework/consumers/website/build.py"
+        "crates/framework/framework/consumers/website/build.py",
+        "crates/framework/framework/consumers/support/source_family.rs",
+        "crates/framework/framework/proofs/source-browser.cjs"
       ],
       "limitations": []
     },
@@ -568,7 +572,10 @@
         "crates/framework/framework/consumers/support/native.rs",
         "crates/framework/framework/tests/cases/catalog.rs#compiled_catalog_and_api_sql_prepare_real_ordered_phases_once",
         "crates/framework/framework-admin/tests/pages.rs",
-        "crates/framework/framework-api/tests/management.rs"
+        "crates/framework/framework-api/tests/management.rs",
+        "examples/api-checkpoint/proofs/browser.cjs#API_AGGREGATE_ASSET",
+        "crates/framework/framework/consumers/support/source_family.rs",
+        "crates/framework/framework/proofs/source-browser.cjs"
       ],
       "limitations": [
         "API-MATRIX"
@@ -625,11 +632,10 @@
         "crates/framework/framework/tests/cases/codegen.rs#real_generation_and_provider_errors",
         "crates/framework/framework/consumers/build-host/src/main.rs",
         "crates/framework/framework/consumers/run.py",
-        "crates/framework/framework/consumers/graphs.py"
+        "crates/framework/framework/consumers/graphs.py",
+        "crates/framework/framework/consumers/build-host/src/main.rs"
       ],
-      "limitations": [
-        "API-BUILD-HOST"
-      ]
+      "limitations": []
     },
     {
       "id": "R18",
@@ -646,7 +652,8 @@
         "crates/framework/framework/proofs/session-browser.cjs",
         "crates/framework/framework/proofs/browser.cjs",
         "crates/framework/framework/consumers/graphs.py",
-        "crates/framework/framework-api/tests/consent.rs"
+        "crates/framework/framework-api/tests/consent.rs",
+        "examples/api-checkpoint/proofs/browser.cjs#API_AGGREGATE_ASSET"
       ],
       "limitations": [
         "API-MATRIX"
@@ -673,8 +680,8 @@
     "NODE-PACKAGING": "No npm package.json writer. Optional supervised non-awaited app callback preserves build.ts:21 timing; bundler/watch/TTY/listener/FS integration is application-owned.",
     "LIVE-PROVIDERS": "Owning session/API tests execute direct PostgreSQL/MySQL ASCII q/like searches with real source setup/codecs. G48 aggregate live tests prove direct adjacent generated upgrades, MySQL partial state and PostgreSQL rollback, related MySQL child-first DELETE after native TRUNCATE error 1701, and unchanged PostgreSQL CASCADE. MySQL callers omit CASCADE; the general renderer still refuses it. Aggregate live provider event routing, SMTP/SES/sendmail, remote delivery acknowledgement and listener proof remain unclaimed; SQLite and JSON mail remain real finite boundaries. No generated MySQL MigrationRunner is supplied (G27 unchanged).",
     "INSTALLED-TAURI": "No installed desktop/mobile/Tauri acceptance. Native/WASM compile and Chromium execution are separate evidence.",
-    "API-MATRIX": "The existing 13-case/mode API checkpoint matrix includes generated Application/Profile/Session management, native-form navigation, persisted consent/token exchange and cancellable relation fetch through its separate stdio host. Its host hard-codes direct registrars and has no injected aggregate seam; the aggregate website has generated Note admin plus a static session seed. Full replay would require a second app transport/generated-management fixture. Current API native/SSR suites run in the compatible workspace; API browser features compile, but those 26 end-to-end cases are not claimed through aggregate.",
-    "API-BUILD-HOST": "Aggregate generation/freshness is executed with Note; the existing API checkpoint tool demonstrates real built-in API/session schema composition. Complete API client regeneration through the new aggregate build-host consumer is not replayed here.",
+    "API-MATRIX": "G50 M3 replays all 13 original API scenarios per mode against both standalone and aggregate hydrate/CSR artifacts. The finite stdio backend still selects direct API registrars, not the aggregate; the separate aggregate source-family SQLite proof covers registered auth/CRUD/joins/admin/export. Not every native API edge is re-dispatched through the aggregate in the browser matrix.",
+    "API-BUILD-HOST": "Closed by G50 M3: the aggregate build-host generates and freshness-checks the complete four-model source client with Profile.nickname, alongside the unchanged Typed Note fixture.",
     "EDGE-REPLAY": "The seven account/API behaviours are resolved under G46 and pinned by owning-crate tests/source. Not every such edge is reinvoked under aggregate registration; aggregate adds no replacement implementation. Session matrix does replay actual account loaders/exports and real email event.",
     "SOURCE-LICENSE": "Resolved under G46: owner-owned.",
     "SQLITE-TRUNCATE": "Resolved under G46: SQLite purge keeps DELETE FROM \"table\", the accepted stackpress-sql mapping. No TRUNCATE or added WHERE 1."

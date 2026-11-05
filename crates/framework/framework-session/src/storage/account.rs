@@ -1,10 +1,12 @@
 //! Direct Auth signup/signin and source password assertions, without route/event policy.
 
-use super::{ActionError, AuthActions, ProfileActions, Result, StoreQuery};
+use super::{ActionError, AuthActions, ProfileActions, Result};
 use crate::columns::Value;
 use crate::columns::{self, Record};
 use serde::{Deserialize, Serialize};
+use stackpress_framework_sql::source::{SessionModels, SourceActions, SourceModel, SourceStore};
 use stackpress_sql::Engine;
+use std::marker::PhantomData;
 use std::sync::Arc;
 
 /// Source password checks, ordered min/max/upper/lower/number/special.
@@ -32,91 +34,68 @@ pub struct ActionOptions {
     /// Optional source password assertion policy.
     pub password: PasswordConfig,
 }
-impl AuthActions {
-    /// Source make(ctx) factory semantics after the native host resolves its Engine and
-    /// config values at invocation time. Missing database.seed falls back to abc123;
-    /// direct new/with_options still keep their source empty-seed behavior.
-    pub fn make(
-        engine: Arc<Engine>,
-        database_seed: Option<String>,
-        password: Option<PasswordConfig>,
-    ) -> Self {
-        Self::with_options(
+
+/// Handwritten account orchestration over one application's generated Profile/Auth family.
+/// Only this logic owns signup/signin sequencing; no model columns are redefined here.
+pub struct AccountActions<M: SessionModels> {
+    engine: Arc<Engine>,
+    seed: String,
+    offset: i32,
+    password: PasswordConfig,
+    family: PhantomData<M>,
+}
+impl<M: SessionModels> AccountActions<M> {
+    /// Bind immutable collaborators without defaults, database IO or plugin registration.
+    pub fn new(engine: Arc<Engine>, seed: String, offset: i32, password: PasswordConfig) -> Self {
+        Self {
             engine,
-            ActionOptions {
-                seed: database_seed.unwrap_or_else(|| "abc123".into()),
-                password: password.unwrap_or_default(),
-            },
-        )
+            seed,
+            offset,
+            password,
+            family: PhantomData,
+        }
     }
-
-    /// Compose the same engine/store with source options; no account routes are installed.
-    pub fn with_options(engine: Arc<Engine>, options: ActionOptions) -> Self {
-        let mut actions = Self::new(engine, options.seed);
-        actions.password = options.password;
-        actions
+    /// Actual app-generated Auth actions, including any explicit action overrides.
+    pub fn auth(&self) -> <M::Auth as SourceModel>::Actions {
+        M::Auth::actions(self.engine.clone(), self.seed.clone(), self.offset)
     }
-    /// Source ProfileActions collaborator, using the same database seed and engine.
-    pub fn profile(&self) -> ProfileActions {
-        let mut profile = ProfileActions::new(self.engine.clone(), self.store.seed.clone());
-        // The source collaborator runs in the same process timezone as its AuthActions.
-        profile.store.schema.offset = self.store.offset;
-        profile
+    /// The very same associated Profile used by auth and API collaborators.
+    pub fn profile(&self) -> <M::Profile as SourceModel>::Actions {
+        M::Profile::actions(self.engine.clone(), self.seed.clone(), self.offset)
     }
-
-    /// Ordered source signup/password validation; errors accumulate across independent fields.
+    /// Original ordered signup/password checks, without inspecting app-added columns.
     pub fn assert(&self, input: &Record) -> Option<Record> {
-        let mut errors = Record::new();
-        if !input.get("name").is_some_and(columns::truthy) {
-            errors.insert("name".into(), "Name is required".into());
-        }
-        if !["username", "email", "phone"]
-            .iter()
-            .any(|name| input.get(*name).is_some_and(columns::truthy))
-        {
-            errors.insert(
-                "username".into(),
-                "Username, email, or phone is required".into(),
-            );
-        } else if let Some(email) = input.get("email").filter(|value| columns::truthy(value))
-            && !is_email(&columns::string(email))
-        {
-            errors.insert("email".into(), "Invalid email".into());
-        }
-        let secret = input.get("secret");
-        let message = if !secret.is_some_and(columns::truthy) {
-            Some("Password is required".into())
-        } else {
-            password_error(
-                &secret.map(columns::string).unwrap_or_default(),
-                &self.password,
-            )
-        };
-        if let Some(message) = message {
-            errors.insert("secret".into(), message.into());
-        }
-        (!errors.is_empty()).then_some(errors)
+        assert_input(input, &self.password)
     }
-
-    /// Source type/token lookup, optional password comparison, consumed update and reload.
-    /// Missing identifiers/secrets are String(undefined), preserving direct-call behavior.
+    /// Original lookup/password/consumed/reload sequence; no 2FA/page policy is added.
     pub async fn signin(
         &self,
         kind: &str,
         input: &Record,
         password: bool,
     ) -> Result<Option<Record>> {
-        let mut query = StoreQuery::eq("type", kind);
-        query.eq.insert(
-            "token".into(),
-            input
-                .get(kind)
-                .map(columns::string)
-                .unwrap_or_else(|| "undefined".into())
-                .into(),
-        );
-        query.columns = vec!["*".into(), "profile.*".into()];
-        let Some(record) = self.find(&query).await? else {
+        let actions = self.auth();
+        let query = actions.store().query(&Record::from_iter([
+            (
+                "eq".into(),
+                Value::Object(Record::from_iter([
+                    ("type".into(), kind.into()),
+                    (
+                        "token".into(),
+                        input
+                            .get(kind)
+                            .map(columns::string)
+                            .unwrap_or_else(|| "undefined".into())
+                            .into(),
+                    ),
+                ])),
+            ),
+            (
+                "columns".into(),
+                Value::Array(vec!["*".into(), "profile.*".into()]),
+            ),
+        ]))?;
+        let Some(record) = actions.find(&query).await? else {
             return Err(ActionError::new(
                 404,
                 "Invalid Parameters",
@@ -141,16 +120,23 @@ impl AuthActions {
                 ));
             }
         }
-        self.update(
-            &StoreQuery::eq("id", record.get("id").cloned().unwrap_or(Value::Null)),
-            &mut Record::from_iter([("consumed".into(), columns::date(columns::now()))]),
-        )
-        .await?;
-        self.find(&query).await
+        let consumed = actions.store().query(&Record::from_iter([(
+            "eq".into(),
+            Value::Object(Record::from_iter([(
+                "id".into(),
+                record.get("id").cloned().unwrap_or(Value::Null),
+            )])),
+        )]))?;
+        actions
+            .update(
+                &consumed,
+                &mut Record::from_iter([("consumed".into(), columns::date(columns::now()))]),
+            )
+            .await?;
+        actions.find(&query).await
     }
-
-    /// Source sequential profile/email/phone/username creation, deliberately without an outer
-    /// transaction. A later failure leaves earlier records in place. Missing phone succeeds G44.
+    /// Sequential source signup; only name/type/roles are forwarded to Profile.create.
+    /// A later Auth failure retains earlier rows; missing phone remains optional (G44).
     pub async fn signup(&self, input: &Record) -> Result<Record> {
         if let Some(errors) = self.assert(input) {
             return Err(ActionError::new(400, "Invalid Parameters", errors));
@@ -178,6 +164,7 @@ impl AuthActions {
             ),
         ]);
         let mut profile = self.profile().create(&profile_input).await?;
+        let actions = self.auth();
         let mut auth = Record::new();
         for kind in ["email", "phone", "username"] {
             if let Some(identifier) = input.get(kind).filter(|value| columns::truthy(value)) {
@@ -197,7 +184,7 @@ impl AuthActions {
                             .into(),
                     ),
                 ]);
-                match self.create(&auth_input).await {
+                match actions.create(&auth_input).await {
                     Ok(record) => {
                         auth.insert(kind.into(), Value::Object(record));
                     }
@@ -215,6 +202,89 @@ impl AuthActions {
     }
 }
 
+impl AuthActions {
+    /// Source host factory: database.seed fallback abc123; direct construction stays empty.
+    pub fn make(
+        engine: Arc<Engine>,
+        database_seed: Option<String>,
+        password: Option<PasswordConfig>,
+    ) -> Self {
+        Self::with_options(
+            engine,
+            ActionOptions {
+                seed: database_seed.unwrap_or_else(|| "abc123".into()),
+                password: password.unwrap_or_default(),
+            },
+        )
+    }
+    /// Existing direct options and constructor, without account route registration.
+    pub fn with_options(engine: Arc<Engine>, options: ActionOptions) -> Self {
+        let mut actions = Self::new(engine, options.seed);
+        actions.password = options.password;
+        actions
+    }
+    /// Existing direct Profile path, using the same generated defaults and source timezone.
+    pub fn profile(&self) -> ProfileActions {
+        let mut actions = ProfileActions::new(self.engine.clone(), self.store.seed.clone());
+        actions.store.schema = actions.store.schema.with_offset_minutes(self.store.offset);
+        actions
+    }
+    fn account(&self) -> AccountActions<stackpress_framework_models::Models> {
+        AccountActions::new(
+            self.engine.clone(),
+            self.store.seed.clone(),
+            self.store.offset,
+            self.password.clone(),
+        )
+    }
+    /// Original signup checks; app columns never become new stock signup inputs.
+    pub fn assert(&self, input: &Record) -> Option<Record> {
+        assert_input(input, &self.password)
+    }
+    /// Existing direct signin delegates to the same source flow as generic registrars.
+    pub async fn signin(
+        &self,
+        kind: &str,
+        input: &Record,
+        password: bool,
+    ) -> Result<Option<Record>> {
+        self.account().signin(kind, input, password).await
+    }
+    /// Existing direct signup delegates to the same generated-default family collaborator.
+    pub async fn signup(&self, input: &Record) -> Result<Record> {
+        self.account().signup(input).await
+    }
+}
+/// One password/identifier check inventory for direct and generic auth collaborators.
+fn assert_input(input: &Record, password: &PasswordConfig) -> Option<Record> {
+    let mut errors = Record::new();
+    if !input.get("name").is_some_and(columns::truthy) {
+        errors.insert("name".into(), "Name is required".into());
+    }
+    if !["username", "email", "phone"]
+        .iter()
+        .any(|name| input.get(*name).is_some_and(columns::truthy))
+    {
+        errors.insert(
+            "username".into(),
+            "Username, email, or phone is required".into(),
+        );
+    } else if let Some(email) = input.get("email").filter(|value| columns::truthy(value))
+        && !is_email(&columns::string(email))
+    {
+        errors.insert("email".into(), "Invalid email".into());
+    }
+    let secret = input.get("secret");
+    let message = if !secret.is_some_and(columns::truthy) {
+        Some("Password is required".into())
+    } else {
+        password_error(&secret.map(columns::string).unwrap_or_default(), password)
+    };
+    if let Some(message) = message {
+        errors.insert("secret".into(), message.into());
+    }
+    (!errors.is_empty()).then_some(errors)
+}
 /// ECMAScript \s, which differs from Rust's general Unicode whitespace set.
 fn space(character: char) -> bool {
     matches!(character,'\u{0009}'..='\u{000d}'|'\u{0020}'|'\u{00a0}'|'\u{1680}'|'\u{2000}'..='\u{200a}'|'\u{2028}'|'\u{2029}'|'\u{202f}'|'\u{205f}'|'\u{3000}'|'\u{feff}')

@@ -1,4 +1,11 @@
 //! Browser artifact consumes only the deliberate public session seed, never native services.
+#[cfg(target_arch = "wasm32")]
+#[allow(dead_code)]
+#[path = "../../../../../../examples/api-checkpoint/client/src/lib.rs"]
+mod api_client;
+#[cfg(target_arch = "wasm32")]
+#[allow(dead_code)]
+mod source_family;
 #[cfg(all(target_arch = "wasm32", any(feature = "hydrate", feature = "csr")))]
 mod browser {
     use stackpress::{
@@ -9,6 +16,17 @@ mod browser {
 
     #[cfg(all(feature = "hydrate", feature = "csr"))]
     compile_error!("select exactly one browser renderer");
+
+    /// The original API matrix uses this same aggregate website artifact.
+    #[wasm_bindgen]
+    pub fn start_api() -> Result<js_sys::Function, JsValue> {
+        crate::api_client::start()
+    }
+    /// Hydrate/mount the app's extended source admin using the existing API transport.
+    #[wasm_bindgen]
+    pub fn start_source() -> Result<js_sys::Function, JsValue> {
+        crate::api_client::start_with_ui(crate::source_family::ui())
+    }
 
     /// Mount the shared source view and return an explicit disposal action to its owner.
     #[wasm_bindgen]

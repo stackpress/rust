@@ -190,7 +190,7 @@
       {
         "path": "crates/framework/framework-session/src/composite.rs",
         "contains": [
-          "crate::auth::register(app)?;",
+          "crate::auth::register_with::<M>(app)?;",
           "stackpress_framework_email::plugin::register(app)?;",
           "crate::plugin::register(app)?;"
         ]
@@ -422,7 +422,7 @@
     "statement": "caught item statuses even after rollback/commit failure",
     "evidence": [
       {
-        "path": "crates/framework/framework-session/src/storage/batch.rs",
+        "path": "crates/framework/framework-sql/src/source/batch.rs",
         "contains": [
           "let _ = transaction.rollback().await;",
           "let _ = transaction.commit().await;"
@@ -638,9 +638,9 @@
     "statement": "SQLite ILIKE",
     "evidence": [
       {
-        "path": "crates/framework/framework-session/src/storage/query.rs",
+        "path": "crates/framework/framework-sql/src/source/query.rs",
         "contains": [
-          "for map in [&query.has, &query.hasnt]"
+          "&query.hasnt"
         ]
       },
       {
@@ -665,14 +665,7 @@
         ]
       },
       {
-        "path": "crates/framework/framework-session/src/storage/statement.rs",
-        "contains": [
-          "DialectId::Postgres =>",
-          "DialectId::Sqlite | DialectId::Mysql => return Ok(query)"
-        ]
-      },
-      {
-        "path": "crates/framework/framework-api/src/sql/adapter.rs",
+        "path": "crates/framework/framework-sql/src/source/statement.rs",
         "contains": [
           "DialectId::Postgres =>",
           "DialectId::Sqlite | DialectId::Mysql => return Ok(query)"
@@ -732,11 +725,19 @@
     "evidence": [
       {
         "path": "crates/framework/framework-session/src/account/events.rs",
-        "contains": ["macro_rules! account_events", "pub fn register_listen", "app.on_listen(listen)"]
+        "contains": [
+          "macro_rules! account_events",
+          "pub fn register_listen",
+          "app.on_listen(listen::<M>)"
+        ]
       },
       {
         "path": "crates/framework/framework-session/tests/main/account_registration.rs",
-        "contains": ["immediate_and_listen_entry_points_share_exactly_seven_events", "earlier-listen", "later-listen"]
+        "contains": [
+          "immediate_and_listen_entry_points_share_exactly_seven_events",
+          "earlier-listen",
+          "later-listen"
+        ]
       }
     ]
   },
@@ -746,7 +747,7 @@
     "statement": "Moment admin dates",
     "evidence": [
       {
-        "path": "crates/framework/framework-api/src/views/roles.rs",
+        "path": "crates/framework/framework-admin/src/source/roles.rs",
         "contains": [
           "fn source_date",
           "literal `i`"
@@ -769,19 +770,38 @@
     "evidence": [
       {
         "path": "crates/framework/framework-session/tests/live_search.rs",
-        "contains": ["profile.install().await?", "auth.install().await?", "Profile q/like search", "Auth-to-Profile like search"]
+        "contains": [
+          "profile.install().await?",
+          "auth.install().await?",
+          "Profile q/like search",
+          "Auth-to-Profile like search"
+        ]
       },
       {
         "path": "crates/framework/framework-api/tests/live_search.rs",
-        "contains": ["app.install().await?", "session.install().await?", "Application q/like search", "Session like search", "does-not-match"]
+        "contains": [
+          "app.install().await?",
+          "session.install().await?",
+          "Application q/like search",
+          "Session like search",
+          "does-not-match"
+        ]
       },
       {
         "path": "crates/sql/sql/src/engine.rs",
-        "contains": ["pub async fn execute_non_atomic", "with_plan_progress"]
+        "contains": [
+          "pub async fn execute_non_atomic",
+          "with_plan_progress"
+        ]
       },
       {
         "path": "crates/framework/framework-session/tests/live/support.rs",
-        "contains": ["created owned database", "drop confirmed:", "Duration::from_secs(30)", "Duration::from_secs(10)"]
+        "contains": [
+          "created owned database",
+          "drop confirmed:",
+          "Duration::from_secs(30)",
+          "Duration::from_secs(10)"
+        ]
       }
     ]
   },
@@ -809,9 +829,45 @@
     "page": "crates/framework/framework-session/docs/api/storage.md",
     "statement": "The native mechanics now live in",
     "evidence": [
-      {"path": "crates/framework/framework-session/src/columns/mod.rs", "contains": ["pub use stackpress_framework_schema::source::"]},
-      {"path": "crates/framework/framework-session/src/storage/mod.rs", "contains": ["SourceResult as Result"]},
-      {"path": "crates/framework/framework-schema/tests/source_graph.rs", "contains": ["shared_native_record_retains_dates_null_absence_and_nested_order"]}
+      {
+        "path": "crates/framework/framework-session/src/columns/mod.rs",
+        "contains": [
+          "pub use stackpress_framework_schema::source::"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-session/src/storage/mod.rs",
+        "contains": [
+          "SourceResult as Result"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-schema/tests/source_graph.rs",
+        "contains": [
+          "shared_native_record_retains_dates_null_absence_and_nested_order"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "g50-generated-families",
+    "page": "crates/framework/framework-session/docs/source-models.md",
+    "statement": "Signup\npasses only name/type/roles",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-session/tests/main/generated_family.rs",
+        "contains": [
+          "[\"name\", \"type\", \"roles\"]",
+          "generated_family_registered_auth_account_and_export_share_app_profile"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-session/src/composite.rs",
+        "contains": [
+          "pub fn register_with",
+          "crate::auth::register_with::<M>"
+        ]
+      }
     ]
   }
 ]

@@ -11,7 +11,7 @@ mod account;
 mod actions;
 mod batch;
 mod store;
-pub use account::{ActionOptions, PasswordConfig, is_email};
+pub use account::{AccountActions, ActionOptions, PasswordConfig, is_email};
 pub use actions::{Actions, AuthActions, ProfileActions};
 pub use batch::{BatchMode, BatchStatus};
 pub use query::{StoreQuery, StoreSelector};

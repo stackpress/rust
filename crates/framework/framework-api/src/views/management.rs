@@ -13,20 +13,8 @@ use stackpress_leptos::components::{
     LayoutPanel, Textarea,
 };
 
-/// Compiled application's generated page functions; no dynamic model or role loading.
-#[derive(Clone, Copy)]
-pub struct Ui {
-    /// Generated selected model descriptor.
-    pub spec: fn(&str) -> SchemaResult<PageSpec>,
-    /// Generated create/update/copy controls.
-    pub form: fn(&str, Form) -> SchemaResult<AnyView>,
-    /// Generated query controls.
-    pub filters: fn(&str, &Draft, &str) -> SchemaResult<AnyView>,
-    /// Generated list roles.
-    pub table: fn(&str, &Value, &str) -> SchemaResult<AnyView>,
-    /// Generated read roles.
-    pub detail: fn(&str, &Value, &str) -> SchemaResult<AnyView>,
-}
+/// Shared compiled source UI callbacks; the existing API import path remains valid.
+pub use stackpress_framework_admin::source::pages::Ui;
 /// Source-selected public page state; stored secrets deliberately remain visible.
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Management {
@@ -119,11 +107,28 @@ pub fn ManagementPage(
     }).collect_view();
     let content = content(&page, ui, &spec, submit, search);
     let base = page.base().to_owned();
-    let model_label = if page.module == "application" {
-        "Apps"
-    } else {
-        "Sessions"
-    };
+    // Source clients supply their own catalog presentation; the direct API adapter keeps
+    // its existing two-model labels when no application catalog is selected.
+    let catalog = page.config.get("models").and_then(Value::as_object);
+    let presentation = catalog.and_then(|models| models.get(&page.module));
+    let model_label = presentation
+        .and_then(|model| model.get("plural"))
+        .and_then(Value::as_str)
+        .unwrap_or_else(|| match page.module.as_str() {
+            "application" => "Apps",
+            "session" => "Sessions",
+            _ => &spec.model.label,
+        })
+        .to_owned();
+    let model_icon = presentation
+        .and_then(|model| model.get("icon"))
+        .and_then(Value::as_str)
+        .unwrap_or(if page.module == "application" {
+            "blocks"
+        } else {
+            "key"
+        })
+        .to_owned();
     let menu = page
         .config
         .pointer("/admin/menu")
@@ -150,11 +155,23 @@ pub fn ManagementPage(
         Action::Detail | Action::Remove | Action::Restore
     );
     let sidebar_name = admin_name.clone();
+    let header_model_label = model_label.clone();
     let applications_url = format!("{base}/application/search");
     let brand_url = applications_url.clone();
     let sessions_url = format!("{base}/session/search");
     let search_url = page.url(Action::Search, None);
     let is_application = page.module == "application";
+    let model_menu = if let Some(catalog) = catalog {
+        catalog.iter().map(|(module, metadata)| {
+            let label = metadata.get("plural").and_then(Value::as_str).unwrap_or(module).to_owned();
+            let icon = metadata.get("icon").and_then(Value::as_str).unwrap_or("");
+            let href = format!("{base}/{module}/search");
+            view! {<a aria-current=(module == &page.module).then_some("page") href=href>{super::icons::named(icon)}<span>{label}</span></a>}
+        }).collect_view().into_any()
+    } else {
+        view! {<a aria-current=is_application.then_some("page") href=applications_url>{super::icons::named("blocks")}<span>"Apps"</span></a>
+            <a aria-current=(!is_application).then_some("page") href=sessions_url>{super::icons::named("key")}<span>"Sessions"</span></a>}.into_any()
+    };
     let pending_theme = page.theme.is_none();
     let action = page.action;
     let sessions_tab = (is_application && is_detail)
@@ -172,13 +189,12 @@ pub fn ManagementPage(
             <a class="api-brand" href=brand_url>{super::icons::named("blocks")}<span>{brand}</span></a>
             <p class="api-menu-label">{sidebar_name}</p>
             <LayoutMenu label="Models">
-                <a aria-current=is_application.then_some("page") href=applications_url>{super::icons::named("blocks")}<span>"Apps"</span></a>
-                <a aria-current=(!is_application).then_some("page") href=sessions_url>{super::icons::named("key")}<span>"Sessions"</span></a>{menu}
+                {model_menu}{menu}
             </LayoutMenu>
         </LayoutLeft><div class="api-workspace">
-            <LayoutHead><span>{admin_name}</span><span class="api-section-label">{model_label}</span></LayoutHead>
+            <LayoutHead><span>{admin_name}</span><span class="api-section-label">{header_model_label}</span></LayoutHead>
             <LayoutMain><div class="api-admin">
-                <nav class="api-crumbs" aria-label="Breadcrumb"><a href=search_url>{super::icons::named(if is_application {"blocks"} else {"key"})}{model_label}</a>{super::icons::named("chevron-right")}<span aria-current="page">{action_label(action)}</span></nav>
+                <nav class="api-crumbs" aria-label="Breadcrumb"><a href=search_url>{super::icons::named(&model_icon)}{model_label}</a>{super::icons::named("chevron-right")}<span aria-current="page">{action_label(action)}</span></nav>
                 <div class="api-page-heading"><h1>{title}</h1><nav class="api-actions" aria-label="Actions">{links}</nav></div>
                 {is_detail.then(||view!{<nav class="api-tabs" aria-label="Record"><span aria-current="page">"Info"</span>{sessions_tab}</nav>})}
                 <div class="api-content">{error}{content}</div>
@@ -260,13 +276,19 @@ fn content(
             &json!({"rows":rows.iter().map(|row|scalar(spec,row)).collect::<Vec<_>>()}),
             "api-table",
         );
-        // Shared tables have no row-action slot yet; retain the approved fallback until
-        // framework-admin supplies a trailing action column, without forking its emitter.
-        let links = rows.iter().filter_map(|row|row.get("id").and_then(Value::as_str)).map(|id| {
-            view! {<a class="api-row-link" aria-label=format!("Detail {id}") href=page.url(Action::Detail,Some(id))>
-                {super::icons::named("file-text")}<span>"Detail"</span>
-            </a>}
-        }).collect_view();
+        // App roots may select the shared trailing action column. Existing API callers
+        // without that context retain their original external detail-link representation.
+        let links = if use_context::<stackpress_framework_admin::row_actions::RowActions>()
+            .is_some()
+        {
+            ().into_any()
+        } else {
+            rows.iter().filter_map(|row|row.get("id").and_then(Value::as_str)).map(|id| {
+                view! {<a class="api-row-link" aria-label=format!("Detail {id}") href=page.url(Action::Detail,Some(id))>
+                    {super::icons::named("file-text")}<span>"Detail"</span>
+                </a>}
+            }).collect_view().into_any()
+        };
         // Upstream keeps collection text search separate from the filter drawer. A native
         // disclosure retains the same panel distinction without requiring JavaScript.
         let filter_search = search;

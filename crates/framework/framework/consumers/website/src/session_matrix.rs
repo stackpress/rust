@@ -193,6 +193,10 @@ pub async fn run(out: &Path) -> Result<()> {
 /// Explicit source metadata/catalog; no dynamic module loading or registration-time IO.
 fn register(app: &mut ServerBuilder) -> Result<()> {
     static CLIENT: stackpress::framework::CompiledClient = stackpress::framework::CompiledClient {
+        bindings: stackpress::framework::FrameworkBindings {
+            session: None,
+            api: None,
+        },
         build: "slice11-session-matrix",
         describe: || vec![],
         models: &[stackpress::framework::CompiledModel {

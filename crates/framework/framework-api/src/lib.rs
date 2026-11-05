@@ -52,6 +52,8 @@ pub mod webhooks;
 pub use config::{ApiConfig, ApiEndpoint, ApiScope, ApiType, ApiWebhook, Cors};
 #[cfg(not(target_arch = "wasm32"))]
 pub use plugin::register;
+#[cfg(all(feature = "sql", not(target_arch = "wasm32")))]
+pub use plugin::register_with;
 #[cfg(feature = "ui")]
 pub mod views;
 

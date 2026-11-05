@@ -154,36 +154,7 @@ fn number(value: &Value) -> Value {
                 }
             }
             Value::Object(_) => 0.0,
-            _ => {
-                let text = js_string(value);
-                let text = super::trim(&text);
-                if text.is_empty() {
-                    0.0
-                } else if let Some(hex) =
-                    text.strip_prefix("0x").or_else(|| text.strip_prefix("0X"))
-                {
-                    radix_number(hex, 16)
-                } else if let Some(binary) =
-                    text.strip_prefix("0b").or_else(|| text.strip_prefix("0B"))
-                {
-                    radix_number(binary, 2)
-                } else if let Some(octal) =
-                    text.strip_prefix("0o").or_else(|| text.strip_prefix("0O"))
-                {
-                    radix_number(octal, 8)
-                } else if matches!(text, "Infinity" | "+Infinity" | "-Infinity")
-                    || text
-                        .bytes()
-                        .all(|b| b.is_ascii_digit() || b"+-eE.".contains(&b))
-                {
-                    text.parse::<f64>()
-                        .ok()
-                        .filter(|value| !value.is_nan())
-                        .unwrap_or(0.0)
-                } else {
-                    0.0
-                }
-            }
+            _ => crate::__private::source_number(&js_string(value)),
         }
     };
     if !number.is_finite() {
@@ -227,41 +198,4 @@ fn encode_json(value: &Value) -> SchemaResult<String> {
         SchemaError::new(SchemaErrorKind::Codec, "source column JSON encoding failed")
             .with_cause(cause)
     })
-}
-
-/// Parse power-of-two radix literals with one IEEE-754 ties-to-even rounding step.
-/// A u64 parser would silently turn valid larger literals into zero; repeated f64
-/// multiplication would instead round at each digit. Keep 53 bits plus guard/sticky bits.
-fn radix_number(text: &str, radix: u32) -> f64 {
-    if text.is_empty() {
-        return 0.0;
-    }
-    let width = radix.trailing_zeros();
-    let mut count = 0usize;
-    let mut top = 0u64;
-    let mut guard = false;
-    let mut sticky = false;
-    for c in text.chars() {
-        let Some(digit) = c.to_digit(radix) else {
-            return 0.0;
-        };
-        for shift in (0..width).rev() {
-            let bit = (digit >> shift) & 1;
-            if count == 0 && bit == 0 {
-                continue;
-            }
-            if count < 53 {
-                top = (top << 1) | u64::from(bit)
-            } else if count == 53 {
-                guard = bit != 0
-            } else {
-                sticky |= bit != 0
-            }
-            count += 1;
-        }
-    }
-    if guard && (sticky || top & 1 != 0) {
-        top += 1;
-    }
-    top as f64 * 2_f64.powi(count.saturating_sub(53).min(i32::MAX as usize) as i32)
 }

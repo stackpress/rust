@@ -59,6 +59,20 @@ pub fn register(app: &mut ServerBuilder) -> Result<()> {
     Ok(())
 }
 
+/// Select API processes for the same compiled family as the data-event registrars.
+///
+/// API processes resolve ordinary named events instead of constructing model actions.
+/// Select [`crate::sql::register_with`] or the app's generated model listeners separately;
+/// this function installs neither data handlers nor tables and adds no global guard.
+/// # Errors
+/// Preserves the same configuration and startup errors as [`register`].
+#[cfg(feature = "sql")]
+pub fn register_with<M: stackpress_framework_sql::source::ApiModels>(
+    app: &mut ServerBuilder,
+) -> Result<()> {
+    register(app)
+}
+
 /// Install late observers independently of whether any API endpoint was configured.
 async fn listen(start: &mut StartupContext) -> Result<Flow> {
     let Some(config) = start.config::<Option<ApiConfig>>()? else {

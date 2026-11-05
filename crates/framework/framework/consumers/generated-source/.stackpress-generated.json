@@ -1,0 +1,115 @@
+{
+  "version": 1,
+  "files": {
+    "client/framework.rs": {
+      "owner": "source-client",
+      "sha256": "1d9c752b2d46351a7334e17af70e539a90d734b3df936cb13cdd317d96d31584",
+      "bytes": 6175
+    },
+    "client/mod.rs": {
+      "owner": "aggregate",
+      "sha256": "d5a819180e65033bf6db08ef7f8f882ad2e639b21740906f971507d5fea6300b",
+      "bytes": 19
+    },
+    "mod.rs": {
+      "owner": "aggregate",
+      "sha256": "c34092b658edd75ad3966356bc2d32bc66448dbe587481cb7b7856d8f9ee1894",
+      "bytes": 60
+    },
+    "source/application.rs": {
+      "owner": "source-client",
+      "sha256": "477f288da14ee58502c2a7cb4467dc90db7426d235ade464082a8f8119761fb8",
+      "bytes": 37341
+    },
+    "source/auth.rs": {
+      "owner": "source-client",
+      "sha256": "60345ea11e3386f3632fd2e0c6adbc9997a0b774683b16c169a217238288d967",
+      "bytes": 32804
+    },
+    "source/catalog.rs": {
+      "owner": "source-client",
+      "sha256": "aac758fc9e3dbe9cf3c24e53ebe20fbe8e31d4f13a38259e2a82b9ad84db3b25",
+      "bytes": 82834
+    },
+    "source/mod.rs": {
+      "owner": "aggregate",
+      "sha256": "abab3a2ee55bd3e31a130c9657bc61fa822673c14ac1b94e150e0cd3cd62616e",
+      "bytes": 86
+    },
+    "source/profile.rs": {
+      "owner": "source-client",
+      "sha256": "85fa3684b17c5f27116129806fb7e3d1ba992fdab5ed0b0762fa7242968fe871",
+      "bytes": 37868
+    },
+    "source/session.rs": {
+      "owner": "source-client",
+      "sha256": "057a87645c48314961a77b326616713bfd417ff383543b7ac1a59d4b0cb7b6b4",
+      "bytes": 32655
+    },
+    "stores/application.rs": {
+      "owner": "source-client",
+      "sha256": "e0be65a3a02723b74e9a773796dc75173f485ddd9e247a52f45979f6bb914083",
+      "bytes": 1314
+    },
+    "stores/auth.rs": {
+      "owner": "source-client",
+      "sha256": "49638c7bd39c4bd5e60ee311ed509de7d06279d923f0bbfc82452f91da6cef95",
+      "bytes": 1196
+    },
+    "stores/family.rs": {
+      "owner": "source-client",
+      "sha256": "df2ab2a3c2891cb0b25587c41c77b004e05b44c33b3571e8f31eab8e16c981a7",
+      "bytes": 513
+    },
+    "stores/mod.rs": {
+      "owner": "aggregate",
+      "sha256": "db08ea5d9a52111ed0555919e877cff8cea3ab1d8fa78d41a82fd1da03b12da1",
+      "bytes": 85
+    },
+    "stores/profile.rs": {
+      "owner": "source-client",
+      "sha256": "2fcdee959545e5b8c0232137be17fe0fe40465e5d591140285cd1064de5563f2",
+      "bytes": 1244
+    },
+    "stores/session.rs": {
+      "owner": "source-client",
+      "sha256": "a68f6760702f69644d4f60b920525a11d176b78e86b230bfb0dfd2bce75a2da3",
+      "bytes": 1247
+    },
+    "ui/application.rs": {
+      "owner": "source-client",
+      "sha256": "c36e343de5bbebeefa7955c7abd7395817d187180e91b1cc61c1f97f41d85ab6",
+      "bytes": 29036
+    },
+    "ui/auth.rs": {
+      "owner": "source-client",
+      "sha256": "7f844205b26c357ccfa57e62b69fe5bee3a0eb0aa934c421aaa9347a4235d04d",
+      "bytes": 25890
+    },
+    "ui/host.rs": {
+      "owner": "source-client",
+      "sha256": "40c65dead8e876e2a1b44b568c40d23bba5c7aa7564be3087d14ed179c3986dd",
+      "bytes": 870
+    },
+    "ui/mod.rs": {
+      "owner": "aggregate",
+      "sha256": "65923c28cc61cae3dcae685083fd4b7ce49dc5b70cc8b191a248fcd91a54ed65",
+      "bytes": 98
+    },
+    "ui/pages.rs": {
+      "owner": "source-client",
+      "sha256": "b18bce0fb3bebcc86780d8d64b08f0f364bb5c2af631069fa407be1e47277932",
+      "bytes": 4116
+    },
+    "ui/profile.rs": {
+      "owner": "source-client",
+      "sha256": "ab89d0754fcbd17aef1a3aa9e3bdd58c5c9c3831fa5a57ac70fbe3bd64d74966",
+      "bytes": 31364
+    },
+    "ui/session.rs": {
+      "owner": "source-client",
+      "sha256": "1e9b864ba73dcf891bb0679bda57e3c047ba844bce5960b45a5869cfa513a0e4",
+      "bytes": 25339
+    }
+  }
+}

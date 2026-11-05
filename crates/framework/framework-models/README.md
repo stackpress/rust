@@ -1,10 +1,15 @@
 # Default generated framework models
 
+The `sql` feature is selected by default, preserving the existing schema/store/action
+surface. Native schema-only users select `default-features = false`; that normal
+dependency graph contains no SQL or server crate. `server` and `generate` select
+`sql` explicitly. The authored module loader selects managed partitions independently;
+the official generator still owns and checks every generated file.
+
 `stackpress-framework-models` contains the native source schemas generated from the shipped
 `stackpress/stackpress.idea` → `stackpress-api/schema.idea` →
 `stackpress-session/schema.idea` graph. It exports the four Schema/Model/Store/Actions families and `Models` from checked-in
-generated output. Importing this package registers nothing. Session/API plugin binding
-remains M3 work.
+generated output. Importing this package registers nothing. Session/API generic registrars accept this default family or an application-generated family.
 
 ```rust
 # #[cfg(not(target_arch = "wasm32"))] {
@@ -25,7 +30,8 @@ runs no defaults or application IO. `defaults_at` supplies a clock; `with_provid
 an app-owned `ValueProviders`. Missing members, explicit null, native Dates and insertion
 order remain distinct. The complete private metadata includes all source fields, attributes,
 relations, selectors and presentation bindings. It is not a browser publication or a route
-policy. Source schemas are absent on wasm32; browser UI integration is a later stage.
+policy. Source schemas are absent on wasm32; portable UI belongs to the separate
+[source UI catalog and admin adapters](../framework-admin/docs/source-models.md).
 
 [Native tests](tests/native.rs) check the original Node column and crypto vectors, every
 core accessor, defaults, partial assertions, filter/populate and codec phases. [Generator
@@ -100,5 +106,6 @@ including exclusive cgt/clt, while preserving original messages. `@hashed` uses 
 The [schema guide](../framework-schema/docs/source-models.md) lists conversion/provider
 boundaries. The accepted lower SQL type mapping governs physical DDL; complete source
 metadata does not imply identical driver DDL spellings. Unknown columns are deliberately
-omitted by the original SQL setup helper. Concrete renderers and plugin-family binding
-are not supplied at this stage. Typed generated applications remain byte-stable.
+omitted by the original SQL setup helper. Portable source rendering and plugin-family registration are documented by the
+[session family guide](../framework-session/docs/source-models.md) and
+[API family guide](../framework-api/docs/source-models.md). Typed generated applications remain byte-stable.

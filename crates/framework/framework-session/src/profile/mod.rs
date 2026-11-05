@@ -1,7 +1,7 @@
 //! Profile schema shared with account and API storage adapters.
 //!
 //! A Profile may describe a person, company or another entity. It is not restricted to
-//! an authenticated user. The source generated schema has ten stored columns and no
+//! an authenticated user. The generated default has ten stored columns and no
 //! reverse store relations; Idea's auth/applications/sessions edges remain model metadata.
 
 use crate::columns::{Record, RecordSchema};
@@ -29,11 +29,13 @@ pub struct ProfileSchema(RecordSchema);
 impl ProfileSchema {
     /// Retain source seed and columns without opening a database or generating defaults.
     pub fn new(seed: impl Into<String>) -> Self {
-        Self(RecordSchema::new("Profile", seed.into()))
+        Self(RecordSchema::from_generated::<
+            stackpress_framework_models::ProfileSchema,
+        >(seed.into(), 0))
     }
     /// Select the host's local UTC offset for Date column conversions.
     pub fn with_offset_minutes(mut self, offset: i32) -> Self {
-        self.0.offset = offset;
+        self.0 = self.0.with_offset_minutes(offset);
         self
     }
     /// Own the underlying schema for native store composition.

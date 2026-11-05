@@ -1,0 +1,41 @@
+[
+  {
+    "id": "g50-source-family",
+    "page": "crates/framework/framework-api/docs/source-models.md",
+    "statement": "inherits SessionModels",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-sql/src/source/mod.rs",
+        "contains": [
+          "pub trait ApiModels: SessionModels"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-api/tests/generated_family.rs",
+        "contains": [
+          "nickname"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "g50-source-composition",
+    "page": "crates/framework/framework-api/README.md",
+    "statement": "full four-model composition",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-api/src/codegen.rs",
+        "contains": [
+          "pub fn normalize",
+          "normalize_source"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-api/tests/sql.rs",
+        "contains": [
+          "full_idea_normalization_retains_management_fields_and_composed_profile"
+        ]
+      }
+    ]
+  }
+]

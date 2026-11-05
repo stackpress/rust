@@ -39,10 +39,10 @@ dependencies = [
  "stackpress-framework-admin",
  "stackpress-framework-api",
  "stackpress-framework-schema",
+ "stackpress-leptos",
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "web-sys",
- "stackpress-leptos",
 ]
 
 [[package]]
@@ -329,18 +329,18 @@ checksum = "f67855af358fcb20fac58f9d714c94e2b228fe5694c1c9b4ead4a366343eda1b"
 
 [[package]]
 name = "convert_case"
-version = "0.11.0"
+version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "affbf0190ed2caf063e3def54ff444b449371d55c58e513a95ab98eca50adb49"
+checksum = "ec182b0ca2f35d8fc196cf3404988fd8b8c739a4d270ff118a398feb0cbec1ca"
 dependencies = [
  "unicode-segmentation",
 ]
 
 [[package]]
 name = "convert_case"
-version = "0.6.0"
+version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ec182b0ca2f35d8fc196cf3404988fd8b8c739a4d270ff118a398feb0cbec1ca"
+checksum = "affbf0190ed2caf063e3def54ff444b449371d55c58e513a95ab98eca50adb49"
 dependencies = [
  "unicode-segmentation",
 ]
@@ -2437,6 +2437,7 @@ dependencies = [
  "serde_json",
  "stackpress-framework-schema",
  "stackpress-leptos",
+ "stackpress-lib",
 ]
 
 [[package]]
@@ -3290,4 +3291,3 @@ name = "zmij"
 version = "1.0.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "29666d0abbfad1e3dc4dcf6144730dd3a3ab225bbbdac83319345b1b44ccfc1b"
-

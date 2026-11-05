@@ -9,6 +9,15 @@ use crate::SchemaResult;
 /// The Typed catalog is unchanged. Aliases/derived families use the existing resolver.
 pub fn source_definitions() -> SchemaResult<DefinitionRegistry> {
     let mut definitions = DefinitionRegistry::standard();
+    for definition in source_components() {
+        definitions = definitions.with_component(definition, None)?;
+    }
+    Ok(definitions)
+}
+
+/// Source argument definitions, reusable by a separately selected compiled renderer catalog.
+pub fn source_components() -> Vec<ComponentDefinition> {
+    let mut definitions = Vec::new();
     // These names describe source props rather than the locale-first Typed UI interface.
     for (name, props) in [
         ("field.input", vec![("type", PropType::String)]),
@@ -16,6 +25,58 @@ pub fn source_definitions() -> SchemaResult<DefinitionRegistry> {
         ("field.password", vec![("type", PropType::String)]),
         ("field.metadata", vec![("add", PropType::String)]),
         ("field.stringlist", vec![("add", PropType::String)]),
+        // attributes.ts:3406-3644 and frui/form/TextEditor.tsx:17-55. The source
+        // dictionary calls style a CSS object while Frui/blog use a Boolean toolbar flag;
+        // retain both as inert JSON, without choosing a concrete rich-editor adapter.
+        (
+            "field.editor",
+            vec![
+                ("align", PropType::Boolean),
+                ("audio", PropType::Boolean),
+                ("blockquote", PropType::Boolean),
+                ("className", PropType::String),
+                ("code", PropType::Boolean),
+                ("color", PropType::Boolean),
+                ("dir", PropType::Json),
+                ("fullscreen", PropType::Boolean),
+                ("history", PropType::Boolean),
+                ("font", PropType::Boolean),
+                ("format", PropType::Boolean),
+                ("highlight", PropType::Boolean),
+                ("indent", PropType::Boolean),
+                ("lineheight", PropType::Boolean),
+                ("link", PropType::Boolean),
+                ("list", PropType::Boolean),
+                ("math", PropType::Boolean),
+                ("paragraph", PropType::Boolean),
+                ("preview", PropType::Boolean),
+                ("remove", PropType::Boolean),
+                ("rule", PropType::Boolean),
+                ("showblocks", PropType::Boolean),
+                ("size", PropType::Boolean),
+                ("table", PropType::Boolean),
+                ("style", PropType::Json),
+                ("text", PropType::Boolean),
+                ("textStyle", PropType::Boolean),
+                ("video", PropType::Boolean),
+                ("image", PropType::Boolean),
+                ("imageGallery", PropType::Boolean),
+                ("print", PropType::Boolean),
+                ("save", PropType::Boolean),
+            ],
+        ),
+        // Original attributes.ts:2660-2719 and Frui Select's array/object option carrier.
+        (
+            "field.select",
+            vec![
+                ("className", PropType::String),
+                ("display", PropType::Json),
+                ("dropdown", PropType::Json),
+                ("option", PropType::Json),
+                ("options", PropType::Json),
+                ("placeholder", PropType::String),
+            ],
+        ),
         (
             "field.relation",
             vec![
@@ -26,7 +87,12 @@ pub fn source_definitions() -> SchemaResult<DefinitionRegistry> {
         ),
         (
             "view.overflow",
-            vec![("length", PropType::Number), ("hellip", PropType::Boolean)],
+            // Original positional order and string-or-number carrier, attributes.ts:5182-5211.
+            vec![
+                ("length", PropType::Json),
+                ("words", PropType::Boolean),
+                ("hellip", PropType::Boolean),
+            ],
         ),
         ("view.date", vec![("format", PropType::String)]),
         (
@@ -42,33 +108,33 @@ pub fn source_definitions() -> SchemaResult<DefinitionRegistry> {
                 ("className", PropType::String),
             ],
         ),
-        ("view.metadata", vec![("className", PropType::String)]),
+        (
+            "view.metadata",
+            vec![("className", PropType::String), ("style", PropType::Json)],
+        ),
         ("view.template", vec![("template", PropType::String)]),
     ] {
-        definitions = definitions.with_component(
-            ComponentDefinition {
-                name: name.into(),
-                key: format!("stackpress.source.{name}"),
-                revision: "source-1".into(),
-                props: props
-                    .into_iter()
-                    .map(|(name, value_type)| PropDefinition {
-                        name: name.into(),
-                        value_type,
-                        required: false,
-                        public: true,
-                    })
-                    .collect(),
-                // Source AttributeComponent.props spreads these definition attributes last.
-                fixed: match name {
-                    "field.url" => [("type".into(), serde_json::json!("url"))].into(),
-                    "field.password" => [("type".into(), serde_json::json!("password"))].into(),
-                    _ => Default::default(),
-                },
-                available: false,
+        definitions.push(ComponentDefinition {
+            name: name.into(),
+            key: format!("stackpress.source.{name}"),
+            revision: "source-1".into(),
+            props: props
+                .into_iter()
+                .map(|(name, value_type)| PropDefinition {
+                    name: name.into(),
+                    value_type,
+                    required: false,
+                    public: true,
+                })
+                .collect(),
+            // Source AttributeComponent.props spreads these definition attributes last.
+            fixed: match name {
+                "field.url" => [("type".into(), serde_json::json!("url"))].into(),
+                "field.password" => [("type".into(), serde_json::json!("password"))].into(),
+                _ => Default::default(),
             },
-            None,
-        )?;
+            available: false,
+        });
     }
-    Ok(definitions)
+    definitions
 }

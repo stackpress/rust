@@ -109,5 +109,6 @@ and clocks stay explicit. These behaviors have original Node oracles in
 [SQL source stores/actions/events](../../framework-sql/docs/api/source-models.md) consume
 these exact descriptors and the immutable catalog. The default package emits all four
 models, while session-only source generation explicitly declares Application/Session links
-external and emits no hidden API models. UI/role metadata is complete; concrete UI rendering
-and session/API plugin binding remain M3 work. Output keeps the existing finite writer budget.
+external and emits no hidden API models. The portable SourceUiCatalog selects authored roles without codecs/provider arguments;
+[admin source adapters](../../framework-admin/docs/source-models.md) render it.
+Session/API generic registrars bind the application family at compilation. Output keeps the existing finite writer budget.

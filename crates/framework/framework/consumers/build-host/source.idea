@@ -1,0 +1,12 @@
+use "stackpress/stackpress.idea"
+
+model Profile {
+  nickname String?
+    @label("Nickname")
+    @default("application")
+    @searchable
+    @field.input({ type "text" })
+    @filter.input({ type "text" })
+    @list.string
+    @view.string
+}

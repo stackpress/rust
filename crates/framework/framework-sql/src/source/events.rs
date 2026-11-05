@@ -1,5 +1,8 @@
 //! Source event wrappers; no OperationPolicy, global guard, route ownership or startup IO.
-use super::{BatchMode, NativeActions, SourceModel, StoreQuery};
+use super::{
+    ActionError, BatchMode, BatchStatus, NativeActions, SourceActions, SourceModel, SourceStore,
+    StoreQuery,
+};
 use stackpress_framework_schema::source::{Record, SourceSchema, Value};
 use stackpress_lib::{
     Body, Flow, HandlerFuture, Invocation, PublicError, Request, Response, Result, handler,
@@ -48,19 +51,55 @@ impl Event {
     }
 }
 /// Register source model events during Listen; every handler remains independently composable.
-/// This native registrar binds [`NativeActions`] to the model's emitted schema; it does
-/// not select an arbitrary custom `M::Actions`. Custom collaborators use the direct traits.
+/// This registrar calls the model family's associated actions. Dynamic batch inputs
+/// use the additional [`SourceEventActions`] contract; no action override is discarded.
 /// # Errors
 /// Preserves builder errors; no Engine or IO is required at registration/startup.
-pub fn register<M: SourceModel<Schema: SourceSchema<Value = Value, Record = Record>>>(
+pub fn register<
+    M: SourceModel<
+            Schema: SourceSchema<Value = Value, Record = Record>,
+            Store: SourceStore<Error = ActionError>,
+            Actions: SourceEventActions,
+        >,
+>(
     app: &mut ServerBuilder,
 ) -> Result<()> {
-    app.on_listen(listen::<M>)?;
-    Ok(())
+    register_with::<M>(app, ResponseValues::Json)
+}
+/// Choose the in-process response boundary explicitly; ordinary registration stays JSON.
+#[derive(Clone, Copy, Debug, Default)]
+pub enum ResponseValues {
+    /// Source Date.toJSON wire text, matching the existing public event surface.
+    #[default]
+    Json,
+    /// Native Dates for nested source processes; the final host owns JSON serialization.
+    Native,
+}
+/// Queue the same inventory with an explicit response representation, without IO or policy.
+pub fn register_with<
+    M: SourceModel<
+            Schema: SourceSchema<Value = Value, Record = Record>,
+            Store: SourceStore<Error = ActionError>,
+            Actions: SourceEventActions,
+        >,
+>(
+    app: &mut ServerBuilder,
+    values: ResponseValues,
+) -> Result<()> {
+    app.on_listen(stackpress_lib::queue::task(
+        move |start: &mut StartupContext| Box::pin(async move { listen::<M>(start, values).await }),
+    ))
 }
 /// Queue the same catalog inventory in source Listen order; no await or resource acquisition.
-async fn listen<M: SourceModel<Schema: SourceSchema<Value = Value, Record = Record>>>(
+async fn listen<
+    M: SourceModel<
+            Schema: SourceSchema<Value = Value, Record = Record>,
+            Store: SourceStore<Error = ActionError>,
+            Actions: SourceEventActions,
+        >,
+>(
     start: &mut StartupContext,
+    values: ResponseValues,
 ) -> Result<Flow> {
     let model = M::Schema::describe();
     let prefix = event_prefix(&model.name, &model.module, &M::Schema::catalog());
@@ -84,7 +123,11 @@ async fn listen<M: SourceModel<Schema: SourceSchema<Value = Value, Record = Reco
         if matches!(event, Event::Restore) && !model.fields.iter().any(|f| f.active) {
             continue;
         }
-        start.on_priority(&format!("{prefix}-{}", event.name()), 0, action::<M>(event))?;
+        start.on_priority(
+            &format!("{prefix}-{}", event.name()),
+            0,
+            action_bound::<M>(event, None, values),
+        )?;
     }
     Ok(Flow::Continue)
 }
@@ -131,7 +174,14 @@ pub struct SourceEnvironment {
     pub offset_minutes: i32,
 }
 /// Direct event callback, equivalent to the selected registrar and composable under G42.
-pub fn action<M: SourceModel<Schema: SourceSchema<Value = Value, Record = Record>>>(
+/// Direct callback with source environment read at invocation, as before.
+pub fn action<
+    M: SourceModel<
+            Schema: SourceSchema<Value = Value, Record = Record>,
+            Store: SourceStore<Error = ActionError>,
+            Actions: SourceEventActions,
+        >,
+>(
     event: Event,
 ) -> impl for<'a> Fn(
     &'a mut Request,
@@ -140,7 +190,47 @@ pub fn action<M: SourceModel<Schema: SourceSchema<Value = Value, Record = Record
 ) -> HandlerFuture<'a, Result<Flow>>
 + Send
 + Sync {
+    action_bound::<M>(event, None, ResponseValues::Json)
+}
+/// Direct callback with explicit immutable codec options; useful for source APIs whose
+/// constructor always supplies empty seed/UTC instead of reading an ambient model environment.
+pub fn action_with<
+    M: SourceModel<
+            Schema: SourceSchema<Value = Value, Record = Record>,
+            Store: SourceStore<Error = ActionError>,
+            Actions: SourceEventActions,
+        >,
+>(
+    event: Event,
+    environment: SourceEnvironment,
+) -> impl for<'a> Fn(
+    &'a mut Request,
+    &'a mut Response,
+    Invocation<'a>,
+) -> HandlerFuture<'a, Result<Flow>>
++ Send
++ Sync {
+    action_bound::<M>(event, Some(environment), ResponseValues::Json)
+}
+fn action_bound<
+    M: SourceModel<
+            Schema: SourceSchema<Value = Value, Record = Record>,
+            Store: SourceStore<Error = ActionError>,
+            Actions: SourceEventActions,
+        >,
+>(
+    event: Event,
+    explicit: Option<SourceEnvironment>,
+    values: ResponseValues,
+) -> impl for<'a> Fn(
+    &'a mut Request,
+    &'a mut Response,
+    Invocation<'a>,
+) -> HandlerFuture<'a, Result<Flow>>
++ Send
++ Sync {
     handler(move |req, res, invocation| {
+        let explicit = explicit.clone();
         Box::pin(async move {
             // The source's body/code guard precedes even the optional database lookup.
             if body_present(res.body())
@@ -154,19 +244,18 @@ pub fn action<M: SourceModel<Schema: SourceSchema<Value = Value, Record = Record
             let Ok(engine) = invocation.shared_service::<Engine>() else {
                 return Ok(Flow::Continue);
             };
-            let environment = invocation
-                .service::<SourceEnvironment>()
-                .cloned()
-                .unwrap_or_default();
-            let actions = NativeActions::<M::Schema>::new(
-                engine,
-                super::NativeStore::new(environment.seed, environment.offset_minutes),
-            );
+            let environment = explicit.clone().unwrap_or_else(|| {
+                invocation
+                    .service::<SourceEnvironment>()
+                    .cloned()
+                    .unwrap_or_default()
+            });
+            let actions = M::actions(engine, environment.seed, environment.offset_minutes);
             let mut data = source(req.data.value())?
                 .as_object()
                 .cloned()
                 .unwrap_or_default();
-            let outcome = invoke::<M>(event, &actions, &mut data, req, res).await;
+            let outcome = invoke::<M>(event, &actions, &mut data, req, res, values).await;
             if let Err(error) = outcome {
                 res.set_error(PublicError {
                     code: error.code,
@@ -195,14 +284,21 @@ fn body_present(body: &Body) -> bool {
     }
 }
 /// Run one generated wrapper, preserving source error capitalization and request mutations.
-async fn invoke<M: SourceModel<Schema: SourceSchema<Value = Value, Record = Record>>>(
+async fn invoke<
+    M: SourceModel<
+            Schema: SourceSchema<Value = Value, Record = Record>,
+            Store: SourceStore<Error = ActionError>,
+            Actions: SourceEventActions,
+        >,
+>(
     event: Event,
-    actions: &NativeActions<M::Schema>,
+    actions: &M::Actions,
     data: &mut Record,
     req: &mut Request,
     res: &mut Response,
+    representation: ResponseValues,
 ) -> super::SourceResult<()> {
-    use super::ActionError;
+    let model = M::Schema::describe();
 
     let invalid = |name: &str, message: &str| {
         ActionError::new(
@@ -214,18 +310,18 @@ async fn invoke<M: SourceModel<Schema: SourceSchema<Value = Value, Record = Reco
     match event {
         Event::Create => {
             // Preparation, validation and native return fallback belong to Actions.
-            results(res, Some(actions.create(data).await?))?;
+            results(res, Some(actions.create(data).await?), representation)?;
         }
         Event::Upsert => {
             // A present missing ID returns null; successful writes mutate the input clock.
             let row = actions.upsert(data).await?;
-            copy_updated(data, req, &actions.store.model)?;
-            results(res, row)?;
+            copy_updated(data, req, &model)?;
+            results(res, row, representation)?;
         }
         Event::Detail | Event::Update | Event::Remove | Event::Restore => {
             // Only absent/null/empty IDs are rejected; other source scalar types flow on.
             let mut keys = Record::new();
-            for field in actions.store.model.fields.iter().filter(|f| f.key) {
+            for field in model.fields.iter().filter(|f| f.key) {
                 let value = data
                     .get(&field.name)
                     .filter(|v| !v.is_null() && v.as_str() != Some(""))
@@ -256,39 +352,42 @@ async fn invoke<M: SourceModel<Schema: SourceSchema<Value = Value, Record = Reco
             }
             query.eq.extend(keys);
             if matches!(event, Event::Restore) {
-                for f in actions.store.model.fields.iter().filter(|f| f.active) {
+                for f in model.fields.iter().filter(|f| f.active) {
                     query.eq.insert(f.name.clone(), (-1).into());
                 }
             }
             match event {
                 Event::Detail => {
                     let row = actions
-                        .find(&query)
+                        .find(&model_query::<M>(actions, &query)?)
                         .await?
                         .ok_or_else(|| ActionError::new(404, "Not Found", Record::new()))?;
-                    results(res, Some(row))?;
+                    results(res, Some(row), representation)?;
                 }
                 Event::Update => {
                     let rows = actions
                         .update(
-                            &StoreQuery {
-                                columns: vec!["*".into()],
-                                ..query
-                            },
+                            &model_query::<M>(
+                                actions,
+                                &StoreQuery {
+                                    columns: vec!["*".into()],
+                                    ..query
+                                },
+                            )?,
                             data,
                         )
                         .await?;
-                    copy_updated(data, req, &actions.store.model)?;
-                    results(res, rows.into_iter().next())?;
+                    copy_updated(data, req, &model)?;
+                    results(res, rows.into_iter().next(), representation)?;
                 }
                 Event::Remove | Event::Restore => {
                     query.columns = vec!["*".into()];
                     let rows = if matches!(event, Event::Remove) {
-                        actions.remove(&query).await?
+                        actions.remove(&model_query::<M>(actions, &query)?).await?
                     } else {
-                        actions.restore(&query).await?
+                        actions.restore(&model_query::<M>(actions, &query)?).await?
                     };
-                    results(res, rows.into_iter().next())?;
+                    results(res, rows.into_iter().next(), representation)?;
                 }
                 _ => unreachable!(),
             }
@@ -316,10 +415,10 @@ async fn invoke<M: SourceModel<Schema: SourceSchema<Value = Value, Record = Reco
                 super::event_defaults::columns::<M>()
             };
             let row = actions
-                .find(&query)
+                .find(&model_query::<M>(actions, &query)?)
                 .await?
                 .ok_or_else(|| ActionError::new(404, "Not Found", Record::new()))?;
-            results(res, Some(row))?;
+            results(res, Some(row), representation)?;
         }
         Event::Search => {
             // Search changes the original columns before both independent read/count calls.
@@ -339,11 +438,16 @@ async fn invoke<M: SourceModel<Schema: SourceSchema<Value = Value, Record = Reco
                 "columns".into(),
                 Value::from(serde_json::to_value(columns).map_err(wire)?),
             );
-            let query = super::event_defaults::query(data)?;
+            let query = actions.store().query(data)?;
             // The source does not wrap these reads in an implicit transaction or retry.
             let found = actions.find_all(&query).await?;
             let total = actions.count(&query).await?;
-            rows(res, found.into_iter().map(Value::Object).collect(), total)?;
+            rows(
+                res,
+                found.into_iter().map(Value::Object).collect(),
+                total,
+                representation,
+            )?;
         }
         Event::Batch => {
             // Validate the outer array only; item failures are reported and rolled back inside.
@@ -394,7 +498,7 @@ async fn invoke<M: SourceModel<Schema: SourceSchema<Value = Value, Record = Reco
                     Ok(value)
                 })
                 .collect::<super::SourceResult<Vec<_>>>()?;
-            rows(res, values, statuses.len() as u64)?;
+            rows(res, values, statuses.len() as u64, representation)?;
             res.status_code(
                 code,
                 Some(if code == 200 { "OK" } else { "Bad Request" }.into()),
@@ -412,7 +516,7 @@ async fn invoke<M: SourceModel<Schema: SourceSchema<Value = Value, Record = Reco
                 })
                 .map_err(wire)?;
             }
-            res.set("text/plain", Body::Text(actions.store.table().into()))
+            res.set("text/plain", Body::Text(model_table::<M>()))
                 .map_err(wire)?;
         }
     }
@@ -460,16 +564,41 @@ fn copy_updated(
     Ok(())
 }
 
-/// The existing JSON/HTTP Response boundary requires explicit Date wire conversion.
-/// Model values select source Date.toJSON ISO text; direct Actions keep native Dates.
-fn results(res: &mut Response, row: Option<Record>) -> super::SourceResult<()> {
-    res.results(&row.map(Value::Object).unwrap_or(Value::Null))
-        .map_err(wire)?;
+/// The JSON boundary stays byte-compatible; nested session processes can retain Dates.
+fn results(
+    res: &mut Response,
+    row: Option<Record>,
+    values: ResponseValues,
+) -> super::SourceResult<()> {
+    let value = row.map(Value::Object).unwrap_or(Value::Null);
+    match values {
+        ResponseValues::Json => {
+            res.results(&value).map_err(wire)?;
+        }
+        ResponseValues::Native => {
+            res.results_value(native(&value).map_err(wire)?)
+                .map_err(wire)?;
+        }
+    }
     Ok(())
 }
-/// Source row counts include zero; model serialization supplies explicit Date wire text.
-fn rows(res: &mut Response, values: Vec<Value>, total: u64) -> super::SourceResult<()> {
-    res.rows(&values, total).map_err(wire)?;
+/// Preserve source counts, including zero, in either explicit representation.
+fn rows(
+    res: &mut Response,
+    values: Vec<Value>,
+    total: u64,
+    representation: ResponseValues,
+) -> super::SourceResult<()> {
+    match representation {
+        ResponseValues::Json => {
+            res.rows(&values, total).map_err(wire)?;
+        }
+        ResponseValues::Native => {
+            res.results_value(native(&Value::Array(values)).map_err(wire)?)
+                .map_err(wire)?;
+            res.set_total(total).map_err(wire)?;
+        }
+    }
     Ok(())
 }
 /// Convert the host's native Date carrier back into source model values before preparation.
@@ -496,4 +625,43 @@ fn source(value: &stackpress_lib::Value) -> Result<Value> {
         ),
         _ => Value::from(value.to_json()?),
     })
+}
+
+/// Action contract for source generated events, including dynamic primitive/null batch rows.
+/// Ordinary direct collaborators can implement SourceActions without selecting server events.
+pub trait SourceEventActions: SourceActions<BatchStatus = BatchStatus> {
+    /// Same source transaction/status semantics as direct batch, with original dynamic inputs.
+    fn batch_values(
+        &self,
+        input: &mut [Value],
+        mode: BatchMode,
+    ) -> impl std::future::Future<Output = Vec<BatchStatus>> + Send;
+}
+impl<S: SourceSchema<Value = Value, Record = Record>> SourceEventActions for NativeActions<S> {
+    async fn batch_values(&self, input: &mut [Value], mode: BatchMode) -> Vec<BatchStatus> {
+        self.batch_values(input, mode).await
+    }
+}
+/// Construct the associated store's query directly, without a JSON conversion or type cast.
+fn model_query<
+    M: SourceModel<
+            Schema: SourceSchema<Value = Value, Record = Record>,
+            Store: SourceStore<Error = ActionError>,
+            Actions: SourceEventActions,
+        >,
+>(
+    actions: &M::Actions,
+    query: &StoreQuery,
+) -> super::SourceResult<<M::Store as SourceStore>::Query> {
+    actions.store().query(&query.to_record())
+}
+/// Generated table spelling for the one source purge response, without a NativeStore downcast.
+fn model_table<M: SourceModel>() -> String {
+    let model = M::Schema::describe();
+    M::Schema::catalog()
+        .tables
+        .into_iter()
+        .find(|table| table.model == model.name)
+        .map(|table| table.name)
+        .unwrap_or(model.module)
 }

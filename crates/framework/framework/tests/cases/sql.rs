@@ -44,6 +44,10 @@ pub(super) async fn engine(root: &Fixture) -> Arc<Engine> {
 }
 /// Empty generated package is present, unlike a missing client module.
 static CLIENT: CompiledClient = CompiledClient {
+    bindings: stackpress_framework::FrameworkBindings {
+        session: None,
+        api: None,
+    },
     models: &[],
     build: "m1-finite",
     describe: Vec::new,

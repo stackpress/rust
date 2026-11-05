@@ -6,6 +6,7 @@ use super::{
 use leptos::prelude::*;
 use serde_json::{Value, json};
 use stackpress_framework_admin::pages::Action;
+use stackpress_framework_sql::source::{SessionModels, SourceActions, SourceModel, SourceStore};
 use stackpress_lib::{
     Body, Error, Flow, Invocation, MethodPattern, Nest, Request, Response, Result, handler,
 };
@@ -28,49 +29,104 @@ impl Default for Config {
         }
     }
 }
+// One inventory serves immediate and source Route-phase contributions.
+macro_rules! register_routes {
+    ($target:expr, $ui:expr, $config:expr, $modules:expr, $family:ty) => {{
+        let config = Arc::new($config);
+        let base = config
+            .presentation
+            .pointer("/admin/base")
+            .and_then(Value::as_str)
+            .unwrap_or("/admin");
+        for &module in $modules {
+            for action in [
+                Action::Search,
+                Action::Detail,
+                Action::Create,
+                Action::Update,
+                Action::Copy,
+                Action::Remove,
+                Action::Restore,
+                Action::Import,
+                Action::Export,
+            ] {
+                let mut path = format!("{base}/{module}/{}", action.name());
+                if matches!(
+                    action,
+                    Action::Detail
+                        | Action::Update
+                        | Action::Copy
+                        | Action::Remove
+                        | Action::Restore
+                ) {
+                    path.push_str("/:id");
+                }
+                let config = config.clone();
+                $target.route_with(
+                    RouteSpec::new(MethodPattern::Any, &path),
+                    handler(move |req, res, inv| {
+                        let config = config.clone();
+                        Box::pin(async move {
+                            page::<$family>(req, res, inv, module, action, $ui, &config).await
+                        })
+                    }),
+                )?;
+            }
+        }
+    }};
+}
+
 /// Register the selected generated admin inventory through ordinary shared routes.
 /// # Errors
 /// Returns native route construction errors; no route conflict arbitration occurs.
 pub fn register(app: &mut ServerBuilder, ui: Ui, config: Config) -> Result<()> {
-    let config = Arc::new(config);
-    let base = config
-        .presentation
-        .pointer("/admin/base")
-        .and_then(Value::as_str)
-        .unwrap_or("/admin");
-    for module in ["application", "session"] {
-        for action in [
-            Action::Search,
-            Action::Detail,
-            Action::Create,
-            Action::Update,
-            Action::Copy,
-            Action::Remove,
-            Action::Restore,
-            Action::Import,
-            Action::Export,
-        ] {
-            let mut path = format!("{base}/{module}/{}", action.name());
-            if matches!(
-                action,
-                Action::Detail | Action::Update | Action::Copy | Action::Remove | Action::Restore
-            ) {
-                path.push_str("/:id");
-            }
-            let config = config.clone();
-            app.route_with(
-                RouteSpec::new(MethodPattern::Any, &path),
-                handler(move |req, res, inv| {
-                    let config = config.clone();
-                    Box::pin(async move { page(req, res, inv, module, action, ui, &config).await })
-                }),
-            )?;
-        }
-    }
+    register_with::<stackpress_framework_models::Models>(
+        app,
+        ui,
+        config,
+        &["application", "session"],
+    )
+}
+
+/// Register ordinary source admin routes for selected generated models and one actual family.
+/// The application owns the module catalog and UI; this installs no Engine, schema or guard.
+/// # Errors
+/// Preserves ordinary route errors and the same invocation-time action/render failures.
+pub fn register_with<M: SessionModels>(
+    app: &mut ServerBuilder,
+    ui: Ui,
+    config: Config,
+    modules: &[&'static str],
+) -> Result<()> {
+    register_routes!(app, ui, config, modules, M);
     Ok(())
 }
+
+/// Queue generated source admin routes at the source Route phase; direct registration stays immediate.
+/// No Engine, policy or schema setup is selected by this contribution.
+/// # Errors
+/// Returns ordinary startup errors; route failures surface while building the host.
+pub fn register_queued_with<M: SessionModels>(
+    app: &mut ServerBuilder,
+    ui: Ui,
+    config: Config,
+    modules: &[&'static str],
+) -> Result<()> {
+    let modules = modules.to_vec();
+    app.on_route(stackpress_lib::queue::task(
+        move |start: &mut stackpress_server::StartupContext| {
+            let modules = modules.clone();
+            let config = config.clone();
+            Box::pin(async move {
+                register_routes!(start, ui, config, &modules, M);
+                Ok(Flow::Continue)
+            })
+        },
+    ))
+}
+
 /// Source prior-body/non-200 guard, shared event response and page-owned mutation sequencing.
-async fn page(
+async fn page<M: SessionModels>(
     req: &mut Request,
     res: &mut Response,
     inv: Invocation<'_>,
@@ -142,6 +198,7 @@ async fn page(
             }
         }
         inv.emit(&format!("{module}-search"), req, res).await?;
+        project_results(res)?;
     } else if action == Action::Export {
         let mut data = req.data.clone();
         data.set("take", 0)?;
@@ -149,7 +206,7 @@ async fn page(
         if found.status().map(|status| status.code) == Some(200) {
             let rows = found
                 .result()
-                .map(stackpress_lib::Value::to_json)
+                .map(wire_json)
                 .transpose()?
                 .unwrap_or(json!([]));
             let csv = export(&rows)?;
@@ -194,6 +251,7 @@ async fn page(
         } else {
             inv.emit(&format!("{module}-{event}"), req, res).await?;
         }
+        project_results(res)?;
         if res.status().map(|status| status.code) == Some(200)
             && !req.data.has(noview)
             && action != Action::Import
@@ -221,6 +279,7 @@ async fn page(
         }
     } else if !matches!(action, Action::Create | Action::Import) {
         inv.emit(&format!("{module}-detail"), req, res).await?;
+        project_results(res)?;
     }
     if req.data.has(noview) {
         let json = res.try_to_json()?;
@@ -236,10 +295,10 @@ async fn page(
     }
     let data = res
         .result()
-        .map(stackpress_lib::Value::to_json)
+        .map(wire_json)
         .transpose()?
         .unwrap_or(json!({}));
-    let relations = relations(&inv, &data).await?;
+    let relations = relations::<M>(&inv, &data).await?;
     let theme = super::host::presentation(req, &inv)?.theme;
     let page = Management {
         module: module.into(),
@@ -260,7 +319,7 @@ async fn page(
     Ok(Flow::Continue)
 }
 /// Build labels from real joined results; choice lists are loaded by the app's public searches.
-async fn relations(inv: &Invocation<'_>, data: &Value) -> Result<Relations> {
+async fn relations<M: SessionModels>(inv: &Invocation<'_>, data: &Value) -> Result<Relations> {
     let mut relations = Relations::default();
     let rows = data
         .as_array()
@@ -284,9 +343,13 @@ async fn relations(inv: &Invocation<'_>, data: &Value) -> Result<Relations> {
     }
     // Creation needs real selectable rows even before a particular foreign key is selected.
     if let Ok(engine) = inv.shared_service::<stackpress_sql::Engine>() {
-        let profiles = stackpress_framework_session::storage::ProfileActions::new(engine, "");
+        let profiles = M::Profile::actions(engine, String::new(), 0);
+        let query = profiles
+            .store()
+            .query(&Default::default())
+            .map_err(Error::from_source)?;
         let rows = profiles
-            .find_all(&Default::default())
+            .find_all(&query)
             .await
             .map_err(Error::from_source)?;
         for row in rows {
@@ -306,7 +369,7 @@ async fn relations(inv: &Invocation<'_>, data: &Value) -> Result<Relations> {
     let apps = crate::helpers::resolve(inv, "application-search", Nest::new()).await?;
     if let Some(rows) = apps
         .result()
-        .map(stackpress_lib::Value::to_json)
+        .map(wire_json)
         .transpose()?
         .as_ref()
         .and_then(Value::as_array)
@@ -325,6 +388,40 @@ async fn relations(inv: &Invocation<'_>, data: &Value) -> Result<Relations> {
         }
     }
     Ok(relations)
+}
+/// Native Dates cross the JSON/HTML boundary here, after the nested source process finishes.
+fn project_results(res: &mut Response) -> Result<()> {
+    if res.status().map(|status| status.code) == Some(200)
+        && let Some(value) = res.result()
+    {
+        let value = wire_json(value)?;
+        let total = res.total();
+        res.results(&value)?;
+        res.set_total(total)?;
+    }
+    Ok(())
+}
+/// Source Date.toJSON at this host boundary; unsupported native payloads still fail.
+fn wire_json(value: &stackpress_lib::Value) -> Result<Value> {
+    use stackpress_lib::Value as Native;
+    Ok(match value {
+        Native::DateTime(time) => {
+            let millis = time
+                .seconds
+                .checked_mul(1000)
+                .and_then(|value| value.checked_add(i64::from(time.nanoseconds() / 1_000_000)))
+                .ok_or_else(|| Error::invalid("source Date exceeds native milliseconds"))?;
+            serde_json::to_value(stackpress_framework_schema::source::date(millis))?
+        }
+        Native::Array(values) => Value::Array(values.iter().map(wire_json).collect::<Result<_>>()?),
+        Native::Object(values) => Value::Object(
+            values
+                .iter()
+                .map(|(key, value)| Ok((key.clone(), wire_json(value)?)))
+                .collect::<Result<_>>()?,
+        ),
+        _ => value.to_json()?,
+    })
 }
 /// Render locally and dispose the Leptos owner before yielding owned HTML to a Send future.
 /// # Errors

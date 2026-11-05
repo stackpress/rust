@@ -16,6 +16,22 @@ fn record(value: serde_json::Value) -> Record {
 
 /// Use the same synthetic values as SQLite, including API's unchanged plaintext secret codec.
 async fn scenario(engine: Arc<Engine>) -> support::TestResult<()> {
+    let result = scenario_steps(engine).await;
+    if let Err(error) = &result {
+        // Synthetic fixture diagnostics retain the native server message, never its URL.
+        let mut cause = Some(error.as_ref() as &(dyn std::error::Error + 'static));
+        while let Some(error) = cause {
+            let message = error.to_string();
+            assert!(!message.contains("postgres://") && !message.contains("mysql://"));
+            eprintln!("live search native cause (verbatim): {message}");
+            cause = error.source();
+        }
+    }
+    result
+}
+
+/// Observe each unchanged search/setup step before diagnosing a backend boundary.
+async fn scenario_steps(engine: Arc<Engine>) -> support::TestResult<()> {
     let profile = ProfileActions::new(engine.clone(), "seed");
     let app = ApplicationActions::new(engine.clone(), "seed");
     let session = SessionActions::new(engine, "seed");
@@ -37,6 +53,19 @@ async fn scenario(engine: Arc<Engine>) -> support::TestResult<()> {
     input.insert("id".into(), "s".into());
     input.insert("applicationId".into(), "a".into());
     session.create(&input).await?;
+    println!("stage: G53 Application/Session multi-value has requires all scopes");
+    let all = StoreQuery {
+        has: record(json!({"scopes":["read","write"]})),
+        ..Default::default()
+    };
+    assert_eq!(app.count(&all).await?, 1);
+    assert_eq!(session.count(&all).await?, 1);
+    let missing = StoreQuery {
+        has: record(json!({"scopes":["read","missing"]})),
+        ..Default::default()
+    };
+    assert_eq!(app.count(&missing).await?, 0);
+    assert_eq!(session.count(&missing).await?, 0);
     println!("stage: Application q/like search");
     let query = StoreQuery {
         q: Some("eXaMpLe".into()),
@@ -69,18 +98,26 @@ async fn scenario(engine: Arc<Engine>) -> support::TestResult<()> {
         "g48_note",
         stackpress_sql::SqlType::Integer,
     ));
+    println!("stage: Session upgrade");
     session.upgrade(&target.create()).await?;
+    println!("stage: Session purge");
     session.purge(true).await?;
+    println!("stage: Session uninstall");
     session.uninstall().await?;
     let mut target = app.store.create().definition()?;
     target.fields.push(stackpress_sql::Field::new(
         "g48_note",
         stackpress_sql::SqlType::Integer,
     ));
+    println!("stage: Application upgrade");
     app.upgrade(&target.create()).await?;
+    println!("stage: Application purge");
     app.purge(true).await?;
+    println!("stage: Application uninstall");
     app.uninstall().await?;
+    println!("stage: Profile purge");
     profile.purge(true).await?;
+    println!("stage: Profile uninstall");
     profile.uninstall().await?;
     Ok(())
 }

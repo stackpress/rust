@@ -1,5 +1,5 @@
 //! Generated native stores execute on an actual in-process SQLite file.
-#![cfg(not(target_arch = "wasm32"))]
+#![cfg(all(feature = "sql", not(target_arch = "wasm32")))]
 #[path = "support/scenario.rs"]
 mod scenario;
 use std::sync::Arc;
@@ -133,12 +133,16 @@ async fn generated_source_scalar_returning_and_query_oracles() {
         };
         // The accepted Rust JSON AST binds the fixed path instead of interpolating '$'.
         assert_eq!(binds, expected);
-        if name != "search" {
+        if name == "hasnt" {
             assert!(rendered.sql().contains("json_each(\"tags\".\"0\""));
             assert!(
                 engine.fetch(&rendered).await.is_err(),
                 "source flatten(...,true) retains the invalid indexed-column path"
             );
+        } else if name == "has" {
+            // G53 deliberately fixes has only; the original golden remains unchanged.
+            assert!(!rendered.sql().contains("json_each(\"tags\".\"0\""));
+            assert!(engine.fetch(&rendered).await.is_ok());
         }
     }
     // A relation-ending selector is emitted faithfully; it is not changed into a wildcard.

@@ -7,11 +7,13 @@ mod bindings;
 mod catalog;
 mod emit;
 mod pages;
+mod source;
 mod table;
 mod templates;
 pub use catalog::{Component, components, register_components};
 pub use emit::emit_roles;
 pub use pages::emit_pages;
+pub use source::{emit_source_pages, emit_source_roles, source_definitions};
 
 /// Register a role-only build transform owning UI after the selected schema transform.
 ///
