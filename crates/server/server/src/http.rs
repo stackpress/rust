@@ -16,7 +16,7 @@ pub mod stream;
 use common::{load_body, prepare};
 use http::HeaderValue;
 use http::header::CONTENT_LENGTH;
-use stackpress_lib::{DeliveryState, Error, ParseLimits, Request, Response, Result};
+use stackpress_lib::{CookieOptions, DeliveryState, Error, ParseLimits, Request, Response, Result};
 
 use crate::{HandleOptions, HandleReport, HostReply, OutputGuard, Server};
 
@@ -51,6 +51,10 @@ pub struct HttpOptions {
     /// Absolute HTTP(S) origin with root path, without credentials, query or fragment.
     /// Host and forwarded headers never override it for origin-form input.
     pub base_url: String,
+    /// Fallback cookie options, used only when a revision supplies no options.
+    /// Defaults to `Path=/` alone. An explicit revision object replaces this whole object,
+    /// including an empty object; attributes are never merged individually.
+    pub cookie: CookieOptions,
     /// Request data budgets; `max_bytes` also bounds the body and URI separately.
     pub limits: ParseLimits,
     /// Initial response budgets; a replacement Response owns its replacement limits.
@@ -69,6 +73,10 @@ impl Default for HttpOptions {
         // Independent aggregate/header ceilings prevent many small fields bypassing body limits.
         Self {
             base_url: "http://unknownhost/".into(),
+            cookie: CookieOptions {
+                path: Some("/".into()),
+                ..Default::default()
+            },
             limits: ParseLimits::default(),
             response_limits: ParseLimits::default(),
             max_request_bytes: 2 * 1024 * 1024,
@@ -150,7 +158,7 @@ impl HttpAdapter {
     /// Validate a trusted base and retain finite policies without opening resources.
     ///
     /// # Errors
-    /// Rejects non-HTTP(S), credential-bearing or non-origin base URLs.
+    /// Rejects non-HTTP(S), credential-bearing or non-origin base URLs and invalid cookie options.
     ///
     /// # Examples
     /// ```
@@ -184,6 +192,8 @@ impl HttpAdapter {
         }
         // Remove only the validated root suffix before literal request-target concatenation.
         let origin = base.url.as_str().trim_end_matches('/').to_owned();
+        // Trusted host cookie defaults are checked before handling any request or output.
+        options.cookie.validate()?;
         Ok(Self { options, origin })
     }
 
@@ -273,12 +283,12 @@ impl HttpAdapter {
             }
         };
         // Native publication remains outside handler reach, including Response replacement.
-        Ok(finish(reply, head).await)
+        Ok(finish(reply, head, &self.options.cookie).await)
     }
 }
 
 /// Convert all fallible state before consuming the invocation's private output authority.
-async fn finish(mut reply: HostReply, head: bool) -> HttpReply {
+async fn finish(mut reply: HostReply, head: bool, cookie: &CookieOptions) -> HttpReply {
     // This authority belongs to the adapter call, independently of any handler Response value.
     let mut guard = OutputGuard::default();
     match reply.response.delivery_state() {
@@ -309,7 +319,7 @@ async fn finish(mut reply: HostReply, head: bool) -> HttpReply {
         }
     }
     // Complete conversion/fallback before the guard can enter native publication.
-    let prepared = prepare_or_fallback(&mut reply, head);
+    let prepared = prepare_or_fallback(&mut reply, head, cookie);
     // Publication has no hook dispatch or retry path and consumes the same private authority.
     let output = publish(&mut reply, &mut guard, prepared).await;
     HttpReply {
@@ -319,9 +329,13 @@ async fn finish(mut reply: HostReply, head: bool) -> HttpReply {
 }
 
 /// Choose a fully prepared response, retaining conversion failure before sanitized replacement.
-fn prepare_or_fallback(reply: &mut HostReply, head: bool) -> BufferedResponse {
+fn prepare_or_fallback(
+    reply: &mut HostReply,
+    head: bool,
+    cookie: &CookieOptions,
+) -> BufferedResponse {
     // Preflight touches no native writer; an error can still safely choose the sole output.
-    match prepare(&reply.response, head) {
+    match prepare(&reply.response, head, cookie) {
         Ok(response) => response,
         Err(error) => {
             // Preserve the failed conversion and old delivery state before replacing any values.

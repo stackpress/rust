@@ -95,6 +95,33 @@ async fn output(req: &mut Request, res: &mut Response, _: Invocation<'_>) -> Res
             session.remove("removed")?;
             res.results(&true)?;
         }
+        "/cookie-options" => {
+            // None uses the host object; Some(empty) deliberately suppresses it.
+            let session = res.session_mut()?;
+            session.set("implicit", "one", None)?;
+            session.set(
+                "explicit",
+                "two",
+                Some(CookieOptions {
+                    path: Some("/scope".into()),
+                    ..Default::default()
+                }),
+            )?;
+            session.set("empty", "three", Some(CookieOptions::default()))?;
+            session.remove("gone")?;
+            session.set(
+                "scoped-gone",
+                "old",
+                Some(CookieOptions {
+                    path: Some("/scope".into()),
+                    ..Default::default()
+                }),
+            )?;
+            session.remove("scoped-gone")?;
+            session.set("empty-gone", "old", Some(CookieOptions::default()))?;
+            session.remove("empty-gone")?;
+            res.results(&true)?;
+        }
         "/cookie-list" => {
             // List revisions need an explicit codec; guessing a string would change cookie meaning.
             res.session_mut()?.set(
@@ -428,6 +455,86 @@ async fn public_envelopes_keep_scalar_presence_and_zero_total() -> Result<()> {
     Ok(())
 }
 
+/// Host fallback is selected as one object for sets/removals, never merged into explicit options.
+#[tokio::test]
+async fn cookie_host_defaults_are_whole_objects_and_explicit_options_win() -> Result<()> {
+    let app = application().await?;
+    // No other attribute is implied by the source host's single Path=/ default.
+    let default = HttpOptions::default().cookie;
+    assert_eq!(
+        default,
+        CookieOptions {
+            path: Some("/".into()),
+            ..Default::default()
+        }
+    );
+    let custom = CookieOptions {
+        path: Some("/host".into()),
+        http_only: true,
+        secure: true,
+        same_site: Some(stackpress_lib::session::SameSite::Strict),
+        ..Default::default()
+    };
+    for policy in [default, custom, CookieOptions::default()] {
+        let adapter = HttpAdapter::new(HttpOptions {
+            cookie: policy.clone(),
+            ..Default::default()
+        })?;
+        let request = NativeRequest::builder()
+            .uri("/cookie-options")
+            .body(Vec::new())
+            .unwrap();
+        let response = native(adapter.handle(&app, request).await?);
+        let cookies = response
+            .headers()
+            .get_all("set-cookie")
+            .iter()
+            .map(|value| value.to_str().unwrap())
+            .collect::<Vec<_>>();
+        assert_eq!(
+            cookies[0],
+            stackpress_lib::session::cookie::serialize("implicit", "one", &policy)?
+        );
+        assert_eq!(cookies[1], "explicit=two; Path=/scope");
+        assert_eq!(cookies[2], "empty=three");
+        // Deletion keeps the same option-selection rule, overriding only its lifetime.
+        for (index, name, options) in [
+            (3, "gone", policy.clone()),
+            (
+                4,
+                "scoped-gone",
+                CookieOptions {
+                    path: Some("/scope".into()),
+                    ..Default::default()
+                },
+            ),
+            (5, "empty-gone", CookieOptions::default()),
+        ] {
+            let tombstone = CookieOptions {
+                max_age: Some(0),
+                expires: Some(std::time::UNIX_EPOCH),
+                ..options
+            };
+            assert_eq!(
+                cookies[index],
+                stackpress_lib::session::cookie::serialize(name, "", &tombstone)?
+            );
+        }
+    }
+    // Reject a malformed host policy before serving any request, like explicit cookie options.
+    assert!(
+        HttpAdapter::new(HttpOptions {
+            cookie: CookieOptions {
+                path: Some("/bad\r\npath".into()),
+                ..Default::default()
+            },
+            ..Default::default()
+        })
+        .is_err()
+    );
+    Ok(())
+}
+
 /// Repeated headers and scoped cookie tombstones survive; framing and MIME are authoritative.
 #[tokio::test]
 async fn cookies_and_multivalue_headers_are_never_folded() -> Result<()> {
@@ -445,7 +552,12 @@ async fn cookies_and_multivalue_headers_are_never_folded() -> Result<()> {
     assert_eq!(cookies.len(), 5);
     assert_eq!(
         &cookies[..4],
-        ["manual=1", "manual=2", "first=one", "second=two"]
+        [
+            "manual=1",
+            "manual=2",
+            "first=one; Path=/",
+            "second=two; Path=/"
+        ]
     );
     assert!(cookies[4].starts_with("removed=;"));
     // A tombstone must preserve domain/path/security and override lifetime to immediate expiry.

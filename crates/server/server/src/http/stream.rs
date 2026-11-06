@@ -9,7 +9,9 @@ use super::{HttpAdapter, HttpOptions, common};
 use crate::{HandleOptions, HandleReport, HostReply, OutputGuard, Server};
 use futures_core::Stream;
 use http::header::{CONNECTION, CONTENT_LENGTH, CONTENT_TYPE};
-use stackpress_lib::{Body, DeliveryState, Error, Response, Result, SharedNative, Value};
+use stackpress_lib::{
+    Body, CookieOptions, DeliveryState, Error, Response, Result, SharedNative, Value,
+};
 use std::{
     future::Future,
     pin::Pin,
@@ -486,7 +488,7 @@ impl StreamingHttpAdapter {
             }
             Err(error) => app.input_failure("<invalid HTTP input>", error)?,
         };
-        Ok(finish(reply, head).await)
+        Ok(finish(reply, head, &policy.cookie).await)
     }
 }
 /// Extract only the private extension identity; arbitrary SharedNative values stay unsupported.
@@ -497,10 +499,14 @@ fn descriptor(response: &Response) -> Option<&HttpBodySlot> {
     }
 }
 /// Validate all headers and response fields before taking exclusive producer ownership.
-fn prepare(response: &Response, head: bool) -> Result<http::Response<HttpBody>> {
+fn prepare(
+    response: &Response,
+    head: bool,
+    cookie: &CookieOptions,
+) -> Result<http::Response<HttpBody>> {
     let Some(slot) = descriptor(response) else {
         // Buffered output keeps its exact converter and bytes; only network hop headers differ.
-        let native = common::prepare(response, head)?;
+        let native = common::prepare(response, head, cookie)?;
         let (mut parts, bytes) = native.into_parts();
         strip_hop_headers(&mut parts.headers)?;
         return Ok(http::Response::from_parts(parts, HttpBody::buffered(bytes)));
@@ -523,7 +529,7 @@ fn prepare(response: &Response, head: bool) -> Result<http::Response<HttpBody>> 
             .with_cause(cause)
     })?;
     // Convert repeated headers/cookies before altering adapter-owned framing.
-    let mut headers = common::response_headers(response, &limits)?;
+    let mut headers = common::response_headers(response, &limits, cookie)?;
     strip_hop_headers(&mut headers)?;
     // Stream lengths are unknown; stale caller lengths must never frame producer bytes.
     headers.remove(CONTENT_LENGTH);
@@ -618,7 +624,7 @@ fn strip_hop_headers(headers: &mut http::HeaderMap) -> Result<()> {
     Ok(())
 }
 /// Preflight, consume one output guard, then return an unpolled native body to the caller.
-async fn finish(mut reply: HostReply, head: bool) -> StreamingHttpReply {
+async fn finish(mut reply: HostReply, head: bool, cookie: &CookieOptions) -> StreamingHttpReply {
     // Authority is call-local and cannot be reset by any handler response replacement.
     let mut guard = OutputGuard::default();
     match reply.response.delivery_state() {
@@ -647,7 +653,7 @@ async fn finish(mut reply: HostReply, head: bool) -> StreamingHttpReply {
         }
     }
     // Every fallible conversion precedes publication; failure can still choose one empty 500.
-    let prepared = match prepare(&reply.response, head) {
+    let prepared = match prepare(&reply.response, head, cookie) {
         Ok(native) => native,
         Err(error) => {
             reply.report.record_output_failure(error, &reply.response);
