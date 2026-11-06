@@ -9,6 +9,9 @@ use stackpress_leptos::components::{
 };
 use std::collections::BTreeMap;
 
+mod editor;
+pub use editor::{EditorField, HtmlView};
+
 /// A source relation choice, loaded through the configured model search event.
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Choice {

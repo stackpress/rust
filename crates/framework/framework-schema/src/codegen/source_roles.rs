@@ -27,7 +27,7 @@ pub fn source_components() -> Vec<ComponentDefinition> {
         ("field.stringlist", vec![("add", PropType::String)]),
         // attributes.ts:3406-3644 and frui/form/TextEditor.tsx:17-55. The source
         // dictionary calls style a CSS object while Frui/blog use a Boolean toolbar flag;
-        // retain both as inert JSON, without choosing a concrete rich-editor adapter.
+        // retain both as JSON so the renderer can follow Frui's truthiness semantics.
         (
             "field.editor",
             vec![
@@ -63,8 +63,18 @@ pub fn source_components() -> Vec<ComponentDefinition> {
                 ("imageGallery", PropType::Boolean),
                 ("print", PropType::Boolean),
                 ("save", PropType::Boolean),
+                // Append newly supported named props without moving source positional slots.
+                ("template", PropType::Boolean),
+                ("defaultValue", PropType::String),
+                ("value", PropType::String),
+                ("name", PropType::String),
+                ("id", PropType::String),
+                ("disabled", PropType::Boolean),
+                ("required", PropType::Boolean),
+                ("error", PropType::Json),
             ],
         ),
+        ("view.html", vec![]),
         // Original attributes.ts:2660-2719 and Frui Select's array/object option carrier.
         (
             "field.select",

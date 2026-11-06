@@ -193,7 +193,9 @@ impl DefinitionRegistry {
             || value.name != canonical
             || !token(&value.key)
             || !token(&value.revision)
-            || value.props.len() > 32
+            // Rich editors expose more than 32 independent toolbar/form props.
+            // Keep a finite signature budget while admitting the complete source API.
+            || value.props.len() > 64
         {
             return Err(invalid("invalid component definition"));
         }
