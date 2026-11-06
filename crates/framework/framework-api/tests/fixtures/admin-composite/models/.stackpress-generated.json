@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "files": {
+    "mod.rs": {
+      "owner": "aggregate",
+      "sha256": "36f7d65faf7af84e2352aa64c9f2d14f67a1e52bd9a4379fd4ab25255ff26c64",
+      "bytes": 32
+    },
+    "source/_catalog.rs": {
+      "owner": "source-models",
+      "sha256": "fe56fb7c0221609d0b22d8645a672e2f3bac1d9e2af5b333cb9416f8c83232a7",
+      "bytes": 8192
+    },
+    "source/catalog.rs": {
+      "owner": "source-models",
+      "sha256": "3d439cc195d1e9fc3e459104b1ed598129f9019bbd659846fab8b23307f8ae30",
+      "bytes": 9208
+    },
+    "source/mod.rs": {
+      "owner": "aggregate",
+      "sha256": "558f9ddcfc8b4d7539199039c0cf77d790280a6b5f9980d11f618c853fdeaddc",
+      "bytes": 52
+    },
+    "source/slugged.rs": {
+      "owner": "source-models",
+      "sha256": "1913c32d979946486a6f73650a7c8a0bf8a51f100e0d615320fc4568b06feed2",
+      "bytes": 6226
+    },
+    "stores/catalog.rs": {
+      "owner": "source-models",
+      "sha256": "7aee917b453d5c7387205b803df4587abf7996d513a2c1183dc06dcecc979399",
+      "bytes": 1201
+    },
+    "stores/family.rs": {
+      "owner": "source-models",
+      "sha256": "b06fb49cac3a1dfa7ceb7e5fd640f6de37889c18d0707c76cfdc2ddd2466f4e8",
+      "bytes": 180
+    },
+    "stores/mod.rs": {
+      "owner": "aggregate",
+      "sha256": "5864f674fdfb736ad7ef2431707b0b2ebdd08d6465052279df131890e575ebf1",
+      "bytes": 50
+    },
+    "stores/slugged.rs": {
+      "owner": "source-models",
+      "sha256": "fc87abe115d30374ee40a149655a4253b6187a2b62e40b992b80528f659d44d1",
+      "bytes": 1201
+    }
+  }
+}

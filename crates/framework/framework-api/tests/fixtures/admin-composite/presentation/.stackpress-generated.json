@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "files": {
+    "mod.rs": {
+      "owner": "aggregate",
+      "sha256": "3b019783a8ce99c2ba531086105200fa4d3cd25af2018d03c7ded587eaf9612d",
+      "bytes": 12
+    },
+    "ui/catalog.rs": {
+      "owner": "admin-composite-ui",
+      "sha256": "93172d75b820e27adab7c5c98e599ecf2cedf9f9511e9360f0a1f01054ce85bb",
+      "bytes": 8909
+    },
+    "ui/host.rs": {
+      "owner": "admin-composite-ui",
+      "sha256": "9eac17ae3e2406b54778b080aac5d44450151c637d116376d9bdf9a262146e56",
+      "bytes": 659
+    },
+    "ui/mod.rs": {
+      "owner": "aggregate",
+      "sha256": "108fd3e5e4deef1e1f71d31c72695caa1d7239329c861e825ea410e3ba705312",
+      "bytes": 63
+    },
+    "ui/pages.rs": {
+      "owner": "admin-composite-ui",
+      "sha256": "641a6329265880da7dd7c1407e272bf82f045513ee06eb37bddc6d626b226c34",
+      "bytes": 2998
+    },
+    "ui/slugged.rs": {
+      "owner": "admin-composite-ui",
+      "sha256": "2b797de8179ec5d767f96430936492f6c48742ccd0e238b5493db9862e6cc17e",
+      "bytes": 6642
+    }
+  }
+}

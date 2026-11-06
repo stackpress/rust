@@ -39,6 +39,7 @@ macro_rules! register_routes {
             .and_then(Value::as_str)
             .unwrap_or("/admin");
         for &module in $modules {
+            let spec = ($ui.spec)(module).map_err(Error::from_source)?;
             for action in [
                 Action::Search,
                 Action::Detail,
@@ -50,27 +51,42 @@ macro_rules! register_routes {
                 Action::Import,
                 Action::Export,
             ] {
-                let mut path = format!("{base}/{module}/{}", action.name());
-                if matches!(
+                let keyed = matches!(
                     action,
                     Action::Detail
                         | Action::Update
                         | Action::Copy
                         | Action::Remove
                         | Action::Restore
-                ) {
-                    path.push_str("/:id");
+                );
+                if keyed && spec.model.key.is_empty() {
+                    continue;
                 }
-                let config = config.clone();
-                $target.route_with(
-                    RouteSpec::new(MethodPattern::Any, &path),
-                    handler(move |req, res, inv| {
-                        let config = config.clone();
-                        Box::pin(async move {
-                            page::<$family>(req, res, inv, module, action, $ui, &config).await
-                        })
-                    }),
-                )?;
+                // Upstream routes.ts uses create/<keys> for copy. Retain the existing
+                // Rust copy/<keys> spelling as an alias for callers already using it.
+                let names = if action == Action::Copy {
+                    &["create", "copy"][..]
+                } else {
+                    &[action.name()][..]
+                };
+                for name in names {
+                    let mut path = format!("{base}/{module}/{name}");
+                    if keyed {
+                        for key in &spec.model.key {
+                            path.push_str(&format!("/:{key}"));
+                        }
+                    }
+                    let config = config.clone();
+                    $target.route_with(
+                        RouteSpec::new(MethodPattern::Any, &path),
+                        handler(move |req, res, inv| {
+                            let config = config.clone();
+                            Box::pin(async move {
+                                page::<$family>(req, res, inv, module, action, $ui, &config).await
+                            })
+                        }),
+                    )?;
+                }
             }
         }
     }};
@@ -90,6 +106,8 @@ pub fn register(app: &mut ServerBuilder, ui: Ui, config: Config) -> Result<()> {
 
 /// Register ordinary source admin routes for selected generated models and one actual family.
 /// The application owns the module catalog and UI; this installs no Engine, schema or guard.
+/// Item paths use all source key fields in declaration order. Copy uses `create/<keys>`;
+/// the existing Rust `copy/<keys>` spelling remains an alias for the same handler.
 /// # Errors
 /// Preserves ordinary route errors and the same invocation-time action/render failures.
 pub fn register_with<M: SessionModels>(
@@ -252,6 +270,14 @@ async fn page<M: SessionModels>(
             inv.emit(&format!("{module}-{event}"), req, res).await?;
         }
         project_results(res)?;
+        // The source rejects a non-object creation result even with noview. A
+        // composite identity is a valid object; it need not contain a member named id.
+        if matches!(action, Action::Create | Action::Copy)
+            && res.status().map(|status| status.code) == Some(200)
+            && res.result().and_then(|row| row.as_object()).is_none()
+        {
+            return Err(Error::invalid("Unknown creation response results"));
+        }
         if res.status().map(|status| status.code) == Some(200)
             && !req.data.has(noview)
             && action != Action::Import
@@ -261,20 +287,28 @@ async fn page<M: SessionModels>(
                 .pointer("/admin/base")
                 .and_then(Value::as_str)
                 .unwrap_or("/admin");
-            let id = if matches!(action, Action::Create | Action::Copy) {
-                res.result()
-                    .and_then(|row| row.as_object())
-                    .and_then(|row| row.get("id"))
-                    .and_then(stackpress_lib::Value::as_str)
-            } else {
-                req.data.get("id").and_then(stackpress_lib::Value::as_str)
-            };
-            if action == Action::Remove {
+            let spec = (ui.spec)(module).map_err(Error::from_source)?;
+            let creation = matches!(action, Action::Create | Action::Copy);
+            if action == Action::Remove || (creation && spec.model.key.len() != 1) {
                 res.redirect(&format!("{base}/{module}/search"))?;
-            } else if let Some(id) = id {
-                res.redirect(&format!("{base}/{module}/detail/{id}"))?;
             } else {
-                return Err(Error::invalid("Unknown creation response results"));
+                // Create/copy interpolate the returned row; update/restore use the
+                // request's complete declared identity, in source declaration order.
+                let data = if creation {
+                    res.result().map(wire_json).transpose()?.unwrap_or_default()
+                } else {
+                    // Update may add native Dates to unrelated request fields. Only
+                    // interpolate the key members; do not JSON-project the whole request.
+                    let mut keys = serde_json::Map::new();
+                    for key in &spec.model.key {
+                        if let Some(value) = req.data.get(key) {
+                            keys.insert(key.clone(), wire_json(value)?);
+                        }
+                    }
+                    Value::Object(keys)
+                };
+                let id = super::identity::path(&spec, &data, &Value::Null).unwrap_or_default();
+                res.redirect(&format!("{base}/{module}/detail/{id}"))?;
             }
         }
     } else if !matches!(action, Action::Create | Action::Import) {

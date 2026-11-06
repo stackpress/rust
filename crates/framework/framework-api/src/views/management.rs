@@ -18,7 +18,7 @@ pub use stackpress_framework_admin::source::pages::Ui;
 /// Source-selected public page state; stored secrets deliberately remain visible.
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Management {
-    /// Selected generated module, application or session.
+    /// Selected application-generated source model module.
     pub module: String,
     /// Original selected admin action.
     pub action: Action,
@@ -45,13 +45,17 @@ impl Management {
             .and_then(Value::as_str)
             .unwrap_or("/admin")
     }
-    /// Current source route, including its original path identity spelling.
+    /// Current source route, with slash-joined declared keys; copy uses create/<keys>.
     pub fn url(&self, action: Action, id: Option<&str>) -> String {
         format!(
             "{}/{}/{}{}",
             self.base(),
             self.module,
-            action.name(),
+            if action == Action::Copy {
+                "create"
+            } else {
+                action.name()
+            },
             id.map(|id| format!("/{id}")).unwrap_or_default()
         )
     }
@@ -75,11 +79,7 @@ pub fn ManagementPage(
     let Ok(spec) = spec else {
         return view! {<p role="alert">"Unknown management module"</p>}.into_any();
     };
-    let id = page
-        .query
-        .get("id")
-        .and_then(Value::as_str)
-        .or_else(|| page.data.get("id").and_then(Value::as_str));
+    let id = super::identity::path(&spec, &page.query, &page.data);
     let title = format!("{} {}", spec.model.label, action_label(page.action));
     // Source detail actions distinguish active rows from removed rows. Other pages retain
     // collection actions; the breadcrumb provides the way back to search.
@@ -101,7 +101,7 @@ pub fn ManagementPage(
     };
     let links = actions.iter().copied().map(|action| {
         let collection = matches!(action, Action::Search | Action::Create | Action::Import | Action::Export);
-        view! {<a class=format!("api-action api-action-{}",action.name()) href=page.url(action,if collection {None} else {id})>
+        view! {<a class=format!("api-action api-action-{}",action.name()) href=page.url(action,if collection {None} else {id.as_deref()})>
             {super::icons::named(action_icon(action))}<span>{action_label(action)}</span>
         </a>}
     }).collect_view();
@@ -283,8 +283,8 @@ fn content(
         {
             ().into_any()
         } else {
-            rows.iter().filter_map(|row|row.get("id").and_then(Value::as_str)).map(|id| {
-                view! {<a class="api-row-link" aria-label=format!("Detail {id}") href=page.url(Action::Detail,Some(id))>
+            rows.iter().filter_map(|row|super::identity::path(spec,row,&Value::Null)).map(|id| {
+                view! {<a class="api-row-link" aria-label=format!("Detail {id}") href=page.url(Action::Detail,Some(&id))>
                     {super::icons::named("file-text")}<span>"Detail"</span>
                 </a>}
             }).collect_view().into_any()
@@ -335,10 +335,13 @@ fn content(
         );
         let csrf = page.csrf.clone();
         let query = page.query.clone();
+        let keys = spec.model.key.clone();
         return view!{<form method="post" on:submit=move |event| {
             if let Some(submit)=&submit {event.prevent_default();if pending.blocked(){return;}
                 if let Ok(mut data)=draft.snapshot() {if let Some(object)=data.as_object_mut() {
-                    if let Some(id)=query.get("id") {object.insert("id".into(),id.clone());}
+                    // Native routes already carry every key; browser callbacks must
+                    // preserve that same identity rather than forwarding only id.
+                    for key in &keys {if let Some(value)=query.get(key) {object.insert(key.clone(),value.clone());}}
                     if let Some((name,token))=&csrf {object.insert(name.clone(),Value::String(token.clone()));}
                 }submit.run(data);}
             }
