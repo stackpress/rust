@@ -69,3 +69,16 @@ M crates/server/server/src/http/stream.rs
 M crates/server/server/tests/http_output.rs
 M crates/server/server/tests/http_stream.rs
 ```
+
+## Coordinator verification
+
+Committed as `037c60c` and merged into main as `5ae3ec9`. I reviewed the additive `HttpOptions.cookie` default (`Path=/`), explicit options replacing it, and the sign-out scope. Post-merge gate on a detached `5ae3ec9` (`/private/tmp/cookie-verify/run.sh`, 2026-11-06), exit 0:
+- 699 tuples identical;
+- fmt; Clippy, default and compatible;
+- nextest: default 1,077 passed; compatible 1,244 passed; `tcp_watchdog` alone;
+- doctests; Rustdoc with `-D warnings`;
+- aggregate/session consumers and build-host `--check`;
+- all freshness checks;
+- wasm32;
+- docs and ledger;
+- the source-roles and editor browser proofs.
