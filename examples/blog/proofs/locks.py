@@ -2,7 +2,7 @@
 """Seed this example lock exactly once offline, then check registry/root-byte invariants.
 
 Run through the repository build-benchmark recorder. ``seed`` performs the sole unlocked
-offline resolution; ``check`` performs no Cargo operation. Subsequent Cargo commands use
+offline resolution; ``check`` reads committed locks without a marker or Cargo operation. Subsequent Cargo commands use
 --locked --offline. The durable attempt marker prevents an accidental second resolution.
 """
 
@@ -46,6 +46,15 @@ def verify(baseline):
     packages = tomllib.loads(example.decode())['package']
     assert all(not p.get('source') or p['source'].startswith('registry+') for p in packages)
     print(f'locks: root 699 identical tuples/bytes; example {len(selected)} registry tuples are an exact subset')
+
+
+def check():
+    """Check against the committed root without depending on a resolution attempt marker."""
+    # Git reads local committed source only. Comparing the worktree bytes with that source
+    # also detects an accidental root-lock edit, rather than blessing it as a new baseline.
+    committed = subprocess.check_output(['git', '-C', str(ROOT), 'show', 'HEAD:Cargo.lock'])
+    verify({'root_sha256': hashlib.sha256(committed).hexdigest(),
+            'registry': registry(committed)})
 
 
 def seed(release=None):
@@ -95,8 +104,7 @@ def main():
     args = parser.parse_args()
     if args.mode == 'seed':
         return seed(args.release)
-    marker = BASELINE if args.release is None else BASELINE.with_name(f'lock-{args.release}.json')
-    verify(json.loads(marker.read_text()))
+    check()
     return 0
 
 

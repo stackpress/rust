@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""One complete final gate, retaining every failed phase and the known enabled regressions."""
+"""Bootstrap and verify a fresh checkout, retaining every phase and enabled regression."""
 import json
 import os
 from pathlib import Path
@@ -66,9 +66,21 @@ def run(name,command,env=None,seconds=600):
 
 def main():
     """Verify authored/generated code, all native targets, separate renderers, browser and coverage."""
+    # The documented target is dedicated to this gate; first-run diagnostics also need its
+    # directory to exist before the initial size sample, without requiring a prior Cargo run.
+    target=Path(os.environ['CARGO_TARGET_DIR']).parent
+    target.mkdir(parents=True,exist_ok=True)
     manifest=['--manifest-path',str(BLOG/'Cargo.toml')]
     common=manifest+['--locked','--offline']
     features=['--features','blog-tool/native-proof,blog-shared/ssr']
+    # Generation is an explicit prerequisite, not ignored state inherited from an edit loop.
+    # The default tool is independent of its output; full and native partitions stay separate.
+    generator=['cargo','run',*common,'-p','blog-tool','--']
+    for action in ['generate-app','generate']:
+        if run('bootstrap-'+action,[*generator,action]):return 1
+    if run('bootstrap-extension',['python3',str(BLOG/'proofs/extension.py')]):return 1
+    # Native HTTP tests read the actual debug WASM, so build it before compiling/running tests.
+    if run('browser-build',['python3',str(BLOG/'proofs/build.py')],seconds=1200):return 1
     run('format',['python3',str(BLOG/'proofs/format.py')])
     run('javascript',['node','--check',str(BLOG/'tests/browser.cjs')])
     run('javascript-flows',['node','--check',str(BLOG/'tests/flows.cjs')])
@@ -78,13 +90,15 @@ def main():
     run('doctests',['cargo','test',*common,'--workspace','--doc',*features])
     run('rustdoc',['cargo','doc',*common,'--workspace','--no-deps',*features],env=dict(os.environ,RUSTDOCFLAGS='-D warnings'))
     run('graphs',['python3',str(BLOG/'proofs/graphs.py')])
-    run('browser-build',['python3',str(BLOG/'proofs/build.py')])
     for mode in ['hydrate','csr']:
         target=str(Path(os.environ['CARGO_TARGET_DIR']).parent/mode)
         run('clippy-'+mode,['cargo','clippy',*common,'-p','blog-client','--target','wasm32-unknown-unknown','--no-default-features','--features',mode,'--','-D','warnings'],env=dict(os.environ,CARGO_TARGET_DIR=target))
+    # Nextest's test executables are not the finite stdin/stdout adapter browser.py spawns.
+    if run('browser-probe',['cargo','build',*common,'-p','blog-web','--bin','probe']):return 1
     run('browser-public-matrix',['python3',str(BLOG/'proofs/browser.py'),'--public-only','--matrix'])
     run('browser-full',['python3',str(BLOG/'proofs/browser.py')])
-    # The copied-out example must use current source and genuinely regenerated nickname UI.
+    # Prepare the copied-out schema/database/native/browser products in this same invocation.
+    if run('nickname-prepare',['python3',str(BLOG/'proofs/nickname.py'),'prepare'],seconds=1800):return 1
     if run('nickname-freshness',['python3',str(BLOG/'proofs/nickname.py'),'check'])==0:
         run('nickname-browser',['python3',str(BLOG/'proofs/nickname.py'),'browser'])
     target=Path(os.environ['CARGO_TARGET_DIR']).parent
@@ -101,7 +115,7 @@ def main():
     except Exception as error:
         print('COVERAGE GAP:',repr(error),flush=True)
         RESULTS.append({'name':'coverage-report','code':1,'error':repr(error)})
-    run('lock-invariants',['python3',str(BLOG/'proofs/locks.py'),'check','--release','blog-post-g57'])
+    run('lock-invariants',['python3',str(BLOG/'proofs/locks.py'),'check'])
     (OUTPUT/'results.json').write_text(json.dumps(RESULTS,indent=2))
     print('GATE RESULTS',json.dumps(RESULTS),flush=True)
     return int(any(item['code']for item in RESULTS))

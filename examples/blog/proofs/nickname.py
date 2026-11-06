@@ -42,7 +42,7 @@ def check():
 
 
 def prepare():
-    """Reuse the approved README patch, then run revision/generate/push on the copied app."""
+    """Follow the README's checkout-path step, then revise/generate/push the copied app."""
     source = signature()
     root_lock = (ROOT / 'Cargo.lock').read_bytes()
     source_lock = (BLOG / 'Cargo.lock').read_bytes()
@@ -50,7 +50,7 @@ def prepare():
     native = Path(os.environ['CARGO_TARGET_DIR'])
     target = native.parent
     try:
-        # This uses exactly the already approved patch in the same disposable copied app.
+        # The copy proof derives only existing repo-local edges from this checkout.
         subprocess.run(['python3', str(BLOG / 'proofs/readme.py')], check=True, timeout=420)
         env = dict(os.environ, CARGO_TARGET_DIR=str(target / 'readme'))
 

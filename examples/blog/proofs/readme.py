@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """Execute the documented finite first-success path in an isolated copied-out app."""
-import difflib
 import os
 from pathlib import Path
 import re
@@ -16,7 +15,7 @@ from proof import bounded
 
 
 def main():
-    """Use the approved checkout-path patch; never resolve or change any lock."""
+    """Point only existing repo-local edges at this checkout; never resolve or change a lock."""
     source_lock = (BLOG / 'Cargo.lock').read_bytes()
     root_lock = (ROOT / 'Cargo.lock').read_bytes()
     root_manifest = (ROOT / 'Cargo.toml').read_bytes()
@@ -36,11 +35,21 @@ def main():
     # This is the README's explicit mkdir step before the managed writer publishes output.
     output.mkdir()
     manifest = source_manifest.decode()
-    patched = re.sub(r'path = "(\.\./\.\./(?:crates|tools)/[^"]+)"',
-                     lambda match: 'path = "' + str((BLOG / match[1]).resolve()) + '"', manifest)
-    patch = ''.join(difflib.unified_diff(manifest.splitlines(True), patched.splitlines(True),
-                                       fromfile='copied-app/Cargo.toml', tofile='copied-app/Cargo.toml'))
-    assert patch == (BLOG / '.build/review/readme-copy.manifest.patch').read_text(), 'copy patch drifted from approval'
+    # The README's unpublished-crate step must work in any fresh checkout. Derive its
+    # absolute paths from the existing edges, not a machine-specific ignored review patch.
+    edges = re.compile(r'path = "(\.\./\.\./(?:crates|tools)/[^"]+)"')
+    selected = []
+    def checkout_edge(match):
+        source = (BLOG / match[1]).resolve()
+        assert source.is_relative_to(ROOT) and (source / 'Cargo.toml').is_file(), source
+        selected.append((match[0], 'path = "' + str(source) + '"'))
+        return selected[-1][1]
+    patched = edges.sub(checkout_edge, manifest)
+    assert selected, 'no repo-local dependencies found'
+    restored = patched
+    for old, new in selected:
+        restored = restored.replace(new, old)
+    assert restored == manifest, 'copied manifest changed beyond existing path edges'
     (destination / 'Cargo.toml').write_text(patched)
     native = Path(os.environ['CARGO_TARGET_DIR'])
     os.environ['CARGO_TARGET_DIR'] = str(native.parent / 'readme')
