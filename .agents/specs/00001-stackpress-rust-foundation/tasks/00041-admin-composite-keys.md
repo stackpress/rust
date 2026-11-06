@@ -89,3 +89,7 @@ A crates/framework/framework-api/tests/fixtures/admin-composite/presentation/ui/
 A crates/framework/framework-api/tests/fixtures/admin-composite/schema.idea
 M crates/framework/framework-api/tests/main.rs
 ```
+
+## Coordinator verification
+
+Committed as `7089100` and merged into main as `fa1095a`. Verified by the same combined gate as 00040, which also covered the composite models and UI fixture `--check` after the 44-role emitter change. One Rustdoc unclosed-tag error in `views/management.rs` was fixed on main in `744f64e`. Unblocks the blog example's Catalog regression.

@@ -163,3 +163,25 @@ The unchanged `examples/api-checkpoint/proofs/browser.cjs` passed 13 scenarios f
 Follow-up counters: 0 → 5 attempts, all passed; 0 → 3 compilation-emitting attempts; zero cold workspace rebuilds. Accumulated command time 1,239.476 s; observed Cargo stages 1,155.300 s (overlapping runs, not calendar elapsed time). Fresh consumer subtargets used warm sccache, incremental/debug off and two Cargo jobs. Sampled follow-up output peak 7.39 GiB; existing primary target retained at 11.73 GiB, with 90 GiB disk free at close.
 
 Final scope is exactly the three checkpoint locks and this appended receipt; root lock/manifest and all source remain unchanged. Root SHA-256 and all 699 tuples match the original receipt. Current KB validation baseline is 146 inherited errors and 42 warnings; the appendix adds no diagnostics. No follow-up gaps, commits, pushes, listeners or installations.
+
+## Coordinator verification
+
+Committed as `737a5d2` and merged into main as `73ce025`. The nested-lock follow-up `347bce6` was merged as `8774730`. Reviewed:
+- the G55 Rust-native roles;
+- frui data copied with hashes;
+- the `source` feature enabling pulldown-cmark only;
+- one Lucide hash line, licence text untouched;
+- the website and API checkpoint locks: +3 existing root tuples each.
+
+My first post-merge gate stopped on the API checkpoint locks, which the follow-up fixed. Then a combined gate at `fa1095a`/`744f64e`, 2026-11-06, exit 0:
+- 699 tuples identical; root lock unchanged;
+- fmt; Clippy, default and compatible;
+- nextest: default 1,070 passed; compatible 1,237 passed; `tcp_watchdog` run alone;
+- doctests; Rustdoc with `-D warnings`, after quoting one 00041 doc comment in `744f64e`;
+- aggregate consumers and build-host `--check`;
+- generated-workspace/admin, models and API checkpoint freshness;
+- session consumers;
+- wasm32 admin/leptos;
+- docs and ledger;
+- `source_roles.py all`: data parity plus 8 browser cases;
+- `editor.py all`.
