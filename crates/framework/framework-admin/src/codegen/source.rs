@@ -32,11 +32,36 @@ pub fn source_definitions() -> SchemaResult<DefinitionRegistry> {
     for mut definition in source {
         let symbol = match definition.name.as_str() {
             "field.editor" => "EditorField",
+            "field.fieldset" => "FieldsetField",
+            "view.fieldset" => "FieldsetView",
+            "field.code" | "field.json" | "field.markdown" | "field.mask" => "RichField",
+            "field.country" | "field.currency" => "CountryField",
+            "field.color" => "ColorField",
+            "view.country" | "view.currency" => "CountryView",
+            "view.code" | "view.json" | "view.markdown" => "RichView",
+            "view.formula" => "FormulaView",
+            "view.carousel" | "view.film" => "MediaView",
+            "field.file" | "field.image" | "field.filelist" | "field.imagelist" => "FileField",
+            "field.radio" => "RadioField",
+            "field.small" => "SmallField",
+            "field.suggest" => "SuggestField",
             "view.html" => "HtmlView",
-            "field.input" | "field.url" | "field.password" => "InputField",
+            "view.chars" | "view.words" => "OverflowView",
+            "view.color" => "ColorView",
+            "view.email" => "EmailView",
+            "view.transform" => "TransformView",
+            "view.rating" => "RatingView",
+            "view.rel" | "view.relative" => "RelativeView",
+            "view.comma" | "view.line" | "view.spread" => "SpreadView",
+            "view.list" | "view.ol" | "view.ul" => "ListView",
+            "view.tabular" => "TabularView",
+            "field.input" | "field.url" | "field.password" | "field.email" => "InputField",
             "field.relation" => "RelationField",
             "field.metadata" => "MetadataField",
             "field.stringlist" => "TextListField",
+            "field.datelist" | "field.datetimelist" | "field.numberlist" | "field.timelist" => {
+                "SourceTextListField"
+            }
             "field.select" => "SelectField",
             "view.overflow" => "OverflowView",
             "view.date" => "DateView",
@@ -45,7 +70,7 @@ pub fn source_definitions() -> SchemaResult<DefinitionRegistry> {
             "view.tags" => "TagsView",
             "view.template" => "TemplateView",
             "view.metadata" => "MetadataView",
-            _ => unreachable!("finite source definitions"),
+            _ => continue,
         };
         definition.available = true;
         let import = stackpress_framework_schema::codegen::ComponentImport {
@@ -90,6 +115,8 @@ pub fn emit_source_roles(
             Role::List,
             Role::View,
         ] {
+            let nested_target = nested_target(ui, &model.id, role, definitions);
+            let cells = role == Role::List || (role == Role::View && nested_target);
             let controls=model.fields.iter().filter_map(|field|field.roles.iter().find(|binding|binding.role==role).map(|binding|(field,binding)))
                 .map(|(field,binding)|{
                     let import=super::bindings::import(binding,definitions)?;
@@ -107,12 +134,18 @@ pub fn emit_source_roles(
                             || binding.props.get("options").is_some_and(|value|value.as_array().is_none_or(|values|values.iter().any(|value|!value.is_string())))) {
                         return Err(stackpress_framework_schema::SchemaError::new(stackpress_framework_schema::SchemaErrorKind::Unsupported,"source select props require an application adapter"));
                     }
-                    Ok(serde_json::json!({"wire":literal(&field.wire_name),"module":import.module,"symbol":import.symbol,"row":matches!(role,Role::List|Role::View)&&import.module=="stackpress_framework_admin::source::roles"&&import.symbol=="TemplateView"}))
+                    let nested=if import.module=="stackpress_framework_admin::source::roles" && matches!(import.symbol.as_str(),"FieldsetField"|"FieldsetView") {
+                        let stackpress_framework_schema::ValueType::Fieldset(name)=&field.value_type.value else {
+                            return Err(stackpress_framework_schema::SchemaError::new(stackpress_framework_schema::SchemaErrorKind::Invalid,"source fieldset role requires a fieldset type"));
+                        };
+                        Some(source_module(graph.fieldsets().iter().find(|fieldset|fieldset.name==*name).expect("normalized fieldset")).to_owned())
+                    }else{None};
+                    Ok(serde_json::json!({"wire":literal(&field.wire_name),"module":import.module,"symbol":import.symbol,"nested":nested.is_some(),"nested_module":nested.unwrap_or_default(),"nested_display":matches!(role,Role::List|Role::View),"nested_function":match role{Role::List=>"list_cells",Role::View=>"view_cells",_=>super::emit::role_name(role)},"row":matches!(role,Role::List|Role::View)&&import.module=="stackpress_framework_admin::source::roles"&&matches!(import.symbol.as_str(),"TemplateView"|"FormulaView")}))
                 }).collect::<SchemaResult<Vec<_>>>().map_err(source_error)?;
             let uses_row = controls
                 .iter()
                 .any(|control| control["row"].as_bool() == Some(true));
-            roles.push(serde_json::json!({"name":super::emit::role_name(role),"function":if role==Role::List {"list_cells"}else{super::emit::role_name(role)},"list":role==Role::List,"variant":format!("{role:?}"),"display":matches!(role,Role::List|Role::View),"uses_row":uses_row,"has_controls":!controls.is_empty(),"controls":controls}));
+            roles.push(serde_json::json!({"name":super::emit::role_name(role),"function":match role {Role::List=>"list_cells",Role::View if cells=>"view_cells",_=>super::emit::role_name(role)},"cells":cells,"prefix":nested_target && !matches!(role,Role::View|Role::List),"list":role==Role::List,"variant":format!("{role:?}"),"display":matches!(role,Role::List|Role::View),"uses_row":uses_row,"has_controls":!controls.is_empty(),"controls":controls}));
         }
         let text=renderer.render(Asset::SourceRoles,&serde_json::json!({"model":literal(&serde_json::to_string(model).expect("portable descriptor")),"rendering":roles.iter().any(|role|role["has_controls"].as_bool()==Some(true)),"roles":roles})).map_err(source_error)?;
         files.push((source_module(metadata).to_owned(), text));
@@ -168,4 +201,36 @@ pub fn emit_source_pages(
             .map_err(source_error)?,
     )?;
     output.contribute_module("ui", &host)
+}
+
+/// Only actual nested-fieldset targets need the extra cell renderer or form-name adapter.
+/// Keeping those additions local preserves existing unrelated generated-source fixture bytes.
+fn nested_target(
+    ui: &SourceUiCatalog,
+    target: &str,
+    role: Role,
+    definitions: &DefinitionRegistry,
+) -> bool {
+    let symbol = if matches!(role, Role::View | Role::List) {
+        "FieldsetView"
+    } else {
+        "FieldsetField"
+    };
+    // Incoming generated fieldset roles determine which child wrapper needs composition hooks.
+    ui.models
+        .iter()
+        .chain(&ui.fieldsets)
+        .flat_map(|model| &model.fields)
+        .filter(|field| {
+            matches!(&field.value_type.value,stackpress_framework_schema::ValueType::Fieldset(name) if name==target)
+        })
+        .any(|field| {
+            field.roles.iter().filter(|binding| binding.role == role).any(|binding| {
+                definitions.imports().iter().any(|import| {
+                    import.component == binding.component
+                        && import.module == "stackpress_framework_admin::source::roles"
+                        && import.symbol == symbol
+                })
+            })
+        })
 }

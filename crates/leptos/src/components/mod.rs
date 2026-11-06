@@ -21,6 +21,8 @@ pub use icons::ChevronRight;
 pub use text_editor::{HTML, TextEditor, TextEditorOptions, TextEditorUpdate};
 mod inputs;
 mod presentation;
+/// Shared source-faithful controls used by generated source-admin roles.
+pub mod source;
 pub use display_values::{
     DisplayError, DisplayRow, DisplayTable, DisplayValues, EmailAddress, HexColor, ImageSource,
     MetadataValues, PhoneNumber, ProgressAmount, ProgressValue, RatingRound, RatingValue,

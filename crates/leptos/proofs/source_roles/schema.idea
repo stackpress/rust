@@ -1,0 +1,50 @@
+type Detail { text String? @field.input @filter.input @span.input @view.text @list.text }
+model RoleProof {
+ id String @id
+ f_code String? @field.code @filter.code @span.code
+ f_color String? @field.color @filter.color @span.color
+ f_country String? @field.country({searchable true}) @filter.country({searchable true}) @span.country({searchable true})
+ f_currency String? @field.currency({searchable true}) @filter.currency({searchable true}) @span.currency({searchable true})
+ f_email String? @field.email @filter.email @span.email
+ f_file String? @field.file @filter.file @span.file
+ f_image String? @field.image @filter.image @span.image
+ f_json String? @field.json @filter.json @span.json
+ f_markdown String? @field.markdown @filter.markdown @span.markdown
+ f_mask String? @field.mask({mask "99-99"}) @filter.mask({mask "99-99"}) @span.mask({mask "99-99"})
+ f_radio String? @field.radio @filter.radio @span.radio
+ f_small Integer? @field.small @filter.small @span.small
+ f_suggest String? @field.suggest({options ["Alpha" "Beta"] remote "/never-fetch"}) @filter.suggest({options ["Alpha" "Beta"] remote "/never-fetch"}) @span.suggest({options ["Alpha" "Beta"] remote "/never-fetch"})
+ f_datelist String[]? @field.datelist @filter.datelist @span.datelist
+ f_datetimelist String[]? @field.datetimelist @filter.datetimelist @span.datetimelist
+ f_filelist String[]? @field.filelist @filter.filelist @span.filelist
+ f_imagelist String[]? @field.imagelist @filter.imagelist @span.imagelist
+ f_numberlist String[]? @field.numberlist @filter.numberlist @span.numberlist
+ f_timelist String[]? @field.timelist @filter.timelist @span.timelist
+ f_fieldset Detail? @field.fieldset @filter.fieldset @span.fieldset
+ v_chars String? @view.chars @list.chars
+ v_comma String[]? @view.comma @list.comma
+ v_country String? @view.country @list.country
+ v_currency String? @view.currency @list.currency
+ v_email String? @view.email @list.email
+ v_formula Number? @view.formula({formula "{this}+{price}"}) @list.formula({formula "{this}+{price}"})
+ v_line String[]? @view.line @list.line
+ v_relative String? @view.relative @list.relative
+ v_transform String? @view.transform @list.transform
+ v_words String? @view.words @list.words
+ v_carousel String[]? @view.carousel({auto true hidden true defaultIndex 1 style {width "240px"}}) @list.carousel({auto true hidden true defaultIndex 1 style {width "240px"}})
+ v_code String? @view.code({language "rust"}) @list.code({language "rust"})
+ v_color String? @view.color @list.color
+ v_film String[]? @view.film @list.film
+ v_json String? @view.json @list.json
+ v_markdown String? @view.markdown @list.markdown
+ v_rating Number? @view.rating @list.rating
+ v_list String[]? @view.list @list.list
+ v_ol String[]? @view.ol @list.ol
+ v_spread String[]? @view.spread @list.spread
+ v_tabular Object[]? @view.tabular @list.tabular
+ v_ul String[]? @view.ul @list.ul
+ v_fieldset Detail? @view.fieldset @list.fieldset
+ v_rel String? @view.rel @list.rel
+ f_fieldsets Detail[]? @field.fieldset @filter.fieldset @span.fieldset @view.fieldset @list.fieldset
+ price Number @default(3)
+}

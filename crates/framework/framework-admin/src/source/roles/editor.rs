@@ -84,7 +84,7 @@ pub fn EditorField(
 }
 
 /// React conditionals use JavaScript truthiness, including truthy empty objects/arrays.
-fn source_truthy(value: &Value) -> bool {
+pub(super) fn source_truthy(value: &Value) -> bool {
     match value {
         Value::Null => false,
         Value::Bool(value) => *value,

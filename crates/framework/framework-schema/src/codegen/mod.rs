@@ -43,6 +43,7 @@ mod source_graph;
 pub use source_graph::SourceGraph;
 mod source_assertions;
 mod source_roles;
+mod source_roles_remaining;
 pub use source_roles::{source_components, source_definitions};
 mod source_catalog;
 mod source_emit;

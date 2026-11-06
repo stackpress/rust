@@ -13,6 +13,7 @@ hydrate = ["leptos/hydrate"]
 csr = ["leptos/csr"]
 async = ["dep:futures", "dep:serde_json"]
 stream = ["ssr", "tokio/sync", "tokio/macros", "tokio/time"]
+source = ["dep:pulldown-cmark"]
 rich = ["dep:ammonia", "dep:pulldown-cmark"]
 format = ["dep:icu_decimal", "dep:icu_locale", "dep:icu_datetime", "dep:icu_calendar", "dep:phonenumber"]
 

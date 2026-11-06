@@ -145,6 +145,10 @@ pub fn Input(
     /// Whether this field has a current associated validation error.
     #[prop(optional, into)]
     invalid: Signal<bool>,
+    /// Omit empty help/error attributes for source-native controls that had no associations.
+    /// Nonempty descriptions and actual invalid states remain explicitly associated.
+    #[prop(optional)]
+    omit_empty_associations: bool,
     /// Disable native editing when the caller requires it.
     #[prop(optional, into)]
     disabled: Signal<bool>,
@@ -157,11 +161,23 @@ pub fn Input(
     /// Optional visible input hint, supplementary to the required label.
     #[prop(default = String::new())]
     placeholder: String,
+    /// Additional source/application classes; the base control class is retained.
+    #[prop(optional, into)]
+    class_name: String,
+    /// Optional native CSS declarations; no additional style admission is imposed.
+    #[prop(optional_no_strip)]
+    style: Option<String>,
 ) -> impl IntoView {
     // Attribute seeds SSR while property keeps subsequent browser edits controlled.
-    view! { <input class="sp-input" type=input_type id=id name=name
+    let class_name = if class_name.is_empty() {
+        "sp-input".to_owned()
+    } else {
+        format!("sp-input {class_name}")
+    };
+    view! { <input class=class_name style=style type=input_type id=id name=name
     value=move || value.get() prop:value=move || value.get()
-    aria-describedby=move || described_by.get() aria-invalid=move || invalid.get().to_string()
+    aria-describedby=move || {let value=described_by.get();(!omit_empty_associations||!value.is_empty()).then_some(value)}
+    aria-invalid=move || {let value=invalid.get();(!omit_empty_associations||value).then(||value.to_string())}
     disabled=move || disabled.get() required=move || required.get() readonly=move || read_only.get() placeholder=placeholder
     on:input=move |event| value.set(event_target_value(&event))/> }
 }
