@@ -75,3 +75,20 @@ M crates/server/server/src/http/common.rs
 A crates/server/server/src/http/json.rs
 M crates/server/server/tests/http_output.rs
 ```
+
+## Coordinator verification
+
+Committed as `710ccfc`, then merged into main as `9c5f33c`. Reviewed:
+- the HTTP-only `json::envelope` projection: Date → JS `toISOString` form, with the lib kept strict;
+- the session test-only `stackpress-server-http` edge, a workspace edge only.
+
+Post-merge gate on a detached `9c5f33c` (`/private/tmp/g57-verify/run.sh`, 2026-11-06), exit 0:
+- 699 tuples identical;
+- fmt; Clippy, default and compatible;
+- nextest: default 1,073 passed; compatible 1,240 passed; `tcp_watchdog` alone;
+- doctests; Rustdoc with `-D warnings`;
+- aggregate/session consumers and build-host `--check`;
+- freshness for generated-workspace/admin, models, API checkpoint and composite fixtures;
+- wasm32 admin/leptos;
+- docs and ledger;
+- the source-roles and editor browser proofs.
