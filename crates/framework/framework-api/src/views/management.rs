@@ -45,7 +45,7 @@ impl Management {
             .and_then(Value::as_str)
             .unwrap_or("/admin")
     }
-    /// Current source route, with slash-joined declared keys; copy uses create/<keys>.
+    /// Current source route, with slash-joined declared keys; copy uses `create/<keys>`.
     pub fn url(&self, action: Action, id: Option<&str>) -> String {
         format!(
             "{}/{}/{}{}",
