@@ -113,10 +113,19 @@ budgets precede normalization copies; decoded/aggregate budgets still apply afte
 ## 4. Output contract
 
 Text/Bytes preserve exact representation, including empty/non-UTF-8 buffers. Empty/Value output uses
-Response::try_to_json public envelope and application/json; explicit response MIME overrides stale
+the public response envelope and application/json; explicit response MIME overrides stale
 content-type for raw output. Repeated headers and separate Set-Cookie values are not folded. Scalar
 session revisions serialize normally, including scoped removals. List cookie revisions have no
 adapter codec option: they produce an Output diagnostic naming the cookie and fixed empty 500.
+
+At this HTTP boundary, native Dates anywhere in envelope results or field errors become UTC
+ISO-8601 strings with exactly three millisecond digits and a trailing `Z`, matching the original
+JavaScript `Date.toISOString()` form (G57). Redirects retain their envelope body. Conversion uses
+a separate envelope copy: in-process Dates and strict `Response::try_to_json` / Value serialization
+remain unchanged. Other non-JSON values still fail with a qualified diagnostic; projected Date
+strings must fit the response's existing limits. Dates beyond the JavaScript Date range fail.
+The `http_dates_*` tests in `tests/http_output.rs` pin the output contract; the session native HTTP
+regression also exercises actual signup/signin, SQLite, cookies and Hyper using finite duplex IO.
 
 Completed native status must be 200–599. Transfer-Encoding is rejected. Handler Content-Length
 cannot control framing: the adapter computes the actual representation length. Status 204/205/304

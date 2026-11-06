@@ -9,6 +9,7 @@
 //! empty status-500 output. An explicit codec option on [`HttpOptions`] is future work.
 
 mod common;
+mod json;
 #[cfg(feature = "http-stream")]
 pub mod stream;
 
