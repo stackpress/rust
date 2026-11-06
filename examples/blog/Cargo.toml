@@ -1,0 +1,46 @@
+[workspace]
+members = ["tool", "web", "shared", "client"]
+default-members = ["web"]
+resolver = "3"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.96"
+publish = false
+
+[workspace.dependencies]
+stackpress-framework-session = { path = "../../crates/framework/framework-session", default-features = false }
+stackpress-framework-api = { path = "../../crates/framework/framework-api", default-features = false }
+stackpress-framework = { path = "../../crates/framework/framework", default-features = false }
+stackpress-framework-schema = { path = "../../crates/framework/framework-schema", default-features = false }
+stackpress-framework-sql = { path = "../../crates/framework/framework-sql", default-features = false }
+stackpress-idea-parser = { path = "../../crates/idea/idea-parser" }
+stackpress-idea-transformer = { path = "../../crates/idea/idea-transformer" }
+stackpress-framework-admin = { path = "../../crates/framework/framework-admin", default-features = false }
+stackpress-framework-view = { path = "../../crates/framework/framework-view", default-features = false }
+stackpress-framework-email = { path = "../../crates/framework/framework-email", default-features = false }
+stackpress-framework-csrf = { path = "../../crates/framework/framework-csrf", default-features = false }
+stackpress-leptos = { path = "../../crates/leptos", default-features = false }
+stackpress-lib = { path = "../../crates/lib", default-features = false }
+stackpress-server = { path = "../../crates/server/server", default-features = false }
+stackpress-server-http = { path = "../../crates/server/http", default-features = false }
+stackpress-cli = { path = "../../tools/cli", default-features = false }
+stackpress-sql = { path = "../../crates/sql/sql", default-features = false }
+stackpress-sql-sqlite = { path = "../../crates/sql/sql-sqlite", default-features = false }
+leptos = { version = "=0.8.22", default-features = false }
+leptos_meta = { version = "=0.8.7", default-features = false }
+serde = { version = "=1.0.229", features = ["derive"] }
+serde_json = { version = "=1.0.154", features = ["preserve_order"] }
+http = "=1.5.0"
+tokio = { version = "=1.54.1", default-features = false }
+chrono = { version = "=0.4.45", default-features = false }
+wasm-bindgen = "=0.2.129"
+wasm-bindgen-futures = "=0.4.79"
+js-sys = "=0.3.106"
+web-sys = { version = "=0.3.106", default-features = false }
+tempfile = "3"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+missing_docs = "deny"

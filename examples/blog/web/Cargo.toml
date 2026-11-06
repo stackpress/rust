@@ -1,0 +1,42 @@
+[package]
+name = "blog-web"
+description = "File SQLite Stackpress blog example and finite application commands"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[features]
+default = ["server"]
+server = ["stackpress-framework-sql/server"]
+
+[dependencies]
+blog-shared = { path = "../shared", features = ["ssr"] }
+stackpress-framework = { workspace = true, features = ["full"] }
+stackpress-framework-session = { workspace = true, features = ["leptos-ssr"] }
+stackpress-framework-api = { workspace = true, features = ["sql", "ui-ssr"] }
+stackpress-framework-admin = { workspace = true, features = ["source-ssr", "format"] }
+stackpress-framework-schema = { workspace = true, features = ["source"] }
+stackpress-framework-sql = { workspace = true, features = ["source", "server", "migrations", "sqlite-maintenance"] }
+stackpress-framework-view = { workspace = true, features = ["presentation", "leptos-ssr"] }
+stackpress-framework-email = { workspace = true, features = ["server"] }
+stackpress-framework-csrf = { workspace = true, features = ["server"] }
+stackpress-leptos = { workspace = true, features = ["ssr", "format"] }
+stackpress-lib.workspace = true
+stackpress-server = { workspace = true, features = ["http"] }
+stackpress-server-http.workspace = true
+stackpress-cli.workspace = true
+stackpress-sql.workspace = true
+stackpress-sql-sqlite = { workspace = true, features = ["maintenance"] }
+leptos = { workspace = true, features = ["ssr"] }
+serde.workspace = true
+serde_json.workspace = true
+http.workspace = true
+tokio = { workspace = true, features = ["macros", "rt", "sync", "time", "io-util", "signal"] }
+chrono = { workspace = true, features = ["clock"] }
+
+[dev-dependencies]
+tempfile.workspace = true
+
+[lints]
+workspace = true

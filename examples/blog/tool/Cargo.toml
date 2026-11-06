@@ -1,0 +1,31 @@
+[package]
+name = "blog-tool"
+description = "Independent source-model generator for the Stackpress blog boilerplate"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[features]
+default = []
+# Compile only after generating the owned .build/generated tree; never needed to generate.
+native-proof = []
+# The emitted native registrar uses this ordinary optional source-runtime feature.
+server = ["stackpress-framework-sql/server"]
+
+[dependencies]
+stackpress-framework-session.workspace = true
+stackpress-framework-api.workspace = true
+stackpress-framework = { workspace = true, features = ["codegen"] }
+stackpress-framework-schema = { workspace = true, features = ["codegen", "source"] }
+stackpress-framework-sql = { workspace = true, features = ["codegen", "source"] }
+stackpress-idea-parser.workspace = true
+stackpress-idea-transformer.workspace = true
+
+stackpress-framework-admin = { workspace = true, features = ["codegen", "format"] }
+
+[dev-dependencies]
+tempfile.workspace = true
+
+[lints]
+workspace = true

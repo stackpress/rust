@@ -1,0 +1,107 @@
+{
+  "name": "Stackpress Blog MCP",
+  "version": "1.0.0",
+  "route": "/mcp",
+  "mode": "stateful",
+  "tools": [
+    {
+      "name": "article_search",
+      "title": "Search Articles",
+      "description": "Returns published articles that match the search query.",
+      "type": "public",
+      "method": "GET",
+      "event": "article-search",
+      "input": {
+        "type": "object",
+        "properties": {
+          "q": {
+            "type": "string"
+          },
+          "limit": {
+            "type": "number"
+          }
+        }
+      },
+      "data": {}
+    },
+    {
+      "name": "article_create",
+      "title": "Create Article",
+      "description": "Creates a new article draft for the authenticated app.",
+      "type": "app",
+      "method": "POST",
+      "event": "article-create",
+      "scopes": [
+        "articles.write"
+      ],
+      "input": {
+        "type": "object",
+        "required": [
+          "title",
+          "slug",
+          "content",
+          "profileId",
+          "keywords",
+          "tags"
+        ],
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "keywords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "content": {
+            "type": "string"
+          },
+          "profileId": {
+            "type": "string"
+          },
+          "banner": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "data": {}
+    },
+    {
+      "mode": "plugin",
+      "event": "article-detail-tool"
+    },
+    {
+      "mode": "plugin",
+      "type": "app",
+      "event": "article-update-tool",
+      "scopes": [
+        "articles.write"
+      ]
+    },
+    {
+      "mode": "plugin",
+      "event": "comment-search-tool"
+    },
+    {
+      "mode": "plugin",
+      "type": "user",
+      "event": "comment-create-tool",
+      "scopes": [
+        "comments.write"
+      ]
+    }
+  ]
+}
