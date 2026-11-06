@@ -1,6 +1,7 @@
 //! Native-semantic controls, explicit layout slots and root-scoped providers.
 //!
-//! All strings render as escaped text. Styles are small, neutral and identical
+//! Ordinary controls escape text; HTML and TextEditor explicitly insert raw HTML.
+//! Styles are small, neutral and identical
 //! across SSR/hydration/CSR; application-specific branding remains with callers.
 //! Include CORE_STYLES for ordinary controls/action groups and ADVANCED_STYLES
 //! for table/dialog presentation and document scroll locking. Add BREADTH_STYLES
@@ -15,7 +16,9 @@ pub const BASE_STYLES: &str = include_str!("styles.css");
 mod controls;
 mod display_values;
 mod icons;
+mod text_editor;
 pub use icons::ChevronRight;
+pub use text_editor::{HTML, TextEditor, TextEditorOptions, TextEditorUpdate};
 mod inputs;
 mod presentation;
 pub use display_values::{

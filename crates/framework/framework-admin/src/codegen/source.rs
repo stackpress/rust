@@ -30,13 +30,9 @@ pub fn source_definitions() -> SchemaResult<DefinitionRegistry> {
         registry = registry.with_component(definition, Some(import))?;
     }
     for mut definition in source {
-        if definition.name == "field.editor" {
-            // No shared rich editor exists. Retain authored props as metadata and refuse
-            // concrete emission until the app supplies a compiled adapter explicitly.
-            registry = registry.with_component(definition, None)?;
-            continue;
-        }
         let symbol = match definition.name.as_str() {
+            "field.editor" => "EditorField",
+            "view.html" => "HtmlView",
             "field.input" | "field.url" | "field.password" => "InputField",
             "field.relation" => "RelationField",
             "field.metadata" => "MetadataField",

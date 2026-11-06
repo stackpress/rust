@@ -8,6 +8,45 @@ use stackpress_idea_transformer::{
 };
 use std::collections::{BTreeMap, BTreeSet};
 
+/// Complete editor signatures fit the finite catalog; oversized signatures still fail.
+#[test]
+fn editor_signature_budget_is_additive_and_still_bounded() {
+    for (count, accepted) in [(32, true), (41, true), (64, true), (65, false)] {
+        let definition = ComponentDefinition {
+            name: "field.editor".into(),
+            key: "proof.editor".into(),
+            revision: "1".into(),
+            props: (0..count)
+                .map(|index| PropDefinition {
+                    name: format!("option{index}"),
+                    value_type: PropType::Boolean,
+                    required: false,
+                    public: true,
+                })
+                .collect(),
+            fixed: BTreeMap::new(),
+            available: false,
+        };
+        assert_eq!(
+            DefinitionRegistry::standard()
+                .with_component(definition, None)
+                .is_ok(),
+            accepted
+        );
+    }
+    // Metadata-only definitions preserve every named prop without choosing a renderer.
+    let definitions = source_definitions().unwrap();
+    let source = config(
+        "model Article { contents Text @field.editor({ template true value \"<p>HTML</p>\" }) @view.html }",
+    );
+    let graph = Schema::normalize_source(&source, Default::default(), &[]).unwrap();
+    let ui = graph.project_source_ui(&definitions).unwrap();
+    let roles = &ui.models[0].fields[0].roles;
+    assert!(roles.iter().all(|role| !role.available));
+    assert_eq!(roles[0].props["template"], serde_json::json!(true));
+    assert_eq!(roles[0].props["value"], serde_json::json!("<p>HTML</p>"));
+}
+
 /// Compose actual shipped package bytes and optional app extensions with the real loader.
 fn config(input: &str) -> SchemaConfig {
     let mut app = MemoryLoader::new("/source-emission").unwrap();

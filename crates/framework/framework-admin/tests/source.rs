@@ -9,6 +9,9 @@ use stackpress_idea_transformer::{
     Composer, MemoryLoader, OutputPlan, PackageLoader, Registry, TransformContext, TransformSpec,
 };
 
+#[path = "source/editor.rs"]
+mod editor;
+
 fn config() -> stackpress_idea_parser::SchemaConfig {
     let mut app = MemoryLoader::new("/source-admin").unwrap();
     app.insert("schema.idea","use \"stackpress-api/schema.idea\"\nmodel Profile { nickname String? @default(\"Ada\") @field.input @list.string @view.string @filter.input }");
@@ -236,14 +239,13 @@ fn source_select_uses_authored_option_order_with_the_shared_control() {
 #[test]
 fn source_declared_but_unimplemented_adapter_props_are_not_silently_ignored() {
     for source in [
-        "model Article { contents Text? @field.editor({ history true }) }",
         "model Article { status String @field.select({ options [\"A\"] className \"source-style\" }) }",
         "model Article { created Datetime @view.date(\"YYYY\") }",
         "model Article { metadata Hash @view.metadata({ style { color \"red\" } }) }",
     ] {
         let config =
             stackpress_idea_parser::parse("unavailable.idea", source, &Default::default()).unwrap();
-        // Metadata acceptance does not promise a compiled editor or styling adapter.
+        // Metadata acceptance does not promise an application styling adapter.
         let graph = Schema::normalize_source(&config, Default::default(), &[]).unwrap();
         assert!(
             graph

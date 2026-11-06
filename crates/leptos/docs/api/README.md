@@ -22,6 +22,7 @@ Use [the mode matrix](../README.md#select-one-render-mode) before compiling a co
 | [Startup](initialize-ssr.md) | `render::initialize_ssr (native ssr)` |
 | [Button](button.md) | `components::Button, ButtonType` |
 | [Input](input.md) | `components::Input` |
+| [HTML editing and display](text-editor.md) | `components::TextEditor, TextEditorOptions, TextEditorUpdate, HTML` |
 | [FieldControl](field-control.md) | `components::FieldControl` |
 | [Alert](alert.md) | `components::Alert` |
 | [Loader](loader.md) | `components::Loader` |
