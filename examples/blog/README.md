@@ -146,25 +146,38 @@ natively. The commands guide explains those retained source semantics.
   create Category/Catalog and a scoped Application, verify API denial/success, and export CSV.
   The copied-out app adds Nickname through regeneration/migration and edits it in both renderers.
 
-## Finite contributor proofs
+## Verify
+
+From `examples/blog` in a fresh Stackpress Rust checkout, run this exact sequence using the
+already installed toolchain, cached dependencies, WASM target, matching `wasm-bindgen`, nextest,
+LLVM tools and cached Playwright. As with the other contributor commands, record the sequence
+through the repository benchmark recorder and its persistent store. No earlier `.build/`
+directory, generated source, database, lock-resolution marker or review patch is required.
 
 ```sh
-python3 proof.py storage
-python3 proof.py generation
-python3 proofs/extension.py
-python3 proofs/graphs.py
-python3 proofs/browser.py --public-only --matrix
+export RUSTC_WRAPPER=sccache SCCACHE_CACHE_SIZE=20G
+export CARGO_INCREMENTAL=0 CARGO_PROFILE_DEV_DEBUG=0 CARGO_BUILD_JOBS=2
+export CARGO_TARGET_DIR="$PWD/target/verify/native"
 python3 proofs/gate.py
-python3 proofs/locks.py check --release blog-post-g57
 ```
 
-Generate the native bootstrap, extension fixture and browser artifacts before the complete
-integration tests. The repository gate also requires the prepared copied-out nickname fixture
-(`proofs/nickname.py prepare`); its root-path manifest patch is reviewed before that proof runs.
-`storage` includes the Catalog redirect, native HTTP Date and cookie-scope regressions.
-The gate checks all authored Rust formatting while generation freshness checks the managed
-output. It runs native and renderer-specific Clippy/docs/tests/graphs/browser proofs and exports
-native LLVM coverage with fresh per-run profiles and the explicit G56 browser-entry exemption.
-`web/src/bin/probe.rs` is a finite stdin/stdout real-HTTP/SQLite fixture for later cached Playwright
-routing. It opens no socket. The lock audit uses an ignored repository baseline and is not a
-copied-out app runtime requirement. No command installs packages or updates registry versions.
+The gate first runs the same `generate-app` and `generate` commands described above, then
+`proofs/extension.py` creates the generated nullable-Profile fixture that the integration tests
+compile. It builds actual browser assets before the native HTTP asset test, explicitly builds
+the stdin/stdout `probe` executable, and prepares the copied-out nickname project/database and
+both browser products. Its copy step changes only existing repository-local dependency paths
+to this checkout; every source/copied/root lock stays unchanged. These are finite operations;
+the gate opens no listener and installs nothing.
+
+It then checks formatting, freshness, native and separate-renderer Clippy, all native tests,
+docs, dependency graphs, public/authenticated/copied-out browser flows, and native coverage.
+The lock check recomputes the example subset against the committed 699-tuple root lock, without
+reading a marker. Logs and per-phase results are in `.build/gate/`; compiled targets stay under
+the dedicated `target/verify/` budget. Completed consumer/browser targets may be retired before
+coverage; exact browser products and test reports remain in `.build/`.
+
+For later narrow edit loops, `proof.py storage` and `proof.py generation` reuse the prerequisites
+created by this sequence. Their integration modules intentionally compile the generated
+extension fixture; running them before generation is unsupported. The suite includes the
+Catalog redirect, native HTTP Date and cookie-scope regressions. `blog-client` retains its G56
+coverage exemption, exercised by actual hydration/CSR browser tests.
