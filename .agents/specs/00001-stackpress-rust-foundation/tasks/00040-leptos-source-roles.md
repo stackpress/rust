@@ -137,3 +137,29 @@ Root Cargo.lock and workspace manifest are byte-identical to HEAD; all 699 regis
 No requested canonical role remains unavailable. G55 rich-role differences, the native Date spelling/locale boundary, and literal handling of arbitrary RegExp-like formula keys outside normalized source field names are explicit in the API reference. This is local web/native compilation and browser proof, not installed Tauri, live upload/provider, publication or owner visual acceptance.
 
 KB validator: 147 inherited errors and 39 warnings; none concern this receipt. Coordinator reviews/verifies/merges; owner decides product acceptance. No commit/push/listener/install. Aggregate/session/API/SQL source/docs, examples/blog and other trial worktrees were untouched; the website lock is the explicit coordinator-approved exception.
+
+## Follow-up: nested locks
+
+Coordinator-scoped fix after merge `73ce025`: each checkpoint lock was copied from the root lock and resolved exactly once with offline `cargo tree`. Immediately after each resolution, registry tuples were asserted to be a root subset, root bytes identical, and the same 699 root tuples/checksums unchanged. Each adds only pulldown-cmark 0.13.5, pulldown-cmark-escape 0.11.0 and unicase 2.10.0, plus the corresponding Leptos dependency edge; nothing was removed.
+
+| Lock under `examples/api-checkpoint/` | Registry tuples before → after |
+| --- | ---: |
+| `tool/Cargo.lock` | 368 → 371 |
+| `web/Cargo.lock` | 398 → 401 |
+| `client/Cargo.lock` | 315 → 318 |
+
+All requested verification passed with Cargo `--locked --offline`: tool `--check` (fresh generated source), native web build, client WASM hydrate/CSR builds, aggregate website hydrate/CSR Clippy/build/bindgen and secret-sentinel checks, session `consumers/graphs.py --check`, and session `consumers/run.py` (direct/facade/plugin/disabled, including fmt, strict Clippy and runtime assertions). All four session locks admitted unchanged; no session lock refresh was needed.
+
+The unchanged `examples/api-checkpoint/proofs/browser.cjs` passed 13 scenarios for each standalone hydrate, standalone CSR, aggregate hydrate and aggregate CSR: **52 total**, each with zero errors and zero unexpected requests. Aggregate runs used `API_AGGREGATE_ASSET=1` and freshly rebuilt aggregate artifacts. `API_REVIEW_ONLY` was unset throughout; light/dark and responsive cases ran inside each matrix. The cached Playwright/Chromium and stdio interception opened no listener. Reports/assets/screenshots and orchestration scripts remain in `target/00040/nested-followup/`; benchmark index is `benchmark-index.json` there.
+
+| Follow-up benchmark record (same permanent store above) | Result | Command s | Cargo stages s |
+| --- | --- | ---: | ---: |
+| `20261106T074931.323151Z-e18e9539bb17` | Three sequential lock refreshes and immediate invariants passed | 1.411 | — |
+| `20261106T075049.978540Z-69f3081412ee` | Checkpoint freshness/builds and standalone 26 browser scenarios passed | 410.859 | 378.850 |
+| `20261106T075054.036903Z-eb402b1aab1a` | Session graphs and all four consumers passed | 589.746 | 573.030 |
+| `20261106T075326.932188Z-ec23211a617d` | Aggregate hydrate/CSR artifacts passed | 207.600 | 203.420 |
+| `20261106T075811.679235Z-eb5046c6fc24` | Aggregate 26 browser scenarios passed | 29.862 | — |
+
+Follow-up counters: 0 → 5 attempts, all passed; 0 → 3 compilation-emitting attempts; zero cold workspace rebuilds. Accumulated command time 1,239.476 s; observed Cargo stages 1,155.300 s (overlapping runs, not calendar elapsed time). Fresh consumer subtargets used warm sccache, incremental/debug off and two Cargo jobs. Sampled follow-up output peak 7.39 GiB; existing primary target retained at 11.73 GiB, with 90 GiB disk free at close.
+
+Final scope is exactly the three checkpoint locks and this appended receipt; root lock/manifest and all source remain unchanged. Root SHA-256 and all 699 tuples match the original receipt. Current KB validation baseline is 146 inherited errors and 42 warnings; the appendix adds no diagnostics. No follow-up gaps, commits, pushes, listeners or installations.
