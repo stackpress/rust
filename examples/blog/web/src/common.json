@@ -1,0 +1,360 @@
+{
+  "admin": {
+    "name": "Admin",
+    "base": "/admin",
+    "menu": [
+      {
+        "name": "Categories",
+        "icon": "sitemap",
+        "path": "/admin/category/search",
+        "match": "/admin/category"
+      },
+      {
+        "name": "Articles",
+        "icon": "file",
+        "path": "/admin/article/search",
+        "match": "/admin/article"
+      },
+      {
+        "name": "Profiles",
+        "icon": "user",
+        "path": "/admin/profile/search",
+        "match": "/admin/profile"
+      },
+      {
+        "name": "Auth",
+        "icon": "lock",
+        "path": "/admin/auth/search",
+        "match": "/admin/auth"
+      },
+      {
+        "name": "Apps",
+        "icon": "laptop",
+        "path": "/admin/application/search",
+        "match": "/admin/application"
+      },
+      {
+        "name": "Sessions",
+        "icon": "coffee",
+        "path": "/admin/session/search",
+        "match": "/admin/session"
+      }
+    ]
+  },
+  "api": {
+    "expires": 31536000000,
+    "webhooks": [
+      {
+        "event": "auth-signout",
+        "uri": "http://localhost:3000/api/webhook",
+        "method": "POST",
+        "validity": {},
+        "data": {}
+      }
+    ],
+    "scopes": {
+      "user": {
+        "name": "User API Service",
+        "description": "Profile Endpoints"
+      }
+    },
+    "endpoints": [
+      {
+        "method": "GET",
+        "route": "/api/auth/search",
+        "type": "public",
+        "event": "auth-search",
+        "cors": true,
+        "data": {}
+      },
+      {
+        "method": "GET",
+        "route": "/api/profile/search",
+        "type": "app",
+        "scopes": [
+          "user"
+        ],
+        "event": "profile-search",
+        "data": {}
+      },
+      {
+        "method": "GET",
+        "route": "/api/profile/detail/:id",
+        "type": "app",
+        "scopes": [
+          "user"
+        ],
+        "event": "profile-detail",
+        "data": {}
+      },
+      {
+        "method": "GET",
+        "route": "/api/profile/get/:key/:value",
+        "type": "app",
+        "scopes": [
+          "user"
+        ],
+        "event": "profile-get",
+        "data": {}
+      },
+      {
+        "method": "GET",
+        "route": "/api/my/address",
+        "type": "session",
+        "scopes": [
+          "user"
+        ],
+        "event": "profile-detail",
+        "data": {}
+      },
+      {
+        "method": "GET",
+        "route": "/api/my/files",
+        "type": "session",
+        "scopes": [
+          "user"
+        ],
+        "event": "profile-detail",
+        "data": {}
+      }
+    ]
+  },
+  "auth": {
+    "base": "/auth",
+    "redirect": "/",
+    "2fa": {
+      "issuer": "Stackpress"
+    },
+    "roles": [
+      "USER"
+    ],
+    "menu": [
+      {
+        "name": "With Username",
+        "icon": "user",
+        "path": "/auth/signin/username"
+      },
+      {
+        "name": "With Email",
+        "icon": "envelope",
+        "path": "/auth/signin/email"
+      },
+      {
+        "name": "With Phone",
+        "icon": "phone",
+        "path": "/auth/signin/phone"
+      },
+      {
+        "name": "Create a New Account",
+        "icon": "user-plus",
+        "path": "/auth/signup"
+      },
+      {
+        "type": "footer",
+        "name": "Terms of Use",
+        "path": "/auth/terms-of-use"
+      },
+      {
+        "type": "footer",
+        "name": "Privacy Policy",
+        "path": "/auth/privacy-policy"
+      }
+    ],
+    "password": {
+      "min": 8,
+      "max": 32,
+      "upper": true,
+      "lower": true,
+      "number": true,
+      "special": true
+    }
+  },
+  "brand": {
+    "name": "Stackpress",
+    "logo": "/logo.png",
+    "icon": "/icon.png",
+    "favicon": "/favicon.ico"
+  },
+  "client": {
+    "lang": "js",
+    "module": "blog-client",
+    "package": "blog-client",
+    "revisions": ".build/revisions",
+    "build": "node_modules/blog-client",
+    "tsconfig": "tsconfig.json",
+    "prettier": {
+      "singleQuote": true,
+      "jsxSingleQuote": false,
+      "trailingComma": "none",
+      "bracketSpacing": true,
+      "experimentalTernaries": true
+    }
+  },
+  "cookie": {
+    "path": "/"
+  },
+  "csrf": {
+    "name": "csrf"
+  },
+  "database": {
+    "seed": "abc123",
+    "migrations": ".build/migrations",
+    "schema": {
+      "onDelete": "CASCADE",
+      "onUpdate": "RESTRICT"
+    }
+  },
+  "email": {
+    "host": "smtp.example.com",
+    "port": 587,
+    "secure": false,
+    "auth": {
+      "user": "username",
+      "pass": "password"
+    }
+  },
+  "language": {
+    "key": "locale",
+    "locale": "en_US",
+    "languages": {
+      "en_US": {
+        "label": "EN",
+        "translations": {
+          "Sign In": "Signin",
+          "Home Page": "Home Page"
+        }
+      },
+      "th_TH": {
+        "label": "TH",
+        "translations": {
+          "Sign In": "Signin",
+          "Home Page": "Home Pagesss"
+        }
+      }
+    }
+  },
+  "server": {
+    "host": "127.0.0.1",
+    "port": 3000,
+    "cwd": "."
+  },
+  "session": {
+    "key": "session",
+    "seed": "abc123",
+    "access": {
+      "ADMIN": [
+        {
+          "method": "ALL",
+          "route": "/"
+        },
+        {
+          "method": "ALL",
+          "route": "/articles/**"
+        },
+        {
+          "method": "ALL",
+          "route": "/auth/**"
+        },
+        {
+          "method": "ALL",
+          "route": "/admin/**"
+        },
+        {
+          "method": "ALL",
+          "route": "/api/**"
+        }
+      ],
+      "MANAGER": [
+        {
+          "method": "ALL",
+          "route": "/"
+        },
+        {
+          "method": "ALL",
+          "route": "/articles/**"
+        },
+        {
+          "method": "ALL",
+          "route": "/auth/**"
+        },
+        {
+          "method": "ALL",
+          "route": "/admin/auth/**"
+        },
+        {
+          "method": "ALL",
+          "route": "/api/**"
+        }
+      ],
+      "USER": [
+        {
+          "method": "ALL",
+          "route": "/"
+        },
+        {
+          "method": "ALL",
+          "route": "/articles/**"
+        },
+        {
+          "method": "ALL",
+          "route": "/auth/**"
+        },
+        {
+          "method": "ALL",
+          "route": "/api/**"
+        }
+      ],
+      "GUEST": [
+        {
+          "method": "ALL",
+          "route": "/"
+        },
+        {
+          "method": "ALL",
+          "route": "/articles/**"
+        },
+        {
+          "method": "ALL",
+          "route": "/auth/signup"
+        },
+        {
+          "method": "ALL",
+          "route": "/auth/signin"
+        },
+        {
+          "method": "ALL",
+          "route": "/auth/signin/**"
+        },
+        {
+          "method": "ALL",
+          "route": "/auth/signout"
+        },
+        {
+          "method": "ALL",
+          "route": "/api/**"
+        },
+        {
+          "method": "ALL",
+          "route": "/mcp"
+        }
+      ]
+    }
+  },
+  "terminal": {
+    "label": "[BLOG]",
+    "idea": "schema.idea"
+  },
+  "view": {
+    "noview": "json",
+    "base": "/",
+    "notify": {
+      "position": "bottom-right",
+      "autoClose": 5000,
+      "hideProgressBar": false,
+      "closeOnClick": true,
+      "pauseOnHover": true,
+      "draggable": true,
+      "theme": "dark"
+    }
+  }
+}

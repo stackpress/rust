@@ -1,0 +1,28 @@
+[package]
+name = "blog-shared"
+description = "Portable blog and generated admin Leptos views"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[features]
+default = []
+ssr = ["leptos/ssr", "stackpress-leptos/ssr", "stackpress-framework-admin/source-ssr", "stackpress-framework-api/ui-ssr", "stackpress-framework-session/leptos-ssr", "stackpress-framework-view/leptos-ssr"]
+hydrate = ["leptos/hydrate", "stackpress-leptos/hydrate", "stackpress-framework-admin/hydrate", "stackpress-framework-api/ui-hydrate", "stackpress-framework-session/leptos-hydrate", "stackpress-framework-view/leptos-hydrate"]
+csr = ["leptos/csr", "stackpress-leptos/csr", "stackpress-framework-admin/csr", "stackpress-framework-api/ui-csr", "stackpress-framework-session/leptos-csr", "stackpress-framework-view/leptos-csr"]
+
+[dependencies]
+stackpress-framework-schema.workspace = true
+stackpress-framework-admin = { workspace = true, features = ["source", "format"] }
+stackpress-framework-api = { workspace = true, features = ["ui"] }
+stackpress-framework-session = { workspace = true, features = ["leptos"] }
+stackpress-framework-view = { workspace = true, features = ["preferences", "leptos"] }
+stackpress-leptos = { workspace = true, features = ["format"] }
+leptos.workspace = true
+leptos_meta.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+
+[lints]
+workspace = true

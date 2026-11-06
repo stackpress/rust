@@ -1,0 +1,3 @@
+{
+  "sqlite": { "path": ".build/blog.sqlite" }
+}
