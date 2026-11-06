@@ -9,14 +9,23 @@ application migration. No session plugin invokes installation or maintenance.
 ```rust
 use stackpress_framework_session::{
     columns::Record,
-    storage::{AuthActions, ProfileActions, Result, StoreQuery},
+    storage::{
+        AccountActions, DefaultModels, PasswordConfig, ProfileActions, ProfileStore, Result,
+        StoreQuery,
+    },
 };
 use stackpress_sql::Engine;
 use std::sync::Arc;
 
 pub async fn account(engine: Arc<Engine>) -> Result<()> {
-    let profiles = ProfileActions::new(engine.clone(), "database-seed");
-    let auth = AuthActions::new(engine, "database-seed");
+    let profiles =
+        ProfileActions::new(engine.clone(), ProfileStore::new("database-seed".into(), 0));
+    let auth = AccountActions::<DefaultModels>::new(
+        engine,
+        "database-seed".into(),
+        0,
+        PasswordConfig::default(),
+    );
     let input: Record = serde_json::from_value(serde_json::json!({
         "name": "Ada", "email": "ada@example.test", "secret": "hello"
     }))
@@ -30,18 +39,20 @@ pub async fn account(engine: Arc<Engine>) -> Result<()> {
 }
 ```
 
-`ProfileSchema::new(seed)` / `AuthSchema::new(seed)` require `native`, independently of SQL.
-`schema.columns` exposes each source name, SQL name, kind, optional/nullability, required
-message, string minimum and literal default. Column `defaults[_at]`, `assert`, `serialize`
-and `unserialize` are directly available. `None` represents JavaScript undefined. Records
-are maps of `columns::Value`, preserving missing keys, null, arrays, objects and native Dates.
+`ProfileSchema` / `AuthSchema` require `native`, independently of SQL. Import
+`columns::SourceSchema` for `new(String, offset_minutes)` and static `describe()`/`catalog()`.
+`columns()` and `column(name)` expose generated `SourceColumn` descriptors: source/SQL
+names, primitive codec and the authored Field with defaults, rules and UI metadata.
+Column defaults/assert/serialize/unserialize are directly available. `None` represents
+JavaScript undefined. Records are insertion-ordered maps of `columns::Value`, preserving
+missing keys, null, arrays, objects and native Dates.
 JSON input uses normal Serde conversion; arbitrary object keys are never Date markers.
 
 Native JavaScript Date values use `columns::date(milliseconds)` values to distinguish a
 Date from a numeric input. `columns::as_date` reads them; `columns::to_json` recursively
 produces source JSON Date strings for an explicit wire boundary; normal Serde serialization does the same. Use
 `date_with_display(milliseconds, display)` when an array's Date.toString needs the host's
-local timezone label; the native default context is UTC. Schema `with_offset_minutes`
+local timezone label; the native default context is UTC. The schema constructor’s `offset_minutes`
 selects local Date column conversion without mutating process timezone state. The native
 time library's representable years/offsets are explicit fallible mechanics limits. Date
 strings support ISO/RFC3339, source SQL local text, date-only and V8 numeric month/year
@@ -58,12 +69,12 @@ Rust input contract. Use a native Date value for those values.
 | `upsert[_in]` | Present ID takes precedence and returns null if not found. Auth then tries a nonempty token. Otherwise create. |
 | `batch` | Explicit transaction on one executor. Caught item errors cause rollback after all items. Status rows describe attempts even if rollback/commit fails. Missing update keys add an error item without setting rollback. |
 | `install`, `upgrade`, `purge`, `uninstall` | G48: explicit source install/upgrade is ordered and non-atomic on MySQL, atomic on PostgreSQL/SQLite. Ordinary transaction guarantees stay unchanged. Single-statement purge/uninstall keep their existing semantics; these standalone actions forward purge's cascade only on PostgreSQL. |
-| `signin`, `signup`, `assert` | Source password checks/errors, optional password comparison, consumed reload; signup creates profile/email/phone/username sequentially, preserving earlier writes after later failures. Missing phone succeeds under G44. |
+| `AccountActions::{signin, signup, assert}` | Source password checks/errors, optional password comparison, consumed reload; signup creates profile/email/phone/username sequentially, preserving earlier writes after later failures. Missing phone succeeds under G44. |
 
 `StoreQuery` supplies `eq`, `ne`, `ge`, `le`, `like`, `has`, `hasnt`, `q`, `columns`, `sort`,
-`skip` and `take`. Arrays in scalar conditions form OR groups. Unknown ordinary scalar
+`skip` and `take`. `eq` takes one value; arrays retain source indexed-path AND semantics. Unknown ordinary scalar
 selectors are skipped as source; JSON membership reaches the database. `Store::select`,
-`insert[_for]`, `update`, `delete`, `create` and `alter` return detached SQL builders/plans.
+`insert(&Record, DialectId)`, `update`, `delete`, `create` and `alter` return detached SQL builders/plans.
 Selectors, paths, joins, scalarize, unscalarize and to_sql_value are available directly.
 Auth's requested `profile.*` is an inner join with no extra profile-active predicate.
 ProfileStore has no reverse eager relations, matching the generated source store.
@@ -84,7 +95,8 @@ Source behaviors intentionally retained:
 - Omitted Profile lists become [] during preparation, including the merged update return;
   SQL writes only supplied fields. Empty text removed from a merged return can still be
   written by the original input. These returns are not a persisted-row acknowledgement.
-- `hasnt` currently compiles as `has`. JSON membership arrays form source OR groups.
+- G53 `has` requires every requested value. G54 `hasnt` excludes every requested value;
+  SQL NULL lists and missing JSON paths match. A nonexistent SQL column still errors.
 - G46 keeps ILIKE only on PostgreSQL. SQLite/MySQL use LIKE, relying on SQLite's default
   ASCII case-insensitive matching and MySQL's default _ci collations.
 
@@ -100,4 +112,6 @@ DB seed, secret or full result becomes a browser snapshot automatically.
 
 [Schema/column vectors](../tests/main/records.rs), [real SQLite Actions](../tests/main/actions.rs), [codec challenges](../tests/main/storage.rs) and [exclusive-executor compile failure](../tests/ui-sql/exclusive_executor.rs) anchor the storage contract. [Storage API](api/storage.md) lists the public methods and shared providers.
 
-**Resolved under G46:** PostgreSQL uses ILIKE; SQLite/MySQL use LIKE. Auth native create-return and positive hasnt follow the original source, unchanged. The [decision register](source-behavior.md#owner-decisions-g46) records the source anchors and rendering/execution evidence.
+**Owner decisions:** G46 uses PostgreSQL ILIKE and SQLite/MySQL LIKE; Auth native
+create-return follows the original source. G54 supersedes positive `hasnt` with exclusion.
+The [decision register](source-behavior.md#owner-decisions-g46) records the source anchors.

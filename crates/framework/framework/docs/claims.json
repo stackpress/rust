@@ -994,10 +994,17 @@
         "contains": [
           "Positive hasnt"
         ]
+      },
+      {
+        "path": "crates/framework/framework-sql/src/source/membership.rs",
+        "contains": [
+          "fn non_membership",
+          "Expr::IsNull"
+        ]
       }
     ],
     "status": "resolved",
-    "decision": "G46"
+    "decision": "G54"
   },
   {
     "id": "question-optional-phone-on-update",
@@ -1223,6 +1230,27 @@
           "framework::register_with",
           "App Source",
           "source-account-export"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "g54-hasnt-excludes",
+    "page": "crates/framework/framework/docs/source-behavior.md",
+    "statement": "G54",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-sql/tests/main/source_models/runtime.rs",
+        "contains": [
+          "g54_hasnt_none_values_and_absence_on_real_sqlite"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-sql/tests/support/g54.rs",
+        "contains": [
+          "sql-null",
+          "references:absent",
+          "not_installed"
         ]
       }
     ]

@@ -1,6 +1,7 @@
 //! Original-source process traces and real SQLite reusable-event integration.
 use serde_json::{Value as Json, json};
 use stackpress_framework_csrf::{CsrfConfig, Service as Csrf};
+use stackpress_framework_schema::source::SourceSchema;
 use stackpress_framework_session::{
     Service,
     auth::{self, AuthConfig, Environment, Hooks, events, pages},
@@ -49,7 +50,7 @@ fn native(value: &Json) -> Lib {
 }
 /// Oracle uses one frozen instant; source fixture has second precision.
 fn auth_date(value: &str) -> i64 {
-    let column = auth::AuthSchema::default();
+    let column = auth::AuthSchema::new(String::new(), 0);
     let date = column
         .column("consumed")
         .unwrap()

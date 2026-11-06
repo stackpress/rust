@@ -17,8 +17,11 @@ async fn database() -> (tempfile::TempDir, Arc<Engine>, AuthActions) {
     .await
     .unwrap();
     let engine = Arc::new(Engine::new(db));
-    let actions = AuthActions::new(engine.clone(), "database-seed");
-    actions.profile().install().await.unwrap();
+    let actions = AuthActions::new(
+        engine.clone(),
+        stackpress_framework_session::storage::AuthStore::new("database-seed".into(), 0),
+    );
+    account(&actions).profile().install().await.unwrap();
     actions.install().await.unwrap();
     (dir, engine, actions)
 }
@@ -107,7 +110,7 @@ async fn token(host: &Server, id: &Value) -> String {
 async fn sql_account_update_password_and_ordered_nested_export() {
     let (_dir, engine, actions) = database().await;
     let host = host(Some(engine.clone())).await;
-    let profile = actions
+    let profile = account(&actions)
         .signup(&record(
             json!({"name":"Ada","email":"ada@example.test","secret":"correct"}),
         ))
@@ -193,7 +196,7 @@ async fn sql_account_update_password_and_ordered_nested_export() {
     // Deliberately reverse lexical order at two nested levels. The source preserves
     // this insertion order through JSON storage and the final flattened CSV cell.
     let patch:Record=serde_json::from_str(r#"{"references":{"z-last-alphabetically":{"b":"first","a":"second"},"a-first-alphabetically":"last"}}"#).unwrap();
-    actions
+    account(&actions)
         .profile()
         .update(&StoreQuery::eq("id", id.clone()), &mut patch.clone())
         .await
@@ -238,7 +241,7 @@ async fn sql_account_update_password_and_ordered_nested_export() {
 async fn sql_totp_enroll_regenerate_remove_get_and_account_soft_removal() {
     let (_dir, engine, actions) = database().await;
     let host = host(Some(engine.clone())).await;
-    let profile = actions
+    let profile = account(&actions)
         .signup(&record(
             json!({"name":"Ada","username":"ada-user","secret":"correct"}),
         ))
@@ -344,7 +347,7 @@ async fn sql_totp_enroll_regenerate_remove_get_and_account_soft_removal() {
     // The source generated profile-remove sees the parent's existing profile body
     // and passes through. Credential removals ran with fresh child responses.
     assert!(
-        actions
+        account(&actions)
             .profile()
             .find(&StoreQuery::eq("id", id.clone()))
             .await
@@ -416,4 +419,18 @@ async fn generated_sql_missing_engine_and_id_modes() {
     assert_eq!(missing.error(), Some("Not Found"));
     assert_eq!(auth::totp::generate_secret(0).unwrap(), "");
     engine.close().await.unwrap();
+}
+
+use stackpress_framework_schema::source::SourceSchema;
+
+/// Bind account orchestration to the same generated store environment.
+fn account(
+    actions: &AuthActions,
+) -> stackpress_framework_session::storage::AccountActions<stackpress_framework_models::Models> {
+    stackpress_framework_session::storage::AccountActions::new(
+        actions.engine.clone(),
+        actions.store.schema.seed().into(),
+        actions.store.schema.offset_minutes(),
+        Default::default(),
+    )
 }

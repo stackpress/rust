@@ -13,23 +13,21 @@ pub fn describe() -> Model {
 pub fn columns() -> Vec<SourceColumn> {
     let model = describe();
     let catalog = std::sync::Arc::new(super::_catalog::describe());
-    let codecs = vec![Column {
-        name: "value",
-        sql: "value",
-        kind: Kind::String,
-        nullable: true,
-        required_message: None,
-        minimum: None,
-        default: None,
-    }];
+    let codecs = vec![(
+        "value",
+        Column {
+            kind: Kind::String,
+            nullable: true,
+        },
+    )];
     // Pair by exact identity instead of dropping or shifting a virtual relation slot.
     codecs
         .into_iter()
-        .map(|codec| {
+        .map(|(name, codec)| {
             let field = model
                 .fields
                 .iter()
-                .find(|field| field.name == codec.name)
+                .find(|field| field.name == name)
                 .expect("generated column has source field")
                 .clone();
             SourceColumn::new(codec, field).with_catalog(catalog.clone())
@@ -53,6 +51,10 @@ impl KeylessSchema {
     /// Borrow the generated storage inventory and its complete field metadata.
     pub fn columns(&self) -> &[SourceColumn] {
         self.0.columns()
+    }
+    /// Borrow one declared storage column by its source field name.
+    pub fn column(&self, name: &str) -> Option<&SourceColumn> {
+        self.0.column(name)
     }
 }
 

@@ -1,4 +1,7 @@
 //! Opt-in G46 searches through the real Application/Session stores and their source DDL.
+
+#[path = "../../framework-sql/tests/support/g54.rs"]
+mod g54;
 #[path = "../../framework-session/tests/live/support.rs"]
 mod support;
 
@@ -32,9 +35,18 @@ async fn scenario(engine: Arc<Engine>) -> support::TestResult<()> {
 
 /// Observe each unchanged search/setup step before diagnosing a backend boundary.
 async fn scenario_steps(engine: Arc<Engine>) -> support::TestResult<()> {
-    let profile = ProfileActions::new(engine.clone(), "seed");
-    let app = ApplicationActions::new(engine.clone(), "seed");
-    let session = SessionActions::new(engine, "seed");
+    let profile = ProfileActions::new(
+        engine.clone(),
+        stackpress_framework_session::storage::ProfileStore::new("seed".into(), 0),
+    );
+    let app = ApplicationActions::new(
+        engine.clone(),
+        stackpress_framework_api::models::ApplicationStore::new("seed".into(), 0),
+    );
+    let session = SessionActions::new(
+        engine,
+        stackpress_framework_api::models::SessionStore::new("seed".into(), 0),
+    );
     println!("stage: Profile/Application/Session install");
     profile.install().await?;
     app.install().await?;
@@ -119,6 +131,7 @@ async fn scenario_steps(engine: Arc<Engine>) -> support::TestResult<()> {
     profile.purge(true).await?;
     println!("stage: Profile uninstall");
     profile.uninstall().await?;
+    g54::prove(profile).await?;
     Ok(())
 }
 fn main() {

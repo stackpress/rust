@@ -32,9 +32,20 @@ async fn main() -> Result<()> {
     ));
     let actions = stackpress_framework_session::storage::AuthActions::new(
         engine.clone(),
-        "DATABASE-SEED-MUST-NOT-REACH-BROWSER",
+        stackpress_framework_session::storage::AuthStore::new(
+            "DATABASE-SEED-MUST-NOT-REACH-BROWSER".into(),
+            0,
+        ),
     );
-    actions
+    let account = stackpress_framework_session::storage::AccountActions::<
+        stackpress_framework_models::Models,
+    >::new(
+        engine.clone(),
+        "DATABASE-SEED-MUST-NOT-REACH-BROWSER".into(),
+        0,
+        Default::default(),
+    );
+    account
         .profile()
         .install()
         .await
@@ -46,7 +57,7 @@ async fn main() -> Result<()> {
     let input: Record = serde_json::from_value(
         json!({"name":"Ada Lovelace","username":"ada-user","email":"ada@example.test","phone":"+639171234567","secret":"correct","roles":["USER"]}),
     )?;
-    let profile = actions
+    let profile = account
         .signup(&input)
         .await
         .map_err(stackpress_lib::Error::from_source)?;

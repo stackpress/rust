@@ -37,17 +37,25 @@ impl Db {
             .await
             .unwrap(),
         ));
-        let profile =
-            stackpress_framework_session::storage::ProfileActions::new(engine.clone(), "");
+        let profile = stackpress_framework_session::storage::ProfileActions::new(
+            engine.clone(),
+            stackpress_framework_session::storage::ProfileStore::new("".into(), 0),
+        );
         profile.install().await.unwrap();
-        ApplicationActions::new(engine.clone(), "")
-            .install()
-            .await
-            .unwrap();
-        SessionActions::new(engine.clone(), "")
-            .install()
-            .await
-            .unwrap();
+        ApplicationActions::new(
+            engine.clone(),
+            stackpress_framework_api::models::ApplicationStore::new("".into(), 0),
+        )
+        .install()
+        .await
+        .unwrap();
+        SessionActions::new(
+            engine.clone(),
+            stackpress_framework_api::models::SessionStore::new("".into(), 0),
+        )
+        .install()
+        .await
+        .unwrap();
         profile
             .create(
                 &serde_json::from_value(json!({"id":"p","name":"Ada Lovelace","roles":["USER"]}))

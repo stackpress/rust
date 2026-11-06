@@ -59,8 +59,8 @@ The [emission tests](../tests/source_emission.rs) cover every shipped construct,
 explicit role bindings, an added Profile field, external references and pre-output refusal.
 
 `source::SourceColumn` combines a field's complete metadata with the existing codec family.
-Its defaults derive from the declared value rule/literal rather than the legacy Column
-getter's framework field-name switch. `SourceRecordSchema` implements common ordered record
+Its defaults derive from the declared value rule/literal; the primitive Column has no
+framework field-name switch or duplicate validation metadata. `SourceRecordSchema` implements common ordered record
 operations; the generated schema wraps it and implements `SourceSchema`. Native seed/offset
 state is private and is not inserted into descriptors. The generated metadata decoder uses
 `source::__private::serde_json`; application crates need no direct serialization dependency.

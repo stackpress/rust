@@ -1,4 +1,7 @@
 //! Same generated four-model scenario on SQLite and opt-in owned network databases.
+
+#[path = "../../../framework-sql/tests/support/g54.rs"]
+mod g54;
 use serde_json::json;
 use stackpress_framework_models::generated::stores::{
     application::ApplicationModel, auth::AuthModel, profile::ProfileModel, session::SessionModel,
@@ -251,6 +254,7 @@ pub async fn scenario(engine: Arc<Engine>) -> TestResult<()> {
     app.uninstall().await?;
     auth.uninstall().await?;
     profile.uninstall().await?;
+    g54::prove(profile).await?;
     println!("stage: generated four-model scenario passed");
     Ok(())
 }

@@ -7,8 +7,8 @@ pub(super) fn flatten(value: &Record) -> Record {
     flatten_values(value, true)
 }
 
-/// G53 keeps each has array on its list column; all other filters retain source indices.
-pub(super) fn flatten_has(value: &Record) -> Record {
+/// G53/G54 keep membership arrays on their list column; scalar filters retain source indices.
+pub(super) fn flatten_membership(value: &Record) -> Record {
     flatten_values(value, false)
 }
 
@@ -71,6 +71,20 @@ fn json_scalar(value: &Value) -> Result<JsonScalar> {
             ));
         }
     })
+}
+
+/// G54 excludes each match and includes SQL NULL or an absent JSON path on every backend.
+pub(super) fn non_membership(
+    identifier: Identifier,
+    json: &[String],
+    value: &Value,
+    dialect: DialectId,
+) -> Result<Expr> {
+    let contains = membership(identifier.clone(), json, value, dialect)?;
+    // MySQL's array guard propagates SQL NULL, whereas the EXISTS backends return
+    // false. Make absence explicit before negation, without changing positive has.
+    let absent = Expr::IsNull(Box::new(Expr::json(identifier, path(json)?)), false);
+    Ok(Expr::any([absent, Expr::Not(Box::new(contains))]))
 }
 
 /// SQLite source json_each compares extracted SQL scalars: null never equals null,

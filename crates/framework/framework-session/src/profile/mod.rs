@@ -4,8 +4,7 @@
 //! an authenticated user. The generated default has ten stored columns and no
 //! reverse store relations; Idea's auth/applications/sessions edges remain model metadata.
 
-use crate::columns::{Record, RecordSchema};
-use std::ops::Deref;
+use crate::columns::Record;
 
 /// Source Profile record, including partial projection/create fallback results.
 pub type Profile = Record;
@@ -14,48 +13,8 @@ pub type ProfileInput = Record;
 /// Source extended profile; the generated store defines no eager reverse relations.
 pub type ProfileExtended = Record;
 
-/// Stable public Profile schema: defaults, assertions, filtering and column codecs.
-///
-/// ```
-/// use stackpress_framework_session::profile::ProfileSchema;
-/// let schema = ProfileSchema::new("");
-/// let defaults = schema.defaults_at(0)?;
-/// assert_eq!(defaults["roles"], serde_json::json!(["GUEST"]));
-/// assert!(schema.assert(&defaults, true).unwrap().contains_key("name"));
-/// # Ok::<(), stackpress_framework_schema::SchemaError>(())
-/// ```
-#[derive(Clone, Debug)]
-pub struct ProfileSchema(RecordSchema);
-impl ProfileSchema {
-    /// Retain source seed and columns without opening a database or generating defaults.
-    pub fn new(seed: impl Into<String>) -> Self {
-        Self(RecordSchema::from_generated::<
-            stackpress_framework_models::ProfileSchema,
-        >(seed.into(), 0))
-    }
-    /// Select the host's local UTC offset for Date column conversions.
-    pub fn with_offset_minutes(mut self, offset: i32) -> Self {
-        self.0 = self.0.with_offset_minutes(offset);
-        self
-    }
-    /// Own the underlying schema for native store composition.
-    pub fn into_schema(self) -> RecordSchema {
-        self.0
-    }
-}
-impl Default for ProfileSchema {
-    /// Direct source construction uses an empty seed.
-    fn default() -> Self {
-        Self::new("")
-    }
-}
-impl Deref for ProfileSchema {
-    type Target = RecordSchema;
-    /// Borrow source operations without duplicating ten generated column implementations.
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
+/// Generated default Profile schema. Use the `SourceSchema` trait for construction and metadata.
+pub use stackpress_framework_models::ProfileSchema;
 
 #[cfg(feature = "sql")]
 pub use crate::storage::{ProfileActions, ProfileStore};

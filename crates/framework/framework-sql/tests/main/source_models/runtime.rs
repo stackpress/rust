@@ -7,6 +7,9 @@ use stackpress_framework_sql::source::{NativeActions, NativeStore, StoreQuery};
 use stackpress_sql::{DialectId, Render};
 use std::sync::Arc;
 
+#[path = "../../support/g54.rs"]
+mod g54;
+
 /// A real composed schema delegates all mechanics to the same descriptor owner as emitted code.
 macro_rules! schema {
     ($name:ident, $model:literal) => {
@@ -350,7 +353,7 @@ fn source_unique_indexes_precede_ordinary_indexes_for_every_table() {
     }
 }
 
-/// G53 fixes only multi-value has; scalar SQL and source hasnt stay unchanged.
+/// G53 keeps scalar has SQL unchanged while requiring every requested list member.
 #[tokio::test]
 async fn g53_has_all_values_preserves_single_value_sql_on_every_dialect() {
     let store = NativeStore::<Profile>::new(String::new(), 0);
@@ -382,28 +385,6 @@ async fn g53_has_all_values_preserves_single_value_sql_on_every_dialect() {
         assert!(!all.sql().contains(" OR "), "{}", all.sql());
         assert!(!all.sql().contains("\"tags\".\"0\"") && !all.sql().contains("`tags`.`0`"));
         assert_eq!(all.binds().iter().filter(|v| matches!(v, stackpress_sql::SqlValue::Text(s) if s.contains("red") || s.contains("blue"))).count(), 2);
-        // Positive source hasnt keeps its exact scalar query and indexed-array behavior.
-        let hasnt = StoreQuery {
-            hasnt: single.has.clone(),
-            ..Default::default()
-        };
-        let positive = store
-            .select(&hasnt, dialect)
-            .unwrap()
-            .render(dialect)
-            .unwrap();
-        assert_eq!(scalar.sql(), positive.sql());
-        assert_eq!(scalar.binds(), positive.binds());
-        let indexed = StoreQuery {
-            hasnt: both.has.clone(),
-            ..Default::default()
-        };
-        let indexed = store
-            .select(&indexed, dialect)
-            .unwrap()
-            .render(dialect)
-            .unwrap();
-        assert!(indexed.sql().contains("tags\".\"0") || indexed.sql().contains("tags`.`0"));
         println!(
             "G53 {dialect:?} single: {}; all: {}",
             scalar.sql(),
@@ -441,5 +422,49 @@ async fn g53_has_all_values_preserves_single_value_sql_on_every_dialect() {
             .unwrap(),
         0
     );
+    engine.close().await.unwrap();
+}
+
+/// G54 hasnt uses one negative member predicate per value, retaining NULL/absent paths.
+#[tokio::test]
+async fn g54_hasnt_none_values_and_absence_on_real_sqlite() {
+    let store = NativeStore::<Profile>::new(String::new(), 0);
+    for dialect in [DialectId::Sqlite, DialectId::Postgres, DialectId::Mysql] {
+        let compile = |value| {
+            store
+                .select(
+                    &StoreQuery {
+                        hasnt: record(serde_json::json!({"tags":value})),
+                        ..Default::default()
+                    },
+                    dialect,
+                )
+                .unwrap()
+                .render(dialect)
+                .unwrap()
+        };
+        let single = compile(serde_json::json!("red"));
+        let one = compile(serde_json::json!(["red"]));
+        assert_eq!(single.sql(), one.sql());
+        assert_eq!(single.binds(), one.binds());
+        let both = compile(serde_json::json!(["red", "blue"]));
+        assert_eq!(single.sql().matches("NOT (").count(), 1);
+        assert_eq!(both.sql().matches("NOT (").count(), 2);
+        assert_eq!(both.sql().matches("IS NULL").count(), 2);
+        assert!(!both.sql().contains("\"tags\".\"0\"") && !both.sql().contains("`tags`.`0`"));
+        assert!(both.sql().contains(" AND "));
+        println!("G54 {dialect:?}: {}", both.sql());
+    }
+    let directory = tempfile::tempdir().unwrap();
+    let database = stackpress_sql_sqlite::SqliteDatabase::open(
+        stackpress_sql_sqlite::SqliteOptions::file(directory.path().join("hasnt.sqlite"))
+            .create_if_missing(true),
+    )
+    .await
+    .unwrap();
+    let engine = Arc::new(stackpress_sql::Engine::new(database));
+    g54::prove(NativeActions::new(engine.clone(), store))
+        .await
+        .unwrap();
     engine.close().await.unwrap();
 }

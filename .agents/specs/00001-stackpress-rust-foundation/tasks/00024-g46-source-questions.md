@@ -62,7 +62,7 @@ Live PostgreSQL/MySQL execution is **skipped**: existing backend harness opt-ins
 | File |
 | --- |
 | [.agents/specs/00001-stackpress-rust-foundation/tasks/00024-g46-source-questions.md](../../../../.agents/specs/00001-stackpress-rust-foundation/tasks/00024-g46-source-questions.md) |
-| [crates/framework/framework-api/src/sql/adapter.rs](../../../../crates/framework/framework-api/src/sql/adapter.rs) |
+| `crates/framework/framework-api/src/sql/adapter.rs` (removed in G50 M4) |
 | [crates/framework/framework-api/tests/sql.rs](../../../../crates/framework/framework-api/tests/sql.rs) |
 | [crates/framework/framework-session/README.md](../../../../crates/framework/framework-session/README.md) |
 | [crates/framework/framework-session/docs/account.md](../../../../crates/framework/framework-session/docs/account.md) |
@@ -77,7 +77,7 @@ Live PostgreSQL/MySQL execution is **skipped**: existing backend harness opt-ins
 | [crates/framework/framework-session/docs/source-behavior.md](../../../../crates/framework/framework-session/docs/source-behavior.md) |
 | [crates/framework/framework-session/docs/storage.md](../../../../crates/framework/framework-session/docs/storage.md) |
 | [crates/framework/framework-session/docs/verification.md](../../../../crates/framework/framework-session/docs/verification.md) |
-| [crates/framework/framework-session/src/storage/statement.rs](../../../../crates/framework/framework-session/src/storage/statement.rs) |
+| `crates/framework/framework-session/src/storage/statement.rs` (removed in G50 M4) |
 | [crates/framework/framework-session/tests/main/actions.rs](../../../../crates/framework/framework-session/tests/main/actions.rs) |
 | [crates/framework/framework/docs/api/sql.md](../../../../crates/framework/framework/docs/api/sql.md) |
 | [crates/framework/framework/docs/claims.json](../../../../crates/framework/framework/docs/claims.json) |

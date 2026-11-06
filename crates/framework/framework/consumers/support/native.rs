@@ -2,6 +2,7 @@
 use crate::{framework, generated, pages_host};
 use serde_json::{Value, json};
 use stackpress_framework_schema::Model;
+use stackpress_framework_session::columns::SourceSchema;
 use stackpress_framework_session::{
     Service,
     auth::{self, Hooks},
@@ -50,8 +51,8 @@ fn admin(app: &mut ServerBuilder) -> Result<()> {
 /// Compiled source-client metadata includes real account model definitions.
 fn describe() -> Vec<Model> {
     vec![
-        stackpress_framework_session::profile::ProfileSchema::default().model(),
-        auth::AuthSchema::default().model(),
+        stackpress_framework_session::profile::ProfileSchema::describe(),
+        auth::AuthSchema::describe(),
     ]
 }
 
@@ -189,23 +190,41 @@ pub async fn prove(
             .execute_plan(&table.create().render(engine.dialect())?)
             .await?;
     }
-    let accounts = AuthActions::new(engine.clone(), "DATABASE-SEED-MUST-NOT-REACH-BROWSER");
-    accounts.profile().install().await?;
+    let accounts = AuthActions::new(
+        engine.clone(),
+        stackpress_framework_session::storage::AuthStore::new(
+            "DATABASE-SEED-MUST-NOT-REACH-BROWSER".into(),
+            0,
+        ),
+    );
+    let profiles = stackpress_framework_session::storage::ProfileActions::new(
+        engine.clone(),
+        stackpress_framework_session::storage::ProfileStore::new(
+            "DATABASE-SEED-MUST-NOT-REACH-BROWSER".into(),
+            0,
+        ),
+    );
+    profiles.install().await?;
     accounts.install().await?;
-    accounts
-        .profile()
+    profiles
         .create(&serde_json::from_value(
             json!({"id":"person","name":"Finite Person","roles":["USER"]}),
         )?)
         .await?;
     #[cfg(feature = "api")]
     {
-        stackpress_framework_api::models::ApplicationActions::new(engine.clone(), "")
-            .install()
-            .await?;
-        stackpress_framework_api::models::SessionActions::new(engine.clone(), "")
-            .install()
-            .await?;
+        stackpress_framework_api::models::ApplicationActions::new(
+            engine.clone(),
+            stackpress_framework_api::models::ApplicationStore::new("".into(), 0),
+        )
+        .install()
+        .await?;
+        stackpress_framework_api::models::SessionActions::new(
+            engine.clone(),
+            stackpress_framework_api::models::SessionStore::new("".into(), 0),
+        )
+        .install()
+        .await?;
     }
     let calls = Arc::new(Calls::default());
     let resources = engine.clone();

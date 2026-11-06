@@ -36,7 +36,6 @@ pub fn emit_source_contracts(graph: &SourceGraph, output: &mut OutputPlan) -> Re
             }
             columns.push(json!({
                 "name": source::string_literal(&field.name),
-                "sql": source::string_literal(&field.column),
                 "kind": codec(field).map_err(transform_error)?,
                 "nullable": !field.required && !field.multiple,
             }));

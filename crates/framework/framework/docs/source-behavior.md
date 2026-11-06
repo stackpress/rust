@@ -20,7 +20,7 @@ All ten entries are **resolved under owner decision G46**. The only code change 
 | Account delete keeps Profile | Intended soft delete via @active. Removed records are deactivated and queries filter active rows by default; the account flow retains Profile. No code change. [Account flow tests](../../framework-session/tests/main/account_flows/sql.rs), [active-filter tests](../../framework-session/tests/main/actions.rs). |
 | SQLite ILIKE | PostgreSQL alone retains ILIKE; SQLite and MySQL use LIKE. SQLite ASCII matching and MySQL default _ci collations supply case-insensitive matching. [Session tests](../../framework-session/tests/main/actions.rs), [API tests](../../framework-api/tests/sql.rs). |
 | Auth create-return | Follow original source, unchanged. [Action tests](../../framework-session/tests/main/actions.rs). |
-| Positive hasnt | Follow original source, unchanged. [Query implementation](../../framework-session/src/storage/query.rs). |
+| Positive hasnt | Superseded by G54: exclude every requested value; SQL NULL lists and missing JSON paths match. Original select.ts:680–682 calls positive whereJsonContains. [Shared implementation](../../framework-sql/src/source/membership.rs), [membership cases](../../framework-sql/tests/support/g54.rs). |
 | Optional phone on update | Follow original source, unchanged; G44 optional signup phone remains separate. [Profile update](../../framework-session/src/account/profile.rs). |
 | Email sign-in skips send | Follow original source, unchanged. [Email page](../../framework-session/src/auth/pages/email.rs), [integration tests](../../framework-email/tests/cases/integration/mod.rs). |
 | Moment admin dates | Follow original source, unchanged. [API roles view](../../framework-api/src/views/roles.rs). |

@@ -2,13 +2,11 @@
 //!
 //! The lower source runtime owns event semantics. This module selects the original
 //! twenty API event names and preserves the direct default-model callback paths.
-use crate::models::{ModelKind, Schema};
 use stackpress_framework_sql::source::{
-    self, ApiModels, NativeActions, NativeStore, SourceEnvironment, SourceEventActions, SourceModel,
+    self, ApiModels, SourceEnvironment, SourceEventActions, SourceModel,
 };
 use stackpress_lib::{Flow, HandlerFuture, Invocation, Request, Response, Result};
 use stackpress_server::{ServerBuilder, StartupContext};
-use std::marker::PhantomData;
 
 pub use source::Event;
 
@@ -63,18 +61,8 @@ where
     Ok(Flow::Continue)
 }
 
-/// Thin identity adapter for the existing public `action::<ApplicationModel>` path.
-/// Its schema is generated; it defines no fields, relationships, codecs or query policy.
-struct DefaultModel<M: ModelKind>(PhantomData<M>);
-impl<M: ModelKind> SourceModel for DefaultModel<M> {
-    type Role = ();
-    type Schema = Schema<M>;
-    type Store = NativeStore<Schema<M>>;
-    type Actions = NativeActions<Schema<M>>;
-}
-
 /// Direct callback over the generated default descriptor, composable with other handlers (G42).
-pub fn action<M: ModelKind>(
+pub fn action<M: SourceModel>(
     event: Event,
 ) -> impl for<'a> Fn(
     &'a mut Request,
@@ -82,6 +70,14 @@ pub fn action<M: ModelKind>(
     Invocation<'a>,
 ) -> HandlerFuture<'a, Result<Flow>>
 + Send
-+ Sync {
-    source::action_with::<DefaultModel<M>>(event, SourceEnvironment::default())
++ Sync
+where
+    M::Schema: stackpress_framework_schema::source::SourceSchema<
+            Value = crate::models::Value,
+            Record = crate::models::Record,
+        >,
+    M::Store: source::SourceStore<Error = source::ActionError>,
+    M::Actions: SourceEventActions,
+{
+    source::action_with::<M>(event, SourceEnvironment::default())
 }

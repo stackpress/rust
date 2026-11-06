@@ -47,7 +47,8 @@ Optional adapters `events::{search, update}` implement the source `auth-search` 
 or provide the application's existing handlers for those events. The auth registrar
 neither selects a global SQL operation policy nor silently registers those extensions.
 `search` accepts `storage::StoreQuery`; `update` uses `id` plus patch fields, returning the
-first row or null. G46 uses PostgreSQL ILIKE and SQLite/MySQL LIKE; create-return and positive-hasnt follow the original source, unchanged.
+first row or null. G46 uses PostgreSQL ILIKE and SQLite/MySQL LIKE; create-return follows
+the original source. G54 makes `hasnt` exclude every requested list member.
 
 ## Native resources and task ownership
 

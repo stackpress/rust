@@ -24,7 +24,7 @@ pub struct StoreQuery {
     pub like: Record,
     /// JSON-array membership; every requested value must be present (G53).
     pub has: Record,
-    /// Source currently compiles this as membership too, preserved deliberately.
+    /// Exclude every requested list member, including SQL NULL/missing paths (G54).
     pub hasnt: Record,
     /// Source ASC/DESC map, case insensitive; invalid directions are skipped.
     pub sort: Record,

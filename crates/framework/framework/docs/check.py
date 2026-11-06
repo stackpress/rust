@@ -24,7 +24,7 @@ GRAPHS = {'full': 'full', 'headless': 'headless', 'facade': 'facade',
 EXECUTIONS = {'first_aggregate': 'async', 'catalog_host': 'async', 'finite_serve': 'async',
               'packaging_lifecycle': 'async', 'facade_host': 'async', 'absent_client': 'async',
               'generation_options': 'sync', 'sqlite_transaction': 'async',
-              'translation': 'unit', 'build_registry': 'sync'}
+              'translation': 'unit', 'build_registry': 'sync', 'compose_application': 'sync'}
 
 
 def pages():
