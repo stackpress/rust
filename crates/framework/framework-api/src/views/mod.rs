@@ -6,6 +6,7 @@ mod consent;
 #[cfg(all(feature = "ui-ssr", not(target_arch = "wasm32")))]
 mod document;
 mod icons;
+mod identity;
 pub mod management;
 pub mod roles;
 pub use consent::{

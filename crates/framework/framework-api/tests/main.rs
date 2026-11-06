@@ -17,6 +17,8 @@ mod oauth;
 #[cfg(all(feature = "codegen", feature = "ui-ssr"))]
 mod url_roles;
 
+#[cfg(all(feature = "ui-ssr", feature = "sql"))]
+mod composite_admin;
 #[cfg(feature = "ui-ssr")]
 mod consent;
 #[cfg(all(feature = "ui-ssr", feature = "sql"))]

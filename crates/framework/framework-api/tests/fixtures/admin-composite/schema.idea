@@ -1,0 +1,11 @@
+model Catalog {
+  categoryId String @id @default("cuid()") @list.string @view.string
+  articleId String @id @default("cuid()") @list.string @view.string
+  title String @field.input @list.string @view.string
+  active Boolean @default(true) @active
+}
+
+model Slugged {
+  slug String @id @default("cuid()") @list.string @view.string
+  title String @field.input @list.string @view.string
+}
