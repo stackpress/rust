@@ -1,4 +1,7 @@
 //! Opt-in G46 searches through the real Profile/Auth stores and their source DDL.
+
+#[path = "../../framework-sql/tests/support/g54.rs"]
+mod g54;
 #[path = "live/support.rs"]
 mod support;
 
@@ -33,8 +36,14 @@ async fn scenario(engine: Arc<Engine>) -> support::TestResult<()> {
 
 /// Keep search and setup observations distinct when a live backend rejects an operation.
 async fn scenario_steps(engine: Arc<Engine>) -> support::TestResult<()> {
-    let profile = ProfileActions::new(engine.clone(), "database-seed");
-    let auth = AuthActions::new(engine, "database-seed");
+    let profile = ProfileActions::new(
+        engine.clone(),
+        stackpress_framework_session::storage::ProfileStore::new("database-seed".into(), 0),
+    );
+    let auth = AuthActions::new(
+        engine,
+        stackpress_framework_session::storage::AuthStore::new("database-seed".into(), 0),
+    );
     println!("stage: Profile install");
     profile.install().await?;
     println!("stage: Auth install");
@@ -127,6 +136,7 @@ async fn scenario_steps(engine: Arc<Engine>) -> support::TestResult<()> {
         // targets must fail, and application-owned dependents must never be purged.
         mysql_purge_boundaries(&profile).await?;
     }
+    g54::prove(profile).await?;
     Ok(())
 }
 

@@ -8,8 +8,8 @@
     },
     "source/auth.rs": {
       "owner": "native",
-      "sha256": "60345ea11e3386f3632fd2e0c6adbc9997a0b774683b16c169a217238288d967",
-      "bytes": 32804
+      "sha256": "20c2a8bf520335251818c449d8a5523e196b4f4db7d791d599e7809e00df9686",
+      "bytes": 32110
     },
     "source/catalog.rs": {
       "owner": "native",
@@ -23,8 +23,8 @@
     },
     "source/profile.rs": {
       "owner": "native",
-      "sha256": "84b1e22e65767d0489baa5eb55174e16cc6e52bc77b850135c8f7d406e475222",
-      "bytes": 36954
+      "sha256": "3d124e78b84a827385fa9d9d57a2bd412438e3005d018f84a9cd5a4652888b78",
+      "bytes": 36181
     },
     "stores/auth.rs": {
       "owner": "native",

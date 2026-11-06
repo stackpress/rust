@@ -6,7 +6,7 @@ use std::sync::Arc;
 /// One generated storage column and its complete source metadata.
 #[derive(Clone, Debug)]
 pub struct SourceColumn {
-    /// Legacy-compatible conversion only; its name-based default getter is never exposed here.
+    /// Primitive conversion only; defaults and assertions use the authored field metadata.
     codec: Column,
     /// Exact composed field, including assertions, defaults, roles and source attributes.
     pub field: Field,
@@ -208,13 +208,8 @@ impl SourceRecordSchema {
                 };
                 let mut column = SourceColumn::new(
                     Column {
-                        name: "",
-                        sql: "",
                         kind,
                         nullable: !field.required && !field.multiple,
-                        required_message: None,
-                        minimum: None,
-                        default: None,
                     },
                     field.clone(),
                 );

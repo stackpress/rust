@@ -29,11 +29,15 @@ private codec seeds/provider metadata never enter that portable catalog or SSR s
 The app opens and installs databases explicitly; generation and registration do no IO.
 
 `models::{ApplicationSchema,SessionSchema,ApplicationStore,SessionStore,ApplicationActions,SessionActions}`
-keep constructor/path adapters backed by generated defaults. RecordSchema/SourceColumn
-use columns()/column()/describe(). Under G53, `eq` takes one value per field; arrays are misuse
+are direct generated aliases at the existing paths. Import `models::SourceSchema` for
+`new(String, offset_minutes)` and static describe()/catalog(); schema descriptors use
+columns()/column(). CRUD Actions take an explicit generated Store, or use the generated
+SourceModel actions factory. There is no finite ModelKind or default-constructor shim. Under G53, `eq` takes one value per field; arrays are misuse
 and retain source indexed-path AND semantics. Multi-value `has` requires all values in the
-list column on SQLite, PostgreSQL and MySQL; scalar SQL is unchanged. `hasnt` still follows
-the source's positive membership and indexed-array behavior; G53 does not change it.
+list column on SQLite, PostgreSQL and MySQL; scalar SQL is unchanged. G54 makes `hasnt`
+exclude every requested value, including SQL NULL lists and missing JSON paths in the
+result. A nonexistent SQL column still fails at execution. The shared
+[membership cases](../../framework-sql/tests/support/g54.rs) pin those boundaries.
 The lower G46/G48 dialect/setup rules and original source oracles remain unchanged.
 
 Evidence: [extended generated handlers](../tests/generated_family.rs), [default SQL tests](../tests/sql.rs),

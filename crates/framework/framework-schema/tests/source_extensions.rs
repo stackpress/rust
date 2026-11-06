@@ -26,13 +26,8 @@ fn column(declaration: &str) -> SourceColumn {
     };
     SourceColumn::new(
         Column {
-            name: "value",
-            sql: "value",
             kind,
             nullable: !field.required && !field.multiple,
-            required_message: None,
-            minimum: None,
-            default: None,
         },
         field,
     )

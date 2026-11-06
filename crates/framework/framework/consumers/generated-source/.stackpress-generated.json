@@ -18,13 +18,13 @@
     },
     "source/application.rs": {
       "owner": "source-client",
-      "sha256": "477f288da14ee58502c2a7cb4467dc90db7426d235ade464082a8f8119761fb8",
-      "bytes": 37341
+      "sha256": "681766e0d871ac6280b0c648e820f17e6fff065250b85563ca103185e3d548d8",
+      "bytes": 36564
     },
     "source/auth.rs": {
       "owner": "source-client",
-      "sha256": "60345ea11e3386f3632fd2e0c6adbc9997a0b774683b16c169a217238288d967",
-      "bytes": 32804
+      "sha256": "20c2a8bf520335251818c449d8a5523e196b4f4db7d791d599e7809e00df9686",
+      "bytes": 32110
     },
     "source/catalog.rs": {
       "owner": "source-client",
@@ -38,13 +38,13 @@
     },
     "source/profile.rs": {
       "owner": "source-client",
-      "sha256": "85fa3684b17c5f27116129806fb7e3d1ba992fdab5ed0b0762fa7242968fe871",
-      "bytes": 37868
+      "sha256": "d32d48b4bb350567ac866bce9dbeb424731650d70e9333cce0916ff810456080",
+      "bytes": 37095
     },
     "source/session.rs": {
       "owner": "source-client",
-      "sha256": "057a87645c48314961a77b326616713bfd417ff383543b7ac1a59d4b0cb7b6b4",
-      "bytes": 32655
+      "sha256": "5630702181314a77fbb7a0a08493a3e53251a3fd7a618dca35bb8b57ccc84f96",
+      "bytes": 32039
     },
     "stores/application.rs": {
       "owner": "source-client",

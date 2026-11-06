@@ -636,9 +636,18 @@ mod persisted {
                     .await
                     .map_err(Error::from_source)?,
             ));
-            let profile = ProfileActions::new(engine.clone(), "");
-            let apps = ApplicationActions::new(engine.clone(), "");
-            let sessions = SessionActions::new(engine.clone(), "");
+            let profile = ProfileActions::new(
+                engine.clone(),
+                stackpress_framework_session::storage::ProfileStore::new("".into(), 0),
+            );
+            let apps = ApplicationActions::new(
+                engine.clone(),
+                stackpress_framework_api::models::ApplicationStore::new("".into(), 0),
+            );
+            let sessions = SessionActions::new(
+                engine.clone(),
+                stackpress_framework_api::models::SessionStore::new("".into(), 0),
+            );
             profile.install().await.unwrap();
             apps.install().await.unwrap();
             sessions.install().await.unwrap();

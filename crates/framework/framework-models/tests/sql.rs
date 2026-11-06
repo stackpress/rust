@@ -123,24 +123,33 @@ async fn generated_source_scalar_returning_and_query_oracles() {
                 .iter()
                 .take(1)
                 .cloned()
-                .chain(
-                    expected
-                        .iter()
-                        .skip(1)
-                        .flat_map(|value| [serde_json::json!("$"), value.clone()]),
-                )
+                .chain(expected.iter().skip(1).flat_map(|value| {
+                    // G54's NULL guard binds its own checked JSON path.
+                    if name == "hasnt" {
+                        vec![
+                            serde_json::json!("$"),
+                            serde_json::json!("$"),
+                            value.clone(),
+                        ]
+                    } else {
+                        vec![serde_json::json!("$"), value.clone()]
+                    }
+                }))
                 .collect()
         };
         // The accepted Rust JSON AST binds the fixed path instead of interpolating '$'.
         assert_eq!(binds, expected);
         if name == "hasnt" {
-            assert!(rendered.sql().contains("json_each(\"tags\".\"0\""));
-            assert!(
-                engine.fetch(&rendered).await.is_err(),
-                "source flatten(...,true) retains the invalid indexed-column path"
-            );
+            // G54 supersedes the source's positive/invalid indexed-path template.
+            // Keep records.json unchanged; assert the owner-decided none-of result.
+            assert!(!rendered.sql().contains("json_each(\"tags\".\"0\""));
+            assert_eq!(rendered.sql().matches("NOT").count(), 2);
+            assert_eq!(rendered.sql().matches("IS NULL").count(), 2);
+            let rows = engine.fetch(&rendered).await.unwrap();
+            assert_eq!(rows.len(), 1);
+            assert_eq!(rows[0].try_get::<String>("id").unwrap(), "profile-1");
         } else if name == "has" {
-            // G53 deliberately fixes has only; the original golden remains unchanged.
+            // G53 fixes positive membership; the original golden remains unchanged.
             assert!(!rendered.sql().contains("json_each(\"tags\".\"0\""));
             assert!(engine.fetch(&rendered).await.is_ok());
         }

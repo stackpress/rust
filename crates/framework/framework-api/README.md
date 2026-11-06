@@ -1,7 +1,7 @@
 # API source-search execution
 
 The API crate exposes source Application/Session models and stores behind `sql`.
-[SQLite tests](tests/sql.rs) and [dialect adapters](src/sql/adapter.rs) pin PostgreSQL ILIKE
+[SQLite tests](tests/sql.rs) and [dialect adapters](../framework-sql/src/source/statement.rs) pin PostgreSQL ILIKE
 versus SQLite/MySQL LIKE. The new [live executable](tests/live_search.rs) runs actual actions
 using the [shared test-only fixture](../framework-session/tests/live/support.rs).
 
@@ -13,7 +13,7 @@ parent/admin watchdogs. No listener or public fixture API is added.
 
 PostgreSQL and MySQL execute Application q/like and Session like with mixed ASCII case and counts,
 using the real Profile/Application/Session `install()` paths and source codecs. API Session
-ignores q, following its [source query contract](src/models/query.rs). This is direct-store
+ignores q, following its [source query contract](../framework-sql/src/source/query_input.rs). This is direct-store
 evidence; the SQLite test additionally covers the registered application-search event.
 
 G48 uses [explicit schema setup](../framework-sql/docs/api/setup.md): MySQL runs source

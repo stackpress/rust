@@ -46,36 +46,13 @@ pub enum Kind {
 /// Immutable column metadata and its source conversion behavior.
 #[derive(Clone, Debug)]
 pub struct Column {
-    /// Source field spelling.
-    pub name: &'static str,
-    /// SQL spelling, including profile_id.
-    pub sql: &'static str,
     /// Conversion family.
     pub kind: Kind,
     /// Source optional/nullable column.
     pub nullable: bool,
-    /// First refine message for empty text, absent for unrestricted strings.
-    pub required_message: Option<&'static str>,
-    /// Source string minimum measured in JavaScript UTF-16 code units.
-    pub minimum: Option<usize>,
-    /// Source literal default, excluding generated CUID and clock defaults.
-    pub default: Option<serde_json::Value>,
 }
 
 impl Column {
-    /// Source per-column default getter: fresh identity/Date, literal value or undefined.
-    pub fn defaults_at(&self, now: i64) -> SchemaResult<Option<Value>> {
-        Ok(match self.name {
-            "id" => Some(Value::String(providers::cuid()?)),
-            "created" | "updated" | "consumed" => Some(date(now)),
-            _ => self.default.clone().map(Value::from),
-        })
-    }
-    /// Resolve the source getter at the native clock.
-    pub fn defaults(&self) -> SchemaResult<Option<Value>> {
-        self.defaults_at(super::now())
-    }
-
     /// Convert a supplied field; None represents JavaScript undefined.
     ///
     /// `storage` enables only the source's token encryption/secret hashing. SQL scalar
@@ -258,19 +235,6 @@ impl Column {
             return Some(format!(
                 "Invalid input: expected {expected}, received {received}"
             ));
-        }
-        let text = value.and_then(Value::as_str).unwrap_or_default();
-        if let Some(message) = self
-            .required_message
-            .filter(|_| text.is_empty() && expected == "string")
-        {
-            return Some(message.into());
-        }
-        if self
-            .minimum
-            .is_some_and(|minimum| text.encode_utf16().count() < minimum)
-        {
-            return Some("Must be at least 5 characters".into());
         }
         None
     }

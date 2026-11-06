@@ -1,6 +1,6 @@
 //! Direct Auth signup/signin and source password assertions, without route/event policy.
 
-use super::{ActionError, AuthActions, ProfileActions, Result};
+use super::{ActionError, Result};
 use crate::columns::Value;
 use crate::columns::{self, Record};
 use serde::{Deserialize, Serialize};
@@ -26,15 +26,6 @@ pub struct PasswordConfig {
     /// Require source punctuation or ECMAScript whitespace, including ordinary space.
     pub special: bool,
 }
-/// Source direct constructor options; no configured database seed fallback is applied here.
-#[derive(Clone, Debug, Default)]
-pub struct ActionOptions {
-    /// Direct default is empty; the later host factory uses database.seed fallback abc123.
-    pub seed: String,
-    /// Optional source password assertion policy.
-    pub password: PasswordConfig,
-}
-
 /// Handwritten account orchestration over one application's generated Profile/Auth family.
 /// Only this logic owns signup/signin sequencing; no model columns are redefined here.
 pub struct AccountActions<M: SessionModels> {
@@ -202,59 +193,6 @@ impl<M: SessionModels> AccountActions<M> {
     }
 }
 
-impl AuthActions {
-    /// Source host factory: database.seed fallback abc123; direct construction stays empty.
-    pub fn make(
-        engine: Arc<Engine>,
-        database_seed: Option<String>,
-        password: Option<PasswordConfig>,
-    ) -> Self {
-        Self::with_options(
-            engine,
-            ActionOptions {
-                seed: database_seed.unwrap_or_else(|| "abc123".into()),
-                password: password.unwrap_or_default(),
-            },
-        )
-    }
-    /// Existing direct options and constructor, without account route registration.
-    pub fn with_options(engine: Arc<Engine>, options: ActionOptions) -> Self {
-        let mut actions = Self::new(engine, options.seed);
-        actions.password = options.password;
-        actions
-    }
-    /// Existing direct Profile path, using the same generated defaults and source timezone.
-    pub fn profile(&self) -> ProfileActions {
-        let mut actions = ProfileActions::new(self.engine.clone(), self.store.seed.clone());
-        actions.store.schema = actions.store.schema.with_offset_minutes(self.store.offset);
-        actions
-    }
-    fn account(&self) -> AccountActions<stackpress_framework_models::Models> {
-        AccountActions::new(
-            self.engine.clone(),
-            self.store.seed.clone(),
-            self.store.offset,
-            self.password.clone(),
-        )
-    }
-    /// Original signup checks; app columns never become new stock signup inputs.
-    pub fn assert(&self, input: &Record) -> Option<Record> {
-        assert_input(input, &self.password)
-    }
-    /// Existing direct signin delegates to the same source flow as generic registrars.
-    pub async fn signin(
-        &self,
-        kind: &str,
-        input: &Record,
-        password: bool,
-    ) -> Result<Option<Record>> {
-        self.account().signin(kind, input, password).await
-    }
-    /// Existing direct signup delegates to the same generated-default family collaborator.
-    pub async fn signup(&self, input: &Record) -> Result<Record> {
-        self.account().signup(input).await
-    }
-}
 /// One password/identifier check inventory for direct and generic auth collaborators.
 fn assert_input(input: &Record, password: &PasswordConfig) -> Option<Record> {
     let mut errors = Record::new();

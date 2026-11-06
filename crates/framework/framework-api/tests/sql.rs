@@ -1,6 +1,7 @@
 //! Real SQLite source parity, source SQL rendering and finite host composition.
 use serde_json::{Value as Json, json};
 use stackpress_framework_api::{models::*, sql};
+use stackpress_framework_schema::source::SourceSchema;
 use stackpress_framework_session::{profile::ProfileSchema, storage::ProfileActions};
 use stackpress_lib::{Body, Flow, Nest, Request, Response, Result};
 use stackpress_server::{Server, ServerBuilder, StartupContext};
@@ -38,9 +39,18 @@ impl Fixture {
                 .await
                 .unwrap(),
         ));
-        let app = ApplicationActions::new(engine.clone(), "seed");
-        let session = SessionActions::new(engine.clone(), "seed");
-        let profile = ProfileActions::new(engine.clone(), "seed");
+        let app = ApplicationActions::new(
+            engine.clone(),
+            stackpress_framework_api::models::ApplicationStore::new("seed".into(), 0),
+        );
+        let session = SessionActions::new(
+            engine.clone(),
+            stackpress_framework_api::models::SessionStore::new("seed".into(), 0),
+        );
+        let profile = ProfileActions::new(
+            engine.clone(),
+            stackpress_framework_session::storage::ProfileStore::new("seed".into(), 0),
+        );
         profile.install().await.unwrap();
         app.install().await.unwrap();
         session.install().await.unwrap();
@@ -116,8 +126,8 @@ fn result(res: &Response) -> Json {
 /// G46 preserves PostgreSQL ILIKE and bound data; both other dialects use supported LIKE.
 #[test]
 fn g46_search_operators_follow_dialect_for_application_and_session() {
-    let application = ApplicationStore::new("");
-    let session = SessionStore::new("");
+    let application = ApplicationStore::new("".into(), 0);
+    let session = SessionStore::new("".into(), 0);
     let search = StoreQuery {
         q: Some("A LIKE B".into()),
         ..Default::default()
@@ -188,7 +198,7 @@ async fn g46_sqlite_ascii_searches_execute_for_application_and_session() {
 fn source_model_columns_defaults_provider_and_plaintext_codecs() {
     for (schema, names) in [
         (
-            ApplicationSchema::new().columns().to_vec(),
+            ApplicationSchema::new(String::new(), 0).columns().to_vec(),
             vec![
                 "id",
                 "profileId",
@@ -204,7 +214,7 @@ fn source_model_columns_defaults_provider_and_plaintext_codecs() {
             ],
         ),
         (
-            SessionSchema::new().columns().to_vec(),
+            SessionSchema::new(String::new(), 0).columns().to_vec(),
             vec![
                 "id",
                 "applicationId",
@@ -235,7 +245,7 @@ fn source_model_columns_defaults_provider_and_plaintext_codecs() {
         );
         assert!(!schema.iter().any(|column| column.name() == "profile"));
     }
-    let schema = ApplicationSchema::new();
+    let schema = ApplicationSchema::new(String::new(), 0);
     let first = schema.defaults_at(1234).unwrap();
     let second = schema.defaults_at(1234).unwrap();
     assert_eq!(first["scopes"], json!([]));
@@ -259,7 +269,7 @@ fn source_model_columns_defaults_provider_and_plaintext_codecs() {
         .serialize(&record(json!({"secret":"clear"})), true)
         .unwrap();
     assert_eq!(serialized["secret"], "clear");
-    let store = ApplicationStore::new("any seed");
+    let store = ApplicationStore::new("any seed".into(), 0);
     let encoded = store
         .scalarize(&record(json!({"secret":"clear","logo":null})))
         .unwrap();
@@ -273,7 +283,7 @@ fn source_model_columns_defaults_provider_and_plaintext_codecs() {
             .unwrap()["profileId"],
         "p"
     );
-    assert_eq!(ProfileSchema::default().model().name, "Profile");
+    assert_eq!(ProfileSchema::describe().name, "Profile");
 }
 #[test]
 fn provider_boundary_is_shared_and_failures_propagate() {
@@ -298,18 +308,21 @@ fn provider_boundary_is_shared_and_failures_propagate() {
         }
     }
     assert_eq!(
-        SessionSchema::new().defaults_with(0, &Provider).unwrap()["secret"],
+        SessionSchema::new(String::new(), 0)
+            .with_providers(Arc::new(Provider))
+            .defaults_at(0)
+            .unwrap()["secret"],
         "fixed"
     );
     assert_eq!(
-        ApplicationSchema::new()
-            .defaults_with(0, &Provider)
+        ApplicationSchema::new(String::new(), 0)
+            .with_providers(Arc::new(Provider))
+            .defaults_at(0)
             .unwrap()["id"],
         "fixed"
     );
     assert!(
-        ApplicationSchema::new()
-            .with_offset_minutes(i32::MAX)
+        ApplicationSchema::new(String::new(), i32::MAX)
             .serialize(&Record::from_iter([("expires".into(), date(0))]), false)
             .is_err()
     );
@@ -449,7 +462,7 @@ async fn source_filters_sort_paging_membership_and_sqlite_like_search() {
     };
     assert_eq!(f.app.find_all(&query).await.unwrap().len(), 2);
     query.hasnt = std::mem::take(&mut query.has);
-    assert_eq!(f.app.find_all(&query).await.unwrap().len(), 2);
+    assert!(f.app.find_all(&query).await.unwrap().is_empty()); // G54 excludes read.
     query = StoreQuery {
         q: Some("Example".into()),
         ..Default::default()
@@ -583,7 +596,7 @@ async fn delete_cascade_maintenance_and_explicit_transaction_affinity() {
 /// Retained relation paths are source selectors even when the child segment is unknown.
 #[test]
 fn source_forward_relation_fallbacks_preserve_the_last_edge() {
-    let session = SessionStore::new("");
+    let session = SessionStore::new("".into(), 0);
     for (path, model, table, column, joins) in [
         ("application", "Session", "session", "application", 1),
         (
@@ -619,7 +632,7 @@ fn source_forward_relation_fallbacks_preserve_the_last_edge() {
         let selector = session.paths(path).into_iter().next().unwrap();
         assert_eq!(
             (
-                selector.model,
+                selector.model.as_str(),
                 selector.table.as_str(),
                 selector.column.as_str()
             ),
@@ -632,7 +645,7 @@ fn source_forward_relation_fallbacks_preserve_the_last_edge() {
         };
         assert_eq!(session.joins(&query).len(), joins, "{path}");
     }
-    let app = ApplicationStore::new("");
+    let app = ApplicationStore::new("".into(), 0);
     assert_eq!(app.paths("profile.unknown")[0].column, "profile");
     assert!(
         app.paths("session.*").is_empty(),
@@ -646,7 +659,7 @@ fn source_forward_relation_fallbacks_preserve_the_last_edge() {
 
 #[test]
 fn source_backend_rendering_and_selected_paths() {
-    let store = SessionStore::new("");
+    let store = SessionStore::new("".into(), 0);
     let query = StoreQuery {
         columns: vec![
             "id".into(),
@@ -676,7 +689,7 @@ fn source_backend_rendering_and_selected_paths() {
         q: Some("search".into()),
         ..Default::default()
     };
-    let sql = ApplicationStore::new("")
+    let sql = ApplicationStore::new("".into(), 0)
         .select(&query, DialectId::Postgres)
         .unwrap()
         .render(DialectId::Postgres)
@@ -684,14 +697,14 @@ fn source_backend_rendering_and_selected_paths() {
     assert_eq!(sql.sql().matches("ILIKE").count(), 2);
     assert!(
         store
-            .insert_for(&session("s"), DialectId::Mysql)
+            .insert(&session("s"), DialectId::Mysql)
             .unwrap()
             .render(DialectId::Mysql)
             .is_ok()
     );
     assert!(
         !store
-            .insert_for(&session("s"), DialectId::Mysql)
+            .insert(&session("s"), DialectId::Mysql)
             .unwrap()
             .render(DialectId::Mysql)
             .unwrap()
@@ -1038,7 +1051,10 @@ async fn scripted_backend_fallback_and_failures_are_not_native_backend_claims() 
             insert_id,
             fail: false,
         }));
-        let actions = ApplicationActions::new(engine.clone(), "");
+        let actions = ApplicationActions::new(
+            engine.clone(),
+            stackpress_framework_api::models::ApplicationStore::new("".into(), 0),
+        );
         let input = application("a");
         assert_eq!(actions.create(&input).await.unwrap(), input);
         assert!(
@@ -1054,7 +1070,10 @@ async fn scripted_backend_fallback_and_failures_are_not_native_backend_claims() 
         insert_id: None,
         fail: true,
     }));
-    let actions = ApplicationActions::new(engine.clone(), "");
+    let actions = ApplicationActions::new(
+        engine.clone(),
+        stackpress_framework_api::models::ApplicationStore::new("".into(), 0),
+    );
     assert_eq!(
         actions.create(&application("a")).await.unwrap_err().code,
         500

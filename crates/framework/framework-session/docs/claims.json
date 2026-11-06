@@ -371,9 +371,9 @@
         ]
       },
       {
-        "path": "crates/framework/framework-session/src/columns/model.rs",
+        "path": "crates/framework/framework-models/src/generated/source/profile.rs",
         "contains": [
-          "pub fn model"
+          "pub fn describe() -> Model"
         ]
       }
     ]
@@ -403,7 +403,7 @@
     "statement": "returned rows retain the pre-read timestamp",
     "evidence": [
       {
-        "path": "crates/framework/framework-session/src/storage/actions.rs",
+        "path": "crates/framework/framework-sql/src/source/native_actions.rs",
         "contains": [
           "pub async fn update_in"
         ]
@@ -439,7 +439,7 @@
   {
     "id": "storage-signup",
     "page": "crates/framework/framework-session/docs/api/storage.md",
-    "statement": "Signup writes sequentially; missing phone succeeds under G44",
+    "statement": "Missing signup phone succeeds under G44",
     "evidence": [
       {
         "path": "crates/framework/framework-session/tests/main/actions.rs",
@@ -866,6 +866,27 @@
         "contains": [
           "pub fn register_with",
           "crate::auth::register_with::<M>"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "g54-hasnt-excludes",
+    "page": "crates/framework/framework-session/docs/source-behavior.md",
+    "statement": "G54",
+    "evidence": [
+      {
+        "path": "crates/framework/framework-sql/tests/main/source_models/runtime.rs",
+        "contains": [
+          "g54_hasnt_none_values_and_absence_on_real_sqlite"
+        ]
+      },
+      {
+        "path": "crates/framework/framework-sql/tests/support/g54.rs",
+        "contains": [
+          "sql-null",
+          "references:absent",
+          "not_installed"
         ]
       }
     ]

@@ -109,3 +109,10 @@ metadata does not imply identical driver DDL spellings. Unknown columns are deli
 omitted by the original SQL setup helper. Portable source rendering and plugin-family registration are documented by the
 [session family guide](../framework-session/docs/source-models.md) and
 [API family guide](../framework-api/docs/source-models.md). Typed generated applications remain byte-stable.
+
+External applications compose `stackpress-session/schema.idea`, `stackpress-api/schema.idea`
+and `stackpress/stackpress.idea` through their package `SCHEMA_SOURCE` exports, or use the
+aggregate's `commands::schema::rust::package_loader` under `codegen`. The
+[external-app recipe](../framework/docs/guides/codegen.md) uses no relative framework
+`include_str!`. The repository's default regeneration binary keeps internal asset includes
+to avoid a dependency cycle: session/API depend on this lower generated package.

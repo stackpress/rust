@@ -4,8 +4,7 @@ use stackpress_framework_session::columns::Value;
 use stackpress_framework_session::{
     columns::{self, Record},
     storage::{
-        ActionOptions, AuthActions, AuthStore, BatchMode, PasswordConfig, ProfileActions,
-        ProfileStore, StoreQuery,
+        AuthActions, AuthStore, BatchMode, PasswordConfig, ProfileActions, ProfileStore, StoreQuery,
     },
 };
 use stackpress_sql::{DialectId, Engine, Field, Render, Sql, SqlType};
@@ -21,8 +20,14 @@ async fn database() -> (tempfile::TempDir, Arc<Engine>, ProfileActions, AuthActi
     .await
     .unwrap();
     let engine = Arc::new(Engine::new(db));
-    let profile = ProfileActions::new(engine.clone(), "database-seed");
-    let auth = AuthActions::new(engine.clone(), "database-seed");
+    let profile = ProfileActions::new(
+        engine.clone(),
+        stackpress_framework_session::storage::ProfileStore::new("database-seed".into(), 0),
+    );
+    let auth = AuthActions::new(
+        engine.clone(),
+        stackpress_framework_session::storage::AuthStore::new("database-seed".into(), 0),
+    );
     profile.install().await.unwrap();
     auth.install().await.unwrap();
     (dir, engine, profile, auth)
@@ -35,8 +40,8 @@ fn record(value: JsonValue) -> Record {
 /// G46 selects a supported search operator without rewriting bound caller text.
 #[test]
 fn g46_search_operators_follow_dialect_for_profile_and_auth() {
-    let profile = ProfileStore::new("database-seed");
-    let auth = AuthStore::new("database-seed");
+    let profile = ProfileStore::new("database-seed".into(), 0);
+    let auth = AuthStore::new("database-seed".into(), 0);
     let search = StoreQuery {
         q: Some("A LIKE B".into()),
         ..Default::default()
@@ -219,7 +224,7 @@ async fn source_scalar_goldens_and_auth_returning_branch() {
     };
     assert_eq!(
         Value::Object(sqlite(
-            ProfileStore::new("database-seed")
+            ProfileStore::new("database-seed".into(), 0)
                 .scalarize(&input)
                 .unwrap()
         )),
@@ -227,7 +232,9 @@ async fn source_scalar_goldens_and_auth_returning_branch() {
     );
     assert_eq!(
         Value::Object(sqlite(
-            AuthStore::new("database-seed").scalarize(&input).unwrap()
+            AuthStore::new("database-seed".into(), 0)
+                .scalarize(&input)
+                .unwrap()
         )),
         fixture["scalar"]["Auth"]
     );
@@ -274,10 +281,10 @@ async fn token_global_uniqueness_preflight_sql_constraint_and_inactive() {
     assert_eq!(error.code, 400);
     assert_eq!(error.errors["token"], "Already exists");
     // Bypassing the action preflight still reaches the real global unique constraint.
-    let mut populated = auth.store.populate(&duplicate).unwrap();
+    let mut populated = auth.store.schema.populate(&duplicate).unwrap();
     assert!(
         engine
-            .execute(&auth.store.insert(&populated).unwrap())
+            .execute(&auth.store.insert(&populated, DialectId::Sqlite).unwrap())
             .await
             .is_err()
     );
@@ -288,14 +295,15 @@ async fn token_global_uniqueness_preflight_sql_constraint_and_inactive() {
     assert_eq!(auth.count(&StoreQuery::default().all()).await.unwrap(), 1);
     // Inactive auth cannot sign in; no further joined-profile active guard is introduced.
     assert_eq!(
-        auth.signin(
-            "email",
-            &record(json!({"email":"same-token","secret":"hello"})),
-            true
-        )
-        .await
-        .unwrap_err()
-        .code,
+        account(&auth)
+            .signin(
+                "email",
+                &record(json!({"email":"same-token","secret":"hello"})),
+                true
+            )
+            .await
+            .unwrap_err()
+            .code,
         404
     );
     populated.insert("token".into(), "different-token".into());
@@ -313,7 +321,7 @@ async fn signin_flags_consumed_reload_and_inactive_profile_join() {
         json!({"id":"a","profileId":"p","type":"email","token":"ada@example.test","secret":"hello","consumed":0}),
     );
     auth.create(&input).await.unwrap();
-    let error = auth
+    let error = account(&auth)
         .signin(
             "email",
             &record(json!({"email":"ada@example.test","secret":"bad"})),
@@ -324,7 +332,7 @@ async fn signin_flags_consumed_reload_and_inactive_profile_join() {
     assert_eq!(error.code, 401);
     assert_eq!(error.error, "Invalid Parameters");
     assert_eq!(error.errors["secret"], "Invalid Password");
-    let signed = auth
+    let signed = account(&auth)
         .signin("email", &record(json!({"email":"ada@example.test"})), false)
         .await
         .unwrap()
@@ -332,21 +340,23 @@ async fn signin_flags_consumed_reload_and_inactive_profile_join() {
     assert_eq!(signed["profile"]["active"], false);
     assert!(columns::as_date(&signed["consumed"]).unwrap() > 0);
     assert_eq!(
-        auth.signin("username", &Record::new(), false)
+        account(&auth)
+            .signin("username", &Record::new(), false)
             .await
             .unwrap_err()
             .errors["username"],
         "User Not Found"
     );
     assert!(
-        auth.signin(
-            "email",
-            &record(json!({"email":"ada@example.test","secret":"hello"})),
-            true
-        )
-        .await
-        .unwrap()
-        .is_some()
+        account(&auth)
+            .signin(
+                "email",
+                &record(json!({"email":"ada@example.test","secret":"hello"})),
+                true
+            )
+            .await
+            .unwrap()
+            .is_some()
     );
     engine.close().await.unwrap();
 }
@@ -407,7 +417,7 @@ async fn source_batch_rolls_back_item_errors_but_retains_status_rows() {
 #[tokio::test]
 async fn signup_optional_phone_and_sequential_partial_side_effects() {
     let (_dir, engine, profile, auth) = database().await;
-    let result = auth
+    let result = account(&auth)
         .signup(&record(
             json!({"name":"Ada","email":"ada@example.test","secret":"hello"}),
         ))
@@ -415,13 +425,13 @@ async fn signup_optional_phone_and_sequential_partial_side_effects() {
         .unwrap();
     assert_eq!(result["roles"], json!([]));
     assert!(result["auth"].get("phone").is_none());
-    let error=auth.signup(&record(json!({"name":"Other","email":"new@example.test","username":"ada@example.test","secret":"hello"}))).await.unwrap_err();
+    let error=account(&auth).signup(&record(json!({"name":"Other","email":"new@example.test","username":"ada@example.test","secret":"hello"}))).await.unwrap_err();
     assert_eq!(error.code, 400);
     assert_eq!(error.errors["username"], "Already exists");
     assert_eq!(error.errors["token"], "Already exists");
     assert_eq!(profile.count(&StoreQuery::default()).await.unwrap(), 2);
     assert_eq!(auth.count(&StoreQuery::default()).await.unwrap(), 2); // New email remains after username failure.
-    let result=auth.signup(&record(json!({"name":"Phone","phone":"0012345","username":"phone-user","roles":["ADMIN"],"secret":"hello"}))).await.unwrap();
+    let result=account(&auth).signup(&record(json!({"name":"Phone","phone":"0012345","username":"phone-user","roles":["ADMIN"],"secret":"hello"}))).await.unwrap();
     assert_eq!(result["roles"], json!(["ADMIN"]));
     assert!(result["auth"]["phone"].is_object());
     engine.close().await.unwrap();
@@ -453,7 +463,9 @@ async fn predicates_sort_projection_join_and_maintenance() {
     assert_eq!(found.len(), 2);
     query.has.clear();
     query.hasnt = record(json!({"tags":"red"}));
-    assert_eq!(profile.find_all(&query).await.unwrap(), found);
+    let excluded = profile.find_all(&query).await.unwrap();
+    assert_eq!(excluded.len(), 1);
+    assert_eq!(excluded[0]["id"], "p2"); // G54 excludes red rather than repeat has.
     query = StoreQuery::default();
     query.eq = record(json!({"id":["p1","p2"]}));
     query.ne = record(json!({"name":"Bert"}));
@@ -480,7 +492,7 @@ async fn predicates_sort_projection_join_and_maintenance() {
         record(json!({"id":"a1","profile":{"name":"Ada"}}))
     );
     assert_eq!(auth.count(&query).await.unwrap(), 1);
-    assert!(ProfileStore::new("").paths("auth.*").is_empty());
+    assert!(ProfileStore::new("".into(), 0).paths("auth.*").is_empty());
     assert_eq!(
         auth.store
             .selectors(&["*".into(), "id".into(), "profile.*".into()])
@@ -546,26 +558,27 @@ async fn predicates_sort_projection_join_and_maintenance() {
 #[tokio::test]
 async fn password_precedence_upsert_and_validation() {
     let (_dir, engine, profile, _) = database().await;
-    let auth = AuthActions::with_options(
+    let auth = stackpress_framework_session::storage::AccountActions::<
+        stackpress_framework_models::Models,
+    >::new(
         engine.clone(),
-        ActionOptions {
-            seed: "database-seed".into(),
-            password: PasswordConfig {
-                min: Some(4),
-                max: Some(8),
-                upper: true,
-                lower: true,
-                number: true,
-                special: true,
-            },
+        "database-seed".into(),
+        0,
+        PasswordConfig {
+            min: Some(4),
+            max: Some(8),
+            upper: true,
+            lower: true,
+            number: true,
+            special: true,
         },
     );
-    let configured = AuthActions::make(engine.clone(), None, None);
-    let direct = AuthActions::with_options(engine.clone(), ActionOptions::default());
+    let configured = AuthStore::new("abc123".into(), 0);
+    let direct = AuthStore::new(String::new(), 0);
     let token = record(json!({"token":"identifier"}));
     assert_ne!(
-        configured.store.scalarize(&token).unwrap(),
-        direct.store.scalarize(&token).unwrap()
+        configured.scalarize(&token).unwrap(),
+        direct.scalarize(&token).unwrap()
     );
     let secret_error = |secret: &str| {
         auth.assert(&record(
@@ -613,13 +626,20 @@ async fn password_precedence_upsert_and_validation() {
     assert!(profile.upsert(&mut supplied).await.unwrap().is_none());
     let mut supplied = record(json!({"name":"insert"}));
     assert!(profile.upsert(&mut supplied).await.unwrap().is_some());
-    assert!(auth.store.create().render(DialectId::Postgres).is_ok());
-    assert!(auth.store.create().render(DialectId::Mysql).is_ok());
+    assert!(
+        auth.auth()
+            .store
+            .create()
+            .render(DialectId::Postgres)
+            .is_ok()
+    );
+    assert!(auth.auth().store.create().render(DialectId::Mysql).is_ok());
     let input = record(json!({"id":"a","profileId":"p","token":"identifier","secret":"hello"}));
     assert!(
         !auth
+            .auth()
             .store
-            .insert_for(&input, DialectId::Mysql)
+            .insert(&input, DialectId::Mysql)
             .unwrap()
             .render(DialectId::Mysql)
             .unwrap()
@@ -650,4 +670,18 @@ pub(super) async fn transaction_child() {
     send(profile.find_in(&mut session, &query));
     transaction.rollback().await.unwrap();
     engine.close().await.unwrap();
+}
+
+use stackpress_framework_schema::source::SourceSchema;
+
+/// Bind account orchestration to the same generated store environment.
+fn account(
+    actions: &AuthActions,
+) -> stackpress_framework_session::storage::AccountActions<stackpress_framework_models::Models> {
+    stackpress_framework_session::storage::AccountActions::new(
+        actions.engine.clone(),
+        actions.store.schema.seed().into(),
+        actions.store.schema.offset_minutes(),
+        Default::default(),
+    )
 }

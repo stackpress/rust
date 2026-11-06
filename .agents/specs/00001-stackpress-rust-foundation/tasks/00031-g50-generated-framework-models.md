@@ -43,7 +43,7 @@ model Profile {
 | `framework-api/src/codegen.rs`, `codegen/source_compat.rs`, source role adapters | Remove synthetic external Profile rendering/import stripping. Generalize wildcard/inverse and source-component support into generators/shared UI definitions, then normalize the complete imported four-model graph. No three-model projection or fixture is carried forward. |
 | Aggregate CompiledClient/CompiledModel/catalog and app-generated admin | Keep ordinary registration, source nine-stage order and app ownership. Extend the compiled runtime binding seam as below. Generated model callbacks still enter SQL Listen; admin stays last. No route ownership, global protection or runtime plugin loading. |
 
-Existing [source model/actions](../../../../crates/framework/framework-session/src/storage/actions.rs), [custom account actions](../../../../crates/framework/framework-session/src/storage/account.rs), [API model schema](../../../../crates/framework/framework-api/src/models/schema.rs) and [generated SQL templates](../../../../crates/framework/framework-sql/src/codegen/templates/) are inventories to migrate, not interchangeable APIs today.
+Existing `source model/actions` (removed in G50 M4), [custom account actions](../../../../crates/framework/framework-session/src/storage/account.rs), `API model schema` (removed in G50 M4) and [generated SQL templates](../../../../crates/framework/framework-sql/src/codegen/templates/) are inventories to migrate, not interchangeable APIs today.
 
 ## Compile-time model binding proposal
 

@@ -1,8 +1,10 @@
 //! Source generated query defaults used by detail/get/search and management consumers.
-use crate::models::{ModelKind, Record, StoreQuery, Value};
+use crate::models::{Record, StoreQuery, Value};
+use stackpress_framework_schema::source::SourceSchema;
+use stackpress_framework_sql::source::SourceModel;
 /// Source model @query columns, including plaintext credentials and joined Profile.
-pub fn columns<M: ModelKind>() -> Vec<String> {
-    let model = super::super::models::Schema::<M>::new().model();
+pub fn columns<M: SourceModel>() -> Vec<String> {
+    let model = M::Schema::describe();
     if model.query.is_empty() {
         vec!["*".into()]
     } else {

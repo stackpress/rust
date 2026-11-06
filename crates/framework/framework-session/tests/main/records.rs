@@ -1,5 +1,6 @@
 //! Golden values are captured by executing the original generated TypeScript classes.
 use serde_json::{Value as JsonValue, json};
+use stackpress_framework_schema::source::SourceSchema;
 use stackpress_framework_session::columns::Value;
 use stackpress_framework_session::{
     auth::AuthSchema,
@@ -14,14 +15,17 @@ fn wire(value: Value) -> JsonValue {
 #[test]
 fn original_column_goldens() {
     let fixture: JsonValue = serde_json::from_str(include_str!("../records.json")).unwrap();
-    let profile = ProfileSchema::new("database-seed");
-    let auth = AuthSchema::new("database-seed");
     for case in fixture["columns"].as_array().unwrap() {
-        let schema = if case["model"] == "Profile" {
-            &*profile
-        } else {
-            &*auth
-        };
+        let schema = columns::RecordSchema::from_metadata(
+            &if case["model"] == "Profile" {
+                ProfileSchema::describe()
+            } else {
+                AuthSchema::describe()
+            },
+            std::sync::Arc::new(ProfileSchema::catalog()),
+            "database-seed".into(),
+            0,
+        );
         let column = schema.column(case["name"].as_str().unwrap()).unwrap();
         let mut input = case.get("input").cloned().map(Value::from);
         if case["nativeDate"] == true {
@@ -54,7 +58,7 @@ fn original_column_goldens() {
                 actual,
                 case[name],
                 "{} {} {name} input={input:?}",
-                schema.name,
+                case["model"],
                 column.name()
             );
         }
@@ -65,14 +69,14 @@ fn original_column_goldens() {
                 .unwrap_or(JsonValue::Null),
             case["assert"],
             "{} {} assertion input={input:?}",
-            schema.name,
+            case["model"],
             column.name()
         );
     }
 }
 #[test]
 fn schema_defaults_missing_null_filter_and_date_contract() {
-    let schema = ProfileSchema::new("");
+    let schema = ProfileSchema::new("".into(), 0);
     let first = schema.defaults_at(1700000000123).unwrap();
     let second = schema.defaults_at(1700000000123).unwrap();
     assert_ne!(first["id"], second["id"]);
@@ -130,8 +134,8 @@ fn original_email_goldens() {
 }
 #[test]
 fn model_descriptor_is_seed_free_and_contains_api_profile_edges() {
-    let schema = ProfileSchema::new("private-seed");
-    let model = schema.model();
+    let schema = ProfileSchema::new("private-seed".into(), 0);
+    let model = ProfileSchema::describe();
     let encoded = serde_json::to_string(&model).unwrap();
     assert!(!encoded.contains("private-seed"));
     assert_eq!(model.name, "Profile");
@@ -188,7 +192,7 @@ fn native_dates_cannot_collide_with_arbitrary_json_objects() {
         serde_json::to_value(&date).unwrap(),
         json!("2023-11-14T22:13:20.123Z")
     );
-    let schema = ProfileSchema::default();
+    let schema = ProfileSchema::new(String::new(), 0);
     assert_eq!(
         schema
             .column("references")
@@ -198,8 +202,7 @@ fn native_dates_cannot_collide_with_arbitrary_json_objects() {
         Some(native)
     );
     assert_eq!(
-        schema
-            .model()
+        ProfileSchema::describe()
             .fields
             .iter()
             .find(|field| field.name == "type")

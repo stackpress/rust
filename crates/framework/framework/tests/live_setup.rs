@@ -3,6 +3,8 @@
 mod cancellation;
 #[path = "live/cascade.rs"]
 mod cascade;
+#[path = "../../framework-sql/tests/support/g54.rs"]
+mod g54;
 #[path = "../../framework-session/tests/live/support.rs"]
 mod support;
 
@@ -227,7 +229,12 @@ async fn scenario(engine: Arc<Engine>) -> support::TestResult<()> {
     partial_state(&engine).await?;
     commands(&engine, markers.0.to_str().unwrap()).await?;
     cascade::prove(&engine).await?;
-    cancellation::prove(engine).await?;
+    cancellation::prove(engine.clone()).await?;
+    g54::prove(stackpress_framework_session::storage::ProfileActions::new(
+        engine,
+        stackpress_framework_session::storage::ProfileStore::new(String::new(), 0),
+    ))
+    .await?;
     Ok(())
 }
 fn main() {

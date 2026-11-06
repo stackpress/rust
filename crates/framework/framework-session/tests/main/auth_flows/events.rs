@@ -10,11 +10,17 @@ async fn database() -> (tempfile::TempDir, Arc<Engine>, AuthActions) {
     .await
     .unwrap();
     let engine = Arc::new(Engine::new(db));
-    ProfileActions::new(engine.clone(), "database-seed")
-        .install()
-        .await
-        .unwrap();
-    let auth = AuthActions::new(engine.clone(), "database-seed");
+    ProfileActions::new(
+        engine.clone(),
+        stackpress_framework_session::storage::ProfileStore::new("database-seed".into(), 0),
+    )
+    .install()
+    .await
+    .unwrap();
+    let auth = AuthActions::new(
+        engine.clone(),
+        stackpress_framework_session::storage::AuthStore::new("database-seed".into(), 0),
+    );
     auth.install().await.unwrap();
     (dir, engine, auth)
 }
@@ -115,7 +121,7 @@ async fn real_signup_optional_phone_roles_override_secret_removal_and_errors() {
     );
     assert!(duplicate.errors().get("token").is_some()); // Original token error is retained too.
     assert_eq!(
-        actions
+        account(&actions)
             .profile()
             .count(&StoreQuery::default())
             .await
@@ -129,7 +135,7 @@ async fn real_signup_optional_phone_roles_override_secret_removal_and_errors() {
 async fn real_signin_flags_2fa_search_inactive_profile_and_literal_signout() {
     let (_dir, engine, actions) = database().await;
     let host = sql_host(engine.clone(), Some(json!({"base":"/login"}))).await;
-    let profile = actions
+    let profile = account(&actions)
         .signup(&record(
             json!({"name":"Ada","email":"ada@example.test","secret":"correct"}),
         ))
@@ -200,7 +206,7 @@ async fn real_signin_flags_2fa_search_inactive_profile_and_literal_signout() {
         *host.host().service::<Calls>().unwrap().0.lock().unwrap(),
         vec!["auth-search"]
     );
-    actions
+    account(&actions)
         .profile()
         .update(
             &StoreQuery::eq("id", profile_id),
@@ -424,18 +430,21 @@ async fn source_timezone_column_sql_and_profile_collaborator_vectors() {
     let fixture: Json = serde_json::from_str(include_str!("../../auth-flows.json")).unwrap();
     for vector in fixture["timezone"].as_array().unwrap() {
         let offset = vector["offset"].as_i64().unwrap() as i32;
-        let mut actions = actions.clone();
-        actions.store.schema = actions.store.schema.clone().with_offset_minutes(offset);
+        let actions = AuthActions::new(
+            actions.engine.clone(),
+            stackpress_framework_session::storage::AuthStore::new("database-seed".into(), offset),
+        );
         let value = columns::date(1_700_000_000_000);
         let serialized = actions
             .store
+            .schema
             .column("consumed")
             .unwrap()
             .serialize(Some(&value), "", false, offset)
             .unwrap()
             .unwrap();
         assert_eq!(serialized, vector["serialized"]);
-        let scalar = actions
+        let scalar = account(&actions)
             .profile()
             .store
             .scalarize(&Record::from_iter([("created".into(), value)]))
@@ -482,7 +491,7 @@ async fn route(host: &Server, method: &str, url: &str, data: Json, csrf: Option<
 #[tokio::test]
 async fn real_sql_otp_magic_handoff_and_session_creation_through_registered_routes() {
     let (_dir, engine, actions) = database().await;
-    actions
+    account(&actions)
         .signup(&record(
             json!({"name":"Ada","email":"ada@example.test","secret":"secret"}),
         ))
@@ -605,4 +614,18 @@ async fn real_sql_otp_magic_handoff_and_session_creation_through_registered_rout
     );
     host.host().service::<Hooks>().unwrap().shutdown().await;
     engine.close().await.unwrap();
+}
+
+use stackpress_framework_schema::source::SourceSchema;
+
+/// Bind account orchestration to the same generated store environment.
+fn account(
+    actions: &AuthActions,
+) -> stackpress_framework_session::storage::AccountActions<stackpress_framework_models::Models> {
+    stackpress_framework_session::storage::AccountActions::new(
+        actions.engine.clone(),
+        actions.store.schema.seed().into(),
+        actions.store.schema.offset_minutes(),
+        Default::default(),
+    )
 }

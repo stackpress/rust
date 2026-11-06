@@ -74,7 +74,7 @@ pub async fn auth_search_with<M: SessionModels>(
     let query: StoreQuery = serde_json::from_value(serde_json::to_value(b::input(req)?)?)?;
     let auth = actions.auth();
     // Keep the existing String-q decoder before transferring to the app's query type.
-    let query = auth.store().query(&query.native().to_record());
+    let query = auth.store().query(&query.to_record());
     let rows = match query {
         Ok(query) => auth.find_all(&query).await,
         Err(error) => Err(error),
@@ -106,9 +106,7 @@ pub async fn auth_update_with<M: SessionModels>(
         return Ok(Flow::Continue);
     };
     let auth = actions.auth();
-    let query = auth
-        .store()
-        .query(&StoreQuery::eq("id", id).native().to_record());
+    let query = auth.store().query(&StoreQuery::eq("id", id).to_record());
     let rows = match query {
         Ok(query) => auth.update(&query, &mut b::input(req)?).await,
         Err(error) => Err(error),
@@ -137,9 +135,7 @@ pub async fn auth_remove_with<M: SessionModels>(
         return Ok(Flow::Continue);
     };
     let auth = actions.auth();
-    let query = auth
-        .store()
-        .query(&StoreQuery::eq("id", id).native().to_record());
+    let query = auth.store().query(&StoreQuery::eq("id", id).to_record());
     let rows = match query {
         Ok(query) => auth.remove(&query).await,
         Err(error) => Err(error),
@@ -188,7 +184,7 @@ pub async fn profile_detail_with<M: SessionModels>(
             .collect();
     }
     let profile = actions.profile();
-    let query = profile.store().query(&query.native().to_record());
+    let query = profile.store().query(&query.to_record());
     let row = match query {
         Ok(query) => profile.find(&query).await,
         Err(error) => Err(error),
@@ -224,9 +220,7 @@ pub async fn profile_update_with<M: SessionModels>(
         return Ok(Flow::Continue);
     };
     let profile = actions.profile();
-    let query = profile
-        .store()
-        .query(&StoreQuery::eq("id", id).native().to_record());
+    let query = profile.store().query(&StoreQuery::eq("id", id).to_record());
     let rows = match query {
         Ok(query) => profile.update(&query, &mut b::input(req)?).await,
         Err(error) => Err(error),
@@ -255,9 +249,7 @@ pub async fn profile_remove_with<M: SessionModels>(
         return Ok(Flow::Continue);
     };
     let profile = actions.profile();
-    let query = profile
-        .store()
-        .query(&StoreQuery::eq("id", id).native().to_record());
+    let query = profile.store().query(&StoreQuery::eq("id", id).to_record());
     let rows = match query {
         Ok(query) => profile.remove(&query).await,
         Err(error) => Err(error),

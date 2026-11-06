@@ -17,9 +17,8 @@
 //! # Ok::<(), stackpress_lib::Error>(())
 //! ```
 
-mod adapter;
 pub mod defaults;
 mod events;
 pub use crate::models::{ApplicationActions, ApplicationStore, SessionActions, SessionStore};
-pub use adapter::SourceStatement;
 pub use events::{Event, action, register, register_with};
+pub use stackpress_framework_sql::source::SourceStatement;

@@ -87,9 +87,18 @@ async fn main() -> std::result::Result<(), Box<dyn std::error::Error + Send + Sy
         )
         .await?,
     ));
-    let profiles = ProfileActions::new(engine.clone(), "");
-    let applications = ApplicationActions::new(engine.clone(), "");
-    let sessions = SessionActions::new(engine.clone(), "");
+    let profiles = ProfileActions::new(
+        engine.clone(),
+        stackpress_framework_session::storage::ProfileStore::new("".into(), 0),
+    );
+    let applications = ApplicationActions::new(
+        engine.clone(),
+        stackpress_framework_api::models::ApplicationStore::new("".into(), 0),
+    );
+    let sessions = SessionActions::new(
+        engine.clone(),
+        stackpress_framework_api::models::SessionStore::new("".into(), 0),
+    );
     profiles.install().await?;
     applications.install().await?;
     sessions.install().await?;

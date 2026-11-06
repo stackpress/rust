@@ -10,6 +10,7 @@ The model callback queues account handlers for Listen. The admin callback queues
 ```rust
 use stackpress_framework::{CompiledClient, CompiledModel};
 use stackpress_framework_schema::Model;
+use stackpress_framework_session::columns::SourceSchema;
 use stackpress_lib::{Flow, Invocation, Request, Response, Result};
 use stackpress_server::{ServerBuilder, StartupContext};
 
@@ -28,7 +29,7 @@ fn admin(app: &mut ServerBuilder) -> Result<()> {
 }
 
 fn describe() -> Vec<Model> {
-    vec![stackpress_framework_session::profile::ProfileSchema::default().model()]
+    vec![stackpress_framework_session::profile::ProfileSchema::describe()]
 }
 
 static CLIENT: CompiledClient = CompiledClient {

@@ -38,9 +38,12 @@ reuse its transaction under an external watchdog with a forced-kill control.
 
 `StoreQuery` preserves source q/eq/ne/ge/le/like/has/hasnt/sort/columns/skip/take.
 Missing paging defaults to take=50/skip=0; zero take is unlimited. Unrepresentable native
-paging fails explicitly. Nested maps and arrays flatten to indexed source paths.
+paging fails explicitly. Nested maps and scalar-filter arrays flatten to indexed source paths.
 Terminal relation/unknown-child selectors retain the last source selector and can fail
-at SQL execution. Positive `hasnt`, active=-1 and native interpolation follow upstream.
+at SQL execution. G53 requires all `has` members; G54 excludes all `hasnt` members, keeping
+each value on the same list column. SQL NULL lists and missing JSON paths match `hasnt`;
+nonexistent SQL columns still fail. The [shared cases](../../tests/support/g54.rs) cover
+these boundaries. active=-1 and native interpolation follow upstream.
 G46 uses ILIKE only on PostgreSQL; SQLite/MySQL use LIKE. Inherent native store methods
 return `SourceStatement`, which renders that spelling. The generic SourceStore trait
 returns bare lower SQL ASTs; wrap them in SourceStatement when rendering directly.

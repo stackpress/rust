@@ -11,7 +11,7 @@ use stackpress_framework_csrf::Service as Csrf;
 use stackpress_framework_email::{events::EMAIL_SEND, plugin};
 use stackpress_framework_session::{
     auth::{self, Environment, Hooks},
-    storage::{AuthActions, ProfileActions},
+    storage::{AuthActions, AuthStore, ProfileActions, ProfileStore},
 };
 use stackpress_lib::{
     Flow, Invocation, PublicError, Request, Response, Result, handler, queue::task,
@@ -93,9 +93,10 @@ async fn host(case: Json, config: Option<Json>) -> (Arc<Server>, Arc<Fixture>) {
     .await
     .unwrap();
     let engine = Arc::new(Engine::new(database));
-    let profiles = ProfileActions::new(engine.clone(), "database-seed");
+    let profiles =
+        ProfileActions::new(engine.clone(), ProfileStore::new("database-seed".into(), 0));
     profiles.install().await.unwrap();
-    let actions = AuthActions::new(engine.clone(), "database-seed");
+    let actions = AuthActions::new(engine.clone(), AuthStore::new("database-seed".into(), 0));
     actions.install().await.unwrap();
     // Explicit IDs and consumed time let Rust compare original-source templates byte for byte.
     profiles

@@ -14,105 +14,85 @@ pub fn columns() -> Vec<SourceColumn> {
     let model = describe();
     let catalog = std::sync::Arc::new(super::catalog::describe());
     let codecs = vec![
-        Column {
-            name: "id",
-            sql: "id",
-            kind: Kind::String,
-            nullable: false,
-            required_message: None,
-            minimum: None,
-            default: None,
-        },
-        Column {
-            name: "profileId",
-            sql: "profile_id",
-            kind: Kind::String,
-            nullable: false,
-            required_message: None,
-            minimum: None,
-            default: None,
-        },
-        Column {
-            name: "type",
-            sql: "type",
-            kind: Kind::String,
-            nullable: false,
-            required_message: None,
-            minimum: None,
-            default: None,
-        },
-        Column {
-            name: "token",
-            sql: "token",
-            kind: Kind::Token,
-            nullable: false,
-            required_message: None,
-            minimum: None,
-            default: None,
-        },
-        Column {
-            name: "secret",
-            sql: "secret",
-            kind: Kind::Secret,
-            nullable: false,
-            required_message: None,
-            minimum: None,
-            default: None,
-        },
-        Column {
-            name: "verified",
-            sql: "verified",
-            kind: Kind::Boolean,
-            nullable: false,
-            required_message: None,
-            minimum: None,
-            default: None,
-        },
-        Column {
-            name: "consumed",
-            sql: "consumed",
-            kind: Kind::Date,
-            nullable: false,
-            required_message: None,
-            minimum: None,
-            default: None,
-        },
-        Column {
-            name: "active",
-            sql: "active",
-            kind: Kind::Boolean,
-            nullable: false,
-            required_message: None,
-            minimum: None,
-            default: None,
-        },
-        Column {
-            name: "created",
-            sql: "created",
-            kind: Kind::Date,
-            nullable: false,
-            required_message: None,
-            minimum: None,
-            default: None,
-        },
-        Column {
-            name: "updated",
-            sql: "updated",
-            kind: Kind::Date,
-            nullable: false,
-            required_message: None,
-            minimum: None,
-            default: None,
-        },
+        (
+            "id",
+            Column {
+                kind: Kind::String,
+                nullable: false,
+            },
+        ),
+        (
+            "profileId",
+            Column {
+                kind: Kind::String,
+                nullable: false,
+            },
+        ),
+        (
+            "type",
+            Column {
+                kind: Kind::String,
+                nullable: false,
+            },
+        ),
+        (
+            "token",
+            Column {
+                kind: Kind::Token,
+                nullable: false,
+            },
+        ),
+        (
+            "secret",
+            Column {
+                kind: Kind::Secret,
+                nullable: false,
+            },
+        ),
+        (
+            "verified",
+            Column {
+                kind: Kind::Boolean,
+                nullable: false,
+            },
+        ),
+        (
+            "consumed",
+            Column {
+                kind: Kind::Date,
+                nullable: false,
+            },
+        ),
+        (
+            "active",
+            Column {
+                kind: Kind::Boolean,
+                nullable: false,
+            },
+        ),
+        (
+            "created",
+            Column {
+                kind: Kind::Date,
+                nullable: false,
+            },
+        ),
+        (
+            "updated",
+            Column {
+                kind: Kind::Date,
+                nullable: false,
+            },
+        ),
     ];
     // Pair by exact identity instead of dropping or shifting a virtual relation slot.
     codecs
         .into_iter()
-        .map(|codec| {
+        .map(|(name, codec)| {
             let field = model
                 .fields
                 .iter()
-                .find(|field| field.name == codec.name)
+                .find(|field| field.name == name)
                 .expect("generated column has source field")
                 .clone();
             SourceColumn::new(codec, field).with_catalog(catalog.clone())
@@ -136,6 +116,10 @@ impl AuthSchema {
     /// Borrow the generated storage inventory and its complete field metadata.
     pub fn columns(&self) -> &[SourceColumn] {
         self.0.columns()
+    }
+    /// Borrow one declared storage column by its source field name.
+    pub fn column(&self, name: &str) -> Option<&SourceColumn> {
+        self.0.column(name)
     }
 }
 

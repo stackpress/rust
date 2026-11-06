@@ -2,10 +2,11 @@
 use super::*;
 use stackpress_framework::{CompiledClient, CompiledModel, register_with};
 use stackpress_framework_schema::Model;
+use stackpress_framework_session::columns::SourceSchema;
 
 /// Source metadata is explicitly evaluated by callers, never by startup.
 fn describe() -> Vec<Model> {
-    vec![stackpress_framework_session::profile::ProfileSchema::default().model()]
+    vec![stackpress_framework_session::profile::ProfileSchema::describe()]
 }
 /// An application-owned model queues a real capability for Listen.
 fn first_model(app: &mut ServerBuilder) -> Result<()> {

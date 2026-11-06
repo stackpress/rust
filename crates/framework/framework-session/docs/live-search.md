@@ -37,7 +37,7 @@ timeout result. No listener is started; only the already-running local database 
 Both PostgreSQL and MySQL execute Profile q/like, Auth-to-Profile like, Application q/like and API Session
 like successfully, including mixed ASCII case, ordered identities and counts. All tables use
 the stores' real `install()` paths and source codecs. API Session has no q search fields and
-continues to ignore q, as declared in its [query contract](../../framework-api/src/models/query.rs).
+continues to ignore q, as declared in its [query contract](../../framework-sql/src/source/query_input.rs).
 The proof does not claim arbitrary Unicode matching, other collations, every JSON operator,
 every possible schema upgrade or production-load acceptance. The same cases also exercise
 real store upgrade with a nullable integer column, purge with `cascade=true` and
