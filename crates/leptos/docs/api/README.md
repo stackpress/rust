@@ -62,3 +62,5 @@ Related: [Getting started](../getting-started.md), [Concepts](../concepts.md),
 Disclosure, navigation, overlay, table and collection contracts: [component breadth](components-breadth.md).
 
 Specialized decimal/date/time/phone editing: `format::edit::{EditState, DecimalPolicy, TemporalPolicy, PhonePolicy, FormattedInput}` under the opt-in `format` feature (facade `leptos-format`); see [the editor contract and finite proof](../../../../examples/ui-format/README.md#specialized-editing-contract).
+
+Shared source-role controls and owner-approved native differences: [source roles](source-roles.md).

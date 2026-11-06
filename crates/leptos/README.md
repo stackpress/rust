@@ -7,3 +7,6 @@ Cargo workspace and no view, server, facade, persistence, SQL, schema or admin d
 [TextEditor and HTML](docs/api/text-editor.md) provide frui-compatible HTML editing
 and verbatim HTML display. Applications own stored-content security; these APIs
 perform no sanitization.
+
+The shared [source-role family](docs/api/source-roles.md) also covers source inputs,
+choices, file upload hooks, collections and displays, with the G55 native rich-role contract.

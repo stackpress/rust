@@ -33,11 +33,13 @@ literal `i` in the shipped format. The existing Leptos UTC-offset formatter is
 not substituted. Joined template roles receive the actual row, while direct
 legacy callers can retain their relation-choice context.
 
-Original blog `field.editor` toolbar props and `field.select` options normalize
-as source data. **Rich editor adapter absent:** no reusable rich editor exists
-in the shared controls. The editor catalog remains unavailable for concrete
-emission; an application must select a compiled implementation. No editor is
-silently replaced by a textarea. The stock select adapter handles string-array
+Original blog `field.editor` toolbar props delegate to the shared TextEditor and
+`view.html` inserts stored HTML verbatim. The remaining 44 canonical source roles
+also have compiled shared adapters, including generated nested fieldsets and real
+row-fed formulas. Their contract, G55 native rich-role differences, upload hook,
+data provenance and browser evidence are documented in [shared source roles](../../../leptos/docs/api/source-roles.md).
+
+The stock select adapter handles string-array
 options and placeholder; source styling or non-string-array options require an
 application adapter and are diagnosed at emission. The stock date adapter implements
 the shipped `m d, Y h:iA` format; other Moment formats need an application adapter.

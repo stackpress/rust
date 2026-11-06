@@ -6,6 +6,8 @@ use leptos::prelude::*;
 pub(super) enum IconKind {
     /// Right-pointing chevron: follow a row's detail link.
     ChevronRight,
+    /// Check: selected source radio check-style marker.
+    Check,
     /// Upward arrow: move an existing row earlier.
     ArrowUp,
     /// Downward arrow: move an existing row later.
@@ -27,6 +29,7 @@ pub(super) fn icon(kind: IconKind) -> AnyView {
     // Keep primitive attributes identical to the pinned Lucide masters. No raw HTML,
     // dynamic paths, resource references or external icon font enters this renderer.
     let geometry = match kind {
+        IconKind::Check => view! { <path d="M20 6 9 17l-5-5"/> }.into_any(),
         IconKind::ChevronRight => view! { <path d="m9 18 6-6-6-6"/> }.into_any(),
         IconKind::ArrowUp => view! {
             <path d="m5 12 7-7 7 7"/><path d="M12 19V5"/>

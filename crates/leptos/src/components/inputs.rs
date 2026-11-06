@@ -321,7 +321,7 @@ pub fn Textarea(
 }
 
 /// Escape native textarea RCDATA without changing its parsed string value.
-fn textarea_seed(value: &str) -> String {
+pub(super) fn textarea_seed(value: &str) -> String {
     let escaped = value
         .replace('&', "&amp;")
         .replace('<', "&lt;")

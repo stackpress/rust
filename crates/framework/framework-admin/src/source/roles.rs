@@ -9,7 +9,27 @@ use stackpress_leptos::components::{
 };
 use std::collections::BTreeMap;
 
+mod countries;
+mod display;
+mod fieldset;
+mod inputs;
+mod lists;
+mod media;
+mod props;
+mod rich;
+/// Existing source stringlist retains its established shared collection contract.
+pub use crate::components::TextListField;
+pub use countries::{ColorField, CountryField, CountryView};
+pub use fieldset::{FieldsetField, FieldsetView, fieldset_context};
+pub use inputs::{FileField, RadioField, SmallField, SourceUploader, SuggestField};
+pub use lists::SourceTextListField;
+pub use media::MediaView;
+pub use rich::{FormulaView, RichField, RichView};
 mod editor;
+pub use display::{
+    ColorView, EmailView, ListView, RatingView, RelativeView, SpreadView, TabularView,
+    TransformView,
+};
 pub use editor::{EditorField, HtmlView};
 
 /// A source relation choice, loaded through the configured model search event.
@@ -44,24 +64,19 @@ pub fn InputField(
     /// Generated field metadata, draft value and fixed source arguments.
     context: RoleContext,
 ) -> impl IntoView {
-    let text = match context.value.get_untracked() {
-        Presence::Missing | Presence::Null => String::new(),
-        Presence::Value(value) => value
-            .as_str()
-            .map(str::to_owned)
-            .unwrap_or_else(|| value.to_string()),
-    };
+    let text = props::input_content(&context);
     let value = RwSignal::new(text);
     let draft = context.value;
     let kind = context.text_prop("type", "text");
+    // Earlier non-text source adapters emitted native inputs without empty Typed associations.
+    let omit_empty_associations = kind != "text";
     let id = context.id.clone();
-    // Shared Input fixes type=text. A URL needs a native typed element inside the same shared
-    // frame: spreading a second type attribute makes the browser keep the first text type.
-    let control = if kind == "text" {
-        view!{<Input id=id.clone() name=context.field.wire_name.clone() value required=context.input_required() on:input=move |event|draft.set(Presence::Value(Value::String(event_target_value(&event))))/>}.into_any()
-    } else {
-        view!{<input class="sp-input" type=kind id=id.clone() name=context.field.wire_name.clone() value=move ||value.get() prop:value=move ||value.get() required=context.input_required() on:input=move |event| {let text=event_target_value(&event);value.set(text.clone());draft.set(Presence::Value(Value::String(text)));}/>}.into_any()
-    };
+    let appearance = props::appearance(&context);
+    // The shared native Input already owns type, value, IME and successful-form behavior.
+    // Forward source appearance through explicit props so SSR never emits duplicate attributes.
+    let control = view! {<Input input_type=kind omit_empty_associations id=id.clone() name=props::form_name(&context) value required=context.input_required()
+    class_name=appearance.class_name style=(!appearance.style.is_empty()).then_some(appearance.style)
+    on:input=move|event|draft.set(Presence::Value(Value::String(event_target_value(&event))))/>};
     view! {<FieldControl for_id=id label=context.field.label.clone()>{control}</FieldControl>}
 }
 /// Original Boolean filter: one switch, without a generated presence-action selector.
@@ -162,8 +177,8 @@ pub fn RelationField(
     );
     view! {
         <div class="relation">
-            <Combobox id=context.id label=context.field.label.clone()
-                name=context.field.wire_name.clone() state lookup/>
+            <Combobox id=context.id.clone() label=context.field.label.clone()
+                name=props::form_name(&context) state lookup/>
             <p role="alert">{move || error.get()}</p>
         </div>
     }
@@ -352,9 +367,6 @@ fn source_date(iso: &str) -> Option<String> {
     }
 }
 
-/// Existing shared list editor retains the source's ordinary text list values.
-pub use crate::components::TextListField;
-
 /// Source form/field.ts:139–141 applies String(val) before calling Frui Metadata.
 /// Keep that presentation conversion separate from the exact native draft until an edit.
 #[component]
@@ -478,32 +490,12 @@ pub fn OverflowView(
             })
         })
         .unwrap_or(0.0);
-    let words = context.bool_prop("words", false);
-    let size = if words {
-        text.split(' ').count()
-    } else {
-        text.encode_utf16().count()
-    };
-    let mut visible = text.clone();
-    // Frui TextOverflow: zero/missing/NaN never clips; negative slice endpoints count
-    // from the end. Character slicing uses JavaScript UTF-16 units, not Rust bytes.
-    if count != 0.0 && size as f64 > count {
-        let end = if count < 0.0 {
-            size as f64 + count.trunc()
-        } else {
-            count.trunc()
-        }
-        .clamp(0.0, size as f64) as usize;
-        visible = if words {
-            text.split(' ').take(end).collect::<Vec<_>>().join(" ")
-        } else {
-            String::from_utf16_lossy(&text.encode_utf16().take(end).collect::<Vec<_>>())
-        };
-        if context.bool_prop("hellip", false) {
-            visible.push('…');
-        }
-    }
-    visible
+    stackpress_leptos::components::source::source_overflow(
+        &text,
+        count,
+        context.bool_prop("words", false),
+        context.bool_prop("hellip", false),
+    )
 }
 /// Source Metadata is a two-column table in object insertion order (Frui Metadata.tsx:23-33).
 #[component]

@@ -8,7 +8,7 @@ publish.workspace = true
 
 [features]
 default = []
-source = ["dep:stackpress-lib"]
+source = ["dep:stackpress-lib", "stackpress-leptos/source"]
 source-ssr = ["source", "ssr", "dep:chrono"]
 format = ["stackpress-leptos/format"]
 ssr = ["stackpress-leptos/ssr"]

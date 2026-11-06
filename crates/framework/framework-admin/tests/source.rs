@@ -11,6 +11,8 @@ use stackpress_idea_transformer::{
 
 #[path = "source/editor.rs"]
 mod editor;
+#[path = "source/remaining.rs"]
+mod remaining;
 
 fn config() -> stackpress_idea_parser::SchemaConfig {
     let mut app = MemoryLoader::new("/source-admin").unwrap();

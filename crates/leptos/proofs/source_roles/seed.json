@@ -1,0 +1,105 @@
+{
+  "f_code": "let answer = 42;",
+  "f_color": "rebeccapurple",
+  "f_country": "PH",
+  "f_currency": "PHP",
+  "f_email": "source email",
+  "f_file": "",
+  "f_image": "",
+  "f_json": "{ invalid JSON }",
+  "f_markdown": "# Markdown\n\n**bold** and <em>raw HTML</em>",
+  "f_mask": "source mask",
+  "f_radio": "source radio",
+  "f_small": 3,
+  "f_suggest": "source suggest",
+  "f_datelist": [
+    "first",
+    "second"
+  ],
+  "f_datetimelist": [
+    "first",
+    "second"
+  ],
+  "f_filelist": [],
+  "f_imagelist": [],
+  "f_numberlist": [
+    "first",
+    "second"
+  ],
+  "f_timelist": [
+    "first",
+    "second"
+  ],
+  "f_fieldset": {
+    "text": "nested"
+  },
+  "v_chars": "source chars",
+  "v_comma": [
+    "first",
+    "second"
+  ],
+  "v_country": "PHL",
+  "v_currency": "PHP",
+  "v_email": "source email",
+  "v_formula": 2.5,
+  "v_line": [
+    "first",
+    "second"
+  ],
+  "v_relative": "2026-11-01T00:00:00Z",
+  "v_transform": "source transform",
+  "v_words": "source words",
+  "v_carousel": [
+    "/picture.svg",
+    "/picture.svg"
+  ],
+  "v_code": "let answer = 42;",
+  "v_color": "rebeccapurple",
+  "v_film": [
+    "/picture.svg",
+    "/picture.svg"
+  ],
+  "v_json": "{ invalid JSON }",
+  "v_markdown": "# Markdown\n\n**bold** and <em>raw HTML</em>",
+  "v_rating": 2.5,
+  "v_list": [
+    "first",
+    "second"
+  ],
+  "v_ol": [
+    "first",
+    "second"
+  ],
+  "v_spread": [
+    "first",
+    "second"
+  ],
+  "v_tabular": [
+    {
+      "name": "first",
+      "zero": 0
+    },
+    {
+      "name": "second",
+      "zero": 1
+    }
+  ],
+  "v_ul": [
+    "first",
+    "second"
+  ],
+  "v_fieldset": {
+    "text": "nested"
+  },
+  "v_rel": "2026-11-01T00:00:00Z",
+  "f_fieldsets": [
+    {
+      "text": "row 1"
+    },
+    {
+      "text": "row 2"
+    }
+  ],
+  "price": 3,
+  "id": "proof"
+}

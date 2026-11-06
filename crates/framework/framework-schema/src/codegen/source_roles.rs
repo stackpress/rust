@@ -146,5 +146,6 @@ pub fn source_components() -> Vec<ComponentDefinition> {
             available: false,
         });
     }
+    definitions.extend(super::source_roles_remaining::components());
     definitions
 }
