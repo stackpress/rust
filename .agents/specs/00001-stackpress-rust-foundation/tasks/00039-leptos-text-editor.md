@@ -92,4 +92,20 @@ Existing partial-adapter limits remain: source select styling/object options, no
 
 ## Verification notes
 
-Coordinator-owned; pending.
+Coordinator: I reviewed and committed this as `60a18a9`, then merged it into main as `bc03c06` (no-ff). The review covered:
+- the registry prop budget, raised from 32 to 64;
+- the editor/HTML emitter mapping;
+- the 13 approved web-sys features;
+- Lucide NOTICE hash lines, added with the licence text untouched;
+- raw HTML documented under G43.
+
+Fresh-target gate `/private/tmp/editor-verify/run.sh`, 2026-11-06:
+- 699 registry tuples identical; Cargo.lock unchanged from `a802483`;
+- fmt; default and compatible Clippy with `-D warnings`;
+- nextest: default 1,052 passed / 91 skipped; compatible 1,209 passed / 99 skipped;
+- compatible doctests; Rustdoc with `-D warnings`;
+- wasm32 Clippy for leptos and admin source, hydrate and CSR;
+- aggregate graphs, eight consumers and build-host `--check`;
+- generated-workspace, generated-admin and API checkpoint freshness;
+- aggregate docs and proof ledger;
+- `crates/leptos/proofs/editor.py all`: generated consumers plus 8 browser cases.
