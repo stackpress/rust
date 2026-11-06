@@ -130,6 +130,11 @@ async fn output(req: &mut Request, res: &mut Response, inv: Invocation<'_>) -> R
                 .append("set-cookie", "one=1")?
                 .append("set-cookie", "two=2")?;
         }
+        "/cookies" => {
+            // A genuine exclusive stream uses the same host cookie policy as buffered output.
+            res.session_mut()?.set("stream", "value", None)?;
+            res.session_mut()?.remove("removed")?;
+        }
         "/stop" => {
             res.stop()?;
         }
@@ -188,6 +193,28 @@ async fn collect(mut body: HttpBody) -> Result<Vec<u8>> {
     }
     Ok(bytes)
 }
+/// Stream preflight selects the same root scope as the buffered converter.
+#[tokio::test]
+async fn streamed_cookies_keep_the_host_scope_on_set_and_remove() -> Result<()> {
+    let app = app(Arc::new(Probe::default())).await?;
+    let reply = call(&app, "GET", "/cookies").await?;
+    let StreamingHttpOutput::Response(response) = reply.output else {
+        panic!("missing stream")
+    };
+    let cookies = response
+        .headers()
+        .get_all("set-cookie")
+        .iter()
+        .map(|value| value.to_str().unwrap())
+        .collect::<Vec<_>>();
+    assert_eq!(cookies[0], "stream=value; Path=/");
+    assert!(cookies[1].contains("Path=/"));
+    assert!(cookies[1].contains("Max-Age=0"));
+    assert!(cookies[1].contains("1970"));
+    assert_eq!(collect(response.into_body()).await?, [0, 255]);
+    Ok(())
+}
+
 /// Snapshots cannot produce a second output or second poll, including a repeated lifecycle.
 #[tokio::test(flavor = "multi_thread")]
 async fn cloned_views_share_only_one_shot_identity() -> Result<()> {

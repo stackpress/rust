@@ -4,8 +4,8 @@ use http::header::{CONTENT_LENGTH, CONTENT_TYPE, SET_COOKIE, TRANSFER_ENCODING};
 use http::{HeaderMap, HeaderName, HeaderValue, Uri};
 use stackpress_lib::data::parse_body;
 use stackpress_lib::{
-    Body, Error, ErrorKind, Headers, LoadResult, ParseLimits, Request, Response, Result, Session,
-    SessionRevision, SessionValue,
+    Body, CookieOptions, Error, ErrorKind, Headers, LoadResult, ParseLimits, Request, Response,
+    Result, Session, SessionRevision, SessionValue,
 };
 
 use super::{BufferedResponse, HttpOptions};
@@ -167,7 +167,11 @@ pub(super) fn load_body(mime: &str, bytes: Vec<u8>, limits: ParseLimits) -> Resu
 }
 
 /// Preflight foundation budgets, HTTP legality and framing before native publication.
-pub(super) fn prepare(response: &Response, head: bool) -> Result<BufferedResponse> {
+pub(super) fn prepare(
+    response: &Response,
+    head: bool,
+    cookie: &CookieOptions,
+) -> Result<BufferedResponse> {
     // Handler replacement can change budgets, so use the final Response's policy every time.
     let limits = response.limits();
     // Mirror dispatch validation before its callback, including publicly replaceable stores.
@@ -183,7 +187,7 @@ pub(super) fn prepare(response: &Response, head: bool) -> Result<BufferedRespons
         ));
     }
     // Headers/cookies are checked even when the selected status forbids a body.
-    let mut headers = response_headers(response, &limits)?;
+    let mut headers = response_headers(response, &limits, cookie)?;
     // These statuses cannot carry payload bytes; HEAD is handled later as representation
     // suppression.
     let body = if matches!(code, 204 | 205 | 304) {
@@ -233,7 +237,11 @@ pub(super) fn frame_response(
 }
 
 /// Validate and append repeated headers/cookies without comma folding.
-pub(super) fn response_headers(response: &Response, limits: &ParseLimits) -> Result<HeaderMap> {
+pub(super) fn response_headers(
+    response: &Response,
+    limits: &ParseLimits,
+    cookie: &CookieOptions,
+) -> Result<HeaderMap> {
     // Keep each native value separate; no field joins can accidentally fold Set-Cookie.
     let mut headers = HeaderMap::new();
     let mut bytes = 0usize;
@@ -275,29 +283,46 @@ pub(super) fn response_headers(response: &Response, limits: &ParseLimits) -> Res
         return Err(Error::limit("response header limit exceeded"));
     }
     // Cookie encoding is a separate boundary from ordinary HTTP header conversion.
-    append_cookie_headers(response.session(), &mut headers)?;
+    append_cookie_headers(response.session(), &mut headers, cookie)?;
     Ok(headers)
 }
 
 /// Append checked scalar cookie revisions, retaining scoped removals and diagnostic identity.
-fn append_cookie_headers(session: &Session, headers: &mut HeaderMap) -> Result<()> {
-    // Diagnose the offending key before scalar serialization can return an unnamed codec error.
+fn append_cookie_headers(
+    session: &Session,
+    headers: &mut HeaderMap,
+    defaults: &CookieOptions,
+) -> Result<()> {
+    // Match source entry.options || host options: an explicit empty object also wins.
     for (name, revision) in session.revisions() {
-        if matches!(
-            revision,
+        let cookie = match revision {
+            SessionRevision::Set {
+                value: SessionValue::Text(value),
+                options,
+            } => stackpress_lib::session::cookie::serialize(
+                name,
+                value,
+                options.as_ref().unwrap_or(defaults),
+            )?,
             SessionRevision::Set {
                 value: SessionValue::List(_),
                 ..
+            } => {
+                // Name the unsupported revision only in diagnostics; no prepared headers
+                // are published when this fallible conversion returns an error.
+                return Err(Error::invalid(format!(
+                    "cookie {name:?}: session list value requires an explicit codec"
+                )));
             }
-        ) {
-            // Name the unsupported revision only in diagnostics; the wire fallback stays empty.
-            return Err(Error::invalid(format!(
-                "cookie {name:?}: session list value requires an explicit codec"
-            )));
-        }
-    }
-    // Foundation serialization validates attributes and forces scoped removal expiry/max-age.
-    for cookie in session.cookie_headers()? {
+            SessionRevision::Remove { options } => {
+                let mut options = options.as_ref().unwrap_or(defaults).clone();
+                // Retain the accepted foundation tombstone lifetime (G08) and the
+                // same selected host/explicit scope used when the cookie was issued.
+                options.max_age = Some(0);
+                options.expires = Some(std::time::UNIX_EPOCH);
+                stackpress_lib::session::cookie::serialize(name, "", &options)?
+            }
+        };
         // Checked scalar serialization retains deletion scope and separate revisions.
         let value = HeaderValue::from_str(&cookie).map_err(|cause| {
             Error::new("HTTP response cookie header conversion failed")

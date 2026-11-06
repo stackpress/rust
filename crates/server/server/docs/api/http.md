@@ -35,6 +35,7 @@ Clone/Debug/Default with public policy fields; every ceiling includes equality a
 | Field | Type | Default and meaning |
 | --- | --- | --- |
 | base_url | String | http://unknownhost/; trusted absolute HTTP(S) origin, root path, no credentials/query/fragment. |
+| cookie | stackpress_lib::CookieOptions | `Path=/` alone; fallback for session revisions with no options. |
 | limits | ParseLimits | Lib defaults; 1 MiB, 10,000 entries, depth 64, multipart-part header bytes 8,192; also bounds URI/body separately. |
 | response_limits | ParseLimits | Lib defaults for initial Response; a replacement owns its own limits. |
 | max_request_bytes | usize | 2 MiB across method, whole URI, every header-name/value occurrence, and body. |
@@ -71,6 +72,15 @@ let adapter = HttpAdapter::new(HttpOptions {
 **Returns** An immutable adapter or base-URL construction/policy Error. Rejects relative, non-web,
 credential-bearing, non-root, query/fragment bases. Origin-form input ignores Host/forwarded headers
 for authority.
+
+Cookie defaults follow the original Ingest host: `Path=/` only. Set `HttpOptions.cookie` to
+replace that whole fallback object. A response revision with explicit options replaces the host
+object entirely, including an explicitly empty object; attributes are not merged. Removal uses
+the same selected scope and the existing expired tombstone lifetime. Already encoded Set-Cookie
+headers are preserved. Buffered and streamed native output share this policy. The foundation
+Session serializer remains transport-neutral. See the maintained
+[cookie-policy tests](../../tests/http_output.rs), [stream proof](../../tests/http_stream.rs) and
+[native sign-in/jar/sign-out proof](../../../../framework/framework-session/tests/main/native_http.rs).
 
 ### 2.2. handle
 
