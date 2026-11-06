@@ -5,7 +5,7 @@ use http::Request as NativeRequest;
 use serde_json::{Value as Json, json};
 use stackpress_lib::{
     Body, CookieOptions, DeliveryState, Error, Flow, Invocation, MethodPattern, Nest, ParseLimits,
-    Request, Response, Result, SessionValue, SharedNative, Value,
+    Request, Response, Result, SessionValue, SharedNative, Timestamp, Value,
 };
 use stackpress_server::http::{HttpAdapter, HttpOptions, HttpOutput, HttpReply};
 use stackpress_server::{LifecycleStage as Stage, Server, ServerBuilder};
@@ -241,6 +241,123 @@ async fn handle(app: &Server, method: &str, path: &str) -> Result<HttpReply> {
     HttpAdapter::new(HttpOptions::default())?
         .handle(app, input)
         .await
+}
+
+/// G57 maps native Dates only at HTTP output; core JSON serialization still refuses them.
+async fn date_output(req: &mut Request, res: &mut Response, _: Invocation<'_>) -> Result<Flow> {
+    let date = |seconds, nanos| Value::DateTime(Timestamp::new(seconds, nanos).unwrap());
+    let value = match req.url.path() {
+        "/dates" => Value::Object(stackpress_lib::DataMap::from_iter([
+            ("epoch".into(), date(0, 0)),
+            (
+                "nested".into(),
+                Value::Array(vec![
+                    date(-1, 999_000_000),
+                    date(-2_208_988_800, 0),
+                    date(951_782_400, 123_000_000),
+                    date(253_402_300_800, 0),
+                    date(-62_167_219_200, 0),
+                    date(-62_198_755_200, 0),
+                    date(-8_640_000_000_000, 0),
+                    date(8_640_000_000_000, 0),
+                    date(-1, 999_999_999),
+                ]),
+            ),
+        ])),
+        "/date-budget" => {
+            // A native instant fits; its selected 24-byte HTTP spelling must still fit.
+            *res = Response::with_limits(ParseLimits {
+                max_bytes: 23,
+                ..Default::default()
+            });
+            date(0, 0)
+        }
+        "/date-range" => date(i64::MAX, 0),
+        path => {
+            // A preceding Date must not enable any other native payload's serialization.
+            let native = match path {
+                "/date-bytes" => Value::Bytes(vec![1, 2]),
+                "/date-file" => stackpress_lib::FileData::new(vec![], "file", "text/plain").into(),
+                "/date-shared" => SharedNative::new("private").into(),
+                _ => panic!("unknown Date fixture"),
+            };
+            Value::Array(vec![date(0, 0), native])
+        }
+    };
+    res.results_value(value)?;
+    if req.url.path() == "/dates" {
+        res.errors_mut()?.set("when", date(0, 0))?;
+    }
+    // This is the unchanged foundation contract, even for a Date-only result.
+    assert!(res.try_to_json().is_err());
+    res.redirect("/destination")?;
+    Ok(Flow::Continue)
+}
+
+/// Real buffered conversion retains redirect bodies and exact JavaScript ISO spelling.
+#[tokio::test]
+async fn http_dates_use_js_iso_without_changing_the_strict_core() -> Result<()> {
+    let mut builder = ServerBuilder::new();
+    builder.all("/:case", date_output)?;
+    let app = builder.build().await.map_err(|failure| failure.error)?;
+    let reply = handle(&app, "GET", "/dates").await?;
+    assert!(reply.report.failures.is_empty());
+    let response = native(reply);
+    assert_eq!(response.status(), 302);
+    assert_eq!(response.headers()["location"], "/destination");
+    assert_eq!(response.headers()["content-type"], "application/json");
+    assert_eq!(
+        response.headers()["content-length"],
+        response.body().len().to_string()
+    );
+    let body: Json = serde_json::from_slice(response.body()).unwrap();
+    assert_eq!(body["results"]["epoch"], "1970-01-01T00:00:00.000Z");
+    assert_eq!(body["errors"]["when"], "1970-01-01T00:00:00.000Z");
+    assert_eq!(
+        body["results"]["nested"],
+        json!([
+            "1969-12-31T23:59:59.999Z",
+            "1900-01-01T00:00:00.000Z",
+            "2000-02-29T00:00:00.123Z",
+            "+010000-01-01T00:00:00.000Z",
+            "0000-01-01T00:00:00.000Z",
+            "-000001-01-01T00:00:00.000Z",
+            "-271821-04-20T00:00:00.000Z",
+            "+275760-09-13T00:00:00.000Z",
+            "1970-01-01T00:00:00.000Z"
+        ])
+    );
+    // Ordered native objects retain order through the adapter-owned projection.
+    assert!(String::from_utf8_lossy(response.body()).contains(r#""results":{"epoch":"#));
+    let head = native(handle(&app, "HEAD", "/dates").await?);
+    assert!(head.body().is_empty());
+    assert_eq!(head.headers(), response.headers());
+    Ok(())
+}
+
+/// G57 neither admits unrelated native values nor bypasses the owning response's budgets.
+#[tokio::test]
+async fn http_dates_keep_other_native_values_and_limits_fallible() -> Result<()> {
+    let mut builder = ServerBuilder::new();
+    builder.all("/:case", date_output)?;
+    let app = builder.build().await.map_err(|failure| failure.error)?;
+    for path in [
+        "/date-bytes",
+        "/date-file",
+        "/date-shared",
+        "/date-budget",
+        "/date-range",
+    ] {
+        let reply = handle(&app, "GET", path).await?;
+        assert_eq!(reply.report.failures.len(), 1, "{path}");
+        if matches!(path, "/date-bytes" | "/date-file" | "/date-shared") {
+            assert_eq!(reply.report.failures[0].error.path(), Some("results.1"));
+        }
+        let response = native(reply);
+        assert_eq!(response.status(), 500, "{path}");
+        assert!(response.body().is_empty());
+    }
+    Ok(())
 }
 
 /// Require an actual response rather than treating suppression as transport success.

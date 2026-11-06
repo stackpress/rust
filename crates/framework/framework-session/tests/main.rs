@@ -11,6 +11,9 @@ mod host;
 #[cfg(feature = "native")]
 #[path = "main/native.rs"]
 mod native;
+#[cfg(feature = "auth-server")]
+#[path = "main/native_http.rs"]
+mod native_http;
 #[cfg(feature = "native")]
 #[path = "main/storage.rs"]
 mod storage;

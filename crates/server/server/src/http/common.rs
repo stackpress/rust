@@ -319,7 +319,7 @@ fn representation(response: &Response, headers: &mut HeaderMap) -> Result<Vec<u8
         Body::Bytes(bytes) => (bytes.clone(), response.mimetype()),
         Body::Empty | Body::Value(_) => {
             // Keep the owning Response limits and presence of null/false/zero/total=0.
-            let json = response.try_to_json()?;
+            let json = super::json::envelope(response)?;
             (
                 serde_json::to_vec(&json).map_err(|cause| {
                     Error::new("HTTP response JSON serialization failed")

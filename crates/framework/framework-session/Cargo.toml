@@ -52,6 +52,7 @@ png = { version = "=0.18.1", default-features = false, optional = true }
 ring = { version = "=0.17.14", default-features = false, features = ["std"], optional = true }
 
 [dev-dependencies]
+stackpress-server-http = { path = "../../server/http" }
 stackpress-framework-email = { path = "../framework-email", features = ["server"] }
 tokio = { version = "1", features = ["macros", "rt-multi-thread", "sync", "time"] }
 stackpress-framework-schema = { path = "../framework-schema", features = ["providers", "source"] }
