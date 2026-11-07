@@ -29,7 +29,7 @@ async fn emit(server: &Server, event: &str) -> stackpress_lib::Result<Value> {
 
 /// Open an empty existing file so cold push is the explicit schema-changing operation.
 async fn empty(root: &Path) {
-    blog_web::plugins::store::open(&root.join("blog.sqlite"), true)
+    blog_store::open(&root.join("blog.sqlite"), true)
         .await
         .unwrap()
         .close()
@@ -70,14 +70,14 @@ async fn cold_push_records_source_then_nullable_upgrade_preserves_fifteen_seed_r
     );
     assert_eq!(emit(&server, "populate").await.unwrap()["code"], 200);
     let engine = server.host().shared_service::<Engine>().unwrap();
-    let mut tables = blog_web::plugins::store::tables().unwrap();
+    let mut tables = blog_web::storage::tables().unwrap();
     tables
         .iter_mut()
         .find(|table| table.name == "article")
         .unwrap()
         .fields
         .push(Field::new("subtitle", SqlType::Text));
-    let current = blog_web::plugins::commands::current().unwrap();
+    let current = blog_web::commands::current().unwrap();
     let next = blog_web::history::snapshot(current["source"].clone(), &tables).unwrap();
     let revisions = root.join("revisions");
     blog_web::history::insert_at(
@@ -152,7 +152,7 @@ async fn one_revision_push_reinstalls_source_schema_and_missing_provider_is_not_
         .unwrap();
     app.config_layers(provider_layers).unwrap();
     stackpress_framework::config::register(&mut app).unwrap();
-    blog_web::plugins::commands::register(&mut app).unwrap();
+    blog_web::commands::register(&mut app).unwrap();
     app.on_config(stackpress_lib::queue::task(
         move |start: &mut StartupContext| {
             let engine = engine.clone();
@@ -237,14 +237,14 @@ async fn real_cli_query_warning_force_purge_and_constraints() {
             .success()
     );
 
-    let mut tables = blog_web::plugins::store::tables().unwrap();
+    let mut tables = blog_web::storage::tables().unwrap();
     tables
         .iter_mut()
         .find(|table| table.name == "article")
         .unwrap()
         .fields
         .retain(|field| field.name != "banner");
-    let current = blog_web::plugins::commands::current().unwrap();
+    let current = blog_web::commands::current().unwrap();
     let next = blog_web::history::snapshot(current["source"].clone(), &tables).unwrap();
     blog_web::history::insert_at(
         root.join("revisions").to_str().unwrap(),
@@ -254,7 +254,7 @@ async fn real_cli_query_warning_force_purge_and_constraints() {
     .unwrap();
     success(cli(&config, false, "migrate", None));
     assert!(!cli(&config, false, "push", None).status.success());
-    let engine = blog_web::plugins::store::open(&root.join("blog.sqlite"), false)
+    let engine = blog_store::open(&root.join("blog.sqlite"), false)
         .await
         .unwrap();
     assert!(article_columns(&engine).await.contains(&"banner".into()));
@@ -285,7 +285,7 @@ async fn real_cli_query_warning_force_purge_and_constraints() {
 async fn adjacent_push_does_not_evaluate_scripts_and_missing_paths_keep_source_skips() {
     let fixture = tempfile::tempdir_in("/private/tmp").unwrap();
     let root = fixture.path();
-    let engine = blog_web::plugins::store::open(&root.join("blog.sqlite"), true)
+    let engine = blog_store::open(&root.join("blog.sqlite"), true)
         .await
         .unwrap();
     let table = stackpress_sql::Create::new("record")
@@ -343,7 +343,7 @@ async fn earlier_response_and_missing_engine_precede_invalid_revision_path() {
     let mut app = ServerBuilder::new();
     app.config_layers(layers).unwrap();
     stackpress_framework::config::register(&mut app).unwrap();
-    blog_web::plugins::commands::register(&mut app).unwrap();
+    blog_web::commands::register(&mut app).unwrap();
     let server = app.build().await.unwrap();
     let mut res = Response::new();
     res.status_code(404, None).unwrap();

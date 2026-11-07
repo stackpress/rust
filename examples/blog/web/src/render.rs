@@ -1,5 +1,5 @@
 //! Native source values enter a checked public snapshot before synchronous Leptos execution.
-use blog_shared::{Kind, Page};
+use blog_app::{Kind, Page};
 use leptos::prelude::*;
 use serde_json::{Value, json};
 use stackpress_framework_view::{
@@ -112,8 +112,8 @@ pub async fn document(page: Page) -> Result<String> {
         assets,
         |snapshot: &PageSnapshot<Page>| {
             let body =
-                blog_shared::views::page(snapshot.data.clone()).map_err(ViewError::from_source)?;
-            Ok((blog_shared::views::head(&snapshot.data), body).into_any())
+                blog_app::views::page(snapshot.data.clone()).map_err(ViewError::from_source)?;
+            Ok((blog_app::views::head(&snapshot.data), body).into_any())
         },
     )
     .map_err(Error::from_source)?;
@@ -151,4 +151,15 @@ pub async fn page(
     res.html(document(value).await?)?;
     res.status_code(code, None)?;
     Ok(Flow::Continue)
+}
+
+/// Supply the app plugin's native view callbacks with this host's projection/render boundary.
+/// The returned future preserves [`page`]'s configuration, snapshot and SSR errors.
+pub fn plugin_page<'a>(
+    kind: Kind,
+    req: &'a mut Request,
+    res: &'a mut Response,
+    inv: Invocation<'a>,
+) -> stackpress_lib::HandlerFuture<'a, Result<Flow>> {
+    Box::pin(page(kind, req, res, inv))
 }

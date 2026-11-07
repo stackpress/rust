@@ -33,7 +33,7 @@ cargo run -p blog-tool --locked --offline -- generate-app --check
 
 The managed `.build/app-generated/` tree contains Profile, Auth, Application, Session, Category,
 Catalog, Article and Comment. `web/src/generated/mod.rs` selects native contracts/stores/client;
-`shared/src/lib.rs` selects only portable generated UI. Edit the schema and regenerate rather
+`plugins/app/src/lib.rs` selects only portable generated UI. Edit the schema and regenerate rather
 than editing output. `--check` detects manual edits, deleted output and stale schema without
 repairing files. Optional `generate` produces the separate native-only `.build/generated/`
 bootstrap proof; it does not replace the full application output.
@@ -67,7 +67,7 @@ python3 proofs/build.py
 
 The finite pipeline compiles hydration and CSR separately and runs the already installed matching
 `wasm-bindgen`. Its outputs are `.build/browser/{hydrate,csr}/blog.js` and `blog_bg.wasm`.
-`assets/` contains authored source CSS and a small SVG brand; no upstream generated `public/`
+`plugins/assets/assets/` contains authored source CSS and a small SVG brand; no upstream generated `public/`
 output is copied. This replaces the Vite/UnoCSS pipeline; it is not an HMR watcher.
 The shared native HTTP adapter explicitly allows32MiB responses for the unoptimized debug WASM;
 request policies retain their framework defaults.
@@ -119,6 +119,31 @@ Read the generated SQL before pushing it. With fewer than two revisions, source 
 and clears tables. There is no applied-revision ledger; repeating adjacent ADD COLUMN fails
 natively. The commands guide explains those retained source semantics.
 
+## Project layout
+
+Each plugin is an unpublished crate selected by an ordinary registration function, like the
+original `templates/blog/plugins/` folders. The root workspace inherits `publish = false` for
+every crate; new crate edges use local paths.
+
+| Folder | Responsibility and original counterpart |
+| --- | --- |
+| `plugins/app/` (`blog-app`) | Original `plugins/app`: `pages/` and error hooks behind `server`; Leptos `views/`, helpers, wire data and generated admin selection behind `ui`. `ssr`, `hydrate` and `csr` select the renderer. |
+| `plugins/assets/` (`blog-assets`) | Original `plugins/assets`: registration, authored CSS/brand and bootstrap JavaScript; serves separately compiled `.build/browser/` products. |
+| `plugins/store/` (`blog-store`) | Original `plugins/store`: registration and `connect.rs` own file SQLite acquisition; startup opens an existing database. |
+| `web/` (`blog-web`) | Original config and application entry: config, History, seed, HTTP, rendering and binaries; `client.rs` selects all three plugins by calling their registration functions. |
+| `client/` (`blog-client`) | Thin browser startup/DOM/fetch glue; its app dependency enables only `ui` and hydration or CSR. |
+| `tool/` (`blog-tool`) | Independent official schema/source generator, unchanged by plugin selection. |
+
+There is no separate shared crate: the app plugin owns both the public views and this app's
+generated admin UI selection. The web host supplies its native projection/SSR function to
+`blog_app::register`; this keeps server configuration out of portable UI. Tests live with their
+plugin; cross-plugin SQLite, auth, HTTP and browser regressions remain host integration tests.
+
+`web/src/storage.rs` composes generated DDL for explicit setup. `web/src/commands.rs` binds that
+catalog and the host's durable History to existing framework CLI operations. Those bindings
+stay in the host because they compose its schema/revision policy; the original store plugin
+only supplies a connection. See [command behavior](docs/commands.md#command-behavior).
+
 ## Source choices and boundaries
 
 - G52 removes only the dangling `Category.profile` edge; Article/Comment relations and framework
@@ -136,7 +161,7 @@ natively. The commands guide explains those retained source semantics.
   theme interaction and idempotent root disposal. Remote seed images are fulfilled locally.
 - The copied-out proof uses a byte-identical lock and a real SQLite upgrade. Form serialization,
   seed selection and relation response/error decisions now live in target-independent
-  `blog-shared` functions with native tests and coverage. The existing framework RelationField
+  `blog-app` functions with native tests and coverage. The existing framework RelationField
   builds search URLs in plain Rust; the browser adapter forwards them unchanged.
 - G56 exempts `blog-client` from the numeric coverage floor: it contains startup/mount/disposal
   and thin DOM/navigation/fetch/AbortController glue only. Real hydration/CSR browser tests must
@@ -170,7 +195,9 @@ to this checkout; every source/copied/root lock stays unchanged. These are finit
 the gate opens no listener and installs nothing.
 
 It then checks formatting, freshness, native and separate-renderer Clippy, all native tests,
-docs, dependency graphs, public/authenticated/copied-out browser flows, and native coverage.
+docs, dependency graphs, public/authenticated/copied-out browser flows, and native coverage
+for `blog-app`, `blog-assets`, `blog-store`, `blog-web` and `blog-tool`. Browser graphs select
+`blog-app` UI without its server feature or either native plugin.
 The lock check recomputes the example subset against the committed 699-tuple root lock, without
 reading a marker. Logs and per-phase results are in `.build/gate/`; compiled targets stay under
 the dedicated `target/verify/` budget. Completed consumer/browser targets may be retired before

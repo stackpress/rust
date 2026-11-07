@@ -35,7 +35,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         _ => return Err("only --existing is accepted after the fixture directory".into()),
     };
     if !existing {
-        blog_web::plugins::store::setup(&path).await?;
+        blog_web::storage::setup(&path).await?;
     }
     let mut layers = ConfigLayers::new();
     layers.value("owned finite HTTP fixture",json!({"sqlite":{"path":path},"client":{"revisions":root.join("revisions")},"api":{"webhooks":[]}}))?;

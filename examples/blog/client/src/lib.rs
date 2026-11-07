@@ -1,7 +1,7 @@
-//! Thin hydration/CSR startup and browser IO glue; data decisions live in blog-shared.
+//! Thin hydration/CSR startup and browser IO glue; data decisions live in blog-app.
 #[cfg(all(feature = "hydrate", feature = "csr"))]
 compile_error!("select exactly one browser renderer");
-pub use blog_shared::Page;
+pub use blog_app::Page;
 #[cfg(target_arch = "wasm32")]
 mod adapters;
 #[cfg(target_arch = "wasm32")]
@@ -19,15 +19,15 @@ mod browser {
             .ok_or_else(|| JsValue::from_str("root missing"))?
             .dyn_into::<web_sys::HtmlElement>()?;
         // DOM reads remain here; seed priority, decoding and errors are target-independent.
-        let seeds = blog_shared::browser::SEED_IDS.map(|id| {
+        let seeds = blog_app::browser::SEED_IDS.map(|id| {
             document
                 .get_element_by_id(id)
                 .map(|element| element.text_content())
         });
         let page =
-            blog_shared::browser::decode_seed(seeds).map_err(|error| JsValue::from_str(&error))?;
+            blog_app::browser::decode_seed(seeds).map_err(|error| JsValue::from_str(&error))?;
         let root = move || {
-            blog_shared::root::meta_context();
+            blog_app::root::meta_context();
             super::adapters::relations();
             page.view(
                 Callback::new(super::adapters::submit),

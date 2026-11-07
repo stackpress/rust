@@ -1,0 +1,37 @@
+[package]
+name = "blog-app"
+description = "Blog plugin with native pages and portable Leptos views"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[features]
+default = []
+ui = ["dep:stackpress-framework-schema", "dep:stackpress-framework-admin", "dep:stackpress-framework-api", "dep:stackpress-framework-session", "dep:stackpress-framework-view", "dep:stackpress-leptos", "dep:leptos", "dep:leptos_meta", "dep:serde", "dep:serde_json"]
+server = ["ssr", "dep:stackpress-lib", "dep:stackpress-server"]
+ssr = ["ui", "leptos/ssr", "stackpress-leptos/ssr", "stackpress-framework-admin/source-ssr", "stackpress-framework-api/ui-ssr", "stackpress-framework-session/leptos-ssr", "stackpress-framework-view/leptos-ssr"]
+hydrate = ["ui", "leptos/hydrate", "stackpress-leptos/hydrate", "stackpress-framework-admin/hydrate", "stackpress-framework-api/ui-hydrate", "stackpress-framework-session/leptos-hydrate", "stackpress-framework-view/leptos-hydrate"]
+csr = ["ui", "leptos/csr", "stackpress-leptos/csr", "stackpress-framework-admin/csr", "stackpress-framework-api/ui-csr", "stackpress-framework-session/leptos-csr", "stackpress-framework-view/leptos-csr"]
+
+[dependencies]
+stackpress-framework-schema = { workspace = true, optional = true }
+stackpress-framework-admin = { workspace = true, optional = true, features = ["source", "format"] }
+stackpress-framework-api = { workspace = true, optional = true, features = ["ui"] }
+stackpress-framework-session = { workspace = true, optional = true, features = ["leptos"] }
+stackpress-framework-view = { workspace = true, optional = true, features = ["preferences", "leptos"] }
+stackpress-leptos = { workspace = true, optional = true, features = ["format"] }
+leptos = { workspace = true, optional = true }
+leptos_meta = { workspace = true, optional = true }
+serde = { workspace = true, optional = true }
+serde_json = { workspace = true, optional = true }
+
+stackpress-lib = { workspace = true, optional = true }
+stackpress-server = { workspace = true, optional = true }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["macros", "rt"] }
+tempfile.workspace = true
+
+[lints]
+workspace = true

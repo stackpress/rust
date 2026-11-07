@@ -17,8 +17,6 @@ mod extension;
 mod history;
 #[path = "cases/http.rs"]
 mod http;
-#[path = "cases/lifecycle.rs"]
-mod lifecycle;
 #[path = "cases/pages.rs"]
 mod pages;
 #[path = "cases/render.rs"]

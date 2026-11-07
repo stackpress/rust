@@ -1,4 +1,4 @@
-//! Native partitions from the one application emit; portable UI is consumed by blog-shared.
+//! Native partitions from the one application emit; portable UI is consumed by blog-app.
 
 /// Static framework client bound to this application's exact generated family.
 #[path = "../../../.build/app-generated/client/mod.rs"]

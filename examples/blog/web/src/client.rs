@@ -54,17 +54,17 @@ pub async fn build(
     );
     let admin = stackpress_framework_api::views::admin::Config {
         presentation: json!({"admin":presentation.admin,"brand":presentation.brand,"view":presentation.view,
-            "models":blog_shared::ui::host::presentation()}),
+            "models":blog_app::ui::host::presentation()}),
         csrf: presentation.csrf,
     };
     let mut app = ServerBuilder::new();
     app.config_layers(all)?;
     crate::config::register(&mut app)?;
-    crate::plugins::store::register(&mut app)?;
+    blog_store::register(&mut app)?;
     crate::history::register(&mut app)?;
-    crate::plugins::commands::register_application(&mut app)?;
-    crate::plugins::app::register(&mut app)?;
-    crate::plugins::assets::register(&mut app)?;
+    crate::commands::register_application(&mut app)?;
+    blog_app::register(&mut app, crate::render::plugin_page)?;
+    blog_assets::register(&mut app)?;
     app.on_config(stackpress_lib::queue::task(
         move |start: &mut StartupContext| {
             let environment = environment.clone();
@@ -119,9 +119,9 @@ pub async fn build(
         crate::generated::stores::family::Models,
     >(
         &mut app,
-        blog_shared::ui::pages::ui(),
+        blog_app::ui::pages::ui(),
         admin,
-        blog_shared::ui::pages::MODELS,
+        blog_app::ui::pages::MODELS,
     )?;
     let server = Arc::new(app.build().await?);
     server

@@ -4,12 +4,13 @@
 //! file and publishes immutable scripts; it never changes schema/data or reads revision files.
 
 pub mod client;
+pub mod commands;
 pub mod config;
 pub mod history;
 pub mod http;
-pub mod plugins;
 pub mod render;
 pub mod seed;
+pub mod storage;
 
 /// The generator owns this complete source/store tree; regenerate instead of patching it.
 #[allow(missing_docs)]
@@ -42,7 +43,7 @@ pub async fn build_storage_with(
     app.config_layers(config::shared(database_seed)?)?;
     app.config_layers(layers)?;
     stackpress_framework::config::register(&mut app)?;
-    plugins::store::register(&mut app)?;
+    blog_store::register(&mut app)?;
     history::register(&mut app)?;
     app.on_config(stackpress_lib::queue::task(
         move |start: &mut stackpress_server::StartupContext| {
@@ -53,7 +54,7 @@ pub async fn build_storage_with(
             })
         },
     ))?;
-    plugins::commands::register(&mut app)?;
+    commands::register(&mut app)?;
     // These are the generated registrars, with the complete application model inventory.
     generated::stores::profile::register(&mut app)?;
     generated::stores::category::register(&mut app)?;

@@ -10,6 +10,9 @@ use std::path::PathBuf;
 pub struct Assets(pub PathBuf);
 
 /// Select static bytes and the compiled browser products; registration performs no file IO.
+///
+/// # Errors
+/// Preserves typed-section and callback registration failures.
 pub fn register(app: &mut ServerBuilder) -> Result<()> {
     app.config_section("assets", Assets(".build/browser".into()), |_| Ok(()))?;
     app.on_listen(routes)
@@ -32,21 +35,18 @@ async fn asset(req: &mut Request, res: &mut Response, inv: Invocation<'_>) -> Re
                 "{}\n{}\n{}",
                 stackpress_leptos::components::BASE_STYLES,
                 stackpress_framework_api::views::STYLES,
-                include_str!("../../../assets/global.css")
+                include_str!("../assets/global.css")
             )
             .into_bytes(),
         ),
-        "/styles/article.css" => (
-            "text/css",
-            include_bytes!("../../../assets/article.css").to_vec(),
-        ),
+        "/styles/article.css" => ("text/css", include_bytes!("../assets/article.css").to_vec()),
         "/assets/blog.js" | "/assets/session.js" | "/assets/api-checkpoint.js" => (
             "text/javascript",
-            include_bytes!("../../../bootstrap.js").to_vec(),
+            include_bytes!("../bootstrap.js").to_vec(),
         ),
         "/assets/brand.svg" | "/logo.png" | "/icon.png" | "/favicon.ico" | "/favicon.png" => (
             "image/svg+xml",
-            include_bytes!("../../../assets/brand.svg").to_vec(),
+            include_bytes!("../assets/brand.svg").to_vec(),
         ),
         path if path
             == format!(

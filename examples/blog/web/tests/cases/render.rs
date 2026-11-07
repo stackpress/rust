@@ -1,5 +1,5 @@
 //! Native shared view boundaries: empty content, optional data and source error presentation.
-use blog_shared::{Kind, Page};
+use blog_app::{Kind, Page};
 use serde_json::json;
 
 /// Empty home/article states and production trace visibility retain original source fallbacks.

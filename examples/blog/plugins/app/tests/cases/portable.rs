@@ -1,5 +1,5 @@
 //! Source helper and portable seed boundary proofs, independent of SQLite/native services.
-use blog_shared::{helpers::*, root::Root};
+use blog_app::{helpers::*, root::Root};
 use serde_json::json;
 
 #[test]
@@ -77,7 +77,7 @@ fn metrics_topics_and_comment_labels_match_source() {
 fn seeds_reject_build_drift_and_relation_choices_keep_title_labels() {
     assert!(Root::decode("missing", "{}").is_err());
     assert!(Root::decode("stackpress-page", r#"{"build":"drift"}"#).is_err());
-    let choices = blog_shared::root::choices(
+    let choices = blog_app::root::choices(
         json!({"results":[{"id":"p","name":"Profile"},{"id":"a","title":"Article"}]}),
     );
     assert_eq!(choices[0].label, "Profile");
@@ -94,7 +94,7 @@ fn form_fields_keep_nested_arrays_objects_scalars_and_empty_drafts() {
         "empty_array": [], "empty_object": {}, "rows": [{"id": "p"}]
     });
     assert_eq!(
-        blog_shared::form::fields(&draft),
+        blog_app::form::fields(&draft),
         vec![
             ("name", "a & b"),
             ("enabled", "false"),
@@ -118,7 +118,7 @@ fn form_fields_keep_nested_arrays_objects_scalars_and_empty_drafts() {
         json!("text"),
         json!(false),
     ] {
-        assert!(blog_shared::form::fields(&value).is_empty());
+        assert!(blog_app::form::fields(&value).is_empty());
     }
 }
 
@@ -134,36 +134,32 @@ fn browser_seed_selection_preserves_priority_missing_and_empty_text_errors() {
         locale: "en-US".into(),
         theme: None,
         status: PublicStatus::new(200, None).unwrap(),
-        data: blog_shared::Page::default(),
+        data: blog_app::Page::default(),
     };
     let text = serde_json::to_string(&snapshot).unwrap();
     assert!(matches!(
-        blog_shared::browser::decode_seed([
-            Some(Some(text.clone())),
-            Some(Some("bad".into())),
-            None
-        ]),
+        blog_app::browser::decode_seed([Some(Some(text.clone())), Some(Some("bad".into())), None]),
         Ok(Root::Blog(_))
     ));
     assert_eq!(
-        blog_shared::browser::decode_seed([None, None, None])
+        blog_app::browser::decode_seed([None, None, None])
             .err()
             .unwrap(),
         "page seed missing"
     );
     // Empty/null text on a present first element never falls through to the next seed.
     for text in [None, Some(String::new()), Some("not JSON".into())] {
-        assert!(blog_shared::browser::decode_seed([Some(text), None, None]).is_err());
+        assert!(blog_app::browser::decode_seed([Some(text), None, None]).is_err());
     }
     // Later existing seed contracts are selected by their real element ID, not by guessed JSON.
-    assert!(blog_shared::browser::decode_seed([None, Some(Some("{}".into())), None]).is_err());
-    assert!(blog_shared::browser::decode_seed([None, None, Some(Some("{}".into()))]).is_err());
+    assert!(blog_app::browser::decode_seed([None, Some(Some("{}".into())), None]).is_err());
+    assert!(blog_app::browser::decode_seed([None, None, Some(Some("{}".into()))]).is_err());
 }
 
 /// Non-success replies retain choices, including redirects and transport/type/read errors.
 #[test]
 fn browser_relation_status_and_error_mapping_keep_source_failure_policy() {
-    use blog_shared::browser::{RelationError, response_status};
+    use blog_app::browser::{RelationError, response_status};
     for status in [200, 204, 299] {
         assert_eq!(response_status(status), Ok(()));
     }
@@ -191,7 +187,7 @@ fn browser_relation_status_and_error_mapping_keep_source_failure_policy() {
 /// Joined labels, empty replies, parse precedence and stale completions use plain native data.
 #[test]
 fn browser_relation_json_and_cancellation_preserve_joined_rows_and_precedence() {
-    use blog_shared::browser::{RelationError, relation_response};
+    use blog_app::browser::{RelationError, relation_response};
     for text in [
         r#"{"results":[{"id":"p","name":"Profile"},{"id":"a","title":"Article"},{"id":2,"name":"skip"},{"id":"skip"}]}"#,
         r#"[{"id":"p","name":"Profile"},{"id":"a","title":"Article"}]"#,

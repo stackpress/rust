@@ -18,7 +18,7 @@ impl App {
     pub async fn configured(extra: Value) -> Self {
         let root = tempfile::tempdir_in("/private/tmp").unwrap();
         let path = root.path().join("blog.sqlite");
-        blog_web::plugins::store::setup(&path).await.unwrap();
+        blog_web::storage::setup(&path).await.unwrap();
         let mut layers = ConfigLayers::new();
         // Webhook delivery itself is a separate framework proof; never make network requests.
         layers

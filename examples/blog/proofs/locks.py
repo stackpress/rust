@@ -43,6 +43,9 @@ def verify(baseline):
     allowed = {tuple(p) for p in baseline['registry']}
     selected = registry(example)
     assert all(tuple(p) in allowed for p in selected), 'example gained an external tuple'
+    assert len(selected) == 437, 'blog registry inventory changed'
+    if 'example_registry' in baseline:
+        assert selected == baseline['example_registry'], 'blog registry tuples changed'
     packages = tomllib.loads(example.decode())['package']
     assert all(not p.get('source') or p['source'].startswith('registry+') for p in packages)
     print(f'locks: root 699 identical tuples/bytes; example {len(selected)} registry tuples are an exact subset')
@@ -53,8 +56,9 @@ def check():
     # Git reads local committed source only. Comparing the worktree bytes with that source
     # also detects an accidental root-lock edit, rather than blessing it as a new baseline.
     committed = subprocess.check_output(['git', '-C', str(ROOT), 'show', 'HEAD:Cargo.lock'])
+    example = subprocess.check_output(['git', '-C', str(ROOT), 'show', 'HEAD:examples/blog/Cargo.lock'])
     verify({'root_sha256': hashlib.sha256(committed).hexdigest(),
-            'registry': registry(committed)})
+            'registry': registry(committed), 'example_registry': registry(example)})
 
 
 def seed(release=None):
@@ -69,8 +73,11 @@ def seed(release=None):
     if release is None:
         assert not EXAMPLE_LOCK.exists(), 'example lock already exists; use check, not seed'
     else:
-        assert release in ('g50-m3-exports', 'blog-web-stages', 'blog-post-g57'), 'manifest amendment lacks an explicit release'
+        assert release in ('g50-m3-exports', 'blog-web-stages', 'blog-post-g57', 'blog-plugin-crates'), 'manifest amendment lacks an explicit release'
         assert EXAMPLE_LOCK.exists(), 'manifest amendment needs the previous lock'
+        if release == 'blog-plugin-crates':
+            baseline['example_registry'] = registry(EXAMPLE_LOCK.read_bytes())
+            assert len(baseline['example_registry']) == 437
     BASELINE.parent.mkdir(parents=True, exist_ok=True)
 
     # Claim the attempt before Cargo runs. Failed attempts remain evidence and never authorize
@@ -100,7 +107,7 @@ def main():
     """Expose only the one-shot seed and later read-only invariant check."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('mode', choices=('seed', 'check'))
-    parser.add_argument('--release', choices=('g50-m3-exports', 'blog-web-stages', 'blog-post-g57'))
+    parser.add_argument('--release', choices=('g50-m3-exports', 'blog-web-stages', 'blog-post-g57', 'blog-plugin-crates'))
     args = parser.parse_args()
     if args.mode == 'seed':
         return seed(args.release)
