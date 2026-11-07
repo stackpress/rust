@@ -82,5 +82,5 @@ pub async fn page(req: &mut Request, res: &mut Response, inv: Invocation<'_>) ->
         res.status_code(code, None)?;
         return Ok(Flow::Continue);
     }
-    crate::render::page(blog_shared::Kind::Error, req, res, inv).await
+    crate::server::render(crate::Kind::Error, req, res, inv).await
 }

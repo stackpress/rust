@@ -16,7 +16,7 @@ def main():
     env = dict(os.environ, CARGO_TARGET_DIR=str(target))
     env['RUSTFLAGS'] = (env.get('RUSTFLAGS', '') + ' -C instrument-coverage').strip()
     env['LLVM_PROFILE_FILE'] = str(target / 'g56-%m-%p.profraw')
-    common = ['--manifest-path', str(BLOG / 'Cargo.toml'), '-p', 'blog-shared',
+    common = ['--manifest-path', str(BLOG / 'Cargo.toml'), '-p', 'blog-app',
               '--features', 'ssr', '--test', 'main', '--locked', '--offline']
     # Cargo's artifact stream identifies the exact instrumented executable without metadata
     # or stale target discovery. Nextest then runs those contracts with the same flags.
@@ -40,7 +40,7 @@ def main():
     raw = subprocess.check_output([str(llvm / 'llvm-cov'), 'export', '-format=text',
                                    f'-instr-profile={merged}', '-object', binaries[0]], text=True)
     (output / 'coverage-raw.json').write_text(raw)
-    wanted = {BLOG / 'shared/src/browser.rs', BLOG / 'shared/src/form.rs'}
+    wanted = {BLOG / 'plugins/app/src/browser.rs', BLOG / 'plugins/app/src/form.rs'}
     report = {}
     for row in json.loads(raw)['data'][0]['files']:
         file = Path(row['filename']).resolve()

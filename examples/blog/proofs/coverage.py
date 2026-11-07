@@ -24,7 +24,7 @@ def measure(run):
     profiles_dir=Path(tempfile.mkdtemp(prefix='run-',dir=target))
     env['LLVM_PROFILE_FILE']=str(profiles_dir/'blog-%m-%p.profraw')
     common=['--manifest-path',str(BLOG/'Cargo.toml'),'--locked','--offline']
-    features=['--features','blog-tool/native-proof,blog-shared/ssr']
+    features=['--features','blog-tool/native-proof,blog-app/ssr']
     # Catalog redirects, native Date output and cookie scope remain enabled unchanged.
     run('coverage-nextest',['cargo','nextest','run',*common,'--workspace','--all-targets',*features,'--test-threads','2','--no-fail-fast'],env=env,seconds=900)
     return finish(run,target,profiles_dir)
@@ -45,20 +45,20 @@ def finish(run,target,profiles_dir):
     llvm=sysroot/'lib/rustlib'/host/'bin'
     merged=profiles_dir/'blog.profdata'
     subprocess.run([str(llvm/'llvm-profdata'),'merge','-sparse',*map(str,profiles),'-o',str(merged)],check=True)
-    objects=[file for file in (target/'debug/deps').iterdir() if file.is_file() and file.suffix=='' and os.access(file,os.X_OK) and file.name.startswith(('main-','blog_web-','blog_tool-','blog_shared-','blog_client-','probe-','setup-','serve-'))]
+    objects=[file for file in (target/'debug/deps').iterdir() if file.is_file() and file.suffix=='' and os.access(file,os.X_OK) and file.name.startswith(('main-','blog_web-','blog_tool-','blog_app-','blog_store-','blog_assets-','blog_client-','probe-','setup-','serve-'))]
     objects.extend(file for name in ('blog-web','blog-tool','setup','probe','serve') if (file:=target/'debug'/name).exists())
     command=[str(llvm/'llvm-cov'),'export','-format=text',f'-instr-profile={merged}']
     for file in objects:command+=['-object',str(file)]
     raw=subprocess.check_output(command,text=True,timeout=120)
     output=BLOG/'.build/gate'
     (output/'coverage-raw.json').write_text(raw)
-    groups={name:[] for name in ['blog-tool','blog-web','blog-shared']}
+    groups={name:[] for name in ['blog-tool','blog-web','blog-app','blog-store','blog-assets']}
     for file in json.loads(raw)['data'][0]['files']:
         location=Path(file['filename']).resolve()
-        group=next((name for name,folder in [('blog-tool','tool'),('blog-web','web'),('blog-shared','shared')] if location.is_relative_to(BLOG/folder/'src')),None)
+        group=next((name for name,folder in [('blog-tool','tool'),('blog-web','web'),('blog-app','plugins/app'),('blog-store','plugins/store'),('blog-assets','plugins/assets')] if location.is_relative_to(BLOG/folder/'src')),None)
         generated=BLOG/'.build/app-generated'
         if location.is_relative_to(generated):
-            group='blog-shared' if location.relative_to(generated).parts[0]=='ui' else 'blog-web'
+            group='blog-app' if location.relative_to(generated).parts[0]=='ui' else 'blog-web'
         # Dedicated tests, disposable extension/bootstrap fixtures and dependencies are not
         # shipped app source. Actual app-generated UI/source/stores/client remain counted.
         if group:groups[group].append(file)
@@ -73,7 +73,7 @@ def finish(run,target,profiles_dir):
         'status':'exempt', 'decision':'G56',
         'scope':'startup/mount/disposal and thin DOM/navigation/fetch/AbortController glue only',
         'evidence':'tests/browser.cjs public matrix exercises actual hydration/CSR entries; gate requires its passing phase',
-        'decisions':'shared/src/{form,browser,root}.rs are target-independent and included in native coverage',
+        'decisions':'plugins/app/src/{form,browser,root}.rs are target-independent and included in native coverage',
     }
     (output/'coverage.json').write_text(json.dumps(report,indent=2))
     assert all(value['percent'] is not None and value['percent']>=70 for name,value in report.items() if name!='blog-client'),'native crate below70%; see per-crate report'

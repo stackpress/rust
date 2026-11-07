@@ -27,7 +27,7 @@ fn schema(fields: &[&str], version: u32) -> Value {
 
 /// Open only a private fixture, with its connection shutdown explicitly awaited by each caller.
 async fn engine(root: &std::path::Path) -> std::sync::Arc<Engine> {
-    blog_web::plugins::store::open(&root.join("history.sqlite"), true)
+    blog_store::open(&root.join("history.sqlite"), true)
         .await
         .unwrap()
 }
@@ -52,7 +52,7 @@ async fn history_reloads_noops_metadata_changes_and_source_epoch_overwrite() {
     let root = fixture.path().join("revisions");
     let root = root.to_str().unwrap();
     let engine = engine(fixture.path()).await;
-    let original = blog_web::plugins::commands::current().unwrap();
+    let original = blog_web::commands::current().unwrap();
     insert_at(root, &original, 100).unwrap();
     let file = std::path::Path::new(root).join("100.json");
     let bytes = std::fs::read(&file).unwrap();

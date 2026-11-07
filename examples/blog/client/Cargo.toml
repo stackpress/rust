@@ -11,11 +11,11 @@ crate-type = ["cdylib", "rlib"]
 
 [features]
 default = []
-hydrate = ["blog-shared/hydrate", "leptos/hydrate"]
-csr = ["blog-shared/csr", "leptos/csr"]
+hydrate = ["blog-app/hydrate", "leptos/hydrate"]
+csr = ["blog-app/csr", "leptos/csr"]
 
 [dependencies]
-blog-shared = { path = "../shared" }
+blog-app = { path = "../plugins/app", features = ["ui"] }
 leptos.workspace = true
 serde_json.workspace = true
 

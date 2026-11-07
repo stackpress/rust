@@ -6,6 +6,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let path = std::env::args_os()
         .nth(1)
         .unwrap_or_else(|| ".build/blog.sqlite".into());
-    blog_web::plugins::store::setup(std::path::Path::new(&path)).await?;
+    blog_web::storage::setup(std::path::Path::new(&path)).await?;
     Ok(())
 }

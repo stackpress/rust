@@ -20,15 +20,20 @@ def main():
     native = graph('blog-web')
     forbidden_native = {'blog-tool', 'stackpress-idea-parser', 'stackpress-idea-transformer'}
     assert not native & forbidden_native, native & forbidden_native
+    assert {'blog-app', 'blog-assets', 'blog-store'} <= native, 'host lost a selected plugin'
     print(f'native: {len(native)} packages; no Idea parser/transformer or blog-tool')
+    # An unselected app has neither pages nor UI dependencies. Renderer commands below
+    # select UI explicitly without inheriting the server host's feature union.
+    assert graph('blog-app', '--no-default-features') == {'blog-app'}
     for mode in ('hydrate', 'csr'):
         browser = graph('blog-client', '--target', 'wasm32-unknown-unknown',
                         '--no-default-features', '--features', mode)
         forbidden = {name for name in browser if name.startswith(('stackpress-sql', 'stackpress-server', 'stackpress-idea'))}
         forbidden |= browser & {'stackpress-framework-sql', 'stackpress-framework-models',
                                 'stackpress-framework-identity', 'stackpress-framework-email',
-                                'stackpress-cli', 'lettre', 'reqwest', 'ring', 'blog-tool', 'blog-web'}
+                                'stackpress-cli', 'lettre', 'reqwest', 'ring', 'blog-tool', 'blog-web', 'blog-store', 'blog-assets'}
         assert not forbidden, (mode, forbidden)
+        assert 'blog-app' in browser and 'blog-shared' not in browser
         print(f'{mode}: {len(browser)} packages; no native SQL/server/mail/identity/codegen')
 
 

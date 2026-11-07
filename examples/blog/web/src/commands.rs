@@ -2,7 +2,8 @@
 //!
 //! Full CompiledClient/UI generation is not needed for these ordinary app command bindings.
 //! No empty client is fabricated: install/purge use the real generated eight-model definitions.
-//! Framework functions retain all execution/transaction/warning policy. This plugin supplies IO.
+//! Framework functions retain all execution/transaction/warning policy. This host binds IO
+//! and its generated catalog/History; the store plugin independently supplies the connection.
 
 use serde_json::{Value as Json, json};
 use stackpress_framework::{
@@ -22,7 +23,7 @@ use std::sync::Arc;
 /// Retains metadata/DDL/codec errors before any database or history IO.
 pub fn current() -> Result<Json> {
     let catalog = crate::generated::source::_catalog::describe();
-    let tables = crate::plugins::store::tables()?;
+    let tables = crate::storage::tables()?;
     // Keep source catalog order in revisions, distinct from dependency order for installation.
     let tables = catalog
         .tables

@@ -35,7 +35,7 @@ async fn regenerated_profile_column_reaches_crud_auth_api_admin_and_export() {
     let old = super::support::App::new().await;
     let revisions = old.root.path().join("extension-revisions");
     let root = revisions.to_str().unwrap();
-    let before = blog_web::plugins::commands::current().unwrap();
+    let before = blog_web::commands::current().unwrap();
     let after = blog_web::history::snapshot(
         serde_json::to_value(generated::source::_catalog::describe()).unwrap(),
         &generated::client::framework::definition().unwrap(),
@@ -67,7 +67,7 @@ async fn regenerated_profile_column_reaches_crud_auth_api_admin_and_export() {
     }
     let mut builder = ServerBuilder::new();
     builder.config_layers(layers).unwrap();
-    blog_web::plugins::store::register(&mut builder).unwrap();
+    blog_store::register(&mut builder).unwrap();
     stackpress_framework::register_with(&mut builder, &generated::client::framework::CLIENT)
         .unwrap();
     stackpress_framework_api::views::admin::register_queued_with::<generated::stores::family::Models>(

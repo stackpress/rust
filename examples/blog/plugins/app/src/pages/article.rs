@@ -38,5 +38,5 @@ pub async fn page(req: &mut Request, res: &mut Response, inv: Invocation<'_>) ->
 }
 /// Use the same source-selected article view in SSR and both browser renderers.
 pub async fn view(req: &mut Request, res: &mut Response, inv: Invocation<'_>) -> Result<Flow> {
-    crate::render::page(blog_shared::Kind::Article, req, res, inv).await
+    crate::server::render(crate::Kind::Article, req, res, inv).await
 }

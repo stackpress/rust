@@ -72,7 +72,7 @@ def main():
     target.mkdir(parents=True,exist_ok=True)
     manifest=['--manifest-path',str(BLOG/'Cargo.toml')]
     common=manifest+['--locked','--offline']
-    features=['--features','blog-tool/native-proof,blog-shared/ssr']
+    features=['--features','blog-tool/native-proof,blog-app/ssr']
     # Generation is an explicit prerequisite, not ignored state inherited from an edit loop.
     # The default tool is independent of its output; full and native partitions stay separate.
     generator=['cargo','run',*common,'-p','blog-tool','--']

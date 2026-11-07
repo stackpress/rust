@@ -17,5 +17,5 @@ pub async fn page(req: &mut Request, res: &mut Response, inv: Invocation<'_>) ->
 }
 /// Shared home rendering uses the source noview/body/redirect semantics.
 pub async fn view(req: &mut Request, res: &mut Response, inv: Invocation<'_>) -> Result<Flow> {
-    crate::render::page(blog_shared::Kind::Home, req, res, inv).await
+    crate::server::render(crate::Kind::Home, req, res, inv).await
 }

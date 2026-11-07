@@ -71,9 +71,11 @@ seeded articles. Stock signup retains its original accepted fields.
 
 ## Command behavior
 
-The finite host selects ordinary app registration functions in `web/src/lib.rs`. Its command
-plugin passes actual generated table definitions and an explicit History binding to existing
-framework SQL functions. It does not need full UI generation or a placeholder compiled client.
+The finite host selects `blog_store::register` from `plugins/store/` in `web/src/lib.rs`.
+`web/src/storage.rs` composes actual generated table definitions for explicit setup, and
+`web/src/commands.rs` supplies them and the host's History binding to existing framework SQL
+functions. These are host/schema command bindings, rather than connection-plugin operations.
+They do not need full UI generation or a placeholder compiled client.
 
 | Event after `emit` | Effect |
 | --- | --- |

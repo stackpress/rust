@@ -11,7 +11,9 @@ default = ["server"]
 server = ["stackpress-framework-sql/server"]
 
 [dependencies]
-blog-shared = { path = "../shared", features = ["ssr"] }
+blog-app = { path = "../plugins/app", features = ["server"] }
+blog-assets = { path = "../plugins/assets" }
+blog-store = { path = "../plugins/store" }
 stackpress-framework = { workspace = true, features = ["full"] }
 stackpress-framework-session = { workspace = true, features = ["leptos-ssr"] }
 stackpress-framework-api = { workspace = true, features = ["sql", "ui-ssr"] }

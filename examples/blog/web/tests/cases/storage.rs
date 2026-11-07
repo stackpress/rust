@@ -48,7 +48,7 @@ async fn counts(server: &Server) {
 async fn setup_populate_join_defaults_composite_key_and_restart() {
     let fixture = tempfile::tempdir_in("/private/tmp").unwrap();
     let path = fixture.path().join("blog.sqlite");
-    blog_web::plugins::store::setup(&path).await.unwrap();
+    blog_web::storage::setup(&path).await.unwrap();
     let server = blog_web::build_storage(layers(&path), "abc123")
         .await
         .unwrap();
@@ -127,7 +127,7 @@ async fn missing_file_and_invalid_config_fail_without_setup() {
 async fn cli_b_file_overrides_shared_path_and_invalid_values_fail() {
     let fixture = tempfile::tempdir_in("/private/tmp").unwrap();
     let path = fixture.path().join("cli.sqlite");
-    blog_web::plugins::store::setup(&path).await.unwrap();
+    blog_web::storage::setup(&path).await.unwrap();
     let config = fixture.path().join("develop.json");
     std::fs::write(
         &config,

@@ -1,5 +1,5 @@
-//! Thin browser DOM/navigation/fetch/AbortController glue; decisions live in blog-shared.
-use blog_shared::root::{RelationLoader, RelationRequest};
+//! Thin browser DOM/navigation/fetch/AbortController glue; decisions live in blog-app.
+use blog_app::root::{RelationLoader, RelationRequest};
 use leptos::prelude::*;
 use std::sync::{
     Arc,
@@ -28,7 +28,7 @@ fn native_form(data: serde_json::Value, method: &str) {
     };
     form.set_method(method);
     // Shared Rust owns names, nesting, omission and scalar conversion.
-    for (name, value) in blog_shared::form::fields(&data) {
+    for (name, value) in blog_app::form::fields(&data) {
         if let Ok(input) = document
             .create_element("input")
             .and_then(|input| input.dyn_into::<HtmlInputElement>().map_err(Into::into))
@@ -75,7 +75,7 @@ pub(super) fn relations() {
                 // Only browser IO and its type conversions stay here; shared Rust decides
                 // status/JSON/error/cancellation semantics before a completion is published.
                 let response = fetch(&request.url, &controller).await.and_then(|text| {
-                    blog_shared::browser::relation_response(
+                    blog_app::browser::relation_response(
                         text.as_deref(),
                         alive.load(Ordering::Relaxed),
                         controller.signal().aborted(),
@@ -93,8 +93,8 @@ pub(super) fn relations() {
 async fn fetch(
     url: &str,
     controller: &web_sys::AbortController,
-) -> Result<Option<String>, blog_shared::browser::RelationError> {
-    use blog_shared::browser::RelationError;
+) -> Result<Option<String>, blog_app::browser::RelationError> {
+    use blog_app::browser::RelationError;
     let window = web_sys::window().ok_or(RelationError::Fetch)?;
     let options = web_sys::RequestInit::new();
     options.set_signal(Some(&controller.signal()));
@@ -106,7 +106,7 @@ async fn fetch(
             .map_err(|_| RelationError::Response)?;
     // The generated RelationField already builds the source search URL in plain Rust;
     // this IO adapter forwards it unchanged, without rebuilding its query or policy.
-    blog_shared::browser::response_status(response.status())?;
+    blog_app::browser::response_status(response.status())?;
     let text = response.text().map_err(|_| RelationError::ReadBody)?;
     let text = wasm_bindgen_futures::JsFuture::from(text)
         .await

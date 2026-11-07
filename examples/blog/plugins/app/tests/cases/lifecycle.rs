@@ -16,7 +16,7 @@ async fn listen(start: &mut StartupContext) -> Result<Flow> {
 #[tokio::test(flavor = "current_thread")]
 async fn error_guards_preserve_terminal_abort_non_get_and_truthy_bodies() {
     let mut builder = ServerBuilder::new();
-    blog_web::plugins::app::register(&mut builder).unwrap();
+    blog_app::register(&mut builder, unexpected_render).unwrap();
     builder.on_listen(listen).unwrap();
     let app = builder.build().await.unwrap();
     for (method, mime, body, terminal) in [
@@ -66,7 +66,7 @@ async fn json_error_captures_only_owned_absolute_snippets_without_rendering() {
         column: 3,
     };
     let mut builder = ServerBuilder::new();
-    blog_web::plugins::app::register(&mut builder).unwrap();
+    blog_app::register(&mut builder, unexpected_render).unwrap();
     let app = builder.build().await.unwrap();
     let mut request = Request::builder()
         .data(serde_json::json!({"json":true}))
@@ -97,4 +97,14 @@ async fn json_error_captures_only_owned_absolute_snippets_without_rendering() {
     assert!(stack[2].get("snippet").is_none());
     assert!(matches!(response.body(), Body::Empty));
     assert_eq!(response.status().unwrap().code, 500);
+}
+
+/// Guard-only cases must return before requesting host configuration or SSR.
+fn unexpected_render<'a>(
+    _: blog_app::Kind,
+    _: &'a mut Request,
+    _: &'a mut Response,
+    _: Invocation<'a>,
+) -> stackpress_lib::HandlerFuture<'a, Result<Flow>> {
+    panic!("guard unexpectedly entered host rendering")
 }

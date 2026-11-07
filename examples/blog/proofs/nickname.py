@@ -22,10 +22,10 @@ def digest(path):
 
 def signature():
     """Include every authored runtime file, selected manifests/lock and the framework commit."""
-    files = [file for directory in ['tool/src', 'web/src', 'shared/src', 'client/src', 'assets', 'config']
+    files = [file for directory in ['tool/src', 'web/src', 'plugins', 'client/src', 'config']
              for file in (BLOG / directory).rglob('*') if file.is_file()]
-    files += [BLOG / name for name in ['schema.idea', 'bootstrap.js', 'Cargo.lock', 'Cargo.toml',
-              'tool/Cargo.toml', 'web/Cargo.toml', 'shared/Cargo.toml', 'client/Cargo.toml']]
+    files += [BLOG / name for name in ['schema.idea', 'Cargo.lock', 'Cargo.toml',
+              'tool/Cargo.toml', 'web/Cargo.toml', 'plugins/app/Cargo.toml', 'plugins/store/Cargo.toml', 'plugins/assets/Cargo.toml', 'client/Cargo.toml']]
     return {'head': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
             'files': {str(file.relative_to(BLOG)): digest(file) for file in sorted(files)}}
 

@@ -99,7 +99,7 @@ async fn integrated_family_signin_api_scopes_admin_and_export() {
 async fn source_catalog_create_redirects_after_committing_its_compound_identity() {
     let fixture = tempfile::tempdir_in("/private/tmp").unwrap();
     let path = fixture.path().join("catalog-admin.sqlite");
-    blog_web::plugins::store::setup(&path).await.unwrap();
+    blog_web::storage::setup(&path).await.unwrap();
     let mut layers = ConfigLayers::new();
     layers
         .value("owned M2 database", json!({"sqlite":{"path":path}}))
@@ -108,7 +108,7 @@ async fn source_catalog_create_redirects_after_committing_its_compound_identity(
     app.config_layers(blog_web::config::shared("abc123").unwrap())
         .unwrap();
     app.config_layers(layers).unwrap();
-    blog_web::plugins::store::register(&mut app).unwrap();
+    blog_store::register(&mut app).unwrap();
     // The actual emitted client selects exactly one data inventory and the same auth/API family.
     stackpress_framework::register_with(&mut app, &blog_web::generated::client::framework::CLIENT)
         .unwrap();
@@ -116,9 +116,9 @@ async fn source_catalog_create_redirects_after_committing_its_compound_identity(
         blog_web::generated::stores::family::Models,
     >(
         &mut app,
-        blog_shared::ui::pages::ui(),
+        blog_app::ui::pages::ui(),
         Default::default(),
-        blog_shared::ui::pages::MODELS,
+        blog_app::ui::pages::MODELS,
     )
     .unwrap();
     let server = app.build().await.unwrap();
