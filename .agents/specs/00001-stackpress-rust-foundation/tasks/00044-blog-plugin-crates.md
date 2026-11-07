@@ -43,3 +43,16 @@ No new behavior gaps; original web-only/MCP/delivery boundaries remain. Source a
 ## Verification notes
 
 Coordinator review pending.
+
+## Coordinator verification
+
+Committed as `d601076` and merged into main as `0fb2bb2`. Reviewed:
+- the plugin crates `blog-app`, `blog-assets` and `blog-store` (path-only, publish = false);
+- `shared` removed;
+- tests moved with their plugins;
+- the lock: only local package names changed, still 437 registry tuples;
+- the README Project layout section.
+
+Independent README Verify on a detached clean checkout of `0fb2bb2`, with no prior `.build`, 2026-11-07: all 26 phases passed.
+- 52 native tests passed; both browser modes.
+- Coverage: blog-tool 90.27%, blog-web 70.24%, blog-app 95.26%, blog-store 97.44%, blog-assets 89.39%. blog-client is G56-exempt.
