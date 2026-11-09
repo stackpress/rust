@@ -5,8 +5,10 @@ import os
 from pathlib import Path
 import sys
 
-BLOG = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(BLOG))
+ROOT = Path(__file__).resolve().parents[3]
+BLOG = ROOT / 'examples/blog'
+PROOFS = Path(__file__).resolve().parent
+sys.path.insert(0, str(PROOFS))
 from proof import bounded
 
 
@@ -16,7 +18,7 @@ def main():
     parser.add_argument('--mode', choices=['hydrate', 'csr', 'both'], default='both')
     parser.add_argument('--matrix', action='store_true')
     args = parser.parse_args()
-    os.environ['BLOG_PLAYWRIGHT'] = '/Users/cblanquera/.npm/_npx/e41f203b7505f1fb/node_modules/playwright'
+    os.environ.setdefault('BLOG_PLAYWRIGHT', 'playwright')
     modes = ['hydrate', 'csr'] if args.mode == 'both' else [args.mode]
     sizes = [(1280, 1), (375, 1), (375, 2)] if args.matrix else [(1280, 1)]
     for mode in modes:

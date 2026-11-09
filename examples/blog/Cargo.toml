@@ -1,5 +1,5 @@
 [workspace]
-members = ["tool", "web", "plugins/app", "plugins/assets", "plugins/store", "client"]
+members = ["tool", "web", "plugins/app", "plugins/assets", "plugins/store", "client", "xtask"]
 default-members = ["web"]
 resolver = "3"
 

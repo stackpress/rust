@@ -1,129 +1,21 @@
 # Stackpress blog example
 
-Start a Rust web project from the original Stackpress blog: import the framework schema,
-generate eight model families and their admin, populate file SQLite, and share Leptos views
-between SSR, hydration and CSR. Plugins are ordinary registration functions selected at build time.
+A copyable Rust port of the original Stackpress `templates/blog`. It imports the framework
+schema, generates models and admin pages, selects plugins through registration functions,
+and stores data in a SQLite file. Leptos shares the views across server rendering (SSR),
+browser hydration and client rendering (CSR).
 
-## 1. Copy the boilerplate
+The example includes:
 
-Copy this directory without `.build/`, `target/` or `.env`. Keep the schema, manifests, standalone
-lock, source and config together. Use the repository's cached Rust toolchain, dependencies and
-matching `wasm-bindgen` CLI; this example installs nothing.
-
-The Stackpress crates are unpublished. The `path = "../../crates/..."` and
-`path = "../../tools/cli"` dependencies in `Cargo.toml` are repository-local. After copying the
-folder out of the repository, point them at your Stackpress Rust checkout. Later, replace them
-with published versions when available. This is a required setup step.
-
-Run the following finite commands from the blog directory. Contributors run Cargo/proof commands
-through the repository build-benchmark recorder with its repository store, as described in the
-Rust contributor workflow. The commands below show the underlying application commands.
-
-## 2. Read the schema, then generate
-
-`schema.idea` imports `stackpress/stackpress.idea`, extends Profile, and adds PublishStatus,
-Category, Catalog, Article and Comment. PackageLoader obtains imported sources from crate exports;
-it never reads a hard-coded sibling schema path. The generator builds before output exists.
-
-```sh
-mkdir -p .build
-cargo run -p blog-tool --locked --offline -- generate-app
-cargo run -p blog-tool --locked --offline -- generate-app --check
-```
-
-The managed `.build/app-generated/` tree contains Profile, Auth, Application, Session, Category,
-Catalog, Article and Comment. `web/src/generated/mod.rs` selects native contracts/stores/client;
-`plugins/app/src/lib.rs` selects only portable generated UI. Edit the schema and regenerate rather
-than editing output. `--check` detects manual edits, deleted output and stale schema without
-repairing files. Optional `generate` produces the separate native-only `.build/generated/`
-bootstrap proof; it does not replace the full application output.
-
-## 3. Set up and populate SQLite
-
-```sh
-cargo run -p blog-web --bin setup --locked --offline -- .build/blog.sqlite
-cargo run -p blog-web --bin blog-web --locked --offline -- -b config/develop.json emit revision
-cargo run -p blog-web --bin blog-web --locked --offline -- -b config/develop.json emit populate
-cargo run -p blog-web --bin blog-web --locked --offline -- -b config/develop.json emit query 'SELECT COUNT(*) AS total FROM article'
-```
-
-Setup follows the source install behavior: it uninstalls existing tables before installing.
-`revision` records the generated schema without changing SQL. Population dispatches all fifteen
-original seed events in order; the query returns `results.rows[0].total = 2`. Startup only opens
-an existing database; it never installs or populates. SQLite is this app's selected adapter.
-MySQL/PostgreSQL have separate framework adapters; PGlite is unsupported.
-
-Shared values in `web/src/config.rs` sit below the explicit environment JSON and later app layers.
-The finite maintenance CLI uses the storage/command host; the web host adds the generated family,
-session/auth/API, language, view, email, error hooks and assets. `.env.sample` retains the original
-`abc123` seeds. The entries read `DATABASE_SEED` from the process; copying `.env.sample` does not
-load environment variables automatically. Session configuration remains in the explicit layers.
-
-## 4. Build the browser and run through devmetrics
-
-```sh
-python3 proofs/build.py
-```
-
-The finite pipeline compiles hydration and CSR separately and runs the already installed matching
-`wasm-bindgen`. Its outputs are `.build/browser/{hydrate,csr}/blog.js` and `blog_bg.wasm`.
-`plugins/assets/assets/` contains authored source CSS and a small SVG brand; no upstream generated `public/`
-output is copied. This replaces the Vite/UnoCSS pipeline; it is not an HMR watcher.
-The shared native HTTP adapter explicitly allows32MiB responses for the unoptimized debug WASM;
-request policies retain their framework defaults.
-
-The explicit listener adapter is `web/src/bin/serve.rs`. It reads an existing SQLite file and a
-JSON layer. Development launch must be managed:
-
-```sh
-devmetrics start --summary "Stackpress blog" -- 'cargo run -p blog-web --bin serve --locked --offline -- {port} config/develop.json'
-```
-
-Open **`http://localhost:<assigned-port>/`**, using the port printed by devmetrics. The app
-binds only `127.0.0.1`; its public origin is `localhost`, and the existing native authority
-allowlist also admits `127.0.0.1:<assigned-port>`. No framework host policy is changed.
-
-Repository contributors also wrap that Cargo command in the benchmark recorder. Visit the
-assigned URL for home, an article link for its raw HTML and
-comments, and `/articles/missing` for the source 404 view. Add `?renderer=csr` to select CSR;
-hydration is the default. Add `?json` to a public page to retain model results without its view.
-
-## 5. Use the generated admin and API
-
-Sign in at `/auth/signin/username` with the source seed `developer` / `developer`, then visit
-`/admin/article/search`. Create/edit Article through generated controls, including the real rich
-editor; `Article.contents` retains its original metadata and raw HTML display. Categories are
-unowned. Catalog has two ID fields, so its create redirect returns to search. The native HTTP
-host defaults the session cookie to `Path=/`, retaining explicit cookie options.
-
-The source app seed has scopes `profile-write` / `auth-read`; the configured profile endpoints
-require `user`. Its denial is intentional. A separately created Application with `user` scope
-and a valid expiry can call `/api/profile/search` using `Authorization: Bearer <application-id>`.
-The Expires editor accepts an instant with an explicit offset, such as `2099-01-01T00:00:00Z`;
-blur or press Enter to apply it before saving.
-Menu visibility does not grant permission; real session and endpoint checks still run.
-
-The original language dictionaries are `en_US` and `th_TH`, including their demonstration copy.
-The source prefix/data operation stages the locale cookie; a following request uses it. Public
-page data keeps underscore names, while the checked document's `lang` uses `en-US` / `th-TH`.
-The shared initial theme bootstrap is reused, with the Light no-JS fallback.
-
-## 6. Add a column and migrate
-
-Follow [Add a nullable column and inspect its SQL](docs/commands.md) for revision, `migrate`,
-`push`, `purge` and query behavior. A regenerated nullable `Profile.nickname` fixture proves a
-real SQLite upgrade preserves existing articles and reaches CRUD, sign-in, API joins, generated
-admin and account CSV export. Stock signup keeps its original accepted fields.
-
-Read the generated SQL before pushing it. With fewer than two revisions, source `push` reinstalls
-and clears tables. There is no applied-revision ledger; repeating adjacent ADD COLUMN fails
-natively. The commands guide explains those retained source semantics.
+- A public blog with articles and comments.
+- Username sign-in and generated admin pages with a rich text editor.
+- An API with application scopes and account CSV export.
+- English (`en_US`) and Thai (`th_TH`) dictionaries.
 
 ## Project layout
 
-Each plugin is an unpublished crate selected by an ordinary registration function, like the
-original `templates/blog/plugins/` folders. The root workspace inherits `publish = false` for
-every crate; new crate edges use local paths.
+The plugins are unpublished crates, selected before compilation by calling their registration
+functions. Each folder maps to a part of the original template:
 
 | Folder | Responsibility and original counterpart |
 | --- | --- |
@@ -134,77 +26,163 @@ every crate; new crate edges use local paths.
 | `client/` (`blog-client`) | Thin browser startup/DOM/fetch glue; its app dependency enables only `ui` and hydration or CSR. |
 | `tool/` (`blog-tool`) | Independent official schema/source generator, unchanged by plugin selection. |
 
-There is no separate shared crate: the app plugin owns both the public views and this app's
-generated admin UI selection. The web host supplies its native projection/SSR function to
-`blog_app::register`; this keeps server configuration out of portable UI. Tests live with their
-plugin; cross-plugin SQLite, auth, HTTP and browser regressions remain host integration tests.
+`xtask/` is the finite browser build helper; `tool/` stays focused on schema generation.
 
-`web/src/storage.rs` composes generated DDL for explicit setup. `web/src/commands.rs` binds that
-catalog and the host's durable History to existing framework CLI operations. Those bindings
-stay in the host because they compose its schema/revision policy; the original store plugin
-only supplies a connection. See [command behavior](docs/commands.md#command-behavior).
+## Prerequisites
 
-## Source choices and boundaries
+- Rust 1.96 or newer, with Cargo, and a Stackpress Rust checkout.
+- The `wasm32-unknown-unknown` Rust target.
+- `wasm-bindgen` CLI **0.2.129**, matching `wasm-bindgen` in `Cargo.lock`, on your PATH.
 
-- G52 removes only the dangling `Category.profile` edge; Article/Comment relations and framework
-  validation remain unchanged.
-- G52 intentionally changes the home handler to a real `eq.status = PUBLISHED` filter. It overrides
-  a caller's status filter, preserves a caller's sort, and leaves detail-route behavior unchanged.
-- MCP / `stackpress-ai` is unsupported. The original config, including its `content`/`contents`
-  mismatch, is retained as [reference data](docs/mcp-reference.json).
-- Desktop/Tauri packaging is a later step, outside this first web release.
-- The full host selects existing email/webhook mechanisms with original config. No external mail
-  or webhook delivery is proved here. Owned test/smoke fixtures explicitly disable webhook URLs
-  to keep proofs offline. Configure a real transport separately when your app needs delivery.
-- Both renderer modes pass the cached in-process public browser matrix at1280px,375px and
-  200% mobile zoom: no-JS first paint, head/assets, keyboard links, article/comments,404, live
-  theme interaction and idempotent root disposal. Remote seed images are fulfilled locally.
-- The copied-out proof uses a byte-identical lock and a real SQLite upgrade. Form serialization,
-  seed selection and relation response/error decisions now live in target-independent
-  `blog-app` functions with native tests and coverage. The existing framework RelationField
-  builds search URLs in plain Rust; the browser adapter forwards them unchanged.
-- G56 exempts `blog-client` from the numeric coverage floor: it contains startup/mount/disposal
-  and thin DOM/navigation/fetch/AbortController glue only. Real hydration/CSR browser tests must
-  exercise the entry; the gate requires both public and full browser flows. This exemption is
-  not a claim of 100% coverage. The missing WASM profiler runtime is no longer a gate blocker.
-- Authenticated browser proofs sign in through the real source form, update rich content,
-  create Category/Catalog and a scoped Application, verify API denial/success, and export CSV.
-  The copied-out app adds Nickname through regeneration/migration and edits it in both renderers.
+The commands use `--locked --offline`, so the locked Cargo dependencies must already be
+cached. The normal setup and tests use only the tools above.
 
-## Verify
+## Setup
 
-From `examples/blog` in a fresh Stackpress Rust checkout, run this exact sequence using the
-already installed toolchain, cached dependencies, WASM target, matching `wasm-bindgen`, nextest,
-LLVM tools and cached Playwright. As with the other contributor commands, record the sequence
-through the repository benchmark recorder and its persistent store. No earlier `.build/`
-directory, generated source, database, lock-resolution marker or review patch is required.
+Follow these steps from a fresh copy. All commands run from the copied blog directory.
+
+### 1. Copy and connect the framework
+
+Copy this directory without `.build/`, `target/` or `.env`. Keep its `Cargo.lock`.
+The Stackpress crates are unpublished: **edit the `path = "../../crates/..."` and
+`path = "../../tools/cli"` dependencies in `Cargo.toml` to point at your Stackpress Rust
+checkout**. Keep paths between the example's own crates unchanged.
+
+### 2. Generate the app
+
+`schema.idea` imports `stackpress/stackpress.idea` and adds the blog models. Generate their
+Rust code and admin UI, then check that the output matches the schema:
 
 ```sh
-export RUSTC_WRAPPER=sccache SCCACHE_CACHE_SIZE=20G
-export CARGO_INCREMENTAL=0 CARGO_PROFILE_DEV_DEBUG=0 CARGO_BUILD_JOBS=2
-export CARGO_TARGET_DIR="$PWD/target/verify/native"
-python3 proofs/gate.py
+mkdir -p .build
+cargo run -p blog-tool --locked --offline -- generate-app
+cargo run -p blog-tool --locked --offline -- generate-app --check
 ```
 
-The gate first runs the same `generate-app` and `generate` commands described above, then
-`proofs/extension.py` creates the generated nullable-Profile fixture that the integration tests
-compile. It builds actual browser assets before the native HTTP asset test, explicitly builds
-the stdin/stdout `probe` executable, and prepares the copied-out nickname project/database and
-both browser products. Its copy step changes only existing repository-local dependency paths
-to this checkout; every source/copied/root lock stays unchanged. These are finite operations;
-the gate opens no listener and installs nothing.
+The output is in `.build/app-generated/`. Edit the schema and regenerate instead of editing
+these files; `--check` reports missing, edited or stale output without repairing it.
 
-It then checks formatting, freshness, native and separate-renderer Clippy, all native tests,
-docs, dependency graphs, public/authenticated/copied-out browser flows, and native coverage
-for `blog-app`, `blog-assets`, `blog-store`, `blog-web` and `blog-tool`. Browser graphs select
-`blog-app` UI without its server feature or either native plugin.
-The lock check recomputes the example subset against the committed 699-tuple root lock, without
-reading a marker. Logs and per-phase results are in `.build/gate/`; compiled targets stay under
-the dedicated `target/verify/` budget. Completed consumer/browser targets may be retired before
-coverage; exact browser products and test reports remain in `.build/`.
+### 3. Create and populate SQLite
 
-For later narrow edit loops, `proof.py storage` and `proof.py generation` reuse the prerequisites
-created by this sequence. Their integration modules intentionally compile the generated
-extension fixture; running them before generation is unsupported. The suite includes the
-Catalog redirect, native HTTP Date and cookie-scope regressions. `blog-client` retains its G56
-coverage exemption, exercised by actual hydration/CSR browser tests.
+Use this sequence on the fresh copy. **Setup clears any existing tables.** The revision
+records the starting schema so a later migration can compare it with your changes.
+
+```sh
+cargo run -p blog-web --bin setup --locked --offline -- .build/blog.sqlite
+cargo run -p blog-web --bin blog-web --locked --offline -- -b config/develop.json emit revision
+cargo run -p blog-web --bin blog-web --locked --offline -- -b config/develop.json emit populate
+cargo run -p blog-web --bin blog-web --locked --offline -- -b config/develop.json emit query 'SELECT COUNT(*) AS total FROM article'
+```
+
+The query should return `results.rows[0].total = 2`. The server opens this database;
+it does not create tables or populate them on startup. `.env.sample` is a reference and
+is not loaded automatically; the seed defaults to `abc123` unless you set `DATABASE_SEED`.
+
+### 4. Build the browser bundles
+
+Compile hydration and CSR and emit their JavaScript/WASM bundles:
+
+```sh
+cargo xtask build-browser
+```
+
+Both bundles are written under `.build/browser/` and served by the assets plugin.
+
+### 5. Run the server
+
+Replace `<port>` with a free port, such as `3000`:
+
+```sh
+cargo run -p blog-web --bin serve -- <port> config/develop.json
+```
+
+Open `http://localhost:<port>/`. The server binds to IPv4 loopback. Stop it with Ctrl-C.
+
+## Try it
+
+- Sign in as **developer / developer** at `/auth/signin/username`.
+- Open `/admin/article/search`, `/admin/category/search`, `/admin/catalog/search`, or
+  `/admin/profile/search`. Create or edit an Article with the rich editor. Catalog has two
+  ID fields, so creating a Catalog returns to search.
+- Create an Application at `/admin/application/search` with the **user** scope and a future
+  expiry, for example `2099-01-01T00:00:00Z`; blur or press Enter before saving the expiry.
+  Call `/api/profile/search` with `Authorization: Bearer <application-id>`. The seeded
+  Application lacks `user` scope and is intentionally denied.
+- Export account data at `/auth/account/security/export?download=1`.
+- Add `?renderer=csr` to a public page to try CSR; hydration is the default.
+  Add `?json` to return page data without its view. Visit `/articles/missing` for the 404 page.
+
+## Command reference
+
+Run these from the blog directory. The database events use `config/develop.json`;
+[command behavior and migration details](docs/commands.md) explain their effects.
+
+| Group | Command | Purpose |
+| --- | --- | --- |
+| Generate | `cargo run -p blog-tool --locked --offline -- generate-app` | Generate the app models, stores and admin UI. |
+| Generate | `cargo run -p blog-tool --locked --offline -- generate-app --check` | Check generated output without changing it. |
+| Generate | `cargo run -p blog-tool --locked --offline -- generate` | Emit the separate native bootstrap proof in `.build/generated/`. |
+| Database | `cargo run -p blog-web --bin setup --locked --offline -- .build/blog.sqlite` | Create the SQLite file and reinstall its tables, clearing data. |
+| Database | `cargo run -p blog-web --bin blog-web --locked --offline -- -b config/develop.json emit revision` | Record the compiled schema when it changes; no SQL. |
+| Database | `cargo run -p blog-web --bin blog-web --locked --offline -- -b config/develop.json emit populate` | Insert the original seed data. |
+| Database | `cargo run -p blog-web --bin blog-web --locked --offline -- -b config/develop.json emit query 'SELECT COUNT(*) AS total FROM article'` | Execute SQL and print its result as JSON. |
+| Database | `cargo run -p blog-web --bin blog-web --locked --offline -- -b config/develop.json emit migrate` | Write baseline and adjacent-revision SQL for inspection. |
+| Database | `cargo run -p blog-web --bin blog-web --locked --offline -- -b config/develop.json emit push` | Apply the latest pair; fewer than two revisions reinstalls and clears data. |
+| Database | `cargo run -p blog-web --bin blog-web --locked --offline -- -b config/develop.json emit upgrade` | Apply only the latest adjacent plan, if present. |
+| Database | `cargo run -p blog-web --bin blog-web --locked --offline -- -b config/develop.json emit install` | Reinstall the current tables and record the schema, clearing data. |
+| Database | `cargo run -p blog-web --bin blog-web --locked --offline -- -b config/develop.json emit purge` | Clear rows while retaining tables and revision files. |
+| Database | `cargo run -p blog-web --bin blog-web --locked --offline -- -b config/develop.json emit uninstall` | Drop tables while retaining revision files. |
+| Build & run | `cargo xtask build-browser` | Build both browser bundles; exits when finished. |
+| Build & run | `cargo run -p blog-web --bin serve -- <port> config/develop.json` | Serve the existing database and built bundles on the chosen port. |
+| Test | `cargo test --workspace --locked --offline` | Run the normal workspace tests after setup. |
+
+## Add a column and migrate
+
+After setup, append this nullable field at the **end of the Article block** in `schema.idea`,
+just before its closing brace. Existing articles can leave it empty.
+
+```idea
+  subtitle Text? @label("Subtitle") @field.textarea @view.text
+```
+
+Regenerate, record the changed schema, and write the SQL:
+
+```sh
+cargo run -p blog-tool --locked --offline -- generate-app
+cargo run -p blog-tool --locked --offline -- generate-app --check
+cargo run -p blog-web --bin blog-web --locked --offline -- -b config/develop.json emit revision
+cargo run -p blog-web --bin blog-web --locked --offline -- -b config/develop.json emit migrate
+```
+
+Inspect `.build/migrations/`. The baseline SQL reinstalls tables; the latest adjacent plan
+should add `subtitle`. With the original and new revisions present, apply that pair:
+
+```sh
+cargo run -p blog-web --bin blog-web --locked --offline -- -b config/develop.json emit push
+cargo run -p blog-web --bin blog-web --locked --offline -- -b config/develop.json emit query 'SELECT id, subtitle FROM article'
+```
+
+The two article IDs should remain, with null subtitles. Rebuild the browser bundles and
+restart the server to use the new admin field. There is no applied-revision ledger: repeating
+this push fails with a duplicate-column error. See [the commands guide](docs/commands.md)
+for imported-model extensions and migration semantics.
+
+## Test
+
+After setup, run the normal test suite without starting a server:
+
+```sh
+cargo test --workspace --locked --offline
+```
+
+Repository contributors: see [the full Verify gate](../../tools/examples/blog/README.md)
+for additional generated fixtures, browser flows, coverage and lock checks.
+See [design notes](docs/design-notes.md) for source choices and boundaries.
+
+## Limitations
+
+- MCP / `stackpress-ai` is unsupported; the original config is kept as [reference data](docs/mcp-reference.json).
+- Desktop/Tauri packaging is a later step; this example runs on the web.
+- Email and webhook delivery are configured but not exercised by the proofs.
+- There is no HMR; the browser build is finite, so rebuild after changes.
+- Debug hydration WASM is about 24 MB (4.7 MB gzipped); no release or size profile exists yet.

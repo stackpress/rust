@@ -1,0 +1,2 @@
+[alias]
+xtask = "run --package blog-xtask --locked --offline --"

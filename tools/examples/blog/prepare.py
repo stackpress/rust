@@ -4,10 +4,13 @@ import argparse
 import json
 import os
 from pathlib import Path
+import shlex
 import sys
 
-BLOG = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(BLOG))
+ROOT = Path(__file__).resolve().parents[3]
+BLOG = ROOT / 'examples/blog'
+PROOFS = Path(__file__).resolve().parent
+sys.path.insert(0, str(PROOFS))
 from proof import bounded
 
 
@@ -37,16 +40,10 @@ def main():
                     '--bin', 'serve', '--bin', 'probe', '--locked', '--offline'], 180)
     if code:
         return code
-    target = Path(os.environ['CARGO_TARGET_DIR'])
-    repo = BLOG.parents[1]
-    # This script is supplied to the coordinator only; preparation never executes it.
-    launcher = root / 'run.sh'
-    launcher.write_text(f'''#!/bin/sh
-set -eu
-cd '{BLOG}'
-exec python3 '{repo / '.agents/scripts/build-benchmark.py'}' --store '/Users/cblanquera/server/projects/stackpress/rust/.agents/resources/build-benchmarks' run --label 'blog final coordinator managed localhost HTTP smoke' --kind other --scope consumer --cache warm -- '{target / 'debug/serve'}' "$1" '{config}'
-''')
-    print('Coordinator launch only:', f'devmetrics start --summary "Stackpress blog final localhost write/export smoke" -- \'bash {launcher} {{port}}\'')
+    # Print a launch command for the prepared database; preparation never executes it.
+    print('Replace <port> with a free port, then run from the blog directory:')
+    print(f'cargo run -p blog-web --bin serve -- <port> {shlex.quote(str(config))}')
+    print('Open http://localhost:<port>/')
     return 0
 
 

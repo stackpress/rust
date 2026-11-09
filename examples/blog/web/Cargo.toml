@@ -9,6 +9,8 @@ publish.workspace = true
 [features]
 default = ["server"]
 server = ["stackpress-framework-sql/server"]
+# Repository gate fixture; normal copied-app tests need only generate-app and browser bundles.
+extension-proof = []
 
 [dependencies]
 blog-app = { path = "../plugins/app", features = ["server"] }

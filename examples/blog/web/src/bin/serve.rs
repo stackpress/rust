@@ -1,4 +1,4 @@
-//! Explicit native web adapter. Development launches belong to devmetrics, never proof scripts.
+//! Explicit native web adapter, launched with a port and an optional JSON config path.
 use stackpress_server::ConfigLayers;
 use stackpress_server_http::HttpServer;
 
@@ -8,12 +8,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut args = std::env::args().skip(1);
     let port = args
         .next()
-        .ok_or("devmetrics-assigned port required")?
+        .ok_or("port argument required (e.g. 3000)")?
         .parse::<u16>()?;
     let path = args.next().unwrap_or_else(|| "config/develop.json".into());
     let mut layers = ConfigLayers::new();
     layers.json(&path, &std::fs::read_to_string(&path)?)?;
-    // Auth link generation and the native HTTP origin agree with the managed assigned port.
+    // Auth link generation and the native HTTP origin agree with the supplied port.
     layers.value(
         "native web address",
         serde_json::json!({"server":{"port":port}}),

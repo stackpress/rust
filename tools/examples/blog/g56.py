@@ -5,7 +5,9 @@ import os
 from pathlib import Path
 import subprocess
 
-BLOG = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[3]
+BLOG = ROOT / 'examples/blog'
+PROOFS = Path(__file__).resolve().parent
 
 
 def main():
