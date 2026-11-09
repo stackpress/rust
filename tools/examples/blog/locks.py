@@ -14,8 +14,9 @@ import subprocess
 import tomllib
 
 
-BLOG = Path(__file__).resolve().parents[1]
-ROOT = BLOG.parents[1]
+ROOT = Path(__file__).resolve().parents[3]
+BLOG = ROOT / 'examples/blog'
+PROOFS = Path(__file__).resolve().parent
 BASELINE = BLOG / '.build/lock-baseline.json'
 EXAMPLE_LOCK = BLOG / 'Cargo.lock'
 ROOT_LOCK = ROOT / 'Cargo.lock'
@@ -73,9 +74,9 @@ def seed(release=None):
     if release is None:
         assert not EXAMPLE_LOCK.exists(), 'example lock already exists; use check, not seed'
     else:
-        assert release in ('g50-m3-exports', 'blog-web-stages', 'blog-post-g57', 'blog-plugin-crates'), 'manifest amendment lacks an explicit release'
+        assert release in ('g50-m3-exports', 'blog-web-stages', 'blog-post-g57', 'blog-plugin-crates', 'blog-xtask'), 'manifest amendment lacks an explicit release'
         assert EXAMPLE_LOCK.exists(), 'manifest amendment needs the previous lock'
-        if release == 'blog-plugin-crates':
+        if release in ('blog-plugin-crates', 'blog-xtask'):
             baseline['example_registry'] = registry(EXAMPLE_LOCK.read_bytes())
             assert len(baseline['example_registry']) == 437
     BASELINE.parent.mkdir(parents=True, exist_ok=True)
@@ -107,7 +108,7 @@ def main():
     """Expose only the one-shot seed and later read-only invariant check."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('mode', choices=('seed', 'check'))
-    parser.add_argument('--release', choices=('g50-m3-exports', 'blog-web-stages', 'blog-post-g57', 'blog-plugin-crates'))
+    parser.add_argument('--release', choices=('g50-m3-exports', 'blog-web-stages', 'blog-post-g57', 'blog-plugin-crates', 'blog-xtask'))
     args = parser.parse_args()
     if args.mode == 'seed':
         return seed(args.release)

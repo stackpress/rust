@@ -2,8 +2,10 @@
 from pathlib import Path
 import sys
 
-BLOG = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(BLOG))
+ROOT = Path(__file__).resolve().parents[3]
+BLOG = ROOT / 'examples/blog'
+PROOFS = Path(__file__).resolve().parent
+sys.path.insert(0, str(PROOFS))
 from proof import bounded
 
 

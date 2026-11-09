@@ -9,8 +9,9 @@ import shutil
 import sqlite3
 import subprocess
 
-BLOG = Path(__file__).resolve().parents[1]
-ROOT = BLOG.parents[1]
+ROOT = Path(__file__).resolve().parents[3]
+BLOG = ROOT / 'examples/blog'
+PROOFS = Path(__file__).resolve().parent
 STATE = BLOG / '.build/nickname.json'
 PROJECT = BLOG / '.build/readme/project'
 
@@ -22,10 +23,10 @@ def digest(path):
 
 def signature():
     """Include every authored runtime file, selected manifests/lock and the framework commit."""
-    files = [file for directory in ['tool/src', 'web/src', 'plugins', 'client/src', 'config']
+    files = [file for directory in ['tool/src', 'web/src', 'plugins', 'client/src', 'config', 'xtask/src', '.cargo']
              for file in (BLOG / directory).rglob('*') if file.is_file()]
     files += [BLOG / name for name in ['schema.idea', 'Cargo.lock', 'Cargo.toml',
-              'tool/Cargo.toml', 'web/Cargo.toml', 'plugins/app/Cargo.toml', 'plugins/store/Cargo.toml', 'plugins/assets/Cargo.toml', 'client/Cargo.toml']]
+              'tool/Cargo.toml', 'xtask/Cargo.toml', 'web/Cargo.toml', 'plugins/app/Cargo.toml', 'plugins/store/Cargo.toml', 'plugins/assets/Cargo.toml', 'client/Cargo.toml']]
     return {'head': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
             'files': {str(file.relative_to(BLOG)): digest(file) for file in sorted(files)}}
 
@@ -51,7 +52,7 @@ def prepare():
     target = native.parent
     try:
         # The copy proof derives only existing repo-local edges from this checkout.
-        subprocess.run(['python3', str(BLOG / 'proofs/readme.py')], check=True, timeout=420)
+        subprocess.run(['python3', str(PROOFS / 'readme.py')], check=True, timeout=1200)
         env = dict(os.environ, CARGO_TARGET_DIR=str(target / 'readme'))
 
         def cargo(*args):
@@ -93,7 +94,7 @@ def prepare():
         shutil.rmtree(consumer)
         # The copied app's browser modes get their own consumer targets; main products stay warm.
         browser_env = dict(os.environ, CARGO_TARGET_DIR=str(target / 'nickname/native'))
-        subprocess.run(['python3', str(PROJECT / 'proofs/build.py')], env=browser_env,
+        subprocess.run(['cargo', 'xtask', 'build-browser'], env=browser_env,
                        cwd=PROJECT, check=True, timeout=600)
         products = [frozen, seed, PROJECT / 'schema.idea', PROJECT / 'Cargo.lock']
         products += [file for directory in ['.build/app-generated', '.build/browser']
@@ -129,7 +130,7 @@ def main():
     if args.mode == 'browser':
         env = dict(os.environ, BLOG_BROWSER_PROJECT=state['project'], BLOG_BROWSER_PROBE=state['probe'],
                    BLOG_BROWSER_SEED=state['seed'], BLOG_NICKNAME='1')
-        return subprocess.run(['python3', str(BLOG / 'proofs/browser.py')], env=env,
+        return subprocess.run(['python3', str(PROOFS / 'browser.py')], env=env,
                               check=False, timeout=300).returncode
     return 0
 

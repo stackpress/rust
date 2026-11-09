@@ -7,8 +7,9 @@ import subprocess
 import sys
 import time
 
-BLOG=Path(__file__).resolve().parents[1]
-ROOT=BLOG.parents[1]
+ROOT=Path(__file__).resolve().parents[3]
+BLOG=ROOT/'examples/blog'
+PROOFS=Path(__file__).resolve().parent
 OUTPUT=BLOG/'.build/gate'
 OUTPUT.mkdir(parents=True,exist_ok=True)
 RESULTS=[]
@@ -34,13 +35,13 @@ def reserve_coverage(target):
     print('Coverage reserve projected bytes:',projected(),flush=True)
 
 
-def run(name,command,env=None,seconds=600):
+def run(name,command,env=None,seconds=600,cwd=ROOT):
     """Record a finite phase, continuing independent checks after an expected/unexpected failure."""
     print(f'GATE {name}: {command}',flush=True)
     start=time.monotonic()
     log=OUTPUT/(name+'.log')
     with log.open('w')as handle:
-        process=subprocess.Popen(command,cwd=ROOT,env=env,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,start_new_session=True)
+        process=subprocess.Popen(command,cwd=cwd,env=env,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,start_new_session=True)
         # The outer recorder bounds this gate; each child is reaped by its explicit deadline.
         import threading,signal
         timed_out=[]
@@ -72,35 +73,35 @@ def main():
     target.mkdir(parents=True,exist_ok=True)
     manifest=['--manifest-path',str(BLOG/'Cargo.toml')]
     common=manifest+['--locked','--offline']
-    features=['--features','blog-tool/native-proof,blog-app/ssr']
+    features=['--features','blog-tool/native-proof,blog-app/ssr,blog-web/extension-proof']
     # Generation is an explicit prerequisite, not ignored state inherited from an edit loop.
     # The default tool is independent of its output; full and native partitions stay separate.
     generator=['cargo','run',*common,'-p','blog-tool','--']
     for action in ['generate-app','generate']:
         if run('bootstrap-'+action,[*generator,action]):return 1
-    if run('bootstrap-extension',['python3',str(BLOG/'proofs/extension.py')]):return 1
+    if run('bootstrap-extension',['python3',str(PROOFS/'extension.py')]):return 1
     # Native HTTP tests read the actual debug WASM, so build it before compiling/running tests.
-    if run('browser-build',['python3',str(BLOG/'proofs/build.py')],seconds=1200):return 1
-    run('format',['python3',str(BLOG/'proofs/format.py')])
+    if run('browser-build',['cargo','xtask','build-browser'],seconds=1200,cwd=BLOG):return 1
+    run('format',['python3',str(PROOFS/'format.py')])
     run('javascript',['node','--check',str(BLOG/'tests/browser.cjs')])
     run('javascript-flows',['node','--check',str(BLOG/'tests/flows.cjs')])
-    run('generated-freshness',['python3',str(BLOG/'proofs/freshness.py')])
+    run('generated-freshness',['python3',str(PROOFS/'freshness.py')])
     run('clippy-native',['cargo','clippy',*common,'--workspace','--all-targets',*features,'--','-D','warnings'])
     run('nextest-native',['cargo','nextest','run',*common,'--workspace','--all-targets',*features,'--test-threads','2','--no-fail-fast'])
     run('doctests',['cargo','test',*common,'--workspace','--doc',*features])
     run('rustdoc',['cargo','doc',*common,'--workspace','--no-deps',*features],env=dict(os.environ,RUSTDOCFLAGS='-D warnings'))
-    run('graphs',['python3',str(BLOG/'proofs/graphs.py')])
+    run('graphs',['python3',str(PROOFS/'graphs.py')])
     for mode in ['hydrate','csr']:
         target=str(Path(os.environ['CARGO_TARGET_DIR']).parent/mode)
         run('clippy-'+mode,['cargo','clippy',*common,'-p','blog-client','--target','wasm32-unknown-unknown','--no-default-features','--features',mode,'--','-D','warnings'],env=dict(os.environ,CARGO_TARGET_DIR=target))
     # Nextest's test executables are not the finite stdin/stdout adapter browser.py spawns.
     if run('browser-probe',['cargo','build',*common,'-p','blog-web','--bin','probe']):return 1
-    run('browser-public-matrix',['python3',str(BLOG/'proofs/browser.py'),'--public-only','--matrix'])
-    run('browser-full',['python3',str(BLOG/'proofs/browser.py')])
+    run('browser-public-matrix',['python3',str(PROOFS/'browser.py'),'--public-only','--matrix'])
+    run('browser-full',['python3',str(PROOFS/'browser.py')])
     # Prepare the copied-out schema/database/native/browser products in this same invocation.
-    if run('nickname-prepare',['python3',str(BLOG/'proofs/nickname.py'),'prepare'],seconds=1800):return 1
-    if run('nickname-freshness',['python3',str(BLOG/'proofs/nickname.py'),'check'])==0:
-        run('nickname-browser',['python3',str(BLOG/'proofs/nickname.py'),'browser'])
+    if run('nickname-prepare',['python3',str(PROOFS/'nickname.py'),'prepare'],seconds=1800):return 1
+    if run('nickname-freshness',['python3',str(PROOFS/'nickname.py'),'check'])==0:
+        run('nickname-browser',['python3',str(PROOFS/'nickname.py'),'browser'])
     target=Path(os.environ['CARGO_TARGET_DIR']).parent
     reserve_coverage(target)
     try:
@@ -115,7 +116,7 @@ def main():
     except Exception as error:
         print('COVERAGE GAP:',repr(error),flush=True)
         RESULTS.append({'name':'coverage-report','code':1,'error':repr(error)})
-    run('lock-invariants',['python3',str(BLOG/'proofs/locks.py'),'check'])
+    run('lock-invariants',['python3',str(PROOFS/'locks.py'),'check'])
     (OUTPUT/'results.json').write_text(json.dumps(RESULTS,indent=2))
     print('GATE RESULTS',json.dumps(RESULTS),flush=True)
     return int(any(item['code']for item in RESULTS))

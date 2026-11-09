@@ -2,7 +2,7 @@
 use super::support::App;
 use stackpress_server::http::{HttpAdapter, HttpOutput};
 
-/// The exact devmetrics/README Host header reaches the blog through the buffered adapter.
+/// The exact README Host header reaches the blog through the buffered adapter.
 #[tokio::test(flavor = "current_thread")]
 async fn native_http_adapter_accepts_documented_localhost_host() {
     let app = App::new().await;

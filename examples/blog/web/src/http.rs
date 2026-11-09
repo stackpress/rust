@@ -2,7 +2,7 @@
 use stackpress_server::http::HttpOptions;
 use stackpress_server_http::NetworkOptions;
 
-/// Match devmetrics' localhost URL while binding only IPv4 loopback.
+/// Match the localhost URL while binding only IPv4 loopback.
 /// The documented authority allowlist also admits the literal loopback smoke URL.
 pub fn network(port: u16) -> NetworkOptions {
     let address = std::net::SocketAddr::from(([127, 0, 0, 1], port));

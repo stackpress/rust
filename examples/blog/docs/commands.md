@@ -63,7 +63,7 @@ editing the imported framework schema:
 ```
 
 Run the same generate/check/revision/migrate/push sequence above, then rebuild both browser
-modes with `python3 proofs/build.py` and restart the app through devmetrics. Open
+modes with `cargo xtask build-browser` and restart the server. Open
 `/admin/profile/update/developer` and save a Nickname. The generated detail page, an authorized
 `/api/profile/search` response and `/auth/account/security/export?download=1` include that value.
 The copied-out browser proof follows this path on a real SQLite upgrade and preserves both

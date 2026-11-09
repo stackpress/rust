@@ -6,7 +6,8 @@ from pathlib import Path
 import signal
 import subprocess
 
-BLOG = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[3]
+BLOG = ROOT / 'examples/blog'
 
 
 def bounded(command, seconds=600):
@@ -31,6 +32,8 @@ def main():
     command = ['cargo', 'nextest', 'run', '--manifest-path', str(BLOG / 'Cargo.toml'),
                '-p', package, '--test', 'main', '--locked', '--offline',
                '--test-threads', '2', '--no-fail-fast']
+    if args.action == 'storage':
+        command += ['--features', 'extension-proof']
     if args.native_proof:
         if args.action != 'generation':
             parser.error('--native-proof belongs to the generation proof')

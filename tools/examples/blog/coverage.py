@@ -7,8 +7,9 @@ import subprocess
 import sys
 import tempfile
 
-BLOG=Path(__file__).resolve().parents[1]
-ROOT=BLOG.parents[1]
+ROOT=Path(__file__).resolve().parents[3]
+BLOG=ROOT/'examples/blog'
+PROOFS=Path(__file__).resolve().parent
 
 
 def measure(run):
@@ -24,7 +25,7 @@ def measure(run):
     profiles_dir=Path(tempfile.mkdtemp(prefix='run-',dir=target))
     env['LLVM_PROFILE_FILE']=str(profiles_dir/'blog-%m-%p.profraw')
     common=['--manifest-path',str(BLOG/'Cargo.toml'),'--locked','--offline']
-    features=['--features','blog-tool/native-proof,blog-app/ssr']
+    features=['--features','blog-tool/native-proof,blog-app/ssr,blog-web/extension-proof']
     # Catalog redirects, native Date output and cookie scope remain enabled unchanged.
     run('coverage-nextest',['cargo','nextest','run',*common,'--workspace','--all-targets',*features,'--test-threads','2','--no-fail-fast'],env=env,seconds=900)
     return finish(run,target,profiles_dir)
@@ -37,7 +38,7 @@ def finish(run,target,profiles_dir):
     env['LLVM_PROFILE_FILE']=str(profiles_dir/'blog-%m-%p.profraw')
     common=['--manifest-path',str(BLOG/'Cargo.toml'),'--locked','--offline']
     if run('coverage-binaries',['cargo','build',*common,'-p','blog-web','--bins'],env=env,seconds=900)==0:
-        run('coverage-native-http-browser',['python3',str(BLOG/'proofs/browser.py'),'--mode','hydrate'],env=env,seconds=180)
+        run('coverage-native-http-browser',['python3',str(PROOFS/'browser.py'),'--mode','hydrate'],env=env,seconds=180)
     profiles=sorted(profiles_dir.glob('blog-*.profraw'))
     assert profiles,'native coverage produced no profiles'
     sysroot=Path(subprocess.check_output(['rustc','--print','sysroot'],text=True).strip())
@@ -45,17 +46,17 @@ def finish(run,target,profiles_dir):
     llvm=sysroot/'lib/rustlib'/host/'bin'
     merged=profiles_dir/'blog.profdata'
     subprocess.run([str(llvm/'llvm-profdata'),'merge','-sparse',*map(str,profiles),'-o',str(merged)],check=True)
-    objects=[file for file in (target/'debug/deps').iterdir() if file.is_file() and file.suffix=='' and os.access(file,os.X_OK) and file.name.startswith(('main-','blog_web-','blog_tool-','blog_app-','blog_store-','blog_assets-','blog_client-','probe-','setup-','serve-'))]
+    objects=[file for file in (target/'debug/deps').iterdir() if file.is_file() and file.suffix=='' and os.access(file,os.X_OK) and file.name.startswith(('main-','blog_web-','blog_tool-','blog_app-','blog_store-','blog_assets-','blog_client-','blog_xtask-','probe-','setup-','serve-'))]
     objects.extend(file for name in ('blog-web','blog-tool','setup','probe','serve') if (file:=target/'debug'/name).exists())
     command=[str(llvm/'llvm-cov'),'export','-format=text',f'-instr-profile={merged}']
     for file in objects:command+=['-object',str(file)]
     raw=subprocess.check_output(command,text=True,timeout=120)
     output=BLOG/'.build/gate'
     (output/'coverage-raw.json').write_text(raw)
-    groups={name:[] for name in ['blog-tool','blog-web','blog-app','blog-store','blog-assets']}
+    groups={name:[] for name in ['blog-tool','blog-web','blog-app','blog-store','blog-assets','blog-xtask']}
     for file in json.loads(raw)['data'][0]['files']:
         location=Path(file['filename']).resolve()
-        group=next((name for name,folder in [('blog-tool','tool'),('blog-web','web'),('blog-app','plugins/app'),('blog-store','plugins/store'),('blog-assets','plugins/assets')] if location.is_relative_to(BLOG/folder/'src')),None)
+        group=next((name for name,folder in [('blog-tool','tool'),('blog-web','web'),('blog-app','plugins/app'),('blog-store','plugins/store'),('blog-assets','plugins/assets'),('blog-xtask','xtask')] if location.is_relative_to(BLOG/folder/'src')),None)
         generated=BLOG/'.build/app-generated'
         if location.is_relative_to(generated):
             group='blog-app' if location.relative_to(generated).parts[0]=='ui' else 'blog-web'

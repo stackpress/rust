@@ -12,6 +12,7 @@ mod commands;
 #[path = "cases/config.rs"]
 mod config;
 #[path = "cases/extension.rs"]
+#[cfg(feature = "extension-proof")]
 mod extension;
 #[path = "cases/history.rs"]
 mod history;

@@ -4,7 +4,9 @@ import os
 from pathlib import Path
 import subprocess
 
-BLOG = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[3]
+BLOG = ROOT / 'examples/blog'
+PROOFS = Path(__file__).resolve().parent
 
 
 def graph(package, *features):
@@ -18,10 +20,10 @@ def graph(package, *features):
 def main():
     """Keep generators outside native runtime and native resources outside both browser graphs."""
     native = graph('blog-web')
-    forbidden_native = {'blog-tool', 'stackpress-idea-parser', 'stackpress-idea-transformer'}
+    forbidden_native = {'blog-tool', 'blog-xtask', 'stackpress-idea-parser', 'stackpress-idea-transformer'}
     assert not native & forbidden_native, native & forbidden_native
     assert {'blog-app', 'blog-assets', 'blog-store'} <= native, 'host lost a selected plugin'
-    print(f'native: {len(native)} packages; no Idea parser/transformer or blog-tool')
+    print(f'native: {len(native)} packages; no Idea parser/transformer or build tools')
     # An unselected app has neither pages nor UI dependencies. Renderer commands below
     # select UI explicitly without inheriting the server host's feature union.
     assert graph('blog-app', '--no-default-features') == {'blog-app'}
@@ -31,7 +33,7 @@ def main():
         forbidden = {name for name in browser if name.startswith(('stackpress-sql', 'stackpress-server', 'stackpress-idea'))}
         forbidden |= browser & {'stackpress-framework-sql', 'stackpress-framework-models',
                                 'stackpress-framework-identity', 'stackpress-framework-email',
-                                'stackpress-cli', 'lettre', 'reqwest', 'ring', 'blog-tool', 'blog-web', 'blog-store', 'blog-assets'}
+                                'stackpress-cli', 'lettre', 'reqwest', 'ring', 'blog-tool', 'blog-xtask', 'blog-web', 'blog-store', 'blog-assets'}
         assert not forbidden, (mode, forbidden)
         assert 'blog-app' in browser and 'blog-shared' not in browser
         print(f'{mode}: {len(browser)} packages; no native SQL/server/mail/identity/codegen')
