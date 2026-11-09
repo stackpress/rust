@@ -53,3 +53,17 @@ Based on `f7d7d27dd7ade5fe3b6d5063c57f90c2f0ac6fec`; no commit.
 
 Coordinator verification pending. Acceptance criteria: none for the implementation proofs;
 README review remains with the coordinator. No product acceptance or context promotion is inferred.
+
+## Coordinator verification
+
+Committed as `9037474` and merged into main as `ea4b03e`. Reviewed:
+- the README content;
+- `docs/design-notes.md`;
+- the `blog-xtask` crate: path-only, publish = false, dev-dependency tempfile only; the lock adds only the local package;
+- the proofs moved to `tools/examples/blog/`;
+- `git grep -i -e devmetrics -e python -- examples/blog` is empty.
+
+Independent run on a detached clean checkout of `ea4b03e`, 2026-11-10, exit 0:
+- **README user path:** generate-app and `--check`, setup, revision, populate, the query returning 2 articles, `cargo xtask build-browser` producing both bundles, then `cargo test --workspace --locked --offline` (55 passed).
+- **Contributor gate** `python3 tools/examples/blog/gate.py`: all 26 phases passed. Coverage: blog-tool 90.27%, blog-web 70.24%, blog-app 95.26%, blog-store 97.44%, blog-assets 89.39%, blog-xtask 85.00%; blog-client G56-exempt.
+- Tracked tree unchanged afterwards.
