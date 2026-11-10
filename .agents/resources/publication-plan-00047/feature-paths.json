@@ -1,0 +1,387 @@
+[
+  {
+    "crate": "stackpress",
+    "feature": "framework-schema",
+    "path_only": [
+      "stackpress-framework-schema"
+    ]
+  },
+  {
+    "crate": "stackpress",
+    "feature": "framework-sql",
+    "path_only": [
+      "stackpress-framework-sql"
+    ]
+  },
+  {
+    "crate": "stackpress",
+    "feature": "framework-admin",
+    "path_only": [
+      "stackpress-framework-admin"
+    ]
+  },
+  {
+    "crate": "stackpress",
+    "feature": "framework-session",
+    "path_only": [
+      "stackpress-framework-session"
+    ]
+  },
+  {
+    "crate": "stackpress",
+    "feature": "server",
+    "path_only": [
+      "stackpress-server"
+    ]
+  },
+  {
+    "crate": "stackpress",
+    "feature": "server-http-host",
+    "path_only": [
+      "stackpress-server-http"
+    ]
+  },
+  {
+    "crate": "stackpress",
+    "feature": "idea-parser",
+    "path_only": [
+      "stackpress-idea-parser"
+    ]
+  },
+  {
+    "crate": "stackpress",
+    "feature": "idea-transformer",
+    "path_only": [
+      "stackpress-idea-transformer"
+    ]
+  },
+  {
+    "crate": "stackpress",
+    "feature": "idea",
+    "path_only": [
+      "stackpress-idea"
+    ]
+  },
+  {
+    "crate": "stackpress",
+    "feature": "sql",
+    "path_only": [
+      "stackpress-sql"
+    ]
+  },
+  {
+    "crate": "stackpress",
+    "feature": "sql-sqlite",
+    "path_only": [
+      "stackpress-sql-sqlite"
+    ]
+  },
+  {
+    "crate": "stackpress",
+    "feature": "sql-postgres",
+    "path_only": [
+      "stackpress-sql-postgres"
+    ]
+  },
+  {
+    "crate": "stackpress",
+    "feature": "sql-mysql",
+    "path_only": [
+      "stackpress-sql-mysql"
+    ]
+  },
+  {
+    "crate": "stackpress",
+    "feature": "framework-view",
+    "path_only": [
+      "stackpress-framework-view"
+    ]
+  },
+  {
+    "crate": "stackpress",
+    "feature": "leptos",
+    "path_only": [
+      "stackpress-leptos"
+    ]
+  },
+  {
+    "crate": "stackpress",
+    "feature": "framework-language",
+    "path_only": [
+      "stackpress-framework-language"
+    ]
+  },
+  {
+    "crate": "stackpress",
+    "feature": "framework",
+    "path_only": [
+      "stackpress-framework"
+    ]
+  },
+  {
+    "crate": "stackpress",
+    "feature": "framework-api",
+    "path_only": [
+      "stackpress-framework-api"
+    ]
+  },
+  {
+    "crate": "stackpress",
+    "feature": "framework-csrf",
+    "path_only": [
+      "stackpress-framework-csrf"
+    ]
+  },
+  {
+    "crate": "stackpress",
+    "feature": "framework-email",
+    "path_only": [
+      "stackpress-framework-email"
+    ]
+  },
+  {
+    "crate": "stackpress-framework-view",
+    "feature": "cookies",
+    "path_only": [
+      "stackpress-framework-language"
+    ]
+  },
+  {
+    "crate": "stackpress-framework-view",
+    "feature": "server",
+    "path_only": [
+      "stackpress-lib",
+      "stackpress-server"
+    ]
+  },
+  {
+    "crate": "stackpress-framework-view",
+    "feature": "leptos",
+    "path_only": [
+      "stackpress-leptos"
+    ]
+  },
+  {
+    "crate": "stackpress-framework-schema",
+    "feature": "source",
+    "path_only": [
+      "stackpress-lib"
+    ]
+  },
+  {
+    "crate": "stackpress-framework-schema",
+    "feature": "codegen",
+    "path_only": [
+      "stackpress-idea-parser",
+      "stackpress-idea-transformer",
+      "stackpress-lib"
+    ]
+  },
+  {
+    "crate": "stackpress-framework-sql",
+    "feature": "server",
+    "path_only": [
+      "stackpress-lib",
+      "stackpress-server"
+    ]
+  },
+  {
+    "crate": "stackpress-framework-sql",
+    "feature": "codegen",
+    "path_only": [
+      "stackpress-idea-transformer",
+      "stackpress-lib"
+    ]
+  },
+  {
+    "crate": "stackpress-framework-sql",
+    "feature": "sqlite-maintenance",
+    "path_only": [
+      "stackpress-sql-sqlite"
+    ]
+  },
+  {
+    "crate": "stackpress-framework-admin",
+    "feature": "source",
+    "path_only": [
+      "stackpress-lib"
+    ]
+  },
+  {
+    "crate": "stackpress-framework-admin",
+    "feature": "codegen",
+    "path_only": [
+      "stackpress-idea-transformer",
+      "stackpress-lib"
+    ]
+  },
+  {
+    "crate": "stackpress-framework-api",
+    "feature": "native",
+    "path_only": [
+      "stackpress-framework-models",
+      "stackpress-framework-session"
+    ]
+  },
+  {
+    "crate": "stackpress-framework-api",
+    "feature": "sql",
+    "path_only": [
+      "stackpress-framework-sql",
+      "stackpress-sql"
+    ]
+  },
+  {
+    "crate": "stackpress-framework-api",
+    "feature": "codegen",
+    "path_only": [
+      "stackpress-idea-transformer",
+      "stackpress-idea-parser",
+      "stackpress-framework-admin"
+    ]
+  },
+  {
+    "crate": "stackpress-framework-api",
+    "feature": "ui",
+    "path_only": [
+      "stackpress-leptos",
+      "stackpress-framework-admin",
+      "stackpress-framework-view"
+    ]
+  },
+  {
+    "crate": "stackpress-framework-api",
+    "feature": "ui-ssr",
+    "path_only": [
+      "stackpress-framework-csrf",
+      "stackpress-framework-view"
+    ]
+  },
+  {
+    "crate": "stackpress-framework-csrf",
+    "feature": "server",
+    "path_only": [
+      "stackpress-server"
+    ]
+  },
+  {
+    "crate": "stackpress-framework-email",
+    "feature": "server",
+    "path_only": [
+      "stackpress-lib",
+      "stackpress-server"
+    ]
+  },
+  {
+    "crate": "stackpress-framework-session",
+    "feature": "native",
+    "path_only": [
+      "stackpress-framework-models",
+      "stackpress-lib",
+      "stackpress-framework-schema"
+    ]
+  },
+  {
+    "crate": "stackpress-framework-session",
+    "feature": "sql",
+    "path_only": [
+      "stackpress-sql",
+      "stackpress-framework-sql"
+    ]
+  },
+  {
+    "crate": "stackpress-framework-session",
+    "feature": "server",
+    "path_only": [
+      "stackpress-lib",
+      "stackpress-server"
+    ]
+  },
+  {
+    "crate": "stackpress-framework-session",
+    "feature": "leptos",
+    "path_only": [
+      "stackpress-leptos",
+      "stackpress-framework-view"
+    ]
+  },
+  {
+    "crate": "stackpress-framework-session",
+    "feature": "auth-server",
+    "path_only": [
+      "stackpress-framework-csrf",
+      "stackpress-framework-email"
+    ]
+  },
+  {
+    "crate": "stackpress-framework-models",
+    "feature": "sql",
+    "path_only": [
+      "stackpress-framework-sql"
+    ]
+  },
+  {
+    "crate": "stackpress-framework-models",
+    "feature": "generate",
+    "path_only": [
+      "stackpress-idea-parser",
+      "stackpress-idea-transformer"
+    ]
+  },
+  {
+    "crate": "stackpress-framework",
+    "feature": "native",
+    "path_only": [
+      "stackpress-lib",
+      "stackpress-server",
+      "stackpress-framework-schema"
+    ]
+  },
+  {
+    "crate": "stackpress-framework",
+    "feature": "csrf",
+    "path_only": [
+      "stackpress-framework-csrf"
+    ]
+  },
+  {
+    "crate": "stackpress-framework",
+    "feature": "sql",
+    "path_only": [
+      "stackpress-sql",
+      "stackpress-framework-sql"
+    ]
+  },
+  {
+    "crate": "stackpress-framework",
+    "feature": "view",
+    "path_only": [
+      "stackpress-framework-view"
+    ]
+  },
+  {
+    "crate": "stackpress-framework",
+    "feature": "codegen",
+    "path_only": [
+      "stackpress-idea",
+      "stackpress-framework-sql",
+      "stackpress-framework-session",
+      "stackpress-framework-api",
+      "stackpress-framework-admin"
+    ]
+  },
+  {
+    "crate": "stackpress-framework",
+    "feature": "session",
+    "path_only": [
+      "stackpress-framework-session"
+    ]
+  },
+  {
+    "crate": "stackpress-framework",
+    "feature": "api",
+    "path_only": [
+      "stackpress-framework-api"
+    ]
+  }
+]
