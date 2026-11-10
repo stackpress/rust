@@ -88,3 +88,24 @@ KB raw validator retains **146 inherited errors / 44 warnings**, no Task 00049 e
 Recorder: `/Users/cblanquera/server/projects/stackpress/rust/.agents/resources/build-benchmarks`; sccache, jobs=2, debug=0, incremental=0, task-owned targets. Command wall time and observed Cargo-stage time remain separate; captured nested compiler output can make the latter incomplete.
 
 Gaps: no remaining task proof gaps. Coordinator verification and merge remain pending; this receipt does not claim coordinator acceptance. Failed tooling/migration attempts remain in the benchmark ledger; no original expectations or snapshots changed.
+
+## Coordinator verification
+
+Committed as `5f42faf` and merged into main as `50584f3`. Reviewed:
+- the crate directory is gone;
+- the Node extension oracle moved byte-identically to framework-schema tests;
+- the root lock lost only workspace edges, with 699 registry tuples identical;
+- no `.stderr`/golden change;
+- the in-crate fixture families and their `--check` regenerators;
+- the required session/API bindings and their error tests.
+
+Independent gate on a detached clean checkout of `50584f3` (`/private/tmp/g59-verify/run.sh`, 2026-11-10), exit 0:
+- fmt; Clippy, default and compatible;
+- nextest: default 1,061 passed; compatible 1,226 passed; `tcp_watchdog` alone;
+- doctests both sets; Rustdoc with `-D warnings`;
+- `regenerate_session_models --check` and `regenerate_api_models --check`;
+- aggregate graphs, eight consumers and build-host `--check`; session graphs and consumers;
+- generated-workspace/admin and API checkpoint freshness;
+- docs and proof ledger;
+- live PostgreSQL 12.2 / MySQL 8.0.27 session/API/aggregate `live_search`/`live_setup` (9 passed): six owned databases dropped, none left;
+- the blog contributor gate: 27/27 phases.
