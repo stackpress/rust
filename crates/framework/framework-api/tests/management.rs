@@ -1,13 +1,12 @@
 //! Generated UI against real API SQL, original CSRF and source admin action URLs.
+use crate::models::stores::application::ApplicationActions;
+use crate::models::stores::session::SessionActions;
 use serde_json::{Value as Json, json};
 use stackpress_framework_admin::pages::Action;
-use stackpress_framework_api::{
-    models::{ApplicationActions, SessionActions},
-    views::{
-        admin,
-        management::{Management, import_csv},
-        roles::Relations,
-    },
+use stackpress_framework_api::views::{
+    admin,
+    management::{Management, import_csv},
+    roles::Relations,
 };
 use stackpress_lib::{Body, Flow, Nest, Request, Response};
 use stackpress_server::{Server, ServerBuilder, StartupContext};
@@ -37,21 +36,21 @@ impl Db {
             .await
             .unwrap(),
         ));
-        let profile = stackpress_framework_session::storage::ProfileActions::new(
+        let profile = crate::models::stores::profile::ProfileActions::new(
             engine.clone(),
-            stackpress_framework_session::storage::ProfileStore::new("".into(), 0),
+            crate::models::stores::profile::ProfileStore::new("".into(), 0),
         );
         profile.install().await.unwrap();
         ApplicationActions::new(
             engine.clone(),
-            stackpress_framework_api::models::ApplicationStore::new("".into(), 0),
+            crate::models::stores::application::ApplicationStore::new("".into(), 0),
         )
         .install()
         .await
         .unwrap();
         SessionActions::new(
             engine.clone(),
-            stackpress_framework_api::models::SessionStore::new("".into(), 0),
+            crate::models::stores::session::SessionStore::new("".into(), 0),
         )
         .install()
         .await
@@ -76,11 +75,15 @@ impl Db {
                 },
             ))
             .unwrap();
-        stackpress_framework_api::sql::register(&mut builder).unwrap();
-        admin::register(
+        stackpress_framework_api::sql::register_with::<crate::models::stores::family::Models>(
+            &mut builder,
+        )
+        .unwrap();
+        admin::register_with::<crate::models::stores::family::Models>(
             &mut builder,
             super::shared::management(),
             Default::default(),
+            &["application", "session"],
         )
         .unwrap();
         let server = builder.build().await.unwrap();

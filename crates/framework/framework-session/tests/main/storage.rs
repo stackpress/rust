@@ -64,10 +64,8 @@ async fn sql_codec_roundtrip_equality_uniqueness_and_consumed_hash() {
 }
 #[test]
 fn original_node_date_to_string_and_timestamp_challenges() {
-    let vectors: serde_json::Value = serde_json::from_str(include_str!(
-        "../../../framework-schema/src/providers/vectors.json"
-    ))
-    .unwrap();
+    let vectors: serde_json::Value =
+        serde_json::from_str(include_str!("../fixtures/storage-vectors.json")).unwrap();
     for case in vectors["dateVectors"].as_array().unwrap() {
         let date = date_string(
             case["ms"].as_i64().unwrap(),

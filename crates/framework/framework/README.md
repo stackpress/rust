@@ -30,7 +30,7 @@ The [source ledger](proofs/coverage-map.json) maps inventory/export/risk rows to
 
 The [source-client recipe](docs/guides/registration.md#generate-an-extended-source-client)
 uses the shipped Idea imports and the public source emitter. CompiledClient.bindings
-selects monomorphized session/API registrars for the actual application family, while
+requires monomorphized session/API registrars for each selected stage for the actual application family, while
 model listeners remain in SQL Listen and generated admin stays last. The default facade
 and no-feature graphs are unchanged. Native schemas/stores/client stay separate from
 portable UI in SSR/hydrate/CSR artifacts; no codec state or native provider enters a seed.

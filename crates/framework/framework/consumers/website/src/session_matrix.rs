@@ -24,15 +24,15 @@ pub async fn run(out: &Path) -> Result<()> {
         .await
         .map_err(stackpress_lib::Error::from_source)?,
     ));
-    let actions = stackpress_framework_session::storage::AuthActions::new(
+    let actions = crate::native::models::stores::auth::AuthActions::new(
         engine.clone(),
-        stackpress_framework_session::storage::AuthStore::new(
+        crate::native::models::stores::auth::AuthStore::new(
             "DATABASE-SEED-MUST-NOT-REACH-BROWSER".into(),
             0,
         ),
     );
     let account = stackpress_framework_session::storage::AccountActions::<
-        stackpress_framework_session::storage::DefaultModels,
+        crate::native::models::stores::family::Models,
     >::new(
         engine.clone(),
         "DATABASE-SEED-MUST-NOT-REACH-BROWSER".into(),
@@ -205,14 +205,26 @@ pub async fn run(out: &Path) -> Result<()> {
 fn register(app: &mut ServerBuilder) -> Result<()> {
     static CLIENT: stackpress::framework::CompiledClient = stackpress::framework::CompiledClient {
         bindings: stackpress::framework::FrameworkBindings {
-            session: None,
-            api: None,
+            session: Some(
+                stackpress_framework_session::composite::register_with::<
+                    crate::native::models::stores::family::Models,
+                >,
+            ),
+            api: Some(
+                stackpress_framework_api::register_with::<
+                    crate::native::models::stores::family::Models,
+                >,
+            ),
         },
         build: "slice11-session-matrix",
         describe: || vec![],
         models: &[stackpress::framework::CompiledModel {
             name: "Account",
-            listen: Some(account::events::register_listen),
+            listen: Some(
+                account::events::register_listen_with::<
+                    crate::native::models::stores::family::Models,
+                >,
+            ),
             admin: None,
         }],
     };

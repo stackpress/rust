@@ -1,6 +1,6 @@
 # Handle your first aggregate event
 
-An application can register the framework before it has a database, generated client or command provider. This example builds a finite event host and resolves one application event. It opens no listener.
+An application can register the framework with its generated application model family before it has a database or command provider. This example builds a finite event host and resolves one application event. It opens no listener.
 
 ## Build a small host
 
@@ -8,6 +8,10 @@ Use the dependencies and locked graph of the [full consumer](../consumers/full/C
 
 <!-- example: full -->
 ```rust
+// Generate this application module from its Idea imports before compiling.
+#[allow(dead_code, missing_docs, unexpected_cfgs)]
+#[path = "models/mod.rs"]
+mod models;
 use stackpress_lib::{Flow, Invocation, Request, Response, Result};
 use stackpress_server::ServerBuilder;
 
@@ -16,10 +20,26 @@ async fn health(_: &mut Request, res: &mut Response, _: Invocation<'_>) -> Resul
     Ok(Flow::Continue)
 }
 
+static CLIENT: stackpress_framework::CompiledClient = stackpress_framework::CompiledClient {
+    bindings: stackpress_framework::FrameworkBindings {
+        session: Some(
+            stackpress_framework_session::composite::register_with::<models::stores::family::Models>,
+        ),
+        api: Some(stackpress_framework_api::register_with::<models::stores::family::Models>),
+    },
+    build: "first-application",
+    describe: Vec::new,
+    models: &[],
+};
+
+fn application(app: &mut ServerBuilder) -> Result<()> {
+    stackpress_framework::register_with(app, &CLIENT)
+}
+
 pub async fn first_aggregate() -> std::result::Result<(), Box<dyn std::error::Error + Send + Sync>>
 {
     let mut app = ServerBuilder::new();
-    app.plugin("framework", stackpress_framework::register)?;
+    app.plugin("framework", application)?;
     app.on("health", health)?;
     let server = app.build().await?;
     let reply = server
@@ -64,6 +84,6 @@ for the `-b` boundary. Paths are relative to the process working directory, not 
 
 ## What the registration did
 
-`register` selected the compiled stages and queued their startup callbacks with an absent client catalog. The schema service's nullable lookup remains absent; registration does not invent a generated client or execute a command. Missing session/access/auth configuration does not add a global guard or auth routes.
+`register_with` selected the compiled stages and queued their startup callbacks with the application-generated bindings. Each selected session/API stage requires its binding; a missing binding returns a descriptive construction error. Registration does not execute a command. Missing session/access/auth configuration does not add a global guard or auth routes.
 
 You now have a host that can resolve application events. Add [compiled model callbacks](guides/registration.md) when generated operations are available, or bind a [finite command provider](guides/commands.md) before emitting command events. The [concepts page](concepts.md) explains the ordering those additions retain.

@@ -1,12 +1,10 @@
 //! Golden values are captured by executing the original generated TypeScript classes.
+use crate::models::source::auth::AuthSchema;
+use crate::models::source::profile::ProfileSchema;
 use serde_json::{Value as JsonValue, json};
 use stackpress_framework_schema::source::SourceSchema;
 use stackpress_framework_session::columns::Value;
-use stackpress_framework_session::{
-    auth::AuthSchema,
-    columns::{self, Record},
-    profile::ProfileSchema,
-};
+use stackpress_framework_session::columns::{self, Record};
 
 /// Translate the native Date marker to the original JSON Date spelling for oracle comparison.
 fn wire(value: Value) -> JsonValue {

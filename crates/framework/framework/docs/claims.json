@@ -9,7 +9,7 @@
         "contains": [
           "observed(\"server\")",
           "observed(\"admin\")",
-          "unwrap_or(stackpress_framework_session::composite::register)"
+          "missing client.bindings.session"
         ]
       }
     ]
@@ -1215,7 +1215,7 @@
   {
     "id": "g50-compiled-family-bindings",
     "page": "crates/framework/framework/docs/guides/registration.md",
-    "statement": "CompiledClient's empty FrameworkBindings",
+    "statement": "CompiledClient's selected session/API bindings",
     "evidence": [
       {
         "path": "crates/framework/framework/src/native/mod.rs",

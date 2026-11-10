@@ -55,6 +55,8 @@ def main():
             after = registry(lock.read_bytes())
             print(f'LOCK {kind}: {len(after)} registry tuples are a workspace subset; root lock unchanged; delta +{len(after-before)}/-{len(before-after)}', flush=True)
             continue
+        if kind == 'plugin':
+            run(['python3', str(base/'plugin/regenerate.py'), '--check'], env)
         flags = ['--manifest-path', str(manifest), '--locked', '--offline']
         graph = subprocess.check_output(['cargo', 'tree', *flags, '-e', 'normal', '--prefix', 'none'], env=env, text=True)
         names = {line.split()[0] for line in graph.splitlines() if line}

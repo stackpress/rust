@@ -2822,7 +2822,7 @@ dependencies = [
  "once_cell",
  "socket2",
  "tracing",
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -3247,7 +3247,7 @@ dependencies = [
  "security-framework",
  "security-framework-sys",
  "webpki-root-certs",
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -3782,7 +3782,6 @@ dependencies = [
  "serde_json",
  "stackpress-framework-admin",
  "stackpress-framework-csrf",
- "stackpress-framework-models",
  "stackpress-framework-schema",
  "stackpress-framework-session",
  "stackpress-framework-sql",
@@ -3826,14 +3825,6 @@ name = "stackpress-framework-language"
 version = "0.1.0"
 
 [[package]]
-name = "stackpress-framework-models"
-version = "0.1.0"
-dependencies = [
- "stackpress-framework-schema",
- "stackpress-framework-sql",
-]
-
-[[package]]
 name = "stackpress-framework-schema"
 version = "0.1.0"
 dependencies = [
@@ -3870,7 +3861,6 @@ dependencies = [
  "serde_json",
  "stackpress-framework-csrf",
  "stackpress-framework-email",
- "stackpress-framework-models",
  "stackpress-framework-schema",
  "stackpress-framework-sql",
  "stackpress-framework-view",

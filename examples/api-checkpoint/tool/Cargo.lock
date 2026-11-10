@@ -2992,7 +2992,6 @@ dependencies = [
  "serde",
  "serde_json",
  "stackpress-framework-admin",
- "stackpress-framework-models",
  "stackpress-framework-schema",
  "stackpress-framework-session",
  "stackpress-framework-sql",
@@ -3008,14 +3007,6 @@ dependencies = [
 [[package]]
 name = "stackpress-framework-language"
 version = "0.1.0"
-
-[[package]]
-name = "stackpress-framework-models"
-version = "0.1.0"
-dependencies = [
- "stackpress-framework-schema",
- "stackpress-framework-sql",
-]
 
 [[package]]
 name = "stackpress-framework-schema"
@@ -3046,7 +3037,6 @@ dependencies = [
  "regex",
  "serde",
  "serde_json",
- "stackpress-framework-models",
  "stackpress-framework-schema",
  "stackpress-framework-sql",
  "stackpress-lib",

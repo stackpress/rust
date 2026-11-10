@@ -6,10 +6,6 @@
 
 mod account;
 pub use account::{AccountActions, PasswordConfig, is_email};
-pub use stackpress_framework_models::{
-    AuthActions, AuthModel, AuthStore, Models as DefaultModels, ProfileActions, ProfileModel,
-    ProfileStore,
-};
 pub use stackpress_framework_sql::source::{
     ActionError, BatchMode, BatchStatus, NativeActions as Actions, NativeStore as Store,
     SourceResult as Result, SourceStatement, StoreQuery, StoreSelector,

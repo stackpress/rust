@@ -116,10 +116,17 @@ def main():
     except Exception as error:
         print('COVERAGE GAP:',repr(error),flush=True)
         RESULTS.append({'name':'coverage-report','code':1,'error':repr(error)})
+    run('lock-controls',['python3','-m','unittest','discover','-s',str(PROOFS/'tests'),'-p','test_locks.py'])
     run('lock-invariants',['python3',str(PROOFS/'locks.py'),'check'])
     (OUTPUT/'results.json').write_text(json.dumps(RESULTS,indent=2))
     print('GATE RESULTS',json.dumps(RESULTS),flush=True)
     return int(any(item['code']for item in RESULTS))
 
 
-if __name__=='__main__':raise SystemExit(main())
+if __name__=='__main__':
+    # Approved workspace-edge edits may predate this gate. No phase may mutate its root lock.
+    frozen_root_lock = (ROOT/'Cargo.lock').read_bytes()
+    try:
+        raise SystemExit(main())
+    finally:
+        assert (ROOT/'Cargo.lock').read_bytes() == frozen_root_lock, 'root lock bytes changed during gate'

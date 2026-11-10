@@ -92,18 +92,6 @@ macro_rules! register_routes {
     }};
 }
 
-/// Register the selected generated admin inventory through ordinary shared routes.
-/// # Errors
-/// Returns native route construction errors; no route conflict arbitration occurs.
-pub fn register(app: &mut ServerBuilder, ui: Ui, config: Config) -> Result<()> {
-    register_with::<stackpress_framework_models::Models>(
-        app,
-        ui,
-        config,
-        &["application", "session"],
-    )
-}
-
 /// Register ordinary source admin routes for selected generated models and one actual family.
 /// The application owns the module catalog and UI; this installs no Engine, schema or guard.
 /// Item paths use all source key fields in declaration order. Copy uses `create/<keys>`;

@@ -31,24 +31,31 @@ This builds only an in-process application. The omitted access map means no sess
 
 ## Select the source group
 
-Use `composite::register` for auth → email → identity. You can compose those same functions directly when your application needs to name the constituents.
+Use `composite::register_with::<models::stores::family::Models>` for auth → email → identity. You can compose those same functions directly when your application needs to name the constituents.
 
 <!-- example: server -->
 ```rust
+// Generate this module from the application Idea file before compiling.
+#[allow(dead_code, missing_docs, unexpected_cfgs)]
+#[path = "models/mod.rs"]
+mod models;
 use stackpress_framework_session::composite;
 use stackpress_lib::Result;
 use stackpress_server::ServerBuilder;
 
 pub fn grouped(app: &mut ServerBuilder) -> Result<()> {
-    app.plugin("session", composite::register)?;
+    app.plugin(
+        "session",
+        composite::register_with::<models::stores::family::Models>,
+    )?;
     Ok(())
 }
 ```
 
-The [compiled composite implementation](../../src/composite.rs) shows the three standalone calls: auth::register, the email plugin registrar, then identity plugin::register. Calling them directly requires an explicit email dependency; the existing plugin consumer needs only the composite. Choose one form for a builder, preserving constituent order without nested plugin selection. [Composite tests](../../tests/main/composite.rs) compare missing-config modes, listener order, real JSON email and multiple-handler Abort behavior.
+The [compiled composite implementation](../../src/composite.rs) shows the three standalone calls: auth::register_with::<models::stores::family::Models>, the email plugin registrar, then identity plugin::register. Calling them directly requires an explicit email dependency; the existing plugin consumer needs only the composite. Choose one form for a builder, preserving constituent order without nested plugin selection. [Composite tests](../../tests/main/composite.rs) compare missing-config modes, listener order, real JSON email and multiple-handler Abort behavior.
 
 ## Place it in an application
 
 The source main aggregate places session after views and before API/admin; CSRF is selected earlier. The [finite plugin consumer](../../consumers/plugin/src/main.rs) demonstrates that order with real registrars and SQLite. It installs tables, supplies native services, binds Hooks and shuts them down explicitly. Those actions are not side effects of registration.
 
-Register `account::events::register` separately when using the included generated-style SQL event adapters, or provide your own event handlers. Add handlers to the same route/event with ordinary priorities; registration grants no ownership or conflict arbitration. Continue with [configuration](configuration.md), [hooks](hooks.md) and [API caller integration](../api/identity.md#caller-interface-for-api-and-other-handlers).
+Register `account::events::register_with::<models::stores::family::Models>` separately when using the included generated-style SQL event adapters, or provide your own event handlers. Add handlers to the same route/event with ordinary priorities; registration grants no ownership or conflict arbitration. Continue with [configuration](configuration.md), [hooks](hooks.md) and [API caller integration](../api/identity.md#caller-interface-for-api-and-other-handlers).

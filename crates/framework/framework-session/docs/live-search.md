@@ -19,7 +19,7 @@ the successful-output records so every owned database name has its matching drop
 
 ## Ownership and deadlines
 
-The [shared test-only owner](../tests/live/support.rs) reuses the existing SQL discovery and
+The [crate-owned test owner](../tests/fixtures/live_support.rs) reuses the existing SQL discovery and
 child-watchdog helpers. The adapter database-owner structs are private to their executables;
 no public testing API or crate is introduced. Each enabled case creates one unique
 `stackpress_g46_*` database with CREATE DATABASE, without IF NOT EXISTS. CREATE acknowledgement

@@ -1051,13 +1051,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "stackpress-framework-models"
-version = "0.1.0"
-dependencies = [
- "stackpress-framework-schema",
-]
-
-[[package]]
 name = "stackpress-framework-schema"
 version = "0.1.0"
 dependencies = [
@@ -1083,7 +1076,6 @@ dependencies = [
  "regex",
  "serde",
  "serde_json",
- "stackpress-framework-models",
  "stackpress-framework-schema",
  "stackpress-lib",
  "time",

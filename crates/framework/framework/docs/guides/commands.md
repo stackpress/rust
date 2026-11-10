@@ -8,6 +8,10 @@ Use the full consumer graph. Publish the binding as a shared service in Config, 
 
 <!-- example: full -->
 ```rust
+// Generate this application module from its Idea imports before compiling.
+#[allow(dead_code, missing_docs, unexpected_cfgs)]
+#[path = "models/mod.rs"]
+mod models;
 use stackpress_framework::commands::Bindings;
 use stackpress_lib::{Flow, Invocation, Request, Response, Result};
 use stackpress_server::{ServerBuilder, StartupContext};
@@ -25,9 +29,24 @@ async fn bindings(start: &mut StartupContext) -> Result<Flow> {
     Ok(Flow::Continue)
 }
 
+static CLIENT: stackpress_framework::CompiledClient = stackpress_framework::CompiledClient {
+    bindings: stackpress_framework::FrameworkBindings {
+        session: Some(
+            stackpress_framework_session::composite::register_with::<models::stores::family::Models>,
+        ),
+        api: Some(stackpress_framework_api::register_with::<models::stores::family::Models>),
+    },
+    build: "docs-application",
+    describe: Vec::new,
+    models: &[],
+};
+fn application(app: &mut ServerBuilder) -> Result<()> {
+    stackpress_framework::register_with(app, &CLIENT)
+}
+
 pub async fn finite_serve() -> std::result::Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let mut app = ServerBuilder::new();
-    stackpress_framework::register(&mut app)?;
+    application(&mut app)?;
     app.on_config(bindings)?;
     let server = app.build().await?;
     let reply = server.resolve("serve", serde_json::json!({})).await?;

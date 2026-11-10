@@ -1,0 +1,155 @@
+{
+  "version": 1,
+  "files": {
+    "mod.rs": {
+      "owner": "aggregate",
+      "sha256": "36f7d65faf7af84e2352aa64c9f2d14f67a1e52bd9a4379fd4ab25255ff26c64",
+      "bytes": 32
+    },
+    "source/_catalog.rs": {
+      "owner": "source-models",
+      "sha256": "ce86bd27e341c111a85a7bde5a2cb305e8b86d6e9ad57a243dcde793e8338198",
+      "bytes": 63094
+    },
+    "source/_source.rs": {
+      "owner": "source-models",
+      "sha256": "5384ff531f9808688911fe5923c0200edfa87f928219bba78471733da58dc857",
+      "bytes": 5278
+    },
+    "source/address.rs": {
+      "owner": "source-models",
+      "sha256": "69152b50231302d6e6674776c027b9c30de839bca8309663bbbb75317db16470",
+      "bytes": 5251
+    },
+    "source/auth.rs": {
+      "owner": "source-models",
+      "sha256": "5dbae8f9ed152f56a53780a4397649a7d8b1136cc86195377dab9ff98bc53c71",
+      "bytes": 32112
+    },
+    "source/catalog.rs": {
+      "owner": "source-models",
+      "sha256": "9602eb011cc6867ea9b389f2bec6465de4ad5fa4ebd9c3cd56da1b66720cccb3",
+      "bytes": 6108
+    },
+    "source/family.rs": {
+      "owner": "source-models",
+      "sha256": "d28965a3ec310b648d16966107930cc9886a3ecfdd673bce7398fbc80c38b82f",
+      "bytes": 5278
+    },
+    "source/keyed.rs": {
+      "owner": "source-models",
+      "sha256": "c07efe1a4913bcb316b7cd98f1513a57a6b64c3f2500c9a014b6831497d44012",
+      "bytes": 4459
+    },
+    "source/keyless.rs": {
+      "owner": "source-models",
+      "sha256": "c81ec715f23452ba319e8760a59f7b1950389c35290abe067fc9fc2ad92dc654",
+      "bytes": 4504
+    },
+    "source/lists.rs": {
+      "owner": "source-models",
+      "sha256": "5634a56930ec60f8fe526eb194dbd521cb8374c01dba129095066b85971f90b6",
+      "bytes": 13157
+    },
+    "source/mod.rs": {
+      "owner": "aggregate",
+      "sha256": "17d52b85f8a4ff9f25fde40619dbf93bc3b338575c22e73fc644d3c1ca5143b5",
+      "bytes": 235
+    },
+    "source/native.rs": {
+      "owner": "source-models",
+      "sha256": "c9b18321953e3abf503179938dfaff2346ce66744d42b8096994a5e2dfdad0c2",
+      "bytes": 5278
+    },
+    "source/native_record.rs": {
+      "owner": "source-models",
+      "sha256": "98f896bc27bc2db72ef3e28dd8e852601ccd22aa9d1f402e8d89edb389aa7c21",
+      "bytes": 5327
+    },
+    "source/profile.rs": {
+      "owner": "source-models",
+      "sha256": "8b388af070b4db29c73ce85349f56f4c18b6e1499d4cbbe1ab32162e292dc96c",
+      "bytes": 38036
+    },
+    "source/runtime.rs": {
+      "owner": "source-models",
+      "sha256": "32a86a2cc28a33442b6dca33cc5ed424175317c6ec19a09f96cff924d18d8b18",
+      "bytes": 5286
+    },
+    "source/stores.rs": {
+      "owner": "source-models",
+      "sha256": "dfaae620607c375f487657e779ed583edbcbd0a3ab2f1333f598ad59ced856ee",
+      "bytes": 5278
+    },
+    "stores/_family.rs": {
+      "owner": "source-models",
+      "sha256": "5948467aad4d87074b1e8911a668cc1c12324628676b76c0b170540d7661ffd7",
+      "bytes": 338
+    },
+    "stores/_stores.rs": {
+      "owner": "source-models",
+      "sha256": "f3d4d93b15a02fb9465c220001223e18273c50f7b6e1a77804ad7f77ef740915",
+      "bytes": 1186
+    },
+    "stores/auth.rs": {
+      "owner": "source-models",
+      "sha256": "49638c7bd39c4bd5e60ee311ed509de7d06279d923f0bbfc82452f91da6cef95",
+      "bytes": 1196
+    },
+    "stores/catalog.rs": {
+      "owner": "source-models",
+      "sha256": "7aee917b453d5c7387205b803df4587abf7996d513a2c1183dc06dcecc979399",
+      "bytes": 1201
+    },
+    "stores/family.rs": {
+      "owner": "source-models",
+      "sha256": "ee66f5b2f6c37af1b605dd6dc3b2fad2f77fe64a064507801aad914f5040b996",
+      "bytes": 1186
+    },
+    "stores/keyed.rs": {
+      "owner": "source-models",
+      "sha256": "7f51bc60d3e6e3c1057772750e773d7ccc3832777d9e152831fbde9425334142",
+      "bytes": 1171
+    },
+    "stores/keyless.rs": {
+      "owner": "source-models",
+      "sha256": "79849ed2007a600a7fed739d40ed8bee02d1241a13be7393d828017503836fe8",
+      "bytes": 1201
+    },
+    "stores/lists.rs": {
+      "owner": "source-models",
+      "sha256": "a678827475a13df6314470dde9910319a823bb745dcca10468a57f3eb50605ee",
+      "bytes": 1171
+    },
+    "stores/mod.rs": {
+      "owner": "aggregate",
+      "sha256": "e7fb75b6d7ba84ef1f39750b50753e3755c965f895b96ed8167d3bf0d09ba5e8",
+      "bytes": 217
+    },
+    "stores/native.rs": {
+      "owner": "source-models",
+      "sha256": "4b388e546083ab0f283199bf65087b519b02cf202b600a03f6f04172da169c1b",
+      "bytes": 1186
+    },
+    "stores/native_record.rs": {
+      "owner": "source-models",
+      "sha256": "ef76aa663b645f9606cdc1a773612625a9a700e00b234c5338a6a2a3a9f90139",
+      "bytes": 1285
+    },
+    "stores/profile.rs": {
+      "owner": "source-models",
+      "sha256": "2fcdee959545e5b8c0232137be17fe0fe40465e5d591140285cd1064de5563f2",
+      "bytes": 1244
+    },
+    "stores/runtime.rs": {
+      "owner": "source-models",
+      "sha256": "73dc688eac62466afa86dcdc0df63e78713bb53425aedda069b062bb97e7a345",
+      "bytes": 1201
+    },
+    "stores/source.rs": {
+      "owner": "source-models",
+      "sha256": "f4eb54b47f5bc546dc2100f0f8ae2f8dc474a77d741ed1da47f4a801e0750a5a",
+      "bytes": 1189
+    }
+  }
+}

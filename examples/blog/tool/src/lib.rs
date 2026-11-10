@@ -2,7 +2,7 @@
 //!
 //! The default tool has no dependency on its generated output or a renderer. Package-owned
 //! schema constants are imported with no optional plugin features. It uses the public
-//! source emitters also used by framework-models. Generation
+//! source emitters. Generation
 //! reads Idea files and installs/checks one managed output tree; it never opens a database.
 
 use std::path::Path;
@@ -71,7 +71,7 @@ pub fn compose(input: &Path) -> Result<SchemaConfig> {
         .config)
 }
 
-/// Emit the same native schema/store partitions as the shipped framework-models generator.
+/// Emit the native schema/store partitions through the public source generator.
 fn emit(context: &TransformContext<'_>, output: &mut OutputPlan) -> Result<()> {
     let graph = Schema::normalize_source(context.schema(), NormalizeOptions::default(), &[])
         .map_err(transform_error)?;

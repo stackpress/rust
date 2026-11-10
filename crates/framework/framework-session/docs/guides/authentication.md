@@ -40,7 +40,7 @@ The [process implementation](../../src/auth/pages/mod.rs), [source invocation tr
 
 | Need | Public entry / source behavior |
 | --- | --- |
-| Signup | `pages::signup` wraps CSRF/page handling around `events::signup`; configured roles are overwritten by request roles, known secrets are stripped after hook submission; missing phone succeeds under G44 |
+| Signup | `pages::signup` wraps CSRF/page handling around `events::signup_with::<M>`; configured roles are overwritten by request roles, known secrets are stripped after hook submission; missing phone succeeds under G44 |
 | Username/phone/email password | `pages::{username,phone,email}` force type/password fields then reuse `pages::password_signin`; event `signin` checks the truthiness of request `password` and only literal false skips its 2FA search |
 | Email OTP | `pages::email` with auth=otp → `otp_signin`; rotate consumed, reload row, derive six-place challenge, late mail checks, same-response email-send; OTP success clears CSRF and redirects |
 | Magic link | auth=magic → `magic_link_signin`; same rotation/reload, no success CSRF clear/redirect; link finalization checks consumed hash without a new CSRF/TTL/auth-type gate |

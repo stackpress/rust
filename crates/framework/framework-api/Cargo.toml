@@ -13,8 +13,8 @@ path = "tests/main.rs"
 
 [features]
 default = []
-native = ["dep:stackpress-framework-models", "dep:stackpress-framework-session", "stackpress-framework-schema/providers"]
-sql = ["stackpress-framework-models/sql", "stackpress-framework-sql/source", "stackpress-framework-sql/server", "native", "stackpress-framework-session/sql", "dep:stackpress-framework-sql", "dep:stackpress-sql"]
+native = ["dep:stackpress-framework-session", "stackpress-framework-schema/providers"]
+sql = ["stackpress-framework-sql/source", "stackpress-framework-sql/server", "native", "stackpress-framework-session/sql", "dep:stackpress-framework-sql", "dep:stackpress-sql"]
 codegen = ["dep:stackpress-idea-transformer", "native", "stackpress-framework-schema/codegen", "dep:stackpress-idea-parser", "dep:stackpress-framework-admin", "stackpress-framework-admin/codegen", "stackpress-framework-admin/format"]
 ui = ["stackpress-framework-admin/source", "dep:leptos", "dep:stackpress-leptos", "dep:stackpress-framework-admin", "stackpress-framework-admin/format", "dep:stackpress-framework-view"]
 ui-ssr = ["stackpress-framework-admin/source-ssr", "ui", "dep:chrono", "dep:stackpress-framework-csrf", "leptos/ssr", "stackpress-leptos/ssr", "stackpress-framework-admin/ssr", "dep:stackpress-framework-view"]
@@ -33,7 +33,6 @@ stackpress-framework-admin = { path = "../framework-admin", optional = true }
 stackpress-framework-view = { path = "../framework-view", features = ["preferences"], optional = true }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-stackpress-framework-models = { path = "../framework-models", default-features = false, optional = true }
 stackpress-idea-transformer = { path = "../../idea/idea-transformer", optional = true }
 stackpress-server = { path = "../../server/server" }
 chrono = { version = "=0.4.45", default-features = false, features = ["clock"], optional = true }
@@ -45,6 +44,9 @@ stackpress-sql = { path = "../../sql/sql", optional = true }
 stackpress-idea-parser = { path = "../../idea/idea-parser", optional = true }
 
 [dev-dependencies]
+stackpress-framework-schema = { path = "../framework-schema", features = ["codegen", "providers"] }
+stackpress-idea-transformer = { path = "../../idea/idea-transformer" }
+stackpress-framework-sql = { path = "../framework-sql", features = ["codegen", "server"] }
 stackpress-framework-session = { path = "../framework-session", features = ["server"] }
 stackpress-sql-sqlite = { path = "../../sql/sql-sqlite" }
 stackpress-sql-postgres = { path = "../../sql/sql-postgres" }
@@ -59,3 +61,7 @@ name = "live_search"
 path = "tests/live_search.rs"
 harness = false
 required-features = ["sql"]
+
+[[example]]
+name = "regenerate_api_models"
+path = "tests/fixtures/regenerate.rs"

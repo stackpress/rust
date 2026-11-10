@@ -1,0 +1,2 @@
+use "stackpress-session/schema.idea"
+model Profile { nickname String? }

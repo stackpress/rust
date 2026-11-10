@@ -4,7 +4,7 @@ Native registration is available when a runtime stage is selected on a non-WASM 
 
 ## Registrar functions
 
-Use `register(&mut ServerBuilder) -> Result<()>` for an absent generated client. Use `register_with(&mut ServerBuilder, &'static CompiledClient) -> Result<()>` for a statically linked catalog. `Register` aliases the ordinary `fn(&mut ServerBuilder) -> Result<()>` callback shape.
+Use `register(&mut ServerBuilder) -> Result<()>` only when the selected stages do not require session/API bindings. Those selected stages return descriptive construction errors without an application-generated binding. Use `register_with(&mut ServerBuilder, &'static CompiledClient) -> Result<()>` for a statically linked catalog. `Register` aliases the ordinary `fn(&mut ServerBuilder) -> Result<()>` callback shape.
 
 | Parameter | Meaning |
 | --- | --- |
@@ -13,7 +13,7 @@ Use `register(&mut ServerBuilder) -> Result<()>` for an absent generated client.
 
 **Returns** `Ok(())` after registration, or the first existing constituent/callback error. Earlier builder mutations are not rolled back. Startup callback errors surface when building the host. `ServerBuilder::build` returns its distinct BuildError, so application examples use a boxed error result rather than assuming it converts into the handler's stackpress-lib Error. No implicit Engine, client generation or global guard is supplied.
 
-This headless-graph example proves nullable and required catalog lookup remain distinct.
+This standalone client example proves nullable and required catalog lookup remain distinct, without selecting the aggregate session/API stages.
 
 <!-- example: headless -->
 ```rust
@@ -22,17 +22,13 @@ use stackpress_server::ServerBuilder;
 
 pub async fn absent_client() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let mut app = ServerBuilder::new();
-    stackpress_framework::register(&mut app)?;
+    stackpress_framework::config::register(&mut app)?;
+    stackpress_framework::client::register(&mut app, None)?;
     let server = app.build().await?;
     let client = server.host().service::<Client>()?;
     assert_eq!(client.module(), "stackpress-client");
     assert!(client.get(true)?.is_none());
     assert!(client.get(false).is_err());
-    server
-        .host()
-        .service::<stackpress_framework_session::auth::Hooks>()?
-        .shutdown()
-        .await;
     Ok(())
 }
 ```
@@ -45,7 +41,7 @@ Callbacks are invoked once per model entry per aggregate registration when their
 
 | Type / field | Contract |
 | --- | --- |
-| CompiledClient.bindings | FrameworkBindings with optional session/API Register callbacks; Default contains None. Empty callbacks retain existing default registrars. |
+| CompiledClient.bindings | FrameworkBindings with optional session/API Register callbacks; Default contains None. A selected session/API stage requires its callback; missing bindings fail visibly. |
 | CompiledClient.models | Static ordered slice of CompiledModel entries. |
 | CompiledClient.build | Static build identity for inspection, not an import path. |
 | CompiledClient.describe | fn() -> Vec<framework_schema::Model>; evaluated explicitly, not during startup. |
@@ -53,7 +49,7 @@ Callbacks are invoked once per model entry per aggregate registration when their
 | CompiledModel.listen | Optional Register, called during SQL composition in catalog order; queue actual listeners for Listen. |
 | CompiledModel.admin | Optional Register, called in the final admin stage in catalog order. |
 
-Account's `account::events::register_listen` queues the same seven handlers as its immediate `register`. This preserves SQL command → model events → session/API event ordering. Missing callbacks stay `None`; the aggregate supplies no replacement admin implementation.
+Account's `account::events::register_listen_with::<models::stores::family::Models>` queues the same seven handlers as its immediate `register_with::<Models>`. This preserves SQL command → model events → session/API event ordering. Missing callbacks stay `None`; the aggregate supplies no replacement admin implementation.
 
 ## Client service and direct constituents
 

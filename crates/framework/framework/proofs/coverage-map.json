@@ -685,7 +685,7 @@
     "EDGE-REPLAY": "The seven account/API behaviours are resolved under G46 and pinned by owning-crate tests/source. Not every such edge is reinvoked under aggregate registration; aggregate adds no replacement implementation. Session matrix does replay actual account loaders/exports and real email event.",
     "SOURCE-LICENSE": "Resolved under G46: owner-owned.",
     "SQLITE-TRUNCATE": "Resolved under G46: SQLite purge keeps DELETE FROM \"table\", the accepted stackpress-sql mapping. No TRUNCATE or added WHERE 1.",
-    "G50-GENERATOR-CYCLE": "The repository default-model generator retains internal asset includes: plugin SCHEMA_SOURCE dependencies would cycle back to framework-models. External apps use the aggregate package_loader or the three SCHEMA_SOURCE exports; no source-checkout include_str is required.",
+    "G50-GENERATOR-CYCLE": "Resolved by G59: applications and crate-local test tools compose the shipped SCHEMA_SOURCE exports with PackageLoader and the official public emitters. No premade model package or generator cycle remains.",
     "G50-ADMIN-CHROME": "Named gap: source admin emission produces callbacks/catalog, not the surrounding HTML document. API management document styling remains app-owned; BASE/page-chrome styles are not installed by the admin emitter.",
     "G50-RICH-EDITOR": "Rich editor and HTML display adapters are in progress in a separate task. G50 M4 does not touch crates/leptos or field.editor/view.html availability entries."
   }

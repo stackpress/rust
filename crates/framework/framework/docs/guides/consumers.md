@@ -5,7 +5,7 @@ Use the existing standalone consumer whose graph matches the application you are
 | Recipe | Starting point | What to supply or observe |
 | --- | --- | --- |
 | Full native | [full](../../consumers/full/Cargo.toml) and [shared native implementation](../../consumers/support/native.rs) | Static client, file SQLite, generated Note operations/admin, real JSON email, CSRF, public API and finite command providers. Application policy is explicit. |
-| Headless / absent config | [headless](../../consumers/headless/src/main.rs) | Stock registrar; absent client/Engine/bindings; no startup IO or request guard. |
+| Headless / absent config | [headless](../../consumers/headless/src/main.rs) | Explicit generated family and constituents; absent client/Engine/command bindings; no startup IO or request guard. |
 | API disabled | [api-disabled](../../consumers/api-disabled/Cargo.toml) | Select remaining leaves individually; API package must be absent from its normal graph. Omit its feature, then rebuild. |
 | Direct constituents | [direct](../../consumers/direct/Cargo.toml) | Call the ordinary functions in source order; full/direct inventories match. Source bridges still import this aggregate crate. |
 | Default facade disabled | [disabled](../../consumers/disabled/Cargo.toml) | Default stackpress with no aggregate feature; only stackpress-lib among first-party dependencies. |
@@ -19,6 +19,10 @@ The facade consumer selects `framework-aggregate-full`. A named wrapper can stil
 
 <!-- example: facade -->
 ```rust
+// Generate this application module from its Idea imports before compiling.
+#[allow(dead_code, missing_docs, unexpected_cfgs)]
+#[path = "models/mod.rs"]
+mod models;
 use stackpress::{Flow, Invocation, Request, Response, Result, framework};
 use stackpress_server::ServerBuilder;
 
@@ -27,9 +31,24 @@ async fn ready(_: &mut Request, res: &mut Response, _: Invocation<'_>) -> Result
     Ok(Flow::Continue)
 }
 
+static CLIENT: framework::CompiledClient = framework::CompiledClient {
+    bindings: framework::FrameworkBindings {
+        session: Some(
+            stackpress_framework_session::composite::register_with::<models::stores::family::Models>,
+        ),
+        api: Some(stackpress_framework_api::register_with::<models::stores::family::Models>),
+    },
+    build: "docs-application",
+    describe: Vec::new,
+    models: &[],
+};
+fn application(app: &mut ServerBuilder) -> Result<()> {
+    framework::register_with(app, &CLIENT)
+}
+
 pub async fn facade_host() -> std::result::Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let mut app = ServerBuilder::new();
-    app.plugin("framework", framework::register)?;
+    app.plugin("framework", application)?;
     app.on("ready", ready)?;
     let server = app.build().await?;
     assert_eq!(

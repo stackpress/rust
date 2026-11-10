@@ -1,5 +1,9 @@
 //! Real session registrars, SQL actions and auth processes join CSRF/email/SSR.
 //! Cargo may select native session views; otherwise this test's public projection renders.
+use crate::models::stores::auth::AuthActions;
+use crate::models::stores::auth::AuthStore;
+use crate::models::stores::profile::ProfileActions;
+use crate::models::stores::profile::ProfileStore;
 
 mod rendering;
 mod signup;
@@ -9,10 +13,7 @@ mod transports;
 use serde_json::{Value as Json, json};
 use stackpress_framework_csrf::Service as Csrf;
 use stackpress_framework_email::{events::EMAIL_SEND, plugin};
-use stackpress_framework_session::{
-    auth::{self, Environment, Hooks},
-    storage::{AuthActions, AuthStore, ProfileActions, ProfileStore},
-};
+use stackpress_framework_session::auth::{self, Environment, Hooks};
 use stackpress_lib::{
     Flow, Invocation, PublicError, Request, Response, Result, handler, queue::task,
 };
@@ -146,12 +147,24 @@ async fn host(case: Json, config: Option<Json>) -> (Arc<Server>, Arc<Fixture>) {
     // Public registrars retain constituent order; none installs a global request gate here.
     app.plugin("csrf", stackpress_framework_csrf::plugin::register)
         .unwrap();
-    app.plugin("auth", auth::register).unwrap();
+    app.plugin(
+        "auth",
+        auth::register_with::<crate::models::stores::family::Models>,
+    )
+    .unwrap();
     plugin::register_with_factory(&mut app, state.factory.clone()).unwrap();
     app.plugin("identity", stackpress_framework_session::plugin::register)
         .unwrap();
-    app.on("auth-search", auth::events::search).unwrap();
-    app.on("auth-update", auth::events::update).unwrap();
+    app.on(
+        "auth-search",
+        auth::events::search_with::<crate::models::stores::family::Models>,
+    )
+    .unwrap();
+    app.on(
+        "auth-update",
+        auth::events::update_with::<crate::models::stores::family::Models>,
+    )
+    .unwrap();
     for event in ["auth-signin", "auth-search", "auth-update"] {
         app.on_priority(event, 10, observe).unwrap();
     }

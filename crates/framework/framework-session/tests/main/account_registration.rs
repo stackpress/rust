@@ -1,5 +1,5 @@
 //! Immediate and source Listen registration share one identical account event inventory.
-use stackpress_framework_session::account::events::{register, register_listen};
+use stackpress_framework_session::account::events::{register_listen_with, register_with};
 use stackpress_lib::{Flow, Invocation, Request, Response, Result, queue::task};
 use stackpress_server::{ServerBuilder, StartupContext};
 
@@ -21,8 +21,15 @@ async fn immediate_and_listen_entry_points_share_exactly_seven_events() {
         "profile-remove",
     ];
     for (select, queued) in [
-        (register as fn(&mut ServerBuilder) -> Result<()>, false),
-        (register_listen, true),
+        (
+            register_with::<crate::models::stores::family::Models>
+                as fn(&mut ServerBuilder) -> Result<()>,
+            false,
+        ),
+        (
+            register_listen_with::<crate::models::stores::family::Models>,
+            true,
+        ),
     ] {
         let mut app = ServerBuilder::new();
         app.on_listen(task(|start: &mut StartupContext| {

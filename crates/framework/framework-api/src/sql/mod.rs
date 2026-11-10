@@ -6,19 +6,22 @@
 //! The application supplies an already-open Engine in Config; installation is explicit.
 //!
 //! ```
-//! # #[cfg(feature = "sql")] {
-//! use stackpress_framework_api::{register, sql};
-//! use stackpress_server::ServerBuilder;
-//! let mut app = ServerBuilder::new();
-//! app.plugin("api", register)?;
-//! app.plugin("api-data", sql::register)?;
-//! // Direct composition is `sql::register(&mut app)?` instead.
-//! # }
-//! # Ok::<(), stackpress_lib::Error>(())
+//! # #[cfg(feature = "sql")]
+//! fn register_data<M: stackpress_framework_sql::source::ApiModels>(
+//!     app: &mut stackpress_server::ServerBuilder,
+//! ) -> stackpress_lib::Result<()>
+//! where
+//!     <M::Application as stackpress_framework_sql::source::SourceModel>::Actions:
+//!         stackpress_framework_sql::source::SourceEventActions,
+//!     <M::Session as stackpress_framework_sql::source::SourceModel>::Actions:
+//!         stackpress_framework_sql::source::SourceEventActions,
+//! {
+//!     stackpress_framework_api::register_with::<M>(app)?;
+//!     stackpress_framework_api::sql::register_with::<M>(app)
+//! }
 //! ```
 
 pub mod defaults;
 mod events;
-pub use crate::models::{ApplicationActions, ApplicationStore, SessionActions, SessionStore};
-pub use events::{Event, action, register, register_with};
+pub use events::{Event, action, register_with};
 pub use stackpress_framework_sql::source::SourceStatement;

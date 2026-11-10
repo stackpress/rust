@@ -10,7 +10,7 @@ No model, engine, route policy or registrar is selected merely by importing this
 Profile/Auth; `ApiModels` inherits exactly that Profile and adds Application/Session.
 Generated witnesses reject wrong core declarations without repairing overrides.
 [Compiler cases](../../tests/source-ui) pin field/declaration and family mismatches.
-The [generated default package](../../../framework-models/README.md) supplies concrete
+The [application-generated family](../../../framework-session/docs/source-models.md) supplies concrete
 models without depending on session/API plugins.
 
 ## Generate and use
@@ -30,7 +30,7 @@ IO or defaults. `NativeStore::from_schema` keeps explicit application providers.
 Pooled calls and their `_in` counterparts use the same action implementation. Borrowed
 calls retain the exact exclusive DataSession borrow until completion/cancellation; only
 the caller commits/rolls back. Returned records own their contents. No model/config lock
-is held across await. [Generated ownership tests](../../../framework-models/tests/ownership.rs)
+is held across await. [Generated ownership tests](../../../framework-session/tests/ui-sql/exclusive_executor.rs)
 suspend the actual SQLite provider, reenter the same actions, cancel a borrowed read and
 reuse its transaction under an external watchdog with a forced-kill control.
 
@@ -53,9 +53,9 @@ timestamp input mutation, ID-first upsert, physical deletion and @active removal
 `batch_values` retains dynamic null/primitive inputs; per-item statuses describe attempts.
 It continues after caught errors, then rolls back, keeping those statuses. A missing update
 selector is a status without an exception. A cancelled future alone proves no remote outcome.
-[SQLite/source oracles](../../../framework-models/tests/sql.rs),
-[app extensions](../../../framework-models/tests/extensions.rs) and the
-[live replay](../../../framework-models/tests/live_search.rs) pin the observable branches.
+[SQLite/source oracles](../../../framework-api/tests/sql.rs),
+[app extensions](../../../framework-api/tests/generated_family.rs) and the
+[live replay](../../../framework-api/tests/live_search.rs) pin the observable branches.
 
 Installation/upgrades use the accepted G48 setup selector: MySQL ordered non-atomic DDL
 with native error progress; PostgreSQL/SQLite atomic plans. Ordinary Engine transactions
@@ -75,7 +75,7 @@ SourceEventActions, retaining dynamic primitive/null batch rows and source statu
 an explicit shared service. Registration/startup performs no SQL; absent Engine and
 already-completed responses skip just as the source does. Ten event suffixes are available
 where model capabilities permit: batch/create/detail/get/purge/remove/restore/search/update/upsert.
-[Event tests](../../../framework-models/tests/events.rs) prove default selectors, errors,
+[Event tests](../../../framework-api/tests/generated_family.rs) prove default selectors, errors,
 request mutation, equal-priority order, duplicate composition and earlier Abort.
 
 Constituent callbacks remain independently usable under G42. This registrar supplies no

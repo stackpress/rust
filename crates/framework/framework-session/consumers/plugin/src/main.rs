@@ -1,12 +1,10 @@
 //! Finite source-order host: real session/CSRF/view/API registrars and SQLite, no listener.
+use crate::models::stores::application::ApplicationActions;
+use crate::models::stores::profile::ProfileActions;
+use crate::models::stores::session::SessionActions;
 use serde_json::{Value as Json, json};
-use stackpress_framework_api::{
-    self as api,
-    models::{ApplicationActions, Record, SessionActions},
-};
-use stackpress_framework_session::{
-    Service, SessionPermission, auth::Hooks, composite, storage::ProfileActions,
-};
+use stackpress_framework_api::{self as api, models::Record};
+use stackpress_framework_session::{Service, SessionPermission, auth::Hooks, composite};
 use stackpress_lib::{Error, Flow, Invocation, Request, Response, Result, queue::task};
 use stackpress_server::{ConfigLayers, ServerBuilder, ServerInvocationExt, StartupContext};
 use stackpress_sql::Engine;
@@ -37,7 +35,7 @@ fn view(app: &mut ServerBuilder) -> Result<()> {
 /// Keep the source session grouping after views and before API/admin.
 fn session(app: &mut ServerBuilder) -> Result<()> {
     phase(app, "session")?;
-    composite::register(app)
+    composite::register_with::<crate::models::stores::family::Models>(app)
 }
 /// API acquisition is still source me/session-detail, without a new universal caller policy.
 fn api(app: &mut ServerBuilder) -> Result<()> {
@@ -89,15 +87,15 @@ async fn main() -> std::result::Result<(), Box<dyn std::error::Error + Send + Sy
     ));
     let profiles = ProfileActions::new(
         engine.clone(),
-        stackpress_framework_session::storage::ProfileStore::new("".into(), 0),
+        crate::models::stores::profile::ProfileStore::new("".into(), 0),
     );
     let applications = ApplicationActions::new(
         engine.clone(),
-        stackpress_framework_api::models::ApplicationStore::new("".into(), 0),
+        crate::models::stores::application::ApplicationStore::new("".into(), 0),
     );
     let sessions = SessionActions::new(
         engine.clone(),
-        stackpress_framework_api::models::SessionStore::new("".into(), 0),
+        crate::models::stores::session::SessionStore::new("".into(), 0),
     );
     profiles.install().await?;
     applications.install().await?;
@@ -140,7 +138,10 @@ async fn main() -> std::result::Result<(), Box<dyn std::error::Error + Send + Sy
     app.config_layers(layers)?;
     // Source main aggregate selects CSRF before view, then session, API and application admin.
     app.plugin("csrf", stackpress_framework_csrf::plugin::register)?;
-    app.plugin("sql", api::sql::register)?;
+    app.plugin(
+        "sql",
+        api::sql::register_with::<crate::models::stores::family::Models>,
+    )?;
     app.plugin("view", view)?;
     app.plugin("session", session)?;
     app.plugin("api", api)?;
@@ -258,3 +259,7 @@ async fn main() -> std::result::Result<(), Box<dyn std::error::Error + Send + Sy
     println!("slice9a plugin consumer passed");
     Ok(())
 }
+
+#[allow(dead_code, missing_docs, unexpected_cfgs)]
+#[path = "models/mod.rs"]
+mod models;

@@ -10,11 +10,6 @@ use stackpress_server::{ServerBuilder, StartupContext};
 
 pub use source::Event;
 
-/// Select the shipped default family's API data events during Listen, without IO.
-pub fn register(app: &mut ServerBuilder) -> Result<()> {
-    register_with::<stackpress_framework_models::Models>(app)
-}
-
 /// Select the application's actual Application/Session actions at the original Listen phase.
 /// The inherited Profile type is identical to the session family's Profile.
 /// # Errors

@@ -38,12 +38,14 @@ serde_json = { version = "=1.0.154", features = ["preserve_order"], optional = t
 tokio = { version = "=1.54.1", default-features = false, features = ["rt", "sync"], optional = true }
 
 [dev-dependencies]
+stackpress-idea-transformer = { path = "../../idea/idea-transformer" }
+stackpress-framework-schema = { path = "../framework-schema", features = ["codegen", "providers"] }
 tokio = { version = "=1.54.1", features = ["macros", "rt-multi-thread", "sync", "time"] }
 trybuild = "1"
 stackpress-sql-sqlite = { path = "../../sql/sql-sqlite", default-features = false }
 stackpress-sql-postgres = { path = "../../sql/sql-postgres", default-features = false }
 stackpress-sql-mysql = { path = "../../sql/sql-mysql", default-features = false }
-stackpress-framework-sql = { path = "../framework-sql", default-features = false, features = ["migrations"] }
+stackpress-framework-sql = { path = "../framework-sql", default-features = false, features = ["migrations", "codegen", "server"] }
 
 [[test]]
 name = "live_setup"
@@ -53,3 +55,8 @@ required-features = ["full"]
 
 [lints]
 workspace = true
+
+[[example]]
+name = "regenerate_aggregate_models"
+path = "tests/fixtures/regenerate.rs"
+required-features = ["codegen", "full"]

@@ -1,11 +1,11 @@
 # Auth events and native process details
 
-Select `auth-server` for `stackpress_framework_session::auth::{register, events, pages,
+Select `auth-server` for `stackpress_framework_session::auth::{register_with, events, pages,
 AuthConfig, AuthSection, Environment, Hooks, templates, totp}`. This native-only feature
 includes `sql` and `server`. Default/browser graphs retain portable permissions/config
 without SQL, cryptography, transport or runtime services.
 
-`plugin::register` remains the independent identity constituent. `composite::register` calls auth → email → identity in source order. The email crate owns
+`plugin::register` remains the independent identity constituent. `composite::register_with::<models::stores::family::Models>` calls auth → email → identity in source order. The email crate owns
 registration and `email-send`; session never implements a second email transport.
 See [shared presentation props, forms and Leptos views](account.md).
 The optional `leptos-ssr` feature contributes their ordinary -100 view handlers.
@@ -14,23 +14,27 @@ The optional `leptos-ssr` feature contributes their ordinary -100 view handlers.
 
 <!-- example: server -->
 ```rust
+// Generate this module from the application Idea file before compiling.
+#[allow(dead_code, missing_docs, unexpected_cfgs)]
+#[path = "models/mod.rs"]
+mod models;
 use stackpress_framework_session::{auth, plugin as identity};
 use stackpress_lib::Result;
 use stackpress_server::ServerBuilder;
 
 pub fn select(app: &mut ServerBuilder) -> Result<()> {
-    auth::register(app)?;
+    auth::register_with::<models::stores::family::Models>(app)?;
     identity::register(app)?;
     Ok(())
 }
 ```
 
-This example selects auth and identity only. Select the email registrar separately with an explicit email dependency, or use `composite::register` for the full group. Select the outer ordinary function with `app.plugin("account", select)`. Constituents
+This example selects auth and identity only. Select the email registrar separately with an explicit email dependency, or use `composite::register_with::<models::stores::family::Models>` for the full group. Select the outer ordinary function with `app.plugin("account", select)`. Constituents
 call ordinary registrars, without nested plugin selections or route ownership. Several
 handlers can serve the same event/route; higher priority then registration order applies.
 A normal source return continues the chain; an explicit handler Abort stops that chain.
 
-`auth::register` owns only the `auth` typed section and `Hooks` service. It always installs
+`auth::register_with::<models::stores::family::Models>` owns only the `auth` typed section and `Hooks` service. It always installs
 `auth-signup`, `auth-signin`, `auth-signout` in that order. Missing/null/false/zero/empty
 string auth sections disable the 16 process routes, while `{}` activates them. Registration
 requires no Engine/session/CSRF/email provider at startup. Processes read dependencies at

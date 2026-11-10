@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "files": {
+    "mod.rs": {
+      "owner": "aggregate",
+      "sha256": "3b019783a8ce99c2ba531086105200fa4d3cd25af2018d03c7ded587eaf9612d",
+      "bytes": 12
+    },
+    "ui/application.rs": {
+      "owner": "api-test-presentation",
+      "sha256": "c36e343de5bbebeefa7955c7abd7395817d187180e91b1cc61c1f97f41d85ab6",
+      "bytes": 29036
+    },
+    "ui/auth.rs": {
+      "owner": "api-test-presentation",
+      "sha256": "7f844205b26c357ccfa57e62b69fe5bee3a0eb0aa934c421aaa9347a4235d04d",
+      "bytes": 25890
+    },
+    "ui/host.rs": {
+      "owner": "api-test-presentation",
+      "sha256": "4fdf86847189f9659fcc3191c7201f3ba2b3c9717b2e6796094b1320295a38e7",
+      "bytes": 870
+    },
+    "ui/mod.rs": {
+      "owner": "aggregate",
+      "sha256": "65923c28cc61cae3dcae685083fd4b7ce49dc5b70cc8b191a248fcd91a54ed65",
+      "bytes": 98
+    },
+    "ui/pages.rs": {
+      "owner": "api-test-presentation",
+      "sha256": "adc8ad3a00fb8b80a5d6f83f14773665636f2ec8853a2a3632e5e1d97af43747",
+      "bytes": 4116
+    },
+    "ui/profile.rs": {
+      "owner": "api-test-presentation",
+      "sha256": "fcf891d1af15ff40f3580d8586e25e24f81c70834dbb25ae04fcddcbe0f1b9b4",
+      "bytes": 28114
+    },
+    "ui/session.rs": {
+      "owner": "api-test-presentation",
+      "sha256": "1e9b864ba73dcf891bb0679bda57e3c047ba844bce5960b45a5869cfa513a0e4",
+      "bytes": 25339
+    }
+  }
+}

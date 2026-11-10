@@ -65,8 +65,8 @@ operations; the generated schema wraps it and implements `SourceSchema`. Native 
 state is private and is not inserted into descriptors. The generated metadata decoder uses
 `source::__private::serde_json`; application crates need no direct serialization dependency.
 
-The [default-model package](../../framework-models/README.md) is generated through this public
-entry point, with an official finite `--check` command. [Its native oracle suite](../../framework-models/tests/native.rs)
+The [application model generation](../../framework-session/docs/source-models.md) is generated through this public
+entry point, with an official finite `--check` command. [The native oracle suite](../../framework-session/tests/main/records.rs)
 proves original Node column/default/crypto behavior and all four core-field families. Extra
 app fields use the same generator. Session-only output retains declared external links.
 
@@ -80,7 +80,7 @@ selectors and model names that collide with generator infrastructure. Generated 
 and module names are escaped independently from SQL identifiers: a field `type` remains
 SQL `type`. [Extension tests](../tests/source_extensions.rs),
 [emission tests](../tests/source_emission.rs) and the
-[compiled extended application](../../framework-models/tests/extensions.rs) pin these cases.
+[compiled extended application](../../framework-api/tests/generated_family.rs) pin these cases.
 
 Every original assertion dictionary name/alias and authored message is retained. G51
 explicitly makes broken or omitted rules work as named, including value eq/neq, regex,

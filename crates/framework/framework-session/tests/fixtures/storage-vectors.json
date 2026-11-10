@@ -1,0 +1,151 @@
+{
+  "provenance": {
+    "schema": "packages/stackpress-schema/src/helpers.ts (direct import)",
+    "cuid2": "@paralleldrive/cuid2 3.3.0 (direct init)",
+    "timezone": "UTC"
+  },
+  "cryptoVectors": [
+    {
+      "value": "",
+      "seed": "",
+      "ciphertext": "70a96856bf5aac342d7f99115abf934e",
+      "hash": "46b9dd2b0ba88d13233b3feb743eeb243fcd52ea62b81b82b50c27646ed5762f"
+    },
+    {
+      "value": "hello",
+      "seed": "abc123",
+      "ciphertext": "155e518ec0aa96021f4a8b19513d233f",
+      "hash": "1234075ae4a1e77316cf2d8000974581a343b9ebbca7e3d1db83394c30f22162"
+    },
+    {
+      "value": "user@example.test",
+      "seed": "database-seed",
+      "ciphertext": "5dd687dad4a14580ec8d46fd439ee9b3cee6fe648c0851b8d642161392107ea8",
+      "hash": "b8191bcca2ab8971955024d1291ac84e666fc26fa26741973379b6fc0f23c784"
+    },
+    {
+      "value": "é🔑\u0000line\n",
+      "seed": "κλειδί",
+      "ciphertext": "0a6db3bdeddb337ccef3b73d2a8ac840",
+      "hash": "1f7752d9a3a87451985208a1a7fce9f14653dddcd7b84409f5c23cd4d294a437"
+    },
+    {
+      "value": "1234567890123456",
+      "seed": "abc123",
+      "ciphertext": "2e99e21403184943f2162219c3987034116fe01719c001be3fcab61f2735bd7f",
+      "hash": "88d36670f0b11001edf79db347e9475c7f0e5cfd25b9a98a9bb8db7d9c80fecf"
+    }
+  ],
+  "cuidVectors": [
+    {
+      "time": 1700000000123,
+      "random": 0,
+      "length": 2,
+      "salt": "00",
+      "counter": 42,
+      "fingerprint": "fixture-host",
+      "first": "a",
+      "id": "aj"
+    },
+    {
+      "time": 1700000000123,
+      "random": 0,
+      "length": 24,
+      "salt": "000000000000000000000000",
+      "counter": 42,
+      "fingerprint": "fixture-host",
+      "first": "a",
+      "id": "aqpx7g8qfst61422vf6dsrvg"
+    },
+    {
+      "time": 1700000000123,
+      "random": 0,
+      "length": 32,
+      "salt": "00000000000000000000000000000000",
+      "counter": 42,
+      "fingerprint": "fixture-host",
+      "first": "a",
+      "id": "a49cflha6gk0pkoe80pz9tdceq0vos39"
+    },
+    {
+      "time": 1700000000123,
+      "random": 0.5,
+      "length": 2,
+      "salt": "ii",
+      "counter": 42,
+      "fingerprint": "fixture-host",
+      "first": "n",
+      "id": "nj"
+    },
+    {
+      "time": 1700000000123,
+      "random": 0.5,
+      "length": 24,
+      "salt": "iiiiiiiiiiiiiiiiiiiiiiii",
+      "counter": 42,
+      "fingerprint": "fixture-host",
+      "first": "n",
+      "id": "n0puu393m0e2efo1zbvpdnrg"
+    },
+    {
+      "time": 1700000000123,
+      "random": 0.5,
+      "length": 32,
+      "salt": "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii",
+      "counter": 42,
+      "fingerprint": "fixture-host",
+      "first": "n",
+      "id": "nc3a17l2pbopg5l6vzhbcpqq3gd329sg"
+    },
+    {
+      "time": 1700000000123,
+      "random": 0.999999,
+      "length": 2,
+      "salt": "zz",
+      "counter": 42,
+      "fingerprint": "fixture-host",
+      "first": "z",
+      "id": "z1"
+    },
+    {
+      "time": 1700000000123,
+      "random": 0.999999,
+      "length": 24,
+      "salt": "zzzzzzzzzzzzzzzzzzzzzzzz",
+      "counter": 42,
+      "fingerprint": "fixture-host",
+      "first": "z",
+      "id": "zwpdbpbwhccw9ht14t58i6wl"
+    },
+    {
+      "time": 1700000000123,
+      "random": 0.999999,
+      "length": 32,
+      "salt": "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz",
+      "counter": 42,
+      "fingerprint": "fixture-host",
+      "first": "z",
+      "id": "zwpym5lybfsr7qaull87s2svkbuns82w"
+    }
+  ],
+  "dateVectors": [
+    {
+      "ms": 0,
+      "date": "Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time)",
+      "hash": "0aba2159be5ab7c829150517cb7cd180786e02fcc0d2f5e886d0e42a725ff0ef",
+      "otpHash": "0fd341fce0def39cb6c2fd469a1135b8eda70f4d62f8d797fc45d57d882df90c"
+    },
+    {
+      "ms": 1700000000123,
+      "date": "Tue Nov 14 2023 22:13:20 GMT+0000 (Coordinated Universal Time)",
+      "hash": "d87160dabb1a642e203807394671acba7ab6d08ce696e21d73f39f2553b0129a",
+      "otpHash": "831a1ea9ae43b80d5112c9e35866455a84e5c27618163db642744eee212f179b"
+    },
+    {
+      "ms": 1741064767000,
+      "date": "Tue Mar 04 2025 05:06:07 GMT+0000 (Coordinated Universal Time)",
+      "hash": "35e91ba90a691409f63c90d687d43e572288c2d36be6724eabd919b1bc6962f3",
+      "otpHash": "8284f07acddfacac470f41514e190c212321401986e2dd1e8c3db28ca79afcb7"
+    }
+  ]
+}

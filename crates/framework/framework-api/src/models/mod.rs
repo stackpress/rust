@@ -2,9 +2,6 @@
 //!
 //! Missing fields, explicit null and native Date values remain distinct. The merged
 //! schema package owns their common native values/codecs; session retains Profile metadata.
-#[cfg(feature = "sql")]
-pub use stackpress_framework_models::{ApplicationModel, SessionModel};
-pub use stackpress_framework_models::{ApplicationSchema, SessionSchema};
 pub use stackpress_framework_schema::source::{
     Column, Kind, Record, SourceSchema, Value, date, date_with_display,
 };
@@ -20,10 +17,6 @@ pub type Session = Record;
 pub type SessionInput = Record;
 /// API Session with selected Application/Profile fields.
 pub type SessionExtended = Record;
-#[cfg(feature = "sql")]
-pub use stackpress_framework_models::{
-    ApplicationActions, ApplicationStore, SessionActions, SessionStore,
-};
 #[cfg(feature = "sql")]
 pub use stackpress_framework_sql::source::{
     ActionError, BatchMode, BatchStatus, NativeActions as Actions, NativeStore as Store,

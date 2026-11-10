@@ -18,13 +18,13 @@ Selected stages run in this exact order. Each stage queues its own existing Conf
 | 8. API | Reuses the API registrar with SQL capability. |
 | 9. admin | Calls application-generated admin registrars in catalog order, last. |
 
-The aggregate calls a model's `listen` function during composition. That function must queue its actual listeners for Listen to retain source phase order. Account models use `account::events::register_listen`; its immediate `register` remains available for direct composition. See the [catalog reference](api/registration.md).
+The aggregate calls a model's `listen` function during composition. That function must queue its actual listeners for Listen to retain source phase order. Account models use `account::events::register_listen_with::<models::stores::family::Models>`; its immediate `register_with::<Models>` remains available for direct composition. See the [catalog reference](api/registration.md).
 
 ## Selection, configuration and execution
 
 Cargo features select executable code before compilation. Configuration controls what the selected plugin contributes, and explicit services supply native IO. Removing configuration is not the same as compiling out a dependency; disabling a plugin requires a rebuild. [Feature graphs](api/features.md) prove both forms separately.
 
-`register` supplies no compiled client; `register_with` supplies a static catalog. Missing and present-empty catalogs remain distinct. Metadata `describe` is evaluated only when explicitly requested. Neither registration runs a listener, compiler, schema generator or database command.
+`register` supplies no compiled client and fails when a selected session/API stage needs a binding; `register_with` supplies a static catalog with the application-generated bindings. Missing and present-empty catalogs remain distinct. Metadata `describe` is evaluated only when explicitly requested. Neither registration runs a listener, compiler, schema generator or database command.
 
 ## Handlers and security
 

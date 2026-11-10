@@ -1,10 +1,10 @@
 # Auth/Profile schemas and SQL storage
 
-`native` exposes columns, source codecs, `auth::AuthSchema` and `profile::ProfileSchema`. `sql` adds detached Store builders and Engine-backed Actions. Use [direct storage](../storage.md) for source coercion/query/return details and [account processes](../account.md) for server events.
+`native` exposes columns and source codecs. Applications generate their own schemas and use the shared SQL Store/Actions runtime with `sql`. Use [direct storage](../storage.md) for source coercion/query/return details and [account processes](../account.md) for server events.
 
 ## Account event registration
 
-With `auth-server`, `account::events::register(&mut ServerBuilder) -> stackpress_lib::Result<()>` registers its seven SQL events immediately for direct composition. `account::events::register_listen(&mut ServerBuilder) -> stackpress_lib::Result<()>` queues the same inventory for Listen, after earlier Listen callbacks, for source-order aggregate composition. Both keep resources/policy explicit and perform no startup IO. [Registration proof](../../tests/main/account_registration.rs) pins both inventories, timing, no duplication and no-Engine pass-through; [implementation](../../src/account/events.rs) shares one handler list.
+With `auth-server`, `account::events::register_with::<models::stores::family::Models>(&mut ServerBuilder) -> stackpress_lib::Result<()>` registers its seven SQL events immediately for direct composition. `account::events::register_listen_with::<models::stores::family::Models>(&mut ServerBuilder) -> stackpress_lib::Result<()>` queues the same inventory for Listen, after earlier Listen callbacks, for source-order aggregate composition. Both keep resources/policy explicit and perform no startup IO. [Registration proof](../../tests/main/account_registration.rs) pins both inventories, timing, no duplication and no-Engine pass-through; [implementation](../../src/account/events.rs) shares one handler list.
 
 | Parameter | Meaning |
 | --- | --- |
@@ -17,14 +17,18 @@ With `auth-server`, `account::events::register(&mut ServerBuilder) -> stackpress
 The package ships the original `schema.idea` as `stackpress_framework_session::SCHEMA_SOURCE`.
 The build-host package catalog resolves `use "stackpress-session/schema.idea"` from
 application Idea files. The [aggregate catalog proof](../../../framework/tests/package_sources.rs)
-checks imports and G19 field extension. Native declarations now come from the generated
-default-model package; the paths below alias that generated output.
+checks imports and G19 field extension. Native declarations come from the application's generated source module.
 
-The stable API composition path is `stackpress_framework_session::profile::ProfileSchema`. The re-exported `SourceSchema` trait supplies `new(seed, offset)` and static `describe()`, which returns an owned seed-free shared Model, including Profile's Auth/Application/Session metadata. It does not add reverse eager joins to ProfileStore. [Descriptor and column tests](../../tests/main/records.rs) anchor these contracts.
+The application-generated composition path is `models::source::profile::ProfileSchema`. The re-exported `SourceSchema` trait supplies `new(seed, offset)` and static `describe()`, which returns an owned seed-free shared Model, including Profile's Auth/Application/Session metadata. It does not add reverse eager joins to ProfileStore. [Descriptor and column tests](../../tests/main/records.rs) anchor these contracts.
 
-<!-- example: direct -->
+<!-- example: server -->
 ```rust
-use stackpress_framework_session::{columns::SourceSchema, profile::ProfileSchema};
+// Generate this module from the application Idea file before compiling.
+#[allow(dead_code, missing_docs, unexpected_cfgs)]
+#[path = "models/mod.rs"]
+mod models;
+use models::source::profile::ProfileSchema;
+use stackpress_framework_session::columns::SourceSchema;
 
 pub fn profile_defaults() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let schema = ProfileSchema::new(String::new(), 0);
@@ -54,14 +58,16 @@ Profile stored columns are id/image/name/type/roles/tags/references/active/creat
 
 ## Engine-backed Actions
 
-`storage::{AuthActions,ProfileActions}` also re-export under auth/profile. Each constructor retains an application-owned Arc<Engine>; actions are not another pool/ORM. The [plugin consumer manifest](../../consumers/plugin/Cargo.toml) supplies the SQLite/Engine dependencies used below.
+The application's generated `models::stores::{auth,profile}` modules provide its Actions/Store aliases. Each constructor retains an application-owned Arc<Engine>; actions are not another pool/ORM. The [plugin consumer manifest](../../consumers/plugin/Cargo.toml) supplies the SQLite/Engine dependencies used below.
 
 <!-- example: server -->
 ```rust
-use stackpress_framework_session::{
-    columns::Record,
-    storage::{ProfileActions, ProfileStore, StoreQuery},
-};
+// Generate this module from the application Idea file before compiling.
+#[allow(dead_code, missing_docs, unexpected_cfgs)]
+#[path = "models/mod.rs"]
+mod models;
+use models::stores::profile::{ProfileActions, ProfileStore};
+use stackpress_framework_session::{columns::Record, storage::StoreQuery};
 use stackpress_sql::Engine;
 use stackpress_sql_sqlite::{SqliteDatabase, SqliteOptions};
 use std::sync::Arc;
@@ -105,7 +111,7 @@ This creates, reads and closes one real file-backed SQLite database. Install Pro
 
 Create/find/find_all/count/update/delete/upsert have `_in` counterparts with `&mut DataSession<'_>` first, exclusively borrowing the caller's executor. Batch owns its transaction and catches outer commit/rollback errors as source. [Batch source](../../../framework-sql/src/source/batch.rs) and [exclusive-executor compile-fail case](../../tests/ui-sql/exclusive_executor.rs) pin this boundary.
 
-`AccountActions<DefaultModels>::new(engine, seed, offset, PasswordConfig)` owns the handwritten account orchestration. App-specific families substitute their generated `Models`. Its `auth()` and `profile()` return the generated CRUD actions; `assert`, `signin` and `signup` retain the source password checks, flags and sequential writes. Host bindings retain the database-seed fallback `abc123`; direct construction takes an explicit seed. Missing signup phone succeeds under G44. [Account action source](../../src/storage/account.rs) and [signup/signin tests](../../tests/main/actions.rs) preserve the errors and partial effects.
+`AccountActions<Models>::new(engine, seed, offset, PasswordConfig)` owns the handwritten account orchestration. App-specific families substitute their generated `Models`. Its `auth()` and `profile()` return the generated CRUD actions; `assert`, `signin` and `signup` retain the source password checks, flags and sequential writes. Host bindings retain the database-seed fallback `abc123`; direct construction takes an explicit seed. Missing signup phone succeeds under G44. [Account action source](../../src/storage/account.rs) and [signup/signin tests](../../tests/main/actions.rs) preserve the errors and partial effects.
 
 ## Queries and detached Store
 

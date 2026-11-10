@@ -8,6 +8,10 @@ The auth registrar installs Hooks even without auth route config. Bind the servi
 
 <!-- example: server -->
 ```rust
+// Generate this module from the application Idea file before compiling.
+#[allow(dead_code, missing_docs, unexpected_cfgs)]
+#[path = "models/mod.rs"]
+mod models;
 use stackpress_framework_session::auth::{self, Hooks};
 use stackpress_lib::Result;
 use stackpress_server::ServerBuilder;
@@ -15,7 +19,10 @@ use std::sync::Arc;
 
 pub async fn owned_hooks() -> Result<()> {
     let mut app = ServerBuilder::new();
-    app.plugin("auth", auth::register)?;
+    app.plugin(
+        "auth",
+        auth::register_with::<models::stores::family::Models>,
+    )?;
     let server = Arc::new(app.build().await.map_err(|failure| failure.error)?);
     let hooks = server.host().service::<Hooks>()?;
     hooks.bind(&server, tokio::runtime::Handle::current());

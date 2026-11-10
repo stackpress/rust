@@ -1,20 +1,20 @@
 # Task 00047 — crates.io publication plan
 
-Status: plan prepared for coordinator/owner review; no release authorized. Snapshot: local `71c4118`, branch `trial/3-publication-plan`, 2026-11-10. All findings are from this checkout and offline probes.
+Status: plan prepared for coordinator/owner review; no release authorized. Snapshot: local `71c4118`, branch `trial/3-publication-plan`, 2026-11-10. Original audit findings are from that checkout and offline probes. G59/Task 00049 updates the candidate scope to 23 and removes the premade-model generator blocker; retained measured rows remain the original audit evidence.
 
-Stackpress can be released as a family of 24 packages, with the foundation packages first and the main `stackpress` facade last. It is not ready to publish yet: internal dependencies lack registry versions, a generator embeds files from sibling crates, and five measured crates fall below the 90% publication coverage floor. Examples and consumer fixtures should remain private to the repository.
+Stackpress can be released as a family of 23 packages, with the foundation packages first and the main `stackpress` facade last. It is not ready to publish yet: internal dependencies lack registry versions, five measured crates fall below the 90% publication coverage floor. Examples and consumer fixtures should remain private to the repository.
 
 Start by choosing the release scope, versions, licence declarations and crate ownership. Then fix packaging boundaries, complete the release checks and publish in the order below. This plan changes no manifests, lockfiles, licences or Rust source. No login, installation, network request, push or actual publication was performed.
 
 ## Authority and evidence
 
-The [quality policy](../../../context/testing-and-quality.md) sets the 90% publication floor; [source structure](../../../context/source-structure.md) preserves independent crates and an acyclic facade. Current manifests/source take precedence over historical implementation-status prose. The coordinator supplied earlier 404 results for `stackpress`, `stackpress-lib`, `stackpress-server`, and zero search results for “stackpress”; these suggest availability, reserve nothing, and were not rechecked here. Check **all 24 names** again immediately before release.
+The [quality policy](../../../context/testing-and-quality.md) sets the 90% publication floor; [source structure](../../../context/source-structure.md) preserves independent crates and an acyclic facade. Current manifests/source take precedence over historical implementation-status prose. The coordinator supplied earlier 404 results for `stackpress`, `stackpress-lib`, `stackpress-server`, and zero search results for “stackpress”; these suggest availability, reserve nothing, and were not rechecked here. Check **all 23 names** again immediately before release.
 
 [Audit resources](../../../resources/publication-plan-00047/inventory.json) contain every package/dependency/feature declaration. [Packaging evidence](../../../resources/publication-plan-00047/packaging.json) retains all 24 file lists, exact commands, exit codes, missing-index errors and size calculations. [External file references](../../../resources/publication-plan-00047/external-reads.json) retain source locations and resolved destinations; load these for individual repair work. [Optional feature wiring](../../../resources/publication-plan-00047/feature-paths.json) identifies the direct feature-to-path dependencies.
 
 ## Complete root workspace inventory
 
-There are 52 explicitly listed members plus the root package: 53 packages total, 24 proposed releases and 29 unpublished examples. “Publishable” describes the intended role, not readiness. All currently inherit `publish = false`; every current workspace version is `0.1.0`.
+There are 51 explicitly listed members plus the root package: 52 packages total, 23 proposed releases and 29 unpublished examples. “Publishable” describes the intended role, not readiness. All currently inherit `publish = false`; every current workspace version is `0.1.0`.
 
 | Package | Directory | Classification | Reason |
 | --- | --- | --- | --- |
@@ -65,7 +65,6 @@ There are 52 explicitly listed members plus the root package: 53 packages total,
 | `stackpress-framework-csrf` | `crates/framework/framework-csrf` | publishable library | CSRF contracts and optional server integration. |
 | `stackpress-framework-email` | `crates/framework/framework-email` | publishable library | Email contracts, transports and optional server hooks. |
 | `stackpress-framework-session` | `crates/framework/framework-session` | publishable library | Identity, permissions and optional account/server/UI adapters. |
-| `stackpress-framework-models` | `crates/framework/framework-models` | publishable library | Shipped generated default models; generator binary needs packaging repair. |
 | `stackpress-framework` | `crates/framework/framework` | publishable library | Compile-time framework composition and runtime registration. |
 | `generated-admin-tool` | `examples/generated-admin/tool` | example/consumer/fixture | Application-owned generator/build tool. |
 | `generated-admin-shared` | `examples/generated-admin/shared` | example/consumer/fixture | Example-specific shared views/generated application code. |
@@ -87,7 +86,7 @@ No other tracked Cargo manifests were found outside those groups and the root in
 
 ## Dependency graph and publication order
 
-Names below omit the `stackpress-` prefix except the root `stackpress`. `?` marks an optional normal dependency; target-specific native dependencies are included. An arrow is **dependent → prerequisite**. Every listed edge currently has `path` and no `version`; there are 92 normal dependency declarations, 70 optional. No candidate has a build dependency or `build.rs`. Dev-dependencies are excluded from this ordering.
+Names below omit the `stackpress-` prefix except the root `stackpress`. `?` marks an optional normal dependency; target-specific native dependencies are included. An arrow is **dependent → prerequisite**. Every listed edge currently has `path` and no `version`; there are 86 normal dependency declarations, 65 optional. No candidate has a build dependency or `build.rs`. Dev-dependencies are excluded from this ordering.
 
 | Order | Package suffix | Internal prerequisites |
 | --- | --- | --- |
@@ -110,27 +109,25 @@ Names below omit the `stackpress-` prefix except the root `stackpress`. `?` mark
 | 17 | `framework-schema` | `idea-parser?`, `idea-transformer?`, `lib?` |
 | 18 | `framework-sql` | `framework-schema`, `sql`, `lib?`, `server?`, `idea-transformer?`, `sql-sqlite?` |
 | 19 | `framework-admin` | `lib?`, `framework-schema`, `leptos`, `idea-transformer?` |
-| 20 | `framework-models` | `framework-sql?`, `framework-schema`, `idea-parser?`, `idea-transformer?` |
-| 21 | `framework-session` | `leptos?`, `framework-view?`, `framework-models?`, `framework-schema?`, `sql?`, `framework-sql?`, `lib?`, `server?`, `framework-csrf?`, `framework-email?` |
-| 22 | `framework-api` | `lib`, `framework-schema`, `leptos?`, `framework-admin?`, `framework-view?`, `framework-models?`, `idea-transformer?`, `server`, `framework-csrf?`, `framework-session?`, `framework-sql?`, `sql?`, `idea-parser?` |
-| 23 | `framework` | `lib?`, `server?`, `framework-schema?`, `framework-csrf?`, `framework-session?`, `framework-api?`, `sql?`, `framework-view?`, `framework-sql?`, `idea?`, `framework-admin?` |
-| 24 | `stackpress` | `lib`, `server?`, `server-http?`, `idea-parser?`, `idea-transformer?`, `idea?`, `sql?`, `sql-sqlite?`, `sql-postgres?`, `sql-mysql?`, `framework-view?`, `leptos?`, `framework-language?`, `framework-schema?`, `framework-sql?`, `framework-admin?`, `framework-session?`, `framework?`, `framework-api?`, `framework-csrf?`, `framework-email?` |
+| 20 | `framework-session` | `leptos?`, `framework-view?`, `framework-schema?`, `sql?`, `framework-sql?`, `lib?`, `server?`, `framework-csrf?`, `framework-email?` |
+| 21 | `framework-api` | `lib`, `framework-schema`, `leptos?`, `framework-admin?`, `framework-view?`, `idea-transformer?`, `server`, `framework-csrf?`, `framework-session?`, `framework-sql?`, `sql?`, `idea-parser?` |
+| 22 | `framework` | `lib?`, `server?`, `framework-schema?`, `framework-csrf?`, `framework-session?`, `framework-api?`, `sql?`, `framework-view?`, `framework-sql?`, `idea?`, `framework-admin?` |
+| 23 | `stackpress` | `lib`, `server?`, `server-http?`, `idea-parser?`, `idea-transformer?`, `idea?`, `sql?`, `sql-sqlite?`, `sql-postgres?`, `sql-mysql?`, `framework-view?`, `leptos?`, `framework-language?`, `framework-schema?`, `framework-sql?`, `framework-admin?`, `framework-session?`, `framework?`, `framework-api?`, `framework-csrf?`, `framework-email?` |
 
-A topological sort of all 24 nodes succeeds: **no normal/build dependency cycles**. Leaves are `leptos`, `framework-language`, `sql`, `lib`, `idea-parser`; they can publish in any order. The table is one valid serial order, including every optional capability. An already published `.crate` file in a local target does not populate the registry index.
+A topological sort of all 23 nodes succeeds: **no normal/build dependency cycles**. Leaves are `leptos`, `framework-language`, `sql`, `lib`, `idea-parser`; they can publish in any order. The table is one valid serial order, including every optional capability. An already published `.crate` file in a local target does not populate the registry index.
 
-There are 37 internal dev-dependency declarations, including PostgreSQL/MySQL tests depending on unpublished `generated-workspace-app`, and email/session test relationships. Dev-dependencies do not define release ordering; path-only dev-dependencies can be omitted from the normalized published manifest. Never publish an example just to satisfy them. Rework/externalize repository-only tests or version publishable dev-dependencies as appropriate, then test the extracted package separately.
+There are 41 internal dev-dependency declarations, including PostgreSQL/MySQL tests depending on unpublished `generated-workspace-app`, and email/session test relationships. Dev-dependencies do not define release ordering; path-only dev-dependencies can be omitted from the normalized published manifest. Never publish an example just to satisfy them. Rework/externalize repository-only tests or version publishable dev-dependencies as appropriate, then test the extracted package separately.
 
 ## Packaging blockers and proposed repairs
 
-Keep the root workspace's `publish = false` as the default. After owner approval, replace `publish.workspace = true` with `publish = true` only in the 24 approved package sections. All other packages remain false. This avoids accidentally releasing the 29 examples.
+Keep the root workspace's `publish = false` as the default. After owner approval, replace `publish.workspace = true` with `publish = true` only in the 23 approved package sections. All other packages remain false. This avoids accidentally releasing the 29 examples.
 
-Every prerequisite in the graph needs a compatible registry version, including optional and target-specific entries: for example `{ path = "../../lib", version = "0.1.0" }`. Preserve existing `optional`, `features` and `default-features` settings. Publishing strips the local path and resolves the version from crates.io. Disabled features do not excuse missing versions. The five leaves have no such normal/build edits; all other candidates do. The feature-wiring evidence lists exact feature names; examples include facade `framework-*`/`leptos-*`, schema `codegen`/`source`, view `leptos-*`/`preferences`/`server`, session `native`/`sql`/`auth-server`/`leptos-*`, API `native`/`sql`/`codegen`/`ui-*`, aggregate `full`/`codegen`, and models `sql`/`generate`.
+Every prerequisite in the graph needs a compatible registry version, including optional and target-specific entries: for example `{ path = "../../lib", version = "0.1.0" }`. Preserve existing `optional`, `features` and `default-features` settings. Publishing strips the local path and resolves the version from crates.io. Disabled features do not excuse missing versions. The five leaves have no such normal/build edits; all other candidates do. The feature-wiring evidence lists exact feature names; examples include facade `framework-*`/`leptos-*`, schema `codegen`/`source`, view `leptos-*`/`preferences`/`server`, session `native`/`sql`/`auth-server`/`leptos-*`, API `native`/`sql`/`codegen`/`ui-*`, aggregate `full`/`codegen`, with dev-only crate fixture regeneration examples.
 
 The following are crate-boundary problems that adding versions cannot fix. Source locations below are relative to each crate; complete literal occurrences are in the linked external-reference evidence. `include`/`exclude` cannot package `../` sibling files. Tests that are kept only at repository level must still contribute to release integration evidence; omitting them from an archive is not a coverage waiver.
 
 | Candidate | Files outside its directory | Required release preparation |
 | --- | --- | --- |
-| `stackpress-framework-models` | **Production generator (`generate` feature):** `src/bin/generate.rs:29,33,37` embeds sibling session/API `schema.idea` and aggregate `stackpress.idea`. Tests also import session records/live support, schema provider vectors, SQL `g54` and example watchdog. | Make the binary self-contained or explicitly keep it repository-only by owner decision. If omitted, move its target and generation tests into an unpublished tool package and adjust the manifest; excluding the file alone leaves a dangling target. Retain/verify shipped generated libraries. Do not add dependencies from models back to session/API/aggregate: that would create real cycles. |
 | `stackpress-server` | `src/core_tests.rs` and concurrency/ownership tests import `crates/lib/tests/support/watchdog.rs`. | Bring the test helper within a supported test boundary. Library build alone does not expose this. |
 | `stackpress-cli` | Seven unit/integration references to the lib watchdog; entry tests create `../../target/cli-entry-fixtures`. | Fix helper ownership; use a writable test temp location when testing extracted packages. PTY Python probes are inside `tests/support` and must remain available if those tests ship. |
 | `stackpress-sql` | `tests/{harness,network}.rs` import sibling `crates/sql/test-support/harness.rs`. | Self-contain or move repository-only network tests. Preserve `examples/support/mod.rs`, which Rustdoc examples include from within this crate. |
@@ -139,20 +136,20 @@ The following are crate-boundary problems that adding versions cannot fix. Sourc
 | `stackpress-sql-mysql` | SQL test harness; PostgreSQL `src/tests{.rs,/support/*}`; framework-SQL `g37-ddl.json`; unpublished generated workspace dev fixture. | Self-contain supported crate tests; do not assume the PostgreSQL source checkout exists beside the installed dependency. |
 | `stackpress-leptos` | Rich-content unit test embeds `examples/ui-format/corpus.json`. | Give the test a package-local corpus while preserving its shared-source provenance. |
 | `stackpress-framework-view` | Cleanup test imports the lib watchdog. | Repair test helper ownership. Retain local embedded JS and example assets. |
-| `stackpress-framework-schema` | Source-generation tests embed sibling session/API schemas and models `extension-oracles.json`. | Self-contain these test inputs or retain them in a separate repository integration lane. |
+| `stackpress-framework-schema` | Source-generation tests embed sibling session/API schemas and its local `tests/extension-oracles.json` (relocated unchanged in G59). | Self-contain these test inputs or retain them in a separate repository integration lane. |
 | `stackpress-framework-sql` | Migration/tests import example watchdog, SQL examples support, generated-workspace four Idea inputs, session/API schemas. | Self-contain package tests; preserve codegen templates and generation/regression data. |
 | `stackpress-framework-admin` | Source tests embed session/API schemas. | Self-contain test inputs; preserve codegen `.tpl` and source-role behavior. |
-| `stackpress-framework-api` | Tests import models generated fixtures, SQL/session live support and `examples/api-checkpoint/shared/src/lib.rs`. | Separate archive tests from repository consumer proofs; retain local `schema.idea`, UI CSS/SVG and template/fixture inputs used by shipped examples. |
-| `stackpress-framework-session` | Tests import SQL live support, models/SQL generated modules and schema vectors. | Self-contain supported package tests; retain `schema.idea`, views/styles, icon notices and local account/interop example inputs. |
-| `stackpress-framework` | Live tests import sibling SQL/session support. Its generation tests read `consumers/build-host/source.idea`. | Self-contain or move repository integration tests: Cargo omits nested packages, so that consumer's input is absent from the package list. |
+| `stackpress-framework-api` | G59 uses local generated models/presentation and local live support. Other package-boundary inputs still require the extracted-package check. | Separate archive tests from repository consumer proofs; retain local `schema.idea`, UI CSS/SVG and template/fixture inputs used by shipped examples. |
+| `stackpress-framework-session` | G59 uses local generated model families and local live support. Schema vectors still need a supported package boundary. | Self-contain supported package tests; retain `schema.idea`, views/styles, icon notices and local account/interop example inputs. |
+| `stackpress-framework` | G59 localizes live helpers. Its generation tests read `consumers/build-host/source.idea`. | Self-contain or move repository integration tests: Cargo omits nested packages, so that consumer's input is absent from the package list. |
 
-No escaped literal include/path references were found for `stackpress`, `lib`, `server-http`, `idea-parser`, `idea-transformer`, `idea`, `framework-language`, `framework-csrf` or `framework-email`. No candidate has a build script with hidden filesystem reads. The audit also checked filesystem/command calls: library runtime file paths are caller/config supplied, rather than fixed reads of sibling repository files. This is a static audit plus packaging probes, not proof of every runtime configuration. The models generator defaults to writing its own `src/generated`; an installed tool needs an explicit writable `--output` and `--input` when applicable. Its compile-time sibling reads remain the main production blocker.
+No escaped literal include/path references were found for `stackpress`, `lib`, `server-http`, `idea-parser`, `idea-transformer`, `idea`, `framework-language`, `framework-csrf` or `framework-email`. No candidate has a build script with hidden filesystem reads. The audit also checked filesystem/command calls: library runtime file paths are caller/config supplied, rather than fixed reads of sibling repository files. This is a static audit plus packaging probes, not proof of every runtime configuration.
 
 `framework-email` embeds `data/nodemailer-{services,mime}.json`; Leptos/session/API embed local SVG/CSS and some source schemas/templates are embedded. Retain these files in package allowlists. HTTP `examples/deployment.rs` uses package-local `examples/assets` at runtime. Do not exclude those assets while continuing to advertise that example.
 
 ## Package contents and size evidence
 
-All 24 `cargo package --list` invocations returned 0. In the disposable tracked-file copy, only root publish inheritance and local dependency versions were changed; example/consumer package sections were kept false. Every local path entry was given `0.1.0` mechanically, including dev entries for the probes; this does not recommend registry versions for unpublished fixture packages. No licence/metadata/include repairs were made. The copy had its own temporary Git index, no commit, and `--allow-dirty` was required. It has been deleted.
+At the original audit snapshot, all 24 `cargo package --list` invocations returned 0. The table below retains the measured rows for the 23 remaining G59 candidates; it is not a refreshed packaging run. In the disposable tracked-file copy, only root publish inheritance and local dependency versions were changed; example/consumer package sections were kept false. Every local path entry was given `0.1.0` mechanically, including dev entries for the probes; this does not recommend registry versions for unpublished fixture packages. No licence/metadata/include repairs were made. The copy had its own temporary Git index, no commit, and `--allow-dirty` was required. It has been deleted.
 
 For each package: `cargo package -p NAME --list --offline --allow-dirty`, then `cargo package -p NAME --no-verify --offline --allow-dirty`. Five leaves produced actual archives; 19 stopped on the first missing internal registry package listed below. **No-verify never proves compilation.** Leaf `cargo publish -p NAME --dry-run --offline --allow-dirty` returned 101 for all five: `attempting to make an HTTP request, but --offline was specified`. Cargo stopped before any HTTP request; these are not successful dry-runs. Non-leaf dry-runs were inapplicable because their prerequisites have never been published.
 
@@ -179,7 +176,6 @@ Sizes in bytes: **A** is actual compressed `.crate`; **E** is an indicative gzip
 | `framework-schema` | 89 | 784,744 | 187,978 E | 101 — `idea-parser` |
 | `framework-sql` | 165 | 2,086,231 | 324,209 E | 101 — `framework-schema` |
 | `framework-admin` | 74 | 635,902 | 162,510 E | 101 — `framework-schema` |
-| `framework-models` | 65 | 834,718 | 116,494 E | 101 — `framework-schema` |
 | `framework-session` | 151 | 1,235,818 | 264,704 E | 101 — `framework-view` |
 | `framework-api` | 92 | 675,353 | 166,631 E | 101 — `framework-admin` |
 | `framework` | 117 | 1,129,446 | 218,955 E | 101 — `framework-sql` |
@@ -187,15 +183,15 @@ Sizes in bytes: **A** is actual compressed `.crate`; **E** is an indicative gzip
 
 The facade currently lists 641 files, including **498 `.agents` files**, 117 example files and 15 tool files. Its approximately 5.01 MB compressed estimate is dominated by unrelated material; three raw coverage JSON files alone occupy about 10 MB uncompressed. Use a reviewed facade allowlist such as `src/**`, `tests/**`, `Cargo.toml`, `README.md` and owner-approved licence files. Re-run the list after this plan/evidence exists; package size grows with repository artifacts otherwise.
 
-For libraries, start with `src/**`, `Cargo.toml`, package README/docs and owner-approved licence/notice files; add actual `schema.idea`, `stackpress.idea`, `third-party/**`, `data/**`, codegen templates and test/example inputs according to usage. If tests/examples ship, retain their entire supporting tree and repair escaped reads first. An `exclude` alternative may remove `consumers/**`, caches and irrelevant proof/generated snapshots, but an allowlist is easier to review. Never blanket-exclude `src/generated/**`, `.tpl`, `.idea`, SVG/CSS/JS or fixtures still referenced by code. Models' generated library code is release content. Framework-SQL has 165 listed files and about 2.09 MB indicative payload; trim unused snapshots only after identifying which tests and consumers still need them.
+For libraries, start with `src/**`, `Cargo.toml`, package README/docs and owner-approved licence/notice files; add actual `schema.idea`, `stackpress.idea`, `third-party/**`, `data/**`, codegen templates and test/example inputs according to usage. If tests/examples ship, retain their entire supporting tree and repair escaped reads first. An `exclude` alternative may remove `consumers/**`, caches and irrelevant proof/generated snapshots, but an allowlist is easier to review. Never blanket-exclude `src/generated/**`, `.tpl`, `.idea`, SVG/CSS/JS or fixtures still referenced by code. Framework-SQL has 165 listed files and about 2.09 MB indicative payload; trim unused snapshots only after identifying which tests and consumers still need them.
 
-Binaries/examples require explicit decisions. CLI is an adapter library, not an installable `stackpress` command. Models has `framework-models-generate` behind `generate`; fix or explicitly omit it before publishing. Auto-discovered examples: HTTP `deployment`; SQL `schema_diff`, `build_inspect`, `execute_plan`, `capabilities`; SQLite `m0-host`; API `composite_admin_fixture`; session `jwt_interop`. Declared feature-gated examples: view `issue17_parity` (`leptos-stream`), session `account_host` (`leptos-ssr`). Verify every retained example under its required features from an extracted archive. No other candidate binary/example targets were found.
+Binaries/examples require explicit decisions. CLI is an adapter library, not an installable `stackpress` command. Auto-discovered examples: HTTP `deployment`; SQL `schema_diff`, `build_inspect`, `execute_plan`, `capabilities`; SQLite `m0-host`; API `composite_admin_fixture`; session `jwt_interop`. Declared feature-gated examples: view `issue17_parity` (`leptos-stream`), session `account_host` (`leptos-ssr`). Verify every retained example under its required features from an extracted archive. No other candidate binary/example targets were found.
 
 ## Metadata and current licence declarations
 
-All 24 have a `description`. All 24 omit explicit `repository`, `readme`, `documentation`, `keywords` and `categories`; none inherits those from workspace metadata. Cargo automatically finds `README.md` in these 12: root `stackpress`, `server-http`, `sql-postgres`, `sql-mysql`, `leptos`, `framework-admin`, `framework-api`, `framework-csrf`, `framework-email`, `framework-session`, `framework-models`, `framework`. The other 12 have neither a package README nor a readme field. Add package-specific documentation and explicit metadata before release; absent repository/docs/keywords/categories are discoverability/documentation gaps, not all hard upload errors. Select valid registry categories and confirm the canonical repository and public documentation URLs online.
+All 23 have a `description`. All 23 omit explicit `repository`, `readme`, `documentation`, `keywords` and `categories`; none inherits those from workspace metadata. Cargo automatically finds `README.md` in these 11: root `stackpress`, `server-http`, `sql-postgres`, `sql-mysql`, `leptos`, `framework-admin`, `framework-api`, `framework-csrf`, `framework-email`, `framework-session`, `framework`. The other 12 have neither a package README nor a readme field. Add package-specific documentation and explicit metadata before release; absent repository/docs/keywords/categories are discoverability/documentation gaps, not all hard upload errors. Select valid registry categories and confirm the canonical repository and public documentation URLs online.
 
-`stackpress-idea-parser` alone declares `license = "Apache-2.0"` and contains its own `LICENSE`. The other **23 candidates declare neither `license` nor `license-file`**, including the root. Root `LICENSE` is titled “STACKPRESS COMMUNITY LICENSE”, January 2026; it is included in the root package list but is not automatically a licence declaration inherited by child packages. Licence choice, compatibility decisions and all licence edits belong to the owner. This plan makes no recommendation of a licence.
+`stackpress-idea-parser` alone declares `license = "Apache-2.0"` and contains its own `LICENSE`. The other **22 candidates declare neither `license` nor `license-file`**, including the root. Root `LICENSE` is titled “STACKPRESS COMMUNITY LICENSE”, January 2026; it is included in the root package list but is not automatically a licence declaration inherited by child packages. Licence choice, compatibility decisions and all licence edits belong to the owner. This plan makes no recommendation of a licence.
 
 | Candidate directory | Third-party licence/notice files currently present and listed |
 | --- | --- |
@@ -239,7 +235,6 @@ The [per-crate coverage report](../../../resources/publication-plan-00047/covera
 | `framework-csrf` | 67 / 69 | 97.10% | 0.00 | 0 |
 | `framework-email` | 2,423 / 2,739 | 88.46% | 1.54 | 43 |
 | `framework-session` | 3,706 / 3,977 | 93.19% | 0.00 | 0 |
-| `framework-models` | 1,082 / 1,108 | 97.65% | 0.00 | 0 |
 | `framework` | 1,173 / 1,227 | 95.60% | 0.00 | 0 |
 
 **Five measured crates miss the floor:** SQL PostgreSQL, SQL MySQL, framework SQL, framework admin and framework email. Eighteen meet 90% only in this measured scope. Combined source counts are **56,714 / 63,016 = 89.9994%**, which is still below 90% even though two-decimal rounding displays 90.00%. A passing combined total would not waive a per-crate gap.
@@ -251,7 +246,7 @@ Doctests, browser WASM hydrate/CSR, installed Tauri/platform adapters, live Post
 
 ## Versioning and toolchain recommendation
 
-Recommend a **lockstep initial `0.1.0` release** for the 24 selected packages: the current workspace already shares this version, and facade re-exports plus generated schema/store types closely couple the family. This is a proposal for the owner, not an accepted versioning policy. Independent versions reduce unnecessary bumps for stable low-level libraries but require a maintained compatibility matrix, separate changelogs and careful facade/generated-output compatibility checks.
+Recommend a **lockstep initial `0.1.0` release** for the 23 selected packages: the current workspace already shares this version, and facade re-exports plus generated schema/store types closely couple the family. This is a proposal for the owner, not an accepted versioning policy. Independent versions reduce unnecessary bumps for stable low-level libraries but require a maintained compatibility matrix, separate changelogs and careful facade/generated-output compatibility checks.
 
 A requirement `version = "0.1.0"` is Cargo's compatible range below `0.2.0`, not an exact pin. If source-level contracts change incompatibly, use `0.2.0` under a stated pre-1.0 policy. Patch releases should preserve the documented public/generated behavior. Re-exported types retain their defining crate identity: incompatible copies of contracts, SQL types or Leptos types can make otherwise similar values unusable together. Coordinate changes to those crates, dependents and facade exports/features; do not promise that bumping only the facade fixes them.
 
@@ -263,7 +258,7 @@ For each subsequent release: classify compatibility changes; choose the next coo
 
 These are instructions to execute only after the owner releases implementation and publication. The offline probes above do not satisfy these gates.
 
-1. Decide the exact 24-package scope (or a smaller dependency-closed first wave), licence declarations/files per package, initial version policy, registry account/owners and token permissions. Decide whether the models generator ships and which package tests/examples/docs are supported. Recheck all names, ownership, 10 MB limits, registry category values, Rust/Cargo policy and repository/docs visibility online. Do not assume the three previously checked names reserve the whole family.
+1. Decide the exact 23-package scope (or a smaller dependency-closed first wave), licence declarations/files per package, initial version policy, registry account/owners and token permissions. Decide which package tests/examples/docs are supported; G59 keeps generation in repository-owned test/application tools. Recheck all names, ownership, 10 MB limits, registry category values, Rust/Cargo policy and repository/docs visibility online. Do not assume the three previously checked names reserve the whole family.
 2. In a separately authorized implementation change, leave workspace publish false and enable only approved candidates; add the 92 versioned normal dependency entries described above; repair cross-crate file reads without adding dependency cycles; resolve dev-only fixture strategy; add owner-approved licence metadata/files, package README/repository/docs/keywords/categories and reviewed include lists. Preserve third-party notices, shipped templates/data and renderer/dependency boundaries. Review all manifest and lock diffs.
 3. Use a task-owned target and the installed recorder. Before release checks, set up the gate environment below and run repository tests, lint, Rustdoc, doctests, generator freshness, target boundaries and per-package archive tests. For this first release, leaves can fully package before publication; dependent package resolution needs earlier versions in the registry. A local path-based build is insufficient. Re-run each dependent's package verification and dry-run after its prerequisites are indexed.
 
@@ -326,7 +321,6 @@ for crate in \
   stackpress-framework-schema \
   stackpress-framework-sql \
   stackpress-framework-admin \
-  stackpress-framework-models \
   stackpress-framework-session \
   stackpress-framework-api \
   stackpress-framework \
@@ -383,11 +377,11 @@ Task-only counters: 0 → 6 attempts (5 passed, 1 failed); these are not global 
 
 Sampled target peak: 7,880,978,432 bytes (7.34 GiB), below the 12 GiB cap; the sample is not a continuous maximum. The throwaway copy and `target/00047` were deleted after report/archive evidence was retained. Benchmark records remain. Review checked inventory completeness, dependency ordering/cycles, file-boundary ownership and runbook shell syntax; no Rust implementation/refactoring was authorized.
 
-Agent Workspace validation retained the **146 inherited errors and 43 inherited warnings**, adding only the preferred-length warning for this coherent under-500-line plan (389 lines). No new hard errors or broken links were introduced. The inherited diagnostics were preserved because repairing unrelated KB references is outside this plan-only task. The release loop and all shell examples passed `zsh -n`; inventory and dependency-order checks covered 53/53 root packages and 24/24 candidates.
+Agent Workspace validation retained the **146 inherited errors and 43 inherited warnings**, adding only the preferred-length warning for this coherent under-500-line plan (389 lines). No new hard errors or broken links were introduced. The inherited diagnostics were preserved because repairing unrelated KB references is outside this plan-only task. The release loop and all shell examples passed `zsh -n`; inventory and dependency-order checks covered 53/53 original root packages and 24/24 original candidates. G59 now has 52 root packages and 23 candidates.
 
-The next owner decisions are release scope, licence declarations, initial version policy, the models generator/test packaging boundaries, and facade line-floor treatment. A separately released implementation task should close the five coverage gaps and packaging/metadata issues, then run actual release integration before publication.
+The next owner decisions are release scope, licence declarations, initial version policy, the test packaging boundaries, and facade line-floor treatment. A separately released implementation task should close the five coverage gaps and packaging/metadata issues, then run actual release integration before publication.
 
 
 ## Coordinator review
 
-Reviewed 2026-11-10 and committed as a plan only. No manifest, lock, licence or source changes. The raw 5.5 MB LLVM export was kept out of git, as described above. Owner decisions are still needed before any release work: the release scope (the 24 candidates), lockstep 0.1.0 versioning, licence declarations, how to treat the 0/0 facade, and fixing the five crates below 90% plus the models generator's sibling-file embeds.
+Reviewed 2026-11-10 and committed as a plan only. No manifest, lock, licence or source changes. The raw 5.5 MB LLVM export was kept out of git, as described above. Owner decisions are still needed before any release work: the release scope (the 23 candidates), lockstep 0.1.0 versioning, licence declarations, how to treat the 0/0 facade, and fixing the five crates below 90% plus retained test packaging boundaries.

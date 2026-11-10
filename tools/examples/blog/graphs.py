@@ -31,7 +31,7 @@ def main():
         browser = graph('blog-client', '--target', 'wasm32-unknown-unknown',
                         '--no-default-features', '--features', mode)
         forbidden = {name for name in browser if name.startswith(('stackpress-sql', 'stackpress-server', 'stackpress-idea'))}
-        forbidden |= browser & {'stackpress-framework-sql', 'stackpress-framework-models',
+        forbidden |= browser & {'stackpress-framework-sql',
                                 'stackpress-framework-identity', 'stackpress-framework-email',
                                 'stackpress-cli', 'lettre', 'reqwest', 'ring', 'blog-tool', 'blog-xtask', 'blog-web', 'blog-store', 'blog-assets'}
         assert not forbidden, (mode, forbidden)

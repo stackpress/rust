@@ -149,6 +149,16 @@ def compile_examples(snippets):
         (workspace / 'Cargo.toml').write_text(manifest)
         lock = original.with_name('Cargo.lock').read_bytes()
         (workspace / 'Cargo.lock').write_bytes(lock)
+        # These standalone documentation applications own generated models like any app.
+        # The finite generator uses public SCHEMA_SOURCE exports, never another test fixture.
+        if mode == 'server':
+            source = workspace / 'schema.idea'
+            source.write_text('use "stackpress-api/schema.idea"\n')
+            generator_env = {**os.environ, 'CARGO_TARGET_DIR': str(target / 'docs-model-generator')}
+            run(['cargo', 'run', '--manifest-path', str(ROOT / 'Cargo.toml'),
+                 '-p', 'stackpress-framework-api', '--example', 'regenerate_api_models',
+                 '--locked', '--offline', '--', '--input', str(source),
+                 '--output', str(workspace / 'src/models')], generator_env)
         modules, tests = [], []
         for index, item in enumerate(snippets):
             if item['mode'] != mode:

@@ -607,13 +607,11 @@ async fn source_mount_gate_all_methods_priorities_fifo_and_outer_abort() -> Resu
 #[cfg(feature = "sql")]
 mod persisted {
     use super::*;
-    use stackpress_framework_api::{
-        models::{ApplicationActions, Record, SessionActions},
-        sql,
-    };
-    use stackpress_framework_session::{
-        Service as Identity, plugin as identity, storage::ProfileActions,
-    };
+    use crate::models::stores::application::ApplicationActions;
+    use crate::models::stores::profile::ProfileActions;
+    use crate::models::stores::session::SessionActions;
+    use stackpress_framework_api::{models::Record, sql};
+    use stackpress_framework_session::{Service as Identity, plugin as identity};
     use stackpress_sql::Engine;
     use stackpress_sql_sqlite::{SqliteDatabase, SqliteOptions};
     use std::path::PathBuf;
@@ -638,15 +636,15 @@ mod persisted {
             ));
             let profile = ProfileActions::new(
                 engine.clone(),
-                stackpress_framework_session::storage::ProfileStore::new("".into(), 0),
+                crate::models::stores::profile::ProfileStore::new("".into(), 0),
             );
             let apps = ApplicationActions::new(
                 engine.clone(),
-                stackpress_framework_api::models::ApplicationStore::new("".into(), 0),
+                crate::models::stores::application::ApplicationStore::new("".into(), 0),
             );
             let sessions = SessionActions::new(
                 engine.clone(),
-                stackpress_framework_api::models::SessionStore::new("".into(), 0),
+                crate::models::stores::session::SessionStore::new("".into(), 0),
             );
             profile.install().await.unwrap();
             apps.install().await.unwrap();
@@ -685,7 +683,10 @@ mod persisted {
             // Public registrars and source event names are the whole identity/storage interface.
             app.plugin("identity", identity::register)?;
             app.plugin("api", register)?;
-            app.plugin("api-sql", sql::register)?;
+            app.plugin(
+                "api-sql",
+                sql::register_with::<crate::models::stores::family::Models>,
+            )?;
             if let Some(barrier) = barrier {
                 app.on_priority(
                     "me",

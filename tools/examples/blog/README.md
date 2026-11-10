@@ -38,7 +38,8 @@ It then checks formatting, freshness, native and separate-renderer Clippy, all n
 docs, dependency graphs, public/authenticated/copied-out browser flows, and native coverage
 for `blog-app`, `blog-assets`, `blog-store`, `blog-web`, `blog-tool` and `blog-xtask`. Browser graphs select
 `blog-app` UI without its server feature or either native plugin.
-The lock check recomputes the example subset against the committed 699-tuple root lock, without
+The gate freezes root lock bytes from entry through exit. Workspace-only package/edge edits may precede the gate.
+The lock check compares all 699 registry tuples with HEAD and recomputes the example subset, without
 reading a marker. G58 allows exactly tungstenite 0.29.0 and its five enumerated transitive
 exceptions in the blog lock only; the check asserts their versions, sources and checksums.
 The JavaScript phase also exercises the shipped hot-patch failure guard without a listener;
@@ -64,7 +65,7 @@ All paths are relative to the repository root; record each invocation through
 | `format.py` | Check authored Rust, including xtask; `--write` formats it. |
 | `freshness.py` | Check both generated trees without changing bytes or timestamps. |
 | `graphs.py` | Check native and separate browser dependency boundaries. |
-| `locks.py check` | Check committed root bytes, all 699 tuples and the example subset. |
+| `locks.py check` | Compare all 699 registry tuples with HEAD and check the example subset plus G58. |
 | `extension.py` | Generate/check the extra Profile fixture used by the full gate. |
 | `browser.py` | Run public and authenticated browser flows through in-process routing. |
 | `nickname.py prepare\|check\|browser` | Prepare/check/test the copied app's Profile migration. |

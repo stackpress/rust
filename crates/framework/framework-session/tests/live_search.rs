@@ -1,15 +1,14 @@
 //! Opt-in G46 searches through the real Profile/Auth stores and their source DDL.
+use crate::models::stores::auth::AuthActions;
+use crate::models::stores::profile::ProfileActions;
 
-#[path = "../../framework-sql/tests/support/g54.rs"]
+#[path = "fixtures/g54.rs"]
 mod g54;
-#[path = "live/support.rs"]
+#[path = "fixtures/live_support.rs"]
 mod support;
 
 use serde_json::json;
-use stackpress_framework_session::{
-    columns::Record,
-    storage::{AuthActions, ProfileActions, StoreQuery},
-};
+use stackpress_framework_session::{columns::Record, storage::StoreQuery};
 use stackpress_sql::Engine;
 use std::sync::Arc;
 
@@ -38,11 +37,11 @@ async fn scenario(engine: Arc<Engine>) -> support::TestResult<()> {
 async fn scenario_steps(engine: Arc<Engine>) -> support::TestResult<()> {
     let profile = ProfileActions::new(
         engine.clone(),
-        stackpress_framework_session::storage::ProfileStore::new("database-seed".into(), 0),
+        crate::models::stores::profile::ProfileStore::new("database-seed".into(), 0),
     );
     let auth = AuthActions::new(
         engine,
-        stackpress_framework_session::storage::AuthStore::new("database-seed".into(), 0),
+        crate::models::stores::auth::AuthStore::new("database-seed".into(), 0),
     );
     println!("stage: Profile install");
     profile.install().await?;
@@ -224,3 +223,7 @@ async fn mysql_purge_boundaries(profile: &ProfileActions) -> support::TestResult
 fn main() {
     support::main(scenario);
 }
+
+#[allow(dead_code, missing_docs, unexpected_cfgs)]
+#[path = "fixtures/models/mod.rs"]
+mod models;

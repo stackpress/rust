@@ -61,14 +61,10 @@ impl Db {
             .await
             .unwrap();
         // The generic page collaborator obtains selectable Profile rows from its family.
-        stackpress_framework_session::storage::ProfileModel::actions(
-            engine.clone(),
-            String::new(),
-            0,
-        )
-        .install()
-        .await
-        .unwrap();
+        crate::models::stores::profile::ProfileModel::actions(engine.clone(), String::new(), 0)
+            .install()
+            .await
+            .unwrap();
         let mut builder = ServerBuilder::new();
         let pool = engine.clone();
         builder
@@ -95,7 +91,7 @@ impl Db {
             presentation::ui::pages::ui()
         };
         if queued {
-            admin::register_queued_with::<stackpress_framework_session::storage::DefaultModels>(
+            admin::register_queued_with::<crate::models::stores::family::Models>(
                 &mut builder,
                 ui,
                 config,
@@ -103,7 +99,7 @@ impl Db {
             )
             .unwrap();
         } else {
-            admin::register_with::<stackpress_framework_session::storage::DefaultModels>(
+            admin::register_with::<crate::models::stores::family::Models>(
                 &mut builder,
                 ui,
                 config,
@@ -427,7 +423,7 @@ async fn source_admin_creation_checks_object_shape_even_with_noview() {
                 }),
             )
             .unwrap();
-            admin::register_with::<stackpress_framework_session::storage::DefaultModels>(
+            admin::register_with::<crate::models::stores::family::Models>(
                 &mut app,
                 presentation::ui::pages::ui(),
                 Default::default(),

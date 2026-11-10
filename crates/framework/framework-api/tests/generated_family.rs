@@ -1,6 +1,6 @@
 //! Actual generated app family selected by the API's ordinary data-event registrar.
 #[allow(dead_code, unexpected_cfgs)]
-#[path = "../../framework-models/tests/extended/generated/mod.rs"]
+#[path = "fixtures/extended/mod.rs"]
 mod generated;
 
 use generated::stores::{

@@ -23,6 +23,9 @@ ring = { version = "=0.17.14", default-features = false, features = ["std"] }
 reqwest = { version = "=0.13.4", default-features = false, features = ["rustls-no-provider", "gzip", "deflate", "cookies"] }
 
 [dev-dependencies]
+stackpress-framework-sql = { path = "../framework-sql", features = ["codegen", "server"] }
+stackpress-idea-transformer = { path = "../../idea/idea-transformer" }
+stackpress-framework-schema = { path = "../framework-schema", features = ["codegen", "providers"] }
 stackpress-framework-csrf = { path = "../framework-csrf", features = ["server"] }
 stackpress-framework-session = { path = "../framework-session", features = ["auth-server"] }
 stackpress-sql = { path = "../../sql/sql" }
@@ -33,3 +36,7 @@ tokio = { version = "1", features = ["macros", "rt-multi-thread", "sync"] }
 
 [lints]
 workspace = true
+
+[[example]]
+name = "regenerate_email_models"
+path = "tests/fixtures/regenerate.rs"

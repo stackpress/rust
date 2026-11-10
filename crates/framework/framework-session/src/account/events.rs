@@ -286,13 +286,10 @@ macro_rules! account_events {
 }
 
 /// Select SQL events immediately for direct composition; all resources and policy stay explicit.
-/// Aggregates needing source Listen-phase order use [`register_listen`] instead.
+/// Aggregates needing source Listen-phase order use [`register_listen_with`] instead.
 /// # Errors
 /// Preserves normal registration errors and multiple-handler cooperation.
-pub fn register(app: &mut stackpress_server::ServerBuilder) -> Result<()> {
-    register_with::<stackpress_framework_models::Models>(app)
-}
-
+///
 /// Register the seven immediate account events over the application's generated family.
 /// No schema, engine, policy or global guard is installed.
 pub fn register_with<M: SessionModels>(app: &mut stackpress_server::ServerBuilder) -> Result<()> {
@@ -302,15 +299,12 @@ pub fn register_with<M: SessionModels>(app: &mut stackpress_server::ServerBuilde
 
 /// Queue the same seven SQL events for source-order aggregate composition.
 ///
-/// Use [`register`] for immediate direct composition. This function contributes during Listen,
+/// Use [`register_with`] for immediate direct composition. This function contributes during Listen,
 /// after earlier Listen callbacks and before later ones, matching the upstream SQL plugin's
 /// model traversal. It selects no schema/Engine, performs no IO and adds no permission gate.
 /// # Errors
 /// Preserves startup registration errors; handler-registration failures surface during build.
-pub fn register_listen(app: &mut stackpress_server::ServerBuilder) -> Result<()> {
-    register_listen_with::<stackpress_framework_models::Models>(app)
-}
-
+///
 /// Queue the application's account family at the same source Listen phase.
 pub fn register_listen_with<M: SessionModels>(
     app: &mut stackpress_server::ServerBuilder,
@@ -323,25 +317,3 @@ async fn listen<M: SessionModels>(start: &mut stackpress_server::StartupContext)
     account_events!(start, M);
     Ok(Flow::Continue)
 }
-
-// Keep direct callback paths alongside their generic counterparts. The inventory
-// above remains the only registrar list; these wrappers select the generated defaults.
-macro_rules! default_event {
-    ($name:ident, $generic:ident) => {
-        /// Direct account callback over the shipped generated default model family.
-        pub async fn $name(
-            req: &mut Request,
-            res: &mut Response,
-            inv: Invocation<'_>,
-        ) -> Result<Flow> {
-            $generic::<stackpress_framework_models::Models>(req, res, inv).await
-        }
-    };
-}
-default_event!(auth_create, auth_create_with);
-default_event!(auth_search, auth_search_with);
-default_event!(auth_update, auth_update_with);
-default_event!(auth_remove, auth_remove_with);
-default_event!(profile_detail, profile_detail_with);
-default_event!(profile_update, profile_update_with);
-default_event!(profile_remove, profile_remove_with);
