@@ -80,6 +80,9 @@ def main():
     os.environ['CARGO_TARGET_DIR'] = str(native.parent / 'readme')
     os.chdir(destination)
     commands = documented_commands('Setup')
+    # Validate the long-running example as text; the proof must never start its listeners.
+    assert documented_commands('Develop with live reload') == [
+        ['cargo', 'xtask', 'dev', '--port', '3000', '--reload-port', '3001']]
     # The documented listener is checked as text only. Every preceding setup command runs.
     assert commands.pop() == ['cargo', 'run', '-p', 'blog-web', '--bin', 'serve', '--',
                               '<port>', 'config/develop.json']

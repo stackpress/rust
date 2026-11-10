@@ -20,6 +20,27 @@ PROOFS = Path(__file__).resolve().parent
 BASELINE = BLOG / '.build/lock-baseline.json'
 EXAMPLE_LOCK = BLOG / 'Cargo.lock'
 ROOT_LOCK = ROOT / 'Cargo.lock'
+# G58: handshake only, without TLS; source/checksum identity is part of the exception.
+G58_EXTRAS = {
+    ('data-encoding', '2.11.1',
+     'registry+https://github.com/rust-lang/crates.io-index',
+     '4583a4551df46e2792f82ceeac45e850d2e2d5debba0b91f102385cda5b11f06'),
+    ('rand', '0.9.4',
+     'registry+https://github.com/rust-lang/crates.io-index',
+     '44c5af06bb1b7d3216d91932aed5265164bf384dc89cd6ba05cf59a35f5f76ea'),
+    ('rand_chacha', '0.9.0',
+     'registry+https://github.com/rust-lang/crates.io-index',
+     'd3022b5f1df60f26e1ffddd6c66e8aa15de382ae63b3a0c1bfc0e4d3e3f325cb'),
+    ('rand_core', '0.9.3',
+     'registry+https://github.com/rust-lang/crates.io-index',
+     '99d9a13982dcf210057a8a78572b2217b667c3beacbf3a0d8b454f6f82837d38'),
+    ('sha1', '0.10.6',
+     'registry+https://github.com/rust-lang/crates.io-index',
+     'e3bf829a2d51ab4a5ddf1352d8470c140cadc8301b2ae1789db023f01cedd6ba'),
+    ('tungstenite', '0.29.0',
+     'registry+https://github.com/rust-lang/crates.io-index',
+     '6c01152af293afb9c7c2a57e4b559c5620b421f6d133261c60dd2d0cdb38e6b8'),
+}
 
 
 def registry(data):
@@ -32,24 +53,25 @@ def registry(data):
 
 
 def verify(baseline):
-    """Reject root mutation or an external tuple not present in the original root lock."""
+    """Reject root mutation and every external tuple outside the root subset plus G58."""
     current = ROOT_LOCK.read_bytes()
     assert hashlib.sha256(current).hexdigest() == baseline['root_sha256'], 'root lock bytes changed'
     assert registry(current) == baseline['registry'], 'root registry tuples/order changed'
     assert len(baseline['registry']) == 699, 'unexpected root registry baseline'
 
     # Pruning unused root packages is expected in a standalone workspace. Neither a new
-    # registry version/checksum nor a git-sourced package is a permitted workspace edge.
+    # registry version/checksum outside G58 nor a git-sourced package is permitted.
     example = EXAMPLE_LOCK.read_bytes()
     allowed = {tuple(p) for p in baseline['registry']}
     selected = registry(example)
-    assert all(tuple(p) in allowed for p in selected), 'example gained an external tuple'
-    assert len(selected) == 437, 'blog registry inventory changed'
-    if 'example_registry' in baseline:
-        assert selected == baseline['example_registry'], 'blog registry tuples changed'
+    assert {tuple(p) for p in selected} - allowed == G58_EXTRAS, 'blog G58 exception tuples changed'
+    assert len(selected) == 448, 'blog registry inventory changed'
     packages = tomllib.loads(example.decode())['package']
+    # The sole WebSocket edge is build tooling, with just the HTTP upgrade feature enabled.
+    manifest = tomllib.loads((BLOG / 'xtask/Cargo.toml').read_text())['dependencies']['tungstenite']
+    assert manifest == {'version': '=0.29.0', 'default-features': False, 'features': ['handshake']}, 'G58 requires minimal handshake features'
     assert all(not p.get('source') or p['source'].startswith('registry+') for p in packages)
-    print(f'locks: root 699 identical tuples/bytes; example {len(selected)} registry tuples are an exact subset')
+    print(f'locks: root 699 identical tuples/bytes; example {len(selected)} registry tuples are a root subset plus exactly the six G58 tuples')
 
 
 def check():
@@ -57,9 +79,8 @@ def check():
     # Git reads local committed source only. Comparing the worktree bytes with that source
     # also detects an accidental root-lock edit, rather than blessing it as a new baseline.
     committed = subprocess.check_output(['git', '-C', str(ROOT), 'show', 'HEAD:Cargo.lock'])
-    example = subprocess.check_output(['git', '-C', str(ROOT), 'show', 'HEAD:examples/blog/Cargo.lock'])
     verify({'root_sha256': hashlib.sha256(committed).hexdigest(),
-            'registry': registry(committed), 'example_registry': registry(example)})
+            'registry': registry(committed)})
 
 
 def seed(release=None):

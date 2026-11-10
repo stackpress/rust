@@ -123,6 +123,7 @@ pub async fn build(
         admin,
         blog_app::ui::pages::MODELS,
     )?;
+    crate::dev::register(&mut app)?;
     let server = Arc::new(app.build().await?);
     server
         .host()

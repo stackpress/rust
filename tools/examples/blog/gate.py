@@ -20,9 +20,9 @@ def reserve_coverage(target):
     import shutil
     def size(directory):
         return int(subprocess.check_output(['du','-sk',str(directory)],text=True).split()[0])*1024 if directory.exists() else 0
-    # The measured full test+binary graph occupies about5.55GiB. Count existing warm
-    # coverage bytes once and reserve5.75GiB, rather than treating it as an edit-loop build.
-    projected=lambda:size(target)-size(target/'coverage')+max(size(target/'coverage'),int(5.75*1024**3))
+    # The previous graph occupied about5.55GiB. Reserve6.25GiB for the added native
+    # dev tooling, counting existing coverage bytes once. The total cap remains12GiB.
+    projected=lambda:size(target)-size(target/'coverage')+max(size(target/'coverage'),int(6.25*1024**3))
     for name in ['browser-entry','readme','csr','hydrate']:
         directory=target/name
         if projected()>12*1024**3 and directory.exists():
@@ -83,7 +83,7 @@ def main():
     # Native HTTP tests read the actual debug WASM, so build it before compiling/running tests.
     if run('browser-build',['cargo','xtask','build-browser'],seconds=1200,cwd=BLOG):return 1
     run('format',['python3',str(PROOFS/'format.py')])
-    run('javascript',['node','--check',str(BLOG/'tests/browser.cjs')])
+    run('javascript',['node',str(BLOG/'tests/hot-reload.cjs')])
     run('javascript-flows',['node','--check',str(BLOG/'tests/flows.cjs')])
     run('generated-freshness',['python3',str(PROOFS/'freshness.py')])
     run('clippy-native',['cargo','clippy',*common,'--workspace','--all-targets',*features,'--','-D','warnings'])
