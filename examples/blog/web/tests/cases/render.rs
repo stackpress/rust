@@ -91,7 +91,7 @@ fn autoreload_is_only_in_the_explicit_dev_environment() {
     let (script, after) = tail.split_once("<!--/blog-dev-reload-->").unwrap();
     assert!(script.contains("/live_reload"));
     assert!(script.contains("3101"));
-    assert!(script.contains("if (msg.all) window.location.reload()"));
+    assert!(script.contains("if (msg.all || msg.blog_reload === blogRenderer)"));
     assert!(script.contains("if (msg.css)"));
     assert_eq!(format!("{before}{after}"), normal);
 }

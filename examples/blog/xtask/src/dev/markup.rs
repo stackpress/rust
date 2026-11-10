@@ -56,6 +56,34 @@ impl Markup {
         work
     }
 
+    /// Explain the conservative fallback using the first affected view and changed line.
+    pub fn reason(&self, paths: &BTreeSet<PathBuf>, next: &Snapshot) -> String {
+        let Some(path) = paths.iter().find(|p| eligible(p)) else {
+            return "non-view source changed".into();
+        };
+        let before = self
+            .sources
+            .get(path)
+            .map(Vec::as_slice)
+            .unwrap_or_default();
+        let after = next.0.get(path).map(Vec::as_slice).unwrap_or_default();
+        // Count the common line prefix so the diagnostic names the first changed source line.
+        let line = before
+            .split(|b| *b == b'\n')
+            .zip(after.split(|b| *b == b'\n'))
+            .take_while(|(a, b)| a == b)
+            .count()
+            + 1;
+        let reason = if !self.valid {
+            "patch baseline unavailable"
+        } else if !paths.iter().all(|p| eligible(p)) {
+            "mixed source changes"
+        } else {
+            rejection(before, after)
+        };
+        format!("{reason} in {}:{line}", path.display())
+    }
+
     /// Return the official serialized Patches only if every changed file is pure markup.
     pub fn patch(&mut self, paths: &BTreeSet<PathBuf>, next: &Snapshot) -> Option<String> {
         if !self.valid || paths.is_empty() {
@@ -101,6 +129,20 @@ impl Markup {
 /// Only the app's shared view source is patched; host, startup, models and config rebuild.
 fn eligible(path: &Path) -> bool {
     path.starts_with("plugins/app/src/views") && path.extension().is_some_and(|e| e == "rs")
+}
+
+/// Distinguish Rust logic from markup limitations without evaluating user expressions.
+fn rejection(before: &[u8], after: &[u8]) -> &'static str {
+    let parse = |bytes| {
+        let mut file = syn::parse_file(std::str::from_utf8(bytes).ok()?).ok()?;
+        Macros::default().visit_file_mut(&mut file);
+        Some(file.into_token_stream().to_string())
+    };
+    match (parse(before), parse(after)) {
+        (Some(old), Some(new)) if old != new => "logic changed",
+        (Some(_), Some(_)) => "dynamic expressions, props or view structure changed",
+        _ => "source added, removed or cannot be parsed",
+    }
 }
 
 /// Removing macro tokens exposes any changed Rust outside markup as a different AST.

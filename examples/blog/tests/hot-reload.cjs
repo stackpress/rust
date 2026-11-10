@@ -53,3 +53,17 @@ timeout.state.now = 30000;
 timeout.scheduled.shift()();
 assert.equal(timeout.sent[0].reload, true);
 console.log('Hot-reload guard: ready, pending, timeout, CSR/missing markers, thrown/caught patch failures passed');
+
+// Execute the shipped renderer selection before hydration as well as on active pages.
+const reloadMode = fs.readFileSync(path.join(__dirname, '../web/src/reload-mode.js'), 'utf8');
+for (const renderer of ['hydrate', 'csr']) {
+  for (const notification of ['all', 'hydrate', 'csr']) {
+    let reloads = 0;
+    const msg = notification === 'all' ? { all: true } : { blog_reload: notification };
+    vm.runInNewContext(reloadMode, { msg, URL, window: { location: {
+      href: `http://localhost:3000/?renderer=${renderer}`, reload() { reloads++; }
+    } } });
+    assert.equal(reloads, Number(notification === 'all' || notification === renderer));
+  }
+}
+console.log('Deferred renderer reload: hydration and CSR notifications select only their own tabs');

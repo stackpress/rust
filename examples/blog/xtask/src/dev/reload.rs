@@ -14,8 +14,12 @@ use tungstenite::{Error, Message, WebSocket};
 /// The official script tests `all`, `css` and a JSON-encoded string in `view`.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(super) enum Notice {
-    /// A completed source build requires a fresh page and its matching browser products.
+    /// A native-only build requires fresh pages in both browser modes.
     All,
+    /// Native and hydration are ready; CSR tabs wait for their own complete bundle.
+    Hydrate,
+    /// Deferred CSR publication reloads only CSR tabs.
+    Csr,
     /// Swap a matching stylesheet link without navigating or discarding form state.
     Css(String),
     /// The string contains serialized Leptos Patches, rather than an embedded JSON array.
@@ -26,6 +30,8 @@ impl Notice {
     /// Match `reload_script.js`: CSS is a relative URL and `all` is truthy.
     pub fn text(&self) -> String {
         match self {
+            Self::Hydrate => serde_json::json!({"blog_reload":"hydrate"}).to_string(),
+            Self::Csr => serde_json::json!({"blog_reload":"csr"}).to_string(),
             Self::All => serde_json::json!({"all":true}).to_string(),
             Self::Css(path) => serde_json::json!({"css":path}).to_string(),
             Self::View(patches) => serde_json::json!({"view":patches}).to_string(),
@@ -82,7 +88,10 @@ impl Channel {
                         Ok(mut socket) => {
                             socket.get_ref().set_nonblocking(true)?;
                             let replay = if stale {
-                                vec![message(&Notice::All, self.messages.revision)]
+                                vec![message(
+                                    &self.messages.stale_notice(),
+                                    self.messages.revision,
+                                )]
                             } else {
                                 self.messages.history.clone()
                             };
@@ -126,20 +135,35 @@ struct Messages {
     history: Vec<Message>,
     /// Coalesce failures until another completed build makes the client state fresh.
     fallback_reported: bool,
+    /// Stale CSR pages must wait until their renderer has been published.
+    csr_pending: bool,
 }
 
 impl Messages {
+    /// Reconnected CSR tabs wait for their bundle while hydration tabs catch up immediately.
+    fn stale_notice(&self) -> Notice {
+        if self.csr_pending {
+            Notice::Hydrate
+        } else {
+            Notice::All
+        }
+    }
+
     /// Bound replay work; the next completed build becomes the new compiled baseline.
     fn checkpoint_needed(&self) -> bool {
         self.history.len() >= 64
     }
 
-    /// Full rebuilds clear history; stylesheet swaps preserve it and never advance patches.
+    /// Critical builds retire patches; CSR completion preserves the current native revision.
     fn record(&mut self, notice: Notice) -> Message {
-        if matches!(notice, Notice::All | Notice::View(_)) {
+        if matches!(notice, Notice::All | Notice::Hydrate | Notice::View(_)) {
             self.revision += 1;
         }
-        if notice == Notice::All {
+        if notice == Notice::Csr {
+            self.csr_pending = false;
+        }
+        if matches!(notice, Notice::All | Notice::Hydrate) {
+            self.csr_pending = notice == Notice::Hydrate;
             self.history.clear();
             self.fallback_reported = false;
         }
@@ -165,10 +189,10 @@ fn stale_page(query: Option<&str>, build: u64) -> bool {
     query != Some(format!("build={build}").as_str())
 }
 
-/// Build completion includes the generation injected into the replacement server's HTML.
+/// Critical completion includes the generation injected into the replacement server's HTML.
 enum Delivery {
     Notice(Notice),
-    Built(u64),
+    Built(u64, Notice),
 }
 
 /// A dedicated worker keeps handshakes, close frames and patch feedback alive during Cargo.
@@ -196,9 +220,9 @@ impl Reload {
                 for delivery in receive.try_iter() {
                     match delivery {
                         Delivery::Notice(notice) => channel.send(notice),
-                        Delivery::Built(build) => {
+                        Delivery::Built(build, notice) => {
                             channel.messages.build = build;
-                            channel.send(Notice::All);
+                            channel.send(notice);
                         }
                     }
                 }
@@ -240,8 +264,8 @@ impl Reload {
     }
 
     /// Record the replacement generation before accepting/reloading another browser.
-    pub fn built(&self, build: u64) -> BuildResult {
-        self.send.send(Delivery::Built(build))?;
+    pub fn built(&self, build: u64, notice: Notice) -> BuildResult {
+        self.send.send(Delivery::Built(build, notice))?;
         Ok(())
     }
 }

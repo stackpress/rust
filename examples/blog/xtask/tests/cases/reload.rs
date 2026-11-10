@@ -210,3 +210,24 @@ fn processes_control_frames_and_retires_failed_peers() {
     );
     assert!(!alive(&mut broken, 0, &mut false));
 }
+
+/// A pending CSR bundle survives native readiness and reconnects without premature reloads.
+#[test]
+fn defers_only_csr_reload_until_its_bundle_lands() {
+    let mut messages = Messages::default();
+    messages.record(Notice::View("old".into()));
+    messages.record(Notice::Hydrate);
+    assert!(messages.history.is_empty());
+    assert_eq!(messages.stale_notice(), Notice::Hydrate);
+    assert_eq!(Notice::Hydrate.text(), r#"{"blog_reload":"hydrate"}"#);
+    // Static patches remain usable while CSR compiles. Keep them for new hydration pages;
+    // a CSR page missing markers still requests the revision-bound full-build fallback.
+    messages.record(Notice::View("during CSR".into()));
+    let revision = messages.revision;
+    messages.record(Notice::Csr);
+    assert_eq!(messages.revision, revision);
+    assert_eq!(messages.history.len(), 1);
+    assert!(messages.fallback(true));
+    assert_eq!(messages.stale_notice(), Notice::All);
+    assert_eq!(Notice::Csr.text(), r#"{"blog_reload":"csr"}"#);
+}
