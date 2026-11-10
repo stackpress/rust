@@ -26,7 +26,7 @@ functions. Each folder maps to a part of the original template:
 | `client/` (`blog-client`) | Thin browser startup/DOM/fetch glue; its app dependency enables only `ui` and hydration or CSR. |
 | `tool/` (`blog-tool`) | Independent official schema/source generator, unchanged by plugin selection. |
 
-`xtask/` is the finite browser build helper; `tool/` stays focused on schema generation.
+`xtask/` builds browser bundles and runs the development loop; `tool/` stays focused on schema generation.
 
 ## Prerequisites
 
@@ -98,6 +98,30 @@ cargo run -p blog-web --bin serve -- <port> config/develop.json
 
 Open `http://localhost:<port>/`. The server binds to IPv4 loopback. Stop it with Ctrl-C.
 
+## Develop with live reload
+
+After setup, run:
+
+```sh
+cargo xtask dev --port 3000 --reload-port 3001
+```
+
+Open `http://localhost:3000/`. Both flags are optional: the app defaults to port 3000,
+and the reload socket defaults to the app port plus one. Ctrl-C stops the loop and its server.
+
+The loop watches the app's plugins, web and browser sources, assets, schema and config.
+It debounces edits, regenerates after schema changes, builds the affected targets and
+restarts the server when needed. A failed build keeps the last good server and bundles running.
+Schema changes still need the explicit database migration commands below.
+
+CSS edits swap the stylesheet without reloading. In hydration mode, static text and literal
+HTML attributes in `plugins/app/src/views/` hot-patch in place. Entirely static `view!` blocks
+can also change their markup structure. Logic, signals, component props, embedded Rust,
+changed macro locations and uncertain edits take a full rebuild and reload. CSR pages,
+missing view markers and failed patches also fall back to a full rebuild and reload.
+New pages replay accepted patches; the next full build compiles those changes into SSR and WASM.
+The reload script is included only in the dev environment set by xtask.
+
 ## Try it
 
 - Sign in as **developer / developer** at `/auth/signin/username`.
@@ -133,6 +157,7 @@ Run these from the blog directory. The database events use `config/develop.json`
 | Database | `cargo run -p blog-web --bin blog-web --locked --offline -- -b config/develop.json emit purge` | Clear rows while retaining tables and revision files. |
 | Database | `cargo run -p blog-web --bin blog-web --locked --offline -- -b config/develop.json emit uninstall` | Drop tables while retaining revision files. |
 | Build & run | `cargo xtask build-browser` | Build both browser bundles; exits when finished. |
+| Build & run | `cargo xtask dev --port 3000 --reload-port 3001` | Watch, rebuild and restart with CSS swaps and safe markup hot patches. |
 | Build & run | `cargo run -p blog-web --bin serve -- <port> config/develop.json` | Serve the existing database and built bundles on the chosen port. |
 | Test | `cargo test --workspace --locked --offline` | Run the normal workspace tests after setup. |
 
@@ -184,5 +209,5 @@ See [design notes](docs/design-notes.md) for source choices and boundaries.
 - MCP / `stackpress-ai` is unsupported; the original config is kept as [reference data](docs/mcp-reference.json).
 - Desktop/Tauri packaging is a later step; this example runs on the web.
 - Email and webhook delivery are configured but not exercised by the proofs.
-- There is no HMR; the browser build is finite, so rebuild after changes.
+- Hot patches cover static markup in shared app views; other changes rebuild and reload.
 - Debug hydration WASM is about 24 MB (4.7 MB gzipped); no release or size profile exists yet.

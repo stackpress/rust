@@ -35,11 +35,17 @@ async fn asset(req: &mut Request, res: &mut Response, inv: Invocation<'_>) -> Re
                 "{}\n{}\n{}",
                 stackpress_leptos::components::BASE_STYLES,
                 stackpress_framework_api::views::STYLES,
-                include_str!("../assets/global.css")
+                String::from_utf8_lossy(&stylesheet(
+                    "global.css",
+                    include_bytes!("../assets/global.css")
+                )?)
             )
             .into_bytes(),
         ),
-        "/styles/article.css" => ("text/css", include_bytes!("../assets/article.css").to_vec()),
+        "/styles/article.css" => (
+            "text/css",
+            stylesheet("article.css", include_bytes!("../assets/article.css"))?,
+        ),
         "/assets/blog.js" | "/assets/session.js" | "/assets/api-checkpoint.js" => (
             "text/javascript",
             include_bytes!("../bootstrap.js").to_vec(),
@@ -86,3 +92,27 @@ async fn asset(req: &mut Request, res: &mut Response, inv: Invocation<'_>) -> Re
     res.status_code(200, None)?;
     Ok(Flow::Continue)
 }
+
+/// Dev CSS is read on each request, so a link swap needs no native build or server restart.
+/// Ordinary serving continues to use the exact embedded bytes.
+fn stylesheet(name: &str, bundled: &[u8]) -> Result<Vec<u8>> {
+    let root = std::env::var_os("BLOG_DEV_ASSETS");
+    stylesheet_at(root.as_deref().map(std::path::Path::new), name, bundled)
+        .map_err(stackpress_lib::Error::from_source)
+}
+
+/// Keep the environment boundary separate from file reads so finite tests own their inputs.
+fn stylesheet_at(
+    root: Option<&std::path::Path>,
+    name: &str,
+    bundled: &[u8],
+) -> std::io::Result<Vec<u8>> {
+    match root {
+        Some(root) => std::fs::read(root.join(name)),
+        None => Ok(bundled.to_vec()),
+    }
+}
+
+#[cfg(test)]
+#[path = "../tests/cases/dev.rs"]
+mod dev_tests;

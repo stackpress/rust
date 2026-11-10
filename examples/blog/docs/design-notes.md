@@ -72,6 +72,8 @@ The finite pipeline compiles hydration and CSR separately and runs the already i
 `wasm-bindgen`. Its outputs are `.build/browser/{hydrate,csr}/blog.js` and `blog_bg.wasm`.
 `plugins/assets/assets/` contains authored source CSS and a small SVG brand; no upstream generated `public/`
 output is copied. This replaces the Vite/UnoCSS pipeline; it is not an HMR watcher.
+Use the separate [`cargo xtask dev` loop](../README.md#develop-with-live-reload) for watched
+builds, CSS swaps and supported static-markup patches.
 The shared native HTTP adapter explicitly allows32MiB responses for the unoptimized debug WASM;
 request policies retain their framework defaults.
 

@@ -6,6 +6,7 @@
 pub mod client;
 pub mod commands;
 pub mod config;
+pub mod dev;
 pub mod history;
 pub mod http;
 pub mod render;

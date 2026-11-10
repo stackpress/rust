@@ -135,3 +135,20 @@ fn bounds_and_reaps_real_children() {
     std::thread::sleep(Duration::from_millis(1100));
     assert!(!marker.exists(), "deadline left a descendant running");
 }
+
+/// Cancellation is observed after a real child starts and kills nested work without waiting.
+#[cfg(unix)]
+#[test]
+fn cancellation_reaps_the_active_build_group() {
+    let root = tempfile::tempdir().unwrap();
+    let marker = root.path().join("started");
+    let error = bounded_until(
+        Command::new("/bin/sh")
+            .args(["-c", "touch \"$1\"; sleep 60 & wait", "sh"])
+            .arg(&marker),
+        Duration::from_secs(5),
+        || marker.exists(),
+    )
+    .unwrap_err();
+    assert!(error.to_string().contains("cancelled"));
+}

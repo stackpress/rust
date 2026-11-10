@@ -1,13 +1,15 @@
-//! Build hydration and CSR in separate targets, then emit installed bindgen glue.
+//! Browser builds and a live development loop, isolated from the application and generator.
 //!
-//! This build-only crate uses the standard library. The application and generator do not
-//! depend on it. Every child has a deadline; deadlines and unwinding reap its owned process group.
+//! Finite compiler/bindgen children have deadlines. The dev server and reload worker live
+//! until Ctrl-C; every exit path retires their owned process groups and thread.
 
 use std::path::{Path, PathBuf};
 use std::process::{Child, Command, ExitStatus};
 use std::time::{Duration, Instant};
 
-/// Fallible finite build result, preserving filesystem and child-process diagnostics.
+pub mod dev;
+
+/// Build or development-loop result, preserving filesystem and child-process diagnostics.
 pub type BuildResult = Result<(), Box<dyn std::error::Error>>;
 
 /// Compile both browser modes and emit `.build/browser/{hydrate,csr}` with `wasm-bindgen`.
@@ -25,6 +27,16 @@ pub fn build_browser(root: &Path, native_target: Option<&Path>) -> BuildResult {
 fn build_with(
     root: &Path,
     native_target: Option<&Path>,
+    mut run: impl FnMut(&mut Command, Duration) -> BuildResult,
+) -> BuildResult {
+    build_into(root, native_target, &root.join(".build/browser"), &mut run)
+}
+
+/// Stage browser output separately during development; publication waits for every build.
+fn build_into(
+    root: &Path,
+    native_target: Option<&Path>,
+    output: &Path,
     mut run: impl FnMut(&mut Command, Duration) -> BuildResult,
 ) -> BuildResult {
     let targets = target_parent(root, native_target)?;
@@ -49,7 +61,7 @@ fn build_with(
             ]);
         run(&mut cargo, Duration::from_secs(600))?;
         // Publish glue only after the matching mode has produced its WASM artifact.
-        let output = root.join(".build/browser").join(mode);
+        let output = output.join(mode);
         std::fs::create_dir_all(&output)?;
         let mut bindgen = Command::new("wasm-bindgen");
         bindgen
@@ -88,6 +100,39 @@ struct OwnedChild {
 }
 
 impl OwnedChild {
+    /// Spawn into a fresh group so replacing the app cannot affect xtask or another command.
+    fn spawn(command: &mut Command) -> Result<Self, Box<dyn std::error::Error>> {
+        #[cfg(unix)]
+        {
+            use std::os::unix::process::CommandExt;
+            command.process_group(0);
+        }
+        Ok(Self {
+            child: command.spawn()?,
+            reaped: false,
+        })
+    }
+
+    /// Give the app's Ctrl-C shutdown a bounded chance to drain before killing its group.
+    fn stop(&mut self) {
+        #[cfg(unix)]
+        {
+            let _ = Command::new("kill")
+                .args(["-INT", "--", &format!("-{}", self.child.id())])
+                .status();
+            let start = Instant::now();
+            while start.elapsed() < Duration::from_secs(2) {
+                if self.child.try_wait().ok().flatten().is_some() {
+                    // Even if the leader exited, retire any descendants left in its group.
+                    self.terminate();
+                    return;
+                }
+                std::thread::sleep(Duration::from_millis(10));
+            }
+        }
+        self.terminate();
+    }
+
     /// Terminate only this command's group, with a direct-child fallback if the OS tool fails.
     fn terminate(&mut self) {
         #[cfg(unix)]
@@ -119,21 +164,25 @@ impl Drop for OwnedChild {
 /// # Errors
 /// Reports spawn/wait failures, nonzero exit codes and elapsed deadlines.
 pub fn bounded(command: &mut Command, timeout: Duration) -> BuildResult {
-    #[cfg(unix)]
-    {
-        use std::os::unix::process::CommandExt;
-        command.process_group(0);
-    }
+    bounded_until(command, timeout, || false)
+}
+
+/// Cancel a build promptly when dev receives Ctrl-C, including nested compiler processes.
+fn bounded_until(
+    command: &mut Command,
+    timeout: Duration,
+    cancelled: impl Fn() -> bool,
+) -> BuildResult {
     let description = format!("{command:?}");
-    let mut owned = OwnedChild {
-        child: command.spawn()?,
-        reaped: false,
-    };
+    let mut owned = OwnedChild::spawn(command)?;
     let start = Instant::now();
     loop {
         if let Some(status) = owned.child.try_wait()? {
             owned.reaped = true;
             return successful(status, &description);
+        }
+        if cancelled() {
+            return Err("build cancelled".into());
         }
         if start.elapsed() >= timeout {
             owned.terminate();

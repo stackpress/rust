@@ -39,7 +39,11 @@ docs, dependency graphs, public/authenticated/copied-out browser flows, and nati
 for `blog-app`, `blog-assets`, `blog-store`, `blog-web`, `blog-tool` and `blog-xtask`. Browser graphs select
 `blog-app` UI without its server feature or either native plugin.
 The lock check recomputes the example subset against the committed 699-tuple root lock, without
-reading a marker. Logs and per-phase results are in `examples/blog/.build/gate/`; compiled targets stay under
+reading a marker. G58 allows exactly tungstenite 0.29.0 and its five enumerated transitive
+exceptions in the blog lock only; the check asserts their versions, sources and checksums.
+The JavaScript phase also exercises the shipped hot-patch failure guard without a listener;
+xtask's tests cover classification, debounce, process cleanup, markup safety and in-memory WebSocket IO.
+Logs and per-phase results are in `examples/blog/.build/gate/`; compiled targets stay under
 the dedicated `examples/blog/target/verify/` budget. Completed consumer/browser targets may be retired before
 coverage; exact browser products and test reports remain in `.build/`.
 
