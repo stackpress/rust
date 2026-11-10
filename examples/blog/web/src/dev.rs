@@ -51,6 +51,11 @@ pub fn document(html: &str) -> Option<String> {
     }
     // Keep Leptos's complete client protocol and patch engine; add only failure feedback.
     let script = script.replace("patch(msg.view);", include_str!("hot-reload.js"));
+    // Hydration pages reload before CSR finishes. The normal Leptos messages stay intact.
+    let script = script.replace(
+        "if (msg.all) window.location.reload();",
+        include_str!("reload-mode.js"),
+    );
     // A newly connected tab may have loaded the last-good HTML while Cargo was compiling.
     let build = std::env::var("BLOG_DEV_BUILD_ID")
         .ok()

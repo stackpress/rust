@@ -2,6 +2,9 @@
 
 /// Dispatch an explicit build or live loop without linking application/generated source.
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    if let Some(wrapper) = std::env::var_os("BLOG_DEV_COMPILER_WRAPPER") {
+        return blog_xtask::compiler(&wrapper, &std::env::args_os().skip(1).collect::<Vec<_>>());
+    }
     let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
         .parent()
         .ok_or("xtask has no blog directory")?;

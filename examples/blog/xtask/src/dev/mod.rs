@@ -4,13 +4,15 @@ mod build;
 mod change;
 mod markup;
 mod reload;
+mod session;
 
-use crate::{BuildResult, OwnedChild, bounded_until};
-use build::{Builder, server_command};
+use crate::{BuildResult, bounded_until};
+use build::Builder;
 use change::{Debounce, Snapshot, Work, classify};
 use markup::Markup;
 use reload::{Notice, Reload};
-use std::path::{Path, PathBuf};
+use session::Session;
+use std::path::Path;
 use std::process::Command;
 use std::sync::{
     Arc,
@@ -37,8 +39,8 @@ pub fn run(root: &Path, native: Option<&Path>, options: Options) -> BuildResult 
     let signals = Signals::register(stop.clone())?;
     let channel = Reload::start(options.reload_port, stop.clone())?;
     let mut builder = Builder::new(root, native)?;
-    let mut session = Session::default();
-    let mut execute = |command: &mut Command, timeout| {
+    let mut session = Session::new(stop.clone());
+    let execute = |command: &mut Command, timeout| {
         bounded_until(command, timeout, || stop.load(Ordering::Relaxed))
     };
     // Observe before building: edits made during the initial compilation must schedule a batch.
@@ -50,8 +52,9 @@ pub fn run(root: &Path, native: Option<&Path>, options: Options) -> BuildResult 
         restart: true,
         ..Default::default()
     };
-    session.update(root, &options, &mut builder, &initial, &mut execute)?;
-    channel.built(session.generation)?;
+    session.update(root, &options, &mut builder, &initial, execute)?;
+    channel.built(session.generation, session.notice())?;
+    session.defer_csr(&builder, stop.clone());
     let mut markup = Markup::new(root, &snapshot);
     println!(
         "dev http://localhost:{}/ (reload {}); Ctrl-C stops both processes",
@@ -67,9 +70,10 @@ pub fn run(root: &Path, native: Option<&Path>, options: Options) -> BuildResult 
                 restart: true,
                 ..Default::default()
             };
-            match session.update(root, &options, &mut builder, &work, &mut execute) {
+            match session.update(root, &options, &mut builder, &work, execute) {
                 Ok(_) => {
-                    channel.built(session.generation)?;
+                    channel.built(session.generation, session.notice())?;
+                    session.defer_csr(&builder, stop.clone());
                     markup = Markup::new(root, &snapshot);
                 }
                 Err(error) => {
@@ -86,22 +90,33 @@ pub fn run(root: &Path, native: Option<&Path>, options: Options) -> BuildResult 
                 channel.send(Notice::View(patches))?;
                 continue;
             }
+            if paths
+                .iter()
+                .any(|path| path.starts_with("plugins/app/src/views"))
+            {
+                let reason = markup.reason(&paths, &snapshot);
+                eprintln!("{reason} → rebuilding");
+            }
             let work = markup.rebuild_work(classify(&paths));
-            match session.update(root, &options, &mut builder, &work, &mut execute) {
+            match session.update(root, &options, &mut builder, &work, execute) {
                 Ok(notices) => {
                     for notice in notices {
-                        if notice == Notice::All {
-                            channel.built(session.generation)?;
+                        if matches!(notice, Notice::All | Notice::Hydrate) {
+                            channel.built(session.generation, session.notice())?;
                         } else {
                             channel.send(notice)?;
                         }
                     }
+                    session.defer_csr(&builder, stop.clone());
                     if work.browser || work.restart {
                         markup = Markup::new(root, &snapshot);
                     }
                 }
                 Err(error) => eprintln!("dev build failed; last good server retained: {error}"),
             }
+        }
+        if let Some(notice) = session.finish_csr(root) {
+            channel.send(notice)?;
         }
         session.check_exit()?;
         std::thread::sleep(Duration::from_millis(50));
@@ -133,87 +148,6 @@ impl Drop for Signals {
     fn drop(&mut self) {
         for signal in self.0.drain(..) {
             signal_hook::low_level::unregister(signal);
-        }
-    }
-}
-
-/// A successful build is the only path to replacing the active owned process.
-#[derive(Default)]
-struct Session {
-    /// The currently running executable's process group.
-    child: Option<OwnedChild>,
-    /// Immutable last-good executable, also reused for config-only restarts.
-    executable: Option<PathBuf>,
-    /// A restart generation lets the reload worker identify HTML loaded during compilation.
-    generation: u64,
-}
-
-impl Session {
-    /// Build all required products first; CSS-only batches do no compiling or restarting.
-    fn update(
-        &mut self,
-        root: &Path,
-        options: &Options,
-        builder: &mut Builder,
-        work: &Work,
-        run: impl FnMut(&mut Command, Duration) -> BuildResult,
-    ) -> Result<Vec<Notice>, Box<dyn std::error::Error>> {
-        let prepared = builder.prepare(work, run)?;
-        prepared.publish(root)?;
-        if work.restart {
-            let executable = prepared
-                .executable
-                .as_ref()
-                .or(self.executable.as_ref())
-                .ok_or("no built server to restart")?
-                .clone();
-            self.replace(&mut server_command(root, &executable, options), executable)?;
-        }
-        if work.browser || work.restart {
-            return Ok(vec![Notice::All]);
-        }
-        Ok(work.css.iter().cloned().map(Notice::Css).collect())
-    }
-
-    /// Stop/reap the previous group before spawning a replacement on the same app port.
-    fn replace(&mut self, command: &mut Command, executable: PathBuf) -> BuildResult {
-        if let Some(mut previous) = self.child.take() {
-            previous.stop();
-        }
-        self.generation += 1;
-        command.env("BLOG_DEV_BUILD_ID", self.generation.to_string());
-        let child = OwnedChild::spawn(command)?;
-        if let Some(previous) = self.executable.replace(executable) {
-            // Config restarts reuse the same immutable candidate; never unlink that one.
-            if self.executable.as_ref() != Some(&previous) {
-                std::fs::remove_file(previous)?;
-            }
-        }
-        self.child = Some(child);
-        Ok(())
-    }
-
-    /// Surface unexpected app exits once; later edits can rebuild/restart it.
-    fn check_exit(&mut self) -> BuildResult {
-        if let Some(child) = &mut self.child
-            && let Some(status) = child.child.try_wait()?
-        {
-            eprintln!("dev server exited: {status}; waiting for a source/config change");
-            child.terminate();
-            self.child = None;
-        }
-        Ok(())
-    }
-}
-
-impl Drop for Session {
-    /// Ctrl-C and all error/unwind paths stop and reap only this session's app group.
-    fn drop(&mut self) {
-        if let Some(child) = &mut self.child {
-            child.stop();
-        }
-        if let Some(path) = &self.executable {
-            let _ = std::fs::remove_file(path);
         }
     }
 }
@@ -253,3 +187,7 @@ impl Options {
 #[cfg(test)]
 #[path = "../../tests/cases/dev.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "../../tests/cases/timing.rs"]
+mod timing;

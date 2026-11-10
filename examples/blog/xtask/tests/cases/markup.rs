@@ -146,3 +146,31 @@ fn failed_or_unknown_views_rebuild_safely() {
     std::fs::write(&path, "bad Rust").unwrap();
     assert!(!Markup::new(root.path(), &Snapshot::read(root.path()).unwrap()).valid);
 }
+
+/// A rejected edit identifies its source line and distinguishes Rust from dynamic markup.
+#[test]
+fn explains_why_a_view_needs_rebuilding() {
+    let root = tempfile::tempdir().unwrap();
+    let relative = PathBuf::from("plugins/app/src/views/page.rs");
+    let path = root.path().join(&relative);
+    std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+    let before = "fn page() {\n let n=1;\n view! { <p>{n}</p> };\n}";
+    std::fs::write(&path, before).unwrap();
+    let baseline = Snapshot::read(root.path()).unwrap();
+    let markup = Markup::new(root.path(), &baseline);
+    std::fs::write(&path, before.replace("n=1", "n=2")).unwrap();
+    let paths = BTreeSet::from([relative]);
+    assert!(
+        markup
+            .reason(&paths, &Snapshot::read(root.path()).unwrap())
+            .contains("logic changed in plugins/app/src/views/page.rs:2")
+    );
+    assert_eq!(
+        rejection(
+            before.as_bytes(),
+            before.replace("{n}", "{other}").as_bytes()
+        ),
+        "dynamic expressions, props or view structure changed"
+    );
+    assert!(rejection(b"broken", b"also broken").contains("cannot be parsed"));
+}

@@ -152,3 +152,64 @@ fn cancellation_reaps_the_active_build_group() {
     .unwrap_err();
     assert!(error.to_string().contains("cancelled"));
 }
+
+/// Incremental rustc receives Cargo's flags directly; dependency invocations retain sccache.
+#[test]
+fn compiler_wrapper_preserves_flags_and_caches_dependencies() {
+    let args = |values: &[&str]| values.iter().map(OsString::from).collect::<Vec<_>>();
+    let local = compiler_command(
+        std::ffi::OsStr::new("sccache"),
+        &args(&["rustc", "-C", "incremental=/owned/cache"]),
+        true,
+    )
+    .unwrap();
+    assert_eq!(local.get_program(), "rustc");
+    assert_eq!(
+        local.get_args().collect::<Vec<_>>(),
+        ["-C", "incremental=/owned/cache"]
+    );
+    assert!(
+        local
+            .get_envs()
+            .any(|(k, v)| k == "CARGO_INCREMENTAL" && v.is_none())
+    );
+    let dependency = compiler_command(
+        std::ffi::OsStr::new("sccache"),
+        &args(&["rustc", "--crate-name", "dep"]),
+        false,
+    )
+    .unwrap();
+    assert_eq!(dependency.get_program(), "sccache");
+    assert!(compiler_command(std::ffi::OsStr::new("sccache"), &[], false).is_err());
+    #[cfg(unix)]
+    {
+        compiler(std::ffi::OsStr::new("/usr/bin/true"), &args(&["rustc"])).unwrap();
+        assert!(compiler(std::ffi::OsStr::new("/usr/bin/false"), &args(&["rustc"])).is_err());
+    }
+}
+
+/// Explicit incremental mode must not turn unwatched framework dependencies into slow local builds.
+#[test]
+fn strips_dependency_incremental_flags_before_sccache() {
+    let args = [
+        "rustc",
+        "-C",
+        "incremental=/owned/dep",
+        "-Cincremental=/owned/other",
+        "--crate-name",
+        "dep",
+    ]
+    .map(OsString::from);
+    let command = compiler_command(std::ffi::OsStr::new("sccache"), &args, false).unwrap();
+    assert_eq!(command.get_program(), "sccache");
+    assert_eq!(
+        command.get_args().collect::<Vec<_>>(),
+        ["rustc", "--crate-name", "dep"]
+    );
+    let command = compiler_command(std::ffi::OsStr::new(""), &args, false).unwrap();
+    assert_eq!(command.get_program(), "rustc");
+    assert_eq!(
+        command.get_args().collect::<Vec<_>>(),
+        ["--crate-name", "dep"]
+    );
+}

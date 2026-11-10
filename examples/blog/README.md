@@ -111,14 +111,22 @@ and the reload socket defaults to the app port plus one. Ctrl-C stops the loop a
 
 The loop watches the app's plugins, web and browser sources, assets, schema and config.
 It debounces edits, regenerates after schema changes, builds the affected targets and
-restarts the server when needed. A failed build keeps the last good server and bundles running.
+restarts the server when needed. Hydration and native builds run concurrently, with incremental
+compilation enabled even if your shell disables it. A failed critical build keeps the last good
+server and bundles running.
+
+The page reloads as soon as the server is ready and hydration is published. CSR builds afterward
+in the background; `?renderer=csr` tabs reload when that complete bundle is published. A failed
+CSR build keeps its previous bundle. New edits cancel superseded background builds.
 Schema changes still need the explicit database migration commands below.
 
 CSS edits swap the stylesheet without reloading. In hydration mode, static text and literal
 HTML attributes in `plugins/app/src/views/` hot-patch in place. Entirely static `view!` blocks
 can also change their markup structure. Logic, signals, component props, embedded Rust,
-changed macro locations and uncertain edits take a full rebuild and reload. CSR pages,
-missing view markers and failed patches also fall back to a full rebuild and reload.
+changed macro locations and uncertain edits take a full rebuild and reload; the terminal prints
+why a view edit could not be patched. Static patches remain available while CSR builds.
+CSS and accepted markup normally update after the 250ms debounce; compiled edits depend on
+project size and the warm compiler cache. CSR pages, missing view markers and failed patches also fall back to a full rebuild and reload.
 New pages replay accepted patches; the next full build compiles those changes into SSR and WASM.
 The reload script is included only in the dev environment set by xtask.
 

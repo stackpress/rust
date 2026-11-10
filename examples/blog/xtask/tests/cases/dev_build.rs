@@ -1,62 +1,94 @@
-//! Real filesystem staging with substituted finite compiler commands.
+//! Real filesystem staging with substituted finite compiler commands and explicit barriers.
 use super::*;
+use std::sync::{Barrier, Mutex};
 
-/// Generation precedes both renderers and native compile; runtime watch never enters builds.
-#[test]
-fn prepares_only_selected_builds_and_stages_all_output() {
+/// Make a mock native artifact without executing an app or opening a port.
+fn fixture() -> tempfile::TempDir {
     let root = tempfile::tempdir().unwrap();
-    let mut builder = Builder::new(root.path(), None).unwrap();
     std::fs::create_dir_all(root.path().join("target/native/debug")).unwrap();
     std::fs::write(root.path().join("target/native/debug/serve"), "binary").unwrap();
-    let work = Work {
-        generate: true,
-        browser: true,
-        native: true,
-        ..Default::default()
-    };
-    let mut calls = Vec::new();
+    root
+}
+
+/// Generation precedes concurrent hydration/native builds; CSR is absent from the critical path.
+#[test]
+fn prepares_only_selected_builds_and_stages_all_output() {
+    let root = fixture();
+    let mut builder = Builder::new(root.path(), None).unwrap();
+    let barrier = Barrier::new(2);
+    let calls = Mutex::new(Vec::new());
     let prepared = builder
-        .prepare(&work, |command, _| {
-            assert_eq!(command.get_current_dir(), Some(root.path()));
-            let args = command
-                .get_args()
-                .map(|s| s.to_string_lossy().into_owned())
-                .collect::<Vec<_>>();
-            assert!(
-                command
+        .prepare(
+            &Work {
+                generate: true,
+                browser: true,
+                native: true,
+                ..Default::default()
+            },
+            |command, _| {
+                assert_eq!(command.get_current_dir(), Some(root.path()));
+                let args = command
+                    .get_args()
+                    .map(|s| s.to_string_lossy().into_owned())
+                    .collect::<Vec<_>>();
+                let env = command
                     .get_envs()
-                    .any(|(k, v)| k == "LEPTOS_WATCH" && v == Some(std::ffi::OsStr::new("1")))
-            );
-            calls.push(args);
-            Ok(())
-        })
+                    .collect::<std::collections::BTreeMap<_, _>>();
+                for key in ["LEPTOS_WATCH", "CARGO_INCREMENTAL"] {
+                    assert_eq!(
+                        env[std::ffi::OsStr::new(key)],
+                        Some(std::ffi::OsStr::new("1"))
+                    );
+                }
+                let jobs = if args.first().is_some_and(|s| s == "run") {
+                    "2"
+                } else {
+                    "1"
+                };
+                assert_eq!(
+                    env[std::ffi::OsStr::new("CARGO_BUILD_JOBS")],
+                    Some(std::ffi::OsStr::new(jobs))
+                );
+                calls.lock().unwrap().push(args.clone());
+                // Neither compiler can reach this point unless the other has started.
+                if args.first().is_some_and(|s| s == "build") {
+                    barrier.wait();
+                }
+                Ok(())
+            },
+        )
         .unwrap();
-    assert_eq!(calls.len(), 6);
+    let calls = calls.into_inner().unwrap();
+    assert_eq!(calls.len(), 4);
     assert!(calls[0].ends_with(&["--".into(), "generate-app".into()]));
-    assert!(calls[5].iter().any(|s| s == "serve"));
+    assert!(!calls.iter().flatten().any(|s| s == "csr"));
     assert_eq!(
         std::fs::read(prepared.executable.unwrap()).unwrap(),
         b"binary"
     );
     assert!(!root.path().join(".build/browser").exists());
-    let empty = builder
+    builder
         .prepare(&Work::default(), |_, _| panic!("unexpected build"))
+        .unwrap()
+        .publish(root.path())
         .unwrap();
-    empty.publish(root.path()).unwrap();
-    let custom = Builder::new(root.path(), Some(Path::new("custom/native"))).unwrap();
-    assert_eq!(custom.native, root.path().join("custom/native"));
+    assert_eq!(
+        Builder::new(root.path(), Some(Path::new("custom/native")))
+            .unwrap()
+            .native,
+        root.path().join("custom/native")
+    );
     assert!(Builder::new(root.path(), Some(Path::new("/"))).is_err());
 }
 
-/// Any compile/bindgen failure preserves the last published browser products.
+/// Every critical failure waits for both scoped workers and leaves public products unchanged.
 #[test]
 fn failed_batches_never_publish_partial_bundles() {
-    for fail_at in 1..=6 {
-        let root = tempfile::tempdir().unwrap();
-        std::fs::create_dir_all(root.path().join(".build/browser")).unwrap();
-        std::fs::write(root.path().join(".build/browser/old"), "last good").unwrap();
+    for failure in ["generate-app", "serve", "hydrate", "bindgen"] {
+        let root = fixture();
+        std::fs::create_dir_all(root.path().join(".build/browser/hydrate")).unwrap();
+        std::fs::write(root.path().join(".build/browser/hydrate/old"), "last good").unwrap();
         let mut builder = Builder::new(root.path(), None).unwrap();
-        let mut calls = 0;
         assert!(
             builder
                 .prepare(
@@ -66,9 +98,14 @@ fn failed_batches_never_publish_partial_bundles() {
                         native: true,
                         ..Default::default()
                     },
-                    |_, _| {
-                        calls += 1;
-                        if calls == fail_at {
+                    |c, _| {
+                        let args = c
+                            .get_args()
+                            .map(|s| s.to_string_lossy())
+                            .collect::<Vec<_>>();
+                        if args.iter().any(|s| s == failure)
+                            || (failure == "bindgen" && c.get_program() == "wasm-bindgen")
+                        {
                             Err("build error".into())
                         } else {
                             Ok(())
@@ -77,39 +114,75 @@ fn failed_batches_never_publish_partial_bundles() {
                 )
                 .is_err()
         );
-        assert_eq!(calls, fail_at);
         assert_eq!(
-            std::fs::read(root.path().join(".build/browser/old")).unwrap(),
+            std::fs::read(root.path().join(".build/browser/hydrate/old")).unwrap(),
             b"last good"
         );
     }
 }
 
-/// Publication replaces a whole directory and restores the old bytes on a missing stage.
+/// Publishing one mode preserves the other mode; a missing stage restores the prior bytes.
 #[test]
-fn publishes_or_rolls_back_both_modes() {
-    let root = tempfile::tempdir().unwrap();
-    std::fs::create_dir_all(root.path().join(".build/dev/stage")).unwrap();
-    std::fs::write(root.path().join(".build/dev/stage/new"), "new").unwrap();
-    let prepared = Prepared {
-        browser: Some(root.path().join(".build/dev/stage")),
-        executable: None,
-    };
+fn publishes_or_rolls_back_each_mode() {
+    let root = fixture();
+    for mode in ["hydrate", "csr"] {
+        let source = root.path().join(".build/dev/browser").join(mode);
+        std::fs::create_dir_all(&source).unwrap();
+        std::fs::write(source.join("bundle"), mode).unwrap();
+        let prepared = Prepared {
+            browser: Some((source.clone(), mode)),
+            executable: None,
+        };
+        prepared.publish(root.path()).unwrap();
+        assert!(prepared.publish(root.path()).is_err());
+        assert_eq!(
+            std::fs::read_to_string(root.path().join(".build/browser").join(mode).join("bundle"))
+                .unwrap(),
+            mode
+        );
+        std::fs::create_dir_all(&source).unwrap();
+        std::fs::write(source.join("bundle"), "next").unwrap();
+        prepared.publish(root.path()).unwrap();
+    }
+    assert!(root.path().join(".build/browser/hydrate/bundle").exists());
+    assert!(root.path().join(".build/browser/csr/bundle").exists());
+}
+
+/// Background output is invisible until joined/published, and cancellation joins the worker.
+#[test]
+fn defers_csr_and_cancels_superseded_work() {
+    let root = fixture();
+    let (started, receive) = std::sync::mpsc::channel();
+    let mut worker = Csr::start_with(
+        Builder::new(root.path(), None).unwrap(),
+        move |_, _, cancel| {
+            started.send(()).unwrap();
+            while !cancel.load(Ordering::Relaxed) {
+                std::thread::yield_now();
+            }
+            Err("canceled".into())
+        },
+    );
+    receive.recv_timeout(Duration::from_secs(2)).unwrap();
+    assert!(!worker.finished());
+    assert!(!root.path().join(".build/browser/csr").exists());
+    // Drop sets the flag and joins; a later worker can reuse this exact staging directory.
+    drop(worker);
+    worker = Csr::start_with(Builder::new(root.path(), None).unwrap(), |_, _, _| Ok(()));
+    let prepared = worker.finish().unwrap();
+    assert!(worker.finish().is_err());
     prepared.publish(root.path()).unwrap();
-    assert!(root.path().join(".build/browser/new").exists());
-    assert!(prepared.publish(root.path()).is_err());
-    assert!(root.path().join(".build/browser/new").exists());
-    std::fs::create_dir_all(root.path().join(".build/dev/stage")).unwrap();
-    std::fs::write(root.path().join(".build/dev/stage/next"), "next").unwrap();
-    prepared.publish(root.path()).unwrap();
-    assert!(root.path().join(".build/browser/next").exists());
-    assert!(!root.path().join(".build/dev/previous-browser").exists());
+    assert!(root.path().join(".build/browser/csr").is_dir());
+    let mut failed = Csr::start_with(Builder::new(root.path(), None).unwrap(), |_, _, _| {
+        Err("CSR failed".into())
+    });
+    assert!(failed.finish().is_err());
 }
 
 /// Runtime dev environment never changes the plain serve command's defaults.
 #[test]
 fn configures_only_the_owned_dev_child() {
-    let root = tempfile::tempdir().unwrap();
+    let root = fixture();
     let options = super::super::Options {
         port: 3300,
         reload_port: 3301,
