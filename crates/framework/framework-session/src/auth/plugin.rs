@@ -11,16 +11,17 @@ use std::sync::Arc;
 /// Missing auth config still installs the three source events. No Engine, email,
 /// session or CSRF service is required during startup; each process reads its actual
 /// dependencies at the source access point. Select the CSRF/identity constituents
-/// independently, or select `composite::register` for the original auth/email/identity group.
+/// independently, or select `composite::register_with::<M>` for the original auth/email/identity group.
 ///
 /// ```
 /// use std::sync::Arc;
 /// use stackpress_framework_session::auth::{self, Hooks};
 /// use stackpress_server::ServerBuilder;
 /// # #[tokio::main(flavor = "current_thread")]
-/// # async fn main() -> stackpress_lib::Result<()> {
+/// # async fn main() {}
+/// # async fn example<M: stackpress_framework_sql::source::SessionModels>() -> stackpress_lib::Result<()> {
 /// let mut app = ServerBuilder::new();
-/// app.plugin("auth", auth::register)?;
+/// app.plugin("auth", auth::register_with::<M>)?;
 /// let server = Arc::new(app.build().await.map_err(|failure| failure.error)?);
 /// let hooks = server.host().service::<Hooks>()?;
 /// hooks.bind(&server, tokio::runtime::Handle::current());
@@ -32,9 +33,6 @@ use std::sync::Arc;
 /// ```
 /// # Errors
 /// Preserves existing duplicate typed-section/service and registration errors.
-pub fn register(app: &mut ServerBuilder) -> Result<()> {
-    register_with::<stackpress_framework_models::Models>(app)
-}
 /// Select auth over the application's generated Profile/Auth family; routes and guards stay source-owned.
 pub fn register_with<M: SessionModels>(app: &mut ServerBuilder) -> Result<()> {
     app.config_section("auth", AuthSection::default(), |_| Ok(()))?;

@@ -1,15 +1,15 @@
 //! Opt-in G46 searches through the real Application/Session stores and their source DDL.
+use crate::models::stores::application::ApplicationActions;
+use crate::models::stores::session::SessionActions;
 
-#[path = "../../framework-sql/tests/support/g54.rs"]
+#[path = "fixtures/g54.rs"]
 mod g54;
-#[path = "../../framework-session/tests/live/support.rs"]
+#[path = "fixtures/live_support.rs"]
 mod support;
 
+use crate::models::stores::profile::ProfileActions;
 use serde_json::json;
-use stackpress_framework_api::models::{
-    ApplicationActions, Record, SessionActions, StoreQuery, date,
-};
-use stackpress_framework_session::storage::ProfileActions;
+use stackpress_framework_api::models::{Record, StoreQuery, date};
 use stackpress_sql::Engine;
 use std::sync::Arc;
 
@@ -37,15 +37,15 @@ async fn scenario(engine: Arc<Engine>) -> support::TestResult<()> {
 async fn scenario_steps(engine: Arc<Engine>) -> support::TestResult<()> {
     let profile = ProfileActions::new(
         engine.clone(),
-        stackpress_framework_session::storage::ProfileStore::new("seed".into(), 0),
+        crate::models::stores::profile::ProfileStore::new("seed".into(), 0),
     );
     let app = ApplicationActions::new(
         engine.clone(),
-        stackpress_framework_api::models::ApplicationStore::new("seed".into(), 0),
+        crate::models::stores::application::ApplicationStore::new("seed".into(), 0),
     );
     let session = SessionActions::new(
         engine,
-        stackpress_framework_api::models::SessionStore::new("seed".into(), 0),
+        crate::models::stores::session::SessionStore::new("seed".into(), 0),
     );
     println!("stage: Profile/Application/Session install");
     profile.install().await?;
@@ -137,3 +137,7 @@ async fn scenario_steps(engine: Arc<Engine>) -> support::TestResult<()> {
 fn main() {
     support::main(scenario);
 }
+
+#[allow(dead_code, missing_docs, unexpected_cfgs)]
+#[path = "fixtures/models/mod.rs"]
+mod models;

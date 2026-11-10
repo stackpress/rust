@@ -7,12 +7,14 @@ application migration. No session plugin invokes installation or maintenance.
 
 <!-- example: server -->
 ```rust
+// Generate this module from the application Idea file before compiling.
+#[allow(dead_code, missing_docs, unexpected_cfgs)]
+#[path = "models/mod.rs"]
+mod models;
+use models::stores::profile::{ProfileActions, ProfileStore};
 use stackpress_framework_session::{
     columns::Record,
-    storage::{
-        AccountActions, DefaultModels, PasswordConfig, ProfileActions, ProfileStore, Result,
-        StoreQuery,
-    },
+    storage::{AccountActions, PasswordConfig, Result, StoreQuery},
 };
 use stackpress_sql::Engine;
 use std::sync::Arc;
@@ -20,7 +22,7 @@ use std::sync::Arc;
 pub async fn account(engine: Arc<Engine>) -> Result<()> {
     let profiles =
         ProfileActions::new(engine.clone(), ProfileStore::new("database-seed".into(), 0));
-    let auth = AccountActions::<DefaultModels>::new(
+    let auth = AccountActions::<models::stores::family::Models>::new(
         engine,
         "database-seed".into(),
         0,
@@ -39,7 +41,7 @@ pub async fn account(engine: Arc<Engine>) -> Result<()> {
 }
 ```
 
-`ProfileSchema` / `AuthSchema` require `native`, independently of SQL. Import
+`ProfileSchema` / `AuthSchema` belong to the application-generated module. Import
 `columns::SourceSchema` for `new(String, offset_minutes)` and static `describe()`/`catalog()`.
 `columns()` and `column(name)` expose generated `SourceColumn` descriptors: source/SQL
 names, primitive codec and the authored Field with defaults, rules and UI metadata.

@@ -6,7 +6,7 @@ use stackpress_framework_session::columns::SourceSchema;
 
 /// Source metadata is explicitly evaluated by callers, never by startup.
 fn describe() -> Vec<Model> {
-    vec![stackpress_framework_session::profile::ProfileSchema::describe()]
+    vec![crate::models::source::profile::ProfileSchema::describe()]
 }
 /// An application-owned model queues a real capability for Listen.
 fn first_model(app: &mut ServerBuilder) -> Result<()> {
@@ -37,8 +37,12 @@ fn second_admin(app: &mut ServerBuilder) -> Result<()> {
 }
 static CATALOG: CompiledClient = CompiledClient {
     bindings: stackpress_framework::FrameworkBindings {
-        session: None,
-        api: None,
+        session: Some(
+            stackpress_framework_session::composite::register_with::<
+                crate::models::stores::family::Models,
+            >,
+        ),
+        api: Some(stackpress_framework_api::register_with::<crate::models::stores::family::Models>),
     },
     build: "m0-proof",
     describe,
@@ -50,7 +54,9 @@ static CATALOG: CompiledClient = CompiledClient {
         },
         CompiledModel {
             name: "api",
-            listen: Some(stackpress_framework_api::sql::register),
+            listen: Some(
+                stackpress_framework_api::sql::register_with::<crate::models::stores::family::Models>,
+            ),
             admin: Some(second_admin),
         },
         CompiledModel {
@@ -124,14 +130,24 @@ async fn compiled_catalog_and_api_sql_prepare_real_ordered_phases_once() {
 async fn queued_account_registration_matches_source_listen_order() {
     static ACCOUNT: CompiledClient = CompiledClient {
         bindings: stackpress_framework::FrameworkBindings {
-            session: None,
-            api: None,
+            session: Some(
+                stackpress_framework_session::composite::register_with::<
+                    crate::models::stores::family::Models,
+                >,
+            ),
+            api: Some(
+                stackpress_framework_api::register_with::<crate::models::stores::family::Models>,
+            ),
         },
         build: "immediate-account-boundary",
         describe,
         models: &[CompiledModel {
             name: "account",
-            listen: Some(stackpress_framework_session::account::events::register_listen),
+            listen: Some(
+                stackpress_framework_session::account::events::register_listen_with::<
+                    crate::models::stores::family::Models,
+                >,
+            ),
             admin: None,
         }],
     };
@@ -161,8 +177,14 @@ async fn queued_account_registration_matches_source_listen_order() {
 async fn empty_catalog_is_present_and_repeated_registration_preserves_native_error() {
     static EMPTY: CompiledClient = CompiledClient {
         bindings: stackpress_framework::FrameworkBindings {
-            session: None,
-            api: None,
+            session: Some(
+                stackpress_framework_session::composite::register_with::<
+                    crate::models::stores::family::Models,
+                >,
+            ),
+            api: Some(
+                stackpress_framework_api::register_with::<crate::models::stores::family::Models>,
+            ),
         },
         build: "empty",
         describe: Vec::new,

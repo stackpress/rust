@@ -93,10 +93,8 @@ fn column_for_oracle(declaration: &str) -> SourceColumn {
 
 #[test]
 fn original_fieldset_and_enum_templates_pin_nested_and_schema_codec_order() {
-    let fixture: serde_json::Value = serde_json::from_str(include_str!(
-        "../../../framework-models/tests/extension-oracles.json"
-    ))
-    .unwrap();
+    let fixture: serde_json::Value =
+        serde_json::from_str(include_str!("../extension-oracles.json")).unwrap();
     let input = "type Address { label String zip Integer } model Entry { address Address? addresses Address[] }";
     let parsed = parse("fieldset.idea", input, &CompileInputs::default()).unwrap();
     let graph = Schema::normalize_source(&parsed, NormalizeOptions::default(), &[]).unwrap();

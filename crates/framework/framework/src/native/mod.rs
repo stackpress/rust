@@ -16,7 +16,7 @@ use stackpress_server::ServerBuilder;
 pub type Register = fn(&mut ServerBuilder) -> Result<()>;
 
 /// Application-generated specializations selected at the original plugin stages.
-/// Empty bindings retain the existing generated-default constituents. Data listeners
+/// Selected session/API stages require the app's generated bindings. Data listeners
 /// remain the catalog's SQL-phase callbacks; these bindings never add a second inventory.
 #[derive(Clone, Copy, Debug, Default)]
 pub struct FrameworkBindings {
@@ -52,7 +52,9 @@ pub struct CompiledClient {
 ///
 /// # Errors
 /// Propagates the first constituent's existing registration failure. Missing config/client
-/// does not require an Engine or create an implicit guard. Startup errors remain build errors.
+/// does not require an Engine or create an implicit guard. Selected session/API stages require
+/// [`register_with`] and their generated bindings; omission returns a construction error.
+/// Startup errors remain build errors.
 #[cfg(any(
     feature = "server-commands",
     feature = "schema-client",
@@ -74,7 +76,8 @@ pub fn register(app: &mut ServerBuilder) -> Result<()> {
 /// Wrap this call in a named application function for `ServerBuilder::plugin`. Callbacks
 /// prepare the existing startup queues; this function does not re-open a running host.
 /// # Errors
-/// Propagates the first real callback/constituent error without rollback or partial publication.
+/// Returns a descriptive error for a missing selected session/API binding. Propagates the
+/// first callback/constituent error without rollback or partial publication.
 #[cfg(any(
     feature = "server-commands",
     feature = "schema-client",
@@ -132,7 +135,7 @@ fn select(app: &mut ServerBuilder, catalog: Option<&'static CompiledClient>) -> 
         observed("sql");
         commands::register_sql(app)?;
         // Existing compiled registrars prepare their own phases. Account catalogs select
-        // account::events::register_listen; the immediate direct API remains independent.
+        // account::events::register_listen_with; the immediate direct API remains independent.
         if let Some(client) = catalog {
             for model in client.models {
                 if let Some(listen) = model.listen {
@@ -149,17 +152,23 @@ fn select(app: &mut ServerBuilder, catalog: Option<&'static CompiledClient>) -> 
     #[cfg(feature = "session")]
     {
         observed("session");
+        // A selected stage requires the application's generated collaborator (G59).
         let register = catalog
             .and_then(|client| client.bindings.session)
-            .unwrap_or(stackpress_framework_session::composite::register);
+            .ok_or_else(|| stackpress_lib::Error::new(
+                "missing client.bindings.session: provide the application-generated composite::register_with::<Models> binding",
+            ))?;
         register(app)?;
     }
     #[cfg(feature = "api")]
     {
         observed("api");
+        // A selected stage requires the application's generated collaborator (G59).
         let register = catalog
             .and_then(|client| client.bindings.api)
-            .unwrap_or(stackpress_framework_api::register);
+            .ok_or_else(|| stackpress_lib::Error::new(
+                "missing client.bindings.api: provide the application-generated stackpress_framework_api::register_with::<Models> binding",
+            ))?;
         register(app)?;
     }
     #[cfg(feature = "admin")]

@@ -1,11 +1,13 @@
 //! Actual SQLite source Store/Actions behavior, including rollback and sequential partial effects.
+use crate::models::stores::auth::AuthActions;
+use crate::models::stores::auth::AuthStore;
+use crate::models::stores::profile::ProfileActions;
+use crate::models::stores::profile::ProfileStore;
 use serde_json::{Value as JsonValue, json};
 use stackpress_framework_session::columns::Value;
 use stackpress_framework_session::{
     columns::{self, Record},
-    storage::{
-        AuthActions, AuthStore, BatchMode, PasswordConfig, ProfileActions, ProfileStore, StoreQuery,
-    },
+    storage::{BatchMode, PasswordConfig, StoreQuery},
 };
 use stackpress_sql::{DialectId, Engine, Field, Render, Sql, SqlType};
 use stackpress_sql_sqlite::{SqliteDatabase, SqliteOptions};
@@ -22,11 +24,11 @@ async fn database() -> (tempfile::TempDir, Arc<Engine>, ProfileActions, AuthActi
     let engine = Arc::new(Engine::new(db));
     let profile = ProfileActions::new(
         engine.clone(),
-        stackpress_framework_session::storage::ProfileStore::new("database-seed".into(), 0),
+        crate::models::stores::profile::ProfileStore::new("database-seed".into(), 0),
     );
     let auth = AuthActions::new(
         engine.clone(),
-        stackpress_framework_session::storage::AuthStore::new("database-seed".into(), 0),
+        crate::models::stores::auth::AuthStore::new("database-seed".into(), 0),
     );
     profile.install().await.unwrap();
     auth.install().await.unwrap();
@@ -559,7 +561,7 @@ async fn predicates_sort_projection_join_and_maintenance() {
 async fn password_precedence_upsert_and_validation() {
     let (_dir, engine, profile, _) = database().await;
     let auth = stackpress_framework_session::storage::AccountActions::<
-        stackpress_framework_models::Models,
+        crate::models::stores::family::Models,
     >::new(
         engine.clone(),
         "database-seed".into(),
@@ -677,7 +679,7 @@ use stackpress_framework_schema::source::SourceSchema;
 /// Bind account orchestration to the same generated store environment.
 fn account(
     actions: &AuthActions,
-) -> stackpress_framework_session::storage::AccountActions<stackpress_framework_models::Models> {
+) -> stackpress_framework_session::storage::AccountActions<crate::models::stores::family::Models> {
     stackpress_framework_session::storage::AccountActions::new(
         actions.engine.clone(),
         actions.store.schema.seed().into(),

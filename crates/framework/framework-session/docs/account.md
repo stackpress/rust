@@ -9,13 +9,17 @@ The default and native-identity-only features do not select a renderer or phone 
 
 <!-- example: server -->
 ```rust
+// Generate this module from the application Idea file before compiling.
+#[allow(dead_code, missing_docs, unexpected_cfgs)]
+#[path = "models/mod.rs"]
+mod models;
 use stackpress_framework_session::{account, composite};
 use stackpress_lib::Result;
 use stackpress_server::ServerBuilder;
 
 pub fn account_application(app: &mut ServerBuilder) -> Result<()> {
-    account::events::register(app)?; // optional explicit source SQL event adapters
-    composite::register(app)?;
+    account::events::register_with::<models::stores::family::Models>(app)?; // optional explicit source SQL event adapters
+    composite::register_with::<models::stores::family::Models>(app)?;
     Ok(())
 }
 ```
@@ -48,7 +52,7 @@ The reusable loader is `account::load_account_profile(&Invocation, Value) -> Res
 base64 data URL. PNG compression/QR encoder internals are supplied by the approved Rust
 libraries; URI, correction level, margin, scale and displayed enrollment data follow source.
 
-`account::events::register` selects auth-search/update/create/remove and
+`account::events::register_with::<models::stores::family::Models>` selects auth-search/update/create/remove and
 profile-detail/update/remove. These generated-style events pass through an existing body,
 non-200 response or missing Engine. Their database.seed fallback is empty, as in the
 original generated SQL events; auth signup/signin's Actions.make fallback remains abc123.

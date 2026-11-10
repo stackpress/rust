@@ -30,15 +30,15 @@ async fn main() -> Result<()> {
         .await
         .map_err(stackpress_lib::Error::from_source)?,
     ));
-    let actions = stackpress_framework_session::storage::AuthActions::new(
+    let actions = crate::models::stores::auth::AuthActions::new(
         engine.clone(),
-        stackpress_framework_session::storage::AuthStore::new(
+        crate::models::stores::auth::AuthStore::new(
             "DATABASE-SEED-MUST-NOT-REACH-BROWSER".into(),
             0,
         ),
     );
     let account = stackpress_framework_session::storage::AccountActions::<
-        stackpress_framework_models::Models,
+        crate::models::stores::family::Models,
     >::new(
         engine.clone(),
         "DATABASE-SEED-MUST-NOT-REACH-BROWSER".into(),
@@ -87,8 +87,14 @@ async fn main() -> Result<()> {
             Ok(Flow::Continue)
         })
     }))?;
-    app.plugin("source-sql", account::events::register)?;
-    app.plugin("auth", auth::register)?;
+    app.plugin(
+        "source-sql",
+        account::events::register_with::<crate::models::stores::family::Models>,
+    )?;
+    app.plugin(
+        "auth",
+        auth::register_with::<crate::models::stores::family::Models>,
+    )?;
     app.plugin("email", stackpress_framework_email::plugin::register)?;
     app.plugin("identity", stackpress_framework_session::plugin::register)?;
     let server = Arc::new(app.build().await.map_err(|error| error.error)?);
@@ -209,3 +215,7 @@ async fn main() -> Result<()> {
     );
     Ok(())
 }
+
+#[allow(dead_code, missing_docs, unexpected_cfgs)]
+#[path = "account_models/mod.rs"]
+mod models;

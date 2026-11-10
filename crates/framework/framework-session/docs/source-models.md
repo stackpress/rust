@@ -1,18 +1,17 @@
 # Generated Profile and Auth families
 
-The shipped `schema.idea` is the source for the default Profile/Auth descriptors. Import
+The shipped `schema.idea` is the source for application-generated Profile/Auth descriptors. Import
 `stackpress-session/schema.idea` through PackageLoader, redeclare Profile with additional
 columns, then run the public source emitters. For a session-only graph declare Application
 and Session external: the links remain in metadata, with no hidden API models or tables.
-The [default model package](../../framework-models/README.md) supplies the closed stock family.
+Each application owns its generated family. The [local fixture generator](../tests/fixtures/generation.rs) demonstrates the public emitters and explicit external links.
 
 ## Select a family
 
 `auth::register_with<M: SessionModels>(&mut ServerBuilder) -> Result<()>` selects the
 handwritten auth processes over M's actual associated actions. `composite::register_with`
 keeps auth → email → identity. `account::events::{register_with,register_listen_with}`
-select the same seven account data events, immediately or in Listen. Ordinary functions
-and default-family `register` remain independently usable; these functions create no
+select the same seven account data events, immediately or in Listen. The generic functions remain independently usable; these functions create no
 Engine, schema, guard or route ownership policy.
 
 `storage::AccountActions<M>` is the direct-library collaborator. Construct it with the
@@ -23,16 +22,15 @@ populate additional fields. Signin joins the same extended Profile.
 
 ## Existing paths and boundaries
 
-ProfileSchema/AuthSchema and ProfileStore/AuthStore/ProfileActions/AuthActions retain
-their public paths as aliases to generated defaults. Import `columns::SourceSchema`
-for `new(String, offset_minutes)` and static `describe()`/`catalog()`; schemas expose
-columns()/column(). Construct a CRUD action with `new(engine, Store::new(seed, offset))`,
-or use a generated SourceModel's actions factory. `storage::DefaultModels` names the
-stock family for `AccountActions<DefaultModels>`; custom apps supply their own family.
-RecordSchema aliases the lower metadata-backed schema. StoreQuery uses native `Value` q; native family transfer preserves Dates, absent/null and insertion order.
-The SQL default package feature preserves its existing surface; schema-only consumers
-use default-features=false. Browser renderers contain portable UI, never native schemas,
-codec seeds, Engine or action factories.
+Import ProfileSchema/AuthSchema and the model/store/action types from the application's own
+generated module. The framework supplies no stock family or model aliases. Import
+`columns::SourceSchema` for `new(String, offset_minutes)` and static `describe()`/`catalog()`;
+schemas expose columns()/column(). Construct CRUD actions with `new(engine, Store::new(seed, offset))`,
+or use the generated SourceModel's actions factory. Supply that family's `Models` to
+`storage::AccountActions<Models>`. RecordSchema aliases the lower metadata-backed schema.
+StoreQuery uses native Value q; native family transfer preserves Dates, absent/null and insertion order.
+Browser renderers contain portable UI, while native schemas, codec seeds, Engine and factories
+remain in the native application module.
 
 Under G53, `eq` accepts one value per field; arrays are misuse and retain source indexed-path
 behavior. `has: {tags: ["red", "blue"]}` requires both values in the list column on every

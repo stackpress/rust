@@ -1,4 +1,5 @@
 //! Real nine-stage native application shared by direct, aggregate, facade and disabled-API builds.
+use self::models::stores::auth::AuthActions;
 use crate::{framework, generated, pages_host};
 use serde_json::{Value, json};
 use stackpress_framework_schema::Model;
@@ -6,7 +7,6 @@ use stackpress_framework_session::columns::SourceSchema;
 use stackpress_framework_session::{
     Service,
     auth::{self, Hooks},
-    storage::AuthActions,
 };
 use stackpress_framework_sql::operations::{Operation, OperationPolicy, Policy};
 use stackpress_lib::{Flow, Invocation, Request, Response, Result, queue::task};
@@ -51,15 +51,22 @@ fn admin(app: &mut ServerBuilder) -> Result<()> {
 /// Compiled source-client metadata includes real account model definitions.
 fn describe() -> Vec<Model> {
     vec![
-        stackpress_framework_session::profile::ProfileSchema::describe(),
-        auth::AuthSchema::describe(),
+        self::models::source::profile::ProfileSchema::describe(),
+        self::models::source::auth::AuthSchema::describe(),
     ]
 }
 
 /// Application-owned immutable model catalog; missing callbacks remain absent.
 static CLIENT: framework::CompiledClient = framework::CompiledClient {
     bindings: framework::FrameworkBindings {
-        session: None,
+        session: Some(
+            stackpress_framework_session::composite::register_with::<
+                self::models::stores::family::Models,
+            >,
+        ),
+        #[cfg(feature = "api")]
+        api: Some(stackpress_framework_api::register_with::<self::models::stores::family::Models>),
+        #[cfg(not(feature = "api"))]
         api: None,
     },
     build: "slice11-private-client-v1",
@@ -72,13 +79,19 @@ static CLIENT: framework::CompiledClient = framework::CompiledClient {
         },
         framework::CompiledModel {
             name: "Account",
-            listen: Some(stackpress_framework_session::account::events::register_listen),
+            listen: Some(
+                stackpress_framework_session::account::events::register_listen_with::<
+                    self::models::stores::family::Models,
+                >,
+            ),
             admin: None,
         },
         #[cfg(feature = "api")]
         framework::CompiledModel {
             name: "Api",
-            listen: Some(stackpress_framework_api::sql::register),
+            listen: Some(
+                stackpress_framework_api::sql::register_with::<self::models::stores::family::Models>,
+            ),
             admin: None,
         },
     ],
@@ -129,7 +142,9 @@ fn direct(app: &mut ServerBuilder) -> Result<()> {
         }
     }
     framework::view::register(app)?;
-    stackpress_framework_session::composite::register(app)?;
+    stackpress_framework_session::composite::register_with::<self::models::stores::family::Models>(
+        app,
+    )?;
     #[cfg(feature = "api")]
     stackpress_framework_api::register(app)?;
     for model in CLIENT.models {
@@ -192,14 +207,14 @@ pub async fn prove(
     }
     let accounts = AuthActions::new(
         engine.clone(),
-        stackpress_framework_session::storage::AuthStore::new(
+        self::models::stores::auth::AuthStore::new(
             "DATABASE-SEED-MUST-NOT-REACH-BROWSER".into(),
             0,
         ),
     );
-    let profiles = stackpress_framework_session::storage::ProfileActions::new(
+    let profiles = self::models::stores::profile::ProfileActions::new(
         engine.clone(),
-        stackpress_framework_session::storage::ProfileStore::new(
+        self::models::stores::profile::ProfileStore::new(
             "DATABASE-SEED-MUST-NOT-REACH-BROWSER".into(),
             0,
         ),
@@ -213,15 +228,15 @@ pub async fn prove(
         .await?;
     #[cfg(feature = "api")]
     {
-        stackpress_framework_api::models::ApplicationActions::new(
+        self::models::stores::application::ApplicationActions::new(
             engine.clone(),
-            stackpress_framework_api::models::ApplicationStore::new("".into(), 0),
+            self::models::stores::application::ApplicationStore::new("".into(), 0),
         )
         .install()
         .await?;
-        stackpress_framework_api::models::SessionActions::new(
+        self::models::stores::session::SessionActions::new(
             engine.clone(),
-            stackpress_framework_api::models::SessionStore::new("".into(), 0),
+            self::models::stores::session::SessionStore::new("".into(), 0),
         )
         .install()
         .await?;
@@ -388,3 +403,7 @@ pub async fn prove(
     engine.close().await?;
     Ok(inventory)
 }
+
+#[allow(dead_code, missing_docs, unexpected_cfgs)]
+#[path = "../generated-models/mod.rs"]
+pub mod models;

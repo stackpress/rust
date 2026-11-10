@@ -51,3 +51,14 @@ mod account_ui;
 #[cfg(all(feature = "auth-server", not(target_arch = "wasm32")))]
 #[path = "main/composite.rs"]
 mod composite;
+
+#[path = "fixtures/generation.rs"]
+mod fixture_generation;
+#[allow(dead_code, missing_docs, unexpected_cfgs)]
+#[path = "fixtures/models/mod.rs"]
+mod models;
+/// A stale fixture fails without modifying output; the example regenerates it explicitly.
+#[test]
+fn generated_models_are_fresh() {
+    fixture_generation::fixtures(true).unwrap();
+}

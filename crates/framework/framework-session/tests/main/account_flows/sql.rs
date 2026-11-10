@@ -1,9 +1,10 @@
 //! Real SQLite proves account writes, source unchecked branches and insertion-ordered exports.
 use super::*;
+use crate::models::stores::auth::AuthActions;
 use stackpress_framework_session::{
     auth,
     columns::{Record, Value},
-    storage::{AuthActions, StoreQuery},
+    storage::StoreQuery,
 };
 use stackpress_sql::Engine;
 use stackpress_sql_sqlite::{SqliteDatabase, SqliteOptions};
@@ -19,7 +20,7 @@ async fn database() -> (tempfile::TempDir, Arc<Engine>, AuthActions) {
     let engine = Arc::new(Engine::new(db));
     let actions = AuthActions::new(
         engine.clone(),
-        stackpress_framework_session::storage::AuthStore::new("database-seed".into(), 0),
+        crate::models::stores::auth::AuthStore::new("database-seed".into(), 0),
     );
     account(&actions).profile().install().await.unwrap();
     actions.install().await.unwrap();
@@ -56,7 +57,7 @@ async fn host(engine: Option<Arc<Engine>>) -> Server {
         },
     ))
     .unwrap();
-    account::events::register(&mut app).unwrap();
+    account::events::register_with::<crate::models::stores::family::Models>(&mut app).unwrap();
     app.on("page-account", account::account).unwrap();
     app.on("page-update", account::update).unwrap();
     app.on("page-password", account::password).unwrap();
@@ -426,7 +427,7 @@ use stackpress_framework_schema::source::SourceSchema;
 /// Bind account orchestration to the same generated store environment.
 fn account(
     actions: &AuthActions,
-) -> stackpress_framework_session::storage::AccountActions<stackpress_framework_models::Models> {
+) -> stackpress_framework_session::storage::AccountActions<crate::models::stores::family::Models> {
     stackpress_framework_session::storage::AccountActions::new(
         actions.engine.clone(),
         actions.store.schema.seed().into(),

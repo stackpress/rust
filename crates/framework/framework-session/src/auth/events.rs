@@ -209,15 +209,23 @@ pub async fn signout(_: &mut Request, res: &mut Response, _: Invocation<'_>) -> 
 /// It has no global operation policy; applications choose which events to expose.
 /// # Errors
 /// Native input/host failures propagate; source SQL/action errors become public failures.
-pub async fn search(req: &mut Request, res: &mut Response, inv: Invocation<'_>) -> Result<Flow> {
+pub async fn search_with<M: SessionModels>(
+    req: &mut Request,
+    res: &mut Response,
+    inv: Invocation<'_>,
+) -> Result<Flow> {
     // One generated-SQL adapter owns source seed/skip/filter mechanics; retain this public path.
-    crate::account::events::auth_search(req, res, inv).await
+    crate::account::events::auth_search_with::<M>(req, res, inv).await
 }
 /// Direct auth-update path reuses the same generated source SQL adapter as account pages.
 /// # Errors
 /// Preserves source action and native response errors, with missing-engine pass-through.
-pub async fn update(req: &mut Request, res: &mut Response, inv: Invocation<'_>) -> Result<Flow> {
-    crate::account::events::auth_update(req, res, inv).await
+pub async fn update_with<M: SessionModels>(
+    req: &mut Request,
+    res: &mut Response,
+    inv: Invocation<'_>,
+) -> Result<Flow> {
+    crate::account::events::auth_update_with::<M>(req, res, inv).await
 }
 /// Explicit JSON projection for wire/SSR adapters; rich Dates become canonical ISO values.
 /// # Errors
@@ -244,13 +252,4 @@ pub(crate) fn consumed_text(inv: &Invocation<'_>, consumed: &Value) -> Result<St
         .map_err(|cause| stackpress_lib::Error::new("Date display failed").with_cause(cause));
     }
     Ok(columns::string(consumed))
-}
-
-/// Existing source signup path, selecting the checked-in generated default family.
-pub async fn signup(req: &mut Request, res: &mut Response, inv: Invocation<'_>) -> Result<Flow> {
-    signup_with::<stackpress_framework_models::Models>(req, res, inv).await
-}
-/// Existing source signin path, selecting the same generated default family as signup.
-pub async fn signin(req: &mut Request, res: &mut Response, inv: Invocation<'_>) -> Result<Flow> {
-    signin_with::<stackpress_framework_models::Models>(req, res, inv).await
 }

@@ -52,12 +52,16 @@ def registry(data):
     ]
 
 
+def verify_root_registry(current, expected):
+    """Permit workspace-edge edits while freezing every external identity and checksum."""
+    assert registry(current) == expected, 'root registry tuples/order changed'
+    assert len(expected) == 699, 'unexpected root registry baseline'
+
+
 def verify(baseline):
-    """Reject root mutation and every external tuple outside the root subset plus G58."""
+    """Reject registry mutation and every external tuple outside the root subset plus G58."""
     current = ROOT_LOCK.read_bytes()
-    assert hashlib.sha256(current).hexdigest() == baseline['root_sha256'], 'root lock bytes changed'
-    assert registry(current) == baseline['registry'], 'root registry tuples/order changed'
-    assert len(baseline['registry']) == 699, 'unexpected root registry baseline'
+    verify_root_registry(current, baseline['registry'])
 
     # Pruning unused root packages is expected in a standalone workspace. Neither a new
     # registry version/checksum outside G58 nor a git-sourced package is permitted.
@@ -71,13 +75,13 @@ def verify(baseline):
     manifest = tomllib.loads((BLOG / 'xtask/Cargo.toml').read_text())['dependencies']['tungstenite']
     assert manifest == {'version': '=0.29.0', 'default-features': False, 'features': ['handshake']}, 'G58 requires minimal handshake features'
     assert all(not p.get('source') or p['source'].startswith('registry+') for p in packages)
-    print(f'locks: root 699 identical tuples/bytes; example {len(selected)} registry tuples are a root subset plus exactly the six G58 tuples')
+    print(f'locks: root 699 identical registry tuples; example {len(selected)} registry tuples are a root subset plus exactly the six G58 tuples')
 
 
 def check():
     """Check against the committed root without depending on a resolution attempt marker."""
-    # Git reads local committed source only. Comparing the worktree bytes with that source
-    # also detects an accidental root-lock edit, rather than blessing it as a new baseline.
+    # Workspace package/edge edits are legitimate before commit. Registry identities
+    # remain anchored to HEAD; the outer gate separately freezes bytes during its run.
     committed = subprocess.check_output(['git', '-C', str(ROOT), 'show', 'HEAD:Cargo.lock'])
     verify({'root_sha256': hashlib.sha256(committed).hexdigest(),
             'registry': registry(committed)})
@@ -121,6 +125,7 @@ def seed(release=None):
         )
     finally:
         # This must be the first action after resolution, including a failed Cargo process.
+        assert ROOT_LOCK.read_bytes() == root_bytes, 'root lock bytes changed during seed'
         verify(baseline)
     return result.returncode
 

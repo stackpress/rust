@@ -8,6 +8,10 @@ The model callback queues account handlers for Listen. The admin callback queues
 
 <!-- example: full -->
 ```rust
+// Generate this module from the application Idea file before compiling.
+#[allow(dead_code, missing_docs, unexpected_cfgs)]
+#[path = "models/mod.rs"]
+mod models;
 use stackpress_framework::{CompiledClient, CompiledModel};
 use stackpress_framework_schema::Model;
 use stackpress_framework_session::columns::SourceSchema;
@@ -29,19 +33,25 @@ fn admin(app: &mut ServerBuilder) -> Result<()> {
 }
 
 fn describe() -> Vec<Model> {
-    vec![stackpress_framework_session::profile::ProfileSchema::describe()]
+    vec![models::source::profile::ProfileSchema::describe()]
 }
 
 static CLIENT: CompiledClient = CompiledClient {
     bindings: stackpress_framework::FrameworkBindings {
-        session: None,
-        api: None,
+        session: Some(
+            stackpress_framework_session::composite::register_with::<models::stores::family::Models>,
+        ),
+        api: Some(stackpress_framework_api::register_with::<models::stores::family::Models>),
     },
     build: "docs-account-v1",
     describe,
     models: &[CompiledModel {
         name: "account",
-        listen: Some(stackpress_framework_session::account::events::register_listen),
+        listen: Some(
+            stackpress_framework_session::account::events::register_listen_with::<
+                models::stores::family::Models,
+            >,
+        ),
         admin: Some(admin),
     }],
 };
@@ -85,8 +95,9 @@ Direct source adapters for server/schema/language/view live in this crate, so th
 The build-host-only `commands::source_client::emit` accepts SourceGraph, source UI
 definitions, Options and OutputPlan. One transform owns source/stores/ui/client. Options
 selects compiled session/API registrar paths and an application admin callback; missing
-bindings remain absent in emitted code. A supplied CompiledClient's empty FrameworkBindings
-retains the aggregate's generated-default session/API registrars.
+bindings remain absent in emitted code. A supplied CompiledClient's selected session/API bindings
+must point to the application's generic registrars. Missing selected bindings return
+a descriptive construction error, including the path to provide.
 
 The [maintained source input](../../consumers/build-host/source.idea) imports
 stackpress/stackpress.idea and appends Profile.nickname. [Build-host](../../consumers/build-host/src/main.rs)

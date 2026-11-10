@@ -89,6 +89,14 @@ fn source(context: &TransformContext<'_>, output: &mut OutputPlan) -> Result<()>
     source_client::emit(&graph, &definitions, &options, output)
 }
 
+/// The ordinary native consumer also generates its unextended account/API family.
+fn models(context: &TransformContext<'_>, output: &mut OutputPlan) -> Result<()> {
+    let graph = Schema::normalize_source(context.schema(), Default::default(), &[])
+        .map_err(transform_error)?;
+    emit_source_contracts(&graph, output)?;
+    stackpress_framework_sql::codegen::emit_source_stores(&graph, output)
+}
+
 /// Explicit generation/check operation, with no runtime consumer or process listener.
 fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
     let base = Path::new(env!("CARGO_MANIFEST_DIR"));
@@ -112,6 +120,27 @@ fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
         report.is_current(),
         "the existing Typed consumer fixture is stale"
     );
+    let mut models_registry = Registry::new();
+    models_registry.add(
+        TransformSpec::new("consumer-models").owns(&["source", "stores"]),
+        models,
+    )?;
+    let models_report = rust::generate(
+        rust::GenerateRequest::new("models.idea", root, mode),
+        rust::package_loader(ProjectLoader::new(base)?)?,
+        &models_registry,
+        &OutputWorkspace::new(
+            base.parent()
+                .expect("consumer parent")
+                .join("generated-models"),
+        )?,
+    )?;
+    if mode == rust::GenerationMode::Check {
+        assert!(
+            models_report.is_current(),
+            "consumer source models are stale"
+        );
+    }
     let mut source_registry = Registry::new();
     source_registry.add(
         TransformSpec::new("source-client").owns(&["source", "stores", "ui", "client"]),

@@ -1,11 +1,11 @@
-//! Test-only owned network databases, shared by the session and API search executables.
+//! Historical session helper retained for source references; active tests use local fixtures.
 //!
-//! Adapter M2 fixtures are private; reuse their public adapters and reachable process/discovery
-//! helpers. This owner follows their CREATE/armed/exact-DROP contract without a library API.
+//! The crate-local copies retain the adapter M2 CREATE/armed/exact-DROP contract.
+//! Public adapters remain declared dev-dependencies; compilation never imports their tests.
 
-#[path = "../../../../sql/test-support/harness.rs"]
+#[path = "../fixtures/harness.rs"]
 mod harness;
-#[path = "../../../../sql/sql-postgres/src/tests/support/process.rs"]
+#[path = "../fixtures/process.rs"]
 mod process;
 
 use stackpress_sql::{DialectId, Engine, Render, Sql, SqlError, TrustedSql};

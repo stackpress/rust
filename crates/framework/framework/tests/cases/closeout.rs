@@ -40,7 +40,7 @@ async fn first_middle_last_abort_preserves_route_and_event_ties() {
 #[test]
 fn aggregate_plus_constituent_preserves_duplicate_error() {
     let mut app = ServerBuilder::new();
-    stackpress_framework_session::composite::register(&mut app).unwrap();
+    stackpress_framework_session::composite::register_with::<crate::models::stores::family::Models>(&mut app).unwrap();
     assert!(register(&mut app).is_err());
 }
 

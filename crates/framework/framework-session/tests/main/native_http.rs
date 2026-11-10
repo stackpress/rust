@@ -1,10 +1,14 @@
 //! G57: source auth processes through actual Hyper HTTP/1 IO, without a listener.
+use crate::models::stores::auth::AuthActions;
+use crate::models::stores::auth::AuthStore;
+use crate::models::stores::profile::ProfileActions;
+use crate::models::stores::profile::ProfileStore;
 
 use serde_json::{Value as Json, json};
 use stackpress_framework_session::{
     Service,
     auth::{self, Hooks},
-    storage::{AuthActions, AuthStore, ProfileActions, ProfileStore, StoreQuery},
+    storage::StoreQuery,
 };
 use stackpress_lib::{Flow, Invocation, Request, Response, Result, Value};
 use stackpress_server::{
@@ -145,8 +149,11 @@ async fn fixture(key: &str, roles: &[&str]) -> Fixture {
         },
     ))
     .unwrap();
-    auth::register(&mut app).unwrap();
-    stackpress_framework_session::account::events::register(&mut app).unwrap();
+    auth::register_with::<crate::models::stores::family::Models>(&mut app).unwrap();
+    stackpress_framework_session::account::events::register_with::<
+        crate::models::stores::family::Models,
+    >(&mut app)
+    .unwrap();
     stackpress_framework_session::plugin::register(&mut app).unwrap();
     app.on("response", retained_dates).unwrap();
     app.get("/admin/check", admin_check).unwrap();

@@ -3,9 +3,9 @@
 mod cancellation;
 #[path = "live/cascade.rs"]
 mod cascade;
-#[path = "../../framework-sql/tests/support/g54.rs"]
+#[path = "fixtures/g54.rs"]
 mod g54;
-#[path = "../../framework-session/tests/live/support.rs"]
+#[path = "fixtures/live_support.rs"]
 mod support;
 
 use stackpress_framework::commands::sql::{self, History, Migration, Scripts};
@@ -230,9 +230,9 @@ async fn scenario(engine: Arc<Engine>) -> support::TestResult<()> {
     commands(&engine, markers.0.to_str().unwrap()).await?;
     cascade::prove(&engine).await?;
     cancellation::prove(engine.clone()).await?;
-    g54::prove(stackpress_framework_session::storage::ProfileActions::new(
+    g54::prove(models::stores::profile::ProfileActions::new(
         engine,
-        stackpress_framework_session::storage::ProfileStore::new(String::new(), 0),
+        models::stores::profile::ProfileStore::new(String::new(), 0),
     ))
     .await?;
     Ok(())
@@ -240,3 +240,7 @@ async fn scenario(engine: Arc<Engine>) -> support::TestResult<()> {
 fn main() {
     support::main(scenario);
 }
+
+#[allow(dead_code, missing_docs, unexpected_cfgs)]
+#[path = "fixtures/models/mod.rs"]
+mod models;

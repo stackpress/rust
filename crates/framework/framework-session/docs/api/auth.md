@@ -1,10 +1,10 @@
 # Auth events, pages and hooks
 
-Select native `auth-server` for `auth::{register,events,pages,AuthConfig,AuthSection,Environment,Hooks,templates,totp}`. `auth::AuthSchema` needs only native; [storage reference](storage.md) describes it independently of server processes.
+Select native `auth-server` for `auth::{register_with,events,pages,AuthConfig,AuthSection,Environment,Hooks,templates,totp}`. Applications generate AuthSchema from the shipped Idea source; [storage reference](storage.md) describes it independently of server processes.
 
 ## Registration and handler shapes
 
-[`auth::register`](../../src/auth/plugin.rs) installs auth-signup, auth-signin and auth-signout Listen events in that order regardless of the auth route gate. Active auth config adds the source GET routes followed by POST routes. [Registration tests](../../tests/main/auth_flows/registration.rs) verify missing modes, priorities, ties and Abort. Use [registration guide](../guides/registration.md) for complete examples.
+[`auth::register_with::<models::stores::family::Models>`](../../src/auth/plugin.rs) installs auth-signup, auth-signin and auth-signout Listen events in that order regardless of the auth route gate. Active auth config adds the source GET routes followed by POST routes. [Registration tests](../../tests/main/auth_flows/registration.rs) verify missing modes, priorities, ties and Abort. Use [registration guide](../guides/registration.md) for complete examples.
 
 | Surface | Arguments / return |
 | --- | --- |

@@ -7,6 +7,10 @@ publish = false
 [workspace]
 
 [dependencies]
+stackpress-framework-schema = { path = "../../../framework-schema", features = ["source", "providers"] }
+stackpress-framework-sql = { path = "../../../framework-sql", features = ["source", "server"] }
+stackpress-framework-api = { path = "../../../framework-api", features = ["sql"] }
+stackpress-framework-csrf = { path = "../../../framework-csrf", features = ["server"] }
 stackpress-framework = { path = "../..", default-features = false, features = ["full"] }
 stackpress-server = { path = "../../../../server/server", default-features = false }
 stackpress-framework-session = { path = "../../../framework-session", default-features = false }

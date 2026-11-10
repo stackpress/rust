@@ -3,7 +3,7 @@
 The API crate exposes source Application/Session models and stores behind `sql`.
 [SQLite tests](tests/sql.rs) and [dialect adapters](../framework-sql/src/source/statement.rs) pin PostgreSQL ILIKE
 versus SQLite/MySQL LIKE. The new [live executable](tests/live_search.rs) runs actual actions
-using the [shared test-only fixture](../framework-session/tests/live/support.rs).
+using the [crate-owned test fixture](tests/fixtures/live_support.rs).
 
 Set `STACKPRESS_TEST_POSTGRES_URL` or `STACKPRESS_TEST_MYSQL_URL` privately, then run
 `cargo nextest run -p stackpress-framework-api --test live_search --features sql --locked --offline --test-threads 2 --no-fail-fast --success-output final --failure-output final`.
@@ -40,5 +40,5 @@ declarations. The aggregate catalog additionally resolves `stackpress/stackpress
 application extensions. [Generated families](docs/source-models.md) now replace the old
 three-model Typed projection: config()/normalize() retain the full four-model composition,
 and register_with<M> binds the application's generated family. Existing schema/store paths
-remain constructor adapters over generated defaults. Portable UI and native schemas/stores
+come from the application-generated family. Portable UI and native schemas/stores
 are emitted into separate partitions by the [checkpoint tool](../../../examples/api-checkpoint/tool/src/main.rs).

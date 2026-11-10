@@ -18,9 +18,10 @@ use stackpress_server::ServerBuilder;
 /// use stackpress_framework_session::composite;
 /// use stackpress_server::ServerBuilder;
 /// # #[tokio::main(flavor = "current_thread")]
-/// # async fn main() -> stackpress_lib::Result<()> {
+/// # async fn main() {}
+/// # async fn example<M: stackpress_framework_sql::source::SessionModels>() -> stackpress_lib::Result<()> {
 /// let mut app = ServerBuilder::new();
-/// app.plugin("session", composite::register)?;
+/// app.plugin("session", composite::register_with::<M>)?;
 /// let server = app.build().await.map_err(|failure| failure.error)?;
 /// // Source auth Listen events exist even when no auth Route config is present.
 /// assert!(server.listeners().any(|listener| listener.pattern == "auth-signin"));
@@ -31,9 +32,6 @@ use stackpress_server::ServerBuilder;
 ///
 /// # Errors
 /// Propagates the constituents' existing config/service/registration failures.
-pub fn register(app: &mut ServerBuilder) -> Result<()> {
-    register_with::<stackpress_framework_models::Models>(app)
-}
 /// Same auth→email→identity source composite with the application's generated model family.
 pub fn register_with<M: stackpress_framework_sql::source::SessionModels>(
     app: &mut ServerBuilder,

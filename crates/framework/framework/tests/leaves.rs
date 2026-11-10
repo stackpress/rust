@@ -8,7 +8,16 @@ async fn api_alone_does_not_register_reachable_session_crate() {
     let mut layers = stackpress_server::ConfigLayers::new();
     layers.value("configured", serde_json::json!({"api":{"endpoints":[{"method":"GET","route":"/public","event":"unused","type":"public"}]}})).unwrap();
     app.config_layers(layers).unwrap();
-    stackpress_framework::register(&mut app).unwrap();
+    static CLIENT: stackpress_framework::CompiledClient = stackpress_framework::CompiledClient {
+        bindings: stackpress_framework::FrameworkBindings {
+            session: None,
+            api: Some(stackpress_framework_api::register_with::<models::stores::family::Models>),
+        },
+        build: "api-only",
+        describe: Vec::new,
+        models: &[],
+    };
+    stackpress_framework::register_with(&mut app, &CLIENT).unwrap();
     let host = app.build().await.unwrap();
     let events: Vec<_> = host
         .listeners()
@@ -29,3 +38,7 @@ async fn api_alone_does_not_register_reachable_session_crate() {
         );
     }
 }
+
+#[allow(dead_code, missing_docs, unexpected_cfgs)]
+#[path = "fixtures/models/mod.rs"]
+mod models;

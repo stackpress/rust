@@ -371,7 +371,7 @@
         ]
       },
       {
-        "path": "crates/framework/framework-models/src/generated/source/profile.rs",
+        "path": "crates/framework/framework-session/tests/fixtures/models/source/profile.rs",
         "contains": [
           "pub fn describe() -> Model"
         ]
@@ -795,7 +795,7 @@
         ]
       },
       {
-        "path": "crates/framework/framework-session/tests/live/support.rs",
+        "path": "crates/framework/framework-session/tests/fixtures/live_support.rs",
         "contains": [
           "created owned database",
           "drop confirmed:",

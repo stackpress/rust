@@ -3,7 +3,7 @@
 //! Import the maintained, officially regenerated schemas. The local family changes
 //! only its Profile action collaborator so the stock signup boundary can be spied.
 #[allow(dead_code)]
-#[path = "../../../framework-models/tests/extended/generated/source/mod.rs"]
+#[path = "../fixtures/extended/source/mod.rs"]
 mod generated;
 
 use generated::{auth::AuthSchema, profile::ProfileSchema};
@@ -289,7 +289,7 @@ async fn generated_family_registered_auth_account_and_export_share_app_profile()
 
 /// Actual session-only emitted code retains reverse links without compiling hidden API stores.
 #[allow(dead_code)]
-#[path = "../../../framework-sql/tests/source-session-only/source/mod.rs"]
+#[path = "../fixtures/session-only/source/mod.rs"]
 mod session_only;
 
 // This host's `server` feature means identity, not the generated app's optional SQL-event

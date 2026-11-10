@@ -11,7 +11,7 @@ mod sql;
 mod view;
 
 use serde_json::{Value, json};
-use stackpress_framework::{client::Client, commands::Bindings, register};
+use stackpress_framework::{client::Client, commands::Bindings};
 use stackpress_lib::{Flow, Invocation, Request, Response, Result, queue::task};
 use stackpress_server::{
     ConfigLayers, ServerBuilder, ServerInvocationExt, StartupContext, StartupSpec, StartupStage,
@@ -20,6 +20,41 @@ use std::sync::{
     Arc,
     atomic::{AtomicUsize, Ordering},
 };
+
+/// The test application supplies its own family even when it has no model callbacks.
+fn register(app: &mut ServerBuilder) -> Result<()> {
+    static CLIENT: stackpress_framework::CompiledClient = stackpress_framework::CompiledClient {
+        bindings: stackpress_framework::FrameworkBindings {
+            session: Some(
+                stackpress_framework_session::composite::register_with::<
+                    crate::models::stores::family::Models,
+                >,
+            ),
+            api: Some(
+                stackpress_framework_api::register_with::<crate::models::stores::family::Models>,
+            ),
+        },
+        build: "test-application",
+        describe: Vec::new,
+        models: &[],
+    };
+    stackpress_framework::register_with(app, &CLIENT)
+}
+
+/// Standalone constituents retain the lower nullable-client contract without a stock family.
+fn without_catalog(app: &mut ServerBuilder) -> Result<()> {
+    stackpress_framework::config::register(app)?;
+    stackpress_framework::commands::register_server(app)?;
+    stackpress_framework::client::register(app, None)?;
+    stackpress_framework::language::register(app)?;
+    stackpress_framework_csrf::plugin::register(app)?;
+    stackpress_framework::commands::register_sql(app)?;
+    stackpress_framework::view::register(app)?;
+    stackpress_framework_session::composite::register_with::<crate::models::stores::family::Models>(
+        app,
+    )?;
+    stackpress_framework_api::register_with::<crate::models::stores::family::Models>(app)
+}
 
 /// Build an application-selected aggregate without a native execution host.
 fn application(config: Value) -> ServerBuilder {
@@ -47,7 +82,10 @@ async fn command(_: &mut Request, res: &mut Response, inv: Invocation<'_>) -> Re
 /// A no-config host still contributes source commands/auth events and the default CSRF mechanism.
 #[tokio::test]
 async fn absent_client_and_config_need_no_engine_or_startup_io() {
-    let host = application(json!({})).build().await.unwrap();
+    // G59 has no stock family; explicit constituents preserve the nullable client proof.
+    let mut app = ServerBuilder::new();
+    without_catalog(&mut app).unwrap();
+    let host = app.build().await.unwrap();
     let client = host.host().service::<Client>().unwrap();
     assert!(client.get(true).unwrap().is_none());
     assert!(client.get(false).is_err());
@@ -98,7 +136,8 @@ async fn schema_priority_and_phase_publication_are_real() {
         }),
     )
     .unwrap();
-    register(&mut app).unwrap();
+    // G59 has no stock family; test nullable publication through explicit constituents.
+    without_catalog(&mut app).unwrap();
     app.startup(
         StartupSpec::new(StartupStage::Config).priority(priority),
         task(|start: &mut StartupContext| {
@@ -247,4 +286,39 @@ async fn g42_all_matching_handlers_keep_priority_ties_and_abort() {
 fn compile_fail_ownership_contracts() {
     let tests = trybuild::TestCases::new();
     tests.compile_fail("tests/ui/*.rs");
+}
+
+/// A selected stage reports the missing application binding before any provider can run.
+#[test]
+fn selected_session_and_api_require_explicit_generated_bindings() {
+    let mut app = ServerBuilder::new();
+    let error = stackpress_framework::register(&mut app).unwrap_err();
+    assert!(error.to_string().contains("client.bindings.session"));
+    assert!(
+        error
+            .to_string()
+            .contains("composite::register_with::<Models>")
+    );
+    static SESSION_ONLY: stackpress_framework::CompiledClient =
+        stackpress_framework::CompiledClient {
+            bindings: stackpress_framework::FrameworkBindings {
+                session: Some(
+                    stackpress_framework_session::composite::register_with::<
+                        crate::models::stores::family::Models,
+                    >,
+                ),
+                api: None,
+            },
+            build: "missing-api-binding",
+            describe: Vec::new,
+            models: &[],
+        };
+    let mut app = ServerBuilder::new();
+    let error = stackpress_framework::register_with(&mut app, &SESSION_ONLY).unwrap_err();
+    assert!(error.to_string().contains("client.bindings.api"));
+    assert!(
+        error
+            .to_string()
+            .contains("stackpress_framework_api::register_with::<Models>")
+    );
 }

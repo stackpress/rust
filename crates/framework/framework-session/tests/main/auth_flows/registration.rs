@@ -42,7 +42,11 @@ async fn source_registration_modes_priority_fifo_and_any_handler_abort() {
         let mut layers = ConfigLayers::new();
         layers.value("fixture", json!({"auth":config})).unwrap();
         app.config_layers(layers).unwrap();
-        app.plugin("auth", auth::register).unwrap();
+        app.plugin(
+            "auth",
+            auth::register_with::<crate::models::stores::family::Models>,
+        )
+        .unwrap();
         let host = app.build().await.unwrap();
         assert_eq!(host.listeners().count(), 3);
         assert!(
@@ -58,7 +62,7 @@ async fn source_registration_modes_priority_fifo_and_any_handler_abort() {
         .unwrap();
     app.config_layers(layers).unwrap();
     app.plugin("auth-with-extensions", |app| {
-        auth::register(app)?;
+        auth::register_with::<crate::models::stores::family::Models>(app)?;
         app.on_listen(extra_events)?;
         app.on_route(extra_routes)?;
         Ok(())

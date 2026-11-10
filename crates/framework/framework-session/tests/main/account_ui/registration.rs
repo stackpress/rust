@@ -73,7 +73,11 @@ async fn rendered_route_augmentation_fifo_and_abort() {
         })
     }))
     .unwrap();
-    app.plugin("auth", auth::register).unwrap();
+    app.plugin(
+        "auth",
+        auth::register_with::<crate::models::stores::family::Models>,
+    )
+    .unwrap();
     app.plugin("identity", plugin::register).unwrap();
     app.on_route(routes).unwrap();
     let host = app.build().await.unwrap();
@@ -129,7 +133,11 @@ async fn source_missing_config_disables_only_its_contributions() {
             .value("fixture", json!({"session":session,"auth":auth_config}))
             .unwrap();
         app.config_layers(layers).unwrap();
-        app.plugin("auth", auth::register).unwrap();
+        app.plugin(
+            "auth",
+            auth::register_with::<crate::models::stores::family::Models>,
+        )
+        .unwrap();
         app.plugin("identity", plugin::register).unwrap();
         let host = app.build().await.unwrap();
         assert_eq!(
@@ -174,7 +182,11 @@ async fn source_view_only_signin_fallback_and_concrete_view_precedence() {
         })
     }))
     .unwrap();
-    app.plugin("auth", auth::register).unwrap();
+    app.plugin(
+        "auth",
+        auth::register_with::<crate::models::stores::family::Models>,
+    )
+    .unwrap();
     app.plugin("identity", plugin::register).unwrap();
     let host = app.build().await.unwrap();
     let views: Vec<_> = host

@@ -20,7 +20,7 @@ Use `stackpress-framework-session` to read a cookie JWT, check configured permis
 
 ## Select the surface
 
-The [feature manifest](Cargo.toml) keeps `default = []`: portable configuration and permission matching are available first. `native` adds JWT Session and schemas, `sql` adds Stores/Actions, `server` adds the identity registrar, and `auth-server` adds auth/account processes and the composite. Select `leptos-ssr`, `leptos-hydrate` or `leptos-csr` for each UI artifact separately.
+The [feature manifest](Cargo.toml) keeps `default = []`: portable configuration and permission matching are available first. `native` adds JWT Session and source codecs, `sql` adds Stores/Actions, `server` adds the identity registrar, and `auth-server` adds auth/account processes and the composite. Select `leptos-ssr`, `leptos-hydrate` or `leptos-csr` for each UI artifact separately.
 
 The facade is opt-in: `stackpress::framework_session` is exported by `framework-session`, with forwarding features such as `framework-session-native` and `framework-session-leptos-ssr`. The default facade graph contains only `stackpress-lib` as a first-party dependency. The [consumer graph checks](consumers/graphs.py) pin these boundaries.
 
@@ -28,7 +28,7 @@ The facade is opt-in: `stackpress::framework_session` is exported by `framework-
 
 As in the original source, plugins secure the application only as configured. Missing `session` contributes no identity service/events; missing `session.access` contributes no global request guard; missing `auth` removes auth process routes. Each route or event secures its own process. An empty access map remains permissive. See the [activation table](docs/guides/configuration.md#activation) and [source behavior](docs/source-behavior.md) for the exact guard, flags, errors and ten resolved owner decisions under G46.
 
-[`plugin::register`](src/plugin.rs) selects identity only. [`composite::register`](src/composite.rs) calls auth, email, then identity. Both are ordinary registration functions. Multiple handlers may contribute to one route/event in priority then registration order, and any handler may abort the chain; no registrar owns a route. [Composition tests](tests/main/composite.rs) cover both forms.
+[`plugin::register`](src/plugin.rs) selects identity only. [`composite::register_with::<Models>`](src/composite.rs) calls auth, email, then identity. Both are ordinary registration functions. Multiple handlers may contribute to one route/event in priority then registration order, and any handler may abort the chain; no registrar owns a route. [Composition tests](tests/main/composite.rs) cover both forms.
 
 ## Reference and evidence
 

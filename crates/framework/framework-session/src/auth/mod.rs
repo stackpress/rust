@@ -23,7 +23,7 @@ pub use hooks::Hooks;
 #[cfg(feature = "auth-server")]
 mod plugin;
 #[cfg(feature = "auth-server")]
-pub use plugin::{register, register_with};
+pub use plugin::register_with;
 #[cfg(feature = "auth-server")]
 pub mod templates;
 #[cfg(feature = "auth-server")]
@@ -37,6 +37,4 @@ pub type AuthInput = Record;
 pub type AuthExtended = Record;
 
 #[cfg(feature = "sql")]
-pub use crate::storage::{AuthActions, AuthStore, PasswordConfig};
-/// Generated default Auth schema, with token uniqueness owned by its generated store.
-pub use stackpress_framework_models::AuthSchema;
+pub use crate::storage::PasswordConfig;

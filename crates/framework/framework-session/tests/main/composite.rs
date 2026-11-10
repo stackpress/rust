@@ -11,9 +11,12 @@ async fn host(config: Json, grouped: bool) -> Result<Server> {
     let mut app = ServerBuilder::new();
     app.config_layers(layers)?;
     if grouped {
-        app.plugin("session", composite::register)?;
+        app.plugin(
+            "session",
+            composite::register_with::<crate::models::stores::family::Models>,
+        )?;
     } else {
-        auth::register(&mut app)?;
+        auth::register_with::<crate::models::stores::family::Models>(&mut app)?;
         stackpress_framework_email::plugin::register(&mut app)?;
         plugin::register(&mut app)?;
     }
@@ -134,7 +137,10 @@ async fn composite_events_still_allow_multiple_handlers_and_abort() -> Result<()
         let mut layers = ConfigLayers::new();
         layers.value("identity", json!({"session":{}}))?;
         app.config_layers(layers)?;
-        app.plugin("session", composite::register)?;
+        app.plugin(
+            "session",
+            composite::register_with::<crate::models::stores::family::Models>,
+        )?;
         if abort {
             app.on_priority("me", 10, stop)?;
         } else {

@@ -12,14 +12,14 @@ async fn database() -> (tempfile::TempDir, Arc<Engine>, AuthActions) {
     let engine = Arc::new(Engine::new(db));
     ProfileActions::new(
         engine.clone(),
-        stackpress_framework_session::storage::ProfileStore::new("database-seed".into(), 0),
+        crate::models::stores::profile::ProfileStore::new("database-seed".into(), 0),
     )
     .install()
     .await
     .unwrap();
     let auth = AuthActions::new(
         engine.clone(),
-        stackpress_framework_session::storage::AuthStore::new("database-seed".into(), 0),
+        crate::models::stores::auth::AuthStore::new("database-seed".into(), 0),
     );
     auth.install().await.unwrap();
     (dir, engine, auth)
@@ -33,7 +33,7 @@ async fn sql_search(req: &mut Request, res: &mut Response, inv: Invocation<'_>) 
         .lock()
         .unwrap()
         .push("auth-search".into());
-    events::search(req, res, inv).await
+    events::search_with::<crate::models::stores::family::Models>(req, res, inv).await
 }
 /// Explicit host resources; none is eagerly demanded by the auth registrar itself.
 async fn sql_host(engine: Arc<Engine>, auth_config: Option<Json>) -> Arc<Server> {
@@ -63,9 +63,17 @@ async fn sql_host(engine: Arc<Engine>, auth_config: Option<Json>) -> Arc<Server>
     ))
     .unwrap();
     app.on("auth-search", sql_search).unwrap();
-    app.on("auth-update", events::update).unwrap();
+    app.on(
+        "auth-update",
+        events::update_with::<crate::models::stores::family::Models>,
+    )
+    .unwrap();
     // Same order as the source constituents; Lane B's email registrar is integrated by its owner.
-    app.plugin("auth", auth::register).unwrap();
+    app.plugin(
+        "auth",
+        auth::register_with::<crate::models::stores::family::Models>,
+    )
+    .unwrap();
     app.plugin("identity", stackpress_framework_session::plugin::register)
         .unwrap();
     let server = Arc::new(app.build().await.unwrap());
@@ -252,7 +260,11 @@ async fn real_signin_flags_2fa_search_inactive_profile_and_literal_signout() {
 #[tokio::test]
 async fn missing_config_modes_and_direct_events_need_no_global_guard() {
     let mut app = ServerBuilder::new();
-    app.plugin("auth", auth::register).unwrap();
+    app.plugin(
+        "auth",
+        auth::register_with::<crate::models::stores::family::Models>,
+    )
+    .unwrap();
     let host = app.build().await.unwrap();
     let patterns: Vec<_> = host
         .listeners()
@@ -358,7 +370,11 @@ pub(crate) async fn concurrency_child() {
     .unwrap();
     app.on("email-email-send", suspended_hook).unwrap();
     app.on("auth-phone-verify", suspended_hook).unwrap();
-    app.plugin("auth", auth::register).unwrap();
+    app.plugin(
+        "auth",
+        auth::register_with::<crate::models::stores::family::Models>,
+    )
+    .unwrap();
     app.plugin("identity", stackpress_framework_session::plugin::register)
         .unwrap();
     let host = Arc::new(app.build().await.unwrap());
@@ -432,7 +448,7 @@ async fn source_timezone_column_sql_and_profile_collaborator_vectors() {
         let offset = vector["offset"].as_i64().unwrap() as i32;
         let actions = AuthActions::new(
             actions.engine.clone(),
-            stackpress_framework_session::storage::AuthStore::new("database-seed".into(), offset),
+            crate::models::stores::auth::AuthStore::new("database-seed".into(), offset),
         );
         let value = columns::date(1_700_000_000_000);
         let serialized = actions
@@ -523,10 +539,22 @@ async fn real_sql_otp_magic_handoff_and_session_creation_through_registered_rout
         },
     ))
     .unwrap();
-    app.on("auth-search", events::search).unwrap();
-    app.on("auth-update", events::update).unwrap();
+    app.on(
+        "auth-search",
+        events::search_with::<crate::models::stores::family::Models>,
+    )
+    .unwrap();
+    app.on(
+        "auth-update",
+        events::update_with::<crate::models::stores::family::Models>,
+    )
+    .unwrap();
     app.on("email-send", capture_mail).unwrap();
-    app.plugin("auth", auth::register).unwrap();
+    app.plugin(
+        "auth",
+        auth::register_with::<crate::models::stores::family::Models>,
+    )
+    .unwrap();
     app.plugin("identity", stackpress_framework_session::plugin::register)
         .unwrap();
     let host = Arc::new(app.build().await.unwrap());
@@ -621,7 +649,7 @@ use stackpress_framework_schema::source::SourceSchema;
 /// Bind account orchestration to the same generated store environment.
 fn account(
     actions: &AuthActions,
-) -> stackpress_framework_session::storage::AccountActions<stackpress_framework_models::Models> {
+) -> stackpress_framework_session::storage::AccountActions<crate::models::stores::family::Models> {
     stackpress_framework_session::storage::AccountActions::new(
         actions.engine.clone(),
         actions.store.schema.seed().into(),

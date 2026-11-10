@@ -11,7 +11,7 @@ may import `stackpress/stackpress.idea` and append a Profile column under G19.
 Application/Session event-major inventory using actual associated SourceActions. ApiModels
 inherits SessionModels, so auth and API share the exact Profile. The ordinary API process
 `register_with<M>` selects the same process registrar; it resolves named model events and
-installs neither data listeners nor tables. Default functions keep their stock-family paths.
+installs neither data listeners nor tables. Every model-dependent path takes the application family; no stock shortcuts are supplied.
 
 `views::admin::register_with<M>` registers selected module routes immediately;
 `register_queued_with<M>` queues them at Route for source aggregate order. Both take the
@@ -28,8 +28,8 @@ only ui. Stored API secrets remain visible wherever the original source displays
 private codec seeds/provider metadata never enter that portable catalog or SSR seed.
 The app opens and installs databases explicitly; generation and registration do no IO.
 
-`models::{ApplicationSchema,SessionSchema,ApplicationStore,SessionStore,ApplicationActions,SessionActions}`
-are direct generated aliases at the existing paths. Import `models::SourceSchema` for
+The application-generated `ApplicationSchema`, `SessionSchema`, stores and actions
+belong to the application-generated module. No stock library aliases are supplied. Import `models::SourceSchema` for
 `new(String, offset_minutes)` and static describe()/catalog(); schema descriptors use
 columns()/column(). CRUD Actions take an explicit generated Store, or use the generated
 SourceModel actions factory. There is no finite ModelKind or default-constructor shim. Under G53, `eq` takes one value per field; arrays are misuse

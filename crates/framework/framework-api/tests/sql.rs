@@ -1,8 +1,15 @@
 //! Real SQLite source parity, source SQL rendering and finite host composition.
+use crate::models::source::application::ApplicationSchema;
+use crate::models::source::profile::ProfileSchema;
+use crate::models::source::session::SessionSchema;
+use crate::models::stores::application::ApplicationActions;
+use crate::models::stores::application::ApplicationStore;
+use crate::models::stores::profile::ProfileActions;
+use crate::models::stores::session::SessionActions;
+use crate::models::stores::session::SessionStore;
 use serde_json::{Value as Json, json};
 use stackpress_framework_api::{models::*, sql};
 use stackpress_framework_schema::source::SourceSchema;
-use stackpress_framework_session::{profile::ProfileSchema, storage::ProfileActions};
 use stackpress_lib::{Body, Flow, Nest, Request, Response, Result};
 use stackpress_server::{Server, ServerBuilder, StartupContext};
 use stackpress_sql::{DialectId, Engine, Field, Render, SqlType};
@@ -41,15 +48,15 @@ impl Fixture {
         ));
         let app = ApplicationActions::new(
             engine.clone(),
-            stackpress_framework_api::models::ApplicationStore::new("seed".into(), 0),
+            crate::models::stores::application::ApplicationStore::new("seed".into(), 0),
         );
         let session = SessionActions::new(
             engine.clone(),
-            stackpress_framework_api::models::SessionStore::new("seed".into(), 0),
+            crate::models::stores::session::SessionStore::new("seed".into(), 0),
         );
         let profile = ProfileActions::new(
             engine.clone(),
-            stackpress_framework_session::storage::ProfileStore::new("seed".into(), 0),
+            crate::models::stores::profile::ProfileStore::new("seed".into(), 0),
         );
         profile.install().await.unwrap();
         app.install().await.unwrap();
@@ -89,7 +96,7 @@ impl Fixture {
             },
         ))
         .unwrap();
-        sql::register(&mut app).unwrap();
+        sql::register_with::<crate::models::stores::family::Models>(&mut app).unwrap();
         app
     }
     async fn server(&self) -> Server {
@@ -771,8 +778,8 @@ async fn generated_events_detail_search_crud_restore_and_batch() {
 #[tokio::test]
 async fn generated_event_errors_missing_database_and_g42_chain() -> Result<()> {
     let mut app = ServerBuilder::new();
-    sql::register(&mut app)?;
-    sql::register(&mut app)?;
+    sql::register_with::<crate::models::stores::family::Models>(&mut app)?;
+    sql::register_with::<crate::models::stores::family::Models>(&mut app)?;
     let server = app.build().await.map_err(|e| e.error)?;
     assert_eq!(server.listeners().count(), 40);
     let (_, res) = emit(&server, "application-create", json!({})).await;
@@ -1053,7 +1060,7 @@ async fn scripted_backend_fallback_and_failures_are_not_native_backend_claims() 
         }));
         let actions = ApplicationActions::new(
             engine.clone(),
-            stackpress_framework_api::models::ApplicationStore::new("".into(), 0),
+            crate::models::stores::application::ApplicationStore::new("".into(), 0),
         );
         let input = application("a");
         assert_eq!(actions.create(&input).await.unwrap(), input);
@@ -1072,7 +1079,7 @@ async fn scripted_backend_fallback_and_failures_are_not_native_backend_claims() 
     }));
     let actions = ApplicationActions::new(
         engine.clone(),
-        stackpress_framework_api::models::ApplicationStore::new("".into(), 0),
+        crate::models::stores::application::ApplicationStore::new("".into(), 0),
     );
     assert_eq!(
         actions.create(&application("a")).await.unwrap_err().code,

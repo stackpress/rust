@@ -14,7 +14,7 @@ Use module-qualified names when importing multiple Session types: the foundation
 
 A feature selects compiled capabilities. A registrar contributes startup callbacks. Configuration decides which source listeners/routes those callbacks add. Missing `session.access` means there is no global request guard. Empty access installs the source permissive guard, including its zero-status error-offer interaction. No framework default-deny policy is added. [Activation and guard tests](../tests/main/host.rs) and [source response traces](../tests/main/auth_flows/registration.rs) pin that distinction.
 
-Ordinary handlers run by priority, then registration order; any handler may return Abort. `plugin::register` is identity-only; `composite::register` calls auth → email → identity. Auth and account handlers may also be reused directly. Their calling page's method, CSRF or permission checks do not appear automatically on a direct event. [Composition tests](../tests/main/composite.rs) and [direct helper tests](../tests/main/auth_flows/oracle.rs) prove those paths.
+Ordinary handlers run by priority, then registration order; any handler may return Abort. `plugin::register` is identity-only; `composite::register_with::<models::stores::family::Models>` calls auth → email → identity. Auth and account handlers may also be reused directly. Their calling page's method, CSRF or permission checks do not appear automatically on a direct event. [Composition tests](../tests/main/composite.rs) and [direct helper tests](../tests/main/auth_flows/oracle.rs) prove those paths.
 
 ## Storage and effects have explicit owners
 
