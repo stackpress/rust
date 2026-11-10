@@ -1,0 +1,23 @@
+{
+  "commit": "71c4118e199dbf5ae8b18308471e667ce4ff4278",
+  "branch": "trial/3-publication-plan",
+  "cargo": "cargo 1.96.0 (30a34c682 2026-05-25)",
+  "coverage_tool": "cargo-llvm-cov 0.8.6",
+  "rustc": [
+    "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "binary: rustc",
+    "commit-hash: ac68faa20c58cbccd01ee7208bf3b6e93a7d7f96",
+    "commit-date: 2026-05-25",
+    "host: aarch64-apple-darwin",
+    "release: 1.96.0",
+    "LLVM version: 22.1.2"
+  ],
+  "features": "framework-aggregate-full,framework-aggregate-ui-session,framework-aggregate-ui-api,framework-aggregate-ui-admin,framework-aggregate-ui-view,framework-aggregate-ssr,framework-api-codegen,framework-csrf-server,framework-email-server,stackpress-framework/codegen,stackpress-framework-schema/providers,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-schema/source,stackpress-framework-sql/source,stackpress-framework-models/generate,stackpress-framework-models/server",
+  "coverage_sha256": "c3498399c5d71aea4f899e5d096bacc6630bc6d31e57a228eb29b452940cff57",
+  "sampled_target_bytes": 7880978432,
+  "disposable_copy_deleted": true,
+  "tracked_diff_before_cleanup": [],
+  "tracked_manifests_unchanged": true,
+  "target_deleted": true,
+  "scratch_copy_deleted": true
+}

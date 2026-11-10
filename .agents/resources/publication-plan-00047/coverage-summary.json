@@ -1,0 +1,2591 @@
+{
+  "root": "/Users/cblanquera/.paseo/worktrees/342ftjlj/trial3-publication-plan",
+  "source": "/private/tmp/stackpress-task47/coverage.json",
+  "tool": "cargo-llvm-cov 0.8.6",
+  "scope": "Every LLVM-mapped file under each package src directory, including in-source tests and shipped generated code; separate tests/examples/consumers and dependencies are not attributed as implementation.",
+  "packages": [
+    {
+      "name": "stackpress",
+      "path": ".",
+      "covered": 0,
+      "total": 0,
+      "percent": null,
+      "gap_percentage_points": null,
+      "additional_covered_lines_for_90": null,
+      "files": []
+    },
+    {
+      "name": "stackpress-lib",
+      "path": "crates/lib",
+      "covered": 4205,
+      "total": 4423,
+      "percent": 95.07121862988922,
+      "gap_percentage_points": 0,
+      "additional_covered_lines_for_90": 0,
+      "files": [
+        {
+          "file": "crates/lib/src/body.rs",
+          "covered": 20,
+          "total": 31
+        },
+        {
+          "file": "crates/lib/src/data/json.rs",
+          "covered": 213,
+          "total": 243
+        },
+        {
+          "file": "crates/lib/src/data/json/key.rs",
+          "covered": 37,
+          "total": 41
+        },
+        {
+          "file": "crates/lib/src/data/mod.rs",
+          "covered": 14,
+          "total": 14
+        },
+        {
+          "file": "crates/lib/src/data/mutation.rs",
+          "covered": 227,
+          "total": 233
+        },
+        {
+          "file": "crates/lib/src/data/nest.rs",
+          "covered": 252,
+          "total": 274
+        },
+        {
+          "file": "crates/lib/src/data/parsers.rs",
+          "covered": 390,
+          "total": 416
+        },
+        {
+          "file": "crates/lib/src/data/path.rs",
+          "covered": 77,
+          "total": 84
+        },
+        {
+          "file": "crates/lib/src/data/value.rs",
+          "covered": 250,
+          "total": 271
+        },
+        {
+          "file": "crates/lib/src/error.rs",
+          "covered": 163,
+          "total": 177
+        },
+        {
+          "file": "crates/lib/src/event.rs",
+          "covered": 500,
+          "total": 513
+        },
+        {
+          "file": "crates/lib/src/headers.rs",
+          "covered": 85,
+          "total": 87
+        },
+        {
+          "file": "crates/lib/src/pattern.rs",
+          "covered": 210,
+          "total": 217
+        },
+        {
+          "file": "crates/lib/src/queue.rs",
+          "covered": 145,
+          "total": 151
+        },
+        {
+          "file": "crates/lib/src/request.rs",
+          "covered": 234,
+          "total": 237
+        },
+        {
+          "file": "crates/lib/src/response.rs",
+          "covered": 358,
+          "total": 383
+        },
+        {
+          "file": "crates/lib/src/session.rs",
+          "covered": 310,
+          "total": 320
+        },
+        {
+          "file": "crates/lib/src/status.rs",
+          "covered": 20,
+          "total": 20
+        },
+        {
+          "file": "crates/lib/src/template/data.rs",
+          "covered": 95,
+          "total": 95
+        },
+        {
+          "file": "crates/lib/src/template/error.rs",
+          "covered": 28,
+          "total": 29
+        },
+        {
+          "file": "crates/lib/src/template/helpers.rs",
+          "covered": 68,
+          "total": 68
+        },
+        {
+          "file": "crates/lib/src/template/mod.rs",
+          "covered": 108,
+          "total": 108
+        },
+        {
+          "file": "crates/lib/src/template/parse.rs",
+          "covered": 220,
+          "total": 224
+        },
+        {
+          "file": "crates/lib/src/template/render.rs",
+          "covered": 181,
+          "total": 187
+        }
+      ]
+    },
+    {
+      "name": "stackpress-server",
+      "path": "crates/server/server",
+      "covered": 2347,
+      "total": 2504,
+      "percent": 93.73003194888179,
+      "gap_percentage_points": 0,
+      "additional_covered_lines_for_90": 0,
+      "files": [
+        {
+          "file": "crates/server/server/src/builder.rs",
+          "covered": 116,
+          "total": 126
+        },
+        {
+          "file": "crates/server/server/src/config.rs",
+          "covered": 231,
+          "total": 247
+        },
+        {
+          "file": "crates/server/server/src/context.rs",
+          "covered": 72,
+          "total": 80
+        },
+        {
+          "file": "crates/server/server/src/http.rs",
+          "covered": 135,
+          "total": 139
+        },
+        {
+          "file": "crates/server/server/src/http/common.rs",
+          "covered": 213,
+          "total": 271
+        },
+        {
+          "file": "crates/server/server/src/http/json.rs",
+          "covered": 58,
+          "total": 58
+        },
+        {
+          "file": "crates/server/server/src/http/stream.rs",
+          "covered": 301,
+          "total": 331
+        },
+        {
+          "file": "crates/server/server/src/lifecycle.rs",
+          "covered": 469,
+          "total": 479
+        },
+        {
+          "file": "crates/server/server/src/output.rs",
+          "covered": 30,
+          "total": 33
+        },
+        {
+          "file": "crates/server/server/src/plugin.rs",
+          "covered": 114,
+          "total": 115
+        },
+        {
+          "file": "crates/server/server/src/registration.rs",
+          "covered": 183,
+          "total": 184
+        },
+        {
+          "file": "crates/server/server/src/report.rs",
+          "covered": 99,
+          "total": 107
+        },
+        {
+          "file": "crates/server/server/src/router.rs",
+          "covered": 41,
+          "total": 46
+        },
+        {
+          "file": "crates/server/server/src/server.rs",
+          "covered": 61,
+          "total": 61
+        },
+        {
+          "file": "crates/server/server/src/services.rs",
+          "covered": 78,
+          "total": 79
+        },
+        {
+          "file": "crates/server/server/src/startup.rs",
+          "covered": 146,
+          "total": 148
+        }
+      ]
+    },
+    {
+      "name": "stackpress-server-http",
+      "path": "crates/server/http",
+      "covered": 1717,
+      "total": 1816,
+      "percent": 94.54845814977973,
+      "gap_percentage_points": 0,
+      "additional_covered_lines_for_90": 0,
+      "files": [
+        {
+          "file": "crates/server/http/src/assets.rs",
+          "covered": 166,
+          "total": 172
+        },
+        {
+          "file": "crates/server/http/src/body.rs",
+          "covered": 60,
+          "total": 61
+        },
+        {
+          "file": "crates/server/http/src/connection.rs",
+          "covered": 278,
+          "total": 295
+        },
+        {
+          "file": "crates/server/http/src/deployment.rs",
+          "covered": 67,
+          "total": 70
+        },
+        {
+          "file": "crates/server/http/src/input.rs",
+          "covered": 86,
+          "total": 88
+        },
+        {
+          "file": "crates/server/http/src/io.rs",
+          "covered": 39,
+          "total": 39
+        },
+        {
+          "file": "crates/server/http/src/lib.rs",
+          "covered": 109,
+          "total": 115
+        },
+        {
+          "file": "crates/server/http/src/monitor.rs",
+          "covered": 128,
+          "total": 134
+        },
+        {
+          "file": "crates/server/http/src/observe.rs",
+          "covered": 74,
+          "total": 77
+        },
+        {
+          "file": "crates/server/http/src/options.rs",
+          "covered": 60,
+          "total": 60
+        },
+        {
+          "file": "crates/server/http/src/proxy.rs",
+          "covered": 299,
+          "total": 325
+        },
+        {
+          "file": "crates/server/http/src/report.rs",
+          "covered": 122,
+          "total": 122
+        },
+        {
+          "file": "crates/server/http/src/startup.rs",
+          "covered": 35,
+          "total": 44
+        },
+        {
+          "file": "crates/server/http/src/supervisor.rs",
+          "covered": 175,
+          "total": 192
+        },
+        {
+          "file": "crates/server/http/src/timer.rs",
+          "covered": 19,
+          "total": 22
+        }
+      ]
+    },
+    {
+      "name": "stackpress-cli",
+      "path": "tools/cli",
+      "covered": 1306,
+      "total": 1402,
+      "percent": 93.15263908701854,
+      "gap_percentage_points": 0,
+      "additional_covered_lines_for_90": 0,
+      "files": [
+        {
+          "file": "tools/cli/src/args.rs",
+          "covered": 159,
+          "total": 160
+        },
+        {
+          "file": "tools/cli/src/control.rs",
+          "covered": 132,
+          "total": 132
+        },
+        {
+          "file": "tools/cli/src/diagnostics.rs",
+          "covered": 47,
+          "total": 47
+        },
+        {
+          "file": "tools/cli/src/entry.rs",
+          "covered": 122,
+          "total": 164
+        },
+        {
+          "file": "tools/cli/src/execution.rs",
+          "covered": 107,
+          "total": 115
+        },
+        {
+          "file": "tools/cli/src/prompt/driver.rs",
+          "covered": 194,
+          "total": 206
+        },
+        {
+          "file": "tools/cli/src/prompt/options.rs",
+          "covered": 127,
+          "total": 136
+        },
+        {
+          "file": "tools/cli/src/prompt/render.rs",
+          "covered": 125,
+          "total": 130
+        },
+        {
+          "file": "tools/cli/src/prompt/state.rs",
+          "covered": 122,
+          "total": 122
+        },
+        {
+          "file": "tools/cli/src/tty.rs",
+          "covered": 171,
+          "total": 190
+        }
+      ]
+    },
+    {
+      "name": "stackpress-idea-parser",
+      "path": "crates/idea/idea-parser",
+      "covered": 2261,
+      "total": 2391,
+      "percent": 94.5629443747386,
+      "gap_percentage_points": 0,
+      "additional_covered_lines_for_90": 0,
+      "files": [
+        {
+          "file": "crates/idea/idea-parser/src/ast.rs",
+          "covered": 51,
+          "total": 51
+        },
+        {
+          "file": "crates/idea/idea-parser/src/error.rs",
+          "covered": 58,
+          "total": 60
+        },
+        {
+          "file": "crates/idea/idea-parser/src/finalize.rs",
+          "covered": 265,
+          "total": 312
+        },
+        {
+          "file": "crates/idea/idea-parser/src/json.rs",
+          "covered": 125,
+          "total": 133
+        },
+        {
+          "file": "crates/idea/idea-parser/src/json/codec.rs",
+          "covered": 172,
+          "total": 185
+        },
+        {
+          "file": "crates/idea/idea-parser/src/json/config.rs",
+          "covered": 151,
+          "total": 152
+        },
+        {
+          "file": "crates/idea/idea-parser/src/lib.rs",
+          "covered": 62,
+          "total": 62
+        },
+        {
+          "file": "crates/idea/idea-parser/src/parser.rs",
+          "covered": 832,
+          "total": 861
+        },
+        {
+          "file": "crates/idea/idea-parser/src/references.rs",
+          "covered": 216,
+          "total": 239
+        },
+        {
+          "file": "crates/idea/idea-parser/src/references/collect.rs",
+          "covered": 140,
+          "total": 143
+        },
+        {
+          "file": "crates/idea/idea-parser/src/stages.rs",
+          "covered": 186,
+          "total": 190
+        },
+        {
+          "file": "crates/idea/idea-parser/src/token.rs",
+          "covered": 3,
+          "total": 3
+        }
+      ]
+    },
+    {
+      "name": "stackpress-idea-transformer",
+      "path": "crates/idea/idea-transformer",
+      "covered": 2104,
+      "total": 2249,
+      "percent": 93.552690084482,
+      "gap_percentage_points": 0,
+      "additional_covered_lines_for_90": 0,
+      "files": [
+        {
+          "file": "crates/idea/idea-transformer/src/compose/compile.rs",
+          "covered": 22,
+          "total": 22
+        },
+        {
+          "file": "crates/idea/idea-transformer/src/compose/json.rs",
+          "covered": 150,
+          "total": 154
+        },
+        {
+          "file": "crates/idea/idea-transformer/src/compose/merge.rs",
+          "covered": 157,
+          "total": 158
+        },
+        {
+          "file": "crates/idea/idea-transformer/src/compose/mod.rs",
+          "covered": 182,
+          "total": 215
+        },
+        {
+          "file": "crates/idea/idea-transformer/src/lib.rs",
+          "covered": 96,
+          "total": 99
+        },
+        {
+          "file": "crates/idea/idea-transformer/src/output.rs",
+          "covered": 264,
+          "total": 288
+        },
+        {
+          "file": "crates/idea/idea-transformer/src/output/format.rs",
+          "covered": 149,
+          "total": 159
+        },
+        {
+          "file": "crates/idea/idea-transformer/src/output/ownership.rs",
+          "covered": 213,
+          "total": 241
+        },
+        {
+          "file": "crates/idea/idea-transformer/src/output/report.rs",
+          "covered": 18,
+          "total": 18
+        },
+        {
+          "file": "crates/idea/idea-transformer/src/plan/mod.rs",
+          "covered": 205,
+          "total": 212
+        },
+        {
+          "file": "crates/idea/idea-transformer/src/plan/path.rs",
+          "covered": 37,
+          "total": 38
+        },
+        {
+          "file": "crates/idea/idea-transformer/src/registry.rs",
+          "covered": 209,
+          "total": 223
+        },
+        {
+          "file": "crates/idea/idea-transformer/src/registry/context.rs",
+          "covered": 79,
+          "total": 80
+        },
+        {
+          "file": "crates/idea/idea-transformer/src/source/memory.rs",
+          "covered": 57,
+          "total": 57
+        },
+        {
+          "file": "crates/idea/idea-transformer/src/source/mod.rs",
+          "covered": 45,
+          "total": 45
+        },
+        {
+          "file": "crates/idea/idea-transformer/src/source/native.rs",
+          "covered": 91,
+          "total": 106
+        },
+        {
+          "file": "crates/idea/idea-transformer/src/source/package.rs",
+          "covered": 84,
+          "total": 87
+        },
+        {
+          "file": "crates/idea/idea-transformer/src/source/paths.rs",
+          "covered": 46,
+          "total": 47
+        }
+      ]
+    },
+    {
+      "name": "stackpress-idea",
+      "path": "crates/idea/idea",
+      "covered": 41,
+      "total": 41,
+      "percent": 100.0,
+      "gap_percentage_points": 0,
+      "additional_covered_lines_for_90": 0,
+      "files": [
+        {
+          "file": "crates/idea/idea/src/lib.rs",
+          "covered": 41,
+          "total": 41
+        }
+      ]
+    },
+    {
+      "name": "stackpress-sql",
+      "path": "crates/sql/sql",
+      "covered": 3248,
+      "total": 3394,
+      "percent": 95.6982911019446,
+      "gap_percentage_points": 0,
+      "additional_covered_lines_for_90": 0,
+      "files": [
+        {
+          "file": "crates/sql/sql/src/ddl.rs",
+          "covered": 484,
+          "total": 492
+        },
+        {
+          "file": "crates/sql/sql/src/dialect.rs",
+          "covered": 51,
+          "total": 51
+        },
+        {
+          "file": "crates/sql/sql/src/diff.rs",
+          "covered": 235,
+          "total": 238
+        },
+        {
+          "file": "crates/sql/sql/src/dml.rs",
+          "covered": 502,
+          "total": 509
+        },
+        {
+          "file": "crates/sql/sql/src/engine.rs",
+          "covered": 159,
+          "total": 168
+        },
+        {
+          "file": "crates/sql/sql/src/error.rs",
+          "covered": 54,
+          "total": 54
+        },
+        {
+          "file": "crates/sql/sql/src/expr.rs",
+          "covered": 288,
+          "total": 293
+        },
+        {
+          "file": "crates/sql/sql/src/identifier.rs",
+          "covered": 62,
+          "total": 62
+        },
+        {
+          "file": "crates/sql/sql/src/json.rs",
+          "covered": 159,
+          "total": 171
+        },
+        {
+          "file": "crates/sql/sql/src/json_render.rs",
+          "covered": 57,
+          "total": 57
+        },
+        {
+          "file": "crates/sql/sql/src/network_ddl.rs",
+          "covered": 433,
+          "total": 526
+        },
+        {
+          "file": "crates/sql/sql/src/query.rs",
+          "covered": 85,
+          "total": 85
+        },
+        {
+          "file": "crates/sql/sql/src/schema.rs",
+          "covered": 276,
+          "total": 282
+        },
+        {
+          "file": "crates/sql/sql/src/statement.rs",
+          "covered": 140,
+          "total": 141
+        },
+        {
+          "file": "crates/sql/sql/src/table.rs",
+          "covered": 50,
+          "total": 50
+        },
+        {
+          "file": "crates/sql/sql/src/value.rs",
+          "covered": 213,
+          "total": 215
+        }
+      ]
+    },
+    {
+      "name": "stackpress-sql-sqlite",
+      "path": "crates/sql/sql-sqlite",
+      "covered": 740,
+      "total": 808,
+      "percent": 91.58415841584159,
+      "gap_percentage_points": 0,
+      "additional_covered_lines_for_90": 0,
+      "files": [
+        {
+          "file": "crates/sql/sql-sqlite/src/collect.rs",
+          "covered": 62,
+          "total": 66
+        },
+        {
+          "file": "crates/sql/sql-sqlite/src/execute.rs",
+          "covered": 104,
+          "total": 113
+        },
+        {
+          "file": "crates/sql/sql-sqlite/src/lease.rs",
+          "covered": 39,
+          "total": 40
+        },
+        {
+          "file": "crates/sql/sql-sqlite/src/lib.rs",
+          "covered": 69,
+          "total": 69
+        },
+        {
+          "file": "crates/sql/sql-sqlite/src/maintenance.rs",
+          "covered": 362,
+          "total": 416
+        },
+        {
+          "file": "crates/sql/sql-sqlite/src/options.rs",
+          "covered": 55,
+          "total": 55
+        },
+        {
+          "file": "crates/sql/sql-sqlite/src/session.rs",
+          "covered": 49,
+          "total": 49
+        }
+      ]
+    },
+    {
+      "name": "stackpress-sql-postgres",
+      "path": "crates/sql/sql-postgres",
+      "covered": 227,
+      "total": 889,
+      "percent": 25.534308211473565,
+      "gap_percentage_points": 64.46569178852644,
+      "additional_covered_lines_for_90": 574,
+      "files": [
+        {
+          "file": "crates/sql/sql-postgres/src/collect.rs",
+          "covered": 18,
+          "total": 86
+        },
+        {
+          "file": "crates/sql/sql-postgres/src/database.rs",
+          "covered": 0,
+          "total": 95
+        },
+        {
+          "file": "crates/sql/sql-postgres/src/execute.rs",
+          "covered": 10,
+          "total": 204
+        },
+        {
+          "file": "crates/sql/sql-postgres/src/json.rs",
+          "covered": 89,
+          "total": 104
+        },
+        {
+          "file": "crates/sql/sql-postgres/src/lease.rs",
+          "covered": 4,
+          "total": 150
+        },
+        {
+          "file": "crates/sql/sql-postgres/src/m1.rs",
+          "covered": 3,
+          "total": 3
+        },
+        {
+          "file": "crates/sql/sql-postgres/src/m2.rs",
+          "covered": 3,
+          "total": 3
+        },
+        {
+          "file": "crates/sql/sql-postgres/src/options.rs",
+          "covered": 100,
+          "total": 126
+        },
+        {
+          "file": "crates/sql/sql-postgres/src/probe.rs",
+          "covered": 0,
+          "total": 44
+        },
+        {
+          "file": "crates/sql/sql-postgres/src/reuse.rs",
+          "covered": 0,
+          "total": 19
+        },
+        {
+          "file": "crates/sql/sql-postgres/src/session.rs",
+          "covered": 0,
+          "total": 55
+        }
+      ]
+    },
+    {
+      "name": "stackpress-sql-mysql",
+      "path": "crates/sql/sql-mysql",
+      "covered": 414,
+      "total": 1049,
+      "percent": 39.46615824594852,
+      "gap_percentage_points": 50.53384175405148,
+      "additional_covered_lines_for_90": 531,
+      "files": [
+        {
+          "file": "crates/sql/sql-mysql/src/collect.rs",
+          "covered": 18,
+          "total": 118
+        },
+        {
+          "file": "crates/sql/sql-mysql/src/database.rs",
+          "covered": 0,
+          "total": 101
+        },
+        {
+          "file": "crates/sql/sql-mysql/src/execute.rs",
+          "covered": 53,
+          "total": 183
+        },
+        {
+          "file": "crates/sql/sql-mysql/src/json.rs",
+          "covered": 86,
+          "total": 101
+        },
+        {
+          "file": "crates/sql/sql-mysql/src/lease.rs",
+          "covered": 4,
+          "total": 150
+        },
+        {
+          "file": "crates/sql/sql-mysql/src/m1.rs",
+          "covered": 3,
+          "total": 3
+        },
+        {
+          "file": "crates/sql/sql-mysql/src/m2.rs",
+          "covered": 3,
+          "total": 3
+        },
+        {
+          "file": "crates/sql/sql-mysql/src/options.rs",
+          "covered": 77,
+          "total": 108
+        },
+        {
+          "file": "crates/sql/sql-mysql/src/probe.rs",
+          "covered": 0,
+          "total": 44
+        },
+        {
+          "file": "crates/sql/sql-mysql/src/reuse.rs",
+          "covered": 170,
+          "total": 182
+        },
+        {
+          "file": "crates/sql/sql-mysql/src/session.rs",
+          "covered": 0,
+          "total": 56
+        }
+      ]
+    },
+    {
+      "name": "stackpress-framework-view",
+      "path": "crates/framework/framework-view",
+      "covered": 1791,
+      "total": 1844,
+      "percent": 97.12581344902387,
+      "gap_percentage_points": 0,
+      "additional_covered_lines_for_90": 0,
+      "files": [
+        {
+          "file": "crates/framework/framework-view/src/access.rs",
+          "covered": 63,
+          "total": 63
+        },
+        {
+          "file": "crates/framework/framework-view/src/adapters/native.rs",
+          "covered": 112,
+          "total": 127
+        },
+        {
+          "file": "crates/framework/framework-view/src/adapters/web.rs",
+          "covered": 43,
+          "total": 43
+        },
+        {
+          "file": "crates/framework/framework-view/src/adapters/web/host.rs",
+          "covered": 10,
+          "total": 10
+        },
+        {
+          "file": "crates/framework/framework-view/src/flash.rs",
+          "covered": 71,
+          "total": 72
+        },
+        {
+          "file": "crates/framework/framework-view/src/flash/host.rs",
+          "covered": 93,
+          "total": 94
+        },
+        {
+          "file": "crates/framework/framework-view/src/leptos/async_render.rs",
+          "covered": 68,
+          "total": 72
+        },
+        {
+          "file": "crates/framework/framework-view/src/leptos/presentation.rs",
+          "covered": 9,
+          "total": 9
+        },
+        {
+          "file": "crates/framework/framework-view/src/leptos/render.rs",
+          "covered": 121,
+          "total": 127
+        },
+        {
+          "file": "crates/framework/framework-view/src/leptos/replay.rs",
+          "covered": 31,
+          "total": 33
+        },
+        {
+          "file": "crates/framework/framework-view/src/leptos/routing.rs",
+          "covered": 34,
+          "total": 34
+        },
+        {
+          "file": "crates/framework/framework-view/src/leptos/safety.rs",
+          "covered": 12,
+          "total": 12
+        },
+        {
+          "file": "crates/framework/framework-view/src/leptos/stream.rs",
+          "covered": 129,
+          "total": 133
+        },
+        {
+          "file": "crates/framework/framework-view/src/lib.rs",
+          "covered": 110,
+          "total": 115
+        },
+        {
+          "file": "crates/framework/framework-view/src/plugin.rs",
+          "covered": 4,
+          "total": 4
+        },
+        {
+          "file": "crates/framework/framework-view/src/policy.rs",
+          "covered": 206,
+          "total": 207
+        },
+        {
+          "file": "crates/framework/framework-view/src/preferences/action.rs",
+          "covered": 106,
+          "total": 108
+        },
+        {
+          "file": "crates/framework/framework-view/src/preferences/host.rs",
+          "covered": 139,
+          "total": 144
+        },
+        {
+          "file": "crates/framework/framework-view/src/preferences/locale.rs",
+          "covered": 105,
+          "total": 105
+        },
+        {
+          "file": "crates/framework/framework-view/src/preferences/state.rs",
+          "covered": 50,
+          "total": 50
+        },
+        {
+          "file": "crates/framework/framework-view/src/routes.rs",
+          "covered": 125,
+          "total": 128
+        },
+        {
+          "file": "crates/framework/framework-view/src/server.rs",
+          "covered": 103,
+          "total": 106
+        },
+        {
+          "file": "crates/framework/framework-view/src/theme.rs",
+          "covered": 47,
+          "total": 48
+        }
+      ]
+    },
+    {
+      "name": "stackpress-leptos",
+      "path": "crates/leptos",
+      "covered": 7928,
+      "total": 8737,
+      "percent": 90.74052878562436,
+      "gap_percentage_points": 0,
+      "additional_covered_lines_for_90": 0,
+      "files": [
+        {
+          "file": "crates/leptos/src/async_render.rs",
+          "covered": 93,
+          "total": 93
+        },
+        {
+          "file": "crates/leptos/src/components/advanced.rs",
+          "covered": 93,
+          "total": 102
+        },
+        {
+          "file": "crates/leptos/src/components/bounded_inputs.rs",
+          "covered": 255,
+          "total": 267
+        },
+        {
+          "file": "crates/leptos/src/components/choice.rs",
+          "covered": 192,
+          "total": 204
+        },
+        {
+          "file": "crates/leptos/src/components/collection_state.rs",
+          "covered": 91,
+          "total": 91
+        },
+        {
+          "file": "crates/leptos/src/components/collections.rs",
+          "covered": 165,
+          "total": 232
+        },
+        {
+          "file": "crates/leptos/src/components/combobox.rs",
+          "covered": 300,
+          "total": 341
+        },
+        {
+          "file": "crates/leptos/src/components/controls.rs",
+          "covered": 250,
+          "total": 254
+        },
+        {
+          "file": "crates/leptos/src/components/disclosure.rs",
+          "covered": 113,
+          "total": 132
+        },
+        {
+          "file": "crates/leptos/src/components/display_values.rs",
+          "covered": 206,
+          "total": 208
+        },
+        {
+          "file": "crates/leptos/src/components/geometry.rs",
+          "covered": 48,
+          "total": 49
+        },
+        {
+          "file": "crates/leptos/src/components/icons.rs",
+          "covered": 34,
+          "total": 35
+        },
+        {
+          "file": "crates/leptos/src/components/inputs.rs",
+          "covered": 326,
+          "total": 350
+        },
+        {
+          "file": "crates/leptos/src/components/layout.rs",
+          "covered": 71,
+          "total": 71
+        },
+        {
+          "file": "crates/leptos/src/components/navigation.rs",
+          "covered": 101,
+          "total": 162
+        },
+        {
+          "file": "crates/leptos/src/components/overlay.rs",
+          "covered": 140,
+          "total": 172
+        },
+        {
+          "file": "crates/leptos/src/components/paging.rs",
+          "covered": 84,
+          "total": 88
+        },
+        {
+          "file": "crates/leptos/src/components/presentation.rs",
+          "covered": 210,
+          "total": 210
+        },
+        {
+          "file": "crates/leptos/src/components/source/code.rs",
+          "covered": 79,
+          "total": 95
+        },
+        {
+          "file": "crates/leptos/src/components/source/color_input.rs",
+          "covered": 89,
+          "total": 104
+        },
+        {
+          "file": "crates/leptos/src/components/source/countries.rs",
+          "covered": 166,
+          "total": 171
+        },
+        {
+          "file": "crates/leptos/src/components/source/display.rs",
+          "covered": 163,
+          "total": 164
+        },
+        {
+          "file": "crates/leptos/src/components/source/file_state.rs",
+          "covered": 57,
+          "total": 61
+        },
+        {
+          "file": "crates/leptos/src/components/source/files.rs",
+          "covered": 82,
+          "total": 97
+        },
+        {
+          "file": "crates/leptos/src/components/source/formula.rs",
+          "covered": 180,
+          "total": 189
+        },
+        {
+          "file": "crates/leptos/src/components/source/lists.rs",
+          "covered": 110,
+          "total": 137
+        },
+        {
+          "file": "crates/leptos/src/components/source/markdown.rs",
+          "covered": 51,
+          "total": 54
+        },
+        {
+          "file": "crates/leptos/src/components/source/mask.rs",
+          "covered": 117,
+          "total": 127
+        },
+        {
+          "file": "crates/leptos/src/components/source/mask_input.rs",
+          "covered": 34,
+          "total": 43
+        },
+        {
+          "file": "crates/leptos/src/components/source/media.rs",
+          "covered": 78,
+          "total": 81
+        },
+        {
+          "file": "crates/leptos/src/components/source/radio.rs",
+          "covered": 57,
+          "total": 63
+        },
+        {
+          "file": "crates/leptos/src/components/source/relative.rs",
+          "covered": 49,
+          "total": 65
+        },
+        {
+          "file": "crates/leptos/src/components/source/select.rs",
+          "covered": 92,
+          "total": 132
+        },
+        {
+          "file": "crates/leptos/src/components/source/small.rs",
+          "covered": 51,
+          "total": 69
+        },
+        {
+          "file": "crates/leptos/src/components/source/suggest.rs",
+          "covered": 51,
+          "total": 81
+        },
+        {
+          "file": "crates/leptos/src/components/table_family.rs",
+          "covered": 158,
+          "total": 173
+        },
+        {
+          "file": "crates/leptos/src/components/table_state.rs",
+          "covered": 161,
+          "total": 165
+        },
+        {
+          "file": "crates/leptos/src/components/tag_list.rs",
+          "covered": 124,
+          "total": 185
+        },
+        {
+          "file": "crates/leptos/src/components/text_editor/mod.rs",
+          "covered": 244,
+          "total": 258
+        },
+        {
+          "file": "crates/leptos/src/components/text_editor/toolbar.rs",
+          "covered": 407,
+          "total": 415
+        },
+        {
+          "file": "crates/leptos/src/components/text_editor/toolbar/icons.rs",
+          "covered": 41,
+          "total": 42
+        },
+        {
+          "file": "crates/leptos/src/edit/decimal.rs",
+          "covered": 194,
+          "total": 195
+        },
+        {
+          "file": "crates/leptos/src/edit/input.rs",
+          "covered": 56,
+          "total": 74
+        },
+        {
+          "file": "crates/leptos/src/edit/mod.rs",
+          "covered": 276,
+          "total": 306
+        },
+        {
+          "file": "crates/leptos/src/edit/phone.rs",
+          "covered": 59,
+          "total": 64
+        },
+        {
+          "file": "crates/leptos/src/edit/selection.rs",
+          "covered": 68,
+          "total": 68
+        },
+        {
+          "file": "crates/leptos/src/edit/temporal.rs",
+          "covered": 180,
+          "total": 198
+        },
+        {
+          "file": "crates/leptos/src/edit/transport.rs",
+          "covered": 31,
+          "total": 33
+        },
+        {
+          "file": "crates/leptos/src/format.rs",
+          "covered": 87,
+          "total": 88
+        },
+        {
+          "file": "crates/leptos/src/format_number.rs",
+          "covered": 105,
+          "total": 107
+        },
+        {
+          "file": "crates/leptos/src/format_phone.rs",
+          "covered": 60,
+          "total": 61
+        },
+        {
+          "file": "crates/leptos/src/format_time.rs",
+          "covered": 243,
+          "total": 246
+        },
+        {
+          "file": "crates/leptos/src/language.rs",
+          "covered": 152,
+          "total": 152
+        },
+        {
+          "file": "crates/leptos/src/navigation.rs",
+          "covered": 41,
+          "total": 44
+        },
+        {
+          "file": "crates/leptos/src/owner.rs",
+          "covered": 9,
+          "total": 9
+        },
+        {
+          "file": "crates/leptos/src/render.rs",
+          "covered": 122,
+          "total": 138
+        },
+        {
+          "file": "crates/leptos/src/replay.rs",
+          "covered": 58,
+          "total": 60
+        },
+        {
+          "file": "crates/leptos/src/replay_error.rs",
+          "covered": 4,
+          "total": 16
+        },
+        {
+          "file": "crates/leptos/src/resources.rs",
+          "covered": 72,
+          "total": 79
+        },
+        {
+          "file": "crates/leptos/src/rich.rs",
+          "covered": 185,
+          "total": 187
+        },
+        {
+          "file": "crates/leptos/src/safety.rs",
+          "covered": 24,
+          "total": 24
+        },
+        {
+          "file": "crates/leptos/src/state.rs",
+          "covered": 109,
+          "total": 109
+        },
+        {
+          "file": "crates/leptos/src/stream.rs",
+          "covered": 303,
+          "total": 330
+        },
+        {
+          "file": "crates/leptos/src/stream_replay.rs",
+          "covered": 77,
+          "total": 117
+        }
+      ]
+    },
+    {
+      "name": "stackpress-framework-language",
+      "path": "crates/framework/framework-language",
+      "covered": 54,
+      "total": 58,
+      "percent": 93.10344827586206,
+      "gap_percentage_points": 0,
+      "additional_covered_lines_for_90": 0,
+      "files": [
+        {
+          "file": "crates/framework/framework-language/src/lib.rs",
+          "covered": 54,
+          "total": 58
+        }
+      ]
+    },
+    {
+      "name": "stackpress-framework-schema",
+      "path": "crates/framework/framework-schema",
+      "covered": 6298,
+      "total": 6840,
+      "percent": 92.07602339181287,
+      "gap_percentage_points": 0,
+      "additional_covered_lines_for_90": 0,
+      "files": [
+        {
+          "file": "crates/framework/framework-schema/src/codegen/assertions.rs",
+          "covered": 167,
+          "total": 181
+        },
+        {
+          "file": "crates/framework/framework-schema/src/codegen/budgets.rs",
+          "covered": 117,
+          "total": 142
+        },
+        {
+          "file": "crates/framework/framework-schema/src/codegen/create.rs",
+          "covered": 90,
+          "total": 101
+        },
+        {
+          "file": "crates/framework/framework-schema/src/codegen/diagnostics.rs",
+          "covered": 120,
+          "total": 137
+        },
+        {
+          "file": "crates/framework/framework-schema/src/codegen/emit.rs",
+          "covered": 238,
+          "total": 273
+        },
+        {
+          "file": "crates/framework/framework-schema/src/codegen/inputs.rs",
+          "covered": 78,
+          "total": 87
+        },
+        {
+          "file": "crates/framework/framework-schema/src/codegen/metadata.rs",
+          "covered": 504,
+          "total": 541
+        },
+        {
+          "file": "crates/framework/framework-schema/src/codegen/mod.rs",
+          "covered": 458,
+          "total": 491
+        },
+        {
+          "file": "crates/framework/framework-schema/src/codegen/names.rs",
+          "covered": 104,
+          "total": 105
+        },
+        {
+          "file": "crates/framework/framework-schema/src/codegen/projection.rs",
+          "covered": 275,
+          "total": 288
+        },
+        {
+          "file": "crates/framework/framework-schema/src/codegen/query.rs",
+          "covered": 61,
+          "total": 64
+        },
+        {
+          "file": "crates/framework/framework-schema/src/codegen/registry.rs",
+          "covered": 294,
+          "total": 305
+        },
+        {
+          "file": "crates/framework/framework-schema/src/codegen/source.rs",
+          "covered": 37,
+          "total": 44
+        },
+        {
+          "file": "crates/framework/framework-schema/src/codegen/source_assertions.rs",
+          "covered": 59,
+          "total": 69
+        },
+        {
+          "file": "crates/framework/framework-schema/src/codegen/source_catalog.rs",
+          "covered": 121,
+          "total": 125
+        },
+        {
+          "file": "crates/framework/framework-schema/src/codegen/source_emit.rs",
+          "covered": 67,
+          "total": 79
+        },
+        {
+          "file": "crates/framework/framework-schema/src/codegen/source_graph.rs",
+          "covered": 340,
+          "total": 357
+        },
+        {
+          "file": "crates/framework/framework-schema/src/codegen/source_roles.rs",
+          "covered": 131,
+          "total": 131
+        },
+        {
+          "file": "crates/framework/framework-schema/src/codegen/source_roles_remaining.rs",
+          "covered": 424,
+          "total": 426
+        },
+        {
+          "file": "crates/framework/framework-schema/src/codegen/source_ui.rs",
+          "covered": 126,
+          "total": 127
+        },
+        {
+          "file": "crates/framework/framework-schema/src/codegen/witnesses.rs",
+          "covered": 51,
+          "total": 60
+        },
+        {
+          "file": "crates/framework/framework-schema/src/input.rs",
+          "covered": 70,
+          "total": 81
+        },
+        {
+          "file": "crates/framework/framework-schema/src/lib.rs",
+          "covered": 98,
+          "total": 107
+        },
+        {
+          "file": "crates/framework/framework-schema/src/providers/crypto.rs",
+          "covered": 52,
+          "total": 52
+        },
+        {
+          "file": "crates/framework/framework-schema/src/providers/cuid.rs",
+          "covered": 144,
+          "total": 148
+        },
+        {
+          "file": "crates/framework/framework-schema/src/providers/mod.rs",
+          "covered": 31,
+          "total": 33
+        },
+        {
+          "file": "crates/framework/framework-schema/src/providers/nanoid.rs",
+          "covered": 62,
+          "total": 64
+        },
+        {
+          "file": "crates/framework/framework-schema/src/query.rs",
+          "covered": 71,
+          "total": 76
+        },
+        {
+          "file": "crates/framework/framework-schema/src/record.rs",
+          "covered": 172,
+          "total": 208
+        },
+        {
+          "file": "crates/framework/framework-schema/src/source.rs",
+          "covered": 3,
+          "total": 12
+        },
+        {
+          "file": "crates/framework/framework-schema/src/source/checks.rs",
+          "covered": 218,
+          "total": 242
+        },
+        {
+          "file": "crates/framework/framework-schema/src/source/codecs.rs",
+          "covered": 43,
+          "total": 44
+        },
+        {
+          "file": "crates/framework/framework-schema/src/source/coercion.rs",
+          "covered": 158,
+          "total": 168
+        },
+        {
+          "file": "crates/framework/framework-schema/src/source/columns.rs",
+          "covered": 199,
+          "total": 269
+        },
+        {
+          "file": "crates/framework/framework-schema/src/source/dates.rs",
+          "covered": 82,
+          "total": 88
+        },
+        {
+          "file": "crates/framework/framework-schema/src/source/fields.rs",
+          "covered": 51,
+          "total": 64
+        },
+        {
+          "file": "crates/framework/framework-schema/src/source/number.rs",
+          "covered": 99,
+          "total": 103
+        },
+        {
+          "file": "crates/framework/framework-schema/src/source/providers.rs",
+          "covered": 16,
+          "total": 16
+        },
+        {
+          "file": "crates/framework/framework-schema/src/source/schema.rs",
+          "covered": 259,
+          "total": 273
+        },
+        {
+          "file": "crates/framework/framework-schema/src/source/text.rs",
+          "covered": 3,
+          "total": 6
+        },
+        {
+          "file": "crates/framework/framework-schema/src/source/value.rs",
+          "covered": 112,
+          "total": 121
+        },
+        {
+          "file": "crates/framework/framework-schema/src/source_number.rs",
+          "covered": 78,
+          "total": 80
+        },
+        {
+          "file": "crates/framework/framework-schema/src/validation.rs",
+          "covered": 215,
+          "total": 236
+        },
+        {
+          "file": "crates/framework/framework-schema/src/values.rs",
+          "covered": 200,
+          "total": 216
+        }
+      ]
+    },
+    {
+      "name": "stackpress-framework-sql",
+      "path": "crates/framework/framework-sql",
+      "covered": 7530,
+      "total": 8629,
+      "percent": 87.26387762197241,
+      "gap_percentage_points": 2.736122378027588,
+      "additional_covered_lines_for_90": 237,
+      "files": [
+        {
+          "file": "crates/framework/framework-sql/src/codegen.rs",
+          "covered": 415,
+          "total": 456
+        },
+        {
+          "file": "crates/framework/framework-sql/src/codegen/bounds.rs",
+          "covered": 36,
+          "total": 36
+        },
+        {
+          "file": "crates/framework/framework-sql/src/codegen/catalog.rs",
+          "covered": 175,
+          "total": 181
+        },
+        {
+          "file": "crates/framework/framework-sql/src/codegen/conflicts.rs",
+          "covered": 18,
+          "total": 18
+        },
+        {
+          "file": "crates/framework/framework-sql/src/codegen/operations.rs",
+          "covered": 125,
+          "total": 127
+        },
+        {
+          "file": "crates/framework/framework-sql/src/codegen/queries.rs",
+          "covered": 40,
+          "total": 41
+        },
+        {
+          "file": "crates/framework/framework-sql/src/codegen/selection.rs",
+          "covered": 75,
+          "total": 78
+        },
+        {
+          "file": "crates/framework/framework-sql/src/codegen/source.rs",
+          "covered": 36,
+          "total": 42
+        },
+        {
+          "file": "crates/framework/framework-sql/src/codegen/templates.rs",
+          "covered": 61,
+          "total": 63
+        },
+        {
+          "file": "crates/framework/framework-sql/src/codegen/writes.rs",
+          "covered": 62,
+          "total": 65
+        },
+        {
+          "file": "crates/framework/framework-sql/src/ddl_policy.rs",
+          "covered": 130,
+          "total": 144
+        },
+        {
+          "file": "crates/framework/framework-sql/src/lib.rs",
+          "covered": 292,
+          "total": 342
+        },
+        {
+          "file": "crates/framework/framework-sql/src/migrations.rs",
+          "covered": 380,
+          "total": 421
+        },
+        {
+          "file": "crates/framework/framework-sql/src/migrations/faults.rs",
+          "covered": 263,
+          "total": 265
+        },
+        {
+          "file": "crates/framework/framework-sql/src/migrations/history.rs",
+          "covered": 319,
+          "total": 354
+        },
+        {
+          "file": "crates/framework/framework-sql/src/migrations/planner.rs",
+          "covered": 909,
+          "total": 993
+        },
+        {
+          "file": "crates/framework/framework-sql/src/migrations/sqlite.rs",
+          "covered": 668,
+          "total": 738
+        },
+        {
+          "file": "crates/framework/framework-sql/src/migrations/steps.rs",
+          "covered": 157,
+          "total": 182
+        },
+        {
+          "file": "crates/framework/framework-sql/src/migrations/storage.rs",
+          "covered": 166,
+          "total": 204
+        },
+        {
+          "file": "crates/framework/framework-sql/src/migrations/wire.rs",
+          "covered": 132,
+          "total": 156
+        },
+        {
+          "file": "crates/framework/framework-sql/src/operations.rs",
+          "covered": 215,
+          "total": 324
+        },
+        {
+          "file": "crates/framework/framework-sql/src/plugin.rs",
+          "covered": 29,
+          "total": 31
+        },
+        {
+          "file": "crates/framework/framework-sql/src/projection.rs",
+          "covered": 54,
+          "total": 126
+        },
+        {
+          "file": "crates/framework/framework-sql/src/setup.rs",
+          "covered": 18,
+          "total": 21
+        },
+        {
+          "file": "crates/framework/framework-sql/src/source/actions.rs",
+          "covered": 82,
+          "total": 82
+        },
+        {
+          "file": "crates/framework/framework-sql/src/source/batch.rs",
+          "covered": 122,
+          "total": 130
+        },
+        {
+          "file": "crates/framework/framework-sql/src/source/error.rs",
+          "covered": 35,
+          "total": 39
+        },
+        {
+          "file": "crates/framework/framework-sql/src/source/event_defaults.rs",
+          "covered": 5,
+          "total": 6
+        },
+        {
+          "file": "crates/framework/framework-sql/src/source/events.rs",
+          "covered": 452,
+          "total": 500
+        },
+        {
+          "file": "crates/framework/framework-sql/src/source/maintenance.rs",
+          "covered": 163,
+          "total": 197
+        },
+        {
+          "file": "crates/framework/framework-sql/src/source/membership.rs",
+          "covered": 87,
+          "total": 121
+        },
+        {
+          "file": "crates/framework/framework-sql/src/source/mod.rs",
+          "covered": 9,
+          "total": 9
+        },
+        {
+          "file": "crates/framework/framework-sql/src/source/native_actions.rs",
+          "covered": 311,
+          "total": 392
+        },
+        {
+          "file": "crates/framework/framework-sql/src/source/native_contracts.rs",
+          "covered": 89,
+          "total": 139
+        },
+        {
+          "file": "crates/framework/framework-sql/src/source/predicates.rs",
+          "covered": 123,
+          "total": 125
+        },
+        {
+          "file": "crates/framework/framework-sql/src/source/query.rs",
+          "covered": 165,
+          "total": 168
+        },
+        {
+          "file": "crates/framework/framework-sql/src/source/query_input.rs",
+          "covered": 103,
+          "total": 103
+        },
+        {
+          "file": "crates/framework/framework-sql/src/source/select.rs",
+          "covered": 34,
+          "total": 36
+        },
+        {
+          "file": "crates/framework/framework-sql/src/source/statement.rs",
+          "covered": 11,
+          "total": 14
+        },
+        {
+          "file": "crates/framework/framework-sql/src/source/store.rs",
+          "covered": 257,
+          "total": 337
+        },
+        {
+          "file": "crates/framework/framework-sql/src/source/text.rs",
+          "covered": 19,
+          "total": 31
+        },
+        {
+          "file": "crates/framework/framework-sql/src/source/values.rs",
+          "covered": 0,
+          "total": 19
+        },
+        {
+          "file": "crates/framework/framework-sql/src/stores.rs",
+          "covered": 120,
+          "total": 139
+        },
+        {
+          "file": "crates/framework/framework-sql/src/stores/query.rs",
+          "covered": 165,
+          "total": 216
+        },
+        {
+          "file": "crates/framework/framework-sql/src/stores/relations.rs",
+          "covered": 403,
+          "total": 418
+        }
+      ]
+    },
+    {
+      "name": "stackpress-framework-admin",
+      "path": "crates/framework/framework-admin",
+      "covered": 3818,
+      "total": 4364,
+      "percent": 87.48854262144822,
+      "gap_percentage_points": 2.511457378551782,
+      "additional_covered_lines_for_90": 110,
+      "files": [
+        {
+          "file": "crates/framework/framework-admin/src/codegen/bindings.rs",
+          "covered": 134,
+          "total": 137
+        },
+        {
+          "file": "crates/framework/framework-admin/src/codegen/catalog.rs",
+          "covered": 114,
+          "total": 114
+        },
+        {
+          "file": "crates/framework/framework-admin/src/codegen/emit.rs",
+          "covered": 182,
+          "total": 197
+        },
+        {
+          "file": "crates/framework/framework-admin/src/codegen/formatted.rs",
+          "covered": 63,
+          "total": 63
+        },
+        {
+          "file": "crates/framework/framework-admin/src/codegen/mod.rs",
+          "covered": 20,
+          "total": 20
+        },
+        {
+          "file": "crates/framework/framework-admin/src/codegen/pages.rs",
+          "covered": 237,
+          "total": 241
+        },
+        {
+          "file": "crates/framework/framework-admin/src/codegen/source.rs",
+          "covered": 206,
+          "total": 222
+        },
+        {
+          "file": "crates/framework/framework-admin/src/codegen/table.rs",
+          "covered": 60,
+          "total": 60
+        },
+        {
+          "file": "crates/framework/framework-admin/src/codegen/templates.rs",
+          "covered": 94,
+          "total": 96
+        },
+        {
+          "file": "crates/framework/framework-admin/src/components.rs",
+          "covered": 211,
+          "total": 275
+        },
+        {
+          "file": "crates/framework/framework-admin/src/components/catalog_inputs.rs",
+          "covered": 192,
+          "total": 229
+        },
+        {
+          "file": "crates/framework/framework-admin/src/components/collection_inputs.rs",
+          "covered": 120,
+          "total": 128
+        },
+        {
+          "file": "crates/framework/framework-admin/src/components/formatted.rs",
+          "covered": 343,
+          "total": 413
+        },
+        {
+          "file": "crates/framework/framework-admin/src/components/sync.rs",
+          "covered": 21,
+          "total": 53
+        },
+        {
+          "file": "crates/framework/framework-admin/src/draft.rs",
+          "covered": 110,
+          "total": 110
+        },
+        {
+          "file": "crates/framework/framework-admin/src/pages.rs",
+          "covered": 144,
+          "total": 145
+        },
+        {
+          "file": "crates/framework/framework-admin/src/presentation.rs",
+          "covered": 103,
+          "total": 119
+        },
+        {
+          "file": "crates/framework/framework-admin/src/row_actions.rs",
+          "covered": 65,
+          "total": 68
+        },
+        {
+          "file": "crates/framework/framework-admin/src/search.rs",
+          "covered": 146,
+          "total": 151
+        },
+        {
+          "file": "crates/framework/framework-admin/src/source/pages.rs",
+          "covered": 55,
+          "total": 56
+        },
+        {
+          "file": "crates/framework/framework-admin/src/source/roles.rs",
+          "covered": 296,
+          "total": 392
+        },
+        {
+          "file": "crates/framework/framework-admin/src/source/roles/countries.rs",
+          "covered": 49,
+          "total": 57
+        },
+        {
+          "file": "crates/framework/framework-admin/src/source/roles/display.rs",
+          "covered": 116,
+          "total": 133
+        },
+        {
+          "file": "crates/framework/framework-admin/src/source/roles/editor.rs",
+          "covered": 95,
+          "total": 110
+        },
+        {
+          "file": "crates/framework/framework-admin/src/source/roles/fieldset.rs",
+          "covered": 93,
+          "total": 154
+        },
+        {
+          "file": "crates/framework/framework-admin/src/source/roles/inputs.rs",
+          "covered": 65,
+          "total": 74
+        },
+        {
+          "file": "crates/framework/framework-admin/src/source/roles/lists.rs",
+          "covered": 17,
+          "total": 20
+        },
+        {
+          "file": "crates/framework/framework-admin/src/source/roles/media.rs",
+          "covered": 11,
+          "total": 12
+        },
+        {
+          "file": "crates/framework/framework-admin/src/source/roles/props.rs",
+          "covered": 53,
+          "total": 96
+        },
+        {
+          "file": "crates/framework/framework-admin/src/source/roles/rich.rs",
+          "covered": 74,
+          "total": 84
+        },
+        {
+          "file": "crates/framework/framework-admin/src/transfer/csv.rs",
+          "covered": 126,
+          "total": 130
+        },
+        {
+          "file": "crates/framework/framework-admin/src/transfer/mod.rs",
+          "covered": 203,
+          "total": 205
+        }
+      ]
+    },
+    {
+      "name": "stackpress-framework-api",
+      "path": "crates/framework/framework-api",
+      "covered": 2234,
+      "total": 2458,
+      "percent": 90.88689991863303,
+      "gap_percentage_points": 0,
+      "additional_covered_lines_for_90": 0,
+      "files": [
+        {
+          "file": "crates/framework/framework-api/src/codegen.rs",
+          "covered": 19,
+          "total": 33
+        },
+        {
+          "file": "crates/framework/framework-api/src/config.rs",
+          "covered": 12,
+          "total": 12
+        },
+        {
+          "file": "crates/framework/framework-api/src/cors.rs",
+          "covered": 55,
+          "total": 55
+        },
+        {
+          "file": "crates/framework/framework-api/src/endpoints.rs",
+          "covered": 12,
+          "total": 12
+        },
+        {
+          "file": "crates/framework/framework-api/src/helpers.rs",
+          "covered": 78,
+          "total": 79
+        },
+        {
+          "file": "crates/framework/framework-api/src/pages/mod.rs",
+          "covered": 85,
+          "total": 108
+        },
+        {
+          "file": "crates/framework/framework-api/src/pages/oauth.rs",
+          "covered": 146,
+          "total": 150
+        },
+        {
+          "file": "crates/framework/framework-api/src/pages/token.rs",
+          "covered": 92,
+          "total": 104
+        },
+        {
+          "file": "crates/framework/framework-api/src/plugin.rs",
+          "covered": 48,
+          "total": 55
+        },
+        {
+          "file": "crates/framework/framework-api/src/routes.rs",
+          "covered": 108,
+          "total": 108
+        },
+        {
+          "file": "crates/framework/framework-api/src/sql/defaults.rs",
+          "covered": 3,
+          "total": 18
+        },
+        {
+          "file": "crates/framework/framework-api/src/sql/events.rs",
+          "covered": 34,
+          "total": 54
+        },
+        {
+          "file": "crates/framework/framework-api/src/views/admin.rs",
+          "covered": 369,
+          "total": 394
+        },
+        {
+          "file": "crates/framework/framework-api/src/views/consent.rs",
+          "covered": 90,
+          "total": 90
+        },
+        {
+          "file": "crates/framework/framework-api/src/views/document.rs",
+          "covered": 15,
+          "total": 15
+        },
+        {
+          "file": "crates/framework/framework-api/src/views/host.rs",
+          "covered": 48,
+          "total": 69
+        },
+        {
+          "file": "crates/framework/framework-api/src/views/icons.rs",
+          "covered": 61,
+          "total": 61
+        },
+        {
+          "file": "crates/framework/framework-api/src/views/identity.rs",
+          "covered": 41,
+          "total": 47
+        },
+        {
+          "file": "crates/framework/framework-api/src/views/management.rs",
+          "covered": 303,
+          "total": 335
+        },
+        {
+          "file": "crates/framework/framework-api/src/views/mod.rs",
+          "covered": 92,
+          "total": 92
+        },
+        {
+          "file": "crates/framework/framework-api/src/webhooks/fetch.rs",
+          "covered": 12,
+          "total": 12
+        },
+        {
+          "file": "crates/framework/framework-api/src/webhooks/mod.rs",
+          "covered": 50,
+          "total": 51
+        },
+        {
+          "file": "crates/framework/framework-api/src/webhooks/predicate.rs",
+          "covered": 199,
+          "total": 213
+        },
+        {
+          "file": "crates/framework/framework-api/src/webhooks/reqwest.rs",
+          "covered": 262,
+          "total": 291
+        }
+      ]
+    },
+    {
+      "name": "stackpress-framework-csrf",
+      "path": "crates/framework/framework-csrf",
+      "covered": 67,
+      "total": 69,
+      "percent": 97.10144927536231,
+      "gap_percentage_points": 0,
+      "additional_covered_lines_for_90": 0,
+      "files": [
+        {
+          "file": "crates/framework/framework-csrf/src/lib.rs",
+          "covered": 52,
+          "total": 54
+        },
+        {
+          "file": "crates/framework/framework-csrf/src/plugin.rs",
+          "covered": 15,
+          "total": 15
+        }
+      ]
+    },
+    {
+      "name": "stackpress-framework-email",
+      "path": "crates/framework/framework-email",
+      "covered": 2423,
+      "total": 2739,
+      "percent": 88.46294267981015,
+      "gap_percentage_points": 1.5370573201898452,
+      "additional_covered_lines_for_90": 43,
+      "files": [
+        {
+          "file": "crates/framework/framework-email/src/backend.rs",
+          "covered": 332,
+          "total": 416
+        },
+        {
+          "file": "crates/framework/framework-email/src/compose/headers.rs",
+          "covered": 117,
+          "total": 118
+        },
+        {
+          "file": "crates/framework/framework-email/src/compose/json.rs",
+          "covered": 109,
+          "total": 111
+        },
+        {
+          "file": "crates/framework/framework-email/src/compose/metadata.rs",
+          "covered": 112,
+          "total": 119
+        },
+        {
+          "file": "crates/framework/framework-email/src/compose/mime.rs",
+          "covered": 261,
+          "total": 281
+        },
+        {
+          "file": "crates/framework/framework-email/src/compose/node.rs",
+          "covered": 129,
+          "total": 159
+        },
+        {
+          "file": "crates/framework/framework-email/src/compose/part.rs",
+          "covered": 103,
+          "total": 112
+        },
+        {
+          "file": "crates/framework/framework-email/src/config.rs",
+          "covered": 7,
+          "total": 7
+        },
+        {
+          "file": "crates/framework/framework-email/src/content.rs",
+          "covered": 167,
+          "total": 213
+        },
+        {
+          "file": "crates/framework/framework-email/src/events.rs",
+          "covered": 34,
+          "total": 34
+        },
+        {
+          "file": "crates/framework/framework-email/src/events/native.rs",
+          "covered": 105,
+          "total": 111
+        },
+        {
+          "file": "crates/framework/framework-email/src/message.rs",
+          "covered": 50,
+          "total": 50
+        },
+        {
+          "file": "crates/framework/framework-email/src/native.rs",
+          "covered": 143,
+          "total": 152
+        },
+        {
+          "file": "crates/framework/framework-email/src/native/capabilities.rs",
+          "covered": 268,
+          "total": 316
+        },
+        {
+          "file": "crates/framework/framework-email/src/native/sendmail.rs",
+          "covered": 40,
+          "total": 40
+        },
+        {
+          "file": "crates/framework/framework-email/src/native/ses.rs",
+          "covered": 59,
+          "total": 62
+        },
+        {
+          "file": "crates/framework/framework-email/src/options.rs",
+          "covered": 248,
+          "total": 296
+        },
+        {
+          "file": "crates/framework/framework-email/src/plugin.rs",
+          "covered": 32,
+          "total": 34
+        },
+        {
+          "file": "crates/framework/framework-email/src/service.rs",
+          "covered": 27,
+          "total": 27
+        },
+        {
+          "file": "crates/framework/framework-email/src/smtp_error.rs",
+          "covered": 46,
+          "total": 47
+        },
+        {
+          "file": "crates/framework/framework-email/src/tasks.rs",
+          "covered": 34,
+          "total": 34
+        }
+      ]
+    },
+    {
+      "name": "stackpress-framework-session",
+      "path": "crates/framework/framework-session",
+      "covered": 3706,
+      "total": 3977,
+      "percent": 93.1858184561227,
+      "gap_percentage_points": 0,
+      "additional_covered_lines_for_90": 0,
+      "files": [
+        {
+          "file": "crates/framework/framework-session/src/account/events.rs",
+          "covered": 200,
+          "total": 242
+        },
+        {
+          "file": "crates/framework/framework-session/src/account/export.rs",
+          "covered": 59,
+          "total": 65
+        },
+        {
+          "file": "crates/framework/framework-session/src/account/mod.rs",
+          "covered": 44,
+          "total": 45
+        },
+        {
+          "file": "crates/framework/framework-session/src/account/password.rs",
+          "covered": 95,
+          "total": 97
+        },
+        {
+          "file": "crates/framework/framework-session/src/account/profile.rs",
+          "covered": 218,
+          "total": 230
+        },
+        {
+          "file": "crates/framework/framework-session/src/account/removal.rs",
+          "covered": 77,
+          "total": 79
+        },
+        {
+          "file": "crates/framework/framework-session/src/account/routes.rs",
+          "covered": 25,
+          "total": 27
+        },
+        {
+          "file": "crates/framework/framework-session/src/account/totp.rs",
+          "covered": 210,
+          "total": 216
+        },
+        {
+          "file": "crates/framework/framework-session/src/auth/bindings.rs",
+          "covered": 14,
+          "total": 14
+        },
+        {
+          "file": "crates/framework/framework-session/src/auth/bridge.rs",
+          "covered": 132,
+          "total": 134
+        },
+        {
+          "file": "crates/framework/framework-session/src/auth/config.rs",
+          "covered": 44,
+          "total": 45
+        },
+        {
+          "file": "crates/framework/framework-session/src/auth/events.rs",
+          "covered": 169,
+          "total": 195
+        },
+        {
+          "file": "crates/framework/framework-session/src/auth/hooks.rs",
+          "covered": 64,
+          "total": 69
+        },
+        {
+          "file": "crates/framework/framework-session/src/auth/pages/challenge.rs",
+          "covered": 243,
+          "total": 270
+        },
+        {
+          "file": "crates/framework/framework-session/src/auth/pages/email.rs",
+          "covered": 180,
+          "total": 193
+        },
+        {
+          "file": "crates/framework/framework-session/src/auth/pages/mod.rs",
+          "covered": 76,
+          "total": 87
+        },
+        {
+          "file": "crates/framework/framework-session/src/auth/pages/password.rs",
+          "covered": 60,
+          "total": 67
+        },
+        {
+          "file": "crates/framework/framework-session/src/auth/plugin.rs",
+          "covered": 51,
+          "total": 55
+        },
+        {
+          "file": "crates/framework/framework-session/src/auth/templates.rs",
+          "covered": 51,
+          "total": 51
+        },
+        {
+          "file": "crates/framework/framework-session/src/auth/totp.rs",
+          "covered": 61,
+          "total": 62
+        },
+        {
+          "file": "crates/framework/framework-session/src/codecs.rs",
+          "covered": 9,
+          "total": 9
+        },
+        {
+          "file": "crates/framework/framework-session/src/composite.rs",
+          "covered": 11,
+          "total": 11
+        },
+        {
+          "file": "crates/framework/framework-session/src/jwt.rs",
+          "covered": 78,
+          "total": 79
+        },
+        {
+          "file": "crates/framework/framework-session/src/permissions.rs",
+          "covered": 71,
+          "total": 72
+        },
+        {
+          "file": "crates/framework/framework-session/src/plugin.rs",
+          "covered": 148,
+          "total": 154
+        },
+        {
+          "file": "crates/framework/framework-session/src/presentation.rs",
+          "covered": 163,
+          "total": 170
+        },
+        {
+          "file": "crates/framework/framework-session/src/session.rs",
+          "covered": 166,
+          "total": 191
+        },
+        {
+          "file": "crates/framework/framework-session/src/storage/account.rs",
+          "covered": 240,
+          "total": 247
+        },
+        {
+          "file": "crates/framework/framework-session/src/types.rs",
+          "covered": 28,
+          "total": 29
+        },
+        {
+          "file": "crates/framework/framework-session/src/views/account.rs",
+          "covered": 118,
+          "total": 123
+        },
+        {
+          "file": "crates/framework/framework-session/src/views/auth.rs",
+          "covered": 125,
+          "total": 128
+        },
+        {
+          "file": "crates/framework/framework-session/src/views/browser.rs",
+          "covered": 3,
+          "total": 6
+        },
+        {
+          "file": "crates/framework/framework-session/src/views/controls.rs",
+          "covered": 124,
+          "total": 135
+        },
+        {
+          "file": "crates/framework/framework-session/src/views/icons.rs",
+          "covered": 20,
+          "total": 21
+        },
+        {
+          "file": "crates/framework/framework-session/src/views/mod.rs",
+          "covered": 100,
+          "total": 112
+        },
+        {
+          "file": "crates/framework/framework-session/src/views/phone_input.rs",
+          "covered": 47,
+          "total": 63
+        },
+        {
+          "file": "crates/framework/framework-session/src/views/strength.rs",
+          "covered": 91,
+          "total": 91
+        },
+        {
+          "file": "crates/framework/framework-session/src/views/types.rs",
+          "covered": 91,
+          "total": 93
+        }
+      ]
+    },
+    {
+      "name": "stackpress-framework-models",
+      "path": "crates/framework/framework-models",
+      "covered": 1082,
+      "total": 1108,
+      "percent": 97.65342960288808,
+      "gap_percentage_points": 0,
+      "additional_covered_lines_for_90": 0,
+      "files": [
+        {
+          "file": "crates/framework/framework-models/src/bin/generate.rs",
+          "covered": 55,
+          "total": 58
+        },
+        {
+          "file": "crates/framework/framework-models/src/generated/source/application.rs",
+          "covered": 268,
+          "total": 271
+        },
+        {
+          "file": "crates/framework/framework-models/src/generated/source/auth.rs",
+          "covered": 239,
+          "total": 246
+        },
+        {
+          "file": "crates/framework/framework-models/src/generated/source/catalog.rs",
+          "covered": 10,
+          "total": 10
+        },
+        {
+          "file": "crates/framework/framework-models/src/generated/source/profile.rs",
+          "covered": 264,
+          "total": 264
+        },
+        {
+          "file": "crates/framework/framework-models/src/generated/source/session.rs",
+          "covered": 236,
+          "total": 239
+        },
+        {
+          "file": "crates/framework/framework-models/src/generated/stores/application.rs",
+          "covered": 0,
+          "total": 5
+        },
+        {
+          "file": "crates/framework/framework-models/src/generated/stores/auth.rs",
+          "covered": 5,
+          "total": 5
+        },
+        {
+          "file": "crates/framework/framework-models/src/generated/stores/profile.rs",
+          "covered": 5,
+          "total": 5
+        },
+        {
+          "file": "crates/framework/framework-models/src/generated/stores/session.rs",
+          "covered": 0,
+          "total": 5
+        }
+      ]
+    },
+    {
+      "name": "stackpress-framework",
+      "path": "crates/framework/framework",
+      "covered": 1173,
+      "total": 1227,
+      "percent": 95.59902200488997,
+      "gap_percentage_points": 0,
+      "additional_covered_lines_for_90": 0,
+      "files": [
+        {
+          "file": "crates/framework/framework/src/native/client.rs",
+          "covered": 30,
+          "total": 32
+        },
+        {
+          "file": "crates/framework/framework/src/native/commands.rs",
+          "covered": 54,
+          "total": 55
+        },
+        {
+          "file": "crates/framework/framework/src/native/commands/schema.rs",
+          "covered": 105,
+          "total": 111
+        },
+        {
+          "file": "crates/framework/framework/src/native/commands/server.rs",
+          "covered": 107,
+          "total": 112
+        },
+        {
+          "file": "crates/framework/framework/src/native/commands/source_client.rs",
+          "covered": 91,
+          "total": 108
+        },
+        {
+          "file": "crates/framework/framework/src/native/commands/sql.rs",
+          "covered": 278,
+          "total": 288
+        },
+        {
+          "file": "crates/framework/framework/src/native/config.rs",
+          "covered": 37,
+          "total": 37
+        },
+        {
+          "file": "crates/framework/framework/src/native/language.rs",
+          "covered": 192,
+          "total": 195
+        },
+        {
+          "file": "crates/framework/framework/src/native/mod.rs",
+          "covered": 50,
+          "total": 50
+        },
+        {
+          "file": "crates/framework/framework/src/native/view.rs",
+          "covered": 170,
+          "total": 180
+        },
+        {
+          "file": "crates/framework/framework/src/native/view/packaging.rs",
+          "covered": 59,
+          "total": 59
+        }
+      ]
+    }
+  ],
+  "combined": {
+    "covered": 56714,
+    "total": 63016,
+    "percent": 89.99936524057382
+  },
+  "raw_tool_totals": {
+    "branches": {
+      "count": 0,
+      "covered": 0,
+      "notcovered": 0,
+      "percent": 0
+    },
+    "functions": {
+      "count": 8216,
+      "covered": 7032,
+      "percent": 85.58909444985395
+    },
+    "instantiations": {
+      "count": 42919,
+      "covered": 22386,
+      "percent": 52.15871758428669
+    },
+    "lines": {
+      "count": 63016,
+      "covered": 56714,
+      "percent": 89.99936524057382
+    },
+    "mcdc": {
+      "count": 0,
+      "covered": 0,
+      "notcovered": 0,
+      "percent": 0
+    },
+    "regions": {
+      "count": 100992,
+      "covered": 87657,
+      "notcovered": 13335,
+      "percent": 86.79598384030417
+    }
+  }
+}

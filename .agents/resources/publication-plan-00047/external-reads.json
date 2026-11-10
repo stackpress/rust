@@ -1,0 +1,650 @@
+[
+  {
+    "crate": "stackpress-server",
+    "source": "crates/server/server/src/core_tests.rs",
+    "line": 18,
+    "kind": "#[path]",
+    "literal": "../../../lib/tests/support/watchdog.rs",
+    "destination": "crates/lib/tests/support/watchdog.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-server",
+    "source": "crates/server/server/tests/concurrency.rs",
+    "line": 16,
+    "kind": "#[path]",
+    "literal": "../../../lib/tests/support/watchdog.rs",
+    "destination": "crates/lib/tests/support/watchdog.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-server",
+    "source": "crates/server/server/tests/ownership.rs",
+    "line": 6,
+    "kind": "#[path]",
+    "literal": "../../../lib/tests/support/watchdog.rs",
+    "destination": "crates/lib/tests/support/watchdog.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-cli",
+    "source": "tools/cli/src/lib.rs",
+    "line": 40,
+    "kind": "#[path]",
+    "literal": "../../../crates/lib/tests/support/watchdog.rs",
+    "destination": "crates/lib/tests/support/watchdog.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-cli",
+    "source": "tools/cli/tests/prompt_contracts.rs",
+    "line": 19,
+    "kind": "#[path]",
+    "literal": "../../../crates/lib/tests/support/watchdog.rs",
+    "destination": "crates/lib/tests/support/watchdog.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-cli",
+    "source": "tools/cli/tests/tty_prompt_contracts.rs",
+    "line": 19,
+    "kind": "#[path]",
+    "literal": "../../../crates/lib/tests/support/watchdog.rs",
+    "destination": "crates/lib/tests/support/watchdog.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-cli",
+    "source": "tools/cli/tests/tty_contracts.rs",
+    "line": 18,
+    "kind": "#[path]",
+    "literal": "../../../crates/lib/tests/support/watchdog.rs",
+    "destination": "crates/lib/tests/support/watchdog.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-cli",
+    "source": "tools/cli/tests/entry_contracts.rs",
+    "line": 17,
+    "kind": "#[path]",
+    "literal": "../../../crates/lib/tests/support/watchdog.rs",
+    "destination": "crates/lib/tests/support/watchdog.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-cli",
+    "source": "tools/cli/tests/render_contracts.rs",
+    "line": 11,
+    "kind": "#[path]",
+    "literal": "../../../crates/lib/tests/support/watchdog.rs",
+    "destination": "crates/lib/tests/support/watchdog.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-cli",
+    "source": "tools/cli/tests/run_contracts.rs",
+    "line": 25,
+    "kind": "#[path]",
+    "literal": "../../../crates/lib/tests/support/watchdog.rs",
+    "destination": "crates/lib/tests/support/watchdog.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-sql",
+    "source": "crates/sql/sql/tests/harness.rs",
+    "line": 2,
+    "kind": "#[path]",
+    "literal": "../../test-support/harness.rs",
+    "destination": "crates/sql/test-support/harness.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-sql",
+    "source": "crates/sql/sql/tests/network.rs",
+    "line": 5,
+    "kind": "#[path]",
+    "literal": "../../test-support/harness.rs",
+    "destination": "crates/sql/test-support/harness.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-sql-sqlite",
+    "source": "crates/sql/sql-sqlite/src/maintenance/tests.rs",
+    "line": 15,
+    "kind": "#[path]",
+    "literal": "../../../../../examples/generated-workspace/support/watchdog.rs",
+    "destination": "examples/generated-workspace/support/watchdog.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-sql-postgres",
+    "source": "crates/sql/sql-postgres/src/tests/m2.rs",
+    "line": 4,
+    "kind": "#[path]",
+    "literal": "../../../test-support/harness.rs",
+    "destination": "crates/sql/test-support/harness.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-sql-postgres",
+    "source": "crates/sql/sql-postgres/src/tests/m1.rs",
+    "line": 4,
+    "kind": "#[path]",
+    "literal": "../../../test-support/harness.rs",
+    "destination": "crates/sql/test-support/harness.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-sql-postgres",
+    "source": "crates/sql/sql-postgres/tests/m0.rs",
+    "line": 4,
+    "kind": "#[path]",
+    "literal": "../../test-support/harness.rs",
+    "destination": "crates/sql/test-support/harness.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-sql-mysql",
+    "source": "crates/sql/sql-mysql/src/tests.rs",
+    "line": 3,
+    "kind": "#[path]",
+    "literal": "../../sql-postgres/src/tests/process.rs",
+    "destination": "crates/sql/sql-postgres/src/tests/process.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-sql-mysql",
+    "source": "crates/sql/sql-mysql/src/tests/g37.rs",
+    "line": 6,
+    "kind": "include_str!",
+    "literal": "../../../../framework/framework-sql/tests/fixtures/g37-ddl.json",
+    "destination": "crates/framework/framework-sql/tests/fixtures/g37-ddl.json",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-sql-mysql",
+    "source": "crates/sql/sql-mysql/src/tests/m2.rs",
+    "line": 4,
+    "kind": "#[path]",
+    "literal": "../../../test-support/harness.rs",
+    "destination": "crates/sql/test-support/harness.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-sql-mysql",
+    "source": "crates/sql/sql-mysql/src/tests/m2.rs",
+    "line": 179,
+    "kind": "#[path]",
+    "literal": "../../../sql-postgres/src/tests/support/process.rs",
+    "destination": "crates/sql/sql-postgres/src/tests/support/process.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-sql-mysql",
+    "source": "crates/sql/sql-mysql/src/tests/m2.rs",
+    "line": 183,
+    "kind": "#[path]",
+    "literal": "../../../sql-postgres/src/tests/support/diagnostics.rs",
+    "destination": "crates/sql/sql-postgres/src/tests/support/diagnostics.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-sql-mysql",
+    "source": "crates/sql/sql-mysql/src/tests/m2.rs",
+    "line": 187,
+    "kind": "#[path]",
+    "literal": "../../../sql-postgres/src/tests/support/contract.rs",
+    "destination": "crates/sql/sql-postgres/src/tests/support/contract.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-sql-mysql",
+    "source": "crates/sql/sql-mysql/src/tests/m2.rs",
+    "line": 189,
+    "kind": "#[path]",
+    "literal": "../../../sql-postgres/src/tests/support/stress.rs",
+    "destination": "crates/sql/sql-postgres/src/tests/support/stress.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-sql-mysql",
+    "source": "crates/sql/sql-mysql/src/tests/m1.rs",
+    "line": 4,
+    "kind": "#[path]",
+    "literal": "../../../test-support/harness.rs",
+    "destination": "crates/sql/test-support/harness.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-sql-mysql",
+    "source": "crates/sql/sql-mysql/src/tests/m1.rs",
+    "line": 178,
+    "kind": "#[path]",
+    "literal": "../../../sql-postgres/src/tests/support/process.rs",
+    "destination": "crates/sql/sql-postgres/src/tests/support/process.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-sql-mysql",
+    "source": "crates/sql/sql-mysql/tests/m0.rs",
+    "line": 4,
+    "kind": "#[path]",
+    "literal": "../../test-support/harness.rs",
+    "destination": "crates/sql/test-support/harness.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-view",
+    "source": "crates/framework/framework-view/tests/leptos_cleanup.rs",
+    "line": 165,
+    "kind": "#[path]",
+    "literal": "../../../lib/tests/support/watchdog.rs",
+    "destination": "crates/lib/tests/support/watchdog.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-leptos",
+    "source": "crates/leptos/src/rich.rs",
+    "line": 215,
+    "kind": "include_str!",
+    "literal": "../../../examples/ui-format/corpus.json",
+    "destination": "examples/ui-format/corpus.json",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-schema",
+    "source": "crates/framework/framework-schema/tests/source_emission.rs",
+    "line": 57,
+    "kind": "include_str!",
+    "literal": "../../framework-session/schema.idea",
+    "destination": "crates/framework/framework-session/schema.idea",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-schema",
+    "source": "crates/framework/framework-schema/tests/source_emission.rs",
+    "line": 62,
+    "kind": "include_str!",
+    "literal": "../../framework-api/schema.idea",
+    "destination": "crates/framework/framework-api/schema.idea",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-schema",
+    "source": "crates/framework/framework-schema/tests/source_graph.rs",
+    "line": 22,
+    "kind": "include_str!",
+    "literal": "../../framework-session/schema.idea",
+    "destination": "crates/framework/framework-session/schema.idea",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-schema",
+    "source": "crates/framework/framework-schema/tests/source_graph.rs",
+    "line": 27,
+    "kind": "include_str!",
+    "literal": "../../framework-api/schema.idea",
+    "destination": "crates/framework/framework-api/schema.idea",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-schema",
+    "source": "crates/framework/framework-schema/tests/source_extensions/oracles.rs",
+    "line": 96,
+    "kind": "include_str!",
+    "literal": "../../../framework-models/tests/extension-oracles.json",
+    "destination": "crates/framework/framework-models/tests/extension-oracles.json",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-sql",
+    "source": "crates/framework/framework-sql/src/migrations/faults.rs",
+    "line": 5,
+    "kind": "#[path]",
+    "literal": "../../../../../examples/generated-workspace/support/watchdog.rs",
+    "destination": "examples/generated-workspace/support/watchdog.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-sql",
+    "source": "crates/framework/framework-sql/tests/conflict.rs",
+    "line": 10,
+    "kind": "#[path]",
+    "literal": "../../../../examples/generated-workspace/support/watchdog.rs",
+    "destination": "examples/generated-workspace/support/watchdog.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-sql",
+    "source": "crates/framework/framework-sql/tests/storage_length.rs",
+    "line": 9,
+    "kind": "#[path]",
+    "literal": "../../../../examples/generated-workspace/support/watchdog.rs",
+    "destination": "examples/generated-workspace/support/watchdog.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-sql",
+    "source": "crates/framework/framework-sql/tests/executor_budgets.rs",
+    "line": 11,
+    "kind": "#[path]",
+    "literal": "../../../../examples/generated-workspace/support/watchdog.rs",
+    "destination": "examples/generated-workspace/support/watchdog.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-sql",
+    "source": "crates/framework/framework-sql/tests/m3.rs",
+    "line": 11,
+    "kind": "#[path]",
+    "literal": "../../../../examples/generated-workspace/support/watchdog.rs",
+    "destination": "examples/generated-workspace/support/watchdog.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-sql",
+    "source": "crates/framework/framework-sql/tests/m3_seeds.rs",
+    "line": 12,
+    "kind": "#[path]",
+    "literal": "../../../../examples/generated-workspace/support/watchdog.rs",
+    "destination": "examples/generated-workspace/support/watchdog.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-sql",
+    "source": "crates/framework/framework-sql/tests/migrations.rs",
+    "line": 15,
+    "kind": "#[path]",
+    "literal": "../../../../examples/generated-workspace/support/watchdog.rs",
+    "destination": "examples/generated-workspace/support/watchdog.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-sql",
+    "source": "crates/framework/framework-sql/tests/setup.rs",
+    "line": 3,
+    "kind": "#[path]",
+    "literal": "../../../sql/sql/examples/support/mod.rs",
+    "destination": "crates/sql/sql/examples/support/mod.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-sql",
+    "source": "crates/framework/framework-sql/tests/main/codegen.rs",
+    "line": 118,
+    "kind": "include_str!",
+    "literal": "../../../../../examples/generated-workspace/contracts/matrix.idea",
+    "destination": "examples/generated-workspace/contracts/matrix.idea",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-sql",
+    "source": "crates/framework/framework-sql/tests/main/codegen.rs",
+    "line": 119,
+    "kind": "include_str!",
+    "literal": "../../../../../examples/generated-workspace/app/schema.idea",
+    "destination": "examples/generated-workspace/app/schema.idea",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-sql",
+    "source": "crates/framework/framework-sql/tests/main/codegen.rs",
+    "line": 120,
+    "kind": "include_str!",
+    "literal": "../../../../../examples/generated-workspace/app/native.idea",
+    "destination": "examples/generated-workspace/app/native.idea",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-sql",
+    "source": "crates/framework/framework-sql/tests/main/codegen.rs",
+    "line": 121,
+    "kind": "include_str!",
+    "literal": "../../../../../examples/generated-workspace/app/names.idea",
+    "destination": "examples/generated-workspace/app/names.idea",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-sql",
+    "source": "crates/framework/framework-sql/tests/main/source_models/ownership.rs",
+    "line": 26,
+    "kind": "#[path]",
+    "literal": "../../../../../../examples/generated-workspace/support/watchdog.rs",
+    "destination": "examples/generated-workspace/support/watchdog.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-sql",
+    "source": "crates/framework/framework-sql/tests/main/source_models/emission.rs",
+    "line": 78,
+    "kind": "include_str!",
+    "literal": "../../../../framework-session/schema.idea",
+    "destination": "crates/framework/framework-session/schema.idea",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-sql",
+    "source": "crates/framework/framework-sql/tests/main/source_models/mod.rs",
+    "line": 79,
+    "kind": "include_str!",
+    "literal": "../../../../framework-session/schema.idea",
+    "destination": "crates/framework/framework-session/schema.idea",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-sql",
+    "source": "crates/framework/framework-sql/tests/main/source_models/mod.rs",
+    "line": 84,
+    "kind": "include_str!",
+    "literal": "../../../../framework-api/schema.idea",
+    "destination": "crates/framework/framework-api/schema.idea",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-admin",
+    "source": "crates/framework/framework-admin/tests/source.rs",
+    "line": 23,
+    "kind": "include_str!",
+    "literal": "../../framework-session/schema.idea",
+    "destination": "crates/framework/framework-session/schema.idea",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-admin",
+    "source": "crates/framework/framework-admin/tests/source.rs",
+    "line": 28,
+    "kind": "include_str!",
+    "literal": "../../framework-api/schema.idea",
+    "destination": "crates/framework/framework-api/schema.idea",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-api",
+    "source": "crates/framework/framework-api/tests/generated_family.rs",
+    "line": 3,
+    "kind": "#[path]",
+    "literal": "../../framework-models/tests/extended/generated/mod.rs",
+    "destination": "crates/framework/framework-models/tests/extended/generated/mod.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-api",
+    "source": "crates/framework/framework-api/tests/main.rs",
+    "line": 27,
+    "kind": "#[path]",
+    "literal": "../../../../examples/api-checkpoint/shared/src/lib.rs",
+    "destination": "examples/api-checkpoint/shared/src/lib.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-api",
+    "source": "crates/framework/framework-api/tests/live_search.rs",
+    "line": 3,
+    "kind": "#[path]",
+    "literal": "../../framework-sql/tests/support/g54.rs",
+    "destination": "crates/framework/framework-sql/tests/support/g54.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-api",
+    "source": "crates/framework/framework-api/tests/live_search.rs",
+    "line": 5,
+    "kind": "#[path]",
+    "literal": "../../framework-session/tests/live/support.rs",
+    "destination": "crates/framework/framework-session/tests/live/support.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-session",
+    "source": "crates/framework/framework-session/tests/live_search.rs",
+    "line": 3,
+    "kind": "#[path]",
+    "literal": "../../framework-sql/tests/support/g54.rs",
+    "destination": "crates/framework/framework-sql/tests/support/g54.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-session",
+    "source": "crates/framework/framework-session/tests/live/support.rs",
+    "line": 6,
+    "kind": "#[path]",
+    "literal": "../../../../sql/test-support/harness.rs",
+    "destination": "crates/sql/test-support/harness.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-session",
+    "source": "crates/framework/framework-session/tests/live/support.rs",
+    "line": 8,
+    "kind": "#[path]",
+    "literal": "../../../../sql/sql-postgres/src/tests/support/process.rs",
+    "destination": "crates/sql/sql-postgres/src/tests/support/process.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-session",
+    "source": "crates/framework/framework-session/tests/main/generated_family.rs",
+    "line": 6,
+    "kind": "#[path]",
+    "literal": "../../../framework-models/tests/extended/generated/source/mod.rs",
+    "destination": "crates/framework/framework-models/tests/extended/generated/source/mod.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-session",
+    "source": "crates/framework/framework-session/tests/main/generated_family.rs",
+    "line": 292,
+    "kind": "#[path]",
+    "literal": "../../../framework-sql/tests/source-session-only/source/mod.rs",
+    "destination": "crates/framework/framework-sql/tests/source-session-only/source/mod.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-session",
+    "source": "crates/framework/framework-session/tests/main/storage.rs",
+    "line": 67,
+    "kind": "include_str!",
+    "literal": "../../../framework-schema/src/providers/vectors.json",
+    "destination": "crates/framework/framework-schema/src/providers/vectors.json",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-models",
+    "source": "crates/framework/framework-models/src/bin/generate.rs",
+    "line": 29,
+    "kind": "include_str!",
+    "literal": "../../../framework-session/schema.idea",
+    "destination": "crates/framework/framework-session/schema.idea",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-models",
+    "source": "crates/framework/framework-models/src/bin/generate.rs",
+    "line": 33,
+    "kind": "include_str!",
+    "literal": "../../../framework-api/schema.idea",
+    "destination": "crates/framework/framework-api/schema.idea",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-models",
+    "source": "crates/framework/framework-models/src/bin/generate.rs",
+    "line": 37,
+    "kind": "include_str!",
+    "literal": "../../../framework/stackpress.idea",
+    "destination": "crates/framework/framework/stackpress.idea",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-models",
+    "source": "crates/framework/framework-models/tests/native.rs",
+    "line": 38,
+    "kind": "include_str!",
+    "literal": "../../framework-session/tests/records.json",
+    "destination": "crates/framework/framework-session/tests/records.json",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-models",
+    "source": "crates/framework/framework-models/tests/native.rs",
+    "line": 366,
+    "kind": "include_str!",
+    "literal": "../../framework-schema/src/providers/vectors.json",
+    "destination": "crates/framework/framework-schema/src/providers/vectors.json",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-models",
+    "source": "crates/framework/framework-models/tests/ownership.rs",
+    "line": 22,
+    "kind": "#[path]",
+    "literal": "../../../../examples/generated-workspace/support/watchdog.rs",
+    "destination": "examples/generated-workspace/support/watchdog.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-models",
+    "source": "crates/framework/framework-models/tests/sql.rs",
+    "line": 45,
+    "kind": "include_str!",
+    "literal": "../../framework-session/tests/records.json",
+    "destination": "crates/framework/framework-session/tests/records.json",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-models",
+    "source": "crates/framework/framework-models/tests/live_search.rs",
+    "line": 4,
+    "kind": "#[path]",
+    "literal": "../../framework-session/tests/live/support.rs",
+    "destination": "crates/framework/framework-session/tests/live/support.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework-models",
+    "source": "crates/framework/framework-models/tests/support/scenario.rs",
+    "line": 3,
+    "kind": "#[path]",
+    "literal": "../../../framework-sql/tests/support/g54.rs",
+    "destination": "crates/framework/framework-sql/tests/support/g54.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework",
+    "source": "crates/framework/framework/tests/live_setup.rs",
+    "line": 6,
+    "kind": "#[path]",
+    "literal": "../../framework-sql/tests/support/g54.rs",
+    "destination": "crates/framework/framework-sql/tests/support/g54.rs",
+    "exists": true
+  },
+  {
+    "crate": "stackpress-framework",
+    "source": "crates/framework/framework/tests/live_setup.rs",
+    "line": 8,
+    "kind": "#[path]",
+    "literal": "../../framework-session/tests/live/support.rs",
+    "destination": "crates/framework/framework-session/tests/live/support.rs",
+    "exists": true
+  }
+]

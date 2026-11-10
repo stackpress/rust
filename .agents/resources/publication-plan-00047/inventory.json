@@ -1,0 +1,4431 @@
+[
+  {
+    "name": "stackpress",
+    "path": ".",
+    "package": {
+      "name": "stackpress",
+      "description": "Explicit facade for the Stackpress Rust libraries",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-lib",
+        "path": "crates/lib",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-server",
+        "path": "crates/server/server",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-server-http",
+        "path": "crates/server/http",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-idea-parser",
+        "path": "crates/idea/idea-parser",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-idea-transformer",
+        "path": "crates/idea/idea-transformer",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-idea",
+        "path": "crates/idea/idea",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-sql",
+        "path": "crates/sql/sql",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-sql-sqlite",
+        "path": "crates/sql/sql-sqlite",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-sql-postgres",
+        "path": "crates/sql/sql-postgres",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-sql-mysql",
+        "path": "crates/sql/sql-mysql",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-view",
+        "path": "crates/framework/framework-view",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-leptos",
+        "path": "crates/leptos",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-language",
+        "path": "crates/framework/framework-language",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-schema",
+        "path": "crates/framework/framework-schema",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-sql",
+        "path": "crates/framework/framework-sql",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-admin",
+        "path": "crates/framework/framework-admin",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-session",
+        "path": "crates/framework/framework-session",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework",
+        "path": "crates/framework/framework",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-api",
+        "path": "crates/framework/framework-api",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-csrf",
+        "path": "crates/framework/framework-csrf",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-email",
+        "path": "crates/framework/framework-email",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      }
+    ],
+    "features": {
+      "default": [],
+      "framework-schema": [
+        "dep:stackpress-framework-schema"
+      ],
+      "framework-sql": [
+        "dep:stackpress-framework-sql"
+      ],
+      "framework-admin": [
+        "dep:stackpress-framework-admin"
+      ],
+      "framework-admin-format": [
+        "framework-admin",
+        "stackpress-framework-admin/format"
+      ],
+      "framework-session": [
+        "dep:stackpress-framework-session"
+      ],
+      "framework-session-native": [
+        "framework-session",
+        "stackpress-framework-session/native"
+      ],
+      "framework-session-sql": [
+        "framework-session",
+        "stackpress-framework-session/sql"
+      ],
+      "framework-session-server": [
+        "framework-session",
+        "stackpress-framework-session/server"
+      ],
+      "framework-session-auth-server": [
+        "framework-session",
+        "stackpress-framework-session/auth-server"
+      ],
+      "framework-session-leptos": [
+        "framework-session",
+        "stackpress-framework-session/leptos"
+      ],
+      "framework-session-leptos-ssr": [
+        "framework-session",
+        "stackpress-framework-session/leptos-ssr"
+      ],
+      "framework-session-browser": [
+        "framework-session",
+        "stackpress-framework-session/browser"
+      ],
+      "framework-session-leptos-hydrate": [
+        "framework-session",
+        "stackpress-framework-session/leptos-hydrate"
+      ],
+      "framework-session-leptos-csr": [
+        "framework-session",
+        "stackpress-framework-session/leptos-csr"
+      ],
+      "server": [
+        "dep:stackpress-server"
+      ],
+      "server-http": [
+        "server",
+        "stackpress-server/http"
+      ],
+      "server-http-host": [
+        "server-http",
+        "dep:stackpress-server-http"
+      ],
+      "server-http-host-tls": [
+        "server-http-host",
+        "stackpress-server-http/tls"
+      ],
+      "idea-parser": [
+        "dep:stackpress-idea-parser"
+      ],
+      "idea-transformer": [
+        "dep:stackpress-idea-transformer"
+      ],
+      "idea": [
+        "dep:stackpress-idea"
+      ],
+      "sql": [
+        "dep:stackpress-sql"
+      ],
+      "sql-sqlite": [
+        "sql",
+        "dep:stackpress-sql-sqlite"
+      ],
+      "sql-postgres": [
+        "sql",
+        "dep:stackpress-sql-postgres"
+      ],
+      "sql-mysql": [
+        "sql",
+        "dep:stackpress-sql-mysql"
+      ],
+      "framework-view": [
+        "dep:stackpress-framework-view"
+      ],
+      "framework-view-preferences": [
+        "framework-view",
+        "stackpress-framework-view/preferences"
+      ],
+      "framework-view-flash": [
+        "framework-view",
+        "stackpress-framework-view/flash"
+      ],
+      "framework-view-native-file": [
+        "framework-view-preferences",
+        "stackpress-framework-view/native-file"
+      ],
+      "framework-view-server": [
+        "framework-view",
+        "stackpress-framework-view/server"
+      ],
+      "framework-view-web-preferences": [
+        "framework-view",
+        "stackpress-framework-view/web-preferences"
+      ],
+      "framework-view-web-flash": [
+        "framework-view",
+        "stackpress-framework-view/web-flash"
+      ],
+      "leptos": [
+        "dep:stackpress-leptos"
+      ],
+      "leptos-ssr": [
+        "leptos",
+        "stackpress-leptos/ssr"
+      ],
+      "leptos-hydrate": [
+        "leptos",
+        "stackpress-leptos/hydrate"
+      ],
+      "leptos-csr": [
+        "leptos",
+        "stackpress-leptos/csr"
+      ],
+      "leptos-async": [
+        "leptos",
+        "stackpress-leptos/async"
+      ],
+      "leptos-rich": [
+        "leptos",
+        "stackpress-leptos/rich"
+      ],
+      "leptos-format": [
+        "leptos",
+        "stackpress-leptos/format"
+      ],
+      "leptos-stream": [
+        "leptos",
+        "stackpress-leptos/stream"
+      ],
+      "framework-view-leptos": [
+        "framework-view",
+        "leptos",
+        "stackpress-framework-view/leptos"
+      ],
+      "framework-view-leptos-ssr": [
+        "framework-view",
+        "leptos",
+        "stackpress-framework-view/leptos-ssr"
+      ],
+      "framework-view-leptos-hydrate": [
+        "framework-view",
+        "leptos",
+        "stackpress-framework-view/leptos-hydrate"
+      ],
+      "framework-view-leptos-csr": [
+        "framework-view",
+        "leptos",
+        "stackpress-framework-view/leptos-csr"
+      ],
+      "framework-view-leptos-async": [
+        "framework-view",
+        "leptos",
+        "stackpress-framework-view/leptos-async"
+      ],
+      "framework-view-leptos-stream": [
+        "framework-view",
+        "leptos",
+        "stackpress-framework-view/leptos-stream"
+      ],
+      "framework-language": [
+        "dep:stackpress-framework-language"
+      ],
+      "framework": [
+        "dep:stackpress-framework"
+      ],
+      "framework-aggregate-native": [
+        "framework",
+        "stackpress-framework/native"
+      ],
+      "framework-aggregate-server-commands": [
+        "framework",
+        "stackpress-framework/server-commands"
+      ],
+      "framework-aggregate-schema-client": [
+        "framework",
+        "stackpress-framework/schema-client"
+      ],
+      "framework-aggregate-language": [
+        "framework",
+        "stackpress-framework/language"
+      ],
+      "framework-aggregate-csrf": [
+        "framework",
+        "stackpress-framework/csrf"
+      ],
+      "framework-aggregate-sql": [
+        "framework",
+        "stackpress-framework/sql"
+      ],
+      "framework-aggregate-view": [
+        "framework",
+        "stackpress-framework/view"
+      ],
+      "framework-aggregate-session": [
+        "framework",
+        "stackpress-framework/session"
+      ],
+      "framework-aggregate-api": [
+        "framework",
+        "stackpress-framework/api"
+      ],
+      "framework-aggregate-admin": [
+        "framework",
+        "stackpress-framework/admin"
+      ],
+      "framework-aggregate-full": [
+        "framework",
+        "stackpress-framework/full"
+      ],
+      "framework-aggregate-codegen": [
+        "framework",
+        "stackpress-framework/codegen"
+      ],
+      "framework-api": [
+        "dep:stackpress-framework-api"
+      ],
+      "framework-api-native": [
+        "framework-api",
+        "stackpress-framework-api/native"
+      ],
+      "framework-api-sql": [
+        "framework-api",
+        "stackpress-framework-api/sql"
+      ],
+      "framework-api-codegen": [
+        "framework-api",
+        "stackpress-framework-api/codegen"
+      ],
+      "framework-api-ui": [
+        "framework-api",
+        "stackpress-framework-api/ui"
+      ],
+      "framework-api-ui-ssr": [
+        "framework-api",
+        "stackpress-framework-api/ui-ssr"
+      ],
+      "framework-api-ui-hydrate": [
+        "framework-api",
+        "stackpress-framework-api/ui-hydrate"
+      ],
+      "framework-api-ui-csr": [
+        "framework-api",
+        "stackpress-framework-api/ui-csr"
+      ],
+      "framework-csrf": [
+        "dep:stackpress-framework-csrf"
+      ],
+      "framework-csrf-server": [
+        "framework-csrf",
+        "stackpress-framework-csrf/server"
+      ],
+      "framework-email": [
+        "dep:stackpress-framework-email"
+      ],
+      "framework-email-server": [
+        "framework-email",
+        "stackpress-framework-email/server"
+      ],
+      "framework-aggregate-ui-session": [
+        "framework",
+        "framework-session-leptos"
+      ],
+      "framework-aggregate-ui-api": [
+        "framework",
+        "framework-api-ui"
+      ],
+      "framework-aggregate-ui-view": [
+        "framework",
+        "framework-view-leptos"
+      ],
+      "framework-aggregate-ui-admin": [
+        "framework",
+        "framework-admin"
+      ],
+      "framework-aggregate-ssr": [
+        "framework",
+        "stackpress-framework-session?/leptos-ssr",
+        "stackpress-framework-api?/ui-ssr",
+        "stackpress-framework-view?/leptos-ssr",
+        "stackpress-framework-admin?/ssr"
+      ],
+      "framework-aggregate-hydrate": [
+        "framework",
+        "stackpress-framework-session?/leptos-hydrate",
+        "stackpress-framework-api?/ui-hydrate",
+        "stackpress-framework-view?/leptos-hydrate",
+        "stackpress-framework-admin?/hydrate"
+      ],
+      "framework-aggregate-csr": [
+        "framework",
+        "stackpress-framework-session?/leptos-csr",
+        "stackpress-framework-api?/ui-csr",
+        "stackpress-framework-view?/leptos-csr",
+        "stackpress-framework-admin?/csr"
+      ]
+    },
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "stackpress-lib",
+    "path": "crates/lib",
+    "package": {
+      "name": "stackpress-lib",
+      "description": "Transport-neutral Stackpress values and ordered capability dispatch",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [],
+    "features": {},
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "stackpress-server",
+    "path": "crates/server/server",
+    "package": {
+      "name": "stackpress-server",
+      "description": "Transport-neutral Stackpress capability host",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-lib",
+        "path": "../../lib",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {
+      "default": [],
+      "http": [
+        "dep:http"
+      ],
+      "http-stream": [
+        "http",
+        "dep:futures-core"
+      ]
+    },
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "stackpress-server-http",
+    "path": "crates/server/http",
+    "package": {
+      "name": "stackpress-server-http",
+      "description": "Owned HTTP/1 IO hosting for Stackpress",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-lib",
+        "path": "../../lib",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-server",
+        "path": "../server",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {
+      "default": [],
+      "tls": [
+        "dep:rustls",
+        "dep:tokio-rustls"
+      ]
+    },
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "stackpress-cli",
+    "path": "tools/cli",
+    "package": {
+      "name": "stackpress-cli",
+      "description": "Application-owned Stackpress CLI adapter primitives",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      },
+      "autobins": false
+    },
+    "deps": [
+      {
+        "name": "stackpress-server",
+        "path": "../../crates/server/server",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-lib",
+        "path": "../../crates/lib",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {
+      "default": [
+        "tty"
+      ],
+      "tty": [
+        "dep:crossterm"
+      ]
+    },
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "stackpress-example-capability-host",
+    "path": "examples/capability-host",
+    "package": {
+      "name": "stackpress-example-capability-host",
+      "description": "In-memory profiles application proving compiled Stackpress plugin composition",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": false
+    },
+    "deps": [
+      {
+        "name": "stackpress-cli",
+        "path": "../../tools/cli",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-lib",
+        "path": "../../crates/lib",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-server",
+        "path": "../../crates/server/server",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {
+      "default": [],
+      "experimental": []
+    },
+    "bins": [
+      {
+        "name": "stackpress",
+        "path": "src/main.rs",
+        "doc": false
+      }
+    ],
+    "examples": []
+  },
+  {
+    "name": "stackpress-idea-parser",
+    "path": "crates/idea/idea-parser",
+    "package": {
+      "name": "stackpress-idea-parser",
+      "description": "Bounded Idea syntax, ordered schema compilation and source diagnostics",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      },
+      "license": "Apache-2.0"
+    },
+    "deps": [],
+    "features": {},
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "stackpress-idea-transformer",
+    "path": "crates/idea/idea-transformer",
+    "package": {
+      "name": "stackpress-idea-transformer",
+      "description": "Ordered Idea transforms and cooperatively owned generated output",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-idea-parser",
+        "path": "../idea-parser",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-lib",
+        "path": "../../lib",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {},
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "stackpress-idea",
+    "path": "crates/idea/idea",
+    "package": {
+      "name": "stackpress-idea",
+      "description": "Independent Idea generation orchestration",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-idea-parser",
+        "path": "../idea-parser",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-idea-transformer",
+        "path": "../idea-transformer",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {},
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "stackpress-example-profile-codegen",
+    "path": "examples/generated-profile/codegen",
+    "package": {
+      "name": "stackpress-example-profile-codegen",
+      "description": "Independent pre-build codegen host for the generated Profile example",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": false
+    },
+    "deps": [
+      {
+        "name": "stackpress-idea",
+        "path": "../../../crates/idea/idea",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-lib",
+        "path": "../../../crates/lib",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-server",
+        "path": "../../../crates/server/server",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-cli",
+        "path": "../../../tools/cli",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {
+      "default": [
+        "profiles"
+      ],
+      "profiles": []
+    },
+    "bins": [
+      {
+        "name": "profile-codegen",
+        "path": "src/main.rs",
+        "doc": false
+      }
+    ],
+    "examples": []
+  },
+  {
+    "name": "stackpress-example-generated-profile",
+    "path": "examples/generated-profile/app",
+    "package": {
+      "name": "stackpress-example-generated-profile",
+      "description": "Generated public Profile contracts and one capability implementation",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": false
+    },
+    "deps": [
+      {
+        "name": "stackpress-lib",
+        "path": "../../../crates/lib",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-server",
+        "path": "../../../crates/server/server",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-cli",
+        "path": "../../../tools/cli",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-example-capability-host",
+        "path": "../../capability-host",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {
+      "default": [
+        "profiles"
+      ],
+      "profiles": []
+    },
+    "bins": [
+      {
+        "name": "profile-app",
+        "path": "src/main.rs",
+        "doc": false
+      }
+    ],
+    "examples": []
+  },
+  {
+    "name": "stackpress-sql",
+    "path": "crates/sql/sql",
+    "package": {
+      "name": "stackpress-sql",
+      "description": "Owned SQL queries and transport-independent database contracts",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [],
+    "features": {},
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "stackpress-sql-sqlite",
+    "path": "crates/sql/sql-sqlite",
+    "package": {
+      "name": "stackpress-sql-sqlite",
+      "description": "Bounded native SQLite adapter for Stackpress SQL",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-sql",
+        "path": "../sql",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-lib",
+        "path": "../../lib",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-server",
+        "path": "../../server/server",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {
+      "default": [],
+      "maintenance": []
+    },
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "stackpress-example-sql-profile",
+    "path": "examples/sql-profile",
+    "package": {
+      "name": "stackpress-example-sql-profile",
+      "description": "Explicitly installed SQLite profiles application with direct, CLI and buffered HTTP parity",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": false
+    },
+    "deps": [
+      {
+        "name": "stackpress-lib",
+        "path": "../../crates/lib",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-server",
+        "path": "../../crates/server/server",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-cli",
+        "path": "../../tools/cli",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-sql",
+        "path": "../../crates/sql/sql",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-sql-sqlite",
+        "path": "../../crates/sql/sql-sqlite",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-example-capability-host",
+        "path": "../capability-host",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {},
+    "bins": [
+      {
+        "name": "sql-profile",
+        "path": "src/main.rs",
+        "doc": false
+      },
+      {
+        "name": "sql-profile-setup",
+        "path": "src/bin/setup.rs",
+        "doc": false
+      }
+    ],
+    "examples": []
+  },
+  {
+    "name": "stackpress-sql-postgres",
+    "path": "crates/sql/sql-postgres",
+    "package": {
+      "name": "stackpress-sql-postgres",
+      "description": "Bounded native PostgreSQL adapter for Stackpress SQL",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-sql",
+        "path": "../sql",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "generated-workspace-app",
+        "path": "../../../examples/generated-workspace/app",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-schema",
+        "path": "../../framework/framework-schema",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-sql",
+        "path": "../../framework/framework-sql",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-sql-sqlite",
+        "path": "../sql-sqlite",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {},
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "stackpress-sql-mysql",
+    "path": "crates/sql/sql-mysql",
+    "package": {
+      "name": "stackpress-sql-mysql",
+      "description": "Bounded native MySQL adapter for Stackpress SQL",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-sql",
+        "path": "../sql",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "generated-workspace-app",
+        "path": "../../../examples/generated-workspace/app",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-schema",
+        "path": "../../framework/framework-schema",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-sql",
+        "path": "../../framework/framework-sql",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {},
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "stackpress-framework-view",
+    "path": "crates/framework/framework-view",
+    "package": {
+      "name": "stackpress-framework-view",
+      "description": "Client-safe public page snapshots and bounded HTML contracts",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-leptos",
+        "path": "../../leptos",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-language",
+        "path": "../framework-language",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-lib",
+        "path": "../../lib",
+        "kind": "dependencies",
+        "scope": "cfg(not(target_arch = \"wasm32\"))",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-server",
+        "path": "../../server/server",
+        "kind": "dependencies",
+        "scope": "cfg(not(target_arch = \"wasm32\"))",
+        "optional": true,
+        "version": null
+      }
+    ],
+    "features": {
+      "default": [],
+      "cookies": [
+        "dep:stackpress-framework-language",
+        "dep:url"
+      ],
+      "preferences": [
+        "cookies"
+      ],
+      "flash": [
+        "cookies"
+      ],
+      "web-preferences": [
+        "preferences",
+        "server"
+      ],
+      "web-flash": [
+        "flash",
+        "server"
+      ],
+      "presentation": [
+        "web-preferences",
+        "web-flash"
+      ],
+      "native-file": [
+        "preferences",
+        "dep:libc"
+      ],
+      "server": [
+        "dep:stackpress-lib",
+        "dep:stackpress-server"
+      ],
+      "leptos": [
+        "dep:stackpress-leptos",
+        "dep:leptos",
+        "dep:leptos_meta",
+        "dep:leptos_router"
+      ],
+      "leptos-async": [
+        "leptos",
+        "stackpress-leptos/async"
+      ],
+      "leptos-ssr": [
+        "leptos-async",
+        "stackpress-leptos/ssr",
+        "server",
+        "dep:futures"
+      ],
+      "leptos-hydrate": [
+        "leptos",
+        "stackpress-leptos/hydrate"
+      ],
+      "leptos-csr": [
+        "leptos",
+        "stackpress-leptos/csr"
+      ],
+      "leptos-stream": [
+        "leptos-ssr",
+        "stackpress-leptos/stream"
+      ]
+    },
+    "bins": [],
+    "examples": [
+      {
+        "name": "issue17_parity",
+        "required-features": [
+          "leptos-stream"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "stackpress-leptos",
+    "path": "crates/leptos",
+    "package": {
+      "name": "stackpress-leptos",
+      "description": "Reusable Leptos components and explicit rendering without an application host",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [],
+    "features": {
+      "default": [],
+      "ssr": [
+        "leptos/ssr",
+        "leptos_meta/ssr",
+        "leptos_router/ssr",
+        "async",
+        "dep:hydration_context",
+        "dep:serde_json",
+        "dep:any_spawner",
+        "dep:tokio"
+      ],
+      "hydrate": [
+        "leptos/hydrate"
+      ],
+      "csr": [
+        "leptos/csr"
+      ],
+      "async": [
+        "dep:futures",
+        "dep:serde_json"
+      ],
+      "stream": [
+        "ssr",
+        "tokio/sync",
+        "tokio/macros",
+        "tokio/time"
+      ],
+      "source": [
+        "dep:pulldown-cmark"
+      ],
+      "rich": [
+        "dep:ammonia",
+        "dep:pulldown-cmark"
+      ],
+      "format": [
+        "dep:icu_decimal",
+        "dep:icu_locale",
+        "dep:icu_datetime",
+        "dep:icu_calendar",
+        "dep:phonenumber"
+      ]
+    },
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "stackpress-framework-language",
+    "path": "crates/framework/framework-language",
+    "package": {
+      "name": "stackpress-framework-language",
+      "description": "Pure checked locale registry and explicit aliases",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [],
+    "features": {},
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "stackpress-example-profile-ui-contracts",
+    "path": "examples/profile-ui/contracts",
+    "package": {
+      "name": "stackpress-example-profile-ui-contracts",
+      "description": "Client-safe Profile source reuse and typed search wire contracts",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-framework-view",
+        "path": "../../../crates/framework/framework-view",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {},
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "stackpress-example-profile-ui-shared",
+    "path": "examples/profile-ui/shared",
+    "package": {
+      "name": "stackpress-example-profile-ui-shared",
+      "description": "One Profile component for SSR, hydration and packaged CSR",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-framework-view",
+        "path": "../../../crates/framework/framework-view",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-leptos",
+        "path": "../../../crates/leptos",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-example-profile-ui-contracts",
+        "path": "../contracts",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {
+      "default": [],
+      "ssr": [
+        "stackpress-framework-view/leptos-ssr",
+        "stackpress-leptos/ssr"
+      ],
+      "hydrate": [
+        "stackpress-framework-view/leptos-hydrate",
+        "stackpress-leptos/hydrate"
+      ],
+      "csr": [
+        "stackpress-framework-view/leptos-csr",
+        "stackpress-leptos/csr"
+      ]
+    },
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "stackpress-example-profile-ui-web",
+    "path": "examples/profile-ui/web",
+    "package": {
+      "name": "stackpress-example-profile-ui-web",
+      "description": "Send page loader over the existing generated Profile capability",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-lib",
+        "path": "../../../crates/lib",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-server",
+        "path": "../../../crates/server/server",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-view",
+        "path": "../../../crates/framework/framework-view",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-leptos",
+        "path": "../../../crates/leptos",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-example-generated-profile",
+        "path": "../../generated-profile/app",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-example-sql-profile",
+        "path": "../../sql-profile",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-example-profile-ui-contracts",
+        "path": "../contracts",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-example-profile-ui-shared",
+        "path": "../shared",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-cli",
+        "path": "../../../tools/cli",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {
+      "default": [],
+      "demo-customization": [],
+      "sqlite": [
+        "dep:stackpress-example-sql-profile"
+      ]
+    },
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "stackpress-example-profile-ui-client",
+    "path": "examples/profile-ui/client",
+    "package": {
+      "name": "stackpress-example-profile-ui-client",
+      "description": "Host-free hydration and Tauri CSR entrypoints",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-leptos",
+        "path": "../../../crates/leptos",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-view",
+        "path": "../../../crates/framework/framework-view",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-example-profile-ui-shared",
+        "path": "../shared",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-example-profile-ui-contracts",
+        "path": "../contracts",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {
+      "default": [],
+      "hydrate": [
+        "stackpress-framework-view/leptos-hydrate",
+        "stackpress-leptos/hydrate",
+        "stackpress-example-profile-ui-shared/hydrate"
+      ],
+      "csr": [
+        "stackpress-framework-view/leptos-csr",
+        "stackpress-leptos/csr",
+        "stackpress-example-profile-ui-shared/csr"
+      ]
+    },
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "stackpress-example-profile-ui-native",
+    "path": "examples/profile-ui/native",
+    "package": {
+      "name": "stackpress-example-profile-ui-native",
+      "description": "Permitted local Profile search with finite cancellation",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-framework-view",
+        "path": "../../../crates/framework/framework-view",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-lib",
+        "path": "../../../crates/lib",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-server",
+        "path": "../../../crates/server/server",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-example-generated-profile",
+        "path": "../../generated-profile/app",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-example-profile-ui-contracts",
+        "path": "../contracts",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-language",
+        "path": "../../../crates/framework/framework-language",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {
+      "default": [],
+      "app": [
+        "dep:tauri",
+        "dep:tauri-build"
+      ],
+      "demo-customization": [],
+      "review-preview": []
+    },
+    "bins": [
+      {
+        "name": "profile-ui",
+        "path": "src/main.rs",
+        "required-features": [
+          "app"
+        ]
+      }
+    ],
+    "examples": []
+  },
+  {
+    "name": "stackpress-example-profile-ui-gateway",
+    "path": "examples/profile-ui/gateway",
+    "package": {
+      "name": "stackpress-example-profile-ui-gateway",
+      "description": "Finite example-only HTTP/1 gateway for the shared Profile UI",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-lib",
+        "path": "../../../crates/lib",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-server",
+        "path": "../../../crates/server/server",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-view",
+        "path": "../../../crates/framework/framework-view",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-example-profile-ui-web",
+        "path": "../web",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-example-profile-ui-contracts",
+        "path": "../contracts",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-example-sql-profile",
+        "path": "../../sql-profile",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {
+      "default": [],
+      "demo-customization": [
+        "stackpress-example-profile-ui-web/demo-customization"
+      ],
+      "sqlite": [
+        "stackpress-example-profile-ui-web/sqlite"
+      ]
+    },
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "stackpress-example-review-preview",
+    "path": "examples/review-preview",
+    "package": {
+      "name": "stackpress-example-review-preview",
+      "description": "Debug-only Slice 8 owner review host",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-lib",
+        "path": "../../crates/lib",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-server",
+        "path": "../../crates/server/server",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-server-http",
+        "path": "../../crates/server/http",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-view",
+        "path": "../../crates/framework/framework-view",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-leptos",
+        "path": "../../crates/leptos",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-sql",
+        "path": "../../crates/sql/sql",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-example-ui-gallery-web",
+        "path": "../ui-gallery/web",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-example-ui-preferences-web",
+        "path": "../ui-preferences/web",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-example-ui-stream-web",
+        "path": "../ui-stream/web",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-example-ui-format",
+        "path": "../ui-format",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "generated-admin-web",
+        "path": "../generated-admin/web",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "generated-admin-shared",
+        "path": "../generated-admin/shared",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      }
+    ],
+    "features": {
+      "default": [],
+      "review-preview": [
+        "dep:stackpress-lib",
+        "dep:stackpress-server",
+        "dep:stackpress-server-http",
+        "dep:stackpress-framework-view",
+        "dep:stackpress-leptos",
+        "dep:stackpress-sql",
+        "dep:stackpress-example-ui-gallery-web",
+        "dep:stackpress-example-ui-preferences-web",
+        "dep:stackpress-example-ui-stream-web",
+        "dep:stackpress-example-ui-format",
+        "dep:generated-admin-web",
+        "dep:generated-admin-shared",
+        "dep:leptos",
+        "dep:tokio",
+        "dep:http",
+        "dep:http-body-util",
+        "dep:hyper",
+        "dep:hyper-util",
+        "dep:base64",
+        "dep:serde",
+        "dep:serde_json",
+        "dep:tempfile",
+        "generated-admin-web/review-preview"
+      ]
+    },
+    "bins": [
+      {
+        "name": "slice8-review",
+        "path": "src/main.rs",
+        "required-features": [
+          "review-preview"
+        ]
+      }
+    ],
+    "examples": []
+  },
+  {
+    "name": "stackpress-example-ui-stream-shared",
+    "path": "examples/ui-stream/shared",
+    "package": {
+      "name": "stackpress-example-ui-stream-shared",
+      "description": "Shared in-order SSR demonstration",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-leptos",
+        "path": "../../../crates/leptos",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {
+      "default": [],
+      "ssr": [
+        "stackpress-leptos/stream",
+        "dep:tokio"
+      ],
+      "hydrate": [
+        "stackpress-leptos/hydrate"
+      ]
+    },
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "stackpress-example-ui-stream-client",
+    "path": "examples/ui-stream/client",
+    "package": {
+      "name": "stackpress-example-ui-stream-client",
+      "description": "Streamed replay and real hydration admission",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-example-ui-stream-shared",
+        "path": "../shared",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-leptos",
+        "path": "../../../crates/leptos",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-view",
+        "path": "../../../crates/framework/framework-view",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {
+      "default": [],
+      "hydrate": [
+        "stackpress-framework-view/leptos-hydrate",
+        "stackpress-example-ui-stream-shared/hydrate"
+      ]
+    },
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "stackpress-example-ui-stream-web",
+    "path": "examples/ui-stream/web",
+    "package": {
+      "name": "stackpress-example-ui-stream-web",
+      "description": "Real Hyper duplex streamed SSR proof without listeners",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-example-ui-stream-shared",
+        "path": "../shared",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-leptos",
+        "path": "../../../crates/leptos",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-view",
+        "path": "../../../crates/framework/framework-view",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-lib",
+        "path": "../../../crates/lib",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-server",
+        "path": "../../../crates/server/server",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-server-http",
+        "path": "../../../crates/server/http",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {},
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "stackpress-example-ui-gallery-shared",
+    "path": "examples/ui-gallery/shared",
+    "package": {
+      "name": "stackpress-example-ui-gallery-shared",
+      "description": "Slice 8 bounded shared UI proof",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-leptos",
+        "path": "../../../crates/leptos",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-language",
+        "path": "../../../crates/framework/framework-language",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-view",
+        "path": "../../../crates/framework/framework-view",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {
+      "default": [],
+      "ssr": [
+        "stackpress-framework-view/leptos-ssr",
+        "stackpress-leptos/ssr"
+      ],
+      "hydrate": [
+        "stackpress-framework-view/leptos-hydrate",
+        "stackpress-leptos/hydrate"
+      ],
+      "csr": [
+        "stackpress-framework-view/leptos-csr",
+        "stackpress-leptos/csr"
+      ]
+    },
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "stackpress-example-ui-gallery-client",
+    "path": "examples/ui-gallery/client",
+    "package": {
+      "name": "stackpress-example-ui-gallery-client",
+      "description": "Slice 8 bounded shared UI proof",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-example-ui-gallery-shared",
+        "path": "../shared",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {
+      "default": [],
+      "hydrate": [
+        "stackpress-example-ui-gallery-shared/hydrate"
+      ],
+      "csr": [
+        "stackpress-example-ui-gallery-shared/csr"
+      ]
+    },
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "stackpress-example-ui-gallery-web",
+    "path": "examples/ui-gallery/web",
+    "package": {
+      "name": "stackpress-example-ui-gallery-web",
+      "description": "Slice 8 bounded shared UI proof",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-example-ui-gallery-shared",
+        "path": "../shared",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-leptos",
+        "path": "../../../crates/leptos",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-view",
+        "path": "../../../crates/framework/framework-view",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-language",
+        "path": "../../../crates/framework/framework-language",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-lib",
+        "path": "../../../crates/lib",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-server",
+        "path": "../../../crates/server/server",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {},
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "stackpress-example-ui-preferences-shared",
+    "path": "examples/ui-preferences/shared",
+    "package": {
+      "name": "stackpress-example-ui-preferences-shared",
+      "description": "Finite Slice 8 preferences proof",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-framework-language",
+        "path": "../../../crates/framework/framework-language",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-view",
+        "path": "../../../crates/framework/framework-view",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-leptos",
+        "path": "../../../crates/leptos",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {
+      "default": [],
+      "ssr": [
+        "stackpress-leptos/ssr"
+      ],
+      "hydrate": [
+        "stackpress-leptos/hydrate"
+      ],
+      "csr": [
+        "stackpress-leptos/csr"
+      ]
+    },
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "stackpress-example-ui-preferences-client",
+    "path": "examples/ui-preferences/client",
+    "package": {
+      "name": "stackpress-example-ui-preferences-client",
+      "description": "Finite Slice 8 preferences proof",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-framework-language",
+        "path": "../../../crates/framework/framework-language",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-view",
+        "path": "../../../crates/framework/framework-view",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-leptos",
+        "path": "../../../crates/leptos",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-example-ui-preferences-shared",
+        "path": "../shared",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {
+      "default": [],
+      "ssr": [
+        "stackpress-example-ui-preferences-shared/ssr"
+      ],
+      "hydrate": [
+        "stackpress-example-ui-preferences-shared/hydrate"
+      ],
+      "csr": [
+        "stackpress-example-ui-preferences-shared/csr"
+      ]
+    },
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "stackpress-example-ui-preferences-web",
+    "path": "examples/ui-preferences/web",
+    "package": {
+      "name": "stackpress-example-ui-preferences-web",
+      "description": "Finite Slice 8 preferences proof",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-framework-language",
+        "path": "../../../crates/framework/framework-language",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-view",
+        "path": "../../../crates/framework/framework-view",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-leptos",
+        "path": "../../../crates/leptos",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-example-ui-preferences-shared",
+        "path": "../shared",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-lib",
+        "path": "../../../crates/lib",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-server",
+        "path": "../../../crates/server/server",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {},
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "stackpress-framework-schema",
+    "path": "crates/framework/framework-schema",
+    "package": {
+      "name": "stackpress-framework-schema",
+      "description": "Owned framework schema contracts and explicit build-host normalization",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-idea-parser",
+        "path": "../../idea/idea-parser",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-idea-transformer",
+        "path": "../../idea/idea-transformer",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-lib",
+        "path": "../../lib",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      }
+    ],
+    "features": {
+      "default": [],
+      "source": [
+        "providers",
+        "dep:stackpress-lib",
+        "time/std",
+        "serde_json/preserve_order"
+      ],
+      "providers": [
+        "dep:sha3",
+        "dep:ring",
+        "dep:aes",
+        "dep:cbc",
+        "dep:base64"
+      ],
+      "codegen": [
+        "dep:stackpress-idea-parser",
+        "dep:stackpress-idea-transformer",
+        "dep:stackpress-lib",
+        "dep:sha2"
+      ]
+    },
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "stackpress-framework-sql",
+    "path": "crates/framework/framework-sql",
+    "package": {
+      "name": "stackpress-framework-sql",
+      "description": "Borrowed generated stores and explicit SQLite migration planning",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-framework-schema",
+        "path": "../framework-schema",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-sql",
+        "path": "../../sql/sql",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-lib",
+        "path": "../../lib",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-server",
+        "path": "../../server/server",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-idea-transformer",
+        "path": "../../idea/idea-transformer",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-sql-sqlite",
+        "path": "../../sql/sql-sqlite",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      }
+    ],
+    "features": {
+      "default": [],
+      "source": [
+        "stackpress-framework-schema/source"
+      ],
+      "server": [
+        "dep:stackpress-lib",
+        "dep:stackpress-server"
+      ],
+      "codegen": [
+        "stackpress-framework-schema/codegen",
+        "dep:stackpress-idea-transformer",
+        "dep:stackpress-lib"
+      ],
+      "migrations": [
+        "dep:sha2"
+      ],
+      "sqlite-maintenance": [
+        "migrations",
+        "dep:stackpress-sql-sqlite",
+        "dep:tokio"
+      ]
+    },
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "generated-workspace-tool",
+    "path": "examples/generated-workspace/tool",
+    "package": {
+      "name": "generated-workspace-tool",
+      "description": "Independent app-owned generator for the three-model data proof",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-framework-schema",
+        "path": "../../../crates/framework/framework-schema",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-sql",
+        "path": "../../../crates/framework/framework-sql",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-idea",
+        "path": "../../../crates/idea/idea",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-cli",
+        "path": "../../../tools/cli",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-lib",
+        "path": "../../../crates/lib",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-server",
+        "path": "../../../crates/server/server",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {
+      "default": [],
+      "database-tools": [
+        "stackpress-framework-sql/sqlite-maintenance"
+      ]
+    },
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "generated-workspace-app",
+    "path": "examples/generated-workspace/app",
+    "package": {
+      "name": "generated-workspace-app",
+      "description": "Real generated three-model native data consumer",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-framework-schema",
+        "path": "../../../crates/framework/framework-schema",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-sql",
+        "path": "../../../crates/framework/framework-sql",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-sql",
+        "path": "../../../crates/sql/sql",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-sql-sqlite",
+        "path": "../../../crates/sql/sql-sqlite",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-lib",
+        "path": "../../../crates/lib",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-server",
+        "path": "../../../crates/server/server",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-cli",
+        "path": "../../../tools/cli",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {
+      "default": [],
+      "matrix": [],
+      "names": []
+    },
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "generated-workspace-contracts",
+    "path": "examples/generated-workspace/contracts",
+    "package": {
+      "name": "generated-workspace-contracts",
+      "description": "Pure consumer of the exact generated native application's contracts",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-framework-schema",
+        "path": "../../../crates/framework/framework-schema",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {},
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "data-quickstart",
+    "path": "examples/data-quickstart",
+    "package": {
+      "name": "data-quickstart",
+      "description": "Idea-to-SQLite getting-started example with explicit schema history",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-framework-schema",
+        "path": "../../crates/framework/framework-schema",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-sql",
+        "path": "../../crates/framework/framework-sql",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-sql",
+        "path": "../../crates/sql/sql",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-sql-sqlite",
+        "path": "../../crates/sql/sql-sqlite",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-lib",
+        "path": "../../crates/lib",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-server",
+        "path": "../../crates/server/server",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      }
+    ],
+    "features": {
+      "default": [],
+      "native": [
+        "dep:stackpress-framework-sql",
+        "dep:stackpress-sql",
+        "dep:stackpress-sql-sqlite",
+        "dep:stackpress-lib",
+        "dep:stackpress-server",
+        "dep:tokio"
+      ],
+      "evolved": [],
+      "expanded": [
+        "evolved"
+      ]
+    },
+    "bins": [
+      {
+        "name": "data-quickstart",
+        "path": "src/main.rs",
+        "required-features": [
+          "native"
+        ]
+      }
+    ],
+    "examples": []
+  },
+  {
+    "name": "stackpress-example-ui-format",
+    "path": "examples/ui-format",
+    "package": {
+      "name": "stackpress-example-ui-format",
+      "description": "Finite shared rich-content and deterministic formatting proof",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-leptos",
+        "path": "../../crates/leptos",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {
+      "default": [],
+      "ssr": [
+        "stackpress-leptos/ssr"
+      ],
+      "hydrate": [
+        "stackpress-leptos/hydrate"
+      ],
+      "csr": [
+        "stackpress-leptos/csr"
+      ],
+      "rich": [
+        "stackpress-leptos/rich"
+      ],
+      "format": [
+        "stackpress-leptos/format"
+      ]
+    },
+    "bins": [
+      {
+        "name": "ui-format",
+        "path": "src/main.rs",
+        "required-features": [
+          "ssr",
+          "rich",
+          "format"
+        ]
+      }
+    ],
+    "examples": []
+  },
+  {
+    "name": "stackpress-framework-admin",
+    "path": "crates/framework/framework-admin",
+    "package": {
+      "name": "stackpress-framework-admin",
+      "description": "Public generated UI role adapters and optional deterministic code generation",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-lib",
+        "path": "../../lib",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-schema",
+        "path": "../framework-schema",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-leptos",
+        "path": "../../leptos",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-idea-transformer",
+        "path": "../../idea/idea-transformer",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-idea-parser",
+        "path": "../../idea/idea-parser",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {
+      "default": [],
+      "source": [
+        "dep:stackpress-lib",
+        "stackpress-leptos/source"
+      ],
+      "source-ssr": [
+        "source",
+        "ssr",
+        "dep:chrono"
+      ],
+      "format": [
+        "stackpress-leptos/format"
+      ],
+      "ssr": [
+        "stackpress-leptos/ssr"
+      ],
+      "hydrate": [
+        "stackpress-leptos/hydrate"
+      ],
+      "csr": [
+        "stackpress-leptos/csr"
+      ],
+      "codegen": [
+        "stackpress-framework-schema/codegen",
+        "dep:stackpress-idea-transformer",
+        "dep:stackpress-lib"
+      ]
+    },
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "stackpress-framework-api",
+    "path": "crates/framework/framework-api",
+    "package": {
+      "name": "stackpress-framework-api",
+      "description": "Source-compatible API configuration and invocation mechanics",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      },
+      "autotests": false
+    },
+    "deps": [
+      {
+        "name": "stackpress-lib",
+        "path": "../../lib",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-schema",
+        "path": "../framework-schema",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-leptos",
+        "path": "../../leptos",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-admin",
+        "path": "../framework-admin",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-view",
+        "path": "../framework-view",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-session",
+        "path": "../framework-session",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-sql-sqlite",
+        "path": "../../sql/sql-sqlite",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-sql-postgres",
+        "path": "../../sql/sql-postgres",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-sql-mysql",
+        "path": "../../sql/sql-mysql",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-models",
+        "path": "../framework-models",
+        "kind": "dependencies",
+        "scope": "cfg(not(target_arch = \"wasm32\"))",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-idea-transformer",
+        "path": "../../idea/idea-transformer",
+        "kind": "dependencies",
+        "scope": "cfg(not(target_arch = \"wasm32\"))",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-server",
+        "path": "../../server/server",
+        "kind": "dependencies",
+        "scope": "cfg(not(target_arch = \"wasm32\"))",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-csrf",
+        "path": "../framework-csrf",
+        "kind": "dependencies",
+        "scope": "cfg(not(target_arch = \"wasm32\"))",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-session",
+        "path": "../framework-session",
+        "kind": "dependencies",
+        "scope": "cfg(not(target_arch = \"wasm32\"))",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-sql",
+        "path": "../framework-sql",
+        "kind": "dependencies",
+        "scope": "cfg(not(target_arch = \"wasm32\"))",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-sql",
+        "path": "../../sql/sql",
+        "kind": "dependencies",
+        "scope": "cfg(not(target_arch = \"wasm32\"))",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-idea-parser",
+        "path": "../../idea/idea-parser",
+        "kind": "dependencies",
+        "scope": "cfg(not(target_arch = \"wasm32\"))",
+        "optional": true,
+        "version": null
+      }
+    ],
+    "features": {
+      "default": [],
+      "native": [
+        "dep:stackpress-framework-models",
+        "dep:stackpress-framework-session",
+        "stackpress-framework-schema/providers"
+      ],
+      "sql": [
+        "stackpress-framework-models/sql",
+        "stackpress-framework-sql/source",
+        "stackpress-framework-sql/server",
+        "native",
+        "stackpress-framework-session/sql",
+        "dep:stackpress-framework-sql",
+        "dep:stackpress-sql"
+      ],
+      "codegen": [
+        "dep:stackpress-idea-transformer",
+        "native",
+        "stackpress-framework-schema/codegen",
+        "dep:stackpress-idea-parser",
+        "dep:stackpress-framework-admin",
+        "stackpress-framework-admin/codegen",
+        "stackpress-framework-admin/format"
+      ],
+      "ui": [
+        "stackpress-framework-admin/source",
+        "dep:leptos",
+        "dep:stackpress-leptos",
+        "dep:stackpress-framework-admin",
+        "stackpress-framework-admin/format",
+        "dep:stackpress-framework-view"
+      ],
+      "ui-ssr": [
+        "stackpress-framework-admin/source-ssr",
+        "ui",
+        "dep:chrono",
+        "dep:stackpress-framework-csrf",
+        "leptos/ssr",
+        "stackpress-leptos/ssr",
+        "stackpress-framework-admin/ssr",
+        "dep:stackpress-framework-view"
+      ],
+      "ui-hydrate": [
+        "ui",
+        "leptos/hydrate",
+        "stackpress-leptos/hydrate",
+        "stackpress-framework-admin/hydrate"
+      ],
+      "ui-csr": [
+        "ui",
+        "leptos/csr",
+        "stackpress-leptos/csr",
+        "stackpress-framework-admin/csr"
+      ]
+    },
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "stackpress-framework-csrf",
+    "path": "crates/framework/framework-csrf",
+    "package": {
+      "name": "stackpress-framework-csrf",
+      "description": "Source-compatible CSRF token generation and explicit validation",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-lib",
+        "path": "../../lib",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-server",
+        "path": "../../server/server",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      }
+    ],
+    "features": {
+      "default": [],
+      "server": [
+        "dep:stackpress-server"
+      ]
+    },
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "stackpress-framework-email",
+    "path": "crates/framework/framework-email",
+    "package": {
+      "name": "stackpress-framework-email",
+      "description": "Per-call Send email transport contracts and supervised background hooks",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-lib",
+        "path": "../../lib",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-server",
+        "path": "../../server/server",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-csrf",
+        "path": "../framework-csrf",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-session",
+        "path": "../framework-session",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-sql",
+        "path": "../../sql/sql",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-sql-sqlite",
+        "path": "../../sql/sql-sqlite",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-view",
+        "path": "../framework-view",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-leptos",
+        "path": "../../leptos",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {
+      "default": [],
+      "server": [
+        "dep:stackpress-lib",
+        "dep:stackpress-server"
+      ]
+    },
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "stackpress-framework-session",
+    "path": "crates/framework/framework-session",
+    "package": {
+      "name": "stackpress-framework-session",
+      "description": "Source-parity JWT identity and configured permission mechanisms",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-leptos",
+        "path": "../../leptos",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-view",
+        "path": "../framework-view",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-server-http",
+        "path": "../../server/http",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-email",
+        "path": "../framework-email",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-schema",
+        "path": "../framework-schema",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-sql",
+        "path": "../../sql/sql",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-sql-sqlite",
+        "path": "../../sql/sql-sqlite",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-sql-postgres",
+        "path": "../../sql/sql-postgres",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-sql-mysql",
+        "path": "../../sql/sql-mysql",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-models",
+        "path": "../framework-models",
+        "kind": "dependencies",
+        "scope": "cfg(not(target_arch = \"wasm32\"))",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-schema",
+        "path": "../framework-schema",
+        "kind": "dependencies",
+        "scope": "cfg(not(target_arch = \"wasm32\"))",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-sql",
+        "path": "../../sql/sql",
+        "kind": "dependencies",
+        "scope": "cfg(not(target_arch = \"wasm32\"))",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-sql",
+        "path": "../framework-sql",
+        "kind": "dependencies",
+        "scope": "cfg(not(target_arch = \"wasm32\"))",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-lib",
+        "path": "../../lib",
+        "kind": "dependencies",
+        "scope": "cfg(not(target_arch = \"wasm32\"))",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-server",
+        "path": "../../server/server",
+        "kind": "dependencies",
+        "scope": "cfg(not(target_arch = \"wasm32\"))",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-csrf",
+        "path": "../framework-csrf",
+        "kind": "dependencies",
+        "scope": "cfg(not(target_arch = \"wasm32\"))",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-email",
+        "path": "../framework-email",
+        "kind": "dependencies",
+        "scope": "cfg(not(target_arch = \"wasm32\"))",
+        "optional": true,
+        "version": null
+      }
+    ],
+    "features": {
+      "default": [],
+      "native": [
+        "dep:stackpress-framework-models",
+        "dep:stackpress-lib",
+        "dep:base64",
+        "dep:jsonwebtoken",
+        "dep:stackpress-framework-schema",
+        "dep:time"
+      ],
+      "sql": [
+        "stackpress-framework-models/sql",
+        "native",
+        "dep:stackpress-sql",
+        "dep:stackpress-framework-sql",
+        "stackpress-framework-sql/source"
+      ],
+      "server": [
+        "native",
+        "dep:stackpress-lib",
+        "dep:stackpress-server"
+      ],
+      "leptos": [
+        "dep:leptos",
+        "dep:leptos_meta",
+        "dep:stackpress-leptos",
+        "dep:stackpress-framework-view",
+        "dep:phonenumber"
+      ],
+      "leptos-ssr": [
+        "leptos",
+        "auth-server",
+        "stackpress-leptos/ssr",
+        "stackpress-framework-view/leptos-ssr"
+      ],
+      "browser": [
+        "dep:web-sys",
+        "dep:wasm-bindgen-futures"
+      ],
+      "leptos-hydrate": [
+        "leptos",
+        "browser",
+        "stackpress-leptos/hydrate"
+      ],
+      "leptos-csr": [
+        "leptos",
+        "browser",
+        "stackpress-leptos/csr"
+      ],
+      "auth-server": [
+        "server",
+        "sql",
+        "dep:stackpress-framework-csrf",
+        "dep:stackpress-framework-email",
+        "stackpress-framework-email/server",
+        "dep:tokio",
+        "dep:ring",
+        "dep:qrcode",
+        "dep:png"
+      ]
+    },
+    "bins": [],
+    "examples": [
+      {
+        "name": "account_host",
+        "required-features": [
+          "leptos-ssr"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "stackpress-framework-models",
+    "path": "crates/framework/framework-models",
+    "package": {
+      "name": "stackpress-framework-models",
+      "description": "Generated default source schemas for the Stackpress framework",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-framework-sql",
+        "path": "../framework-sql",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-schema",
+        "path": "../framework-schema",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-idea-parser",
+        "path": "../../idea/idea-parser",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-idea-transformer",
+        "path": "../../idea/idea-transformer",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-sql",
+        "path": "../../sql/sql",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-sql-sqlite",
+        "path": "../../sql/sql-sqlite",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-sql-mysql",
+        "path": "../../sql/sql-mysql",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-sql-postgres",
+        "path": "../../sql/sql-postgres",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-lib",
+        "path": "../../lib",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-server",
+        "path": "../../server/server",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {
+      "default": [
+        "sql"
+      ],
+      "sql": [
+        "dep:stackpress-framework-sql"
+      ],
+      "server": [
+        "sql",
+        "stackpress-framework-sql/server"
+      ],
+      "generate": [
+        "sql",
+        "stackpress-framework-sql/codegen",
+        "stackpress-framework-schema/codegen",
+        "dep:stackpress-idea-parser",
+        "dep:stackpress-idea-transformer"
+      ]
+    },
+    "bins": [
+      {
+        "name": "framework-models-generate",
+        "path": "src/bin/generate.rs",
+        "required-features": [
+          "generate"
+        ]
+      }
+    ],
+    "examples": []
+  },
+  {
+    "name": "stackpress-framework",
+    "path": "crates/framework/framework",
+    "package": {
+      "name": "stackpress-framework",
+      "description": "Compile-time composition of the source Stackpress framework",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-sql-sqlite",
+        "path": "../../sql/sql-sqlite",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-sql-postgres",
+        "path": "../../sql/sql-postgres",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-sql-mysql",
+        "path": "../../sql/sql-mysql",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-sql",
+        "path": "../framework-sql",
+        "kind": "dev-dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-lib",
+        "path": "../../lib",
+        "kind": "dependencies",
+        "scope": "cfg(not(target_arch = \"wasm32\"))",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-server",
+        "path": "../../server/server",
+        "kind": "dependencies",
+        "scope": "cfg(not(target_arch = \"wasm32\"))",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-schema",
+        "path": "../framework-schema",
+        "kind": "dependencies",
+        "scope": "cfg(not(target_arch = \"wasm32\"))",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-csrf",
+        "path": "../framework-csrf",
+        "kind": "dependencies",
+        "scope": "cfg(not(target_arch = \"wasm32\"))",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-session",
+        "path": "../framework-session",
+        "kind": "dependencies",
+        "scope": "cfg(not(target_arch = \"wasm32\"))",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-api",
+        "path": "../framework-api",
+        "kind": "dependencies",
+        "scope": "cfg(not(target_arch = \"wasm32\"))",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-sql",
+        "path": "../../sql/sql",
+        "kind": "dependencies",
+        "scope": "cfg(not(target_arch = \"wasm32\"))",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-view",
+        "path": "../framework-view",
+        "kind": "dependencies",
+        "scope": "cfg(not(target_arch = \"wasm32\"))",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-sql",
+        "path": "../framework-sql",
+        "kind": "dependencies",
+        "scope": "cfg(not(target_arch = \"wasm32\"))",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-idea",
+        "path": "../../idea/idea",
+        "kind": "dependencies",
+        "scope": "cfg(not(target_arch = \"wasm32\"))",
+        "optional": true,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-admin",
+        "path": "../framework-admin",
+        "kind": "dependencies",
+        "scope": "cfg(not(target_arch = \"wasm32\"))",
+        "optional": true,
+        "version": null
+      }
+    ],
+    "features": {
+      "default": [],
+      "native": [
+        "dep:stackpress-lib",
+        "dep:stackpress-server",
+        "dep:stackpress-framework-schema",
+        "dep:serde",
+        "dep:serde_json"
+      ],
+      "server-commands": [
+        "native"
+      ],
+      "schema-client": [
+        "native"
+      ],
+      "language": [
+        "native"
+      ],
+      "csrf": [
+        "native",
+        "dep:stackpress-framework-csrf",
+        "stackpress-framework-csrf/server"
+      ],
+      "sql": [
+        "native",
+        "dep:stackpress-sql",
+        "dep:stackpress-framework-sql"
+      ],
+      "view": [
+        "native",
+        "dep:stackpress-framework-view",
+        "dep:tokio"
+      ],
+      "codegen": [
+        "schema-client",
+        "dep:stackpress-idea",
+        "dep:stackpress-framework-sql",
+        "dep:stackpress-framework-session",
+        "dep:stackpress-framework-api",
+        "dep:stackpress-framework-admin",
+        "stackpress-framework-admin/codegen",
+        "stackpress-framework-admin/format",
+        "stackpress-framework-schema/codegen",
+        "stackpress-framework-sql/codegen"
+      ],
+      "session": [
+        "native",
+        "dep:stackpress-framework-session",
+        "stackpress-framework-session/auth-server"
+      ],
+      "api": [
+        "native",
+        "dep:stackpress-framework-api",
+        "stackpress-framework-api/sql"
+      ],
+      "admin": [
+        "native"
+      ],
+      "full": [
+        "server-commands",
+        "schema-client",
+        "language",
+        "csrf",
+        "sql",
+        "view",
+        "session",
+        "api",
+        "admin"
+      ]
+    },
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "generated-admin-tool",
+    "path": "examples/generated-admin/tool",
+    "package": {
+      "name": "generated-admin-tool",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-framework-admin",
+        "path": "../../../crates/framework/framework-admin",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-schema",
+        "path": "../../../crates/framework/framework-schema",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-sql",
+        "path": "../../../crates/framework/framework-sql",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "generated-workspace-tool",
+        "path": "../../generated-workspace/tool",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-idea",
+        "path": "../../../crates/idea/idea",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {
+      "default": [],
+      "format": [
+        "stackpress-framework-admin/format"
+      ]
+    },
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "generated-admin-shared",
+    "path": "examples/generated-admin/shared",
+    "package": {
+      "name": "generated-admin-shared",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "stackpress-framework-admin",
+        "path": "../../../crates/framework/framework-admin",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-schema",
+        "path": "../../../crates/framework/framework-schema",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-leptos",
+        "path": "../../../crates/leptos",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {
+      "format": [
+        "stackpress-framework-admin/format"
+      ],
+      "default": [],
+      "ssr": [
+        "stackpress-framework-admin/ssr"
+      ],
+      "hydrate": [
+        "stackpress-framework-admin/hydrate"
+      ],
+      "csr": [
+        "stackpress-framework-admin/csr"
+      ]
+    },
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "generated-admin-client",
+    "path": "examples/generated-admin/client",
+    "package": {
+      "name": "generated-admin-client",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "generated-admin-shared",
+        "path": "../shared",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-admin",
+        "path": "../../../crates/framework/framework-admin",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {
+      "format": [
+        "stackpress-framework-admin/format",
+        "generated-admin-shared/format"
+      ],
+      "default": [],
+      "hydrate": [
+        "generated-admin-shared/hydrate"
+      ],
+      "csr": [
+        "generated-admin-shared/csr"
+      ]
+    },
+    "bins": [],
+    "examples": []
+  },
+  {
+    "name": "generated-admin-web",
+    "path": "examples/generated-admin/web",
+    "package": {
+      "name": "generated-admin-web",
+      "version": {
+        "workspace": true
+      },
+      "edition": {
+        "workspace": true
+      },
+      "rust-version": {
+        "workspace": true
+      },
+      "publish": {
+        "workspace": true
+      }
+    },
+    "deps": [
+      {
+        "name": "generated-admin-shared",
+        "path": "../shared",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-leptos",
+        "path": "../../../crates/leptos",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-admin",
+        "path": "../../../crates/framework/framework-admin",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-schema",
+        "path": "../../../crates/framework/framework-schema",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-framework-sql",
+        "path": "../../../crates/framework/framework-sql",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-lib",
+        "path": "../../../crates/lib",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-server",
+        "path": "../../../crates/server/server",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-sql",
+        "path": "../../../crates/sql/sql",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      },
+      {
+        "name": "stackpress-sql-sqlite",
+        "path": "../../../crates/sql/sql-sqlite",
+        "kind": "dependencies",
+        "scope": "global",
+        "optional": false,
+        "version": null
+      }
+    ],
+    "features": {
+      "default": [],
+      "review-preview": [],
+      "format": [
+        "stackpress-framework-admin/format",
+        "generated-admin-shared/format"
+      ]
+    },
+    "bins": [],
+    "examples": []
+  }
+]
