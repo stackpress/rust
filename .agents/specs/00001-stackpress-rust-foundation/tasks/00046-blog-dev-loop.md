@@ -77,3 +77,16 @@ The coordinator must start the real listener check from `examples/blog` with
 `cargo xtask dev --port 3000 --reload-port 3001`, then open `http://localhost:3000/`.
 No product acceptance, merge or real listener success is inferred from finite proofs.
 Process tests ran on macOS; the Windows cleanup branch and actual TCP listener startup remain unexecuted.
+
+## Coordinator verification
+
+Committed as `3ab4127` and merged into main as `89e164a`. Reviewed:
+- the G58 lock exception: tungstenite 0.29.0 plus five closure tuples, blog lock only, root unchanged;
+- dev-only AutoReload injection, with a byte-identical plain-serve test;
+- the markup-patch safety fallback.
+
+Independent run on a detached clean checkout of `89e164a`, 2026-11-10, exit 0:
+- **README user path:** generate, setup, populate (2 articles), `cargo xtask build-browser`, `cargo test --workspace` (79 passed).
+- **Contributor gate** `tools/examples/blog/gate.py`: 26/26 phases passed. Coverage: blog-tool 90.27%, blog-web 70.61%, blog-app 95.26%, blog-store 97.44%, blog-assets 89.74%, blog-xtask 75.79%; blog-client G56-exempt.
+
+Live check: `cargo xtask dev --port 3000 --reload-port 3001` ran via devmetrics on this machine. The first build took about 2 minutes, then the server became ready and the page carried the `/live_reload` script.
