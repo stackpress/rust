@@ -62,3 +62,11 @@ Control experiments are retained: exact repeated edits measured view logic 12.34
 - Pre-close ledger snapshot through cleanup: **29 records, 22 passed and seven failed/canceled experiments**, `4062.291391s` summed command time. This sum can overlap concurrent commands and is not thread elapsed time. Agent Workspace baseline is **146 inherited errors and 44 warnings**, with exact diagnostics compared after receipt updates.
 
 For the owner's live check, run `cargo xtask dev --port 3000 --reload-port 3001` from `examples/blog`, then refresh existing tabs once to load the updated reload script. First launch warms the incremental targets; the table measures warm saves. No listener, install, commit or push was performed.
+
+## Coordinator verification
+
+Committed as `621a75f` and merged into main as `2ba6ad7`. Independent run on a detached clean checkout of `2ba6ad7`, 2026-11-10, exit 0:
+- **README user path:** generate, setup, populate (2 articles), `cargo xtask build-browser`, `cargo test --workspace` (88 passed).
+- **Contributor gate:** 26/26 phases passed. Coverage: blog-tool 90.27%, blog-web 70.64%, blog-app 95.26%, blog-store 97.44%, blog-assets 89.74%, blog-xtask 78.73%; blog-client G56-exempt.
+
+Restarted the owner's live dev loop on this version via devmetrics, with incremental on.
