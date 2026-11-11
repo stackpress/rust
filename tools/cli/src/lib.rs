@@ -37,5 +37,5 @@ pub mod tty;
 
 // Unit-test modules share one watchdog definition rather than loading the same file twice.
 #[cfg(test)]
-#[path = "../../../crates/lib/tests/support/watchdog.rs"]
+#[path = "../tests/support/watchdog.rs"]
 mod watchdog;

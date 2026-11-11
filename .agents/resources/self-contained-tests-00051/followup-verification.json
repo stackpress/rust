@@ -1,0 +1,1632 @@
+{
+  "task": "00051 publish-order follow-up",
+  "base": "5315730a2102c1c43242e1890d29478e3dcbe602",
+  "publish_order": [
+    "stackpress-lib",
+    "stackpress-sql",
+    "stackpress-leptos",
+    "stackpress-idea-parser",
+    "stackpress-framework-language",
+    "stackpress-sql-sqlite",
+    "stackpress-sql-postgres",
+    "stackpress-sql-mysql",
+    "stackpress-server",
+    "stackpress-idea-transformer",
+    "stackpress-server-http",
+    "stackpress-cli",
+    "stackpress-framework-view",
+    "stackpress-framework-csrf",
+    "stackpress-framework-email",
+    "stackpress-idea",
+    "stackpress-framework-schema",
+    "stackpress-framework-sql",
+    "stackpress-framework-admin",
+    "stackpress-framework-session",
+    "stackpress-framework-api",
+    "stackpress-framework",
+    "stackpress"
+  ],
+  "owned_dependency_audit": [
+    {
+      "package": "stackpress",
+      "crate": ".",
+      "internal_dev_dependencies": [],
+      "status": "pass"
+    },
+    {
+      "package": "stackpress-lib",
+      "crate": "crates/lib",
+      "internal_dev_dependencies": [],
+      "status": "pass"
+    },
+    {
+      "package": "stackpress-server",
+      "crate": "crates/server/server",
+      "internal_dev_dependencies": [],
+      "status": "pass"
+    },
+    {
+      "package": "stackpress-server-http",
+      "crate": "crates/server/http",
+      "internal_dev_dependencies": [],
+      "status": "pass"
+    },
+    {
+      "package": "stackpress-cli",
+      "crate": "tools/cli",
+      "internal_dev_dependencies": [],
+      "status": "pass"
+    },
+    {
+      "package": "stackpress-idea-parser",
+      "crate": "crates/idea/idea-parser",
+      "internal_dev_dependencies": [],
+      "status": "pass"
+    },
+    {
+      "package": "stackpress-idea-transformer",
+      "crate": "crates/idea/idea-transformer",
+      "internal_dev_dependencies": [],
+      "status": "pass"
+    },
+    {
+      "package": "stackpress-idea",
+      "crate": "crates/idea/idea",
+      "internal_dev_dependencies": [],
+      "status": "pass"
+    },
+    {
+      "package": "stackpress-sql",
+      "crate": "crates/sql/sql",
+      "internal_dev_dependencies": [],
+      "status": "pass"
+    },
+    {
+      "package": "stackpress-sql-sqlite",
+      "crate": "crates/sql/sql-sqlite",
+      "internal_dev_dependencies": [
+        {
+          "alias": "stackpress-lib",
+          "package": "stackpress-lib",
+          "relation": "earlier"
+        }
+      ],
+      "status": "pass"
+    },
+    {
+      "package": "stackpress-framework-view",
+      "crate": "crates/framework/framework-view",
+      "internal_dev_dependencies": [],
+      "status": "pass"
+    },
+    {
+      "package": "stackpress-leptos",
+      "crate": "crates/leptos",
+      "internal_dev_dependencies": [],
+      "status": "pass"
+    },
+    {
+      "package": "stackpress-framework-language",
+      "crate": "crates/framework/framework-language",
+      "internal_dev_dependencies": [],
+      "status": "pass"
+    },
+    {
+      "package": "stackpress-framework-schema",
+      "crate": "crates/framework/framework-schema",
+      "internal_dev_dependencies": [],
+      "status": "pass"
+    },
+    {
+      "package": "stackpress-framework-api",
+      "crate": "crates/framework/framework-api",
+      "internal_dev_dependencies": [
+        {
+          "alias": "stackpress-framework-schema",
+          "package": "stackpress-framework-schema",
+          "relation": "earlier"
+        },
+        {
+          "alias": "stackpress-idea-transformer",
+          "package": "stackpress-idea-transformer",
+          "relation": "earlier"
+        },
+        {
+          "alias": "stackpress-framework-sql",
+          "package": "stackpress-framework-sql",
+          "relation": "earlier"
+        },
+        {
+          "alias": "stackpress-framework-session",
+          "package": "stackpress-framework-session",
+          "relation": "earlier"
+        },
+        {
+          "alias": "stackpress-sql-sqlite",
+          "package": "stackpress-sql-sqlite",
+          "relation": "earlier"
+        },
+        {
+          "alias": "stackpress-sql-postgres",
+          "package": "stackpress-sql-postgres",
+          "relation": "earlier"
+        },
+        {
+          "alias": "stackpress-sql-mysql",
+          "package": "stackpress-sql-mysql",
+          "relation": "earlier"
+        }
+      ],
+      "status": "pass"
+    },
+    {
+      "package": "stackpress-framework-csrf",
+      "crate": "crates/framework/framework-csrf",
+      "internal_dev_dependencies": [],
+      "status": "pass"
+    },
+    {
+      "package": "stackpress-framework-session",
+      "crate": "crates/framework/framework-session",
+      "internal_dev_dependencies": [
+        {
+          "alias": "stackpress-idea-transformer",
+          "package": "stackpress-idea-transformer",
+          "relation": "earlier"
+        },
+        {
+          "alias": "stackpress-framework-sql",
+          "package": "stackpress-framework-sql",
+          "relation": "earlier"
+        },
+        {
+          "alias": "stackpress-server-http",
+          "package": "stackpress-server-http",
+          "relation": "earlier"
+        },
+        {
+          "alias": "stackpress-framework-email",
+          "package": "stackpress-framework-email",
+          "relation": "earlier"
+        },
+        {
+          "alias": "stackpress-framework-schema",
+          "package": "stackpress-framework-schema",
+          "relation": "earlier"
+        },
+        {
+          "alias": "stackpress-sql",
+          "package": "stackpress-sql",
+          "relation": "earlier"
+        },
+        {
+          "alias": "stackpress-sql-sqlite",
+          "package": "stackpress-sql-sqlite",
+          "relation": "earlier"
+        },
+        {
+          "alias": "stackpress-sql-postgres",
+          "package": "stackpress-sql-postgres",
+          "relation": "earlier"
+        },
+        {
+          "alias": "stackpress-sql-mysql",
+          "package": "stackpress-sql-mysql",
+          "relation": "earlier"
+        }
+      ],
+      "status": "pass"
+    },
+    {
+      "package": "stackpress-framework",
+      "crate": "crates/framework/framework",
+      "internal_dev_dependencies": [
+        {
+          "alias": "stackpress-idea-transformer",
+          "package": "stackpress-idea-transformer",
+          "relation": "earlier"
+        },
+        {
+          "alias": "stackpress-framework-schema",
+          "package": "stackpress-framework-schema",
+          "relation": "earlier"
+        },
+        {
+          "alias": "stackpress-sql-sqlite",
+          "package": "stackpress-sql-sqlite",
+          "relation": "earlier"
+        },
+        {
+          "alias": "stackpress-sql-postgres",
+          "package": "stackpress-sql-postgres",
+          "relation": "earlier"
+        },
+        {
+          "alias": "stackpress-sql-mysql",
+          "package": "stackpress-sql-mysql",
+          "relation": "earlier"
+        },
+        {
+          "alias": "stackpress-framework-sql",
+          "package": "stackpress-framework-sql",
+          "relation": "earlier"
+        }
+      ],
+      "status": "pass"
+    }
+  ],
+  "pending_coverage_worker": [
+    "stackpress-framework-admin",
+    "stackpress-framework-email",
+    "stackpress-framework-sql",
+    "stackpress-sql-mysql",
+    "stackpress-sql-postgres"
+  ],
+  "manifest_change": "Remove crates/sql/sql-sqlite/Cargo.toml dev-dependency stackpress-server only",
+  "lock_sha256": "d297eed02d2de2f0014aa23f0d573dcade043f092340776f74ce1f8debf1dd18",
+  "invariants": {
+    "moved_compiler_evidence": [
+      {
+        "source": "crates/sql/sql-sqlite/tests/ui/non_send_handler.rs",
+        "destination": "examples/generated-workspace/app/tests/ui/non_send_handler.rs",
+        "sha256": "d3d92d3807f7e6e3b8753f04367a5f4d03076dd73adbe64ba3f91cc32af84a1f"
+      },
+      {
+        "source": "crates/sql/sql-sqlite/tests/ui/non_send_handler.stderr",
+        "destination": "examples/generated-workspace/app/tests/ui/non_send_handler.stderr",
+        "sha256": "0885079fdf6a7bc939a1c2c877781c4348f7084764390efb0c9b031d18ac5824"
+      },
+      {
+        "source": "crates/sql/sql-sqlite/tests/ui/non_send_service.rs",
+        "destination": "examples/generated-workspace/app/tests/ui/non_send_service.rs",
+        "sha256": "c41fdc7c803f050822a145fc8960d6e623e82f43f0cc54236e336af19119c859"
+      },
+      {
+        "source": "crates/sql/sql-sqlite/tests/ui/non_send_service.stderr",
+        "destination": "examples/generated-workspace/app/tests/ui/non_send_service.stderr",
+        "sha256": "6610098dfbb5b6e88cd762f787969b5ba9a0e9ceb716607f4a7f1780670b7668"
+      }
+    ],
+    "host_assertions_preserved": 9,
+    "registry_tuples_unchanged": 699,
+    "lock_change": "remove stackpress-sql-sqlite -> stackpress-server only"
+  },
+  "gate_results": [
+    {
+      "label": "gate fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--check"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "gate Clippy default",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "stackpress-sql-sqlite",
+        "-p",
+        "generated-workspace-app",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "gate nextest default",
+      "command": [
+        "cargo",
+        "nextest",
+        "run",
+        "-p",
+        "stackpress-sql-sqlite",
+        "-p",
+        "generated-workspace-app",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--test-threads",
+        "2",
+        "--no-fail-fast"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "gate doctests default",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "stackpress-sql-sqlite",
+        "-p",
+        "generated-workspace-app",
+        "--locked",
+        "--offline",
+        "--doc"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "gate Rustdoc default",
+      "command": [
+        "env",
+        "RUSTDOCFLAGS=-D warnings",
+        "cargo",
+        "doc",
+        "-p",
+        "stackpress-sql-sqlite",
+        "-p",
+        "generated-workspace-app",
+        "--locked",
+        "--offline",
+        "--no-deps"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "gate Clippy compatible",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "stackpress-sql-sqlite",
+        "-p",
+        "generated-workspace-app",
+        "--locked",
+        "--offline",
+        "--features",
+        "stackpress-sql-sqlite/maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-sql/source,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-schema/providers,stackpress-framework-schema/source",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "gate nextest compatible",
+      "command": [
+        "cargo",
+        "nextest",
+        "run",
+        "-p",
+        "stackpress-sql-sqlite",
+        "-p",
+        "generated-workspace-app",
+        "--locked",
+        "--offline",
+        "--features",
+        "stackpress-sql-sqlite/maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-sql/source,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-schema/providers,stackpress-framework-schema/source",
+        "--all-targets",
+        "--test-threads",
+        "2",
+        "--no-fail-fast"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "gate doctests compatible",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "stackpress-sql-sqlite",
+        "-p",
+        "generated-workspace-app",
+        "--locked",
+        "--offline",
+        "--features",
+        "stackpress-sql-sqlite/maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-sql/source,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-schema/providers,stackpress-framework-schema/source",
+        "--doc"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "gate Rustdoc compatible",
+      "command": [
+        "env",
+        "RUSTDOCFLAGS=-D warnings",
+        "cargo",
+        "doc",
+        "-p",
+        "stackpress-sql-sqlite",
+        "-p",
+        "generated-workspace-app",
+        "--locked",
+        "--offline",
+        "--features",
+        "stackpress-sql-sqlite/maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-sql/source,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-schema/providers,stackpress-framework-schema/source",
+        "--no-deps"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "gate moved standalone example",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "generated-workspace-app",
+        "--example",
+        "m0-host",
+        "--locked",
+        "--offline"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "gate generated workspace freshness",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "generated-workspace-tool",
+        "--locked",
+        "--offline",
+        "--",
+        "emit",
+        "generate",
+        "--check",
+        "true"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "gate checker regressions round 3",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tools/release"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "gate boundaries and publish order",
+      "command": [
+        "python3",
+        "tools/release/check_test_boundaries.py",
+        "--pending-coverage"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "gate copy freshness",
+      "command": [
+        "python3",
+        "tools/release/check_test_copies.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "gate SQLite host coverage",
+      "command": [
+        "cargo",
+        "llvm-cov",
+        "nextest",
+        "-p",
+        "stackpress-sql-sqlite",
+        "-p",
+        "generated-workspace-app",
+        "-p",
+        "stackpress-server",
+        "--features",
+        "stackpress-sql-sqlite/maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-sql/source,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-schema/providers,stackpress-framework-schema/source",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--test-threads",
+        "2",
+        "--no-fail-fast",
+        "--json",
+        "--output-path",
+        "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-self-contained-tests/target/task00051-followup/coverage.json"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "coverage_scope": "Published SQLite/server: standard cargo-llvm-cov implementation report, src/** with tool-default test-file omissions. The tool also omits the entire examples tree. Repository app src/** and both proof files therefore use a second export of the exact collected objects/profiles with that automatic filter removed. No added exclusions. Native aarch64 macOS, compatible features in the recorded command; no publication-floor waiver.",
+  "coverage": [
+    {
+      "package": "stackpress-sql-sqlite",
+      "src": "crates/sql/sql-sqlite/src",
+      "covered": 727,
+      "total": 808,
+      "percent": 89.97524752475248
+    },
+    {
+      "package": "generated-workspace-app",
+      "src": "examples/generated-workspace/app/src",
+      "covered": 3421,
+      "total": 4026,
+      "percent": 84.97267759562841
+    },
+    {
+      "package": "stackpress-server",
+      "src": "crates/server/server/src",
+      "covered": 2008,
+      "total": 2173,
+      "percent": 92.40681086056144
+    }
+  ],
+  "proof_coverage": [
+    {
+      "source": "examples/generated-workspace/app/tests/sqlite_host.rs",
+      "lines": {
+        "count": 156,
+        "covered": 150,
+        "percent": 96.15384615384616
+      }
+    },
+    {
+      "source": "crates/sql/sql-sqlite/src/tests/contention.rs",
+      "lines": {
+        "count": 48,
+        "covered": 48,
+        "percent": 100
+      }
+    }
+  ],
+  "complete_export_command": [
+    "/Users/cblanquera/.rustup/toolchains/stable-aarch64-apple-darwin/lib/rustlib/aarch64-apple-darwin/bin/llvm-cov",
+    "export",
+    "-format=text",
+    "-instr-profile=/Users/cblanquera/.paseo/worktrees/342ftjlj/release-self-contained-tests/target/task00051-followup/llvm-cov/release-self-contained-tests.profdata",
+    "-object",
+    "target/task00051-followup/llvm-cov/debug/deps/atomic-081f52c3805a55ce",
+    "-object",
+    "target/task00051-followup/llvm-cov/debug/deps/callable-3b9284b2e30c1ab9",
+    "-object",
+    "target/task00051-followup/llvm-cov/debug/deps/concurrency-41c5547ddb07c851",
+    "-object",
+    "target/task00051-followup/llvm-cov/debug/deps/config_presence-4736001f263b4d2e",
+    "-object",
+    "target/task00051-followup/llvm-cov/debug/deps/construction-dc75da68b289d96e",
+    "-object",
+    "target/task00051-followup/llvm-cov/debug/deps/contracts-a96674ca73a1441f",
+    "-object",
+    "target/task00051-followup/llvm-cov/debug/deps/error_causes-8ba00282f5380e3c",
+    "-object",
+    "target/task00051-followup/llvm-cov/debug/deps/generated_workspace_app-15d710d2ebad56c0",
+    "-object",
+    "target/task00051-followup/llvm-cov/debug/deps/http_immutable-2e4edbfb645833a1",
+    "-object",
+    "target/task00051-followup/llvm-cov/debug/deps/http_input-9f2b2ae08ecfc6f6",
+    "-object",
+    "target/task00051-followup/llvm-cov/debug/deps/http_output-85830bbef396db57",
+    "-object",
+    "target/task00051-followup/llvm-cov/debug/deps/http_stream-0da3790be01e3bbf",
+    "-object",
+    "target/task00051-followup/llvm-cov/debug/deps/lifecycle-ac432708d9203b29",
+    "-object",
+    "target/task00051-followup/llvm-cov/debug/deps/m0-1810bdd5798b051c",
+    "-object",
+    "target/task00051-followup/llvm-cov/debug/deps/matrix-d9e7bd55fdf8374b",
+    "-object",
+    "target/task00051-followup/llvm-cov/debug/deps/matrix_contracts-107ed9c567ce3167",
+    "-object",
+    "target/task00051-followup/llvm-cov/debug/deps/names-fe580484b4eb69c2",
+    "-object",
+    "target/task00051-followup/llvm-cov/debug/deps/names_contracts-fb1288987ef91b5a",
+    "-object",
+    "target/task00051-followup/llvm-cov/debug/deps/on_request-b2dbe7e24671ed57",
+    "-object",
+    "target/task00051-followup/llvm-cov/debug/deps/operations-e3c08cb5f71b2a5b",
+    "-object",
+    "target/task00051-followup/llvm-cov/debug/deps/outcomes-1c6dc89cc3a99bbd",
+    "-object",
+    "target/task00051-followup/llvm-cov/debug/deps/ownership-154ecda7315aa17d",
+    "-object",
+    "target/task00051-followup/llvm-cov/debug/deps/public_preflight-d780fc0b375a3b8f",
+    "-object",
+    "target/task00051-followup/llvm-cov/debug/deps/reads-6e8f0338173214b5",
+    "-object",
+    "target/task00051-followup/llvm-cov/debug/deps/sqlite_host-bba155b86fc888e2",
+    "-object",
+    "target/task00051-followup/llvm-cov/debug/deps/stackpress_server-e21d353da8ed3bb0",
+    "-object",
+    "target/task00051-followup/llvm-cov/debug/deps/stackpress_sql_sqlite-a638817dd60e1030",
+    "-object",
+    "target/task00051-followup/llvm-cov/debug/deps/writes-9b0a7b0626a69499",
+    "-object",
+    "target/task00051-followup/llvm-cov/debug/examples/m0_host-45a4e6c611b35be1",
+    "-object",
+    "target/task00051-followup/tests/trybuild/debug/deps/libdisplaydoc-f2b8c5f161d5925e.dylib",
+    "-object",
+    "target/task00051-followup/tests/trybuild/debug/deps/libdocument_features-fd07b38311947399.dylib",
+    "-object",
+    "target/task00051-followup/tests/trybuild/debug/deps/libserde_derive-78d994b97234edf5.dylib",
+    "-object",
+    "target/task00051-followup/tests/trybuild/debug/deps/libthiserror_impl-b7f5a9cb329dddeb.dylib",
+    "-object",
+    "target/task00051-followup/tests/trybuild/debug/deps/libtokio_macros-df17c7765ce2fc9a.dylib",
+    "-object",
+    "target/task00051-followup/tests/trybuild/debug/deps/libtracing_attributes-b239d76437193a4c.dylib",
+    "-object",
+    "target/task00051-followup/tests/trybuild/debug/deps/libyoke_derive-8745431abb5bd2b2.dylib",
+    "-object",
+    "target/task00051-followup/tests/trybuild/debug/deps/libzerofrom_derive-d2370bc46694ce94.dylib",
+    "-object",
+    "target/task00051-followup/tests/trybuild/debug/deps/libzerovec_derive-5588d04daa13bc20.dylib"
+  ],
+  "complete_export_sha256": "3c838619309705bc7015286e6ff29488c99a935c92efe8b9f521a2abd0031f38",
+  "benchmark_store": "/Users/cblanquera/server/projects/stackpress/rust/.agents/resources/build-benchmarks",
+  "benchmark_snapshot_through": "20261111T044310.123041Z-bf5cf04a8948",
+  "benchmarks": [
+    {
+      "id": "20261111T024715.032604Z-ae4d74a770ff",
+      "label": "00051 follow-up path escaping regression",
+      "status": "passed",
+      "kind": "test",
+      "scope": "other",
+      "cache": "warm",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tools/release",
+        "-p",
+        "test_*.py"
+      ],
+      "command_seconds": 0.169857,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "cargo_build_stages": [],
+      "log": "runs/20261111T024715.032604Z-ae4d74a770ff.log"
+    },
+    {
+      "id": "20261111T043134.724577Z-a05909312833",
+      "label": "00051 follow-up format moved proofs",
+      "status": "passed",
+      "kind": "check",
+      "scope": "selected",
+      "cache": "cold",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all"
+      ],
+      "command_seconds": 2.759736,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "cargo_build_stages": [],
+      "log": "runs/20261111T043134.724577Z-a05909312833.log"
+    },
+    {
+      "id": "20261111T043146.714801Z-194d37d1ec29",
+      "label": "00051 follow-up round 1 sqlite contention and relocated host/compiler proofs",
+      "status": "failed",
+      "kind": "test",
+      "scope": "selected",
+      "cache": "cold",
+      "command": [
+        "cargo",
+        "nextest",
+        "run",
+        "-p",
+        "stackpress-sql-sqlite",
+        "-p",
+        "generated-workspace-app",
+        "--all-targets",
+        "--locked",
+        "--offline",
+        "-E",
+        "test(m0_under_process_watchdog) | test(ownership_under_process_watchdog) | test(sqlite_host_lifecycle) | test(exclusive_session_compile_failures)",
+        "--no-fail-fast"
+      ],
+      "command_seconds": 0.60785,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "cargo_build_stages": [],
+      "log": "runs/20261111T043146.714801Z-194d37d1ec29.log"
+    },
+    {
+      "id": "20261111T043201.520340Z-fb4694f979f8",
+      "label": "00051 follow-up round 1 sqlite contention and relocated host/compiler proofs retry",
+      "status": "passed",
+      "kind": "test",
+      "scope": "selected",
+      "cache": "cold",
+      "command": [
+        "cargo",
+        "nextest",
+        "run",
+        "-p",
+        "stackpress-sql-sqlite",
+        "-p",
+        "generated-workspace-app",
+        "--all-targets",
+        "--locked",
+        "--offline",
+        "-E",
+        "test(m0_under_process_watchdog) | test(ownership_under_process_watchdog) | test(sqlite_host_lifecycle) | test(exclusive_session_compile_failures)",
+        "--no-fail-fast"
+      ],
+      "command_seconds": 109.58438,
+      "cargo_build_seconds": 42.88,
+      "cargo_activity": {
+        "compiling": 148,
+        "checking": 0,
+        "documenting": 0
+      },
+      "cargo_build_stages": [
+        {
+          "profile": "test",
+          "seconds": 42.88
+        }
+      ],
+      "log": "runs/20261111T043201.520340Z-fb4694f979f8.log"
+    },
+    {
+      "id": "20261111T043305.256407Z-0cb9fc928dca",
+      "label": "00051 follow-up publish-order and file-boundary audit",
+      "status": "passed",
+      "kind": "check",
+      "scope": "selected",
+      "cache": "warm",
+      "command": [
+        "python3",
+        "tools/release/check_test_boundaries.py",
+        "--pending-coverage"
+      ],
+      "command_seconds": 2.732507,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "cargo_build_stages": [],
+      "log": "runs/20261111T043305.256407Z-0cb9fc928dca.log"
+    },
+    {
+      "id": "20261111T043306.223373Z-e55d88094449",
+      "label": "00051 follow-up checker regression round 1",
+      "status": "passed",
+      "kind": "test",
+      "scope": "other",
+      "cache": "warm",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tools/release"
+      ],
+      "command_seconds": 0.095528,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "cargo_build_stages": [],
+      "log": "runs/20261111T043306.223373Z-e55d88094449.log"
+    },
+    {
+      "id": "20261111T043307.322360Z-b6c12defdd02",
+      "label": "00051 follow-up copy freshness after moves",
+      "status": "passed",
+      "kind": "check",
+      "scope": "selected",
+      "cache": "warm",
+      "command": [
+        "python3",
+        "tools/release/check_test_copies.py"
+      ],
+      "command_seconds": 0.038164,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "cargo_build_stages": [],
+      "log": "runs/20261111T043307.322360Z-b6c12defdd02.log"
+    },
+    {
+      "id": "20261111T043459.545840Z-f1b58c815e2d",
+      "label": "00051 follow-up round 2 sqlite tests without server dev edge",
+      "status": "passed",
+      "kind": "test",
+      "scope": "selected",
+      "cache": "warm",
+      "command": [
+        "cargo",
+        "nextest",
+        "run",
+        "-p",
+        "stackpress-sql-sqlite",
+        "--all-targets",
+        "--locked",
+        "--offline",
+        "--no-fail-fast"
+      ],
+      "command_seconds": 11.110364,
+      "cargo_build_seconds": 8.06,
+      "cargo_activity": {
+        "compiling": 10,
+        "checking": 0,
+        "documenting": 0
+      },
+      "cargo_build_stages": [
+        {
+          "profile": "test",
+          "seconds": 8.06
+        }
+      ],
+      "log": "runs/20261111T043459.545840Z-f1b58c815e2d.log"
+    },
+    {
+      "id": "20261111T043608.144098Z-a6eed140643e",
+      "label": "00051 follow-up round 2 dependency checker regressions",
+      "status": "passed",
+      "kind": "test",
+      "scope": "other",
+      "cache": "warm",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tools/release"
+      ],
+      "command_seconds": 0.111605,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "cargo_build_stages": [],
+      "log": "runs/20261111T043608.144098Z-a6eed140643e.log"
+    },
+    {
+      "id": "20261111T043613.324032Z-5894a13afe27",
+      "label": "00051 follow-up gate fmt",
+      "status": "passed",
+      "kind": "check",
+      "scope": "workspace",
+      "cache": "warm",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--check"
+      ],
+      "command_seconds": 2.729087,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "cargo_build_stages": [],
+      "log": "runs/20261111T043613.324032Z-5894a13afe27.log"
+    },
+    {
+      "id": "20261111T043616.279141Z-b8f59519078b",
+      "label": "00051 follow-up gate Clippy default",
+      "status": "passed",
+      "kind": "check",
+      "scope": "selected",
+      "cache": "warm",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "stackpress-sql-sqlite",
+        "-p",
+        "generated-workspace-app",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "command_seconds": 21.286691,
+      "cargo_build_seconds": 21.19,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 125,
+        "documenting": 0
+      },
+      "cargo_build_stages": [
+        {
+          "profile": "dev",
+          "seconds": 21.19
+        }
+      ],
+      "log": "runs/20261111T043616.279141Z-b8f59519078b.log"
+    },
+    {
+      "id": "20261111T043637.767296Z-1d4e42942316",
+      "label": "00051 follow-up gate nextest default",
+      "status": "passed",
+      "kind": "test",
+      "scope": "selected",
+      "cache": "warm",
+      "command": [
+        "cargo",
+        "nextest",
+        "run",
+        "-p",
+        "stackpress-sql-sqlite",
+        "-p",
+        "generated-workspace-app",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--test-threads",
+        "2",
+        "--no-fail-fast"
+      ],
+      "command_seconds": 13.448541,
+      "cargo_build_seconds": 1.16,
+      "cargo_activity": {
+        "compiling": 1,
+        "checking": 0,
+        "documenting": 0
+      },
+      "cargo_build_stages": [
+        {
+          "profile": "test",
+          "seconds": 1.16
+        }
+      ],
+      "log": "runs/20261111T043637.767296Z-1d4e42942316.log"
+    },
+    {
+      "id": "20261111T043651.433554Z-62eb369c9cfc",
+      "label": "00051 follow-up gate doctests default",
+      "status": "passed",
+      "kind": "doc",
+      "scope": "selected",
+      "cache": "warm",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "stackpress-sql-sqlite",
+        "-p",
+        "generated-workspace-app",
+        "--locked",
+        "--offline",
+        "--doc"
+      ],
+      "command_seconds": 4.253737,
+      "cargo_build_seconds": 0.39,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "cargo_build_stages": [
+        {
+          "profile": "test",
+          "seconds": 0.39
+        }
+      ],
+      "log": "runs/20261111T043651.433554Z-62eb369c9cfc.log"
+    },
+    {
+      "id": "20261111T043652.236669Z-5e99eac99634",
+      "label": "00051 follow-up follow-up invariant proof",
+      "status": "passed",
+      "kind": "check",
+      "scope": "selected",
+      "cache": "warm",
+      "command": [
+        "python3",
+        "/private/tmp/task00051-followup-invariants.py"
+      ],
+      "command_seconds": 0.247537,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "cargo_build_stages": [],
+      "log": "runs/20261111T043652.236669Z-5e99eac99634.log"
+    },
+    {
+      "id": "20261111T043655.906345Z-ee85ea97d6ed",
+      "label": "00051 follow-up gate Rustdoc default",
+      "status": "passed",
+      "kind": "doc",
+      "scope": "selected",
+      "cache": "warm",
+      "command": [
+        "env",
+        "RUSTDOCFLAGS=-D warnings",
+        "cargo",
+        "doc",
+        "-p",
+        "stackpress-sql-sqlite",
+        "-p",
+        "generated-workspace-app",
+        "--locked",
+        "--offline",
+        "--no-deps"
+      ],
+      "command_seconds": 13.192253,
+      "cargo_build_seconds": 13.14,
+      "cargo_activity": {
+        "compiling": 8,
+        "checking": 28,
+        "documenting": 2
+      },
+      "cargo_build_stages": [
+        {
+          "profile": "dev",
+          "seconds": 13.14
+        }
+      ],
+      "log": "runs/20261111T043655.906345Z-ee85ea97d6ed.log"
+    },
+    {
+      "id": "20261111T043709.315005Z-38c1b07c10e1",
+      "label": "00051 follow-up gate Clippy compatible",
+      "status": "passed",
+      "kind": "check",
+      "scope": "selected",
+      "cache": "warm",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "stackpress-sql-sqlite",
+        "-p",
+        "generated-workspace-app",
+        "--locked",
+        "--offline",
+        "--features",
+        "stackpress-sql-sqlite/maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-sql/source,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-schema/providers,stackpress-framework-schema/source",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "command_seconds": 11.087813,
+      "cargo_build_seconds": 11.0,
+      "cargo_activity": {
+        "compiling": 1,
+        "checking": 21,
+        "documenting": 0
+      },
+      "cargo_build_stages": [
+        {
+          "profile": "dev",
+          "seconds": 11.0
+        }
+      ],
+      "log": "runs/20261111T043709.315005Z-38c1b07c10e1.log"
+    },
+    {
+      "id": "20261111T043720.634869Z-3b43daf119bb",
+      "label": "00051 follow-up gate nextest compatible",
+      "status": "passed",
+      "kind": "test",
+      "scope": "selected",
+      "cache": "warm",
+      "command": [
+        "cargo",
+        "nextest",
+        "run",
+        "-p",
+        "stackpress-sql-sqlite",
+        "-p",
+        "generated-workspace-app",
+        "--locked",
+        "--offline",
+        "--features",
+        "stackpress-sql-sqlite/maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-sql/source,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-schema/providers,stackpress-framework-schema/source",
+        "--all-targets",
+        "--test-threads",
+        "2",
+        "--no-fail-fast"
+      ],
+      "command_seconds": 36.176372,
+      "cargo_build_seconds": 14.95,
+      "cargo_activity": {
+        "compiling": 22,
+        "checking": 0,
+        "documenting": 0
+      },
+      "cargo_build_stages": [
+        {
+          "profile": "test",
+          "seconds": 14.95
+        }
+      ],
+      "log": "runs/20261111T043720.634869Z-3b43daf119bb.log"
+    },
+    {
+      "id": "20261111T043757.026107Z-d3ef6eb17024",
+      "label": "00051 follow-up gate doctests compatible",
+      "status": "passed",
+      "kind": "doc",
+      "scope": "selected",
+      "cache": "warm",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "stackpress-sql-sqlite",
+        "-p",
+        "generated-workspace-app",
+        "--locked",
+        "--offline",
+        "--features",
+        "stackpress-sql-sqlite/maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-sql/source,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-schema/providers,stackpress-framework-schema/source",
+        "--doc"
+      ],
+      "command_seconds": 2.630999,
+      "cargo_build_seconds": 0.33,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "cargo_build_stages": [
+        {
+          "profile": "test",
+          "seconds": 0.33
+        }
+      ],
+      "log": "runs/20261111T043757.026107Z-d3ef6eb17024.log"
+    },
+    {
+      "id": "20261111T043759.865425Z-0e640597852a",
+      "label": "00051 follow-up gate Rustdoc compatible",
+      "status": "passed",
+      "kind": "doc",
+      "scope": "selected",
+      "cache": "warm",
+      "command": [
+        "env",
+        "RUSTDOCFLAGS=-D warnings",
+        "cargo",
+        "doc",
+        "-p",
+        "stackpress-sql-sqlite",
+        "-p",
+        "generated-workspace-app",
+        "--locked",
+        "--offline",
+        "--features",
+        "stackpress-sql-sqlite/maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-sql/source,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-schema/providers,stackpress-framework-schema/source",
+        "--no-deps"
+      ],
+      "command_seconds": 6.580984,
+      "cargo_build_seconds": 6.52,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 11,
+        "documenting": 2
+      },
+      "cargo_build_stages": [
+        {
+          "profile": "dev",
+          "seconds": 6.52
+        }
+      ],
+      "log": "runs/20261111T043759.865425Z-0e640597852a.log"
+    },
+    {
+      "id": "20261111T043806.659073Z-e04bd3cba3cf",
+      "label": "00051 follow-up gate moved standalone example",
+      "status": "passed",
+      "kind": "test",
+      "scope": "selected",
+      "cache": "warm",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "generated-workspace-app",
+        "--example",
+        "m0-host",
+        "--locked",
+        "--offline"
+      ],
+      "command_seconds": 10.053909,
+      "cargo_build_seconds": 9.43,
+      "cargo_activity": {
+        "compiling": 8,
+        "checking": 0,
+        "documenting": 0
+      },
+      "cargo_build_stages": [
+        {
+          "profile": "dev",
+          "seconds": 9.43
+        }
+      ],
+      "log": "runs/20261111T043806.659073Z-e04bd3cba3cf.log"
+    },
+    {
+      "id": "20261111T043816.942460Z-9f2df1ccef11",
+      "label": "00051 follow-up gate generated workspace freshness",
+      "status": "passed",
+      "kind": "check",
+      "scope": "selected",
+      "cache": "warm",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "generated-workspace-tool",
+        "--locked",
+        "--offline",
+        "--",
+        "emit",
+        "generate",
+        "--check",
+        "true"
+      ],
+      "command_seconds": 10.711988,
+      "cargo_build_seconds": 8.92,
+      "cargo_activity": {
+        "compiling": 20,
+        "checking": 0,
+        "documenting": 0
+      },
+      "cargo_build_stages": [
+        {
+          "profile": "dev",
+          "seconds": 8.92
+        }
+      ],
+      "log": "runs/20261111T043816.942460Z-9f2df1ccef11.log"
+    },
+    {
+      "id": "20261111T043827.883361Z-d73401ce002e",
+      "label": "00051 follow-up gate checker regressions round 3",
+      "status": "passed",
+      "kind": "test",
+      "scope": "other",
+      "cache": "warm",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tools/release"
+      ],
+      "command_seconds": 0.114698,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "cargo_build_stages": [],
+      "log": "runs/20261111T043827.883361Z-d73401ce002e.log"
+    },
+    {
+      "id": "20261111T043828.210773Z-730afdbe090e",
+      "label": "00051 follow-up gate boundaries and publish order",
+      "status": "passed",
+      "kind": "check",
+      "scope": "selected",
+      "cache": "warm",
+      "command": [
+        "python3",
+        "tools/release/check_test_boundaries.py",
+        "--pending-coverage"
+      ],
+      "command_seconds": 2.404054,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "cargo_build_stages": [],
+      "log": "runs/20261111T043828.210773Z-730afdbe090e.log"
+    },
+    {
+      "id": "20261111T043830.811391Z-f4b56b8c7e3a",
+      "label": "00051 follow-up gate copy freshness",
+      "status": "passed",
+      "kind": "check",
+      "scope": "selected",
+      "cache": "warm",
+      "command": [
+        "python3",
+        "tools/release/check_test_copies.py"
+      ],
+      "command_seconds": 0.032773,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "cargo_build_stages": [],
+      "log": "runs/20261111T043830.811391Z-f4b56b8c7e3a.log"
+    },
+    {
+      "id": "20261111T043831.033245Z-d5149adcf0a9",
+      "label": "00051 follow-up gate SQLite host coverage",
+      "status": "passed",
+      "kind": "coverage",
+      "scope": "selected",
+      "cache": "cold",
+      "command": [
+        "cargo",
+        "llvm-cov",
+        "nextest",
+        "-p",
+        "stackpress-sql-sqlite",
+        "-p",
+        "generated-workspace-app",
+        "-p",
+        "stackpress-server",
+        "--features",
+        "stackpress-sql-sqlite/maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-sql/source,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-schema/providers,stackpress-framework-schema/source",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--test-threads",
+        "2",
+        "--no-fail-fast",
+        "--json",
+        "--output-path",
+        "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-self-contained-tests/target/task00051-followup/coverage.json"
+      ],
+      "command_seconds": 92.112447,
+      "cargo_build_seconds": 55.79,
+      "cargo_activity": {
+        "compiling": 160,
+        "checking": 0,
+        "documenting": 0
+      },
+      "cargo_build_stages": [
+        {
+          "profile": "test",
+          "seconds": 55.79
+        }
+      ],
+      "log": "runs/20261111T043831.033245Z-d5149adcf0a9.log"
+    },
+    {
+      "id": "20261111T044115.973436Z-95a2da9476d8",
+      "label": "00051 follow-up follow-up coverage and invariant receipt report",
+      "status": "failed",
+      "kind": "check",
+      "scope": "selected",
+      "cache": "warm",
+      "command": [
+        "python3",
+        "/private/tmp/task00051-followup-report.py"
+      ],
+      "command_seconds": 0.184098,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "cargo_build_stages": [],
+      "log": "runs/20261111T044115.973436Z-95a2da9476d8.log"
+    },
+    {
+      "id": "20261111T044202.735266Z-e8dc68237147",
+      "label": "00051 follow-up coverage export inspection",
+      "status": "failed",
+      "kind": "coverage",
+      "scope": "selected",
+      "cache": "warm",
+      "command": [
+        "cargo",
+        "llvm-cov",
+        "report",
+        "-p",
+        "stackpress-sql-sqlite",
+        "-p",
+        "generated-workspace-app",
+        "-p",
+        "stackpress-server",
+        "--features",
+        "stackpress-sql-sqlite/maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-sql/source,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-schema/providers,stackpress-framework-schema/source",
+        "--locked",
+        "--offline",
+        "-vv",
+        "--json",
+        "--output-path",
+        "target/task00051-followup/coverage-default.json"
+      ],
+      "command_seconds": 0.041248,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "cargo_build_stages": [],
+      "log": "runs/20261111T044202.735266Z-e8dc68237147.log"
+    },
+    {
+      "id": "20261111T044212.079472Z-de51a1bb034e",
+      "label": "00051 follow-up coverage export inspection retry",
+      "status": "passed",
+      "kind": "coverage",
+      "scope": "selected",
+      "cache": "warm",
+      "command": [
+        "cargo",
+        "llvm-cov",
+        "report",
+        "-vv",
+        "--json",
+        "--output-path",
+        "target/task00051-followup/coverage-default.json"
+      ],
+      "command_seconds": 1.373495,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "cargo_build_stages": [],
+      "log": "runs/20261111T044212.079472Z-de51a1bb034e.log"
+    },
+    {
+      "id": "20261111T044310.123041Z-bf5cf04a8948",
+      "label": "00051 follow-up complete coverage export from collected profiles",
+      "status": "passed",
+      "kind": "coverage",
+      "scope": "selected",
+      "cache": "warm",
+      "command": [
+        "python3",
+        "/private/tmp/task00051-followup-export.py"
+      ],
+      "command_seconds": 1.810222,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "cargo_build_stages": [],
+      "log": "runs/20261111T044310.123041Z-bf5cf04a8948.log"
+    }
+  ],
+  "benchmark_totals": {
+    "attempts": 29,
+    "records_emitting_compilation": 9,
+    "statuses": {
+      "failed": 3,
+      "passed": 26
+    },
+    "command_seconds": 357.682937,
+    "cargo_build_seconds": 193.76,
+    "records_with_cargo_build_seconds": 13
+  },
+  "observed_target_kib": 2214408,
+  "limitations": [
+    "Five separately owned candidates remain pending in this branch.",
+    "SQLite-only follow-up does not touch live database harnesses; coordinator retains combined live replay.",
+    "Failed attempts retained: initial --locked before obsolete edge removal; initial report assertion detected omitted repository app; report --features option rejected by installed tool. All resolved without rerunning tests.",
+    "Receipt/report completion and Agent Workspace validation are recorded after the benchmark snapshot.",
+    "Agent Workspace validation retains 146 inherited missing-link errors and 44 warnings; the one moved-example link was repaired and no new diagnostics remain."
+  ],
+  "post_snapshot_checks": [
+    {
+      "id": "20261111T044422.839989Z-0793c99a057b",
+      "label": "00051 follow-up follow-up coverage and invariant receipt report retry",
+      "status": "passed",
+      "command": [
+        "python3",
+        "/private/tmp/task00051-followup-report.py"
+      ],
+      "command_seconds": 3.509741,
+      "cargo_build_seconds": null,
+      "log": "runs/20261111T044422.839989Z-0793c99a057b.log"
+    },
+    {
+      "id": "20261111T044530.057603Z-e14cf1f6815e",
+      "label": "00051 follow-up receipt Agent Workspace validation",
+      "status": "failed",
+      "command": [
+        "python3",
+        ".agents/scripts/validate-agent-workspace.py"
+      ],
+      "command_seconds": 0.367366,
+      "cargo_build_seconds": null,
+      "log": "runs/20261111T044530.057603Z-e14cf1f6815e.log"
+    },
+    {
+      "id": "20261111T044532.496676Z-41553b87a506",
+      "label": "00051 follow-up final follow-up diff check",
+      "status": "passed",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "command_seconds": 0.023719,
+      "cargo_build_seconds": null,
+      "log": "runs/20261111T044532.496676Z-41553b87a506.log"
+    },
+    {
+      "id": "20261111T044625.470492Z-f6e973b8fece",
+      "label": "00051 follow-up receipt validation after relocated example link repair",
+      "status": "failed",
+      "command": [
+        "python3",
+        ".agents/scripts/validate-agent-workspace.py"
+      ],
+      "command_seconds": 0.39967,
+      "cargo_build_seconds": null,
+      "log": "runs/20261111T044625.470492Z-f6e973b8fece.log"
+    },
+    {
+      "id": "20261111T044656.827068Z-27637c8a0606",
+      "label": "00051 follow-up final follow-up diff after receipt link repair",
+      "status": "passed",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "command_seconds": 0.0255,
+      "cargo_build_seconds": null,
+      "log": "runs/20261111T044656.827068Z-27637c8a0606.log"
+    },
+    {
+      "id": "20261111T044720.852106Z-e8a8fb3fd0fd",
+      "label": "00051 follow-up final Agent Workspace receipt validation",
+      "status": "failed",
+      "command": [
+        "python3",
+        ".agents/scripts/validate-agent-workspace.py"
+      ],
+      "command_seconds": 0.367169,
+      "cargo_build_seconds": null,
+      "log": "runs/20261111T044720.852106Z-e8a8fb3fd0fd.log"
+    }
+  ],
+  "agent_workspace_validation": {
+    "errors": 146,
+    "warnings": 44,
+    "new_diagnostics": [],
+    "repaired_followup_link": ".agents/specs/00001-stackpress-rust-foundation/slice-4-receipt-m0.md native proof app relocation",
+    "record": "20261111T044720.852106Z-e8a8fb3fd0fd"
+  },
+  "superseded_by": "publication-floor-verification.json",
+  "superseded_scope": "Standard full-workspace publication coverage and final native proof locations; original evidence retained as historical selected-scope verification."
+}

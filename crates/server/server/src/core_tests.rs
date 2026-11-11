@@ -15,7 +15,7 @@ use stackpress_lib::{
 use super::*;
 use crate::context::CallContext;
 
-#[path = "../../../lib/tests/support/watchdog.rs"]
+#[path = "../tests/support/watchdog.rs"]
 mod watchdog;
 
 /// Typed test input seeds the real registry before M1 implements JSON section decoding.

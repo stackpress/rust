@@ -1,14 +1,16 @@
-//! Named Send handlers use the existing host API without modifying shared crates.
+//! Repo-only host lifecycle proof: published SQLite tests need no later server dependency.
 
 use std::sync::Arc;
 use std::time::Duration;
 
 use stackpress_lib::{Error, Flow, Invocation, Nest, Request, Response, Result};
 use stackpress_server::{ServerBuilder, ServerInvocationExt, StartupContext};
-use stackpress_sql::{Engine, ErrorKind, Transaction};
-use tokio::sync::{Barrier, Notify, Semaphore};
+use stackpress_sql::{DialectId, Engine, ErrorKind, Sql, Transaction};
+use stackpress_sql_sqlite::{SqliteDatabase, SqliteOptions};
+use tokio::sync::{Barrier, Notify};
 
-use super::{SqliteDatabase, SqliteOptions, TempDir, expire, options, sql, wait_for_cleanup};
+#[path = "../../support/watchdog.rs"]
+mod watchdog;
 
 /// App-owned synchronization proves two actual root invocations contend for one pool.
 struct Contention {
@@ -16,30 +18,18 @@ struct Contention {
     ready: Barrier,
     /// Released only after the competing root observes the actual pool timeout.
     failed: Notify,
-    /// Retains visibility of worker retirement after the Engine owns the database.
-    admission: Arc<Semaphore>,
-    /// All admission slots must return before a healthy recovery read begins.
-    permits: u32,
-    /// The configured SQLx deadline, advanced only while the pool is explicitly exhausted.
-    timeout: Duration,
 }
 
 /// Open and register a real Engine as an ordinary typed service during startup.
 async fn configure(start: &mut StartupContext) -> Result<Flow> {
     let options = start.config::<SqliteOptions>()?.clone();
-    let timeout = options.acquire_timeout();
-    let permits = u32::try_from(options.max_in_flight).unwrap();
     let native = SqliteDatabase::open(options)
         .await
         .map_err(Error::from_source)?;
-    let admission = Arc::clone(&native.admission);
     start.register(Arc::new(Engine::new(native)))?;
     start.register(Arc::new(Contention {
         ready: Barrier::new(2),
         failed: Notify::new(),
-        admission,
-        permits,
-        timeout,
     }))?;
     Ok(Flow::Continue)
 }
@@ -58,11 +48,7 @@ async fn leaf(_: &mut Request, res: &mut Response, inv: Invocation<'_>) -> Resul
 /// Observe a real queued timeout while the caller deliberately retains the only connection.
 async fn blocked_leaf(_: &mut Request, res: &mut Response, inv: Invocation<'_>) -> Result<Flow> {
     let engine = inv.service::<Engine>()?;
-    let state = inv.service::<Contention>()?;
-    let query = sql("SELECT 1 AS n");
-    let error = expire(engine.fetch(&query), state.timeout)
-        .await
-        .unwrap_err();
+    let error = engine.fetch(&sql("SELECT 1 AS n")).await.unwrap_err();
     assert_eq!(error.kind(), ErrorKind::PoolTimedOut);
     res.results(&"PoolTimedOut")?;
     Ok(Flow::Continue)
@@ -92,8 +78,7 @@ async fn nested(_: &mut Request, res: &mut Response, inv: Invocation<'_>) -> Res
         Some("PoolTimedOut")
     );
     tx.rollback().await.map_err(Error::from_source)?;
-    let state = inv.service::<Contention>()?;
-    wait_for_cleanup(&state.admission, state.permits).await;
+    recover(inv.service::<Engine>()?).await;
     res.results(&"composed")?;
     Ok(Flow::Continue)
 }
@@ -109,7 +94,7 @@ async fn hold(_: &mut Request, res: &mut Response, inv: Invocation<'_>) -> Resul
     state.ready.wait().await;
     state.failed.notified().await;
     tx.rollback().await.map_err(Error::from_source)?;
-    wait_for_cleanup(&state.admission, state.permits).await;
+    recover(inv.service::<Engine>()?).await;
     res.results(&true)?;
     Ok(Flow::Continue)
 }
@@ -125,9 +110,11 @@ async fn contend(_: &mut Request, res: &mut Response, inv: Invocation<'_>) -> Re
 }
 
 /// The app registers only its explicit operations; no generic SQL route is created.
-pub(super) async fn proof() {
-    let root = TempDir::new().unwrap();
-    let mut opts = options(&root, 1);
+async fn proof() {
+    let root = tempfile::TempDir::new().unwrap();
+    let mut opts = SqliteOptions::file(root.path().join("proof.sqlite")).create_if_missing(true);
+    opts.max_connections = 1;
+    opts.busy_timeout_ms = 80;
     opts.max_in_flight = 2;
     let mut app = ServerBuilder::new();
     app.config_section("sqlite", opts, |options| {
@@ -179,4 +166,37 @@ pub(super) async fn proof() {
     engine.close().await.unwrap();
     drop(server);
     drop(engine);
+}
+
+/// Caller-authored SQL retains its explicit native dialect.
+fn sql(text: &'static str) -> Sql {
+    Sql::literal(DialectId::Sqlite, text)
+}
+
+/// A healthy public read waits for the one native connection after rollback retirement.
+/// Private admission acknowledgements are proved separately inside sql-sqlite.
+async fn recover(engine: &Engine) {
+    let rows = engine.fetch(&sql("SELECT 1 AS n")).await.unwrap();
+    assert_eq!(rows[0].try_get::<i64>("n").unwrap(), 1);
+}
+
+/// Bound real native timeouts with the existing independent repository watchdog.
+/// This lane has no Tokio test-util feature: retain both real five-second pool
+/// deadlines and allow their elapsed time inside a thirty-second process bound.
+#[test]
+fn sqlite_host_lifecycle() {
+    if std::env::var("STACKPRESS_S6_SCENARIO").as_deref() == Ok("sqlite-host") {
+        tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .unwrap()
+            .block_on(proof());
+        return;
+    }
+    let (success, expired, output) = watchdog::run(
+        "sqlite_host_lifecycle",
+        "sqlite-host",
+        Duration::from_secs(30),
+    );
+    assert!(success && !expired, "host: timeout={expired}\n{output}");
 }

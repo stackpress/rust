@@ -1,6 +1,6 @@
 //! M0 production-type proofs. Async scenarios run only under an external watchdog.
 
-mod host;
+mod contention;
 mod m1;
 mod m2;
 mod rounds;
@@ -423,7 +423,7 @@ fn m0_under_process_watchdog() {
         "pool",
         "limits",
         "configuration",
-        "host",
+        "contention",
         "transitions",
         "responsive",
         "failures",
@@ -451,7 +451,7 @@ async fn m0_child() {
         "pool" => pool().await,
         "limits" => limits().await,
         "configuration" => configuration().await,
-        "host" => host::proof().await,
+        "contention" => contention::proof().await,
         "transitions" => transitions::cancellation().await,
         "responsive" => transitions::responsive().await,
         "failures" => transitions::failures().await,

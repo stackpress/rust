@@ -54,12 +54,12 @@ fn config(input: &str) -> SchemaConfig {
     let loader = PackageLoader::new(app)
         .with_source(
             "stackpress-session/schema.idea",
-            include_str!("../../framework-session/schema.idea"),
+            include_str!("fixtures/session.idea"),
         )
         .unwrap()
         .with_source(
             "stackpress-api/schema.idea",
-            include_str!("../../framework-api/schema.idea"),
+            include_str!("fixtures/api.idea"),
         )
         .unwrap();
     Composer::new(loader, CompositionLimits::default())

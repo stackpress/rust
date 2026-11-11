@@ -11,6 +11,15 @@ default = []
 matrix = []
 names = []
 
+# Repository-only native proofs must execute in workspace nextest and coverage.
+[[test]]
+name = "sqlite_host"
+path = "tests/sqlite_host.rs"
+
+[[test]]
+name = "sqlite_service"
+path = "tests/sqlite_service.rs"
+
 [dependencies]
 stackpress-framework-schema = { path = "../../../crates/framework/framework-schema" }
 stackpress-framework-sql = { path = "../../../crates/framework/framework-sql", features = ["server"] }

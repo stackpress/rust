@@ -16,7 +16,7 @@ use stackpress_cli::prompt::{
 };
 use tokio::sync::{Notify, mpsc};
 
-#[path = "../../../crates/lib/tests/support/watchdog.rs"]
+#[path = "support/watchdog.rs"]
 mod watchdog;
 
 /// Exercise a complete supplied-text prompt with readable non-TTY output.

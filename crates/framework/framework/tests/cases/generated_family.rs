@@ -11,7 +11,7 @@ fn config() -> rust::parser::SchemaConfig {
     let mut loader = MemoryLoader::new("/source-client").unwrap();
     loader.insert(
         "schema.idea",
-        include_str!("../../consumers/build-host/source.idea"),
+        include_str!("../fixtures/source-client.idea"),
     );
     Composer::new(rust::package_loader(loader).unwrap(), Default::default())
         .compose("schema.idea")

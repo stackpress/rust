@@ -212,7 +212,7 @@ mod tests {
     fn mutation_corpus_is_stable() {
         // The example consumes this same corpus in real SSR, hydrate and CSR builds.
         let corpus: Vec<serde_json::Value> =
-            serde_json::from_str(include_str!("../../../examples/ui-format/corpus.json")).unwrap();
+            serde_json::from_str(include_str!("../tests/fixtures/corpus.json")).unwrap();
         for entry in corpus {
             let source = entry["input"].as_str().unwrap();
             let safe = SafeHtml::html(source).unwrap();

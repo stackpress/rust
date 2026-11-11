@@ -13,7 +13,7 @@ use std::sync::{
 };
 use std::time::Duration;
 
-#[path = "../../../lib/tests/support/watchdog.rs"]
+#[path = "support/watchdog.rs"]
 mod watchdog;
 
 /// Shared resource has no framework lock; four concurrent leaves must actually rendezvous.

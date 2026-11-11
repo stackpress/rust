@@ -1,0 +1,942 @@
+{
+  "task": "00051 publication-floor follow-up",
+  "base": "5315730a2102c1c43242e1890d29478e3dcbe602",
+  "sqlite_coverage": {
+    "package": "stackpress-sql-sqlite",
+    "covered": 740,
+    "total": 808,
+    "percent": 91.58415841584159,
+    "floor": 90,
+    "measurement": "standard cargo llvm-cov nextest --workspace --all-targets with the full compatible feature set",
+    "special_export": false,
+    "additional_exclusions": [],
+    "files": [
+      {
+        "source": "crates/sql/sql-sqlite/src/collect.rs",
+        "lines": {
+          "count": 66,
+          "covered": 62,
+          "percent": 93.93939393939394
+        }
+      },
+      {
+        "source": "crates/sql/sql-sqlite/src/execute.rs",
+        "lines": {
+          "count": 113,
+          "covered": 104,
+          "percent": 92.03539823008849
+        }
+      },
+      {
+        "source": "crates/sql/sql-sqlite/src/lease.rs",
+        "lines": {
+          "count": 40,
+          "covered": 39,
+          "percent": 97.5
+        }
+      },
+      {
+        "source": "crates/sql/sql-sqlite/src/lib.rs",
+        "lines": {
+          "count": 69,
+          "covered": 69,
+          "percent": 100.0
+        }
+      },
+      {
+        "source": "crates/sql/sql-sqlite/src/maintenance.rs",
+        "lines": {
+          "count": 416,
+          "covered": 362,
+          "percent": 87.01923076923077
+        }
+      },
+      {
+        "source": "crates/sql/sql-sqlite/src/options.rs",
+        "lines": {
+          "count": 55,
+          "covered": 55,
+          "percent": 100.0
+        }
+      },
+      {
+        "source": "crates/sql/sql-sqlite/src/session.rs",
+        "lines": {
+          "count": 49,
+          "covered": 49,
+          "percent": 100.0
+        }
+      }
+    ]
+  },
+  "standard_coverage_record": "20261111T045139.142756Z-18b0fcc38a9e",
+  "standard_workspace_summary": "Summary [ 493.103s] 1229 tests run: 1229 passed (1 slow), 96 skipped",
+  "standard_coverage_report_sha256": "f306a3b10107eddd26c9ac1796da3b9db8dcce5355194272fa2130b2e91aedd3",
+  "native_targets": [
+    {
+      "name": "sqlite_host",
+      "path": "tests/sqlite_host.rs"
+    },
+    {
+      "name": "sqlite_service",
+      "path": "tests/sqlite_service.rs"
+    }
+  ],
+  "manifest_changes": [
+    "Remove obsolete stackpress-server dev-dependency from sql-sqlite",
+    "Declare sqlite_host and sqlite_service test targets in the unpublished generated-workspace-app; no dependency changes"
+  ],
+  "invariants": {
+    "moved_compiler_evidence": [
+      {
+        "source": "crates/sql/sql-sqlite/tests/ui/non_send_handler.rs",
+        "destination": "examples/generated-workspace/app/tests/ui/non_send_handler.rs",
+        "sha256": "d3d92d3807f7e6e3b8753f04367a5f4d03076dd73adbe64ba3f91cc32af84a1f"
+      },
+      {
+        "source": "crates/sql/sql-sqlite/tests/ui/non_send_handler.stderr",
+        "destination": "examples/generated-workspace/app/tests/ui/non_send_handler.stderr",
+        "sha256": "0885079fdf6a7bc939a1c2c877781c4348f7084764390efb0c9b031d18ac5824"
+      },
+      {
+        "source": "crates/sql/sql-sqlite/tests/ui/non_send_service.rs",
+        "destination": "examples/generated-workspace/app/tests/ui/non_send_service.rs",
+        "sha256": "c41fdc7c803f050822a145fc8960d6e623e82f43f0cc54236e336af19119c859"
+      },
+      {
+        "source": "crates/sql/sql-sqlite/tests/ui/non_send_service.stderr",
+        "destination": "examples/generated-workspace/app/tests/ui/non_send_service.stderr",
+        "sha256": "6610098dfbb5b6e88cd762f787969b5ba9a0e9ceb716607f4a7f1780670b7668"
+      }
+    ],
+    "host_assertions_preserved": 9,
+    "registry_tuples_unchanged": 699,
+    "lock_change": "remove stackpress-sql-sqlite -> stackpress-server only"
+  },
+  "gate_results": [
+    {
+      "label": "publication floor gate fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--check"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "publication floor gate Clippy default",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "stackpress-sql-sqlite",
+        "-p",
+        "generated-workspace-app",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "publication floor gate nextest default",
+      "command": [
+        "cargo",
+        "nextest",
+        "run",
+        "-p",
+        "stackpress-sql-sqlite",
+        "-p",
+        "generated-workspace-app",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--test-threads",
+        "2",
+        "--no-fail-fast"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "publication floor gate doctests default",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "stackpress-sql-sqlite",
+        "-p",
+        "generated-workspace-app",
+        "--locked",
+        "--offline",
+        "--doc"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "publication floor gate Rustdoc default",
+      "command": [
+        "env",
+        "RUSTDOCFLAGS=-D warnings",
+        "cargo",
+        "doc",
+        "-p",
+        "stackpress-sql-sqlite",
+        "-p",
+        "generated-workspace-app",
+        "--locked",
+        "--offline",
+        "--no-deps"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "publication floor gate Clippy compatible",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "stackpress-sql-sqlite",
+        "-p",
+        "generated-workspace-app",
+        "--locked",
+        "--offline",
+        "--features",
+        "stackpress-sql-sqlite/maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-sql/source,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-schema/providers,stackpress-framework-schema/source",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "publication floor gate nextest compatible",
+      "command": [
+        "cargo",
+        "nextest",
+        "run",
+        "-p",
+        "stackpress-sql-sqlite",
+        "-p",
+        "generated-workspace-app",
+        "--locked",
+        "--offline",
+        "--features",
+        "stackpress-sql-sqlite/maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-sql/source,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-schema/providers,stackpress-framework-schema/source",
+        "--all-targets",
+        "--test-threads",
+        "2",
+        "--no-fail-fast"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "publication floor gate doctests compatible",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "stackpress-sql-sqlite",
+        "-p",
+        "generated-workspace-app",
+        "--locked",
+        "--offline",
+        "--features",
+        "stackpress-sql-sqlite/maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-sql/source,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-schema/providers,stackpress-framework-schema/source",
+        "--doc"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "publication floor gate Rustdoc compatible",
+      "command": [
+        "env",
+        "RUSTDOCFLAGS=-D warnings",
+        "cargo",
+        "doc",
+        "-p",
+        "stackpress-sql-sqlite",
+        "-p",
+        "generated-workspace-app",
+        "--locked",
+        "--offline",
+        "--features",
+        "stackpress-sql-sqlite/maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-sql/source,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-schema/providers,stackpress-framework-schema/source",
+        "--no-deps"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "publication floor gate generated workspace freshness",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "generated-workspace-tool",
+        "--locked",
+        "--offline",
+        "--",
+        "emit",
+        "generate",
+        "--check",
+        "true"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "publication floor gate checker regressions round 3",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tools/release"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "publication floor gate boundaries and publish order",
+      "command": [
+        "python3",
+        "tools/release/check_test_boundaries.py",
+        "--pending-coverage"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "publication floor gate copy freshness",
+      "command": [
+        "python3",
+        "tools/release/check_test_copies.py"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "benchmark_store": "/Users/cblanquera/server/projects/stackpress/rust/.agents/resources/build-benchmarks",
+  "benchmarks": [
+    {
+      "id": "20261111T045014.869932Z-a7a68fad31dc",
+      "label": "00051 follow-up publication floor format native proof targets",
+      "status": "passed",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all"
+      ],
+      "kind": "check",
+      "scope": "selected",
+      "cache": "warm",
+      "command_seconds": 2.746369,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "log": "runs/20261111T045014.869932Z-a7a68fad31dc.log"
+    },
+    {
+      "id": "20261111T045036.148172Z-f4e8548cb049",
+      "label": "00051 follow-up publication floor native test discovery",
+      "status": "passed",
+      "command": [
+        "cargo",
+        "nextest",
+        "list",
+        "-p",
+        "generated-workspace-app",
+        "--all-targets",
+        "--locked",
+        "--offline",
+        "-E",
+        "test(sqlite_host_lifecycle) | test(sqlite_service_lifecycle)"
+      ],
+      "kind": "check",
+      "scope": "selected",
+      "cache": "warm",
+      "command_seconds": 17.594701,
+      "cargo_build_seconds": 7.34,
+      "cargo_activity": {
+        "compiling": 1,
+        "checking": 0,
+        "documenting": 0
+      },
+      "log": "runs/20261111T045036.148172Z-f4e8548cb049.log"
+    },
+    {
+      "id": "20261111T045113.121935Z-dd83fdf61089",
+      "label": "00051 follow-up publication floor native lifecycle narrow proof",
+      "status": "passed",
+      "command": [
+        "cargo",
+        "nextest",
+        "run",
+        "-p",
+        "generated-workspace-app",
+        "--test",
+        "sqlite_host",
+        "--test",
+        "sqlite_service",
+        "--locked",
+        "--offline",
+        "--test-threads",
+        "1",
+        "--no-fail-fast"
+      ],
+      "kind": "test",
+      "scope": "selected",
+      "cache": "warm",
+      "command_seconds": 11.601881,
+      "cargo_build_seconds": 0.3,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "log": "runs/20261111T045113.121935Z-dd83fdf61089.log"
+    },
+    {
+      "id": "20261111T045139.142756Z-18b0fcc38a9e",
+      "label": "00051 follow-up publication floor standard workspace coverage",
+      "status": "passed",
+      "command": [
+        "cargo",
+        "llvm-cov",
+        "nextest",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--offline",
+        "--features",
+        "framework-aggregate-full,framework-aggregate-ui-session,framework-aggregate-ui-api,framework-aggregate-ui-admin,framework-aggregate-ui-view,framework-aggregate-ssr,framework-api-codegen,framework-csrf-server,framework-email-server,stackpress-framework/codegen,stackpress-framework-schema/providers,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-schema/source,stackpress-framework-sql/source",
+        "--test-threads",
+        "1",
+        "--no-fail-fast",
+        "--json",
+        "--output-path",
+        "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-self-contained-tests/target/task00051-followup/publication-coverage.json"
+      ],
+      "kind": "coverage",
+      "scope": "workspace",
+      "cache": "warm",
+      "command_seconds": 923.051965,
+      "cargo_build_seconds": 269.0,
+      "cargo_activity": {
+        "compiling": 411,
+        "checking": 0,
+        "documenting": 0
+      },
+      "log": "runs/20261111T045139.142756Z-18b0fcc38a9e.log"
+    },
+    {
+      "id": "20261111T045347.313583Z-7893375859a6",
+      "label": "00051 follow-up publication floor round 2 copy freshness",
+      "status": "passed",
+      "command": [
+        "python3",
+        "tools/release/check_test_copies.py"
+      ],
+      "kind": "check",
+      "scope": "selected",
+      "cache": "warm",
+      "command_seconds": 0.047624,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "log": "runs/20261111T045347.313583Z-7893375859a6.log"
+    },
+    {
+      "id": "20261111T045348.989207Z-4869476ba773",
+      "label": "00051 follow-up publication floor round 2 checker regressions",
+      "status": "passed",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tools/release"
+      ],
+      "kind": "test",
+      "scope": "other",
+      "cache": "warm",
+      "command_seconds": 0.104837,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "log": "runs/20261111T045348.989207Z-4869476ba773.log"
+    },
+    {
+      "id": "20261111T045349.237912Z-6fe61e7cbb27",
+      "label": "00051 follow-up publication floor lifecycle and lock invariants",
+      "status": "passed",
+      "command": [
+        "python3",
+        "/private/tmp/task00051-followup-invariants.py"
+      ],
+      "kind": "check",
+      "scope": "selected",
+      "cache": "warm",
+      "command_seconds": 0.223474,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "log": "runs/20261111T045349.237912Z-6fe61e7cbb27.log"
+    },
+    {
+      "id": "20261111T050739.707437Z-7a99a6cd813f",
+      "label": "00051 follow-up publication floor standard SQLite number",
+      "status": "passed",
+      "command": [
+        "python3",
+        "/private/tmp/task00051-publication-number.py"
+      ],
+      "kind": "check",
+      "scope": "selected",
+      "cache": "warm",
+      "command_seconds": 1.010374,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "log": "runs/20261111T050739.707437Z-7a99a6cd813f.log"
+    },
+    {
+      "id": "20261111T050805.006890Z-f86f431994be",
+      "label": "00051 follow-up publication floor gate fmt",
+      "status": "passed",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--check"
+      ],
+      "kind": "check",
+      "scope": "workspace",
+      "cache": "warm",
+      "command_seconds": 2.748715,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "log": "runs/20261111T050805.006890Z-f86f431994be.log"
+    },
+    {
+      "id": "20261111T050808.104189Z-de4ec5c270f1",
+      "label": "00051 follow-up publication floor gate Clippy default",
+      "status": "passed",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "stackpress-sql-sqlite",
+        "-p",
+        "generated-workspace-app",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "kind": "check",
+      "scope": "selected",
+      "cache": "warm",
+      "command_seconds": 1.261964,
+      "cargo_build_seconds": 1.18,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 1,
+        "documenting": 0
+      },
+      "log": "runs/20261111T050808.104189Z-de4ec5c270f1.log"
+    },
+    {
+      "id": "20261111T050809.559585Z-84944b7f3014",
+      "label": "00051 follow-up publication floor gate nextest default",
+      "status": "passed",
+      "command": [
+        "cargo",
+        "nextest",
+        "run",
+        "-p",
+        "stackpress-sql-sqlite",
+        "-p",
+        "generated-workspace-app",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--test-threads",
+        "2",
+        "--no-fail-fast"
+      ],
+      "kind": "test",
+      "scope": "selected",
+      "cache": "warm",
+      "command_seconds": 13.689738,
+      "cargo_build_seconds": 1.27,
+      "cargo_activity": {
+        "compiling": 1,
+        "checking": 0,
+        "documenting": 0
+      },
+      "log": "runs/20261111T050809.559585Z-84944b7f3014.log"
+    },
+    {
+      "id": "20261111T050823.488956Z-7eff3be81384",
+      "label": "00051 follow-up publication floor gate doctests default",
+      "status": "passed",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "stackpress-sql-sqlite",
+        "-p",
+        "generated-workspace-app",
+        "--locked",
+        "--offline",
+        "--doc"
+      ],
+      "kind": "doc",
+      "scope": "selected",
+      "cache": "warm",
+      "command_seconds": 2.566319,
+      "cargo_build_seconds": 0.34,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "log": "runs/20261111T050823.488956Z-7eff3be81384.log"
+    },
+    {
+      "id": "20261111T050826.282409Z-7b1679a1d4e2",
+      "label": "00051 follow-up publication floor gate Rustdoc default",
+      "status": "passed",
+      "command": [
+        "env",
+        "RUSTDOCFLAGS=-D warnings",
+        "cargo",
+        "doc",
+        "-p",
+        "stackpress-sql-sqlite",
+        "-p",
+        "generated-workspace-app",
+        "--locked",
+        "--offline",
+        "--no-deps"
+      ],
+      "kind": "doc",
+      "scope": "selected",
+      "cache": "warm",
+      "command_seconds": 1.254803,
+      "cargo_build_seconds": 1.21,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 2
+      },
+      "log": "runs/20261111T050826.282409Z-7b1679a1d4e2.log"
+    },
+    {
+      "id": "20261111T050827.737039Z-dae120dd1d7c",
+      "label": "00051 follow-up publication floor gate Clippy compatible",
+      "status": "passed",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "stackpress-sql-sqlite",
+        "-p",
+        "generated-workspace-app",
+        "--locked",
+        "--offline",
+        "--features",
+        "stackpress-sql-sqlite/maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-sql/source,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-schema/providers,stackpress-framework-schema/source",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "kind": "check",
+      "scope": "selected",
+      "cache": "warm",
+      "command_seconds": 0.55847,
+      "cargo_build_seconds": 0.47,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 1,
+        "documenting": 0
+      },
+      "log": "runs/20261111T050827.737039Z-dae120dd1d7c.log"
+    },
+    {
+      "id": "20261111T050828.495214Z-73cf95820bdf",
+      "label": "00051 follow-up publication floor gate nextest compatible",
+      "status": "passed",
+      "command": [
+        "cargo",
+        "nextest",
+        "run",
+        "-p",
+        "stackpress-sql-sqlite",
+        "-p",
+        "generated-workspace-app",
+        "--locked",
+        "--offline",
+        "--features",
+        "stackpress-sql-sqlite/maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-sql/source,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-schema/providers,stackpress-framework-schema/source",
+        "--all-targets",
+        "--test-threads",
+        "2",
+        "--no-fail-fast"
+      ],
+      "kind": "test",
+      "scope": "selected",
+      "cache": "warm",
+      "command_seconds": 12.836563,
+      "cargo_build_seconds": 0.8,
+      "cargo_activity": {
+        "compiling": 1,
+        "checking": 0,
+        "documenting": 0
+      },
+      "log": "runs/20261111T050828.495214Z-73cf95820bdf.log"
+    },
+    {
+      "id": "20261111T050841.559775Z-96196d03bbcb",
+      "label": "00051 follow-up publication floor gate doctests compatible",
+      "status": "passed",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "stackpress-sql-sqlite",
+        "-p",
+        "generated-workspace-app",
+        "--locked",
+        "--offline",
+        "--features",
+        "stackpress-sql-sqlite/maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-sql/source,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-schema/providers,stackpress-framework-schema/source",
+        "--doc"
+      ],
+      "kind": "doc",
+      "scope": "selected",
+      "cache": "warm",
+      "command_seconds": 2.867229,
+      "cargo_build_seconds": 0.34,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "log": "runs/20261111T050841.559775Z-96196d03bbcb.log"
+    },
+    {
+      "id": "20261111T050844.636727Z-bcfd16b76b56",
+      "label": "00051 follow-up publication floor gate Rustdoc compatible",
+      "status": "passed",
+      "command": [
+        "env",
+        "RUSTDOCFLAGS=-D warnings",
+        "cargo",
+        "doc",
+        "-p",
+        "stackpress-sql-sqlite",
+        "-p",
+        "generated-workspace-app",
+        "--locked",
+        "--offline",
+        "--features",
+        "stackpress-sql-sqlite/maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-sql/source,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-schema/providers,stackpress-framework-schema/source",
+        "--no-deps"
+      ],
+      "kind": "doc",
+      "scope": "selected",
+      "cache": "warm",
+      "command_seconds": 1.645952,
+      "cargo_build_seconds": 1.6,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 2
+      },
+      "log": "runs/20261111T050844.636727Z-bcfd16b76b56.log"
+    },
+    {
+      "id": "20261111T050846.483257Z-f9d93ec96a5c",
+      "label": "00051 follow-up publication floor gate generated workspace freshness",
+      "status": "passed",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "generated-workspace-tool",
+        "--locked",
+        "--offline",
+        "--",
+        "emit",
+        "generate",
+        "--check",
+        "true"
+      ],
+      "kind": "check",
+      "scope": "selected",
+      "cache": "warm",
+      "command_seconds": 1.53191,
+      "cargo_build_seconds": 0.18,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "log": "runs/20261111T050846.483257Z-f9d93ec96a5c.log"
+    },
+    {
+      "id": "20261111T050848.211818Z-229df6725ca1",
+      "label": "00051 follow-up publication floor gate checker regressions round 3",
+      "status": "passed",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tools/release"
+      ],
+      "kind": "test",
+      "scope": "other",
+      "cache": "warm",
+      "command_seconds": 0.117363,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "log": "runs/20261111T050848.211818Z-229df6725ca1.log"
+    },
+    {
+      "id": "20261111T050848.530237Z-024386200f82",
+      "label": "00051 follow-up publication floor gate boundaries and publish order",
+      "status": "passed",
+      "command": [
+        "python3",
+        "tools/release/check_test_boundaries.py",
+        "--pending-coverage"
+      ],
+      "kind": "check",
+      "scope": "selected",
+      "cache": "warm",
+      "command_seconds": 2.44935,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "log": "runs/20261111T050848.530237Z-024386200f82.log"
+    },
+    {
+      "id": "20261111T050851.187372Z-161747ee7f42",
+      "label": "00051 follow-up publication floor gate copy freshness",
+      "status": "passed",
+      "command": [
+        "python3",
+        "tools/release/check_test_copies.py"
+      ],
+      "kind": "check",
+      "scope": "selected",
+      "cache": "warm",
+      "command_seconds": 0.034538,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "log": "runs/20261111T050851.187372Z-161747ee7f42.log"
+    }
+  ],
+  "benchmark_snapshot_through": "20261111T050851.187372Z-161747ee7f42",
+  "benchmark_totals": {
+    "attempts": 21,
+    "records_emitting_compilation": 4,
+    "statuses": {
+      "passed": 21
+    },
+    "command_seconds": 999.944139,
+    "cargo_build_seconds": 284.03,
+    "records_with_cargo_build_seconds": 12
+  },
+  "observed_target_kib": 9144452,
+  "limitations": [
+    "Native aarch64 macOS only; default live database URLs unset.",
+    "Five other candidates remain separately owned and pending; this follow-up claims SQLite publication coverage only.",
+    "Prior selected-crate coverage/special-export evidence is historical and superseded by this standard full-workspace measurement.",
+    "Agent Workspace has inherited 146 missing-link errors and 44 warnings; final receipt validation is recorded after this snapshot."
+  ],
+  "post_snapshot_checks": [
+    {
+      "id": "20261111T050938.695004Z-93f2282d95ee",
+      "label": "00051 follow-up publication floor verification report",
+      "status": "passed",
+      "command": [
+        "python3",
+        "/private/tmp/task00051-publication-report.py"
+      ],
+      "command_seconds": 1.400051,
+      "cargo_build_seconds": null,
+      "log": "runs/20261111T050938.695004Z-93f2282d95ee.log"
+    },
+    {
+      "id": "20261111T051100.508325Z-948d9822eff6",
+      "label": "00051 follow-up publication floor final receipt validation",
+      "status": "failed",
+      "command": [
+        "python3",
+        ".agents/scripts/validate-agent-workspace.py"
+      ],
+      "command_seconds": 0.377707,
+      "cargo_build_seconds": null,
+      "log": "runs/20261111T051100.508325Z-948d9822eff6.log"
+    },
+    {
+      "id": "20261111T051103.941975Z-fe455c43407f",
+      "label": "00051 follow-up publication floor final diff check",
+      "status": "passed",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "command_seconds": 0.02543,
+      "cargo_build_seconds": null,
+      "log": "runs/20261111T051103.941975Z-fe455c43407f.log"
+    }
+  ],
+  "agent_workspace_validation": {
+    "record": "20261111T051100.508325Z-948d9822eff6",
+    "inherited_errors": 146,
+    "inherited_warnings": 44,
+    "new_diagnostics": []
+  }
+}
