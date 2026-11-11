@@ -16,7 +16,7 @@ use stackpress_cli::prompt::{
 };
 use stackpress_cli::tty::{TtyInput, TtySession};
 
-#[path = "../../../crates/lib/tests/support/watchdog.rs"]
+#[path = "support/watchdog.rs"]
 mod watchdog;
 
 /// Notify the PTY owner after native raw-mode acquisition and the first prompt render.

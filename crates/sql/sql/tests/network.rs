@@ -2,7 +2,7 @@
 //! Only generated throwaway databases are created/dropped; no other database is inspected.
 #[path = "network/cases.rs"]
 mod cases;
-#[path = "../../test-support/harness.rs"]
+#[path = "support/harness.rs"]
 mod harness;
 use sqlx::mysql::{MySqlConnectOptions, MySqlConnection};
 use sqlx::postgres::{PgConnectOptions, PgConnection};

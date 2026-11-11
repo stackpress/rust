@@ -22,7 +22,7 @@ use stackpress_server::{
     BuildResult, LifecycleStage, Server, ServerBuilder, ServerInvocationExt, StartupContext,
 };
 
-#[path = "../../../crates/lib/tests/support/watchdog.rs"]
+#[path = "support/watchdog.rs"]
 mod watchdog;
 
 /// Application-owned observation state; locks are released before any await/delegation.

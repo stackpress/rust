@@ -1,5 +1,5 @@
 //! Exercise the shared custom-harness argument contract without any live backend.
-#[path = "../../test-support/harness.rs"]
+#[path = "support/harness.rs"]
 mod harness;
 
 /// The public entry points are usable by a conventional test target too.

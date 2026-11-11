@@ -3,7 +3,7 @@
 use std::process::Command;
 use std::time::Duration;
 
-#[path = "../../../lib/tests/support/watchdog.rs"]
+#[path = "support/watchdog.rs"]
 mod watchdog;
 
 /// Preserve each service/startup Send, host lifetime, and unique-owner Clone diagnostic.

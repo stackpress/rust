@@ -1,0 +1,109 @@
+{
+  "copies": [
+    {
+      "source": "crates/lib/tests/support/watchdog.rs",
+      "copy": "crates/server/server/tests/support/watchdog.rs",
+      "sha256": "262ad8aa3de6bd6c870ca6c4093a4e9e2ff6a8638e7ce37232de8b06bbb537b0",
+      "provenance": "// Copied from crates/lib/tests/support/watchdog.rs; checked by tools/release/check_test_copies.py."
+    },
+    {
+      "source": "crates/lib/tests/support/watchdog.rs",
+      "copy": "tools/cli/tests/support/watchdog.rs",
+      "sha256": "262ad8aa3de6bd6c870ca6c4093a4e9e2ff6a8638e7ce37232de8b06bbb537b0",
+      "provenance": "// Copied from crates/lib/tests/support/watchdog.rs; checked by tools/release/check_test_copies.py."
+    },
+    {
+      "source": "crates/lib/tests/support/watchdog.rs",
+      "copy": "crates/framework/framework-view/tests/support/watchdog.rs",
+      "sha256": "262ad8aa3de6bd6c870ca6c4093a4e9e2ff6a8638e7ce37232de8b06bbb537b0",
+      "provenance": "// Copied from crates/lib/tests/support/watchdog.rs; checked by tools/release/check_test_copies.py."
+    },
+    {
+      "source": "examples/generated-workspace/support/watchdog.rs",
+      "copy": "crates/sql/sql-sqlite/tests/support/watchdog.rs",
+      "sha256": "0a31eb75555f844ede2ac5bce9954e61ebf23c11c1bd7aba97a9b692d40f16e6",
+      "provenance": "// Copied from examples/generated-workspace/support/watchdog.rs; checked by tools/release/check_test_copies.py."
+    },
+    {
+      "source": "crates/sql/test-support/harness.rs",
+      "copy": "crates/sql/sql/tests/support/harness.rs",
+      "sha256": "bf0f82eeeafc88c855d799be2393349cb7bcc8af34445c3c1ba906ab01510671",
+      "provenance": "// Copied from crates/sql/test-support/harness.rs; checked by tools/release/check_test_copies.py."
+    },
+    {
+      "source": "examples/ui-format/corpus.json",
+      "copy": "crates/leptos/tests/fixtures/corpus.json",
+      "sha256": "80974d569bcfbfb5217ce9c6d2b02b4f2af084d12d9c2f8687a3e7440e817168"
+    },
+    {
+      "source": "crates/framework/framework-session/schema.idea",
+      "copy": "crates/framework/framework-schema/tests/fixtures/session.idea",
+      "sha256": "395c0f46e6543f258ea97a74a543d9306676fcafef3bf71d0dd02deafeaac84a"
+    },
+    {
+      "source": "crates/framework/framework-api/schema.idea",
+      "copy": "crates/framework/framework-schema/tests/fixtures/api.idea",
+      "sha256": "5bddbdfa9c58be140cdfdab4c9cb9ec670e3dec4fc625c098c97ea5a6a2adebf"
+    },
+    {
+      "source": "crates/framework/framework/consumers/build-host/source.idea",
+      "copy": "crates/framework/framework/tests/fixtures/source-client.idea",
+      "sha256": "0d24f1c44ae952a4b2ccf426c4ba389c2a7f8591d4ea9cee7fee076f37d012bc"
+    },
+    {
+      "source": "crates/sql/test-support/harness.rs",
+      "copy": "crates/framework/framework-api/tests/fixtures/harness.rs",
+      "sha256": "bf0f82eeeafc88c855d799be2393349cb7bcc8af34445c3c1ba906ab01510671"
+    },
+    {
+      "source": "crates/sql/sql-postgres/src/tests/support/process.rs",
+      "copy": "crates/framework/framework-api/tests/fixtures/process.rs",
+      "sha256": "bdd2109b0e3e9ef71abed3c565a20709dacf31795c6bc161b8b68ddd1db651e3"
+    },
+    {
+      "source": "crates/framework/framework-sql/tests/support/g54.rs",
+      "copy": "crates/framework/framework-api/tests/fixtures/g54.rs",
+      "sha256": "be22db09d490ee652bf0ddddb72a0d15f54aaffb8cdf6adf4de2b5efa5e7f019"
+    },
+    {
+      "source": "crates/framework/framework-session/tests/fixtures/live_support.rs",
+      "copy": "crates/framework/framework-api/tests/fixtures/live_support.rs",
+      "sha256": "473764b47f5eae73b952cf2f5fb5152d4959d56cf41993e4469048d7bc021530"
+    },
+    {
+      "source": "crates/sql/test-support/harness.rs",
+      "copy": "crates/framework/framework-session/tests/fixtures/harness.rs",
+      "sha256": "bf0f82eeeafc88c855d799be2393349cb7bcc8af34445c3c1ba906ab01510671"
+    },
+    {
+      "source": "crates/sql/sql-postgres/src/tests/support/process.rs",
+      "copy": "crates/framework/framework-session/tests/fixtures/process.rs",
+      "sha256": "bdd2109b0e3e9ef71abed3c565a20709dacf31795c6bc161b8b68ddd1db651e3"
+    },
+    {
+      "source": "crates/framework/framework-sql/tests/support/g54.rs",
+      "copy": "crates/framework/framework-session/tests/fixtures/g54.rs",
+      "sha256": "be22db09d490ee652bf0ddddb72a0d15f54aaffb8cdf6adf4de2b5efa5e7f019"
+    },
+    {
+      "source": "crates/sql/test-support/harness.rs",
+      "copy": "crates/framework/framework/tests/fixtures/harness.rs",
+      "sha256": "bf0f82eeeafc88c855d799be2393349cb7bcc8af34445c3c1ba906ab01510671"
+    },
+    {
+      "source": "crates/sql/sql-postgres/src/tests/support/process.rs",
+      "copy": "crates/framework/framework/tests/fixtures/process.rs",
+      "sha256": "bdd2109b0e3e9ef71abed3c565a20709dacf31795c6bc161b8b68ddd1db651e3"
+    },
+    {
+      "source": "crates/framework/framework-sql/tests/support/g54.rs",
+      "copy": "crates/framework/framework/tests/fixtures/g54.rs",
+      "sha256": "be22db09d490ee652bf0ddddb72a0d15f54aaffb8cdf6adf4de2b5efa5e7f019"
+    },
+    {
+      "source": "crates/framework/framework-session/tests/fixtures/live_support.rs",
+      "copy": "crates/framework/framework/tests/fixtures/live_support.rs",
+      "sha256": "473764b47f5eae73b952cf2f5fb5152d4959d56cf41993e4469048d7bc021530"
+    }
+  ]
+}

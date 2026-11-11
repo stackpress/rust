@@ -8,7 +8,7 @@ use stackpress_cli::prompt::{
     RenderOptions, Validation, prompt,
 };
 
-#[path = "../../../crates/lib/tests/support/watchdog.rs"]
+#[path = "support/watchdog.rs"]
 mod watchdog;
 
 /// Submit immediately and capture actual terminal framing at a chosen width.

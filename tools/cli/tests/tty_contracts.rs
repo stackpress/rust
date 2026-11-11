@@ -15,7 +15,7 @@ use crossterm::event::{Event, KeyCode, KeyModifiers};
 use crossterm::terminal;
 use stackpress_cli::tty::TtySession;
 
-#[path = "../../../crates/lib/tests/support/watchdog.rs"]
+#[path = "support/watchdog.rs"]
 mod watchdog;
 
 /// Probe-only bounded input worker; the full prompt driver is deliberately a later milestone.

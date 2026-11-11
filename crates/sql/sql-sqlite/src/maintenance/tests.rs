@@ -12,7 +12,7 @@ use tokio::sync::oneshot;
 use super::*;
 use crate::SqliteDatabase;
 
-#[path = "../../../../../examples/generated-workspace/support/watchdog.rs"]
+#[path = "../../tests/support/watchdog.rs"]
 mod watchdog;
 
 /// Run native state/cancellation/locking controls only inside independently supervised children.

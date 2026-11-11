@@ -14,7 +14,7 @@ use stackpress_cli::{CliContext, CliSinks, ConfigLayers, main_with_args};
 use stackpress_lib::{Flow, Invocation, ParseLimits, Request, Response, Result};
 use stackpress_server::{BuildResult, Server, ServerBuilder, ServerInvocationExt};
 
-#[path = "../../../crates/lib/tests/support/watchdog.rs"]
+#[path = "support/watchdog.rs"]
 mod watchdog;
 
 /// Allocate only process-local fixture names; each newly created directory has one cleanup owner.
@@ -23,10 +23,10 @@ static FIXTURE: AtomicUsize = AtomicUsize::new(0);
 /// A new ignored directory never overlaps tracked files or another fixture's cleanup authority.
 struct Fixture(PathBuf);
 impl Fixture {
-    /// Create an exclusively new directory beneath this worktree's ignored target output.
+    /// Create an exclusively new directory beneath Cargo's writable test output.
     fn new() -> Self {
         // Isolate file creation/cleanup from every tracked path and concurrently running fixture.
-        let base = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../target/cli-entry-fixtures");
+        let base = Path::new(env!("CARGO_TARGET_TMPDIR")).join("cli-entry-fixtures");
         fs::create_dir_all(&base).unwrap();
         let path = base.join(format!(
             "{}-{}",

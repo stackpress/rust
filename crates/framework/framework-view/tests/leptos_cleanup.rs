@@ -162,7 +162,7 @@ fn no_runtime_never_panics() {
     ));
 }
 
-#[path = "../../../lib/tests/support/watchdog.rs"]
+#[path = "support/watchdog.rs"]
 mod watchdog;
 
 /// Panicking trusted render work runs in a killed/reaped child if it stops progressing.
