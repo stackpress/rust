@@ -8,7 +8,7 @@ import subprocess
 import tempfile
 
 HERE = Path(__file__).resolve().parent
-ROOT = HERE.parents[5]
+ROOT = HERE.parents[3]
 
 
 def supervised(argv, environment, log):
@@ -92,7 +92,7 @@ def main():
         clippy = ["cargo", "clippy", "--offline", "--manifest-path", str(app / "Cargo.toml"), "--", "-D", "warnings"]
         commands.append(clippy)
         supervised(clippy, environment, evidence / "clippy.log")
-        expected = HERE.parents[1] / "fixtures/g37-ddl.json"
+        expected = ROOT / "crates/framework/framework-sql/tests/fixtures/g37-ddl.json"
         if expected.exists():
             assert (evidence / "ddl.json").read_bytes() == expected.read_bytes(), "generated DDL snapshot is stale"
         (evidence / "generated-hashes.json").write_text(json.dumps(before, indent=2) + "\n")

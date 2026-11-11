@@ -258,3 +258,7 @@ pub(crate) fn scalar_type(info: &sqlx::postgres::PgTypeInfo) -> Option<&'static 
         _ => return None,
     })
 }
+
+#[cfg(test)]
+#[path = "tests/binds.rs"]
+mod bind_tests;

@@ -23,7 +23,7 @@ use std::{
 };
 use tokio::sync::Notify;
 
-#[path = "../../../../../../examples/generated-workspace/support/watchdog.rs"]
+#[path = "../../support/watchdog.rs"]
 mod watchdog;
 
 /// Metadata is derived from a real composed app extension, without a handwritten field catalog.

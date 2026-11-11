@@ -46,7 +46,7 @@ stackpress-idea-parser = { path = "../../idea/idea-parser", optional = true }
 [dev-dependencies]
 stackpress-framework-schema = { path = "../framework-schema", features = ["codegen", "providers"] }
 stackpress-idea-transformer = { path = "../../idea/idea-transformer" }
-stackpress-framework-sql = { path = "../framework-sql", features = ["codegen", "server"] }
+stackpress-framework-sql = { path = "../framework-sql", features = ["codegen", "server", "source"] }
 stackpress-framework-session = { path = "../framework-session", features = ["server"] }
 stackpress-sql-sqlite = { path = "../../sql/sql-sqlite" }
 stackpress-sql-postgres = { path = "../../sql/sql-postgres" }

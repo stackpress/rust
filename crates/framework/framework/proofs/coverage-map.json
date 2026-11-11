@@ -498,7 +498,7 @@
       "evidence": [
         "crates/framework/framework/tests/cases/mod.rs#no_global_guard_and_missing_versus_empty_access",
         "crates/framework/framework/consumers/support/native.rs",
-        "crates/framework/framework-email/tests/cases/integration/mod.rs"
+        "crates/framework/framework-session/tests/email/integration/mod.rs"
       ],
       "limitations": [
         "EDGE-REPLAY"

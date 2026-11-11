@@ -46,7 +46,7 @@ These are Rust/library mechanics adaptations, not a new security model, hardenin
 
 The read-only original CSRF/email packages and session composition remain authority. M0's [source hashes/provenance](00020-slice-9-m0-lane-b.md) apply. M1 assumes original auth → email → session composition and caller-owned event/route protection; it needs no new Lane A/API interface. M2 will exercise email-send skips/results/errors and signup integration.
 
-[Original oracle](../../../../crates/framework/framework-email/tests/source-transports.cjs) runs Nodemailer 7.0.13 with inert SMTP/process/SES boundaries; fixtures include source hashes. Corpus: 17 constructor, 18 JSON, 12 MIME, 3 stream, 4 sendmail, 3 SES, 4 SMTP cases (61), plus M0's 13 Stackpress option vectors. MIME comparisons assert observable roles/headers/encoding; JSON/raw comparisons are exact. Fakes do not establish external delivery/HTTP/TLS acceptance.
+[Original oracle](../../../../tools/release/proofs/email-source/source-transports.cjs) runs Nodemailer 7.0.13 with inert SMTP/process/SES boundaries; fixtures include source hashes. Corpus: 17 constructor, 18 JSON, 12 MIME, 3 stream, 4 sendmail, 3 SES, 4 SMTP cases (61), plus M0's 13 Stackpress option vectors. MIME comparisons assert observable roles/headers/encoding; JSON/raw comparisons are exact. Fakes do not establish external delivery/HTTP/TLS acceptance.
 
 SHA-256: source-transports.json `49a07281a6ab52bf2743df02980de839b62f6ff10850f2154f4be60795e73ab2`; services `e4581edb26e207b7d64a79371fd6343e37d9c622c323138d891486141ec9e6d0`; MIME catalog `e3ef0475c660feaac6d76f83d82499a0d56f6f822722947e44616b3d703a5658`. Copied data retains original license and [provenance](../../../../crates/framework/framework-email/data/README.md).
 

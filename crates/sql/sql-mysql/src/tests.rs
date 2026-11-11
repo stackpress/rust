@@ -1,6 +1,6 @@
 //! Offline configuration, strict budgets, and diagnostic ownership checks.
 
-#[path = "../../sql-postgres/src/tests/process.rs"]
+#[path = "../tests/support/postgres/process.rs"]
 mod process;
 
 use super::*;
@@ -284,3 +284,5 @@ fn core_refuses_other_parameter_fragments() {
         );
     }
 }
+
+mod publication;

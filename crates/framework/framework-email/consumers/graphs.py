@@ -22,7 +22,7 @@ assert 'stackpress-lib ' in graph and 'stackpress-server ' not in graph and 'sta
 command=['cargo','tree','-p','stackpress-framework-email','-e','features','--depth','1','--locked','--offline']
 print('COMMAND:',*command,flush=True)
 graph=subprocess.check_output(command,text=True);print(graph,flush=True)
-for feature in ['lettre feature "builder"','lettre feature "smtp-transport"','lettre feature "tokio1-rustls-tls"','lettre feature "hostname"','reqwest feature "rustls-no-provider"','reqwest feature "gzip"','reqwest feature "deflate"','reqwest feature "cookies"']: assert feature in graph,feature
+for feature in ['lettre feature "builder"','lettre feature "smtp-transport"','lettre feature "tokio1-rustls-tls"','lettre feature "hostname"','reqwest feature "rustls"','reqwest feature "gzip"','reqwest feature "deflate"','reqwest feature "cookies"']: assert feature in graph,feature
 assert 'lettre feature "default"' not in graph and 'reqwest feature "default"' not in graph
 print('All source transport variants are compiled native adapters, not runtime-loaded or individually feature-gated plugins.',flush=True)
 

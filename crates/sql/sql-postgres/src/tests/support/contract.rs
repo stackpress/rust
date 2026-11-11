@@ -8,9 +8,6 @@ use stackpress_sql::{
 use std::sync::Arc;
 use std::time::Instant;
 
-#[path = "stores/mod.rs"]
-mod stores;
-
 /// Construct a trusted test statement while keeping every value a separate bind.
 pub(crate) fn query(
     dialect: DialectId,
@@ -73,7 +70,6 @@ mod values;
 pub(crate) async fn run_suite(database: Arc<dyn Database>) -> TestResult<()> {
     let start = Instant::now();
     let dialect = database.dialect();
-    stores::check(database.clone()).await?;
     values::check(database.as_ref()).await?;
     outcomes::check(database.as_ref()).await?;
     transactions::check(database.as_ref()).await?;

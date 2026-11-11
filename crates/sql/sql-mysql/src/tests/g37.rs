@@ -3,7 +3,7 @@ use super::*;
 use stackpress_sql::{Engine, Insert};
 
 /// The permanent generator proof checks these bytes against freshly emitted all-dialect SQL.
-const DDL: &str = include_str!("../../../../framework/framework-sql/tests/fixtures/g37-ddl.json");
+const DDL: &str = include_str!("../../tests/fixtures/g37-ddl.json");
 
 /// Borrow unescaped MySQL statements directly from the static checked fixture.
 #[derive(serde::Deserialize)]

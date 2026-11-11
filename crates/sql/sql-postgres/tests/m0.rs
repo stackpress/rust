@@ -1,7 +1,7 @@
 //! Opt-in native M0 proofs: parent owns CREATE/DROP, child owns all hang-class scenarios.
 //! Unset gate variables are reported as ignored; child timeout is always failure.
 
-#[path = "../../test-support/harness.rs"]
+#[path = "support/harness.rs"]
 mod harness;
 
 use sqlx::postgres::{PgConnectOptions, PgConnection, PgSslMode};

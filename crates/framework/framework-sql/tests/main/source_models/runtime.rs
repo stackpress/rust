@@ -68,6 +68,9 @@ macro_rules! schema {
 schema!(Profile, "Profile");
 schema!(Auth, "Auth");
 
+#[path = "runtime_publication.rs"]
+mod publication;
+
 /// Convert authored JSON without losing the native record's insertion order.
 fn record(value: serde_json::Value) -> Record {
     Value::from(value).as_object().unwrap().clone()

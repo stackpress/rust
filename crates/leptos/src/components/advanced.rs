@@ -101,7 +101,8 @@ pub enum DialogMode {
 }
 impl DialogMode {
     /// Modeless closure preserves unrelated background focus; modal closure always returns it.
-    #[cfg(any(target_arch = "wasm32", test))]
+    // Browser callers are wasm-only; native policy assertions live in the SSR test module.
+    #[cfg(any(target_arch = "wasm32", all(test, feature = "ssr")))]
     pub(super) fn returns_focus(self, inside: bool, at_opener: bool, detached_body: bool) -> bool {
         self != Self::Nonmodal || inside || at_opener || detached_body
     }

@@ -6,7 +6,7 @@ use stackpress_sql::{
 };
 use stackpress_sql_sqlite::{SqliteDatabase, SqliteOptions};
 use std::time::Duration;
-#[path = "../../../../examples/generated-workspace/support/watchdog.rs"]
+#[path = "support/watchdog.rs"]
 mod watchdog;
 
 /// Supervise the complete resize and artifact paths independently of SQLite's worker runtime.

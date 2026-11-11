@@ -39,7 +39,7 @@ Read-only source root: `/Users/cblanquera/server/projects/stackpress/stackpress/
 | stackpress-email/src/plugin.ts | `4ce2b3cc8a1ad5348309415ab715d278cb1d4882c1b9cf956cb5ace527410759` |
 | stackpress-session/src/plugin.ts | `aade8d295a5910f7ccc4f9ac56a7c7a6ac7a8da44bd8b544c8259859bbc4a84f` |
 
-[The no-delivery oracle](../../../../crates/framework/framework-email/tests/source-options.cjs) removes only imports/export and the three TypeScript generic annotations, then executes the actual email handler with inert createTransport/sendMail callbacks. [The fixture](../../../../crates/framework/framework-email/tests/fixtures/source-options.json) records the source hash, config, options, invocation trace and provider result. Rust replays every case against the native factory boundary. It does not exercise NodeMailer delivery, SMTP protocol defaults, MIME generation or provider acceptance.
+[The no-delivery oracle](../../../../tools/release/proofs/email-source/source-options.cjs) removes only imports/export and the three TypeScript generic annotations, then executes the actual email handler with inert createTransport/sendMail callbacks. [The fixture](../../../../crates/framework/framework-email/tests/fixtures/source-options.json) records the source hash, config, options, invocation trace and provider result. Rust replays every case against the native factory boundary. It does not exercise NodeMailer delivery, SMTP protocol defaults, MIME generation or provider acceptance.
 
 ### Rust mechanics adaptations and cross-lane assumptions
 

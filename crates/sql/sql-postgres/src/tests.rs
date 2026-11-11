@@ -168,3 +168,5 @@ fn json_raw_token_and_depth_boundaries() {
     let raw = RawValue::from_string(allowed.clone()).unwrap();
     assert_eq!(crate::json::canonical(&raw, 1000).unwrap(), allowed);
 }
+
+mod publication;

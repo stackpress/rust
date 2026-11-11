@@ -25,7 +25,7 @@ use support::Factory;
 
 /// Original source output defines page invocation order and complete template fields.
 fn vectors() -> Json {
-    serde_json::from_str(include_str!("../../fixtures/source-page-boundaries.json")).unwrap()
+    serde_json::from_str(include_str!("../fixtures/source-page-boundaries.json")).unwrap()
 }
 /// An owned test directory uses the already selected OS entropy provider, without a new crate.
 struct DatabaseDirectory(std::path::PathBuf);

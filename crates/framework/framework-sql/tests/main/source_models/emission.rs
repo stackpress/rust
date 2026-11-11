@@ -75,7 +75,7 @@ fn session_only_external_reverse_links_remain_declarations() {
     let loader = PackageLoader::new(app)
         .with_source(
             "stackpress-session/schema.idea",
-            include_str!("../../../../framework-session/schema.idea"),
+            include_str!("../../fixtures/framework-session.idea"),
         )
         .unwrap();
     let graph = Composer::new(loader, CompositionLimits::default())

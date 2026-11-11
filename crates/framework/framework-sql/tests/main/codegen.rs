@@ -115,10 +115,10 @@ pub(super) fn snapshot(root: &Path) -> BTreeMap<String, Vec<u8>> {
 #[test]
 fn real_type_corpus_and_operation_shapes_repeat() {
     for source in [
-        include_str!("../../../../../examples/generated-workspace/contracts/matrix.idea"),
-        include_str!("../../../../../examples/generated-workspace/app/schema.idea"),
-        include_str!("../../../../../examples/generated-workspace/app/native.idea"),
-        include_str!("../../../../../examples/generated-workspace/app/names.idea"),
+        include_str!("../fixtures/release/matrix.idea"),
+        include_str!("../fixtures/release/schema.idea"),
+        include_str!("../fixtures/release/native.idea"),
+        include_str!("../fixtures/release/names.idea"),
         "enum Code { A 1 B 2 } model Compound { id Boolean @id code Code @id value String? }
          model Schema { id Integer @id value String @unique active Boolean @active updated Datetime @timestamp }
          model Operations { id String @id value String? }",

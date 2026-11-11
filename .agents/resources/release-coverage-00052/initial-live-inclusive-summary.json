@@ -1,0 +1,288 @@
+{
+  "record": "20261111T063957.121800Z-d7376e4de16d",
+  "label": "00052 standard live-inclusive compatible workspace coverage",
+  "status": "passed",
+  "command_seconds": 401.500712,
+  "cargo_build_seconds": 127.13000000000001,
+  "log": "/Users/cblanquera/server/projects/stackpress/rust/.agents/resources/build-benchmarks/runs/20261111T063957.121800Z-d7376e4de16d.log",
+  "log_sha256": "634957623c6648f1c83b65141894935cc8aff2a516cae43b510edb4cbfd871cc",
+  "pairs": [
+    {
+      "backend": "mysql",
+      "name": "stackpress_release_stores_b4a4_18e6eaa2fa665f80",
+      "create_line": 1820,
+      "drop_line": 1827
+    },
+    {
+      "backend": "postgres",
+      "name": "stackpress_release_stores_b4a5_18e6eaa2fa6628d0",
+      "create_line": 1851,
+      "drop_line": 1857
+    },
+    {
+      "backend": "mysql",
+      "name": "stackpress_g46_mysql_d955_18e6eaa9131773b0",
+      "create_line": 3304,
+      "drop_line": 3310
+    },
+    {
+      "backend": "postgres",
+      "name": "stackpress_g46_postgres_d95c_18e6eaa920fd3ca8",
+      "create_line": 3316,
+      "drop_line": 3320
+    },
+    {
+      "backend": "mysql",
+      "name": "stackpress_g46_mysql_efc6_18e6eaadb26bbfa8",
+      "create_line": 4427,
+      "drop_line": 4442
+    },
+    {
+      "backend": "postgres",
+      "name": "stackpress_g46_postgres_effa_18e6eaadc12f0f90",
+      "create_line": 4448,
+      "drop_line": 4463
+    },
+    {
+      "backend": "mysql",
+      "name": "stackpress_g46_mysql_1047f_18e6eab1486248a8",
+      "create_line": 6508,
+      "drop_line": 6531
+    },
+    {
+      "backend": "postgres",
+      "name": "stackpress_g46_postgres_10481_18e6eab1509c7840",
+      "create_line": 6560,
+      "drop_line": 6575
+    },
+    {
+      "backend": "mysql",
+      "name": "stackpress_test_1378b_18e6eab889fd4bd0",
+      "create_line": 12889,
+      "drop_line": 12891
+    },
+    {
+      "backend": "mysql",
+      "name": "stackpress_test_1378c_18e6eab88cf32f58",
+      "create_line": 12897,
+      "drop_line": 12899
+    },
+    {
+      "backend": "mysql",
+      "name": "stackpress_test_1378d_18e6eab88f9155f0",
+      "create_line": 12905,
+      "drop_line": 12907
+    },
+    {
+      "backend": "mysql",
+      "name": "stackpress_test_1378a_18e6eab889fe5570",
+      "create_line": 12913,
+      "drop_line": 12915
+    },
+    {
+      "backend": "mysql",
+      "name": "stackpress_test_1378e_18e6eab8927e67a8",
+      "create_line": 12921,
+      "drop_line": 12923
+    },
+    {
+      "backend": "mysql",
+      "name": "stackpress_test_1378f_18e6eab894590b78",
+      "create_line": 12929,
+      "drop_line": 12931
+    },
+    {
+      "backend": "mysql",
+      "name": "stackpress_test_13790_18e6eab894edf878",
+      "create_line": 12937,
+      "drop_line": 12939
+    },
+    {
+      "backend": "mysql",
+      "name": "stackpress_test_13791_18e6eab8972fab18",
+      "create_line": 12945,
+      "drop_line": 12947
+    },
+    {
+      "backend": "postgres",
+      "name": "stackpress_test_13794_18e6eab8a0bb16b8",
+      "create_line": 12953,
+      "drop_line": 12955
+    },
+    {
+      "backend": "postgres",
+      "name": "stackpress_test_13792_18e6eab8a01276c0",
+      "create_line": 12961,
+      "drop_line": 12963
+    },
+    {
+      "backend": "postgres",
+      "name": "stackpress_test_1379b_18e6eab8ae63caf8",
+      "create_line": 12969,
+      "drop_line": 12971
+    },
+    {
+      "backend": "postgres",
+      "name": "stackpress_test_1379f_18e6eab8b1de0568",
+      "create_line": 12977,
+      "drop_line": 12979
+    },
+    {
+      "backend": "postgres",
+      "name": "stackpress_test_137a4_18e6eab8b8c8e528",
+      "create_line": 12985,
+      "drop_line": 12987
+    },
+    {
+      "backend": "postgres",
+      "name": "stackpress_test_137a7_18e6eab8bcc15fe8",
+      "create_line": 12993,
+      "drop_line": 12995
+    },
+    {
+      "backend": "postgres",
+      "name": "stackpress_test_137ab_18e6eab8c2785770",
+      "create_line": 13001,
+      "drop_line": 13003
+    },
+    {
+      "backend": "postgres",
+      "name": "stackpress_test_137b0_18e6eab8c832c998",
+      "create_line": 13036,
+      "drop_line": 13038
+    },
+    {
+      "backend": "mysql",
+      "name": "stackpress_s7_m1_137d9_18e6eab8de05b398",
+      "create_line": 13296,
+      "drop_line": 13298
+    },
+    {
+      "backend": "mysql",
+      "name": "stackpress_s7_m0_137d8_18e6eab8dd852958",
+      "create_line": 13304,
+      "drop_line": 13313
+    },
+    {
+      "backend": "mysql",
+      "name": "stackpress_s7_m1_137dc_18e6eab8fc1e42c8",
+      "create_line": 13319,
+      "drop_line": 13321
+    },
+    {
+      "backend": "mysql",
+      "name": "stackpress_s7_m1_137de_18e6eab9001c95a0",
+      "create_line": 13327,
+      "drop_line": 13329
+    },
+    {
+      "backend": "mysql",
+      "name": "stackpress_s7_m1_137e0_18e6eab901e64d68",
+      "create_line": 13335,
+      "drop_line": 13337
+    },
+    {
+      "backend": "mysql",
+      "name": "stackpress_s7_m1_137e2_18e6eab90317f380",
+      "create_line": 13343,
+      "drop_line": 13345
+    },
+    {
+      "backend": "mysql",
+      "name": "stackpress_s7_m2_137e4_18e6eab906d65340",
+      "create_line": 13351,
+      "drop_line": 13365
+    },
+    {
+      "backend": "postgres",
+      "name": "stackpress_s7_m0_13804_18e6eab91f23d648",
+      "create_line": 13533,
+      "drop_line": 13542
+    },
+    {
+      "backend": "postgres",
+      "name": "stackpress_s7_m1_1380e_18e6eab94ed589e0",
+      "create_line": 13548,
+      "drop_line": 13550
+    },
+    {
+      "backend": "postgres",
+      "name": "stackpress_s7_m1_13831_18e6eab9832402d0",
+      "create_line": 13556,
+      "drop_line": 13558
+    },
+    {
+      "backend": "postgres",
+      "name": "stackpress_s7_m1_13838_18e6eab98ea9ac18",
+      "create_line": 13564,
+      "drop_line": 13566
+    },
+    {
+      "backend": "postgres",
+      "name": "stackpress_s7_m1_1383f_18e6eab9997b2860",
+      "create_line": 13572,
+      "drop_line": 13574
+    },
+    {
+      "backend": "postgres",
+      "name": "stackpress_s7_m1_13846_18e6eab9a53f3a38",
+      "create_line": 13580,
+      "drop_line": 13582
+    },
+    {
+      "backend": "postgres",
+      "name": "stackpress_s7_m2_13866_18e6eab9be0c1ea0",
+      "create_line": 13588,
+      "drop_line": 13602
+    },
+    {
+      "backend": "mysql",
+      "name": "stackpress_s7_m2_137e5_18e6eab906d65b10",
+      "create_line": 13625,
+      "drop_line": 13634
+    },
+    {
+      "backend": "postgres",
+      "name": "stackpress_s7_m2_1387b_18e6eab9d5b14be8",
+      "create_line": 13739,
+      "drop_line": 13748
+    }
+  ],
+  "crates": [
+    {
+      "crate": "sql-postgres",
+      "covered": 842,
+      "lines": 889,
+      "percent": 94.71316085489313
+    },
+    {
+      "crate": "sql-mysql",
+      "covered": 986,
+      "lines": 1049,
+      "percent": 93.99428026692088
+    },
+    {
+      "crate": "framework-sql",
+      "covered": 7803,
+      "lines": 8629,
+      "percent": 90.42762776683277
+    },
+    {
+      "crate": "framework-admin",
+      "covered": 3929,
+      "lines": 4364,
+      "percent": 90.03208065994501
+    },
+    {
+      "crate": "framework-email",
+      "covered": 2471,
+      "lines": 2742,
+      "percent": 90.1167031363968
+    }
+  ],
+  "final_inventories": {
+    "postgres": [],
+    "mysql": []
+  },
+  "measurement": "Ordinary cargo llvm-cov nextest text report; exact compatible workspace features, no custom export or exclusions, both live URL gates enabled."
+}

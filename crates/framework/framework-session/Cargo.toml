@@ -51,8 +51,11 @@ png = { version = "=0.18.1", default-features = false, optional = true }
 ring = { version = "=0.17.14", default-features = false, features = ["std"], optional = true }
 
 [dev-dependencies]
+stackpress-framework-csrf = { path = "../framework-csrf", version = "0.1.0", features = ["server"] }
+stackpress-framework-view = { path = "../framework-view", version = "0.1.0", features = ["leptos-ssr"] }
+stackpress-leptos = { path = "../../leptos", version = "0.1.0", default-features = false, features = ["ssr"] }
 stackpress-idea-transformer = { path = "../../idea/idea-transformer" }
-stackpress-framework-sql = { path = "../framework-sql", features = ["codegen", "server"] }
+stackpress-framework-sql = { path = "../framework-sql", features = ["codegen", "server", "source"] }
 stackpress-server-http = { path = "../../server/http" }
 stackpress-framework-email = { path = "../framework-email", features = ["server"] }
 tokio = { version = "1", features = ["macros", "rt-multi-thread", "sync", "time"] }
@@ -80,3 +83,7 @@ required-features = ["leptos-ssr"]
 [[example]]
 name = "regenerate_session_models"
 path = "tests/fixtures/regenerate.rs"
+
+[[example]]
+name = "regenerate_email_models"
+path = "tests/email/fixtures/regenerate.rs"

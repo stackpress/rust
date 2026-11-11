@@ -1,7 +1,7 @@
 //! Opt-in native M2 proofs: parent owns CREATE/DROP, child owns all hang-class scenarios.
 //! Unset gate variables are reported as ignored; child timeout is always failure.
 
-#[path = "../../../test-support/harness.rs"]
+#[path = "../../tests/support/harness.rs"]
 mod harness;
 
 use crate::{PostgresDatabase, PostgresOptions, PostgresTls};
@@ -177,7 +177,7 @@ fn bounded_admin(
 mod process;
 use process::watchdog;
 
-#[path = "support/diagnostics.rs"]
+#[path = "support/sql_diagnostics.rs"]
 mod diagnostics;
 use diagnostics::report_error;
 

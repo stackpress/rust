@@ -1,19 +1,22 @@
-# Generated model fixtures
+# Email source fixtures
 
-This crate owns its generated test models. `generation.rs` composes the shipped
-`SCHEMA_SOURCE` exports through `PackageLoader`, normalizes the authored source graph,
-and runs `emit_source_contracts` plus `emit_source_stores` through the managed writer.
-Session-only graphs explicitly retain Application/Session as external declarations.
-No library default model family or other crate's generated tests are imported.
+The JSON transport, event and option vectors in this directory remain crate-local
+and are replayed by email's direct tests. Their source-oracle generators live at
+[`tools/release/proofs/email-source/`](../../../../../tools/release/proofs/email-source/).
 
-Regenerate from the repository root:
+The generated model family, source-page vectors and email/session/SQL/SSR
+integration tests moved to
+[`framework-session/tests/email/`](../../../framework-session/tests/email/).
+Session comes after these dependencies in the publication order. Email's package
+tests use only its normal dependencies and Tokio.
+
+Regenerate the moved family from the repository root:
 
 ```sh
-cargo run -p stackpress-framework-email --example regenerate_email_models --locked --offline
+cargo run -p stackpress-framework-session --example regenerate_email_models --locked --offline
 ```
 
-Pass `-- --check` for a read-only freshness check. Integration tests call the same
-checker; source or generated-output drift fails. The example remains buildable when
-output is missing, unlike an ignored integration test that imports that output.
-Generator dependencies are dev-only and do not enter native/browser library graphs.
-The fixture files are managed output: never edit them by hand.
+Pass `-- --check` for a read-only freshness check. The moved integration target
+calls the same checker; source or generated-output drift fails. The example
+remains buildable when output is missing. Managed fixture output must not be
+edited by hand.

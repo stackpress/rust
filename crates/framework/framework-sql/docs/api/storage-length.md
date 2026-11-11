@@ -94,7 +94,7 @@ AUTOINCREMENT tables maintain a sequence; ordinary INTEGER PRIMARY KEY retains S
 max(rowid)+1 reuse behavior. PostgreSQL/MySQL migrations remain render-only; MySQL apply
 and generated RETURNING writes stay refused.
 
-The [permanent fixture](../../tests/proofs/lengths/README.md) generates and compiles a
+The [permanent fixture](../../../../../tools/release/proofs/lengths/README.md) generates and compiles a
 three-model SQLite consumer and checks all-dialect DDL snapshots. The opt-in MySQL M2
 `--g37-ddl` case executes that snapshot unchanged in an owned throwaway database and
 checks metadata, exact bound text and FKs; it makes no generated MySQL CRUD claim.

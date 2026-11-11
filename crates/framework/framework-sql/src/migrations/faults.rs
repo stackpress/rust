@@ -2,7 +2,7 @@
 
 use super::*;
 use std::{cell::Cell, time::Duration};
-#[path = "../../../../../examples/generated-workspace/support/watchdog.rs"]
+#[path = "../../tests/support/watchdog.rs"]
 mod watchdog;
 thread_local! {
     /// Current-thread supervised tests own these counters; no native production state is global.

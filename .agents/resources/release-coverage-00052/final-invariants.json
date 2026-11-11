@@ -1,0 +1,23 @@
+{
+  "invariant_record": "20261111T074519.668636Z-592295afe2fb",
+  "kb_comparison_record": "20261111T074605.245500Z-d51868af8e63",
+  "root_registry_tuples": 699,
+  "root_registry_unchanged": true,
+  "root_and_all_21_nested_locks_unchanged_during_gate": true,
+  "registered_copies": 26,
+  "shared_canonical_files_unchanged": true,
+  "moved_email_files": 19,
+  "literal_crate_local_references": {
+    "sql-postgres": 25,
+    "sql-mysql": 25,
+    "framework-sql": 78,
+    "framework-admin": 20,
+    "framework-email": 17
+  },
+  "kb_validator_exit": 1,
+  "inherited_kb_errors": 146,
+  "inherited_kb_warnings": 44,
+  "new_kb_findings": 0,
+  "target_size_approx_gib": 22,
+  "commit_or_push": false
+}
