@@ -1,0 +1,23 @@
+{
+  "stackpress-sql-sqlite": [
+    "src/tests/host.rs:7: references stripped dev-dependency stackpress_server"
+  ],
+  "stackpress-sql-postgres": [
+    "src/tests/support/diagnostics.rs:8: references stripped dev-dependency stackpress_framework_sql",
+    "src/tests/support/stores/fixture.rs:3: references stripped dev-dependency stackpress_framework_sql",
+    "src/tests/support/stores/fixture.rs:8: references stripped dev-dependency generated_workspace_app",
+    "src/tests/support/stores/fixture.rs:61: references stripped dev-dependency stackpress_framework_sql",
+    "src/tests/support/stores/fixture.rs:82: references stripped dev-dependency stackpress_framework_sql",
+    "src/tests/support/stores/fixture.rs:103: references stripped dev-dependency stackpress_framework_sql",
+    "src/tests/support/stores/fixture.rs:170: references stripped dev-dependency stackpress_framework_sql",
+    "src/tests/support/stores/mod.rs:3: references stripped dev-dependency generated_workspace_app",
+    "src/tests/support/stores/mod.rs:16: references stripped dev-dependency stackpress_framework_schema",
+    "src/tests/support/stores/mod.rs:17: references stripped dev-dependency stackpress_framework_sql",
+    "src/tests/support/stores/preflight.rs:3: references stripped dev-dependency generated_workspace_app",
+    "src/tests/support/stores/preflight.rs:8: references stripped dev-dependency stackpress_framework_schema",
+    "src/tests/support/stores/reads.rs:3: references stripped dev-dependency stackpress_framework_schema",
+    "src/tests/support/stores/reads.rs:4: references stripped dev-dependency stackpress_framework_sql",
+    "src/tests/support/stores/writes.rs:3: references stripped dev-dependency stackpress_framework_sql",
+    "src/tests/support/stores/writes.rs:351: references stripped dev-dependency stackpress_framework_sql"
+  ]
+}

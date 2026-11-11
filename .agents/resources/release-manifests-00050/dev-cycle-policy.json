@@ -1,0 +1,112 @@
+{
+  "path_only_later_edges": [
+    {
+      "from": "stackpress-sql-sqlite",
+      "to": "stackpress-server"
+    },
+    {
+      "from": "stackpress-sql-postgres",
+      "to": "stackpress-framework-schema"
+    },
+    {
+      "from": "stackpress-sql-postgres",
+      "to": "stackpress-framework-sql"
+    },
+    {
+      "from": "stackpress-sql-mysql",
+      "to": "stackpress-framework-schema"
+    },
+    {
+      "from": "stackpress-sql-mysql",
+      "to": "stackpress-framework-sql"
+    },
+    {
+      "from": "stackpress-framework-email",
+      "to": "stackpress-framework-sql"
+    },
+    {
+      "from": "stackpress-framework-email",
+      "to": "stackpress-framework-schema"
+    },
+    {
+      "from": "stackpress-framework-email",
+      "to": "stackpress-framework-session"
+    }
+  ],
+  "provisional_excluded_files": [
+    "crates/framework/framework-email/tests/cases/event_native.rs",
+    "crates/framework/framework-email/tests/cases/event_supervision.rs",
+    "crates/framework/framework-email/tests/cases/events.rs",
+    "crates/framework/framework-email/tests/cases/factory.rs",
+    "crates/framework/framework-email/tests/cases/integration/mod.rs",
+    "crates/framework/framework-email/tests/cases/integration/rendering.rs",
+    "crates/framework/framework-email/tests/cases/integration/signup.rs",
+    "crates/framework/framework-email/tests/cases/integration/support.rs",
+    "crates/framework/framework-email/tests/cases/integration/transports.rs",
+    "crates/framework/framework-email/tests/cases/native.rs",
+    "crates/framework/framework-email/tests/cases/source_options.rs",
+    "crates/framework/framework-email/tests/cases/supervision.rs",
+    "crates/framework/framework-email/tests/fixtures/README.md",
+    "crates/framework/framework-email/tests/fixtures/generation.rs",
+    "crates/framework/framework-email/tests/fixtures/models.idea",
+    "crates/framework/framework-email/tests/fixtures/models/.stackpress-generated.json",
+    "crates/framework/framework-email/tests/fixtures/models/mod.rs",
+    "crates/framework/framework-email/tests/fixtures/models/source/auth.rs",
+    "crates/framework/framework-email/tests/fixtures/models/source/catalog.rs",
+    "crates/framework/framework-email/tests/fixtures/models/source/mod.rs",
+    "crates/framework/framework-email/tests/fixtures/models/source/profile.rs",
+    "crates/framework/framework-email/tests/fixtures/models/stores/auth.rs",
+    "crates/framework/framework-email/tests/fixtures/models/stores/family.rs",
+    "crates/framework/framework-email/tests/fixtures/models/stores/mod.rs",
+    "crates/framework/framework-email/tests/fixtures/models/stores/profile.rs",
+    "crates/framework/framework-email/tests/fixtures/regenerate.rs",
+    "crates/framework/framework-email/tests/fixtures/source-events.json",
+    "crates/framework/framework-email/tests/fixtures/source-options.json",
+    "crates/framework/framework-email/tests/fixtures/source-page-boundaries.json",
+    "crates/framework/framework-email/tests/fixtures/source-transports.json",
+    "crates/framework/framework-email/tests/main.rs",
+    "crates/framework/framework-email/tests/run-proof.py",
+    "crates/framework/framework-email/tests/source-events.cjs",
+    "crates/framework/framework-email/tests/source-options.cjs",
+    "crates/framework/framework-email/tests/source-page-boundaries.cjs",
+    "crates/framework/framework-email/tests/source-transports.cjs",
+    "crates/sql/sql-sqlite/tests/ui/alias.rs",
+    "crates/sql/sql-sqlite/tests/ui/alias.stderr",
+    "crates/sql/sql-sqlite/tests/ui/clone.rs",
+    "crates/sql/sql-sqlite/tests/ui/clone.stderr",
+    "crates/sql/sql-sqlite/tests/ui/consumed.rs",
+    "crates/sql/sql-sqlite/tests/ui/consumed.stderr",
+    "crates/sql/sql-sqlite/tests/ui/escape.rs",
+    "crates/sql/sql-sqlite/tests/ui/escape.stderr",
+    "crates/sql/sql-sqlite/tests/ui/non_send_future.rs",
+    "crates/sql/sql-sqlite/tests/ui/non_send_future.stderr",
+    "crates/sql/sql-sqlite/tests/ui/non_send_handler.rs",
+    "crates/sql/sql-sqlite/tests/ui/non_send_handler.stderr",
+    "crates/sql/sql-sqlite/tests/ui/non_send_service.rs",
+    "crates/sql/sql-sqlite/tests/ui/non_send_service.stderr",
+    "crates/sql/sql-sqlite/examples/m0-host.rs"
+  ],
+  "pending_source_test_references": {
+    "stackpress-sql-sqlite": [
+      "src/tests/host.rs:7: references stripped dev-dependency stackpress_server"
+    ],
+    "stackpress-sql-postgres": [
+      "src/tests/support/diagnostics.rs:8: references stripped dev-dependency stackpress_framework_sql",
+      "src/tests/support/stores/fixture.rs:3: references stripped dev-dependency stackpress_framework_sql",
+      "src/tests/support/stores/fixture.rs:8: references stripped dev-dependency generated_workspace_app",
+      "src/tests/support/stores/fixture.rs:61: references stripped dev-dependency stackpress_framework_sql",
+      "src/tests/support/stores/fixture.rs:82: references stripped dev-dependency stackpress_framework_sql",
+      "src/tests/support/stores/fixture.rs:103: references stripped dev-dependency stackpress_framework_sql",
+      "src/tests/support/stores/fixture.rs:170: references stripped dev-dependency stackpress_framework_sql",
+      "src/tests/support/stores/mod.rs:3: references stripped dev-dependency generated_workspace_app",
+      "src/tests/support/stores/mod.rs:16: references stripped dev-dependency stackpress_framework_schema",
+      "src/tests/support/stores/mod.rs:17: references stripped dev-dependency stackpress_framework_sql",
+      "src/tests/support/stores/preflight.rs:3: references stripped dev-dependency generated_workspace_app",
+      "src/tests/support/stores/preflight.rs:8: references stripped dev-dependency stackpress_framework_schema",
+      "src/tests/support/stores/reads.rs:3: references stripped dev-dependency stackpress_framework_schema",
+      "src/tests/support/stores/reads.rs:4: references stripped dev-dependency stackpress_framework_sql",
+      "src/tests/support/stores/writes.rs:3: references stripped dev-dependency stackpress_framework_sql",
+      "src/tests/support/stores/writes.rs:351: references stripped dev-dependency stackpress_framework_sql"
+    ]
+  }
+}

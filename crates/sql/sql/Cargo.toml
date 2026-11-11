@@ -4,7 +4,13 @@ description = "Owned SQL queries and transport-independent database contracts"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
-publish.workspace = true
+publish = true
+repository.workspace = true
+readme = "README.md"
+keywords.workspace = true
+categories = ["database"]
+license.workspace = true
+include = ["/src/**", "/README.md", "/LICENSE", "/*.md", "/tests/**", "/examples/**", "/docs/**/*.md", "/third-party/**", "/data/**", "/*.idea"]
 
 [lints]
 workspace = true

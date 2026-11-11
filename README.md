@@ -1,9 +1,8 @@
-# rust
-The rust version...
+# Stackpress Rust
 
 Stackpress's Rust monorepo uses Leptos + Tauri, reusable event-driven capabilities,
-configuration, and compile-time function-based plugins. Implementation has not yet
-been scaffolded; the current workspace establishes the knowledge and coding contract.
+configuration, and compile-time function-based plugins. The workspace contains independent libraries, optional framework capabilities,
+and application examples. Packages are being prepared for a coordinated 0.1.0 release.
 
 Start with [AGENTS.md](AGENTS.md) and the [KB context index](.agents/context/index.md).
 The [next-session handoff](.agents/references/00040-session-handoff.md) records the
@@ -19,3 +18,13 @@ Validate this knowledge workspace with:
 python3 .agents/scripts/validate-agent-workspace.py
 python3 .agents/scripts/verify-kb-provenance.py
 ```
+
+## Crates and licences
+
+The 23 release candidates use lockstep version `0.1.0`. Examples and proof consumers
+remain unpublished. Third-party notices accompany the affected crates.
+
+| Crates | Licence |
+| --- | --- |
+| `stackpress`; `stackpress-framework`, `-view`, `-language`, `-schema`, `-sql`, `-admin`, `-api`, `-csrf`, `-email`, `-session` | [Stackpress License](LICENSE) |
+| `stackpress-lib`, `-server`, `-server-http`, `-cli`, `-idea-parser`, `-idea-transformer`, `-idea`, `-sql`, `-sql-sqlite`, `-sql-postgres`, `-sql-mysql`, `-leptos` | Apache-2.0; each crate ships its own `LICENSE` |
