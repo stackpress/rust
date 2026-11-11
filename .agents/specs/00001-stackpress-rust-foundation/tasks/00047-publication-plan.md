@@ -449,3 +449,7 @@ are confirmed, the owner may explicitly authorize publication. Follow steps 4–
 the serial publication runbook above (the complete 23-package order is unchanged).
 Those interactive login/upload commands are instructions for that future owner action;
 Task 00050 runs neither login nor any publish without `--dry-run`.
+
+Right before publishing, confirm every candidate name is still unclaimed with
+`python3 tools/release/check_names.py` (read-only crates.io lookups; exits non-zero
+if any name is taken). On 2026-11-11 all 23 names were free.

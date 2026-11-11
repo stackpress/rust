@@ -75,3 +75,15 @@ initial offline leaf dry-runs required HTTP; their final dry-runs permit anonymo
 registry reads as authorized by the coordinator. They always retain `--dry-run` and
 `--locked`. No credential is added. `--exclude-lockfile` was investigated and rejected:
 it could hide first-release dependency ordering failures rather than resolve them.
+
+## Crate-name availability
+
+Right before publishing, check that every candidate name is still unclaimed on crates.io:
+
+```sh
+python3 tools/release/check_names.py
+```
+
+It looks each name up read-only through the public crates.io API (404 means free),
+waits one second between requests, sends no credentials or personal details, and
+exits non-zero if any name is taken or could not be checked.
