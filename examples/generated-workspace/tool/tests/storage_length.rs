@@ -53,7 +53,7 @@ async fn prove() {
     let input = root.path().join("schema.idea");
     std::fs::write(
         &input,
-        include_str!("../../../../crates/framework/framework-sql/tests/proofs/lengths/schema.idea"),
+        include_str!("../../../../tools/release/proofs/lengths/schema.idea"),
     )
     .unwrap();
     run("revision",json!({"history":history,"input":input,"name":"one","mysql-collation":"utf8mb4_bin","mysql-page-bytes":16384})).await.unwrap();

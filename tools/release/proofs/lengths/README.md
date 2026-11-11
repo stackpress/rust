@@ -11,7 +11,7 @@ CARGO_TARGET_DIR="$PWD/target" \
 TMPDIR="$PWD/target/tmp" \
 CARGO_INCREMENTAL=0 CARGO_PROFILE_DEV_DEBUG=0 \
 G37_PROOF_OUT=/private/tmp/s6-g37/generated-proof \
-python3 crates/framework/framework-sql/tests/proofs/lengths/prove.py
+python3 tools/release/proofs/lengths/prove.py
 ```
 
 The target and its `tmp` directory must belong to this effort. The script bounds each
@@ -39,8 +39,8 @@ Browser contract/metadata files omit storage declarations and private length arg
 SQLite `VARCHAR(n)` has TEXT affinity and does not enforce n. The raw SQL insertion of an
 overlong value deliberately succeeds; the generated decoder rejects that row. SQLite resize,
 FK-group, sequence, loss-approval, lock and scan-budget checks live in
-[storage_length.rs](../../storage_length.rs); fault/cancel/unknown-commit resize cases live in
-[migrations/faults.rs](../../../src/migrations/faults.rs).
+[storage_length.rs](../../../../crates/framework/framework-sql/tests/storage_length.rs); fault/cancel/unknown-commit resize cases live in
+[migrations/faults.rs](../../../../crates/framework/framework-sql/src/migrations/faults.rs).
 
 This is a finite generated-DDL/guard proof. The separate G26 native MySQL case must execute
 this fixture's unchanged generated DDL through task 00012's harness before making a native

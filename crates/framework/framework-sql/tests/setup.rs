@@ -1,6 +1,6 @@
 //! Setup policy contracts; the live aggregate suite supplies native MySQL/PostgreSQL evidence.
 
-#[path = "../../../sql/sql/examples/support/mod.rs"]
+#[path = "support/recording.rs"]
 mod recorder;
 
 use stackpress_framework_sql::setup;

@@ -19,10 +19,6 @@ mod event_supervision;
 #[path = "cases/events.rs"]
 mod events;
 
-#[cfg(feature = "server")]
-#[path = "cases/integration/mod.rs"]
-mod integration;
-
 use serde_json::{Value, json};
 use stackpress_framework_email::EmailConfig;
 
@@ -58,15 +54,4 @@ fn every_source_option_variant_round_trips_without_new_defaults() {
         let config = EmailConfig::from_section(Some(&value)).unwrap().unwrap();
         assert_eq!(serde_json::to_value(config).unwrap(), value);
     }
-}
-
-#[path = "fixtures/generation.rs"]
-mod fixture_generation;
-#[allow(dead_code, missing_docs, unexpected_cfgs)]
-#[path = "fixtures/models/mod.rs"]
-mod models;
-/// Local output is regenerated independently from the shipped Idea sources.
-#[test]
-fn generated_models_are_fresh() {
-    fixture_generation::fixtures(true).unwrap();
 }

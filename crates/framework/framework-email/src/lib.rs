@@ -46,3 +46,7 @@ pub type EmailError = Box<dyn std::error::Error + Send + Sync + 'static>;
 pub type EmailResult<T> = Result<T, EmailError>;
 /// Source message fields and extension options, forwarded unchanged to the adapter.
 pub type SendMailOptions = serde_json::Map<String, serde_json::Value>;
+
+#[cfg(test)]
+#[path = "tests/publication.rs"]
+mod publication_tests;

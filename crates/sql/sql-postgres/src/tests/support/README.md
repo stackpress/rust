@@ -2,14 +2,17 @@
 
 `contract.rs` runs one public Database/TransactionSession suite against PostgreSQL,
 MySQL and the existing SQLite adapter. Its grouped assertions live in `contract/`.
-MySQL includes these same physical files by path. Only native syntax, strict bool
-representation, generated-ID rules and explicit capabilities vary. Assertions
-are shared; there is no copied reference implementation or test-support crate.
+MySQL keeps crate-local copies under `tests/support/postgres/support/`. Only native
+syntax, strict bool representation, generated-ID rules and explicit capabilities
+vary. The copies preserve the canonical assertions, with provenance and SHA-256
+entries in `tools/release/test-copies-coverage.json` for the repository freshness check.
 
-`stress.rs` is likewise included by both network M2 executables. Backend fixture
+`stress.rs` is likewise copied locally for MySQL’s network M2 executable. Backend fixture
 construction stays in each adapter's `src/tests/m2.rs`; native SQLx handles remain
-private. No SQL core or SQLite source change is required. SQLite, generated-workspace-app and framework dependencies used by the harness are
-dev-only; Cargo.lock adds existing package edges without new versions.
+private. No SQL core or SQLite source change is required. SQLite is an earlier adapter used only by the PostgreSQL reference harness.
+Framework SQL/schema and generated-model scenarios live in the unpublished app
+lane, after those crates in the publication order. Neither driver depends on the
+unpublished application.
 
 ## Run the checks
 
@@ -85,8 +88,23 @@ branch, target or publication readiness.
 
 ## Generated-workspace integration
 
-`stores/` runs the actual emitted Profile, Project and Task code before the common
-core contract. `fixture.rs` uses generated table plans on SQLite/PostgreSQL. MySQL
+The repository integration lane
+[`driver_stores`](../../../../../../examples/generated-workspace/app/tests/driver_stores.rs) runs the actual emitted Profile, Project and Task code
+in its own custom harness. Its scenarios live in
+[`tests/support/driver_stores/`](../../../../../../examples/generated-workspace/app/tests/support/driver_stores), separate from the adapters’ crate-local
+contract/value/error/lifecycle suites. SQLite always runs; the PostgreSQL and
+MySQL cases are live-only and are ignored unless their matching URL gate is set.
+Run the lane from the repository root with
+`cargo nextest run -p generated-workspace-app --test driver_stores --locked --offline`.
+Workspace `--all-targets` coverage includes this lane and its driver execution.
+
+After live execution, keep both URL gates set and run
+`cargo test -p generated-workspace-app --test driver_stores --locked --offline -- --fixture-inventory`.
+This read-only evidence mode prints the remaining `stackpress_*` database names on
+both servers and fails if either list is nonempty. It creates, adopts and drops no
+database; normal scenario parents retain their exact-name cleanup responsibility.
+
+`stores/` retains the original generated-model scenarios. `fixture.rs` uses generated table plans on SQLite/PostgreSQL. MySQL
 first proves all three TEXT-key plans return SQL Unsupported without an executor
 entry, then installs explicitly harness-owned VARCHAR(191)/InnoDB tables. Its seed
 uses generated preparation/encoding plus core inserts without RETURNING. This
@@ -122,15 +140,17 @@ uncertainty and close. None of this enables automatic retries or migration suppo
 M1/M2 runners share `process.rs` for their bounded kill/reap loop; fixture creation,
 admin deadlines and exact-name cleanup remain backend-owned. Library-only controls
 in `../process.rs` execute a successful child and a deliberately timed-out child.
-Both M2 runners share `diagnostics.rs`, which walks at most eight causes and prints
-only safe contexts and native structured categories. Production graphs share no
+Both M2 runners use canonical `sql_diagnostics.rs` through local copies. It walks
+at most eight causes and prints only safe SQL contexts and native structured
+categories. The full data-aware `diagnostics.rs` moved unchanged to the app lane
+and retains the generated-store DataError output there. Production graphs share no
 sibling source files or driver dependency.
 
 The public-trait lifecycle suite checks first-poll input-budget refusals while
 acquisition is unavailable and after close. Network owners also promise dialect
 refusal before acquisition; SQLite checks dialect inside execute after acquisition.
 The reference's existing behavior is preserved. Generated-store zero-entry refusal
-checks remain in `stores/preflight.rs`.
+checks remain in the repository lane’s `stores/preflight.rs`.
 
 MySQL M1 additionally installs test-owned stored routines only in its parent's
 throwaway database. Unicode/digit-prefixed, longer, quoted and qualified function

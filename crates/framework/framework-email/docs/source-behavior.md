@@ -89,9 +89,9 @@ fake resolvers only; real HTTP/TLS, SMTP, SES and sendmail acceptance are unveri
 Native process cancellation uses Tokio kill-on-drop; completion is explicitly reaped.
 No stronger cancellation-reaping claim is made for runtime shutdown.
 
-`tests/source-transports.cjs` runs the original local package with inert SMTP,
+`tools/release/proofs/email-source/source-transports.cjs` runs the original local package with inert SMTP,
 process and SES boundaries; its checked-in fixture includes source file hashes.
-`tests/source-options.cjs` retains the Stackpress event option/default oracle. Event/plugin registration and supervised signup-hook integration are available with
+`tools/release/proofs/email-source/source-options.cjs` retains the Stackpress event option/default oracle. Event/plugin registration and supervised signup-hook integration are available with
 the `server` feature. The standalone [consumers](../consumers/) prove direct, event
 and compile-time disabled application graphs without a listener.
 
@@ -165,4 +165,4 @@ these proofs target aarch64-apple-darwin and do not establish WASM/installed sup
 
 ## Evidence and related reference
 
-The [transport oracle](../tests/source-transports.cjs), [option oracle](../tests/source-options.cjs), [page oracle](../tests/source-page-boundaries.cjs) and [integration suite](../tests/cases/integration/mod.rs) record source-derived boundaries. Use [API reference](api/README.md) for callable contracts and [verification](verification.md) for documentation/consumer checks. These notes preserve source behavior; they do not call for a behavioral change.
+The [transport oracle](../../../../tools/release/proofs/email-source/source-transports.cjs), [option oracle](../../../../tools/release/proofs/email-source/source-options.cjs), [page oracle](../../../../tools/release/proofs/email-source/source-page-boundaries.cjs) and [integration suite](../../framework-session/tests/email/integration/mod.rs) record source-derived boundaries. Use [API reference](api/README.md) for callable contracts and [verification](verification.md) for documentation/consumer checks. These notes preserve source behavior; they do not call for a behavioral change.

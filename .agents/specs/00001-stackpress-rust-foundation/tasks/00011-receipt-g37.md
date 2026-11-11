@@ -53,7 +53,7 @@ See the [storage-length reference](../../../../crates/framework/framework-sql/do
 
 ## Proof and limits
 
-The [permanent generated fixture](../../../../crates/framework/framework-sql/tests/proofs/lengths/README.md)
+The [permanent generated fixture](../../../../tools/release/proofs/lengths/README.md)
 uses the existing app-owned tool, absent-output generation, full freshness and compiled actual
 contracts/stores/operations on SQLite. ASCII, emoji, combining marks, NUL and trailing spaces;
 default/provider outputs; private guards independent of a permissive host validator; patches,

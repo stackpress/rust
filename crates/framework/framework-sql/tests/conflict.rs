@@ -7,7 +7,7 @@ use stackpress_sql::{
 use stackpress_sql_sqlite::{SqliteDatabase, SqliteOptions};
 use std::{sync::Arc, time::Duration};
 
-#[path = "../../../../examples/generated-workspace/support/watchdog.rs"]
+#[path = "support/watchdog.rs"]
 mod watchdog;
 
 /// A parent process bounds the entire concurrency proof, including worker cleanup.

@@ -9,7 +9,7 @@ use stackpress_sql::{Create, Engine, Field, ForeignKey, Index, Insert, Select, S
 use stackpress_sql_sqlite::{SqliteDatabase, SqliteOptions};
 use std::{collections::BTreeMap, time::Duration};
 
-#[path = "../../../../examples/generated-workspace/support/watchdog.rs"]
+#[path = "support/watchdog.rs"]
 mod watchdog;
 
 /// Supervise both native failure scenarios independently of the current-thread runtime.

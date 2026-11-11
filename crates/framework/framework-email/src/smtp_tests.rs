@@ -8,6 +8,28 @@ use std::{
 };
 use tokio::io::{AsyncBufReadExt, AsyncRead, AsyncWrite, BufReader, DuplexStream, ReadBuf};
 
+/// Lettre selects its compiled Ring fallback per TLS configuration, without a global provider.
+#[test]
+fn smtp_tls_parameters_construct_for_implicit_and_starttls_modes() {
+    for (fields, mode) in [
+        (json!({"secure":true}), "implicit"),
+        (json!({"requireTLS":true}), "required"),
+        (json!({}), "opportunistic"),
+    ] {
+        let config =
+            crate::options::TransportOptions::resolve(&serde_json::from_value(fields).unwrap())
+                .unwrap();
+        let settings = ConnectionSettings::new(&config.smtp()).unwrap();
+        let parameters = match (mode, settings.tls) {
+            ("implicit", Tls::Wrapper(parameters))
+            | ("required", Tls::Required(parameters))
+            | ("opportunistic", Tls::Opportunistic(parameters)) => parameters,
+            _ => panic!("unexpected SMTP TLS mode"),
+        };
+        assert_eq!(parameters.domain(), "localhost");
+    }
+}
+
 /// A byte-level fake socket whose peer address is metadata only; it never binds a port.
 #[derive(Debug)]
 struct MemorySocket(DuplexStream);

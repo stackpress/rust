@@ -709,7 +709,7 @@
         ]
       },
       {
-        "path": "crates/framework/framework-email/tests/cases/integration/mod.rs",
+        "path": "crates/framework/framework-session/tests/email/integration/mod.rs",
         "contains": [
           "source_page_csrf_email_render_and_error_boundaries"
         ]

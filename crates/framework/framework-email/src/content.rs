@@ -39,13 +39,7 @@ impl ContentResolver for NativeContentResolver {
                 return data_uri(&request.location);
             }
             if is_url(&request.location) {
-                // Source fetch is a fresh cookie jar, gzip/deflate, five redirects, no timeout.
-                let client = reqwest::Client::builder()
-                    .redirect(reqwest::redirect::Policy::none())
-                    .cookie_store(true)
-                    .danger_accept_invalid_certs(true)
-                    .user_agent("nodemailer/7.0.13")
-                    .build()?;
+                let client = http_client()?;
                 let mut location = url::Url::parse(&request.location)?;
                 for redirects in 0..=5 {
                     let mut get = client
@@ -85,6 +79,18 @@ impl ContentResolver for NativeContentResolver {
             Ok(tokio::fs::read(request.location).await?)
         })
     }
+}
+
+/// Each source fetch owns a fresh cookie jar; reqwest owns its TLS provider and verification mode.
+fn http_client() -> EmailResult<reqwest::Client> {
+    // Preserve source gzip/deflate, accept-invalid certificates and no timeout. The caller
+    // handles at most five redirects so every new location retains the original options.
+    Ok(reqwest::Client::builder()
+        .redirect(reqwest::redirect::Policy::none())
+        .cookie_store(true)
+        .danger_accept_invalid_certs(true)
+        .user_agent("nodemailer/7.0.13")
+        .build()?)
 }
 
 /// Resolve one body/attachment slot. JSON normalization bypasses MIME access flags as source does.
@@ -253,3 +259,7 @@ fn is_url(location: &str) -> bool {
     let lower = location.to_ascii_lowercase();
     lower.starts_with("http://") || lower.starts_with("https://")
 }
+
+#[cfg(test)]
+#[path = "tests/content.rs"]
+mod tests;

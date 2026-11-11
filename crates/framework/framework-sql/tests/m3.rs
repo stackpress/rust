@@ -8,7 +8,7 @@ use stackpress_sql::{
 };
 use stackpress_sql_sqlite::{SqliteDatabase, SqliteOptions};
 use std::{collections::BTreeMap, time::Duration};
-#[path = "../../../../examples/generated-workspace/support/watchdog.rs"]
+#[path = "support/watchdog.rs"]
 mod watchdog;
 
 /// Supervise every filesystem/native scenario independently of its async executor.

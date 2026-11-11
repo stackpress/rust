@@ -1,0 +1,50 @@
+{
+  "scope": "Compatible-feature workspace coverage: fresh full non-live run plus isolated cases and the relocated driver-store/email integration replay. First-party production source unchanged across accumulation; native URLs unset.",
+  "report": "target/00052/post-move-non-live.json",
+  "report_sha256": "556a60e4c4063fdcd8515206ab67dd26fd2b14da396d0b67e5a6686724518efc",
+  "records": [
+    "20261111T032057.997615Z-7dff6c65e695",
+    "20261111T033037.784897Z-072ffcf97a78",
+    "20261111T033229.784361Z-3f9102430749",
+    "20261111T043854.270519Z-e6b056ce7ddd"
+  ],
+  "crates": [
+    {
+      "crate": "sql-postgres",
+      "covered": 369,
+      "lines": 889,
+      "percent": 41.50731158605174
+    },
+    {
+      "crate": "sql-mysql",
+      "covered": 468,
+      "lines": 1049,
+      "percent": 44.6139180171592
+    },
+    {
+      "crate": "framework-sql",
+      "covered": 7767,
+      "lines": 8629,
+      "percent": 90.01042994553251
+    },
+    {
+      "crate": "framework-admin",
+      "covered": 3929,
+      "lines": 4364,
+      "percent": 90.03208065994501
+    },
+    {
+      "crate": "framework-email",
+      "covered": 2471,
+      "lines": 2742,
+      "percent": 90.1167031363968
+    }
+  ],
+  "toolchain": {
+    "cargo_llvm_cov": "0.8.6",
+    "rustc": "1.96.0 (ac68faa20 2026-05-25)",
+    "LLVM": "22.1.2",
+    "host": "aarch64-apple-darwin",
+    "record": "20261111T033833.561501Z-a4c8c7263ef9"
+  }
+}

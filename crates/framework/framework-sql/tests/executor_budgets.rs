@@ -8,7 +8,7 @@ use stackpress_sql::{
 use stackpress_sql_sqlite::{SqliteDatabase, SqliteOptions};
 use std::time::Duration;
 
-#[path = "../../../../examples/generated-workspace/support/watchdog.rs"]
+#[path = "support/watchdog.rs"]
 mod watchdog;
 
 /// Bound native acquisition, transaction execution and close with a separate parent.

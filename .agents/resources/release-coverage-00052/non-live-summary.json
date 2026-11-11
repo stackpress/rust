@@ -1,0 +1,49 @@
+{
+  "scope": "Native aarch64-apple-darwin compatible-feature workspace coverage, live URLs unset; deferred TCP and example tests replayed in isolation; source unchanged across accumulated runs.",
+  "report": "target/00052/non-live-workspace-clean.json",
+  "report_sha256": "ece5f7ef9445e6d88f5f0e9d72a8d663bd01d2ca27ac6f6b37157ea4b57a266b",
+  "records": [
+    "20261111T032057.997615Z-7dff6c65e695",
+    "20261111T033037.784897Z-072ffcf97a78",
+    "20261111T033229.784361Z-3f9102430749"
+  ],
+  "crates": [
+    {
+      "crate": "sql-postgres",
+      "covered": 369,
+      "lines": 889,
+      "percent": 41.50731158605174
+    },
+    {
+      "crate": "sql-mysql",
+      "covered": 468,
+      "lines": 1049,
+      "percent": 44.6139180171592
+    },
+    {
+      "crate": "framework-sql",
+      "covered": 7767,
+      "lines": 8629,
+      "percent": 90.01042994553251
+    },
+    {
+      "crate": "framework-admin",
+      "covered": 3929,
+      "lines": 4364,
+      "percent": 90.03208065994501
+    },
+    {
+      "crate": "framework-email",
+      "covered": 2471,
+      "lines": 2742,
+      "percent": 90.1167031363968
+    }
+  ],
+  "toolchain": {
+    "cargo_llvm_cov": "0.8.6",
+    "rustc": "1.96.0 (ac68faa20 2026-05-25)",
+    "LLVM": "22.1.2",
+    "host": "aarch64-apple-darwin",
+    "record": "20261111T033833.561501Z-a4c8c7263ef9"
+  }
+}

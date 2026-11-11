@@ -14,7 +14,6 @@ serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1", features = ["raw_value"] }
 
 [dev-dependencies]
-generated-workspace-app = { path = "../../../examples/generated-workspace/app" }
 stackpress-framework-schema = { path = "../../framework/framework-schema" }
 stackpress-framework-sql = { path = "../../framework/framework-sql" }
 stackpress-sql-sqlite = { path = "../sql-sqlite" }

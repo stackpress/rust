@@ -1,7 +1,7 @@
 //! Opt-in native M2 proofs: parent owns CREATE/DROP, child owns all hang-class scenarios.
 //! Unset gate variables are reported as ignored; child timeout is always failure.
 
-#[path = "../../../test-support/harness.rs"]
+#[path = "../../tests/support/harness.rs"]
 mod harness;
 
 use crate::{MysqlDatabase, MysqlOptions, MysqlTls};
@@ -176,17 +176,17 @@ fn bounded_admin(
         .map_err(|_| "administration worker panicked")?;
     result
 }
-#[path = "../../../sql-postgres/src/tests/support/process.rs"]
+#[path = "../../tests/support/postgres/support/process.rs"]
 mod process;
 use process::watchdog;
 
-#[path = "../../../sql-postgres/src/tests/support/diagnostics.rs"]
+#[path = "../../tests/support/postgres/support/sql_diagnostics.rs"]
 mod diagnostics;
 use diagnostics::report_error;
 
-#[path = "../../../sql-postgres/src/tests/support/contract.rs"]
+#[path = "../../tests/support/postgres/support/contract.rs"]
 mod contract;
-#[path = "../../../sql-postgres/src/tests/support/stress.rs"]
+#[path = "../../tests/support/postgres/support/stress.rs"]
 mod stress;
 
 #[path = "g37.rs"]

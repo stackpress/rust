@@ -1,7 +1,7 @@
 //! Opt-in native M1 proofs: parent owns CREATE/DROP, child owns all hang-class scenarios.
 //! Unset gate variables are reported as ignored; child timeout is always failure.
 
-#[path = "../../../test-support/harness.rs"]
+#[path = "../../tests/support/harness.rs"]
 mod harness;
 
 use crate::{MysqlDatabase, MysqlOptions, MysqlTls};
@@ -175,7 +175,7 @@ fn bounded_admin(
         .map_err(|_| "administration worker panicked")?;
     result
 }
-#[path = "../../../sql-postgres/src/tests/support/process.rs"]
+#[path = "../../tests/support/postgres/support/process.rs"]
 mod process;
 use process::watchdog;
 
@@ -207,6 +207,8 @@ fn report_error(error: &(dyn std::error::Error + 'static)) {
 mod lifecycle;
 #[path = "m1/outcomes.rs"]
 mod outcomes;
+#[path = "m1/publication.rs"]
+mod publication;
 #[path = "m1/reuse.rs"]
 mod reuse;
 #[path = "m1/values.rs"]
@@ -261,6 +263,7 @@ pub(crate) fn main() {
             runtime.block_on(async {
                 match case.as_str() {
                     "values" => values::run(&name).await,
+                    "publication" => publication::run(&name).await,
                     "outcomes" => outcomes::run(&name).await,
                     "reuse" => reuse::run(&name).await,
                     "lifecycle" => lifecycle::run(&name).await,
@@ -279,11 +282,12 @@ pub(crate) fn main() {
     }
     let harness = harness::Harness::from_env();
     let ignored = std::env::var_os(GATE).is_none();
-    let names = ["values", "outcomes", "reuse", "lifecycle"].map(|case| format!("m1::{case}"));
+    let names = ["values", "outcomes", "reuse", "lifecycle", "publication"]
+        .map(|case| format!("m1::{case}"));
     if harness.discover(names.iter().map(|name| (name.as_str(), ignored))) {
         return;
     }
-    let groups: Vec<_> = ["values", "outcomes", "reuse", "lifecycle"]
+    let groups: Vec<_> = ["values", "outcomes", "reuse", "lifecycle", "publication"]
         .into_iter()
         .filter(|case| harness.selects(&format!("m1::{case}"), ignored))
         .collect();

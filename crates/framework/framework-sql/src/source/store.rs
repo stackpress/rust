@@ -408,3 +408,7 @@ fn numeric_decimal(field: &stackpress_framework_schema::Field) -> bool {
             .filter_map(|rule| rule.args.first().and_then(serde_json::Value::as_f64))
             .any(decimal)
 }
+
+#[cfg(test)]
+#[path = "tests/store.rs"]
+mod tests;

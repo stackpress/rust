@@ -12,7 +12,7 @@ use stackpress_framework_sql::{
 use stackpress_sql::{Create, DialectId, Engine, Field, Insert, Select, SqlType, Update};
 use stackpress_sql_sqlite::{SqliteDatabase, SqliteOptions, maintenance::SqliteMaintenance};
 
-#[path = "../../../../examples/generated-workspace/support/watchdog.rs"]
+#[path = "support/watchdog.rs"]
 mod watchdog;
 
 /// Kill/reap on a hung migration independently from the child's executor.

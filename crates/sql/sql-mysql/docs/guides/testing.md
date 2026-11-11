@@ -53,8 +53,24 @@ certificate interoperability, arbitrary external poolers or other platforms.
 
 ## Generated stores
 
-The same M2 suite executes the actual generated-workspace Profile, Project and Task stores
-through Engine and Database on SQLite, PostgreSQL and MySQL. The observation wrapper counts
+The repository integration harness `driver_stores` executes the actual generated-workspace
+Profile, Project and Task stores through Engine and Database. The scenarios live in
+[`examples/generated-workspace/app/tests/support/driver_stores/`](../../../../../examples/generated-workspace/app/tests/support/driver_stores).
+The drivers retain their own contract, value, error and lifecycle suites with crate-local
+support copies; they have no dependency on the unpublished application.
+
+Run the integration lane from the repository root:
+
+```sh
+cargo nextest run -p generated-workspace-app --test driver_stores --locked --offline
+```
+
+SQLite runs without a network gate. PostgreSQL and MySQL are live-only and are ignored
+unless `STACKPRESS_TEST_POSTGRES_URL` or `STACKPRESS_TEST_MYSQL_URL`, respectively, is set.
+The workspace `--all-targets` coverage command runs this lane too; set both live gates to
+include its PostgreSQL and MySQL execution in driver coverage.
+
+The observation wrapper counts
 BEGIN, run, commit and rollback entries without retaining SQL or binds. Unsupported atomic
 operations have zero entries, including when the underlying BEGIN would fail.
 

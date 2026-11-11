@@ -1,0 +1,31 @@
+[
+  {
+    "crate": "sql-postgres",
+    "stripped_dev_edges": [
+      "stackpress-framework-schema",
+      "stackpress-framework-sql"
+    ],
+    "registry_tuples": 162,
+    "extra_features": [],
+    "result": "passed"
+  },
+  {
+    "crate": "sql-mysql",
+    "stripped_dev_edges": [
+      "stackpress-framework-schema",
+      "stackpress-framework-sql"
+    ],
+    "registry_tuples": 162,
+    "extra_features": [],
+    "result": "passed"
+  },
+  {
+    "crate": "framework-email",
+    "stripped_dev_edges": [],
+    "registry_tuples": 203,
+    "extra_features": [
+      "server"
+    ],
+    "result": "passed"
+  }
+]

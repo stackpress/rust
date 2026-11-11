@@ -22,7 +22,7 @@ All ten entries are **resolved under owner decision G46**. The only code change 
 | Auth create-return | Follow original source, unchanged. [Action tests](../../framework-session/tests/main/actions.rs). |
 | Positive hasnt | Superseded by G54: exclude every requested value; SQL NULL lists and missing JSON paths match. Original select.ts:680–682 calls positive whereJsonContains. [Shared implementation](../../framework-sql/src/source/membership.rs), [membership cases](../../framework-sql/tests/support/g54.rs). |
 | Optional phone on update | Follow original source, unchanged; G44 optional signup phone remains separate. [Profile update](../../framework-session/src/account/profile.rs). |
-| Email sign-in skips send | Follow original source, unchanged. [Email page](../../framework-session/src/auth/pages/email.rs), [integration tests](../../framework-email/tests/cases/integration/mod.rs). |
+| Email sign-in skips send | Follow original source, unchanged. [Email page](../../framework-session/src/auth/pages/email.rs), [integration tests](../../framework-session/tests/email/integration/mod.rs). |
 | Moment admin dates | Follow original source, unchanged. [API roles view](../../framework-api/src/views/roles.rs). |
 
 ## Named limits and evidence gaps

@@ -68,6 +68,6 @@ pub fn generate(
 
 /// Generate or check this crate's independently owned test family.
 pub fn fixtures(check: bool) -> std::result::Result<(), Box<dyn std::error::Error>> {
-    let base = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures");
+    let base = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/email/fixtures");
     generate(&base.join("models.idea"), &base.join("models"), check)
 }

@@ -1,0 +1,6 @@
+plugin "framework-schema" {}
+plugin "framework-sql" {}
+// Separate finite namespace fixture keeps the full type matrix within the generator budget.
+model Schema { id String @id value String @default("safe") type Integer? @sortable active Boolean @active @is.eq(true) }
+model Operations @query("id" "row.value") { id String @id value String @default("safe") schemaId String? row Schema? @relation({ local "schemaId" foreign "id" }) }
+model Identity { id Integer @id }

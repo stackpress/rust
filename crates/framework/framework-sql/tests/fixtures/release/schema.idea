@@ -1,0 +1,38 @@
+plugin "framework-schema" { }
+plugin "framework-sql" { }
+
+enum ProjectState {
+  OPEN "open"
+  CLOSED "closed"
+}
+
+type Address {
+  city String @is.ne @field.input @view.text
+  country String @field.input @view.text
+}
+
+model Profile @labels("Profile" "Profiles") @query("id" "name") {
+  id String @id
+  name String @is.ne @searchable @sortable @field.input @list.text @view.text
+  active Boolean @active @default(true)
+  address Address?
+  projects Project[]
+}
+
+model Project @labels("Project" "Projects") @query("id" "title" "ownerId") {
+  id String @id
+  title String @is.ne @searchable @sortable @field.input @list.text @view.text
+  ownerId String
+  owner Profile @relation({ local "ownerId" foreign "id" name "projects" })
+  state ProjectState @default("open") @filter.select @list.text
+  tags String[] @default([])
+  tasks Task[]
+}
+
+model Task @query("id" "title" "projectId" "done") {
+  id String @id
+  projectId String
+  project Project @relation({ local "projectId" foreign "id" name "tasks" })
+  title String @is.ne @field.input @list.text
+  done Boolean @default(false) @filter.checkbox @list.yesno
+}
