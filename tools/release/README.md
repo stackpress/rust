@@ -10,6 +10,11 @@ and JavaScript `__dirname` joins are resolved without executing the script.
 Caller-supplied source paths and temporary directories are not fixed repository inputs.
 The facade's
 repository application collection is scanned only if it gains Cargo example targets.
+Qualified Rust crate references/imports also reject internal dev-dependencies on
+later release candidates or unpublished repository packages. The checker records
+the owner-approved serial publish order; normal dependencies remain available.
+Comments and string data are ignored. This conservative scan includes all `src/`
+and does not evaluate platform/feature conditions or macro expansion.
 
 Run `python3 tools/release/check_test_copies.py` to merge and verify every
 `tools/release/test-copies*.json` manifest. Duplicate destinations are errors.
@@ -22,4 +27,4 @@ together after reviewing the canonical change; the checker never rewrites files.
 
 The checker regression suite is `python3 -m unittest discover -s tools/release`.
 Source scanning complements the coordinator's extracted-package verification;
-it does not certify normalized dev-dependencies or platform-specific behavior.
+it does not certify extracted archives or platform-specific behavior.

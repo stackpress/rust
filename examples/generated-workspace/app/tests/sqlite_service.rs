@@ -1,4 +1,4 @@
-//! Disposable native service proof. Run with `cargo run -p stackpress-sql-sqlite --example m0-host`.
+//! Repo-only native service proof, discovered by workspace nextest and coverage.
 //! The application explicitly installs/seeds its own tempfile database before startup.
 //! No listener, generic SQL capability, generated store or framework-SQL crate is involved.
 
@@ -35,8 +35,7 @@ async fn profile_name(_: &mut Request, res: &mut Response, inv: Invocation<'_>) 
 }
 
 /// Prove setup, consuming commit, startup registration, named Send dispatch and explicit close.
-#[tokio::main(flavor = "current_thread")]
-async fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
+async fn proof() -> std::result::Result<(), Box<dyn std::error::Error>> {
     let root = tempfile::TempDir::new()?;
     let options = SqliteOptions::file(root.path().join("proof.sqlite")).create_if_missing(true);
     let setup = Engine::new(SqliteDatabase::open(options.clone()).await?);
@@ -78,4 +77,27 @@ async fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
     drop(setup);
     drop(root);
     Ok(())
+}
+
+#[path = "../../support/watchdog.rs"]
+mod watchdog;
+
+/// Run the unchanged seed/startup/dispatch/shutdown proof beneath a process deadline.
+#[test]
+fn sqlite_service_lifecycle() {
+    if std::env::var("STACKPRESS_S6_SCENARIO").as_deref() == Ok("sqlite-service") {
+        tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .unwrap()
+            .block_on(proof())
+            .unwrap();
+        return;
+    }
+    let (success, expired, output) = watchdog::run(
+        "sqlite_service_lifecycle",
+        "sqlite-service",
+        std::time::Duration::from_secs(10),
+    );
+    assert!(success && !expired, "service: timeout={expired}\n{output}");
 }

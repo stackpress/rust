@@ -62,6 +62,35 @@ class BoundaryTests(unittest.TestCase):
     def test_unknown_include_expression_fails_closed(self):
         self.assertEqual(len(self.scan('include_str!(some_macro!());')), 1)
 
+    def test_publish_order_rejects_later_and_unpublished_dev_edges(self):
+        manifest = {"dev-dependencies": {
+            "host": {"package": "stackpress-server", "path": "../server"},
+            "stackpress-lib": {"path": "../lib"},
+            "repo-proof": {"path": "../repo-proof"},
+            "stackpress-framework-api": "0.1",
+            "tempfile": "3",
+        }}
+        unavailable = boundaries.unavailable_dev_dependencies("stackpress-sql-sqlite", manifest)
+        self.assertEqual(set(unavailable), {"host", "repo_proof", "stackpress_framework_api"})
+        self.path.write_text('use host::ServerBuilder;\nextern crate repo_proof;')
+        issues = boundaries.scan_dependency_uses("stackpress-sql-sqlite", self.path, unavailable)
+        self.assertEqual([issue.line for issue in issues], [1, 2])
+        self.path.write_text('// host::ServerBuilder\nlet text = r#"repo_proof::Test"#;\n')
+        self.assertEqual(boundaries.scan_dependency_uses("stackpress-sql-sqlite", self.path, unavailable), [])
+
+    def test_normal_and_target_dependencies_follow_the_same_rule(self):
+        manifest = {"dependencies": {"host": {"package": "stackpress-server", "path": "../server"}},
+                    "target": {"cfg(unix)": {"dev-dependencies": {
+                        "host": {"package": "stackpress-server", "path": "../server"},
+                        "stackpress-framework-schema": {"path": "../schema"},
+                    }}}}
+        self.assertEqual(set(boundaries.unavailable_dev_dependencies("stackpress-sql-sqlite", manifest)),
+                         {"stackpress_framework_schema"})
+
+    def test_publish_order_covers_current_candidate_inventory(self):
+        self.assertEqual({name for name, _ in boundaries.candidates(boundaries.ROOT)},
+                         set(boundaries.PUBLISH_RANK))
+
     def test_manifest_path_preserves_apostrophes_and_spaces(self):
         crate = Path("/tmp/owner's crate")
         expression = 'concat!(env!("CARGO_MANIFEST_DIR"), "/tests/input")'

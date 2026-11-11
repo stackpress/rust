@@ -6476,7 +6476,6 @@ dependencies = [
  "serde_json",
  "sqlx",
  "stackpress-lib",
- "stackpress-server",
  "stackpress-sql",
  "tempfile",
  "tokio",

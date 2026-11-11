@@ -53,7 +53,7 @@ The adapter test suite has five passing parent tests, four ignored child entrypo
 - Every async concurrency/cancellation/host/native-failure scenario runs in a separate child with an 8-second cooperative bound and an independent 10-second parent process watchdog. A deliberately parked synchronous child is killed/reaped by a 150 ms negative control. Compiler proofs have a separate 180-second process deadline. Test-only worker handshakes have finite ready/go waits.
 - All native hooks and test-only transaction disruption stay in test modules; none is a production extension API. Tests use private tempfile roots and close/drop owned resources before their directory cleanup.
 
-The [native proof app](../../../crates/sql/sql-sqlite/examples/m0-host.rs) explicitly installs/seeds its own disposable file, commits a bound insert, closes setup, registers a new Engine during startup, invokes a named `profile-name` capability and explicitly closes the service. It prints `profile-name: Ada`. Its compiled binary also completed under a separate 10-second parent deadline, excluding compilation time.
+The [native proof app](../../../examples/generated-workspace/app/tests/sqlite_service.rs) (promoted to a repository integration test by Task 00051 after this receipt) explicitly installs/seeds its own disposable file, commits a bound insert, closes setup, registers a new Engine during startup, invokes a named `profile-name` capability and explicitly closes the service. It prints `profile-name: Ada`. Its compiled binary also completed under a separate 10-second parent deadline, excluding compilation time.
 
 ## Test-verified M0 review rounds
 

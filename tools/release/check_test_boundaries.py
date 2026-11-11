@@ -8,6 +8,8 @@ Comments and ordinary test data are not interpreted as filesystem access. Dynami
 Rust include expressions fail closed unless composed from literals and
 CARGO_MANIFEST_DIR. This is a source boundary check, not a replacement for testing
 an extracted Cargo archive with its normalized manifest.
+Candidate dev-dependencies may be used only after their package is published;
+normal dependencies remain usable independently of the test publish-order rule.
 """
 
 import argparse
@@ -23,6 +25,16 @@ PENDING = {
     "stackpress-sql-postgres", "stackpress-sql-mysql", "stackpress-framework-sql",
     "stackpress-framework-admin", "stackpress-framework-email",
 }
+# Owner-approved serial order: later path-only dev edges disappear at publication.
+PUBLISH_ORDER = [
+    "lib", "sql", "leptos", "idea-parser", "framework-language",
+    "sql-sqlite", "sql-postgres", "sql-mysql", "server", "idea-transformer",
+    "server-http", "cli", "framework-view", "framework-csrf", "framework-email",
+    "idea", "framework-schema", "framework-sql", "framework-admin",
+    "framework-session", "framework-api", "framework", "stackpress",
+]
+PUBLISH_RANK = {name if name == "stackpress" else "stackpress-" + name: rank
+                for rank, name in enumerate(PUBLISH_ORDER)}
 # Consume comments before strings, preserving offsets for line-number diagnostics.
 LEXEME = re.compile(
     r'//[^\n]*|/\*|(?:b?r)(?P<hashes>\#*)"[\s\S]*?"(?P=hashes)'
@@ -266,15 +278,53 @@ def candidates(root):
             yield name, crate
 
 
+def unavailable_dev_dependencies(package, manifest):
+    """Map dependency aliases that Cargo cannot retain in this candidate's tests."""
+    tables = [manifest, *manifest.get("target", {}).values()]
+    normal = {alias for table in tables for alias in table.get("dependencies", {})}
+    unavailable = {}
+    for table in tables:
+        for alias, dependency in table.get("dev-dependencies", {}).items():
+            if alias in normal:
+                continue
+            dependency = dependency if isinstance(dependency, dict) else {}
+            name = dependency.get("package", alias)
+            if name in PUBLISH_RANK:
+                if PUBLISH_RANK[name] >= PUBLISH_RANK[package]:
+                    unavailable[alias.replace("-", "_")] = f"{name} is not earlier in the publish order"
+            elif "path" in dependency:
+                unavailable[alias.replace("-", "_")] = f"{name} is an unpublished repository package"
+    return unavailable
+
+
+def scan_dependency_uses(package, path, unavailable):
+    """Reject qualified crate names/imports while ignoring comments and string data."""
+    source = uncomment(path.read_text())
+    # Keep offsets stable so import diagnostics point at the original source line.
+    chars = list(source)
+    for match in LEXEME.finditer(source):
+        chars[match.start():match.end()] = ["\n" if char == "\n" else " " for char in match.group()]
+    code = "".join(chars)
+    findings = []
+    for alias, reason in unavailable.items():
+        identifier = re.escape(alias)
+        pattern = rf'\b{identifier}\s*::|\b(?:use|extern\s+crate)\s+{identifier}\b'
+        if match := re.search(pattern, code):
+            findings.append(Finding(package, path, code.count("\n", 0, match.start()) + 1,
+                                    f"unavailable dev-dependency {alias}: {reason}; move this proof to a repository lane"))
+    return findings
+
+
 def scan_crate(package, crate):
     """Visit support modules too, without traversing nested consumer packages."""
+    manifest = tomllib.loads((crate / "Cargo.toml").read_text())
+    unavailable = unavailable_dev_dependencies(package, manifest)
     findings = []
     for directory in ("src", "tests", "examples", "benches"):
         # The facade's examples/ is a repository application collection, with no
         # Cargo example targets of its own. A future declared/autodiscovered
         # target re-enables the scan; nested application packages stay excluded.
         if crate == ROOT and directory == "examples":
-            manifest = tomllib.loads((crate / "Cargo.toml").read_text())
             examples = crate / "examples"
             if not manifest.get("example") and not list(examples.glob("*.rs")) and not list(examples.glob("*/main.rs")):
                 continue
@@ -292,6 +342,8 @@ def scan_crate(package, crate):
                 # scripts and Rust. Rust-only include/path patterns simply do
                 # not occur in the other support languages.
                 findings.extend(scan_file(package, crate, path))
+                if path.suffix == ".rs":
+                    findings.extend(scan_dependency_uses(package, path, unavailable))
     return findings
 
 
