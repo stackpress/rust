@@ -1,0 +1,78 @@
+{
+  "stackpress-leptos": [
+    "src/rich.rs:215: include_str!../../../examples/ui-format/corpus.json missing from package"
+  ],
+  "stackpress-sql": [
+    "tests/harness.rs:3: #[path] ../../test-support/harness.rs missing from package",
+    "tests/network.rs:6: #[path] ../../test-support/harness.rs missing from package"
+  ],
+  "stackpress-sql-sqlite": [
+    "src/maintenance/tests.rs:16: #[path] ../../../../../examples/generated-workspace/support/watchdog.rs missing from package"
+  ],
+  "stackpress-sql-postgres": [
+    "src/tests/m1.rs:5: #[path] ../../../test-support/harness.rs missing from package",
+    "src/tests/m2.rs:5: #[path] ../../../test-support/harness.rs missing from package",
+    "tests/m0.rs:5: #[path] ../../test-support/harness.rs missing from package"
+  ],
+  "stackpress-sql-mysql": [
+    "src/tests.rs:4: #[path] ../../sql-postgres/src/tests/process.rs missing from package",
+    "src/tests/g37.rs:6: include_str!../../../../framework/framework-sql/tests/fixtures/g37-ddl.json missing from package",
+    "src/tests/m1.rs:5: #[path] ../../../test-support/harness.rs missing from package",
+    "src/tests/m1.rs:179: #[path] ../../../sql-postgres/src/tests/support/process.rs missing from package",
+    "src/tests/m2.rs:5: #[path] ../../../test-support/harness.rs missing from package",
+    "src/tests/m2.rs:180: #[path] ../../../sql-postgres/src/tests/support/process.rs missing from package",
+    "src/tests/m2.rs:184: #[path] ../../../sql-postgres/src/tests/support/diagnostics.rs missing from package",
+    "src/tests/m2.rs:188: #[path] ../../../sql-postgres/src/tests/support/contract.rs missing from package",
+    "src/tests/m2.rs:190: #[path] ../../../sql-postgres/src/tests/support/stress.rs missing from package",
+    "tests/m0.rs:5: #[path] ../../test-support/harness.rs missing from package"
+  ],
+  "stackpress-server": [
+    "src/core_tests.rs:19: #[path] ../../../lib/tests/support/watchdog.rs missing from package",
+    "tests/concurrency.rs:17: #[path] ../../../lib/tests/support/watchdog.rs missing from package",
+    "tests/ownership.rs:7: #[path] ../../../lib/tests/support/watchdog.rs missing from package"
+  ],
+  "stackpress-cli": [
+    "src/lib.rs:41: #[path] ../../../crates/lib/tests/support/watchdog.rs missing from package",
+    "tests/entry_contracts.rs:18: #[path] ../../../crates/lib/tests/support/watchdog.rs missing from package",
+    "tests/prompt_contracts.rs:20: #[path] ../../../crates/lib/tests/support/watchdog.rs missing from package",
+    "tests/render_contracts.rs:12: #[path] ../../../crates/lib/tests/support/watchdog.rs missing from package",
+    "tests/run_contracts.rs:26: #[path] ../../../crates/lib/tests/support/watchdog.rs missing from package",
+    "tests/tty_contracts.rs:19: #[path] ../../../crates/lib/tests/support/watchdog.rs missing from package",
+    "tests/tty_prompt_contracts.rs:20: #[path] ../../../crates/lib/tests/support/watchdog.rs missing from package"
+  ],
+  "stackpress-framework-view": [
+    "tests/leptos_cleanup.rs:166: #[path] ../../../lib/tests/support/watchdog.rs missing from package"
+  ],
+  "stackpress-framework-schema": [
+    "tests/source_emission.rs:57: include_str!../../framework-session/schema.idea missing from package",
+    "tests/source_emission.rs:62: include_str!../../framework-api/schema.idea missing from package",
+    "tests/source_graph.rs:22: include_str!../../framework-session/schema.idea missing from package",
+    "tests/source_graph.rs:27: include_str!../../framework-api/schema.idea missing from package"
+  ],
+  "stackpress-framework-sql": [
+    "src/migrations/faults.rs:6: #[path] ../../../../../examples/generated-workspace/support/watchdog.rs missing from package",
+    "tests/conflict.rs:11: #[path] ../../../../examples/generated-workspace/support/watchdog.rs missing from package",
+    "tests/executor_budgets.rs:12: #[path] ../../../../examples/generated-workspace/support/watchdog.rs missing from package",
+    "tests/m3.rs:12: #[path] ../../../../examples/generated-workspace/support/watchdog.rs missing from package",
+    "tests/m3_seeds.rs:13: #[path] ../../../../examples/generated-workspace/support/watchdog.rs missing from package",
+    "tests/main/codegen.rs:118: include_str!../../../../../examples/generated-workspace/contracts/matrix.idea missing from package",
+    "tests/main/codegen.rs:119: include_str!../../../../../examples/generated-workspace/app/schema.idea missing from package",
+    "tests/main/codegen.rs:120: include_str!../../../../../examples/generated-workspace/app/native.idea missing from package",
+    "tests/main/codegen.rs:121: include_str!../../../../../examples/generated-workspace/app/names.idea missing from package",
+    "tests/main/source_models/emission.rs:78: include_str!../../../../framework-session/schema.idea missing from package",
+    "tests/main/source_models/mod.rs:79: include_str!../../../../framework-session/schema.idea missing from package",
+    "tests/main/source_models/mod.rs:84: include_str!../../../../framework-api/schema.idea missing from package",
+    "tests/main/source_models/ownership.rs:27: #[path] ../../../../../../examples/generated-workspace/support/watchdog.rs missing from package",
+    "tests/migrations.rs:16: #[path] ../../../../examples/generated-workspace/support/watchdog.rs missing from package",
+    "tests/proofs/lengths/main.rs:2: mod generated missing from package",
+    "tests/setup.rs:4: #[path] ../../../sql/sql/examples/support/mod.rs missing from package",
+    "tests/storage_length.rs:10: #[path] ../../../../examples/generated-workspace/support/watchdog.rs missing from package"
+  ],
+  "stackpress-framework-admin": [
+    "tests/source.rs:23: include_str!../../framework-session/schema.idea missing from package",
+    "tests/source.rs:28: include_str!../../framework-api/schema.idea missing from package"
+  ],
+  "stackpress-framework": [
+    "tests/cases/generated_family.rs:14: include_str!../../consumers/build-host/source.idea missing from package"
+  ]
+}

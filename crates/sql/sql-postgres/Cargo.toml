@@ -4,10 +4,16 @@ description = "Bounded native PostgreSQL adapter for Stackpress SQL"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
-publish.workspace = true
+publish = true
+repository.workspace = true
+readme = "README.md"
+keywords.workspace = true
+categories = ["database"]
+license.workspace = true
+include = ["/src/**", "/README.md", "/LICENSE", "/*.md", "/tests/**", "/examples/**", "/docs/**/*.md", "/third-party/**", "/data/**", "/*.idea"]
 
 [dependencies]
-stackpress-sql = { path = "../sql" }
+stackpress-sql = { path = "../sql", version = "0.1.0" }
 sqlx = { version = "=0.9.0", default-features = false, features = ["runtime-tokio", "postgres", "tls-rustls-ring", "json"] }
 tokio = { version = "1", features = ["rt", "sync", "time"] }
 serde = { version = "1", features = ["derive"] }
@@ -16,7 +22,7 @@ serde_json = { version = "1", features = ["raw_value"] }
 [dev-dependencies]
 stackpress-framework-schema = { path = "../../framework/framework-schema" }
 stackpress-framework-sql = { path = "../../framework/framework-sql" }
-stackpress-sql-sqlite = { path = "../sql-sqlite" }
+stackpress-sql-sqlite = { path = "../sql-sqlite", version = "0.1.0" }
 tokio = { version = "1", features = ["macros", "rt-multi-thread", "sync", "time"] }
 
 [[test]]

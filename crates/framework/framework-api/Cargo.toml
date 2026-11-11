@@ -4,7 +4,13 @@ description = "Source-compatible API configuration and invocation mechanics"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
-publish.workspace = true
+publish = true
+repository.workspace = true
+readme = "README.md"
+keywords.workspace = true
+categories = ["web-programming"]
+license-file = "LICENSE"
+include = ["/src/**", "/README.md", "/LICENSE", "/*.md", "/tests/**", "/examples/**", "/docs/**/*.md", "/third-party/**", "/data/**", "/*.idea"]
 autotests = false
 
 [[test]]
@@ -22,35 +28,35 @@ ui-hydrate = ["ui", "leptos/hydrate", "stackpress-leptos/hydrate", "stackpress-f
 ui-csr = ["ui", "leptos/csr", "stackpress-leptos/csr", "stackpress-framework-admin/csr"]
 
 [dependencies]
-stackpress-lib = { path = "../../lib" }
+stackpress-lib = { path = "../../lib", version = "0.1.0" }
 
-stackpress-framework-schema = { path = "../framework-schema" }
+stackpress-framework-schema = { path = "../framework-schema", version = "0.1.0" }
 serde = { version = "=1.0.229", features = ["derive"] }
 serde_json = "=1.0.154"
 leptos = { version = "=0.8.22", default-features = false, optional = true }
-stackpress-leptos = { path = "../../leptos", features = ["format"], optional = true }
-stackpress-framework-admin = { path = "../framework-admin", optional = true }
-stackpress-framework-view = { path = "../framework-view", features = ["preferences"], optional = true }
+stackpress-leptos = { path = "../../leptos", version = "0.1.0", features = ["format"], optional = true }
+stackpress-framework-admin = { path = "../framework-admin", version = "0.1.0", optional = true }
+stackpress-framework-view = { path = "../framework-view", version = "0.1.0", features = ["preferences"], optional = true }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-stackpress-idea-transformer = { path = "../../idea/idea-transformer", optional = true }
-stackpress-server = { path = "../../server/server" }
+stackpress-idea-transformer = { path = "../../idea/idea-transformer", version = "0.1.0", optional = true }
+stackpress-server = { path = "../../server/server", version = "0.1.0" }
 chrono = { version = "=0.4.45", default-features = false, features = ["clock"], optional = true }
-stackpress-framework-csrf = { path = "../framework-csrf", optional = true }
+stackpress-framework-csrf = { path = "../framework-csrf", version = "0.1.0", optional = true }
 reqwest = { version = "=0.13.4", default-features = false, features = ["rustls"] }
-stackpress-framework-session = { path = "../framework-session", features = ["native"], optional = true }
-stackpress-framework-sql = { path = "../framework-sql", optional = true }
-stackpress-sql = { path = "../../sql/sql", optional = true }
-stackpress-idea-parser = { path = "../../idea/idea-parser", optional = true }
+stackpress-framework-session = { path = "../framework-session", version = "0.1.0", features = ["native"], optional = true }
+stackpress-framework-sql = { path = "../framework-sql", version = "0.1.0", optional = true }
+stackpress-sql = { path = "../../sql/sql", version = "0.1.0", optional = true }
+stackpress-idea-parser = { path = "../../idea/idea-parser", version = "0.1.0", optional = true }
 
 [dev-dependencies]
-stackpress-framework-schema = { path = "../framework-schema", features = ["codegen", "providers"] }
-stackpress-idea-transformer = { path = "../../idea/idea-transformer" }
-stackpress-framework-sql = { path = "../framework-sql", features = ["codegen", "server", "source"] }
-stackpress-framework-session = { path = "../framework-session", features = ["server"] }
-stackpress-sql-sqlite = { path = "../../sql/sql-sqlite" }
-stackpress-sql-postgres = { path = "../../sql/sql-postgres" }
-stackpress-sql-mysql = { path = "../../sql/sql-mysql" }
+stackpress-framework-schema = { path = "../framework-schema", version = "0.1.0", features = ["codegen", "providers"] }
+stackpress-idea-transformer = { path = "../../idea/idea-transformer", version = "0.1.0" }
+stackpress-framework-sql = { path = "../framework-sql", version = "0.1.0", features = ["codegen", "server", "source"] }
+stackpress-framework-session = { path = "../framework-session", version = "0.1.0", features = ["server"] }
+stackpress-sql-sqlite = { path = "../../sql/sql-sqlite", version = "0.1.0" }
+stackpress-sql-postgres = { path = "../../sql/sql-postgres", version = "0.1.0" }
+stackpress-sql-mysql = { path = "../../sql/sql-mysql", version = "0.1.0" }
 tokio = { version = "=1.54.1", features = ["macros", "rt-multi-thread", "sync", "time"] }
 
 [lints]

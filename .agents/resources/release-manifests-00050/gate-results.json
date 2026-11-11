@@ -1,0 +1,449 @@
+[
+  {
+    "phase": "fmt",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "code": 0,
+    "command_seconds": 3.002967,
+    "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-manifests/target/00050-release"
+  },
+  {
+    "phase": "clippy-default",
+    "command": [
+      "cargo",
+      "clippy",
+      "--workspace",
+      "--locked",
+      "--offline",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0,
+    "command_seconds": 176.866396,
+    "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-manifests/target/00050-release"
+  },
+  {
+    "phase": "nextest-default",
+    "command": [
+      "cargo",
+      "nextest",
+      "run",
+      "--workspace",
+      "--locked",
+      "--offline",
+      "--all-targets",
+      "--test-threads",
+      "2",
+      "--no-fail-fast",
+      "-E",
+      "not test(tcp_watchdog)"
+    ],
+    "code": 0,
+    "command_seconds": 562.661705,
+    "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-manifests/target/00050-release"
+  },
+  {
+    "phase": "nextest-tcp-default",
+    "command": [
+      "cargo",
+      "nextest",
+      "run",
+      "--workspace",
+      "--locked",
+      "--offline",
+      "--all-targets",
+      "--test-threads",
+      "1",
+      "-E",
+      "test(tcp_watchdog)"
+    ],
+    "code": 0,
+    "command_seconds": 3.693792,
+    "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-manifests/target/00050-release"
+  },
+  {
+    "phase": "doctests-default",
+    "command": [
+      "cargo",
+      "test",
+      "--workspace",
+      "--locked",
+      "--offline",
+      "--doc"
+    ],
+    "code": 0,
+    "command_seconds": 54.975452,
+    "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-manifests/target/00050-release"
+  },
+  {
+    "phase": "rustdoc-default",
+    "command": [
+      "cargo",
+      "doc",
+      "--workspace",
+      "--locked",
+      "--offline",
+      "--no-deps"
+    ],
+    "code": 0,
+    "command_seconds": 72.112982,
+    "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-manifests/target/00050-release"
+  },
+  {
+    "phase": "clippy-compatible",
+    "command": [
+      "cargo",
+      "clippy",
+      "--workspace",
+      "--locked",
+      "--offline",
+      "--features",
+      "framework-aggregate-full,framework-aggregate-ui-session,framework-aggregate-ui-api,framework-aggregate-ui-admin,framework-aggregate-ui-view,framework-aggregate-ssr,framework-api-codegen,framework-csrf-server,framework-email-server,stackpress-framework/codegen,stackpress-framework-schema/providers,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-schema/source,stackpress-framework-sql/source",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0,
+    "command_seconds": 134.137396,
+    "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-manifests/target/00050-release"
+  },
+  {
+    "phase": "nextest-compatible",
+    "command": [
+      "cargo",
+      "nextest",
+      "run",
+      "--workspace",
+      "--locked",
+      "--offline",
+      "--features",
+      "framework-aggregate-full,framework-aggregate-ui-session,framework-aggregate-ui-api,framework-aggregate-ui-admin,framework-aggregate-ui-view,framework-aggregate-ssr,framework-api-codegen,framework-csrf-server,framework-email-server,stackpress-framework/codegen,stackpress-framework-schema/providers,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-schema/source,stackpress-framework-sql/source",
+      "--all-targets",
+      "--test-threads",
+      "2",
+      "--no-fail-fast",
+      "-E",
+      "not test(tcp_watchdog)"
+    ],
+    "code": 0,
+    "command_seconds": 690.59584,
+    "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-manifests/target/00050-release"
+  },
+  {
+    "phase": "nextest-tcp-compatible",
+    "command": [
+      "cargo",
+      "nextest",
+      "run",
+      "--workspace",
+      "--locked",
+      "--offline",
+      "--features",
+      "framework-aggregate-full,framework-aggregate-ui-session,framework-aggregate-ui-api,framework-aggregate-ui-admin,framework-aggregate-ui-view,framework-aggregate-ssr,framework-api-codegen,framework-csrf-server,framework-email-server,stackpress-framework/codegen,stackpress-framework-schema/providers,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-schema/source,stackpress-framework-sql/source",
+      "--all-targets",
+      "--test-threads",
+      "1",
+      "-E",
+      "test(tcp_watchdog)"
+    ],
+    "code": 0,
+    "command_seconds": 2.485456,
+    "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-manifests/target/00050-release"
+  },
+  {
+    "phase": "doctests-compatible",
+    "command": [
+      "cargo",
+      "test",
+      "--workspace",
+      "--locked",
+      "--offline",
+      "--features",
+      "framework-aggregate-full,framework-aggregate-ui-session,framework-aggregate-ui-api,framework-aggregate-ui-admin,framework-aggregate-ui-view,framework-aggregate-ssr,framework-api-codegen,framework-csrf-server,framework-email-server,stackpress-framework/codegen,stackpress-framework-schema/providers,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-schema/source,stackpress-framework-sql/source",
+      "--doc"
+    ],
+    "code": 0,
+    "command_seconds": 46.646808,
+    "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-manifests/target/00050-release"
+  },
+  {
+    "phase": "rustdoc-compatible",
+    "command": [
+      "cargo",
+      "doc",
+      "--workspace",
+      "--locked",
+      "--offline",
+      "--features",
+      "framework-aggregate-full,framework-aggregate-ui-session,framework-aggregate-ui-api,framework-aggregate-ui-admin,framework-aggregate-ui-view,framework-aggregate-ssr,framework-api-codegen,framework-csrf-server,framework-email-server,stackpress-framework/codegen,stackpress-framework-schema/providers,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-schema/source,stackpress-framework-sql/source",
+      "--no-deps"
+    ],
+    "code": 0,
+    "command_seconds": 56.592319,
+    "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-manifests/target/00050-release"
+  },
+  {
+    "phase": "aggregate-graphs",
+    "command": [
+      "python3",
+      "crates/framework/framework/consumers/graphs.py",
+      "--check"
+    ],
+    "code": 0,
+    "command_seconds": 475.233797,
+    "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-manifests/target/00050-release"
+  },
+  {
+    "phase": "aggregate-consumers",
+    "command": [
+      "python3",
+      "crates/framework/framework/consumers/run.py"
+    ],
+    "code": 0,
+    "command_seconds": 1509.572929,
+    "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-manifests/target/00050-release"
+  },
+  {
+    "phase": "session-graphs",
+    "command": [
+      "python3",
+      "crates/framework/framework-session/consumers/graphs.py",
+      "--check"
+    ],
+    "code": 0,
+    "command_seconds": 149.63213,
+    "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-manifests/target/00050-release",
+    "log": "target/evidence-00050/gate-logs/ (local, not committed) session-graphs.log"
+  },
+  {
+    "phase": "session-consumers",
+    "command": [
+      "python3",
+      "crates/framework/framework-session/consumers/run.py"
+    ],
+    "code": 0,
+    "command_seconds": 353.043508,
+    "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-manifests/target/00050-release",
+    "log": "target/evidence-00050/gate-logs/ (local, not committed) session-consumers.log"
+  },
+  {
+    "phase": "generated-workspace",
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "generated-workspace-tool",
+      "--locked",
+      "--offline",
+      "--",
+      "emit",
+      "generate",
+      "--check",
+      "true"
+    ],
+    "code": 0,
+    "command_seconds": 19.335056,
+    "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-manifests/target/00050-release",
+    "log": "target/evidence-00050/gate-logs/ (local, not committed) generated-workspace.log"
+  },
+  {
+    "phase": "generated-admin",
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "generated-admin-tool",
+      "--locked",
+      "--offline",
+      "--",
+      "emit",
+      "generate",
+      "--check"
+    ],
+    "code": 0,
+    "command_seconds": 42.394151,
+    "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-manifests/target/00050-release",
+    "log": "target/evidence-00050/gate-logs/ (local, not committed) generated-admin.log"
+  },
+  {
+    "phase": "api-checkpoint",
+    "command": [
+      "cargo",
+      "run",
+      "--manifest-path",
+      "examples/api-checkpoint/tool/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--",
+      "--check"
+    ],
+    "code": 0,
+    "command_seconds": 121.912241,
+    "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-manifests/target/00050-release/api-checkpoint",
+    "log": "target/evidence-00050/gate-logs/ (local, not committed) api-checkpoint.log"
+  },
+  {
+    "phase": "regenerate_session_models",
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "stackpress-framework-session",
+      "--example",
+      "regenerate_session_models",
+      "--locked",
+      "--offline",
+      "--features",
+      "auth-server,leptos-ssr",
+      "--",
+      "--check"
+    ],
+    "code": 0,
+    "command_seconds": 40.301323,
+    "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-manifests/target/00050-release",
+    "log": "target/evidence-00050/gate-logs/ (local, not committed) regenerate_session_models.log"
+  },
+  {
+    "phase": "regenerate_api_models",
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "stackpress-framework-api",
+      "--example",
+      "regenerate_api_models",
+      "--locked",
+      "--offline",
+      "--features",
+      "sql,codegen,ui-ssr",
+      "--",
+      "--check"
+    ],
+    "code": 0,
+    "command_seconds": 52.230819,
+    "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-manifests/target/00050-release",
+    "log": "target/evidence-00050/gate-logs/ (local, not committed) regenerate_api_models.log"
+  },
+  {
+    "phase": "regenerate_aggregate_models",
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "stackpress-framework",
+      "--example",
+      "regenerate_aggregate_models",
+      "--locked",
+      "--offline",
+      "--features",
+      "full,codegen",
+      "--",
+      "--check"
+    ],
+    "code": 0,
+    "command_seconds": 30.106043,
+    "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-manifests/target/00050-release",
+    "log": "target/evidence-00050/gate-logs/ (local, not committed) regenerate_aggregate_models.log"
+  },
+  {
+    "phase": "blog",
+    "command": [
+      "python3",
+      "tools/examples/blog/gate.py"
+    ],
+    "code": 0,
+    "command_seconds": 1818.999324,
+    "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-manifests/target/00050-blog/native",
+    "log": "target/evidence-00050/gate-logs/ (local, not committed) blog.log"
+  },
+  {
+    "phase": "checker-controls",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tools/release",
+      "-p",
+      "test_*.py"
+    ],
+    "code": 0,
+    "command_seconds": 0.058826,
+    "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-manifests/target/00050-release",
+    "log": "target/evidence-00050/gate-logs/ (local, not committed) checker-controls.log"
+  },
+  {
+    "phase": "readmes",
+    "command": [
+      "python3",
+      "tools/release/check_readmes.py"
+    ],
+    "code": 0,
+    "command_seconds": 2.169722,
+    "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-manifests/target/00050-release",
+    "log": "target/evidence-00050/gate-logs/ (local, not committed) readmes.log"
+  },
+  {
+    "phase": "packages-and-dry-runs",
+    "command": [
+      "python3",
+      "tools/release/package_workspace.py",
+      "--pending-tests",
+      "--allow-dirty"
+    ],
+    "code": 1,
+    "command_seconds": 13.65234,
+    "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-manifests/target/00050-release",
+    "log": "target/evidence-00050/gate-logs/ (local, not committed) packages-and-dry-runs.log"
+  },
+  {
+    "phase": "facade",
+    "command": [
+      "python3",
+      "tools/release/check_facade.py"
+    ],
+    "code": 0,
+    "command_seconds": 658.95458,
+    "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-manifests/target/00050-release",
+    "log": "target/evidence-00050/gate-logs/ (local, not committed) facade.log"
+  },
+  {
+    "phase": "checker-controls",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tools/release",
+      "-p",
+      "test_*.py"
+    ],
+    "code": 0,
+    "command_seconds": 0.113797,
+    "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-manifests/target/00050-release",
+    "log": "target/evidence-00050/gate-logs/ (local, not committed) checker-controls-attempt-2.log"
+  },
+  {
+    "phase": "packages-and-dry-runs",
+    "command": [
+      "python3",
+      "tools/release/package_workspace.py",
+      "--pending-tests",
+      "--allow-dirty"
+    ],
+    "code": 0,
+    "command_seconds": 50.278641,
+    "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-manifests/target/00050-release",
+    "log": "target/evidence-00050/gate-logs/ (local, not committed) packages-and-dry-runs-attempt-2.log"
+  }
+]

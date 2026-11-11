@@ -1,0 +1,60 @@
+{
+  "candidate_count": 23,
+  "licences": {
+    "Apache-2.0": 12,
+    "Stackpress": 11
+  },
+  "versioned_internal_declarations": {
+    "dependencies": 86,
+    "dev-dependencies": 31
+  },
+  "path_only_private_dev_dependencies": [
+    [
+      "stackpress-sql-postgres",
+      "generated-workspace-app"
+    ],
+    [
+      "stackpress-sql-mysql",
+      "generated-workspace-app"
+    ]
+  ],
+  "path_only_later_dev_dependencies": [
+    [
+      "stackpress-sql-sqlite",
+      "stackpress-server"
+    ],
+    [
+      "stackpress-sql-postgres",
+      "stackpress-framework-schema"
+    ],
+    [
+      "stackpress-sql-postgres",
+      "stackpress-framework-sql"
+    ],
+    [
+      "stackpress-sql-mysql",
+      "stackpress-framework-schema"
+    ],
+    [
+      "stackpress-sql-mysql",
+      "stackpress-framework-sql"
+    ],
+    [
+      "stackpress-framework-email",
+      "stackpress-framework-sql"
+    ],
+    [
+      "stackpress-framework-email",
+      "stackpress-framework-schema"
+    ],
+    [
+      "stackpress-framework-email",
+      "stackpress-framework-session"
+    ]
+  ],
+  "root_registry_tuples": 699,
+  "root_lock_byte_identical": true,
+  "existing_nested_locks_unchanged": true,
+  "source_and_fixture_changes": [],
+  "original_licence_and_notice_hashes_checked": 16
+}

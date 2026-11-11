@@ -1,0 +1,449 @@
+[
+  {
+    "id": "20261111T021939.387471Z-a1214fb91073",
+    "label": "00050 fresh effort clean",
+    "status": "passed",
+    "kind": "clean",
+    "scope": "workspace",
+    "command": [
+      "cargo",
+      "clean"
+    ],
+    "command_seconds": 0.56882,
+    "cargo_build_seconds": null
+  },
+  {
+    "id": "20261111T021940.736406Z-470104598e56",
+    "label": "00050 fresh effort coverage clean",
+    "status": "passed",
+    "kind": "clean",
+    "scope": "workspace",
+    "command": [
+      "cargo",
+      "llvm-cov",
+      "clean",
+      "--workspace"
+    ],
+    "command_seconds": 0.795793,
+    "cargo_build_seconds": null
+  },
+  {
+    "id": "20261111T022112.160223Z-9a28717fcf46",
+    "label": "00050 metadata offline manifest baseline",
+    "status": "passed",
+    "kind": "check",
+    "scope": "workspace",
+    "command": [
+      "cargo",
+      "metadata",
+      "--offline",
+      "--no-deps",
+      "--format-version",
+      "1"
+    ],
+    "command_seconds": 0.048281,
+    "cargo_build_seconds": null
+  },
+  {
+    "id": "20261111T022319.882471Z-0bdc8aeeebd8",
+    "label": "00050 package list and source-reference baseline",
+    "status": "failed",
+    "kind": "check",
+    "scope": "selected",
+    "command": [
+      "python3",
+      "tools/release/check_packages.py"
+    ],
+    "command_seconds": 12.826043,
+    "cargo_build_seconds": null
+  },
+  {
+    "id": "20261111T022446.368798Z-9c2d5e80e3cf",
+    "label": "00050 README snippets baseline",
+    "status": "passed",
+    "kind": "test",
+    "scope": "consumer",
+    "command": [
+      "python3",
+      "tools/release/check_readmes.py"
+    ],
+    "command_seconds": 43.797894,
+    "cargo_build_seconds": 41.94
+  },
+  {
+    "id": "20261111T022523.358792Z-73adf2729c28",
+    "label": "00050 round 1 reference checker negative controls",
+    "status": "passed",
+    "kind": "test",
+    "scope": "other",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tools/release",
+      "-p",
+      "test_references.py"
+    ],
+    "command_seconds": 0.123539,
+    "cargo_build_seconds": null
+  },
+  {
+    "id": "20261111T022524.089491Z-71d222aad2ce",
+    "label": "00050 round 1 corrected package reference inventory",
+    "status": "failed",
+    "kind": "check",
+    "scope": "selected",
+    "command": [
+      "python3",
+      "tools/release/check_packages.py"
+    ],
+    "command_seconds": 14.452664,
+    "cargo_build_seconds": null
+  },
+  {
+    "id": "20261111T022551.912499Z-695cfae41c79",
+    "label": "00050 facade default build and imports baseline",
+    "status": "failed",
+    "kind": "check",
+    "scope": "consumer",
+    "command": [
+      "python3",
+      "tools/release/check_facade.py",
+      "--only",
+      "default"
+    ],
+    "command_seconds": 14.082882,
+    "cargo_build_seconds": null
+  },
+  {
+    "id": "20261111T022658.081816Z-b20a7600afc2",
+    "label": "00050 round 2 facade default imports",
+    "status": "passed",
+    "kind": "check",
+    "scope": "consumer",
+    "command": [
+      "python3",
+      "tools/release/check_facade.py",
+      "--only",
+      "default"
+    ],
+    "command_seconds": 0.644017,
+    "cargo_build_seconds": 0.26
+  },
+  {
+    "id": "20261111T022659.026197Z-bd86ddb601b9",
+    "label": "00050 round 2 package boundaries with known test omissions",
+    "status": "passed",
+    "kind": "check",
+    "scope": "selected",
+    "command": [
+      "python3",
+      "tools/release/check_packages.py",
+      "--pending-tests"
+    ],
+    "command_seconds": 13.138734,
+    "cargo_build_seconds": null
+  },
+  {
+    "id": "20261111T022821.679111Z-b9e8114d6641",
+    "label": "00050 round 3 checker consistency and comments",
+    "status": "passed",
+    "kind": "test",
+    "scope": "other",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tools/release",
+      "-p",
+      "test_references.py"
+    ],
+    "command_seconds": 0.152333,
+    "cargo_build_seconds": null
+  },
+  {
+    "id": "20261111T022822.398328Z-040731bc0bdc",
+    "label": "00050 round 3 README documentation verification",
+    "status": "passed",
+    "kind": "test",
+    "scope": "consumer",
+    "command": [
+      "python3",
+      "tools/release/check_readmes.py"
+    ],
+    "command_seconds": 1.815492,
+    "cargo_build_seconds": 0.38
+  },
+  {
+    "id": "20261111T022914.830511Z-04c5c5972dc5",
+    "label": "00050 full gate manifests packaging consumers facade",
+    "status": "interrupted",
+    "kind": "test",
+    "scope": "workspace",
+    "command": [
+      "python3",
+      "tools/release/gate.py",
+      "--pending-tests",
+      "--allow-dirty"
+    ],
+    "command_seconds": 3788.825625,
+    "cargo_build_seconds": 2744.99
+  },
+  {
+    "id": "20261111T025527.237846Z-a54c173fea86",
+    "label": "00050 completed consumer target budget monitor",
+    "status": "failed",
+    "kind": "clean",
+    "scope": "other",
+    "command": [
+      "python3",
+      "/private/tmp/00050-target-budget.py"
+    ],
+    "command_seconds": 512.598686,
+    "cargo_build_seconds": null
+  },
+  {
+    "id": "20261111T025919.072817Z-aab8751447a5",
+    "label": "00050 retire completed compile-fail scratch outputs near budget",
+    "status": "passed",
+    "kind": "clean",
+    "scope": "other",
+    "command": [
+      "python3",
+      "-c",
+      "import os,pathlib,shutil; p=pathlib.Path(os.environ[\"CARGO_TARGET_DIR\"])/\"tests\"; assert p.resolve().parent==pathlib.Path.cwd()/\"target/00050-release\"; shutil.rmtree(p); print(\"Retired completed test scratch:\",p)"
+    ],
+    "command_seconds": 2.637823,
+    "cargo_build_seconds": null
+  },
+  {
+    "id": "20261111T030625.331848Z-8de20c86a84f",
+    "label": "00050 completed consumer target budget monitor retry",
+    "status": "passed",
+    "kind": "clean",
+    "scope": "other",
+    "command": [
+      "python3",
+      "/private/tmp/00050-target-budget.py"
+    ],
+    "command_seconds": 4893.872082,
+    "cargo_build_seconds": null
+  },
+  {
+    "id": "20261111T033251.700536Z-f49797e52dad",
+    "label": "00050 full gate continuation with approved cached Playwright",
+    "status": "failed",
+    "kind": "test",
+    "scope": "workspace",
+    "command": [
+      "python3",
+      "tools/release/gate.py",
+      "--pending-tests",
+      "--allow-dirty",
+      "--only",
+      "session-graphs",
+      "--only",
+      "session-consumers",
+      "--only",
+      "generated-workspace",
+      "--only",
+      "generated-admin",
+      "--only",
+      "api-checkpoint",
+      "--only",
+      "regenerate_session_models",
+      "--only",
+      "regenerate_api_models",
+      "--only",
+      "regenerate_aggregate_models",
+      "--only",
+      "blog",
+      "--only",
+      "checker-controls",
+      "--only",
+      "readmes",
+      "--only",
+      "packages-and-dry-runs",
+      "--only",
+      "facade"
+    ],
+    "command_seconds": 3302.865951,
+    "cargo_build_seconds": 3022.6899999999996
+  },
+  {
+    "id": "20261111T034558.600185Z-852c34e1e1c7",
+    "label": "00050 retire completed checkpoint and WASM proof targets near budget",
+    "status": "passed",
+    "kind": "clean",
+    "scope": "other",
+    "command": [
+      "python3",
+      "-c",
+      "import json,os,pathlib,shutil; b=pathlib.Path(os.environ[\"CARGO_TARGET_DIR\"]); rows=json.loads(pathlib.Path(\".agents/resources/release-manifests-00050/gate-results.json\").read_text()); done={r[\"phase\"] for r in rows if r[\"code\"]==0}; assert {\"api-checkpoint\",\"aggregate-graphs\",\"session-graphs\"}<=done; [shutil.rmtree(b/n) for n in [\"api-checkpoint\",\"wasm32-unknown-unknown\"] if (b/n).is_dir()]; print(\"Retired completed checkpoint and WASM target outputs\")"
+    ],
+    "command_seconds": 1.11445,
+    "cargo_build_seconds": null
+  },
+  {
+    "id": "20261111T034746.816447Z-1036c5ce6702",
+    "label": "00050 retire completed workspace lint test and generation target before archive proofs",
+    "status": "passed",
+    "kind": "clean",
+    "scope": "other",
+    "command": [
+      "python3",
+      "-c",
+      "import json,os,pathlib,shutil; b=pathlib.Path(os.environ[\"CARGO_TARGET_DIR\"]); rows=json.loads(pathlib.Path(\".agents/resources/release-manifests-00050/gate-results.json\").read_text()); done={r[\"phase\"] for r in rows if r[\"code\"]==0}; assert {\"regenerate_aggregate_models\",\"regenerate_api_models\",\"regenerate_session_models\",\"session-consumers\"}<=done; p=b/\"debug\"; assert p.resolve().parent==pathlib.Path.cwd()/\"target/00050-release\"; shutil.rmtree(p); print(\"Retired completed workspace build output before independent package/facade builds\")"
+    ],
+    "command_seconds": 4.492209,
+    "cargo_build_seconds": null
+  },
+  {
+    "id": "20261111T040426.212805Z-904051452f65",
+    "label": "00050 final manifest source and lock invariants",
+    "status": "passed",
+    "kind": "check",
+    "scope": "workspace",
+    "command": [
+      "python3",
+      "/private/tmp/00050-invariants.py"
+    ],
+    "command_seconds": 0.833814,
+    "cargo_build_seconds": null
+  },
+  {
+    "id": "20261111T042121.067482Z-21558701eea2",
+    "label": "00050 Cargo-supported workspace package exclude-lockfile dev-cycle probe",
+    "status": "passed",
+    "kind": "check",
+    "scope": "workspace",
+    "command": [
+      "python3",
+      "/private/tmp/00050-package-probe.py"
+    ],
+    "command_seconds": 161.41454,
+    "cargo_build_seconds": 2314.16
+  },
+  {
+    "id": "20261111T042644.102717Z-3ff0729649e0",
+    "label": "00050 later dev-edge policy and packaged-test negative controls",
+    "status": "passed",
+    "kind": "check",
+    "scope": "selected",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tools/release",
+      "-p",
+      "test_*.py"
+    ],
+    "command_seconds": 0.088244,
+    "cargo_build_seconds": null
+  },
+  {
+    "id": "20261111T042644.452959Z-e51ffeaab226",
+    "label": "00050 package lists after first-release dev-edge correction",
+    "status": "failed",
+    "kind": "check",
+    "scope": "selected",
+    "command": [
+      "python3",
+      "tools/release/check_packages.py",
+      "--pending-tests"
+    ],
+    "command_seconds": 19.117132,
+    "cargo_build_seconds": null
+  },
+  {
+    "id": "20261111T042821.772496Z-f87a55109173",
+    "label": "00050 final packaging after approved later-dev correction",
+    "status": "passed",
+    "kind": "test",
+    "scope": "workspace",
+    "command": [
+      "python3",
+      "tools/release/gate.py",
+      "--pending-tests",
+      "--allow-dirty",
+      "--only",
+      "checker-controls",
+      "--only",
+      "packages-and-dry-runs"
+    ],
+    "command_seconds": 50.506669,
+    "cargo_build_seconds": 200.65000000000003
+  },
+  {
+    "id": "20261111T042849.045880Z-7d456e6330b0",
+    "label": "00050 final manifest lock notice and first-release edge invariants",
+    "status": "passed",
+    "kind": "check",
+    "scope": "selected",
+    "command": [
+      "python3",
+      "/private/tmp/00050-invariants.py"
+    ],
+    "command_seconds": 0.763384,
+    "cargo_build_seconds": null
+  },
+  {
+    "id": "20261111T043148.965381Z-13d72e3621e2",
+    "label": "00050 final Agent Workspace validation",
+    "status": "failed",
+    "kind": "check",
+    "scope": "other",
+    "command": [
+      "python3",
+      ".agents/scripts/validate-agent-workspace.py"
+    ],
+    "command_seconds": 0.36038,
+    "cargo_build_seconds": null
+  },
+  {
+    "id": "20261111T043149.567133Z-9dece8fb925a",
+    "label": "00050 final release diff and scoped source ownership",
+    "status": "passed",
+    "kind": "check",
+    "scope": "selected",
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "command_seconds": 0.030185,
+    "cargo_build_seconds": null
+  },
+  {
+    "id": "20261111T043204.259541Z-c37d0b4f2d95",
+    "label": "00050 final Agent Workspace validation after link-label fix",
+    "status": "failed",
+    "kind": "check",
+    "scope": "other",
+    "command": [
+      "python3",
+      ".agents/scripts/validate-agent-workspace.py"
+    ],
+    "command_seconds": 0.389574,
+    "cargo_build_seconds": null
+  },
+  {
+    "id": "20261111T043249.064428Z-5c496b894876",
+    "label": "00050 final evidence receipt and diff assertions",
+    "status": "passed",
+    "kind": "check",
+    "scope": "other",
+    "command": [
+      "python3",
+      "/private/tmp/00050-close-evidence.py"
+    ],
+    "command_seconds": 0.889098,
+    "cargo_build_seconds": null
+  }
+]

@@ -1,0 +1,18 @@
+{
+  "LICENSE": "9149574a444c10ca655b0bf0e92f9ab9b4142a6031bb24f459dbb2008f70d28e",
+  "crates/framework/framework-api/third-party/lucide/FEATHER-LICENSE": "dc21952bfc2285ae2ebcea43fb83359e3ee248d78d06037a0c6562669ecb5dea",
+  "crates/framework/framework-api/third-party/lucide/LICENSE": "b495047bd93a9b06913511076f504daba17d5bbeb3e0650f3bb53a4220329c57",
+  "crates/framework/framework-api/third-party/lucide/NOTICE": "9f2c7af08a743d833e4e75c49b465b1a754cdb4f3dbc7683df0a3fd9fa813559",
+  "crates/framework/framework-email/data/nodemailer-LICENSE": "4f814dcacd2da618d62829ea1f6238701cf421f18a6b36c91c5d8212245e2c78",
+  "crates/framework/framework-session/third-party/frui/LICENSE": "777a0b341e7a60574269d6fa6b324ddd7d4ee0284523052c3e8e05fa9c725e41",
+  "crates/framework/framework-session/third-party/frui/NOTICE": "c151edabed3a2f4aa0cf2870723f600ee20045a1f47b3b180b7909fa48d489d9",
+  "crates/framework/framework-session/third-party/lucide/FEATHER-LICENSE": "dc21952bfc2285ae2ebcea43fb83359e3ee248d78d06037a0c6562669ecb5dea",
+  "crates/framework/framework-session/third-party/lucide/LICENSE": "b495047bd93a9b06913511076f504daba17d5bbeb3e0650f3bb53a4220329c57",
+  "crates/framework/framework-session/third-party/lucide/NOTICE": "562b88d9ac619145ab55f09d8ff97dc98f80f4c893dd7555aef8f9d5c0a73d1b",
+  "crates/idea/idea-parser/LICENSE": "033ff066a8d5efa2a11686a2b2175af303cda460f7563a48b7d1d4041f43076c",
+  "crates/leptos/third-party/frui/LICENSE": "777a0b341e7a60574269d6fa6b324ddd7d4ee0284523052c3e8e05fa9c725e41",
+  "crates/leptos/third-party/frui/NOTICE": "770f066a69a1aa53fcc3a686f2e440c15e56302a5bb5593f5b9bb95d6ce4174b",
+  "crates/leptos/third-party/lucide/FEATHER-LICENSE": "dc21952bfc2285ae2ebcea43fb83359e3ee248d78d06037a0c6562669ecb5dea",
+  "crates/leptos/third-party/lucide/LICENSE": "b495047bd93a9b06913511076f504daba17d5bbeb3e0650f3bb53a4220329c57",
+  "crates/leptos/third-party/lucide/NOTICE": "f6e2980238440461ff500b8b872f7c169071a2782e5e834b694966809402f87d"
+}

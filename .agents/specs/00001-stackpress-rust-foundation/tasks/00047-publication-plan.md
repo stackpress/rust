@@ -1,10 +1,10 @@
 # Task 00047 — crates.io publication plan
 
-Status: plan prepared for coordinator/owner review; no release authorized. Snapshot: local `71c4118`, branch `trial/3-publication-plan`, 2026-11-10. Original audit findings are from that checkout and offline probes. G59/Task 00049 updates the candidate scope to 23 and removes the premade-model generator blocker; retained measured rows remain the original audit evidence.
+Status: release preparation authorized by G59/G60/G61 and Task 00050; publication remains unauthorized. The original audit below is preserved as historical evidence. Snapshot: local `71c4118`, branch `trial/3-publication-plan`, 2026-11-10. Original audit findings are from that checkout and offline probes. G59/Task 00049 updates the candidate scope to 23 and removes the premade-model generator blocker; retained measured rows remain the original audit evidence.
 
-Stackpress can be released as a family of 23 packages, with the foundation packages first and the main `stackpress` facade last. It is not ready to publish yet: internal dependencies lack registry versions, five measured crates fall below the 90% publication coverage floor. Examples and consumer fixtures should remain private to the repository.
+Stackpress can be released as a family of 23 packages, with the foundation packages first and the main `stackpress` facade last. Task 00050 resolves manifest versions, licence declarations, package metadata and README gaps; its verification results are linked below. Publication still waits for integrated package-test self-containment, the separate coverage lane and coordinator/owner release checks. Examples and consumer fixtures remain private to the repository.
 
-Start by choosing the release scope, versions, licence declarations and crate ownership. Then fix packaging boundaries, complete the release checks and publish in the order below. This plan changes no manifests, lockfiles, licences or Rust source. No login, installation, network request, push or actual publication was performed.
+G59/G60/G61 and the coordinator brief select the release scope, lockstep version and licences. Complete the remaining integrated checks and crate ownership review before the owner publishes in the order below. The original plan was read-only; Task 00050 is the separately authorized implementation. Neither task authorizes an actual upload.
 
 ## Authority and evidence
 
@@ -14,7 +14,7 @@ The [quality policy](../../../context/testing-and-quality.md) sets the 90% publi
 
 ## Complete root workspace inventory
 
-There are 51 explicitly listed members plus the root package: 52 packages total, 23 proposed releases and 29 unpublished examples. “Publishable” describes the intended role, not readiness. All currently inherit `publish = false`; every current workspace version is `0.1.0`.
+There are 51 explicitly listed members plus the root package: 52 packages total, 23 proposed releases and 29 unpublished examples. “Publishable” describes the intended role, not readiness. At the audit snapshot all inherited `publish = false`; every workspace version was `0.1.0`. Task 00050 now explicitly enables the 23 approved candidates and keeps the workspace default false.
 
 | Package | Directory | Classification | Reason |
 | --- | --- | --- | --- |
@@ -86,7 +86,7 @@ No other tracked Cargo manifests were found outside those groups and the root in
 
 ## Dependency graph and publication order
 
-Names below omit the `stackpress-` prefix except the root `stackpress`. `?` marks an optional normal dependency; target-specific native dependencies are included. An arrow is **dependent → prerequisite**. Every listed edge currently has `path` and no `version`; there are 86 normal dependency declarations, 65 optional. No candidate has a build dependency or `build.rs`. Dev-dependencies are excluded from this ordering.
+Names below omit the `stackpress-` prefix except the root `stackpress`. `?` marks an optional normal dependency; target-specific native dependencies are included. An arrow is **dependent → prerequisite**. At the audit snapshot every listed edge had `path` and no `version`; there are 86 normal dependency declarations, 65 optional. No candidate has a build dependency or `build.rs`. Dev-dependencies are excluded from this ordering.
 
 | Order | Package suffix | Internal prerequisites |
 | --- | --- | --- |
@@ -181,7 +181,7 @@ Sizes in bytes: **A** is actual compressed `.crate`; **E** is an indicative gzip
 | `framework` | 117 | 1,129,446 | 218,955 E | 101 — `framework-sql` |
 | `stackpress` | 641 | 18,413,274 | 5,010,947 E | 101 — `framework` |
 
-The facade currently lists 641 files, including **498 `.agents` files**, 117 example files and 15 tool files. Its approximately 5.01 MB compressed estimate is dominated by unrelated material; three raw coverage JSON files alone occupy about 10 MB uncompressed. Use a reviewed facade allowlist such as `src/**`, `tests/**`, `Cargo.toml`, `README.md` and owner-approved licence files. Re-run the list after this plan/evidence exists; package size grows with repository artifacts otherwise.
+At the audit snapshot the facade listed 641 files, including **498 `.agents` files**, 117 example files and 15 tool files. Its approximately 5.01 MB compressed estimate is dominated by unrelated material; three raw coverage JSON files alone occupy about 10 MB uncompressed. Use a reviewed facade allowlist such as `src/**`, `tests/**`, `Cargo.toml`, `README.md` and owner-approved licence files. Re-run the list after this plan/evidence exists; package size grows with repository artifacts otherwise.
 
 For libraries, start with `src/**`, `Cargo.toml`, package README/docs and owner-approved licence/notice files; add actual `schema.idea`, `stackpress.idea`, `third-party/**`, `data/**`, codegen templates and test/example inputs according to usage. If tests/examples ship, retain their entire supporting tree and repair escaped reads first. An `exclude` alternative may remove `consumers/**`, caches and irrelevant proof/generated snapshots, but an allowlist is easier to review. Never blanket-exclude `src/generated/**`, `.tpl`, `.idea`, SVG/CSS/JS or fixtures still referenced by code. Framework-SQL has 165 listed files and about 2.09 MB indicative payload; trim unused snapshots only after identifying which tests and consumers still need them.
 
@@ -189,9 +189,9 @@ Binaries/examples require explicit decisions. CLI is an adapter library, not an 
 
 ## Metadata and current licence declarations
 
-All 23 have a `description`. All 23 omit explicit `repository`, `readme`, `documentation`, `keywords` and `categories`; none inherits those from workspace metadata. Cargo automatically finds `README.md` in these 11: root `stackpress`, `server-http`, `sql-postgres`, `sql-mysql`, `leptos`, `framework-admin`, `framework-api`, `framework-csrf`, `framework-email`, `framework-session`, `framework`. The other 12 have neither a package README nor a readme field. Add package-specific documentation and explicit metadata before release; absent repository/docs/keywords/categories are discoverability/documentation gaps, not all hard upload errors. Select valid registry categories and confirm the canonical repository and public documentation URLs online.
+Historical audit: all 23 had a `description`. All 23 omitted explicit `repository`, `readme`, `documentation`, `keywords` and `categories`; none inherits those from workspace metadata. Cargo automatically finds `README.md` in these 11: root `stackpress`, `server-http`, `sql-postgres`, `sql-mysql`, `leptos`, `framework-admin`, `framework-api`, `framework-csrf`, `framework-email`, `framework-session`, `framework`. The other 12 have neither a package README nor a readme field. Add package-specific documentation and explicit metadata before release; absent repository/docs/keywords/categories are discoverability/documentation gaps, not all hard upload errors. Select valid registry categories and confirm the canonical repository and public documentation URLs online.
 
-`stackpress-idea-parser` alone declares `license = "Apache-2.0"` and contains its own `LICENSE`. The other **22 candidates declare neither `license` nor `license-file`**, including the root. Root `LICENSE` is titled “STACKPRESS COMMUNITY LICENSE”, January 2026; it is included in the root package list but is not automatically a licence declaration inherited by child packages. Licence choice, compatibility decisions and all licence edits belong to the owner. This plan makes no recommendation of a licence.
+At the audit snapshot, `stackpress-idea-parser` alone declared `license = "Apache-2.0"` and contains its own `LICENSE`. The other **22 candidates declare neither `license` nor `license-file`**, including the root. Root `LICENSE` is titled “STACKPRESS COMMUNITY LICENSE”, January 2026; it is included in the root package list but is not automatically a licence declaration inherited by child packages. Licence choice, compatibility decisions and all licence edits belong to the owner. This plan makes no recommendation of a licence.
 
 | Candidate directory | Third-party licence/notice files currently present and listed |
 | --- | --- |
@@ -385,3 +385,67 @@ The next owner decisions are release scope, licence declarations, initial versio
 ## Coordinator review
 
 Reviewed 2026-11-10 and committed as a plan only. No manifest, lock, licence or source changes. The raw 5.5 MB LLVM export was kept out of git, as described above. Owner decisions are still needed before any release work: the release scope (the 23 candidates), lockstep 0.1.0 versioning, licence declarations, how to treat the 0/0 facade, and fixing the five crates below 90% plus retained test packaging boundaries.
+
+## Task 00050 release preparation and owner runbook
+
+Task [00050](00050-release-manifests.md) implements the approved 23-candidate scope
+at lockstep `0.1.0`. The workspace default remains `publish = false`; each candidate
+explicitly opts in. Internal candidate normal/build/optional/target dependency paths
+now also declare `version = "0.1.0"`, preserving their feature options. Earlier-order
+dev-dependencies are versioned; eight later-order dev edges and unpublished example
+dev-dependencies stay path-only. Normalized-archive checks prove Cargo strips them.
+The [exact edges and provisional test exclusions](../../../resources/release-manifests-00050/dev-cycle-policy.json) are recorded for merge reconciliation. Examples and consumers remain unpublished.
+
+The owner clarified G60 through the coordinator on 2026-11-11: **the facade uses the
+Stackpress License**. Root `LICENSE` stays unchanged. It and the ten framework copies
+are declared with `license-file = "LICENSE"`. The other twelve candidates declare
+Apache-2.0 and ship byte-identical copies of the parser's Apache `LICENSE`. No alternate
+facade Apache file is created. Lucide/Feather, frui and Nodemailer notices are retained.
+
+Manifest, licence, README, repository, keyword/category and package-allowlist blockers
+are implemented in Task 00050. Twelve new crate READMEs pass twelve actual doctests.
+The eight selected category slugs are confirmed in the [cached registry source map](../../../resources/release-manifests-00050/category-sources.json); no unconfirmed slug is used.
+The [package evidence](../../../resources/release-manifests-00050/packages.json) records
+file counts, bytes, licence/metadata checks and file-reference failures. Both normal-lockfile workspace package passes and all five leaf dry-runs passed.
+The [actual per-crate archive sizes and counts](../../../resources/release-manifests-00050/package-sizes.md) replace the historical estimates for release verification; every archive and uncompressed payload is below 10 MB. Test self-containment and coverage remain separate
+worker deliverables; this lane does not close those blockers.
+
+**G61 interpretation:** build the default, every one of the 79 declared facade features
+individually, and the compatible full native SSR set. This is not a `2^N` powerset.
+Renderer hydrate/CSR/SSR selections remain separate and `--all-features` is forbidden
+on renderer crates. The consumer imports all 87 advertised public re-export paths;
+the default normal tree must contain only `stackpress-lib` among Stackpress dependencies.
+Run all three facade requirements with `python3 tools/release/check_facade.py`.
+The [tooling guide](../../../../tools/release/PACKAGING.md) describes the package and
+facade proofs and the temporary exact test-reference pending list.
+
+The owner runs this preparation sequence from a clean, integrated checkout using
+Cargo 1.96 and the already installed tools. It performs no registry writes:
+
+```sh
+export RUSTC_WRAPPER=sccache SCCACHE_CACHE_SIZE=20G
+export CARGO_INCREMENTAL=0 CARGO_PROFILE_DEV_DEBUG=0 CARGO_BUILD_JOBS=2
+export CARGO_TARGET_DIR="$PWD/target/release-0.1.0"
+export CARGO_LLVM_COV_TARGET_DIR="$CARGO_TARGET_DIR/llvm-cov"
+# Point at an already installed Playwright module; this performs no installation.
+export BLOG_PLAYWRIGHT=/absolute/path/to/installed/playwright
+RELEASE_STORE=/Users/cblanquera/server/projects/stackpress/rust/.agents/resources/build-benchmarks
+python3 .agents/scripts/build-benchmark.py --store "$RELEASE_STORE" run \
+  --label '0.1.0 integrated release gate' --kind test --scope workspace --cache unknown \
+  -- python3 tools/release/gate.py
+```
+
+The gate's package driver runs `cargo package --workspace` excluding every one of
+the 29 non-candidates, first with `--no-verify`, then with verification. It records
+actual archive bytes and counts, checks normalized path-only dev stripping, and runs
+`cargo publish --dry-run --locked` for lib, sql, leptos, idea-parser and framework-language.
+The five initial offline probes required HTTP; authorized anonymous registry reads
+made all five final probes pass without authentication or upload. Workspace packaging
+stays offline and retains archive lockfiles; `--exclude-lockfile` is not used.
+Do not use `--pending-tests` for the integrated release gate. Resolve per-crate coverage in the other worker's receipt.
+
+After all integrated checks, coverage, names, registry ownership and token permissions
+are confirmed, the owner may explicitly authorize publication. Follow steps 4–5 of
+the serial publication runbook above (the complete 23-package order is unchanged).
+Those interactive login/upload commands are instructions for that future owner action;
+Task 00050 runs neither login nor any publish without `--dry-run`.
