@@ -11,7 +11,7 @@ keywords.workspace = true
 categories = ["database"]
 license.workspace = true
 # Provisional: the tests lane moves server-dependent host/trybuild proofs to repo tooling.
-include = ["/src/**", "/README.md", "/LICENSE", "/*.md", "/docs/**/*.md", "/third-party/**", "/data/**", "/*.idea"]
+include = ["/src/**", "/tests/**", "/README.md", "/LICENSE", "/*.md", "/docs/**/*.md", "/third-party/**", "/data/**", "/*.idea"]
 
 [features]
 default = []

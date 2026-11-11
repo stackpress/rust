@@ -1,153 +1,155 @@
-[
-  {
-    "source": "crates/sql/test-support/harness.rs",
-    "copy": "crates/sql/sql-postgres/tests/support/harness.rs",
-    "sha256": "bf0f82eeeafc88c855d799be2393349cb7bcc8af34445c3c1ba906ab01510671",
-    "provenance": "// Copied from crates/sql/test-support/harness.rs; checked by tools/release/check_test_copies.py."
-  },
-  {
-    "source": "crates/sql/sql-postgres/src/tests/process.rs",
-    "copy": "crates/sql/sql-mysql/tests/support/postgres/process.rs",
-    "sha256": "a535906cabd4ae8de763a5f1bc9e9112be9d46fac83d50dc2c16f9ffd53bedfb",
-    "provenance": "// Copied from crates/sql/sql-postgres/src/tests/process.rs; checked by tools/release/check_test_copies.py."
-  },
-  {
-    "source": "crates/framework/framework-sql/tests/fixtures/g37-ddl.json",
-    "copy": "crates/sql/sql-mysql/tests/fixtures/g37-ddl.json",
-    "sha256": "a0b2428c0977c652141e47f598ebc0638955943d254b5cf41fb198fc8b94f479"
-  },
-  {
-    "source": "crates/sql/test-support/harness.rs",
-    "copy": "crates/sql/sql-mysql/tests/support/harness.rs",
-    "sha256": "bf0f82eeeafc88c855d799be2393349cb7bcc8af34445c3c1ba906ab01510671",
-    "provenance": "// Copied from crates/sql/test-support/harness.rs; checked by tools/release/check_test_copies.py."
-  },
-  {
-    "source": "crates/sql/sql-postgres/src/tests/support/process.rs",
-    "copy": "crates/sql/sql-mysql/tests/support/postgres/support/process.rs",
-    "sha256": "bdd2109b0e3e9ef71abed3c565a20709dacf31795c6bc161b8b68ddd1db651e3",
-    "provenance": "// Copied from crates/sql/sql-postgres/src/tests/support/process.rs; checked by tools/release/check_test_copies.py."
-  },
-  {
-    "source": "crates/sql/sql-postgres/src/tests/support/sql_diagnostics.rs",
-    "copy": "crates/sql/sql-mysql/tests/support/postgres/support/sql_diagnostics.rs",
-    "sha256": "b098c91e61288045321dbb7d3706238d3b4c50b0cbd8ecb51e80a892f2eb0b41",
-    "provenance": "// Copied from crates/sql/sql-postgres/src/tests/support/sql_diagnostics.rs; checked by tools/release/check_test_copies.py."
-  },
-  {
-    "source": "crates/sql/sql-postgres/src/tests/support/contract.rs",
-    "copy": "crates/sql/sql-mysql/tests/support/postgres/support/contract.rs",
-    "sha256": "9301eac00eaa99968be66c5a957e9e649a7de0947fa44ab699e9b2ad396fcc16",
-    "provenance": "// Copied from crates/sql/sql-postgres/src/tests/support/contract.rs; checked by tools/release/check_test_copies.py."
-  },
-  {
-    "source": "crates/sql/sql-postgres/src/tests/support/stress.rs",
-    "copy": "crates/sql/sql-mysql/tests/support/postgres/support/stress.rs",
-    "sha256": "7416007bd266904cf2b6e7597b72cc1b34963af309291feb569d7836c8dd0655",
-    "provenance": "// Copied from crates/sql/sql-postgres/src/tests/support/stress.rs; checked by tools/release/check_test_copies.py."
-  },
-  {
-    "source": "examples/generated-workspace/support/watchdog.rs",
-    "copy": "crates/framework/framework-sql/tests/support/watchdog.rs",
-    "sha256": "0a31eb75555f844ede2ac5bce9954e61ebf23c11c1bd7aba97a9b692d40f16e6",
-    "provenance": "// Copied from examples/generated-workspace/support/watchdog.rs; checked by tools/release/check_test_copies.py."
-  },
-  {
-    "source": "crates/sql/sql/examples/support/mod.rs",
-    "copy": "crates/framework/framework-sql/tests/support/recording.rs",
-    "sha256": "14b134b730acedb39aaedb5cd0d3d21fb24bab307a63a512b68aa6789b1e7f6c",
-    "provenance": "// Copied from crates/sql/sql/examples/support/mod.rs; checked by tools/release/check_test_copies.py."
-  },
-  {
-    "source": "examples/generated-workspace/contracts/matrix.idea",
-    "copy": "crates/framework/framework-sql/tests/fixtures/release/matrix.idea",
-    "sha256": "5d9e9314afdf4cc051c9a751c5f386ac7dff514b115024578ee734f1b37c7db5"
-  },
-  {
-    "source": "examples/generated-workspace/app/schema.idea",
-    "copy": "crates/framework/framework-sql/tests/fixtures/release/schema.idea",
-    "sha256": "db07081a06babea420d77dd3dec330a7f1a3409240a356a3a0387db71cdc187e"
-  },
-  {
-    "source": "examples/generated-workspace/app/native.idea",
-    "copy": "crates/framework/framework-sql/tests/fixtures/release/native.idea",
-    "sha256": "9d188a5a6fe8496bafdcd4eaeb2749d99fca92850e927cfc6c459356d64188d5"
-  },
-  {
-    "source": "examples/generated-workspace/app/names.idea",
-    "copy": "crates/framework/framework-sql/tests/fixtures/release/names.idea",
-    "sha256": "9f5ef7ee29fe0915c87f2b86c8fbeee9b0c5f69a02d32d0884826d1190941738"
-  },
-  {
-    "source": "crates/framework/framework-session/schema.idea",
-    "copy": "crates/framework/framework-sql/tests/fixtures/framework-session.idea",
-    "sha256": "395c0f46e6543f258ea97a74a543d9306676fcafef3bf71d0dd02deafeaac84a"
-  },
-  {
-    "source": "crates/framework/framework-api/schema.idea",
-    "copy": "crates/framework/framework-sql/tests/fixtures/framework-api.idea",
-    "sha256": "5bddbdfa9c58be140cdfdab4c9cb9ec670e3dec4fc625c098c97ea5a6a2adebf"
-  },
-  {
-    "source": "crates/framework/framework-session/schema.idea",
-    "copy": "crates/framework/framework-admin/tests/fixtures/framework-session.idea",
-    "sha256": "395c0f46e6543f258ea97a74a543d9306676fcafef3bf71d0dd02deafeaac84a"
-  },
-  {
-    "source": "crates/framework/framework-api/schema.idea",
-    "copy": "crates/framework/framework-admin/tests/fixtures/framework-api.idea",
-    "sha256": "5bddbdfa9c58be140cdfdab4c9cb9ec670e3dec4fc625c098c97ea5a6a2adebf"
-  },
-  {
-    "source": "crates/sql/sql-postgres/src/tests/support/contract/errors.rs",
-    "copy": "crates/sql/sql-mysql/tests/support/postgres/support/contract/errors.rs",
-    "sha256": "666ccd01f881100572184a85daf26892f0ada7e9408aa4080caa1c63f6ed7538",
-    "provenance": "// Copied from crates/sql/sql-postgres/src/tests/support/contract/errors.rs; checked by tools/release/check_test_copies.py."
-  },
-  {
-    "source": "crates/sql/sql-postgres/src/tests/support/contract/lifecycle.rs",
-    "copy": "crates/sql/sql-mysql/tests/support/postgres/support/contract/lifecycle.rs",
-    "sha256": "542f32f617a03def5f1594517cdd82afa96873aade9ae4f1719d7aa62b49c080",
-    "provenance": "// Copied from crates/sql/sql-postgres/src/tests/support/contract/lifecycle.rs; checked by tools/release/check_test_copies.py."
-  },
-  {
-    "source": "crates/sql/sql-postgres/src/tests/support/contract/outcomes.rs",
-    "copy": "crates/sql/sql-mysql/tests/support/postgres/support/contract/outcomes.rs",
-    "sha256": "e28175e4bc41d71e2c17330454168c69b85625466ed699cbb72e69afd4f50541",
-    "provenance": "// Copied from crates/sql/sql-postgres/src/tests/support/contract/outcomes.rs; checked by tools/release/check_test_copies.py."
-  },
-  {
-    "source": "crates/sql/sql-postgres/src/tests/support/contract/transactions.rs",
-    "copy": "crates/sql/sql-mysql/tests/support/postgres/support/contract/transactions.rs",
-    "sha256": "16946e7a91622235eda2186ccd9ff240636f00da7e091b2d03d99f36603bb49c",
-    "provenance": "// Copied from crates/sql/sql-postgres/src/tests/support/contract/transactions.rs; checked by tools/release/check_test_copies.py."
-  },
-  {
-    "source": "crates/sql/sql-postgres/src/tests/support/contract/values.rs",
-    "copy": "crates/sql/sql-mysql/tests/support/postgres/support/contract/values.rs",
-    "sha256": "b565b0dad80ccfd96d41c03e6690b2dc57dd6e35c9540885f57afe791a826920",
-    "provenance": "// Copied from crates/sql/sql-postgres/src/tests/support/contract/values.rs; checked by tools/release/check_test_copies.py."
-  },
-  {
-    "source": "crates/sql/sql-postgres/src/tests/support/sqlite.rs",
-    "copy": "crates/sql/sql-mysql/tests/support/postgres/support/sqlite.rs",
-    "sha256": "dd5d61aec1e2a0c97d35623236c6fb07a2cf8f47dc9c11a00b84a7c3cb240bd0",
-    "provenance": "// Copied from crates/sql/sql-postgres/src/tests/support/sqlite.rs; checked by tools/release/check_test_copies.py."
-  },
-  {
-    "source": "crates/sql/sql-postgres/src/tests/m2.rs",
-    "copy": "examples/generated-workspace/app/tests/support/driver_stores/postgres.rs",
-    "sha256": "76cd2d969330dfee74f4226e3e39d8fb7fd95a6863632268e0a83dc44a269eac",
-    "provenance": "// Copied from crates/sql/sql-postgres/src/tests/m2.rs; checked by tools/release/check_test_copies.py.",
-    "divergence_reason": "Repository integration fixture retains M2 parent CREATE/DROP and watchdog ownership, with a distinct prefix, generated-store child suite and read-only final catalog listing; adapter contract and stress scenarios remain crate-local.",
-    "copy_sha256": "a13f5d67521c4c48ffa10bafed5ffd435992a6601d5fe1f63810c0284e2a02c1"
-  },
-  {
-    "source": "crates/sql/sql-mysql/src/tests/m2.rs",
-    "copy": "examples/generated-workspace/app/tests/support/driver_stores/mysql.rs",
-    "sha256": "2021fd8fc232158abe0428e69853ff2a042941dbf4c00f859fdfeec308c169fa",
-    "provenance": "// Copied from crates/sql/sql-mysql/src/tests/m2.rs; checked by tools/release/check_test_copies.py.",
-    "divergence_reason": "Repository integration fixture retains M2 parent CREATE/DROP and watchdog ownership, with a distinct prefix, generated-store child suite and read-only final catalog listing; adapter contract and stress scenarios remain crate-local.",
-    "copy_sha256": "b4ce0ec194811305c76a713b388a447e2a44ac5b785563187fbaddb238ddfb64"
-  }
-]
+{
+  "copies": [
+    {
+      "source": "crates/sql/test-support/harness.rs",
+      "copy": "crates/sql/sql-postgres/tests/support/harness.rs",
+      "sha256": "bf0f82eeeafc88c855d799be2393349cb7bcc8af34445c3c1ba906ab01510671",
+      "provenance": "// Copied from crates/sql/test-support/harness.rs; checked by tools/release/check_test_copies.py."
+    },
+    {
+      "source": "crates/sql/sql-postgres/src/tests/process.rs",
+      "copy": "crates/sql/sql-mysql/tests/support/postgres/process.rs",
+      "sha256": "a535906cabd4ae8de763a5f1bc9e9112be9d46fac83d50dc2c16f9ffd53bedfb",
+      "provenance": "// Copied from crates/sql/sql-postgres/src/tests/process.rs; checked by tools/release/check_test_copies.py."
+    },
+    {
+      "source": "crates/framework/framework-sql/tests/fixtures/g37-ddl.json",
+      "copy": "crates/sql/sql-mysql/tests/fixtures/g37-ddl.json",
+      "sha256": "a0b2428c0977c652141e47f598ebc0638955943d254b5cf41fb198fc8b94f479"
+    },
+    {
+      "source": "crates/sql/test-support/harness.rs",
+      "copy": "crates/sql/sql-mysql/tests/support/harness.rs",
+      "sha256": "bf0f82eeeafc88c855d799be2393349cb7bcc8af34445c3c1ba906ab01510671",
+      "provenance": "// Copied from crates/sql/test-support/harness.rs; checked by tools/release/check_test_copies.py."
+    },
+    {
+      "source": "crates/sql/sql-postgres/src/tests/support/process.rs",
+      "copy": "crates/sql/sql-mysql/tests/support/postgres/support/process.rs",
+      "sha256": "bdd2109b0e3e9ef71abed3c565a20709dacf31795c6bc161b8b68ddd1db651e3",
+      "provenance": "// Copied from crates/sql/sql-postgres/src/tests/support/process.rs; checked by tools/release/check_test_copies.py."
+    },
+    {
+      "source": "crates/sql/sql-postgres/src/tests/support/sql_diagnostics.rs",
+      "copy": "crates/sql/sql-mysql/tests/support/postgres/support/sql_diagnostics.rs",
+      "sha256": "b098c91e61288045321dbb7d3706238d3b4c50b0cbd8ecb51e80a892f2eb0b41",
+      "provenance": "// Copied from crates/sql/sql-postgres/src/tests/support/sql_diagnostics.rs; checked by tools/release/check_test_copies.py."
+    },
+    {
+      "source": "crates/sql/sql-postgres/src/tests/support/contract.rs",
+      "copy": "crates/sql/sql-mysql/tests/support/postgres/support/contract.rs",
+      "sha256": "9301eac00eaa99968be66c5a957e9e649a7de0947fa44ab699e9b2ad396fcc16",
+      "provenance": "// Copied from crates/sql/sql-postgres/src/tests/support/contract.rs; checked by tools/release/check_test_copies.py."
+    },
+    {
+      "source": "crates/sql/sql-postgres/src/tests/support/stress.rs",
+      "copy": "crates/sql/sql-mysql/tests/support/postgres/support/stress.rs",
+      "sha256": "7416007bd266904cf2b6e7597b72cc1b34963af309291feb569d7836c8dd0655",
+      "provenance": "// Copied from crates/sql/sql-postgres/src/tests/support/stress.rs; checked by tools/release/check_test_copies.py."
+    },
+    {
+      "source": "examples/generated-workspace/support/watchdog.rs",
+      "copy": "crates/framework/framework-sql/tests/support/watchdog.rs",
+      "sha256": "0a31eb75555f844ede2ac5bce9954e61ebf23c11c1bd7aba97a9b692d40f16e6",
+      "provenance": "// Copied from examples/generated-workspace/support/watchdog.rs; checked by tools/release/check_test_copies.py."
+    },
+    {
+      "source": "crates/sql/sql/examples/support/mod.rs",
+      "copy": "crates/framework/framework-sql/tests/support/recording.rs",
+      "sha256": "14b134b730acedb39aaedb5cd0d3d21fb24bab307a63a512b68aa6789b1e7f6c",
+      "provenance": "// Copied from crates/sql/sql/examples/support/mod.rs; checked by tools/release/check_test_copies.py."
+    },
+    {
+      "source": "examples/generated-workspace/contracts/matrix.idea",
+      "copy": "crates/framework/framework-sql/tests/fixtures/release/matrix.idea",
+      "sha256": "5d9e9314afdf4cc051c9a751c5f386ac7dff514b115024578ee734f1b37c7db5"
+    },
+    {
+      "source": "examples/generated-workspace/app/schema.idea",
+      "copy": "crates/framework/framework-sql/tests/fixtures/release/schema.idea",
+      "sha256": "db07081a06babea420d77dd3dec330a7f1a3409240a356a3a0387db71cdc187e"
+    },
+    {
+      "source": "examples/generated-workspace/app/native.idea",
+      "copy": "crates/framework/framework-sql/tests/fixtures/release/native.idea",
+      "sha256": "9d188a5a6fe8496bafdcd4eaeb2749d99fca92850e927cfc6c459356d64188d5"
+    },
+    {
+      "source": "examples/generated-workspace/app/names.idea",
+      "copy": "crates/framework/framework-sql/tests/fixtures/release/names.idea",
+      "sha256": "9f5ef7ee29fe0915c87f2b86c8fbeee9b0c5f69a02d32d0884826d1190941738"
+    },
+    {
+      "source": "crates/framework/framework-session/schema.idea",
+      "copy": "crates/framework/framework-sql/tests/fixtures/framework-session.idea",
+      "sha256": "395c0f46e6543f258ea97a74a543d9306676fcafef3bf71d0dd02deafeaac84a"
+    },
+    {
+      "source": "crates/framework/framework-api/schema.idea",
+      "copy": "crates/framework/framework-sql/tests/fixtures/framework-api.idea",
+      "sha256": "5bddbdfa9c58be140cdfdab4c9cb9ec670e3dec4fc625c098c97ea5a6a2adebf"
+    },
+    {
+      "source": "crates/framework/framework-session/schema.idea",
+      "copy": "crates/framework/framework-admin/tests/fixtures/framework-session.idea",
+      "sha256": "395c0f46e6543f258ea97a74a543d9306676fcafef3bf71d0dd02deafeaac84a"
+    },
+    {
+      "source": "crates/framework/framework-api/schema.idea",
+      "copy": "crates/framework/framework-admin/tests/fixtures/framework-api.idea",
+      "sha256": "5bddbdfa9c58be140cdfdab4c9cb9ec670e3dec4fc625c098c97ea5a6a2adebf"
+    },
+    {
+      "source": "crates/sql/sql-postgres/src/tests/support/contract/errors.rs",
+      "copy": "crates/sql/sql-mysql/tests/support/postgres/support/contract/errors.rs",
+      "sha256": "666ccd01f881100572184a85daf26892f0ada7e9408aa4080caa1c63f6ed7538",
+      "provenance": "// Copied from crates/sql/sql-postgres/src/tests/support/contract/errors.rs; checked by tools/release/check_test_copies.py."
+    },
+    {
+      "source": "crates/sql/sql-postgres/src/tests/support/contract/lifecycle.rs",
+      "copy": "crates/sql/sql-mysql/tests/support/postgres/support/contract/lifecycle.rs",
+      "sha256": "542f32f617a03def5f1594517cdd82afa96873aade9ae4f1719d7aa62b49c080",
+      "provenance": "// Copied from crates/sql/sql-postgres/src/tests/support/contract/lifecycle.rs; checked by tools/release/check_test_copies.py."
+    },
+    {
+      "source": "crates/sql/sql-postgres/src/tests/support/contract/outcomes.rs",
+      "copy": "crates/sql/sql-mysql/tests/support/postgres/support/contract/outcomes.rs",
+      "sha256": "e28175e4bc41d71e2c17330454168c69b85625466ed699cbb72e69afd4f50541",
+      "provenance": "// Copied from crates/sql/sql-postgres/src/tests/support/contract/outcomes.rs; checked by tools/release/check_test_copies.py."
+    },
+    {
+      "source": "crates/sql/sql-postgres/src/tests/support/contract/transactions.rs",
+      "copy": "crates/sql/sql-mysql/tests/support/postgres/support/contract/transactions.rs",
+      "sha256": "16946e7a91622235eda2186ccd9ff240636f00da7e091b2d03d99f36603bb49c",
+      "provenance": "// Copied from crates/sql/sql-postgres/src/tests/support/contract/transactions.rs; checked by tools/release/check_test_copies.py."
+    },
+    {
+      "source": "crates/sql/sql-postgres/src/tests/support/contract/values.rs",
+      "copy": "crates/sql/sql-mysql/tests/support/postgres/support/contract/values.rs",
+      "sha256": "b565b0dad80ccfd96d41c03e6690b2dc57dd6e35c9540885f57afe791a826920",
+      "provenance": "// Copied from crates/sql/sql-postgres/src/tests/support/contract/values.rs; checked by tools/release/check_test_copies.py."
+    },
+    {
+      "source": "crates/sql/sql-postgres/src/tests/support/sqlite.rs",
+      "copy": "crates/sql/sql-mysql/tests/support/postgres/support/sqlite.rs",
+      "sha256": "dd5d61aec1e2a0c97d35623236c6fb07a2cf8f47dc9c11a00b84a7c3cb240bd0",
+      "provenance": "// Copied from crates/sql/sql-postgres/src/tests/support/sqlite.rs; checked by tools/release/check_test_copies.py."
+    },
+    {
+      "source": "crates/sql/sql-postgres/src/tests/m2.rs",
+      "copy": "examples/generated-workspace/app/tests/support/driver_stores/postgres.rs",
+      "sha256": "76cd2d969330dfee74f4226e3e39d8fb7fd95a6863632268e0a83dc44a269eac",
+      "provenance": "// Copied from crates/sql/sql-postgres/src/tests/m2.rs; checked by tools/release/check_test_copies.py.",
+      "divergence_reason": "Repository integration fixture retains M2 parent CREATE/DROP and watchdog ownership, with a distinct prefix, generated-store child suite and read-only final catalog listing; adapter contract and stress scenarios remain crate-local.",
+      "copy_sha256": "a13f5d67521c4c48ffa10bafed5ffd435992a6601d5fe1f63810c0284e2a02c1"
+    },
+    {
+      "source": "crates/sql/sql-mysql/src/tests/m2.rs",
+      "copy": "examples/generated-workspace/app/tests/support/driver_stores/mysql.rs",
+      "sha256": "2021fd8fc232158abe0428e69853ff2a042941dbf4c00f859fdfeec308c169fa",
+      "provenance": "// Copied from crates/sql/sql-mysql/src/tests/m2.rs; checked by tools/release/check_test_copies.py.",
+      "divergence_reason": "Repository integration fixture retains M2 parent CREATE/DROP and watchdog ownership, with a distinct prefix, generated-store child suite and read-only final catalog listing; adapter contract and stress scenarios remain crate-local.",
+      "copy_sha256": "b4ce0ec194811305c76a713b388a447e2a44ac5b785563187fbaddb238ddfb64"
+    }
+  ]
+}
