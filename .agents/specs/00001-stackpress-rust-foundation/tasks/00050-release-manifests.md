@@ -113,3 +113,25 @@ are separate from the green release gate.
 ## Coordinator note
 
 The raw gate logs (1.5 MB) were kept out of git. They remain locally under the ignored `target/evidence-00050/gate-logs/`; the committed `gate-results.json` records each phase's result.
+
+## Coordinator verification (combined release, 00050–00052)
+
+Merged into main: `release/self-contained-tests` (`758ab67`), `release/coverage` (`e4087f9`), `release/manifests` (`25129c4`).
+- Four manifest conflicts were resolved by publish order: API and session test dev-dependencies are versioned, with framework-sql `source`; email keeps only tokio; sql-sqlite's server dev edge is removed.
+- Follow-up `235fd54`: sql-sqlite ships `tests/**`, because its in-crate maintenance tests use `tests/support/watchdog.rs`; `test-copies-coverage.json` uses the `{"copies": [...]}` shape.
+
+Independent runs on a detached clean checkout, 2026-11-11:
+- **At `25129c4`:**
+  - 699 registry tuples identical;
+  - strict `check_test_boundaries.py`; release checker unit tests;
+  - every candidate `cargo clippy -p <crate> --all-targets -D warnings` alone (23/23);
+  - `tools/release/gate.py`: workspace default and compatible fmt/Clippy/nextest/doctests/Rustdoc, aggregate and session consumers/graphs, generator freshness, the blog gate, README doctests and facade checks, all passed;
+  - packaging failed only on the sql-sqlite `tests/support` omission, and the copy check failed only on the registry shape. Both fixed in `235fd54`.
+- **At `235fd54`:**
+  - strict boundaries; copies, 46 in 2 manifests;
+  - sql-sqlite Clippy alone;
+  - `package_workspace.py`: strict `check_packages.py --archives` with no pending allowance, `cargo package --workspace` verified for all 23, and five leaf `cargo publish --dry-run` runs (read-only index access, uploads aborted);
+  - live-inclusive `cargo llvm-cov nextest --workspace --all-targets` with the compatible set and both live URLs: 1,313 passed, 60 skipped. Every non-facade candidate is ≥90%: lowest framework-admin 90.03%, framework-email 90.12%, framework-sql 90.43%, leptos 90.81%; PostgreSQL 94.71%, MySQL 93.99%, sqlite 91.58%. The facade is exempt under G61;
+  - no `stackpress_*` databases left on either server.
+
+The release is ready for the owner's runbook: `cargo login`, then `cargo publish -p` in the documented order.
