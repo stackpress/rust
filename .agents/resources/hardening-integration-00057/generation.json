@@ -1,0 +1,312 @@
+[
+  {
+    "name": "generated-workspace",
+    "check": false,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "generated-workspace-tool",
+      "--locked",
+      "--offline",
+      "--",
+      "emit",
+      "generate"
+    ],
+    "code": 0
+  },
+  {
+    "name": "generated-admin",
+    "check": false,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "generated-admin-tool",
+      "--locked",
+      "--offline",
+      "--",
+      "emit",
+      "generate"
+    ],
+    "code": 0
+  },
+  {
+    "name": "api-checkpoint",
+    "check": false,
+    "command": [
+      "cargo",
+      "run",
+      "--manifest-path",
+      "examples/api-checkpoint/tool/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--"
+    ],
+    "code": 0
+  },
+  {
+    "name": "regenerate_session_models",
+    "check": false,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "stackpress-framework-session",
+      "--example",
+      "regenerate_session_models",
+      "--locked",
+      "--offline",
+      "--features",
+      "auth-server,leptos-ssr",
+      "--"
+    ],
+    "code": 0
+  },
+  {
+    "name": "regenerate_email_models",
+    "check": false,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "stackpress-framework-session",
+      "--example",
+      "regenerate_email_models",
+      "--locked",
+      "--offline",
+      "--features",
+      "auth-server",
+      "--"
+    ],
+    "code": 0
+  },
+  {
+    "name": "regenerate_api_models",
+    "check": false,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "stackpress-framework-api",
+      "--example",
+      "regenerate_api_models",
+      "--locked",
+      "--offline",
+      "--features",
+      "sql,codegen,ui-ssr",
+      "--"
+    ],
+    "code": 0
+  },
+  {
+    "name": "regenerate_aggregate_models",
+    "check": false,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "stackpress-framework",
+      "--example",
+      "regenerate_aggregate_models",
+      "--locked",
+      "--offline",
+      "--features",
+      "full,codegen",
+      "--"
+    ],
+    "code": 0
+  },
+  {
+    "name": "composite_admin_fixture",
+    "check": false,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "stackpress-framework-api",
+      "--example",
+      "composite_admin_fixture",
+      "--locked",
+      "--offline",
+      "--features",
+      "sql,codegen,ui-ssr",
+      "--"
+    ],
+    "code": 0
+  },
+  {
+    "name": "aggregate-build-host",
+    "check": false,
+    "command": [
+      "cargo",
+      "run",
+      "--manifest-path",
+      "crates/framework/framework/consumers/build-host/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--"
+    ],
+    "code": 0
+  },
+  {
+    "name": "generated-workspace",
+    "check": true,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "generated-workspace-tool",
+      "--locked",
+      "--offline",
+      "--",
+      "emit",
+      "generate",
+      "--check",
+      "true"
+    ],
+    "code": 0
+  },
+  {
+    "name": "generated-admin",
+    "check": true,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "generated-admin-tool",
+      "--locked",
+      "--offline",
+      "--",
+      "emit",
+      "generate",
+      "--check"
+    ],
+    "code": 0
+  },
+  {
+    "name": "api-checkpoint",
+    "check": true,
+    "command": [
+      "cargo",
+      "run",
+      "--manifest-path",
+      "examples/api-checkpoint/tool/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--",
+      "--check"
+    ],
+    "code": 0
+  },
+  {
+    "name": "regenerate_session_models",
+    "check": true,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "stackpress-framework-session",
+      "--example",
+      "regenerate_session_models",
+      "--locked",
+      "--offline",
+      "--features",
+      "auth-server,leptos-ssr",
+      "--",
+      "--check"
+    ],
+    "code": 0
+  },
+  {
+    "name": "regenerate_email_models",
+    "check": true,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "stackpress-framework-session",
+      "--example",
+      "regenerate_email_models",
+      "--locked",
+      "--offline",
+      "--features",
+      "auth-server",
+      "--",
+      "--check"
+    ],
+    "code": 0
+  },
+  {
+    "name": "regenerate_api_models",
+    "check": true,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "stackpress-framework-api",
+      "--example",
+      "regenerate_api_models",
+      "--locked",
+      "--offline",
+      "--features",
+      "sql,codegen,ui-ssr",
+      "--",
+      "--check"
+    ],
+    "code": 0
+  },
+  {
+    "name": "regenerate_aggregate_models",
+    "check": true,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "stackpress-framework",
+      "--example",
+      "regenerate_aggregate_models",
+      "--locked",
+      "--offline",
+      "--features",
+      "full,codegen",
+      "--",
+      "--check"
+    ],
+    "code": 0
+  },
+  {
+    "name": "composite_admin_fixture",
+    "check": true,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "stackpress-framework-api",
+      "--example",
+      "composite_admin_fixture",
+      "--locked",
+      "--offline",
+      "--features",
+      "sql,codegen,ui-ssr",
+      "--",
+      "--check"
+    ],
+    "code": 0
+  },
+  {
+    "name": "aggregate-build-host",
+    "check": true,
+    "command": [
+      "cargo",
+      "run",
+      "--manifest-path",
+      "crates/framework/framework/consumers/build-host/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--",
+      "--check"
+    ],
+    "code": 0
+  }
+]

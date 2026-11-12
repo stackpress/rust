@@ -1,0 +1,517 @@
+[
+  {
+    "name": "contracts-matrix",
+    "check": false,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "generated-workspace-tool",
+      "--locked",
+      "--offline",
+      "--",
+      "emit",
+      "generate",
+      "--input",
+      "/private/tmp/hardening-int/examples/generated-workspace/contracts/matrix.idea",
+      "--output",
+      "/private/tmp/hardening-int/examples/generated-workspace/contracts/src/matrix"
+    ],
+    "code": 0
+  },
+  {
+    "name": "native-matrix",
+    "check": false,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "generated-workspace-tool",
+      "--locked",
+      "--offline",
+      "--",
+      "emit",
+      "generate",
+      "--input",
+      "/private/tmp/hardening-int/examples/generated-workspace/app/native.idea",
+      "--output",
+      "/private/tmp/hardening-int/examples/generated-workspace/app/src/matrix_generated"
+    ],
+    "code": 0
+  },
+  {
+    "name": "names",
+    "check": false,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "generated-workspace-tool",
+      "--locked",
+      "--offline",
+      "--",
+      "emit",
+      "generate",
+      "--input",
+      "/private/tmp/hardening-int/examples/generated-workspace/app/names.idea",
+      "--output",
+      "/private/tmp/hardening-int/examples/generated-workspace/app/src/names_generated"
+    ],
+    "code": 0
+  },
+  {
+    "name": "quickstart-v1",
+    "check": false,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "generated-workspace-tool",
+      "--locked",
+      "--offline",
+      "--",
+      "emit",
+      "generate",
+      "--input",
+      "/private/tmp/hardening-int/examples/data-quickstart/schema/001.idea",
+      "--output",
+      "/private/tmp/hardening-int/examples/data-quickstart/src/generated/v1"
+    ],
+    "code": 0
+  },
+  {
+    "name": "quickstart-v2",
+    "check": false,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "generated-workspace-tool",
+      "--locked",
+      "--offline",
+      "--",
+      "emit",
+      "generate",
+      "--input",
+      "/private/tmp/hardening-int/examples/data-quickstart/schema/002.idea",
+      "--output",
+      "/private/tmp/hardening-int/examples/data-quickstart/src/generated/v2"
+    ],
+    "code": 0
+  },
+  {
+    "name": "quickstart-v3",
+    "check": false,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "generated-workspace-tool",
+      "--locked",
+      "--offline",
+      "--",
+      "emit",
+      "generate",
+      "--input",
+      "/private/tmp/hardening-int/examples/data-quickstart/schema/003.idea",
+      "--output",
+      "/private/tmp/hardening-int/examples/data-quickstart/src/generated/v3"
+    ],
+    "code": 0
+  },
+  {
+    "name": "admin-format",
+    "check": false,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "generated-admin-tool",
+      "--locked",
+      "--offline",
+      "--",
+      "emit",
+      "generate",
+      "--input",
+      "examples/generated-admin/schema-format.idea",
+      "--output",
+      "examples/generated-admin/shared/src/generated-format"
+    ],
+    "code": 1
+  },
+  {
+    "name": "admin-format",
+    "check": false,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "generated-admin-tool",
+      "--features",
+      "format",
+      "--locked",
+      "--offline",
+      "--",
+      "emit",
+      "generate",
+      "--input",
+      "examples/generated-admin/schema-format.idea",
+      "--output",
+      "examples/generated-admin/shared/src/generated-format"
+    ],
+    "code": 0
+  },
+  {
+    "name": "profile",
+    "check": false,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "stackpress-example-profile-codegen",
+      "--locked",
+      "--offline",
+      "--",
+      "emit",
+      "generate"
+    ],
+    "code": 0
+  },
+  {
+    "name": "composite-models",
+    "check": false,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "stackpress-framework-api",
+      "--example",
+      "regenerate_api_models",
+      "--locked",
+      "--offline",
+      "--",
+      "--input",
+      "/private/tmp/hardening-int/crates/framework/framework-api/tests/fixtures/admin-composite/schema.idea",
+      "--output",
+      "/private/tmp/hardening-int/crates/framework/framework-api/tests/fixtures/admin-composite/models"
+    ],
+    "code": 0
+  },
+  {
+    "name": "session-plugin-models",
+    "check": false,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "stackpress-framework-api",
+      "--example",
+      "regenerate_api_models",
+      "--locked",
+      "--offline",
+      "--",
+      "--input",
+      "/private/tmp/hardening-int/crates/framework/framework-session/consumers/plugin/schema.idea",
+      "--output",
+      "/private/tmp/hardening-int/crates/framework/framework-session/consumers/plugin/src/models"
+    ],
+    "code": 0
+  },
+  {
+    "name": "sql-session-only",
+    "check": false,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "stackpress-framework-session",
+      "--example",
+      "regenerate_session_models",
+      "--locked",
+      "--offline",
+      "--",
+      "--input",
+      "/private/tmp/hardening-int/crates/framework/framework-sql/tests/fixtures/framework-session.idea",
+      "--output",
+      "/private/tmp/hardening-int/crates/framework/framework-sql/tests/source-session-only"
+    ],
+    "code": 0
+  },
+  {
+    "name": "contracts-matrix",
+    "check": true,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "generated-workspace-tool",
+      "--locked",
+      "--offline",
+      "--",
+      "emit",
+      "generate",
+      "--input",
+      "/private/tmp/hardening-int/examples/generated-workspace/contracts/matrix.idea",
+      "--output",
+      "/private/tmp/hardening-int/examples/generated-workspace/contracts/src/matrix",
+      "--check",
+      "true"
+    ],
+    "code": 0
+  },
+  {
+    "name": "native-matrix",
+    "check": true,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "generated-workspace-tool",
+      "--locked",
+      "--offline",
+      "--",
+      "emit",
+      "generate",
+      "--input",
+      "/private/tmp/hardening-int/examples/generated-workspace/app/native.idea",
+      "--output",
+      "/private/tmp/hardening-int/examples/generated-workspace/app/src/matrix_generated",
+      "--check",
+      "true"
+    ],
+    "code": 0
+  },
+  {
+    "name": "names",
+    "check": true,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "generated-workspace-tool",
+      "--locked",
+      "--offline",
+      "--",
+      "emit",
+      "generate",
+      "--input",
+      "/private/tmp/hardening-int/examples/generated-workspace/app/names.idea",
+      "--output",
+      "/private/tmp/hardening-int/examples/generated-workspace/app/src/names_generated",
+      "--check",
+      "true"
+    ],
+    "code": 0
+  },
+  {
+    "name": "quickstart-v1",
+    "check": true,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "generated-workspace-tool",
+      "--locked",
+      "--offline",
+      "--",
+      "emit",
+      "generate",
+      "--input",
+      "/private/tmp/hardening-int/examples/data-quickstart/schema/001.idea",
+      "--output",
+      "/private/tmp/hardening-int/examples/data-quickstart/src/generated/v1",
+      "--check",
+      "true"
+    ],
+    "code": 0
+  },
+  {
+    "name": "quickstart-v2",
+    "check": true,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "generated-workspace-tool",
+      "--locked",
+      "--offline",
+      "--",
+      "emit",
+      "generate",
+      "--input",
+      "/private/tmp/hardening-int/examples/data-quickstart/schema/002.idea",
+      "--output",
+      "/private/tmp/hardening-int/examples/data-quickstart/src/generated/v2",
+      "--check",
+      "true"
+    ],
+    "code": 0
+  },
+  {
+    "name": "quickstart-v3",
+    "check": true,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "generated-workspace-tool",
+      "--locked",
+      "--offline",
+      "--",
+      "emit",
+      "generate",
+      "--input",
+      "/private/tmp/hardening-int/examples/data-quickstart/schema/003.idea",
+      "--output",
+      "/private/tmp/hardening-int/examples/data-quickstart/src/generated/v3",
+      "--check",
+      "true"
+    ],
+    "code": 0
+  },
+  {
+    "name": "admin-format",
+    "check": true,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "generated-admin-tool",
+      "--features",
+      "format",
+      "--locked",
+      "--offline",
+      "--",
+      "emit",
+      "generate",
+      "--input",
+      "examples/generated-admin/schema-format.idea",
+      "--output",
+      "examples/generated-admin/shared/src/generated-format",
+      "--check"
+    ],
+    "code": 0
+  },
+  {
+    "name": "profile",
+    "check": true,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "stackpress-example-profile-codegen",
+      "--locked",
+      "--offline",
+      "--",
+      "emit",
+      "generate",
+      "--check",
+      "true"
+    ],
+    "code": 0
+  },
+  {
+    "name": "composite-models",
+    "check": true,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "stackpress-framework-api",
+      "--example",
+      "regenerate_api_models",
+      "--locked",
+      "--offline",
+      "--",
+      "--input",
+      "/private/tmp/hardening-int/crates/framework/framework-api/tests/fixtures/admin-composite/schema.idea",
+      "--output",
+      "/private/tmp/hardening-int/crates/framework/framework-api/tests/fixtures/admin-composite/models",
+      "--check"
+    ],
+    "code": 0
+  },
+  {
+    "name": "session-plugin-models",
+    "check": true,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "stackpress-framework-api",
+      "--example",
+      "regenerate_api_models",
+      "--locked",
+      "--offline",
+      "--",
+      "--input",
+      "/private/tmp/hardening-int/crates/framework/framework-session/consumers/plugin/schema.idea",
+      "--output",
+      "/private/tmp/hardening-int/crates/framework/framework-session/consumers/plugin/src/models",
+      "--check"
+    ],
+    "code": 0
+  },
+  {
+    "name": "sql-session-only",
+    "check": true,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "stackpress-framework-session",
+      "--example",
+      "regenerate_session_models",
+      "--locked",
+      "--offline",
+      "--",
+      "--input",
+      "/private/tmp/hardening-int/crates/framework/framework-sql/tests/fixtures/framework-session.idea",
+      "--output",
+      "/private/tmp/hardening-int/crates/framework/framework-sql/tests/source-session-only",
+      "--check"
+    ],
+    "code": 0
+  },
+  {
+    "name": "sql-session-only",
+    "check": false,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "stackpress-framework-session",
+      "--example",
+      "regenerate_session_models",
+      "--locked",
+      "--offline",
+      "--",
+      "--input",
+      "/private/tmp/hardening-int/crates/framework/framework-session/tests/fixtures/session-only.idea",
+      "--output",
+      "/private/tmp/hardening-int/crates/framework/framework-sql/tests/source-session-only"
+    ],
+    "code": 0
+  },
+  {
+    "name": "sql-session-only",
+    "check": true,
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "stackpress-framework-session",
+      "--example",
+      "regenerate_session_models",
+      "--locked",
+      "--offline",
+      "--",
+      "--input",
+      "/private/tmp/hardening-int/crates/framework/framework-session/tests/fixtures/session-only.idea",
+      "--output",
+      "/private/tmp/hardening-int/crates/framework/framework-sql/tests/source-session-only",
+      "--check"
+    ],
+    "code": 0
+  }
+]

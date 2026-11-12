@@ -1,0 +1,14 @@
+[
+  {
+    "path": "target/00057-integration/debug",
+    "bytes": 7095250944
+  },
+  {
+    "path": "target/00057-integration/doc",
+    "bytes": 141135872
+  },
+  {
+    "path": "target/00057-integration/wasm32-unknown-unknown",
+    "bytes": 379453440
+  }
+]

@@ -290,6 +290,49 @@ async fn source_csrf_methods_invalid_draft_json_mode_import_export_and_event_gua
     assert!(html(&exported).contains("Ada Lovelace"));
     db.close().await;
 }
+/// Raw legacy upload bytes must survive the admin route, parser and real SQL batch.
+#[tokio::test]
+async fn source_admin_imports_windows_1252_semicolon_upload_into_storage() {
+    let db = Db::new().await;
+    // Curly quotes and the euro sign distinguish Windows-1252 from Latin-1;
+    // a quoted semicolon must remain inside the decoded application name.
+    let csv = b"id;profileId;name;secret;expires\r\nlegacy;p;\"Caf\xe9 \x93shop; tools\x94 \x80\";legacy-key;2100-01-01T00:00:00.000Z\r\n";
+    let mut request = Request::builder()
+        .method("POST")
+        .url("/admin/application/import?json")
+        .data(Nest::from_object(json!({"mode":"create","json":true})).unwrap())
+        .body(Body::Bytes(csv.to_vec()))
+        .build()
+        .unwrap();
+    let mut response = Response::new();
+    // Dispatch through the actual registered admin import handler and API batch event.
+    db.server
+        .handle_route(&mut request, &mut response)
+        .await
+        .unwrap();
+    assert_eq!(response.status().unwrap().code, 200);
+    assert!(
+        result(&response)
+            .to_string()
+            .contains("Café “shop; tools” €")
+    );
+    // A separate read proves that the decoded fields reached persistent storage.
+    let stored = db
+        .request(
+            "GET",
+            "/admin/application/detail/legacy?json",
+            json!({"json":true}),
+        )
+        .await;
+    assert_eq!(stored.status().unwrap().code, 200);
+    let row = result(&stored);
+    assert_eq!(row["results"]["id"], "legacy");
+    assert_eq!(row["results"]["profileId"], "p");
+    assert_eq!(row["results"]["name"], "Café “shop; tools” €");
+    assert_eq!(row["results"]["secret"], "legacy-key");
+    db.close().await;
+}
+
 #[test]
 fn generated_forms_roles_data_and_csv_representation_limits() {
     let ui = super::shared::management();

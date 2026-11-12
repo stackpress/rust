@@ -1,0 +1,61 @@
+[
+  {
+    "command": [
+      "rustc",
+      "-vV"
+    ],
+    "code": 0,
+    "stdout": "rustc 1.96.0 (ac68faa20 2026-05-25)\nbinary: rustc\ncommit-hash: ac68faa20c58cbccd01ee7208bf3b6e93a7d7f96\ncommit-date: 2026-05-25\nhost: aarch64-apple-darwin\nrelease: 1.96.0\nLLVM version: 22.1.2\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "cargo",
+      "llvm-cov",
+      "--version"
+    ],
+    "code": 0,
+    "stdout": "cargo-llvm-cov 0.8.6\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "cargo",
+      "nextest",
+      "--version"
+    ],
+    "code": 0,
+    "stdout": "cargo-nextest 0.9.150 (d225b1daf 2026-10-26)\nrelease: 0.9.150\ncommit-hash: d225b1daf362c1ca8e5e048132618c1a81c57a28\ncommit-date: 2026-10-26\nhost: aarch64-apple-darwin\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rustc",
+      "+nightly",
+      "-vV"
+    ],
+    "code": 0,
+    "stdout": "rustc 1.102.0-nightly (3ef0c22cd 2026-11-11)\nbinary: rustc\ncommit-hash: 3ef0c22cdb86ac42dc6b8f0f1ec36857daa6f2a1\ncommit-date: 2026-11-11\nhost: aarch64-apple-darwin\nrelease: 1.102.0-nightly\nLLVM version: 23.1.5\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "cargo",
+      "+nightly",
+      "fuzz",
+      "--version"
+    ],
+    "code": 0,
+    "stdout": "cargo-fuzz 0.13.2\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "sccache",
+      "--version"
+    ],
+    "code": 0,
+    "stdout": "sccache 0.19.0\n",
+    "stderr": ""
+  }
+]

@@ -1,0 +1,2010 @@
+[
+  {
+    "path": "target/00057-integration/debug/deps/sql_profile_setup-f3ca2d3d8c05d404",
+    "bytes": 924192
+  },
+  {
+    "path": "target/00057-integration/debug/deps/main-e547d471fbfa4a0b",
+    "bytes": 4898288
+  },
+  {
+    "path": "target/00057-integration/debug/deps/async_feasibility-8034f964cebe094d",
+    "bytes": 4869200
+  },
+  {
+    "path": "target/00057-integration/debug/deps/outcomes-cc47702794f1f475",
+    "bytes": 15525488
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_ui_gallery_web-dac5947eebaefa46",
+    "bytes": 924224
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_ui_preferences_web-a180307f2a374241",
+    "bytes": 924224
+  },
+  {
+    "path": "target/00057-integration/debug/deps/leptos_cleanup-55b5f668299ac423",
+    "bytes": 4171776
+  },
+  {
+    "path": "target/00057-integration/debug/deps/source_loaders-2539bb3494bf2a0a",
+    "bytes": 1402848
+  },
+  {
+    "path": "target/00057-integration/debug/deps/tty_contracts-3b38d17dc048e470",
+    "bytes": 2702000
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_ui_gallery_web-670c53e01aa81e9f",
+    "bytes": 924224
+  },
+  {
+    "path": "target/00057-integration/debug/deps/m1-ef81b3e2edb24c2b",
+    "bytes": 3120800
+  },
+  {
+    "path": "target/00057-integration/debug/deps/m2-304b3bcc06970028",
+    "bytes": 11856816
+  },
+  {
+    "path": "target/00057-integration/debug/deps/config-47d709d7a89a2a2e",
+    "bytes": 1764560
+  },
+  {
+    "path": "target/00057-integration/debug/deps/generated_workspace_contracts-fefcd4a79eac5c5b",
+    "bytes": 924192
+  },
+  {
+    "path": "target/00057-integration/debug/deps/consumer-b6e3ccb787ce3840",
+    "bytes": 1539152
+  },
+  {
+    "path": "target/00057-integration/debug/deps/lifecycle-551bd317077e693b",
+    "bytes": 8932944
+  },
+  {
+    "path": "target/00057-integration/debug/deps/prompt_contracts-8e700731093b5f4f",
+    "bytes": 7625424
+  },
+  {
+    "path": "target/00057-integration/debug/deps/migrations-80a2b8da79cace25",
+    "bytes": 11885552
+  },
+  {
+    "path": "target/00057-integration/debug/deps/engine-d2152bbe85dadaa1",
+    "bytes": 2113904
+  },
+  {
+    "path": "target/00057-integration/debug/deps/leptos_safety-eb0234d62687ac0f",
+    "bytes": 1078624
+  },
+  {
+    "path": "target/00057-integration/debug/deps/leptos_safety-4f3929d781f95087",
+    "bytes": 1078720
+  },
+  {
+    "path": "target/00057-integration/debug/deps/http_stream-044c014c7f7c42c6",
+    "bytes": 9396080
+  },
+  {
+    "path": "target/00057-integration/debug/deps/finite-d5b164ee9bcc8def",
+    "bytes": 14350880
+  },
+  {
+    "path": "target/00057-integration/debug/deps/generation-1fa011321b420130",
+    "bytes": 8116256
+  },
+  {
+    "path": "target/00057-integration/debug/deps/codec-fdc1f67304d5ffc7",
+    "bytes": 25101920
+  },
+  {
+    "path": "target/00057-integration/debug/deps/async_feasibility-df894df3203acd2b",
+    "bytes": 4867952
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_ui_stream_web-0a96f92d8e99a1d9",
+    "bytes": 924224
+  },
+  {
+    "path": "target/00057-integration/debug/deps/routes-3d15f26c67716b6d",
+    "bytes": 1157968
+  },
+  {
+    "path": "target/00057-integration/debug/deps/reply-25a3651a1760424e",
+    "bytes": 1981872
+  },
+  {
+    "path": "target/00057-integration/debug/deps/dialects-c046d1d476770e05",
+    "bytes": 2014944
+  },
+  {
+    "path": "target/00057-integration/debug/deps/m3-7b686265dd89fc54",
+    "bytes": 13412208
+  },
+  {
+    "path": "target/00057-integration/debug/deps/tty_prompt_contracts-b76e77ba434f7901",
+    "bytes": 3447392
+  },
+  {
+    "path": "target/00057-integration/debug/deps/on_request-f0b00e30598315fa",
+    "bytes": 4706000
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_server-4f1b9c2cdc029ad8",
+    "bytes": 9354800
+  },
+  {
+    "path": "target/00057-integration/debug/deps/harness-07510d9146df5063",
+    "bytes": 1001248
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_ui_gallery_web-b945b037941c9897",
+    "bytes": 74178256
+  },
+  {
+    "path": "target/00057-integration/debug/deps/lifecycle-4a2a480e6d616702",
+    "bytes": 9120496
+  },
+  {
+    "path": "target/00057-integration/debug/deps/prompt_contracts-ed380e2bbb122749",
+    "bytes": 7629040
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_sql_profile-cd37b3363b0ba352",
+    "bytes": 1668000
+  },
+  {
+    "path": "target/00057-integration/debug/deps/contracts-d9e9ca4641ec5cbd",
+    "bytes": 7813440
+  },
+  {
+    "path": "target/00057-integration/debug/deps/transfer-b90fbb829b4ddff1",
+    "bytes": 2822992
+  },
+  {
+    "path": "target/00057-integration/debug/deps/contextual_cause-a8b2f8984fe038fb",
+    "bytes": 1002944
+  },
+  {
+    "path": "target/00057-integration/debug/deps/operations-0180257bf4366554",
+    "bytes": 23006048
+  },
+  {
+    "path": "target/00057-integration/debug/deps/matrix_contracts-e3ebefb928a6a7a7",
+    "bytes": 924192
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_profile_ui_native-7b9c9e542372615d",
+    "bytes": 10295392
+  },
+  {
+    "path": "target/00057-integration/debug/deps/finite-4fcc1c86cfe8c555",
+    "bytes": 1455888
+  },
+  {
+    "path": "target/00057-integration/debug/deps/wire-e39df9e455681d97",
+    "bytes": 1987552
+  },
+  {
+    "path": "target/00057-integration/debug/deps/main-a0fe09076ef99c4d",
+    "bytes": 4900352
+  },
+  {
+    "path": "target/00057-integration/debug/deps/idea-60087aee4d6c43c2",
+    "bytes": 924160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/capability_boundaries-09dd9f090a0a96ac",
+    "bytes": 924192
+  },
+  {
+    "path": "target/00057-integration/debug/deps/pages-b6da6ffac3d8bfa3",
+    "bytes": 33681040
+  },
+  {
+    "path": "target/00057-integration/debug/deps/source_extensions-df86813b4d14880b",
+    "bytes": 9839888
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_profile_ui_web-98910f0ccc2a16f5",
+    "bytes": 924224
+  },
+  {
+    "path": "target/00057-integration/debug/deps/experimental-14695e66ddd57a6d",
+    "bytes": 8822368
+  },
+  {
+    "path": "target/00057-integration/debug/deps/m3_review-311daf3739b7fe54",
+    "bytes": 4766000
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_framework_schema-7903399aa4a9b081",
+    "bytes": 8840576
+  },
+  {
+    "path": "target/00057-integration/debug/deps/operations-3fad0ebb92dafce3",
+    "bytes": 924160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/operation_publication-c0897167c4652dc4",
+    "bytes": 9711840
+  },
+  {
+    "path": "target/00057-integration/debug/deps/data_quickstart-35f17c9f3ddb935e",
+    "bytes": 924192
+  },
+  {
+    "path": "target/00057-integration/debug/deps/executables-c57191b448c4fb29",
+    "bytes": 9137440
+  },
+  {
+    "path": "target/00057-integration/debug/deps/contracts-72b7e9de7a11e6b9",
+    "bytes": 1389344
+  },
+  {
+    "path": "target/00057-integration/debug/deps/storage_policy-4deb25f8a23c35fb",
+    "bytes": 1461456
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_framework_api-d2f26cc8b3dfffe1",
+    "bytes": 12044784
+  },
+  {
+    "path": "target/00057-integration/debug/deps/error_contracts-f023630e1ec52a03",
+    "bytes": 6678384
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_profile_codegen-ed8c4f596c6ac5cc",
+    "bytes": 4615984
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_ui_preferences_web-a91aa7e07b5edbe1",
+    "bytes": 11108320
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_cli-fb2e1eed368bc530",
+    "bytes": 3130816
+  },
+  {
+    "path": "target/00057-integration/debug/deps/generation-c73dd8a94d422d32",
+    "bytes": 1206576
+  },
+  {
+    "path": "target/00057-integration/debug/deps/names-8fcd567e870d097c",
+    "bytes": 924160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/tcp-1e033fb1f386c0c0",
+    "bytes": 10832080
+  },
+  {
+    "path": "target/00057-integration/debug/deps/m0-c04c35fbcd15333d",
+    "bytes": 11146080
+  },
+  {
+    "path": "target/00057-integration/debug/deps/leptos_system_theme-761f69ec0266596a",
+    "bytes": 4325952
+  },
+  {
+    "path": "target/00057-integration/debug/deps/http_output-a00084330d806b76",
+    "bytes": 9520656
+  },
+  {
+    "path": "target/00057-integration/debug/deps/package_loader-df388158c78567d0",
+    "bytes": 3433616
+  },
+  {
+    "path": "target/00057-integration/debug/deps/consumer-7680f650736b3b55",
+    "bytes": 1539152
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_server-a9c22830d6a729eb",
+    "bytes": 9360384
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_idea-376a69c16c7e088c",
+    "bytes": 924192
+  },
+  {
+    "path": "target/00057-integration/debug/deps/source_graph-855a6668e512b3fb",
+    "bytes": 10520752
+  },
+  {
+    "path": "target/00057-integration/debug/deps/public_boundary-5c755bf218323b54",
+    "bytes": 23396256
+  },
+  {
+    "path": "target/00057-integration/debug/deps/handler_signature-faec7fd5d0658563",
+    "bytes": 8394224
+  },
+  {
+    "path": "target/00057-integration/debug/deps/storage_length-0d5f92a999ef22fa",
+    "bytes": 16328832
+  },
+  {
+    "path": "target/00057-integration/debug/deps/m3_seeds-26cfb86727368fc3",
+    "bytes": 11896464
+  },
+  {
+    "path": "target/00057-integration/debug/deps/migrations-8bf5b2669c7df3e6",
+    "bytes": 924160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/roles-acfb6b2a093231aa",
+    "bytes": 23921088
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_profile_ui_web-50be029977276775",
+    "bytes": 924224
+  },
+  {
+    "path": "target/00057-integration/debug/deps/generated_admin_shared-4c0dd8ad2967d42e",
+    "bytes": 8878048
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress-5d414e18aa39742b",
+    "bytes": 924160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/http_immutable-6b1d7da1b760d4ae",
+    "bytes": 9280864
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_ui_stream_client-b99010247fdbd0ff",
+    "bytes": 1549424
+  },
+  {
+    "path": "target/00057-integration/debug/deps/generated_admin_tool-35ac4ff9f133c61a",
+    "bytes": 12345744
+  },
+  {
+    "path": "target/00057-integration/debug/deps/error_causes-8de2070a2a21f8ac",
+    "bytes": 1842352
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_profile_ui_web-acd49f8dc25c13d6",
+    "bytes": 924224
+  },
+  {
+    "path": "target/00057-integration/debug/deps/m1-118c67d9a93941d1",
+    "bytes": 11970384
+  },
+  {
+    "path": "target/00057-integration/debug/deps/http_stream-06e280288b2c74f7",
+    "bytes": 9401312
+  },
+  {
+    "path": "target/00057-integration/debug/deps/reuse-970e6cf7cdd1bf1d",
+    "bytes": 24870208
+  },
+  {
+    "path": "target/00057-integration/debug/deps/contracts-71d21a93eda8cd71",
+    "bytes": 7810256
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_sql_profile-b0418b85158ae7c2",
+    "bytes": 1668000
+  },
+  {
+    "path": "target/00057-integration/debug/deps/lifecycle-c5062b7cf778003b",
+    "bytes": 8906416
+  },
+  {
+    "path": "target/00057-integration/debug/deps/finite-d7367a2d6c20a842",
+    "bytes": 14350048
+  },
+  {
+    "path": "target/00057-integration/debug/deps/m1-8f04e83e81d425b7",
+    "bytes": 10010816
+  },
+  {
+    "path": "target/00057-integration/debug/deps/leptos_executor-9eb49918ce3b6881",
+    "bytes": 3735696
+  },
+  {
+    "path": "target/00057-integration/debug/deps/contextual_cause-9a9fbcb3da242379",
+    "bytes": 1004912
+  },
+  {
+    "path": "target/00057-integration/debug/deps/sql_profile-7e8c6d97bec2cd46",
+    "bytes": 924160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/m1-edc63d385fd29fe3",
+    "bytes": 10030400
+  },
+  {
+    "path": "target/00057-integration/debug/deps/dml-7c240f54c27abc79",
+    "bytes": 1914208
+  },
+  {
+    "path": "target/00057-integration/debug/deps/construction-7dcc55bc63ce244d",
+    "bytes": 9006384
+  },
+  {
+    "path": "target/00057-integration/debug/deps/main-c7a3505e6c88a8ff",
+    "bytes": 77303200
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_ui_gallery_client-d6d5ba67092d10b0",
+    "bytes": 924224
+  },
+  {
+    "path": "target/00057-integration/debug/deps/config_presence-f6342495bd995584",
+    "bytes": 3366128
+  },
+  {
+    "path": "target/00057-integration/debug/deps/args_control_contracts-3af11549bc767acc",
+    "bytes": 2058864
+  },
+  {
+    "path": "target/00057-integration/debug/deps/leptos_system_theme-412e832dfdf44054",
+    "bytes": 4326000
+  },
+  {
+    "path": "target/00057-integration/debug/deps/leptos_cleanup-bf11b4d0def99be9",
+    "bytes": 4176144
+  },
+  {
+    "path": "target/00057-integration/debug/deps/codec-bf92e404b50094a9",
+    "bytes": 25085008
+  },
+  {
+    "path": "target/00057-integration/debug/deps/probe-577cd6119168e1a7",
+    "bytes": 924160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/generated_admin_tool-e581a6c7a0ffd8bc",
+    "bytes": 924192
+  },
+  {
+    "path": "target/00057-integration/debug/deps/contracts-36068582ba968281",
+    "bytes": 8919088
+  },
+  {
+    "path": "target/00057-integration/debug/deps/source-614ac15e2a196410",
+    "bytes": 67684976
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_framework-b11cbba3fbec63e1",
+    "bytes": 60385008
+  },
+  {
+    "path": "target/00057-integration/debug/deps/compose_references-f23f0cb02a8cb3d4",
+    "bytes": 3493248
+  },
+  {
+    "path": "target/00057-integration/debug/deps/generated_workspace_tool-ac5f3f33674d44d1",
+    "bytes": 924192
+  },
+  {
+    "path": "target/00057-integration/debug/deps/sql_profile-72ae69ee5ae3d579",
+    "bytes": 14149056
+  },
+  {
+    "path": "target/00057-integration/debug/deps/driver_stores-ce928b6de16b17e3",
+    "bytes": 28684960
+  },
+  {
+    "path": "target/00057-integration/debug/deps/source_emission-5b728687e6aff979",
+    "bytes": 9199472
+  },
+  {
+    "path": "target/00057-integration/debug/deps/render_seams-9d8b3ffd5e524b4b",
+    "bytes": 4799824
+  },
+  {
+    "path": "target/00057-integration/debug/deps/catalog-a62cc72c1e3047bb",
+    "bytes": 43844608
+  },
+  {
+    "path": "target/00057-integration/debug/deps/finite-40a05dc2e16fb163",
+    "bytes": 1021840
+  },
+  {
+    "path": "target/00057-integration/debug/deps/leptos_executor-109efba1e75c1741",
+    "bytes": 3739808
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_capability_host-4bcb1bde59c60330",
+    "bytes": 924224
+  },
+  {
+    "path": "target/00057-integration/debug/deps/sqlite-64fdb1eb69b92cda",
+    "bytes": 924160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/generated_admin_web-31621736d04d255a",
+    "bytes": 78194240
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_framework-ff0aed88e03399af",
+    "bytes": 924192
+  },
+  {
+    "path": "target/00057-integration/debug/deps/generated_admin_client-1a338567390d6557",
+    "bytes": 924192
+  },
+  {
+    "path": "target/00057-integration/debug/deps/m0-f6f6d055bc4c99ed",
+    "bytes": 11139584
+  },
+  {
+    "path": "target/00057-integration/debug/deps/context_contracts-36ef449a399dc9d2",
+    "bytes": 4636720
+  },
+  {
+    "path": "target/00057-integration/debug/deps/compose_rules-be40dc63d24d00b4",
+    "bytes": 3564416
+  },
+  {
+    "path": "target/00057-integration/debug/deps/ddl-bb694a39b57f8d81",
+    "bytes": 1738768
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_ui_stream_shared-8eac8a38f6b03d45",
+    "bytes": 924224
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_profile_ui_contracts-cb64ec59b8255148",
+    "bytes": 924224
+  },
+  {
+    "path": "target/00057-integration/debug/deps/native_layer-235b8e40fe071d5e",
+    "bytes": 70192208
+  },
+  {
+    "path": "target/00057-integration/debug/deps/leptos_async_renderer-9d7900531cfa937f",
+    "bytes": 6360752
+  },
+  {
+    "path": "target/00057-integration/debug/deps/leptos_async_renderer-cd4a1c3b38d91416",
+    "bytes": 6358432
+  },
+  {
+    "path": "target/00057-integration/debug/deps/lifecycle-70d085dc3cf6c530",
+    "bytes": 8924112
+  },
+  {
+    "path": "target/00057-integration/debug/deps/m3_review-1dccb8f00ffceb13",
+    "bytes": 15536896
+  },
+  {
+    "path": "target/00057-integration/debug/deps/generated_admin_web-b0656855091a5ecc",
+    "bytes": 1927360
+  },
+  {
+    "path": "target/00057-integration/debug/deps/request_response_contracts-9c543f702affb55b",
+    "bytes": 5183824
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_framework_api-2ee265260863d236",
+    "bytes": 11007952
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_idea_transformer-a4e8686f08bcb774",
+    "bytes": 4664960
+  },
+  {
+    "path": "target/00057-integration/debug/deps/main-bc76fe6c1a673ccd",
+    "bytes": 924160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/contracts-240ef13d96cafa84",
+    "bytes": 1451728
+  },
+  {
+    "path": "target/00057-integration/debug/deps/profile_codegen-9a838ebf41daa517",
+    "bytes": 7111776
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_sql_postgres-37ebd62ed2a5d33c",
+    "bytes": 3153376
+  },
+  {
+    "path": "target/00057-integration/debug/deps/sql_profile_setup-4e4efc11fa487b64",
+    "bytes": 7686240
+  },
+  {
+    "path": "target/00057-integration/debug/deps/compose_rules-f5378c0fa7f26a77",
+    "bytes": 3561936
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_leptos-540b6d5add4aa5cc",
+    "bytes": 56354464
+  },
+  {
+    "path": "target/00057-integration/debug/deps/leptos_routing-f7d66e864c80c9f7",
+    "bytes": 7374160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/storage_length-c5e95e8754c96b78",
+    "bytes": 13075104
+  },
+  {
+    "path": "target/00057-integration/debug/deps/sql_profile_setup-ae94dfdb8c9f8816",
+    "bytes": 924192
+  },
+  {
+    "path": "target/00057-integration/debug/deps/probe-5bc8f696136f744e",
+    "bytes": 924160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/network-9107e3c2650cd537",
+    "bytes": 13044336
+  },
+  {
+    "path": "target/00057-integration/debug/deps/main-ca78d210b8bbc530",
+    "bytes": 14485024
+  },
+  {
+    "path": "target/00057-integration/debug/deps/publication-0b2f8b274981d437",
+    "bytes": 3297184
+  },
+  {
+    "path": "target/00057-integration/debug/deps/live_search-6a0c4e484b7adbfc",
+    "bytes": 22814176
+  },
+  {
+    "path": "target/00057-integration/debug/deps/page-014dcae2ba9f197c",
+    "bytes": 1162160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/generation-145a6fe6e1db0a41",
+    "bytes": 12758688
+  },
+  {
+    "path": "target/00057-integration/debug/deps/transfer-7f442cf15b3417fc",
+    "bytes": 9371568
+  },
+  {
+    "path": "target/00057-integration/debug/deps/presentation-1a5c2fbf44b9c635",
+    "bytes": 14884736
+  },
+  {
+    "path": "target/00057-integration/debug/deps/pages-b0871223c3923075",
+    "bytes": 11187184
+  },
+  {
+    "path": "target/00057-integration/debug/deps/callable-edbe97c01827be24",
+    "bytes": 19468768
+  },
+  {
+    "path": "target/00057-integration/debug/deps/data_contracts-1f7584f4935737ff",
+    "bytes": 3762528
+  },
+  {
+    "path": "target/00057-integration/debug/deps/names_contracts-8553173f4cae8f9d",
+    "bytes": 924192
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_ui_preferences_web-cc531678ba69e421",
+    "bytes": 924224
+  },
+  {
+    "path": "target/00057-integration/debug/deps/compose_references-298fd235194a60f1",
+    "bytes": 3495696
+  },
+  {
+    "path": "target/00057-integration/debug/deps/public_preflight-5209dfb1dc14f401",
+    "bytes": 15021424
+  },
+  {
+    "path": "target/00057-integration/debug/deps/source_emission-5dbcb431afafd716",
+    "bytes": 9198832
+  },
+  {
+    "path": "target/00057-integration/debug/deps/m1-3b7fd6b6aa940b00",
+    "bytes": 12771520
+  },
+  {
+    "path": "target/00057-integration/debug/deps/disabled-1ca5599ef01d5cdf",
+    "bytes": 924160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/generated_workspace_app-3e699797a0ecb587",
+    "bytes": 1668016
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_ui_preferences_shared-4ee2fa5a0549b845",
+    "bytes": 2737264
+  },
+  {
+    "path": "target/00057-integration/debug/deps/config_presence-21a4612537679b51",
+    "bytes": 3367728
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_ui_stream_web-613e682ad70448ca",
+    "bytes": 924224
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_ui_stream_web-c2079677addef46b",
+    "bytes": 924224
+  },
+  {
+    "path": "target/00057-integration/debug/deps/outcomes-e9e8a025465c361e",
+    "bytes": 15502336
+  },
+  {
+    "path": "target/00057-integration/debug/deps/run_contracts-b3a7c46f5af81144",
+    "bytes": 5871408
+  },
+  {
+    "path": "target/00057-integration/debug/deps/m1-c8b9a350d16aa1eb",
+    "bytes": 12748960
+  },
+  {
+    "path": "target/00057-integration/debug/deps/m2-a2a92ee82efae9e0",
+    "bytes": 11887328
+  },
+  {
+    "path": "target/00057-integration/debug/deps/generated_admin_shared-1d2dd92041a2e9df",
+    "bytes": 8882928
+  },
+  {
+    "path": "target/00057-integration/debug/deps/crud-f676cfdfe03a2dd1",
+    "bytes": 2593168
+  },
+  {
+    "path": "target/00057-integration/debug/deps/routes-59df650dfb149932",
+    "bytes": 1156880
+  },
+  {
+    "path": "target/00057-integration/debug/deps/ownership-a2f7616c5c48c18f",
+    "bytes": 4830704
+  },
+  {
+    "path": "target/00057-integration/debug/deps/m1-b3744e4acc44657a",
+    "bytes": 11453280
+  },
+  {
+    "path": "target/00057-integration/debug/deps/main-38574bc159504049",
+    "bytes": 86775536
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_profile_ui_gateway-231387f4afef83b6",
+    "bytes": 924224
+  },
+  {
+    "path": "target/00057-integration/debug/deps/codecs-408a0d1ea0046318",
+    "bytes": 3273744
+  },
+  {
+    "path": "target/00057-integration/debug/deps/conflict-28d7025c50a663bc",
+    "bytes": 8514128
+  },
+  {
+    "path": "target/00057-integration/debug/deps/crud-074706d5ffc8dfad",
+    "bytes": 2568864
+  },
+  {
+    "path": "target/00057-integration/debug/deps/storage_policy-1d94ed35ef59e553",
+    "bytes": 1461456
+  },
+  {
+    "path": "target/00057-integration/debug/deps/generated_workspace_app-6f55484ce88eb399",
+    "bytes": 976320
+  },
+  {
+    "path": "target/00057-integration/debug/deps/sqlite_service-e211c0a96f42e7cb",
+    "bytes": 10557424
+  },
+  {
+    "path": "target/00057-integration/debug/deps/foundation-63886a1c3acb5de0",
+    "bytes": 8231152
+  },
+  {
+    "path": "target/00057-integration/debug/deps/cli-fd302c6ca8c2489e",
+    "bytes": 9417488
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_ui_format-178cc930c8aa1b77",
+    "bytes": 924192
+  },
+  {
+    "path": "target/00057-integration/debug/deps/source_graph-99766035859c5131",
+    "bytes": 10516896
+  },
+  {
+    "path": "target/00057-integration/debug/deps/wire-59a4d9790c1c4bf7",
+    "bytes": 1989280
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress-b0305c036f18c6cc",
+    "bytes": 924160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_profile_codegen-a02ca170b0f15d1a",
+    "bytes": 4621328
+  },
+  {
+    "path": "target/00057-integration/debug/deps/profile_codegen-3914971575157204",
+    "bytes": 924192
+  },
+  {
+    "path": "target/00057-integration/debug/deps/tty_contracts-7e5ceffdcf2125a5",
+    "bytes": 2700960
+  },
+  {
+    "path": "target/00057-integration/debug/deps/names-9a579fb5522adfee",
+    "bytes": 924160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_profile_ui_contracts-467e8274fb7e934f",
+    "bytes": 924224
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_profile_ui_gateway-96dffd31eca41525",
+    "bytes": 27072960
+  },
+  {
+    "path": "target/00057-integration/debug/deps/finite-88c29bcd11535943",
+    "bytes": 1455872
+  },
+  {
+    "path": "target/00057-integration/debug/deps/presentation-3e143a8c11bc2068",
+    "bytes": 14873152
+  },
+  {
+    "path": "target/00057-integration/debug/deps/profile_app-1ff4e99d138f71ea",
+    "bytes": 924160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/pages-515cd3051b257bcd",
+    "bytes": 11265136
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_ui_gallery_web-9cfec3b9fa59961c",
+    "bytes": 74226960
+  },
+  {
+    "path": "target/00057-integration/debug/deps/safety-2abfe6a496606b37",
+    "bytes": 1989888
+  },
+  {
+    "path": "target/00057-integration/debug/deps/safety-60cb06a823334df3",
+    "bytes": 1989888
+  },
+  {
+    "path": "target/00057-integration/debug/deps/construction-70b564e6a17af32d",
+    "bytes": 9028032
+  },
+  {
+    "path": "target/00057-integration/debug/deps/finite-ef0ecae5a507acf6",
+    "bytes": 1021856
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_profile_ui_native-f92cf0e0511748a4",
+    "bytes": 10298256
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_generated_profile-1a50377860259a8d",
+    "bytes": 924224
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_profile_ui_client-615312709316c3ef",
+    "bytes": 2510528
+  },
+  {
+    "path": "target/00057-integration/debug/deps/render-c99bf3935ac98ba2",
+    "bytes": 49394752
+  },
+  {
+    "path": "target/00057-integration/debug/deps/m2-0a084f67de6fcbc5",
+    "bytes": 16609792
+  },
+  {
+    "path": "target/00057-integration/debug/deps/main-21850df68d6be4c7",
+    "bytes": 20910720
+  },
+  {
+    "path": "target/00057-integration/debug/deps/context_contracts-8ae5eff220196668",
+    "bytes": 4634784
+  },
+  {
+    "path": "target/00057-integration/debug/deps/executor_budgets-e7ae56d3c336da5d",
+    "bytes": 8414864
+  },
+  {
+    "path": "target/00057-integration/debug/deps/capability_boundaries-37959d75fa2a37cf",
+    "bytes": 15506624
+  },
+  {
+    "path": "target/00057-integration/debug/deps/m3_review-763dbc1315205a36",
+    "bytes": 5492496
+  },
+  {
+    "path": "target/00057-integration/debug/deps/cli-b78e2262d04ba7ac",
+    "bytes": 9411936
+  },
+  {
+    "path": "target/00057-integration/debug/deps/callable-96a91fcbbabcdf3e",
+    "bytes": 19489552
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_ui_gallery_shared-f2530e47a222648e",
+    "bytes": 61949360
+  },
+  {
+    "path": "target/00057-integration/debug/deps/main-f3442d0397422252",
+    "bytes": 27632384
+  },
+  {
+    "path": "target/00057-integration/debug/deps/public_preflight-3c549a9436571f68",
+    "bytes": 14256192
+  },
+  {
+    "path": "target/00057-integration/debug/deps/native_layer-40d71027cd920054",
+    "bytes": 70128640
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress-36dc750be3aa179d",
+    "bytes": 8599216
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_framework_csrf-51372d708f4d421d",
+    "bytes": 924192
+  },
+  {
+    "path": "target/00057-integration/debug/deps/args_control_contracts-8436e73aaea9b74e",
+    "bytes": 2078352
+  },
+  {
+    "path": "target/00057-integration/debug/deps/m1-84c1d8668fcc64ee",
+    "bytes": 11460064
+  },
+  {
+    "path": "target/00057-integration/debug/deps/generated_admin_tool-0bdb927b2b7a2f0b",
+    "bytes": 924192
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_framework_session-ab2f55ff22bc33d4",
+    "bytes": 976336
+  },
+  {
+    "path": "target/00057-integration/debug/deps/m1-6c203da1cde7d2a7",
+    "bytes": 11870224
+  },
+  {
+    "path": "target/00057-integration/debug/deps/generated_admin_tool-2bb445d31529a3cf",
+    "bytes": 12371152
+  },
+  {
+    "path": "target/00057-integration/debug/deps/generation-31e7089950c14392",
+    "bytes": 4655344
+  },
+  {
+    "path": "target/00057-integration/debug/deps/setup-9e056ff8e89919fa",
+    "bytes": 3683760
+  },
+  {
+    "path": "target/00057-integration/debug/deps/generated_admin_tool-86bfe489946a95a1",
+    "bytes": 12712448
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_leptos-dd04c5b12feb90e0",
+    "bytes": 47884016
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_sql_sqlite-8e5ae775bb38dc9e",
+    "bytes": 15558224
+  },
+  {
+    "path": "target/00057-integration/debug/deps/pages-dbc497f6105ca168",
+    "bytes": 24685536
+  },
+  {
+    "path": "target/00057-integration/debug/deps/request_response_contracts-24065e21e40a259a",
+    "bytes": 5185392
+  },
+  {
+    "path": "target/00057-integration/debug/deps/profile_app-7916ecf57ee3e02d",
+    "bytes": 924160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/generated_admin_tool-a1eb09af0d8aeb14",
+    "bytes": 13528816
+  },
+  {
+    "path": "target/00057-integration/debug/deps/run_contracts-7e3b66aee3234844",
+    "bytes": 5869760
+  },
+  {
+    "path": "target/00057-integration/debug/deps/transfer-ba95efeaedbe7bae",
+    "bytes": 9374080
+  },
+  {
+    "path": "target/00057-integration/debug/deps/reply-4a387a6f00a147af",
+    "bytes": 1982256
+  },
+  {
+    "path": "target/00057-integration/debug/deps/render_contracts-80da4cec20824ba4",
+    "bytes": 2767280
+  },
+  {
+    "path": "target/00057-integration/debug/deps/codecs-094c50828f708dcb",
+    "bytes": 2557232
+  },
+  {
+    "path": "target/00057-integration/debug/deps/render_seams-a29045131f7568b0",
+    "bytes": 4798208
+  },
+  {
+    "path": "target/00057-integration/debug/deps/roles-d612945cf79671be",
+    "bytes": 23796368
+  },
+  {
+    "path": "target/00057-integration/debug/deps/setup-027b12274641d930",
+    "bytes": 2945808
+  },
+  {
+    "path": "target/00057-integration/debug/deps/entry_contracts-54c3aa209cbbf374",
+    "bytes": 5431968
+  },
+  {
+    "path": "target/00057-integration/debug/deps/reuse-afbef0c7675734ba",
+    "bytes": 24846752
+  },
+  {
+    "path": "target/00057-integration/debug/deps/native-258b650f859a081b",
+    "bytes": 924160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/maintenance-50ba713e8623fdef",
+    "bytes": 924160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/engine-aa1c5f23ce05dab3",
+    "bytes": 2113952
+  },
+  {
+    "path": "target/00057-integration/debug/deps/http_output-5c0fc112587d23b3",
+    "bytes": 9525520
+  },
+  {
+    "path": "target/00057-integration/debug/deps/network-4f82e6311445d376",
+    "bytes": 13072768
+  },
+  {
+    "path": "target/00057-integration/debug/deps/concurrency-480dfcca5ce09ddb",
+    "bytes": 5673472
+  },
+  {
+    "path": "target/00057-integration/debug/deps/contracts-b2a4d97625edbc73",
+    "bytes": 9677152
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_generated_profile-f257d8eff322b1ff",
+    "bytes": 924240
+  },
+  {
+    "path": "target/00057-integration/debug/deps/profiles-97f28158e5a50d9f",
+    "bytes": 9013312
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_profile_ui_web-75ee0c1ce2c2f80f",
+    "bytes": 24348640
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_framework_email-8b465ce403963e35",
+    "bytes": 18077200
+  },
+  {
+    "path": "target/00057-integration/debug/deps/storage_codegen-d4be03fdfe736777",
+    "bytes": 12569648
+  },
+  {
+    "path": "target/00057-integration/debug/deps/on_request-44ce3329dad5aa2b",
+    "bytes": 4687216
+  },
+  {
+    "path": "target/00057-integration/debug/deps/live_setup-bf720bbd1084f30f",
+    "bytes": 24731200
+  },
+  {
+    "path": "target/00057-integration/debug/deps/transfer-b65861f45861f821",
+    "bytes": 2800000
+  },
+  {
+    "path": "target/00057-integration/debug/deps/reads-1fe0776018059a6f",
+    "bytes": 17479536
+  },
+  {
+    "path": "target/00057-integration/debug/deps/tcp-473651fd0dc1d347",
+    "bytes": 10829264
+  },
+  {
+    "path": "target/00057-integration/debug/deps/transfer-bc991322b5fc871e",
+    "bytes": 8122240
+  },
+  {
+    "path": "target/00057-integration/debug/deps/operation_publication-0bc6feca80047320",
+    "bytes": 10422096
+  },
+  {
+    "path": "target/00057-integration/debug/deps/data_contracts-b272a8b647d43063",
+    "bytes": 3761360
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_idea_transformer-103a624f8694b484",
+    "bytes": 4685248
+  },
+  {
+    "path": "target/00057-integration/debug/deps/generation-952ad3482dadee2b",
+    "bytes": 1206528
+  },
+  {
+    "path": "target/00057-integration/debug/deps/contracts-916e38aac318ac8f",
+    "bytes": 1452800
+  },
+  {
+    "path": "target/00057-integration/debug/deps/diff-e982f5b480ec4562",
+    "bytes": 1742064
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress-750140fb4bb83926",
+    "bytes": 924160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/generated_admin_web-33b8e0e16d3c6071",
+    "bytes": 924192
+  },
+  {
+    "path": "target/00057-integration/debug/deps/profile_codegen-da1e82c3a0d7e2a5",
+    "bytes": 7761104
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_ui_format-0932974bf6d4fb1d",
+    "bytes": 924192
+  },
+  {
+    "path": "target/00057-integration/debug/deps/admin_state-c3e57a8174851eb4",
+    "bytes": 9221488
+  },
+  {
+    "path": "target/00057-integration/debug/deps/atomic-76f6c0984a02be4f",
+    "bytes": 15862768
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_framework_sql-1226a63f4d464a87",
+    "bytes": 2577408
+  },
+  {
+    "path": "target/00057-integration/debug/deps/main-80d6d34ce10d4a39",
+    "bytes": 67324256
+  },
+  {
+    "path": "target/00057-integration/debug/deps/concurrency-9f539c9aac3236cf",
+    "bytes": 5675376
+  },
+  {
+    "path": "target/00057-integration/debug/deps/executables-2743026b1ebece1c",
+    "bytes": 9143184
+  },
+  {
+    "path": "target/00057-integration/debug/deps/publication-14614758af57a6a2",
+    "bytes": 32699424
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_server_http-7cc1b88fbefc9f5b",
+    "bytes": 924192
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_ui_gallery_web-60e0fbdea9d8b834",
+    "bytes": 924224
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_ui_gallery_web-8a950e9b0197935c",
+    "bytes": 924224
+  },
+  {
+    "path": "target/00057-integration/debug/deps/profile_app-a2185e63ed2f5457",
+    "bytes": 8603648
+  },
+  {
+    "path": "target/00057-integration/debug/deps/storage_codegen-f7f96b1dd0dd868a",
+    "bytes": 13334496
+  },
+  {
+    "path": "target/00057-integration/debug/deps/error_kinds-f558584b7119dd70",
+    "bytes": 4233776
+  },
+  {
+    "path": "target/00057-integration/debug/deps/catalog-53e72cb8efe18548",
+    "bytes": 43708752
+  },
+  {
+    "path": "target/00057-integration/debug/deps/compose_json-825eb87e04d5c995",
+    "bytes": 3418848
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_sql-6cce3f91d3daedb1",
+    "bytes": 1367456
+  },
+  {
+    "path": "target/00057-integration/debug/deps/storage_length-10b426c47516a1dc",
+    "bytes": 9397792
+  },
+  {
+    "path": "target/00057-integration/debug/deps/source_ui-56ccfaabe73c9621",
+    "bytes": 7206784
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_framework_language-ffe160b6346e8140",
+    "bytes": 1133200
+  },
+  {
+    "path": "target/00057-integration/debug/deps/m3_review-ba6a873414ba919b",
+    "bytes": 16308640
+  },
+  {
+    "path": "target/00057-integration/debug/deps/template_codegen-675166dcf5cb0e31",
+    "bytes": 12200928
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_ui_preferences_web-37de1db622b47f5a",
+    "bytes": 924224
+  },
+  {
+    "path": "target/00057-integration/debug/deps/compose_json-e678da57925f9776",
+    "bytes": 3416208
+  },
+  {
+    "path": "target/00057-integration/debug/deps/generation-18be6ed755514434",
+    "bytes": 4635776
+  },
+  {
+    "path": "target/00057-integration/debug/deps/ownership-f873007f10f26b66",
+    "bytes": 4830704
+  },
+  {
+    "path": "target/00057-integration/debug/deps/http-052382dae8698059",
+    "bytes": 9425856
+  },
+  {
+    "path": "target/00057-integration/debug/deps/leaves-a049e8eb91a841aa",
+    "bytes": 924160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/operations-c55d846fb1a909c6",
+    "bytes": 22983904
+  },
+  {
+    "path": "target/00057-integration/debug/deps/harness-65fb85dc645e61bb",
+    "bytes": 1001248
+  },
+  {
+    "path": "target/00057-integration/debug/deps/email_integration-7559712f98190461",
+    "bytes": 63032016
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_framework_sql-4d5870eb557ef323",
+    "bytes": 12595712
+  },
+  {
+    "path": "target/00057-integration/debug/deps/policies-3e630fa1fa8ff43f",
+    "bytes": 1918032
+  },
+  {
+    "path": "target/00057-integration/debug/deps/lifecycle-0685282b04bc442f",
+    "bytes": 8927616
+  },
+  {
+    "path": "target/00057-integration/debug/deps/generated_admin_web-1b86ea433ce8f209",
+    "bytes": 78135264
+  },
+  {
+    "path": "target/00057-integration/debug/deps/native-c495052d10a201c5",
+    "bytes": 924160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/template_codegen-ecdcb70bb6c8faa2",
+    "bytes": 12121440
+  },
+  {
+    "path": "target/00057-integration/debug/deps/matrix_contracts-5c6d40bf597145b8",
+    "bytes": 924192
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_server_http-85ebdccda02dbaf2",
+    "bytes": 924192
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_profile_ui_shared-709af9bd1fd89c5e",
+    "bytes": 13143392
+  },
+  {
+    "path": "target/00057-integration/debug/deps/writes-48e6c119c4427b93",
+    "bytes": 15462512
+  },
+  {
+    "path": "target/00057-integration/debug/deps/suggestions-a2b202f1d9b6d0d9",
+    "bytes": 2303648
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_ui_gallery_client-4ef79870bc64724a",
+    "bytes": 924224
+  },
+  {
+    "path": "target/00057-integration/debug/deps/duplex-49a85b526997309d",
+    "bytes": 11193200
+  },
+  {
+    "path": "target/00057-integration/debug/deps/parity-3960d6a15cc4f7a5",
+    "bytes": 9675952
+  },
+  {
+    "path": "target/00057-integration/debug/deps/public_boundary-34d979ace0b3332a",
+    "bytes": 23404704
+  },
+  {
+    "path": "target/00057-integration/debug/deps/names_contracts-7682adfe33e35166",
+    "bytes": 924192
+  },
+  {
+    "path": "target/00057-integration/debug/deps/m0-116f1f40ae5b5b4e",
+    "bytes": 20161616
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_framework_email-914027b50f40d326",
+    "bytes": 18153824
+  },
+  {
+    "path": "target/00057-integration/debug/deps/parity-fa3c071ee709db59",
+    "bytes": 9670096
+  },
+  {
+    "path": "target/00057-integration/debug/deps/duplex-1b660f0937e6e144",
+    "bytes": 11191216
+  },
+  {
+    "path": "target/00057-integration/debug/deps/email_integration-ab3ac179abd5bf98",
+    "bytes": 924192
+  },
+  {
+    "path": "target/00057-integration/debug/deps/storage_length-ea5b639c827622f2",
+    "bytes": 924176
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_ui_preferences_web-affe1f16bedd824c",
+    "bytes": 11127952
+  },
+  {
+    "path": "target/00057-integration/debug/deps/transfer_tolerant-70c853eb7a91697b",
+    "bytes": 1545296
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress-fbacecc86963c97a",
+    "bytes": 924160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/m2-8770f828e2e38416",
+    "bytes": 16590352
+  },
+  {
+    "path": "target/00057-integration/debug/deps/error_kinds-c177d24672022f8d",
+    "bytes": 4237056
+  },
+  {
+    "path": "target/00057-integration/debug/deps/main-13868b7b366062bf",
+    "bytes": 26542592
+  },
+  {
+    "path": "target/00057-integration/debug/deps/package_loader-dee95fd8c91db732",
+    "bytes": 3431024
+  },
+  {
+    "path": "target/00057-integration/debug/deps/data_quickstart-b03afdbfae60ea62",
+    "bytes": 924192
+  },
+  {
+    "path": "target/00057-integration/debug/deps/maintenance-c54a34329cdc556e",
+    "bytes": 924160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_review_preview-511a64d4cfb3544c",
+    "bytes": 924224
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_framework_schema-998f616dd5ce54b8",
+    "bytes": 8862592
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_profile_ui_web-1a2082aa795de463",
+    "bytes": 24325536
+  },
+  {
+    "path": "target/00057-integration/debug/deps/generated_workspace_tool-f2be22ee57fb64ed",
+    "bytes": 17558544
+  },
+  {
+    "path": "target/00057-integration/debug/deps/document_errors-005b2a24bf9a2f19",
+    "bytes": 68383120
+  },
+  {
+    "path": "target/00057-integration/debug/deps/render_contracts-8be9ead58197f8a5",
+    "bytes": 2768032
+  },
+  {
+    "path": "target/00057-integration/debug/deps/m1-eb7b10fcb423452e",
+    "bytes": 11975584
+  },
+  {
+    "path": "target/00057-integration/debug/deps/tty_prompt_contracts-e401f5fbb43014de",
+    "bytes": 3464624
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_framework_view-046d8057661046d2",
+    "bytes": 8709536
+  },
+  {
+    "path": "target/00057-integration/debug/deps/generated_workspace_tool-c08a5d1c81561e77",
+    "bytes": 924192
+  },
+  {
+    "path": "target/00057-integration/debug/deps/profile_codegen-381fee9a26abb0ab",
+    "bytes": 924192
+  },
+  {
+    "path": "target/00057-integration/debug/deps/serialization_contracts-6acf17136a1b1cd5",
+    "bytes": 2898256
+  },
+  {
+    "path": "target/00057-integration/debug/deps/dialects-6b6b66e070dda04e",
+    "bytes": 2014944
+  },
+  {
+    "path": "target/00057-integration/debug/deps/main-b96bb2fe19c2c579",
+    "bytes": 67262400
+  },
+  {
+    "path": "target/00057-integration/debug/deps/http_input-6b905d239355de7c",
+    "bytes": 9438640
+  },
+  {
+    "path": "target/00057-integration/debug/deps/suggestions-a445fe6636e98181",
+    "bytes": 2305344
+  },
+  {
+    "path": "target/00057-integration/debug/deps/m0-93259e838ec4f973",
+    "bytes": 12577712
+  },
+  {
+    "path": "target/00057-integration/debug/deps/m3-203462e0c687c581",
+    "bytes": 924160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/m0-871399efa8d15d11",
+    "bytes": 20181728
+  },
+  {
+    "path": "target/00057-integration/debug/deps/pages-c4e05f6f207b62aa",
+    "bytes": 24686304
+  },
+  {
+    "path": "target/00057-integration/debug/deps/config-2654d2812ac087dd",
+    "bytes": 1761648
+  },
+  {
+    "path": "target/00057-integration/debug/deps/m2-bcb22933f173527b",
+    "bytes": 11852576
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_capability_host-6759e815e1da2541",
+    "bytes": 924224
+  },
+  {
+    "path": "target/00057-integration/debug/deps/dml-c9c08198d9b87d2e",
+    "bytes": 1914160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/publication-f9ffd6dfb1602bb8",
+    "bytes": 924160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_ui_stream_web-f7c8a8638404c967",
+    "bytes": 13895216
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_profile_ui_web-1c6d1f9209456f53",
+    "bytes": 924224
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_ui_stream_shared-0d78e592810afa41",
+    "bytes": 924224
+  },
+  {
+    "path": "target/00057-integration/debug/deps/storage_length-f8cc8d1e6fdeaca5",
+    "bytes": 9419008
+  },
+  {
+    "path": "target/00057-integration/debug/deps/live_search-2764b13ef4946960",
+    "bytes": 23054272
+  },
+  {
+    "path": "target/00057-integration/debug/deps/proof-32755b3e783a4d0d",
+    "bytes": 16009072
+  },
+  {
+    "path": "target/00057-integration/debug/deps/pages-52f9448bd84a7f6a",
+    "bytes": 33689616
+  },
+  {
+    "path": "target/00057-integration/debug/deps/generated_workspace_tool-bc2e1b82e7b1a584",
+    "bytes": 976336
+  },
+  {
+    "path": "target/00057-integration/debug/deps/error_contracts-3d9ee5c6fba9160c",
+    "bytes": 6683440
+  },
+  {
+    "path": "target/00057-integration/debug/deps/sqlite-117996cd66a5df8c",
+    "bytes": 924160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_ui_preferences_client-97bc262497c84278",
+    "bytes": 924224
+  },
+  {
+    "path": "target/00057-integration/debug/deps/diff-fa91bfb8ee62be79",
+    "bytes": 1742064
+  },
+  {
+    "path": "target/00057-integration/debug/deps/event_contracts-37c87dcaae07965b",
+    "bytes": 8069024
+  },
+  {
+    "path": "target/00057-integration/debug/deps/handler_signature-52ce36be28b6d12b",
+    "bytes": 8392128
+  },
+  {
+    "path": "target/00057-integration/debug/deps/main-f3d75a9fee450bb6",
+    "bytes": 71921616
+  },
+  {
+    "path": "target/00057-integration/debug/deps/http-8f554e328f532c3e",
+    "bytes": 9419952
+  },
+  {
+    "path": "target/00057-integration/debug/deps/presentation_registration-c09814086662b915",
+    "bytes": 9977968
+  },
+  {
+    "path": "target/00057-integration/debug/deps/http_immutable-ae8895dce4aa329d",
+    "bytes": 9258720
+  },
+  {
+    "path": "target/00057-integration/debug/deps/sqlite_service-36e472747b5fca0e",
+    "bytes": 10556144
+  },
+  {
+    "path": "target/00057-integration/debug/deps/matrix-2014fcaec1889593",
+    "bytes": 924160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/entry_contracts-e49e01ea17ab5ac8",
+    "bytes": 5430528
+  },
+  {
+    "path": "target/00057-integration/debug/deps/contracts-938dcfbcf9f5e084",
+    "bytes": 8899808
+  },
+  {
+    "path": "target/00057-integration/debug/deps/proof-ce3b7637e5dd8f5d",
+    "bytes": 16006896
+  },
+  {
+    "path": "target/00057-integration/debug/deps/disabled-9184cb1900f0ab41",
+    "bytes": 924160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_ui_preferences_web-181ba8094f514abf",
+    "bytes": 924224
+  },
+  {
+    "path": "target/00057-integration/debug/deps/m3_seeds-4f980ccf19493a13",
+    "bytes": 924160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/main-34361274d58b9faa",
+    "bytes": 108529664
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_sql_sqlite-6e332c4586bf0a59",
+    "bytes": 14939488
+  },
+  {
+    "path": "target/00057-integration/debug/deps/m0-c647e14832339bc0",
+    "bytes": 9765600
+  },
+  {
+    "path": "target/00057-integration/debug/deps/source_loaders-c5c086ed8fb0f735",
+    "bytes": 1404416
+  },
+  {
+    "path": "target/00057-integration/debug/deps/generated_workspace_tool-adc44700453fca47",
+    "bytes": 18430992
+  },
+  {
+    "path": "target/00057-integration/debug/deps/event_contracts-4bf7796555156d24",
+    "bytes": 8089840
+  },
+  {
+    "path": "target/00057-integration/debug/deps/writes-926922b1a18e4ea9",
+    "bytes": 15442048
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_framework_session-b4d0a23396c38f68",
+    "bytes": 1721808
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress-315ce92537c1fc98",
+    "bytes": 8593024
+  },
+  {
+    "path": "target/00057-integration/debug/deps/generated_admin_tool-be35e6832b3ba154",
+    "bytes": 13139824
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_lib-f0feebd401f9898d",
+    "bytes": 2927728
+  },
+  {
+    "path": "target/00057-integration/debug/deps/cli-4f3a1f1e6e440f65",
+    "bytes": 924160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/json_values-4b212481f7cf9d62",
+    "bytes": 1620448
+  },
+  {
+    "path": "target/00057-integration/debug/deps/sql_profile_setup-b25d37ae7ffc10cf",
+    "bytes": 7685440
+  },
+  {
+    "path": "target/00057-integration/debug/deps/main-45b6b6e96ca49e9c",
+    "bytes": 26390976
+  },
+  {
+    "path": "target/00057-integration/debug/deps/driver_stores-c0d34ccafd7e7b0c",
+    "bytes": 28711152
+  },
+  {
+    "path": "target/00057-integration/debug/deps/lifecycle-e7f494c50b8b3f75",
+    "bytes": 9115040
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_profile_ui_gateway-91d0a976a876b598",
+    "bytes": 27073744
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_ui_preferences_shared-02c1bbaa1cfe634b",
+    "bytes": 2756416
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_profile_ui_gateway-04c941afcf3324b3",
+    "bytes": 924224
+  },
+  {
+    "path": "target/00057-integration/debug/deps/sqlite_host-0e116865e23a9da0",
+    "bytes": 10487840
+  },
+  {
+    "path": "target/00057-integration/debug/deps/generated_workspace_tool-a27a18463a1615e0",
+    "bytes": 1668000
+  },
+  {
+    "path": "target/00057-integration/debug/deps/publication-7e9d83d39233ae89",
+    "bytes": 2584800
+  },
+  {
+    "path": "target/00057-integration/debug/deps/source-8705e83061d8b065",
+    "bytes": 924160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/source_extensions-24b7d3ab09e415e5",
+    "bytes": 9845664
+  },
+  {
+    "path": "target/00057-integration/debug/deps/storage_length-49a3e96e120dcc08",
+    "bytes": 15557232
+  },
+  {
+    "path": "target/00057-integration/debug/deps/generation-4355f8c41a719240",
+    "bytes": 8116384
+  },
+  {
+    "path": "target/00057-integration/debug/deps/ddl-eb21f55a746d43e0",
+    "bytes": 1738736
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_profile_ui_shared-7bad3bf1d2279f55",
+    "bytes": 13137936
+  },
+  {
+    "path": "target/00057-integration/debug/deps/transfer-9fd7d216d4a73272",
+    "bytes": 8124896
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_cli-5a88f26179f30f8d",
+    "bytes": 3130752
+  },
+  {
+    "path": "target/00057-integration/debug/deps/contracts-c65f523688c8b5a6",
+    "bytes": 1389392
+  },
+  {
+    "path": "target/00057-integration/debug/deps/conflict-5b20b4dc1e41f702",
+    "bytes": 924160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/read_source_policy-0c93e617c7bb07fb",
+    "bytes": 1239536
+  },
+  {
+    "path": "target/00057-integration/debug/deps/profile_codegen-349353a5d6fed58c",
+    "bytes": 7760560
+  },
+  {
+    "path": "target/00057-integration/debug/deps/contracts-6ace6b9d87d97eb2",
+    "bytes": 8961584
+  },
+  {
+    "path": "target/00057-integration/debug/deps/finite-68f96924ef97cff3",
+    "bytes": 1507952
+  },
+  {
+    "path": "target/00057-integration/debug/deps/read_source_policy-e9a7845ca0c664b1",
+    "bytes": 1221680
+  },
+  {
+    "path": "target/00057-integration/debug/deps/m0-fd96650d2ca4930d",
+    "bytes": 9745120
+  },
+  {
+    "path": "target/00057-integration/debug/deps/matrix-c6b930ff93cdc2f5",
+    "bytes": 924160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_framework_csrf-8985f696c0d9ef15",
+    "bytes": 924192
+  },
+  {
+    "path": "target/00057-integration/debug/deps/package_sources-854a89b1f6b4e736",
+    "bytes": 924192
+  },
+  {
+    "path": "target/00057-integration/debug/deps/m1-7a418bee4844cc28",
+    "bytes": 11868304
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_idea_parser-87ad5430486da5b4",
+    "bytes": 924192
+  },
+  {
+    "path": "target/00057-integration/debug/deps/reads-503f620e32b07687",
+    "bytes": 17499792
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_sql_mysql-fe7dab507d0e119b",
+    "bytes": 2827472
+  },
+  {
+    "path": "target/00057-integration/debug/deps/generated_workspace_tool-61c2bc323efe604a",
+    "bytes": 19216752
+  },
+  {
+    "path": "target/00057-integration/debug/deps/page-cbcd473201b4f0e3",
+    "bytes": 1161312
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_ui_stream_client-5e7e990f42f1612d",
+    "bytes": 1551584
+  },
+  {
+    "path": "target/00057-integration/debug/deps/operations-16c24460527e6518",
+    "bytes": 924160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/m0-a7e65d4cbed7aeeb",
+    "bytes": 12601648
+  },
+  {
+    "path": "target/00057-integration/debug/deps/policies-40a2119797a94ecc",
+    "bytes": 1939632
+  },
+  {
+    "path": "target/00057-integration/debug/deps/error_causes-110a3c3c2aaf6be3",
+    "bytes": 1841824
+  },
+  {
+    "path": "target/00057-integration/debug/deps/generated_admin_web-3a4564f9c4068f81",
+    "bytes": 1925792
+  },
+  {
+    "path": "target/00057-integration/debug/deps/finite-863288d64cf16653",
+    "bytes": 1507952
+  },
+  {
+    "path": "target/00057-integration/debug/deps/presentation_registration-08fcd041589b46e7",
+    "bytes": 9982912
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_ui_stream_web-03a7ab40cb8ae156",
+    "bytes": 13877664
+  },
+  {
+    "path": "target/00057-integration/debug/deps/http_input-3949c32e152c4fb3",
+    "bytes": 9461024
+  },
+  {
+    "path": "target/00057-integration/debug/deps/sql_profile-4d3e939b4a368ce8",
+    "bytes": 924160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/document_errors-3fc7eb62fefea8e2",
+    "bytes": 68449600
+  },
+  {
+    "path": "target/00057-integration/debug/deps/sqlite_host-11f6ec6379612e47",
+    "bytes": 10467552
+  },
+  {
+    "path": "target/00057-integration/debug/deps/generated_workspace_contracts-95624fa45fdd6ec2",
+    "bytes": 924192
+  },
+  {
+    "path": "target/00057-integration/debug/deps/foundation-80c6f2e49a793f75",
+    "bytes": 9049184
+  },
+  {
+    "path": "target/00057-integration/debug/deps/generated_admin_client-68d4fe56137a8ce3",
+    "bytes": 924192
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_sql_postgres-85a8369e6baf35db",
+    "bytes": 3189424
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_idea-f53b6ec0ed933f10",
+    "bytes": 924192
+  },
+  {
+    "path": "target/00057-integration/debug/deps/admin_state-99960bfb0faac4a3",
+    "bytes": 9220992
+  },
+  {
+    "path": "target/00057-integration/debug/deps/source_ui-24e229ea2cf27a58",
+    "bytes": 7207520
+  },
+  {
+    "path": "target/00057-integration/debug/deps/m2-21aa04ef965abfcd",
+    "bytes": 11884400
+  },
+  {
+    "path": "target/00057-integration/debug/deps/generation-dfa162536a459147",
+    "bytes": 13506544
+  },
+  {
+    "path": "target/00057-integration/debug/deps/generated_admin_web-5d353c29ab37dace",
+    "bytes": 924192
+  },
+  {
+    "path": "target/00057-integration/debug/deps/package_sources-baa616c70fdc0aca",
+    "bytes": 4001216
+  },
+  {
+    "path": "target/00057-integration/debug/deps/generated_admin_tool-b314e26f6fd42fa4",
+    "bytes": 12499616
+  },
+  {
+    "path": "target/00057-integration/debug/deps/sql_profile-3d73339b8d704aca",
+    "bytes": 14146672
+  },
+  {
+    "path": "target/00057-integration/debug/deps/profiles-a152987dd0c144c8",
+    "bytes": 8991552
+  },
+  {
+    "path": "target/00057-integration/debug/deps/render-eeb3db1c2273345e",
+    "bytes": 49393088
+  },
+  {
+    "path": "target/00057-integration/debug/deps/profile_app-b290868e9d0c1ce4",
+    "bytes": 8597568
+  },
+  {
+    "path": "target/00057-integration/debug/deps/idea-55e66aa448f45be4",
+    "bytes": 924160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_framework_view-7c2802b5877a8cb5",
+    "bytes": 8704656
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_sql_mysql-5323406b2ea29aa0",
+    "bytes": 2849040
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_profile_ui_client-40cf93b159b05136",
+    "bytes": 2489952
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_lib-984c35a9a2fa2dbc",
+    "bytes": 2929888
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_framework_admin-4a5f0e17d5c86156",
+    "bytes": 10509120
+  },
+  {
+    "path": "target/00057-integration/debug/deps/contracts-15d13bcf81cf704d",
+    "bytes": 2044304
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_sql-a050845495b68402",
+    "bytes": 1367424
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_framework_admin-1080445767bdd425",
+    "bytes": 20245408
+  },
+  {
+    "path": "target/00057-integration/debug/deps/rounds-640f308a28e842cc",
+    "bytes": 2570096
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_ui_gallery_shared-d0cc7ddc17ff1598",
+    "bytes": 62005456
+  },
+  {
+    "path": "target/00057-integration/debug/deps/experimental-4cb4c216584661ca",
+    "bytes": 8783904
+  },
+  {
+    "path": "target/00057-integration/debug/deps/json_values-8793b09d62af7e39",
+    "bytes": 1620400
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_ui_preferences_client-3e9fe6ed7f29725c",
+    "bytes": 924224
+  },
+  {
+    "path": "target/00057-integration/debug/deps/serialization_contracts-a5acf0c1f41a4c3e",
+    "bytes": 2896832
+  },
+  {
+    "path": "target/00057-integration/debug/deps/stackpress_example_ui_stream_web-77e9a7ccae4b5c11",
+    "bytes": 924224
+  },
+  {
+    "path": "target/00057-integration/debug/deps/leaves-41e6a9878d6cb320",
+    "bytes": 924160
+  },
+  {
+    "path": "target/00057-integration/debug/deps/transfer_tolerant-117a38fef91bc6e4",
+    "bytes": 1566368
+  },
+  {
+    "path": "target/00057-integration/debug/deps/executor_budgets-a21659e81d0e1132",
+    "bytes": 924192
+  },
+  {
+    "path": "target/00057-integration/debug/deps/atomic-6e8cbbc99f82f88b",
+    "bytes": 15842704
+  },
+  {
+    "path": "target/00057-integration/debug/deps/leptos_routing-a2e98ce2323af302",
+    "bytes": 7369488
+  },
+  {
+    "path": "target/00057-integration/debug/deps/main-b91be9a089a039d6",
+    "bytes": 20877376
+  },
+  {
+    "path": "target/00057-integration/tests/trybuild",
+    "bytes": 1893489623
+  }
+]

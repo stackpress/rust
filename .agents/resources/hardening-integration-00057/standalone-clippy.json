@@ -1,0 +1,393 @@
+[
+  {
+    "crate": "stackpress-leptos",
+    "target": "/private/tmp/hardening-int/target/00057-standalone-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-leptos",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0
+  },
+  {
+    "crate": "stackpress-framework-language",
+    "target": "/private/tmp/hardening-int/target/00057-standalone-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-framework-language",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0
+  },
+  {
+    "crate": "stackpress-sql",
+    "target": "/private/tmp/hardening-int/target/00057-standalone-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-sql",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0
+  },
+  {
+    "crate": "stackpress-lib",
+    "target": "/private/tmp/hardening-int/target/00057-standalone-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-lib",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0
+  },
+  {
+    "crate": "stackpress-idea-parser",
+    "target": "/private/tmp/hardening-int/target/00057-standalone-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-idea-parser",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0
+  },
+  {
+    "crate": "stackpress-sql-sqlite",
+    "target": "/private/tmp/hardening-int/target/00057-standalone-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-sql-sqlite",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0
+  },
+  {
+    "crate": "stackpress-sql-postgres",
+    "target": "/private/tmp/hardening-int/target/00057-standalone-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-sql-postgres",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0
+  },
+  {
+    "crate": "stackpress-sql-mysql",
+    "target": "/private/tmp/hardening-int/target/00057-standalone-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-sql-mysql",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0
+  },
+  {
+    "crate": "stackpress-server",
+    "target": "/private/tmp/hardening-int/target/00057-standalone-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-server",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0
+  },
+  {
+    "crate": "stackpress-idea-transformer",
+    "target": "/private/tmp/hardening-int/target/00057-standalone-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-idea-transformer",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0
+  },
+  {
+    "crate": "stackpress-server-http",
+    "target": "/private/tmp/hardening-int/target/00057-standalone-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-server-http",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0
+  },
+  {
+    "crate": "stackpress-cli",
+    "target": "/private/tmp/hardening-int/target/00057-standalone-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-cli",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0
+  },
+  {
+    "crate": "stackpress-framework-view",
+    "target": "/private/tmp/hardening-int/target/00057-standalone-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-framework-view",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0
+  },
+  {
+    "crate": "stackpress-framework-csrf",
+    "target": "/private/tmp/hardening-int/target/00057-standalone-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-framework-csrf",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0
+  },
+  {
+    "crate": "stackpress-framework-email",
+    "target": "/private/tmp/hardening-int/target/00057-standalone-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-framework-email",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0
+  },
+  {
+    "crate": "stackpress-idea",
+    "target": "/private/tmp/hardening-int/target/00057-standalone-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-idea",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0
+  },
+  {
+    "crate": "stackpress-framework-schema",
+    "target": "/private/tmp/hardening-int/target/00057-standalone-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-framework-schema",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0
+  },
+  {
+    "crate": "stackpress-framework-sql",
+    "target": "/private/tmp/hardening-int/target/00057-standalone-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-framework-sql",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0
+  },
+  {
+    "crate": "stackpress-framework-admin",
+    "target": "/private/tmp/hardening-int/target/00057-standalone-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-framework-admin",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0
+  },
+  {
+    "crate": "stackpress-framework-session",
+    "target": "/private/tmp/hardening-int/target/00057-standalone-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-framework-session",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0
+  },
+  {
+    "crate": "stackpress-framework-api",
+    "target": "/private/tmp/hardening-int/target/00057-standalone-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-framework-api",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0
+  },
+  {
+    "crate": "stackpress-framework",
+    "target": "/private/tmp/hardening-int/target/00057-standalone-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-framework",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0
+  },
+  {
+    "crate": "stackpress",
+    "target": "/private/tmp/hardening-int/target/00057-standalone-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0
+  }
+]

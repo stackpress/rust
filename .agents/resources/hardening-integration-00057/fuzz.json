@@ -1,0 +1,59 @@
+[
+  {
+    "command": [
+      "cargo",
+      "+nightly",
+      "fuzz",
+      "build"
+    ],
+    "code": 0
+  },
+  {
+    "command": [
+      "cargo",
+      "+nightly",
+      "fuzz",
+      "run",
+      "idea_parser",
+      "/private/tmp/hardening-int/fuzz/coverage/discovered-corpus/00057/idea_parser",
+      "--",
+      "-max_total_time=60",
+      "-max_len=1048577",
+      "-timeout=10",
+      "-print_final_stats=1"
+    ],
+    "code": 0
+  },
+  {
+    "command": [
+      "cargo",
+      "+nightly",
+      "fuzz",
+      "run",
+      "admin_csv",
+      "/private/tmp/hardening-int/fuzz/coverage/discovered-corpus/00057/admin_csv",
+      "--",
+      "-max_total_time=60",
+      "-max_len=1048577",
+      "-timeout=10",
+      "-print_final_stats=1"
+    ],
+    "code": 0
+  },
+  {
+    "command": [
+      "cargo",
+      "+nightly",
+      "fuzz",
+      "run",
+      "lib_query_form",
+      "/private/tmp/hardening-int/fuzz/coverage/discovered-corpus/00057/lib_query_form",
+      "--",
+      "-max_total_time=60",
+      "-max_len=1048577",
+      "-timeout=10",
+      "-print_final_stats=1"
+    ],
+    "code": 0
+  }
+]

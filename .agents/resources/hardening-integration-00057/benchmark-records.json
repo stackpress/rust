@@ -1,0 +1,3016 @@
+[
+  {
+    "schema_version": 1,
+    "id": "20261112T070645.813044Z-97559699ba89",
+    "started_at": "2026-11-12T07:06:45.813044+00:00",
+    "status": "passed",
+    "label": "00057 fresh effort cleanup",
+    "kind": "clean",
+    "scope": "workspace",
+    "cache": "cold",
+    "command": [
+      "cargo",
+      "clean"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": false,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_build_stages": [],
+    "log": "runs/20261112T070645.813044Z-97559699ba89.log",
+    "ended_at": "2026-11-12T07:06:46.207008+00:00",
+    "command_seconds": 0.120348,
+    "exit_code": 0,
+    "cargo_build_seconds": null
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T070702.612002Z-031cc997fed2",
+    "started_at": "2026-11-12T07:07:02.612002+00:00",
+    "status": "passed",
+    "label": "00057 fresh coverage cleanup",
+    "kind": "clean",
+    "scope": "workspace",
+    "cache": "cold",
+    "command": [
+      "cargo",
+      "llvm-cov",
+      "clean",
+      "--workspace"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": false,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_build_stages": [],
+    "log": "runs/20261112T070702.612002Z-031cc997fed2.log",
+    "ended_at": "2026-11-12T07:07:03.505930+00:00",
+    "command_seconds": 0.628281,
+    "exit_code": 0,
+    "cargo_build_seconds": null
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T070706.577142Z-be505881bf82",
+    "started_at": "2026-11-12T07:07:06.577142+00:00",
+    "status": "passed",
+    "label": "00057 compile default",
+    "kind": "check",
+    "scope": "workspace",
+    "cache": "cold",
+    "command": [
+      "cargo",
+      "check",
+      "--workspace",
+      "--all-targets",
+      "--locked",
+      "--offline"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": false,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 124,
+      "checking": 314,
+      "documenting": 0
+    },
+    "cargo_build_stages": [
+      {
+        "profile": "dev",
+        "seconds": 139.0
+      }
+    ],
+    "log": "runs/20261112T070706.577142Z-be505881bf82.log",
+    "ended_at": "2026-11-12T07:09:26.393913+00:00",
+    "command_seconds": 139.682519,
+    "exit_code": 0,
+    "cargo_build_seconds": 139.0
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T070822.448567Z-ba5c20d7d991",
+    "started_at": "2026-11-12T07:08:22.448567+00:00",
+    "status": "failed",
+    "label": "00057 strict release tooling controls",
+    "kind": "check",
+    "scope": "other",
+    "cache": "unknown",
+    "command": [
+      "python3",
+      "/private/tmp/00057-auxiliary.py"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": false,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_build_stages": [],
+    "log": "runs/20261112T070822.448567Z-ba5c20d7d991.log",
+    "ended_at": "2026-11-12T07:08:26.085259+00:00",
+    "command_seconds": 3.444126,
+    "exit_code": 1,
+    "cargo_build_seconds": null
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T070826.233170Z-234784ea4029",
+    "started_at": "2026-11-12T07:08:26.233170+00:00",
+    "status": "passed",
+    "label": "00057 initial live DB listing",
+    "kind": "check",
+    "scope": "other",
+    "cache": "unknown",
+    "command": [
+      "python3",
+      "/private/tmp/00057-db-audit.py",
+      "before"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": false,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_build_stages": [],
+    "log": "runs/20261112T070826.233170Z-234784ea4029.log",
+    "ended_at": "2026-11-12T07:08:26.591160+00:00",
+    "command_seconds": 0.218877,
+    "exit_code": 0,
+    "cargo_build_seconds": null
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T070940.037748Z-4b149d232b73",
+    "started_at": "2026-11-12T07:09:40.037748+00:00",
+    "status": "passed",
+    "label": "00057 compile compatible",
+    "kind": "check",
+    "scope": "workspace",
+    "cache": "warm",
+    "command": [
+      "python3",
+      "/private/tmp/00057-compatible.py"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": false,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 26,
+      "checking": 113,
+      "documenting": 0
+    },
+    "cargo_build_stages": [
+      {
+        "profile": "dev",
+        "seconds": 69.0
+      }
+    ],
+    "log": "runs/20261112T070940.037748Z-4b149d232b73.log",
+    "ended_at": "2026-11-12T07:10:49.789233+00:00",
+    "command_seconds": 69.514409,
+    "exit_code": 0,
+    "cargo_build_seconds": 69.0
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T071115.547166Z-000114cf58d8",
+    "started_at": "2026-11-12T07:11:15.547166+00:00",
+    "status": "passed",
+    "label": "00057 format CSV integration regression",
+    "kind": "check",
+    "scope": "selected",
+    "cache": "warm",
+    "command": [
+      "rustfmt",
+      "--edition",
+      "2024",
+      "crates/framework/framework-api/tests/management.rs"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": true,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_build_stages": [],
+    "log": "runs/20261112T071115.547166Z-000114cf58d8.log",
+    "ended_at": "2026-11-12T07:11:15.877608+00:00",
+    "command_seconds": 0.05797,
+    "exit_code": 0,
+    "cargo_build_seconds": null
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T071119.101994Z-17136f00c7c6",
+    "started_at": "2026-11-12T07:11:19.101994+00:00",
+    "status": "passed",
+    "label": "00057 official merged generation and every check",
+    "kind": "check",
+    "scope": "workspace",
+    "cache": "warm",
+    "command": [
+      "python3",
+      "/private/tmp/00057-generate.py"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": true,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 1184,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_build_stages": [
+      {
+        "profile": "dev",
+        "seconds": 18.8
+      },
+      {
+        "profile": "dev",
+        "seconds": 46.51
+      },
+      {
+        "profile": "dev",
+        "seconds": 108.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 68.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 15.63
+      },
+      {
+        "profile": "dev",
+        "seconds": 45.01
+      },
+      {
+        "profile": "dev",
+        "seconds": 27.48
+      },
+      {
+        "profile": "dev",
+        "seconds": 1.99
+      },
+      {
+        "profile": "dev",
+        "seconds": 96.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.39
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.36
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.63
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.49
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.29
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.33
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.38
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.31
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.28
+      }
+    ],
+    "log": "runs/20261112T071119.101994Z-17136f00c7c6.log",
+    "ended_at": "2026-11-12T07:18:57.579924+00:00",
+    "command_seconds": 458.356877,
+    "exit_code": 0,
+    "cargo_build_seconds": 430.88
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T071143.368902Z-5a64c87cda95",
+    "started_at": "2026-11-12T07:11:43.368902+00:00",
+    "status": "passed",
+    "label": "00057 merged fuzz build and 60 second targets",
+    "kind": "test",
+    "scope": "selected",
+    "cache": "cold",
+    "command": [
+      "python3",
+      "/private/tmp/00057-fuzz.py"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": true,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 195,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_build_stages": [
+      {
+        "profile": "release",
+        "seconds": 365.0
+      },
+      {
+        "profile": "release",
+        "seconds": 0.36
+      },
+      {
+        "profile": "release",
+        "seconds": 0.12
+      },
+      {
+        "profile": "release",
+        "seconds": 0.3
+      },
+      {
+        "profile": "release",
+        "seconds": 0.1
+      },
+      {
+        "profile": "release",
+        "seconds": 0.31
+      },
+      {
+        "profile": "release",
+        "seconds": 0.09
+      }
+    ],
+    "log": "runs/20261112T071143.368902Z-5a64c87cda95.log",
+    "ended_at": "2026-11-12T07:20:57.617160+00:00",
+    "command_seconds": 554.110428,
+    "exit_code": 0,
+    "cargo_build_seconds": 366.28000000000003
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T071226.558722Z-004bc98e158e",
+    "started_at": "2026-11-12T07:12:26.558722+00:00",
+    "status": "passed",
+    "label": "00057 nextest audit output option",
+    "kind": "other",
+    "scope": "other",
+    "cache": "unknown",
+    "command": [
+      "cargo",
+      "nextest",
+      "run",
+      "--help"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": true,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_build_stages": [],
+    "log": "runs/20261112T071226.558722Z-004bc98e158e.log",
+    "ended_at": "2026-11-12T07:12:26.755123+00:00",
+    "command_seconds": 0.055942,
+    "exit_code": 0,
+    "cargo_build_seconds": null
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T071447.879876Z-35ea8eb3a8ff",
+    "started_at": "2026-11-12T07:14:47.879876+00:00",
+    "status": "passed",
+    "label": "00057 reconciled strict release tooling controls",
+    "kind": "check",
+    "scope": "other",
+    "cache": "warm",
+    "command": [
+      "python3",
+      "/private/tmp/00057-auxiliary.py"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": true,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_build_stages": [],
+    "log": "runs/20261112T071447.879876Z-35ea8eb3a8ff.log",
+    "ended_at": "2026-11-12T07:14:51.677914+00:00",
+    "command_seconds": 3.618492,
+    "exit_code": 0,
+    "cargo_build_seconds": null
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T071929.528772Z-450322eabc7f",
+    "started_at": "2026-11-12T07:19:29.528772+00:00",
+    "status": "failed",
+    "label": "00057 remaining managed trees regenerate and check",
+    "kind": "check",
+    "scope": "workspace",
+    "cache": "warm",
+    "command": [
+      "python3",
+      "/private/tmp/00057-generate-extra.py"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": true,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_build_stages": [
+      {
+        "profile": "dev",
+        "seconds": 0.48
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.16
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.15
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.2
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.23
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.18
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.3
+      }
+    ],
+    "log": "runs/20261112T071929.528772Z-450322eabc7f.log",
+    "ended_at": "2026-11-12T07:19:38.186012+00:00",
+    "command_seconds": 8.38694,
+    "exit_code": 1,
+    "cargo_build_seconds": 1.7
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T072006.129722Z-e1c74aed2d4a",
+    "started_at": "2026-11-12T07:20:06.129722+00:00",
+    "status": "passed",
+    "label": "00057 remaining generation format feature corrected",
+    "kind": "check",
+    "scope": "workspace",
+    "cache": "warm",
+    "command": [
+      "python3",
+      "/private/tmp/00057-generate-extra.py"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": true,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 199,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_build_stages": [
+      {
+        "profile": "dev",
+        "seconds": 37.3
+      },
+      {
+        "profile": "dev",
+        "seconds": 3.79
+      },
+      {
+        "profile": "dev",
+        "seconds": 24.79
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.47
+      },
+      {
+        "profile": "dev",
+        "seconds": 28.57
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.29
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.14
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.15
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.17
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.15
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.14
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.36
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.14
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.31
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.19
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.29
+      }
+    ],
+    "log": "runs/20261112T072006.129722Z-e1c74aed2d4a.log",
+    "ended_at": "2026-11-12T07:21:58.334303+00:00",
+    "command_seconds": 111.908637,
+    "exit_code": 0,
+    "cargo_build_seconds": 97.25000000000001
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T072214.295080Z-8c506e55e447",
+    "started_at": "2026-11-12T07:22:14.295080+00:00",
+    "status": "passed",
+    "label": "00057 CSV handler regression round 1",
+    "kind": "test",
+    "scope": "selected",
+    "cache": "warm",
+    "command": [
+      "cargo",
+      "nextest",
+      "run",
+      "-p",
+      "stackpress-framework-api",
+      "--test",
+      "main",
+      "--features",
+      "sql,codegen,ui-ssr",
+      "--locked",
+      "--offline",
+      "-E",
+      "test(source_admin_imports_windows_1252)",
+      "--test-threads",
+      "1"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": true,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 1,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_build_stages": [
+      {
+        "profile": "test",
+        "seconds": 6.09
+      }
+    ],
+    "log": "runs/20261112T072214.295080Z-8c506e55e447.log",
+    "ended_at": "2026-11-12T07:22:22.798649+00:00",
+    "command_seconds": 8.239232,
+    "exit_code": 0,
+    "cargo_build_seconds": 6.09
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T072237.007379Z-effd4f7f0ff7",
+    "started_at": "2026-11-12T07:22:37.007379+00:00",
+    "status": "passed",
+    "label": "00057 preserve extended SQL session fixture regeneration",
+    "kind": "check",
+    "scope": "selected",
+    "cache": "warm",
+    "command": [
+      "python3",
+      "/private/tmp/00057-generate-extra.py"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": true,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_build_stages": [
+      {
+        "profile": "dev",
+        "seconds": 0.53
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.25
+      }
+    ],
+    "log": "runs/20261112T072237.007379Z-effd4f7f0ff7.log",
+    "ended_at": "2026-11-12T07:22:39.304657+00:00",
+    "command_seconds": 2.151543,
+    "exit_code": 0,
+    "cargo_build_seconds": 0.78
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T072301.815478Z-c64564da3291",
+    "started_at": "2026-11-12T07:23:01.815478+00:00",
+    "status": "passed",
+    "label": "00057 round 2 API admin responsibility and boundary tests",
+    "kind": "test",
+    "scope": "selected",
+    "cache": "warm",
+    "command": [
+      "cargo",
+      "nextest",
+      "run",
+      "-p",
+      "stackpress-framework-api",
+      "--test",
+      "main",
+      "--features",
+      "sql,codegen,ui-ssr",
+      "--locked",
+      "--offline",
+      "-E",
+      "test(management::) | test(composite_admin::)",
+      "--test-threads",
+      "2"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": true,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_build_stages": [
+      {
+        "profile": "test",
+        "seconds": 0.4
+      }
+    ],
+    "log": "runs/20261112T072301.815478Z-c64564da3291.log",
+    "ended_at": "2026-11-12T07:23:03.744718+00:00",
+    "command_seconds": 1.672711,
+    "exit_code": 0,
+    "cargo_build_seconds": 0.4
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T072316.062056Z-7e42b93bf24c",
+    "started_at": "2026-11-12T07:23:16.062056+00:00",
+    "status": "passed",
+    "label": "00057 round 3 documentation consistency and regenerated descriptors",
+    "kind": "test",
+    "scope": "selected",
+    "cache": "warm",
+    "command": [
+      "cargo",
+      "nextest",
+      "run",
+      "-p",
+      "stackpress-framework-api",
+      "--test",
+      "main",
+      "--features",
+      "sql,codegen,ui-ssr",
+      "--locked",
+      "--offline",
+      "-E",
+      "test(generated_models_are_fresh) | test(generated_forms_roles_data_and_csv_representation_limits) | test(source_admin_imports_windows_1252)",
+      "--test-threads",
+      "1"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": true,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_build_stages": [
+      {
+        "profile": "test",
+        "seconds": 0.4
+      }
+    ],
+    "log": "runs/20261112T072316.062056Z-7e42b93bf24c.log",
+    "ended_at": "2026-11-12T07:23:19.114880+00:00",
+    "command_seconds": 2.803553,
+    "exit_code": 0,
+    "cargo_build_seconds": 0.4
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T072340.229714Z-2a631b4b2e37",
+    "started_at": "2026-11-12T07:23:40.229714+00:00",
+    "status": "passed",
+    "label": "00057 single combined release gate live inclusive",
+    "kind": "test",
+    "scope": "workspace",
+    "cache": "warm",
+    "command": [
+      "python3",
+      "/private/tmp/00057-gate.py"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": true,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 9558,
+      "checking": 4172,
+      "documenting": 107
+    },
+    "cargo_build_stages": [
+      {
+        "profile": "dev",
+        "seconds": 47.63
+      },
+      {
+        "profile": "test",
+        "seconds": 117.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 89.0
+      },
+      {
+        "profile": "test",
+        "seconds": 0.63
+      },
+      {
+        "profile": "test",
+        "seconds": 2.29
+      },
+      {
+        "profile": "dev",
+        "seconds": 41.78
+      },
+      {
+        "profile": "dev",
+        "seconds": 54.9
+      },
+      {
+        "profile": "test",
+        "seconds": 138.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 40.14
+      },
+      {
+        "profile": "dev",
+        "seconds": 25.23
+      },
+      {
+        "profile": "dev",
+        "seconds": 24.51
+      },
+      {
+        "profile": "test",
+        "seconds": 0.75
+      },
+      {
+        "profile": "test",
+        "seconds": 2.3
+      },
+      {
+        "profile": "dev",
+        "seconds": 49.87
+      },
+      {
+        "profile": "dev",
+        "seconds": 8.74
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.31
+      },
+      {
+        "profile": "dev",
+        "seconds": 2.07
+      },
+      {
+        "profile": "dev",
+        "seconds": 14.53
+      },
+      {
+        "profile": "dev",
+        "seconds": 30.9
+      },
+      {
+        "profile": "dev",
+        "seconds": 7.29
+      },
+      {
+        "profile": "dev",
+        "seconds": 3.19
+      },
+      {
+        "profile": "dev",
+        "seconds": 15.3
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.33
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.49
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.39
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.44
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.37
+      },
+      {
+        "profile": "dev",
+        "seconds": 1.88
+      },
+      {
+        "profile": "dev",
+        "seconds": 1.41
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.27
+      },
+      {
+        "profile": "dev",
+        "seconds": 29.46
+      },
+      {
+        "profile": "dev",
+        "seconds": 7.87
+      },
+      {
+        "profile": "dev",
+        "seconds": 8.48
+      },
+      {
+        "profile": "dev",
+        "seconds": 5.09
+      },
+      {
+        "profile": "dev",
+        "seconds": 1.44
+      },
+      {
+        "profile": "dev",
+        "seconds": 1.51
+      },
+      {
+        "profile": "dev",
+        "seconds": 17.87
+      },
+      {
+        "profile": "dev",
+        "seconds": 1.08
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.31
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.49
+      },
+      {
+        "profile": "dev",
+        "seconds": 55.03
+      },
+      {
+        "profile": "dev",
+        "seconds": 17.53
+      },
+      {
+        "profile": "dev",
+        "seconds": 17.47
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.45
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.25
+      },
+      {
+        "profile": "dev",
+        "seconds": 1.95
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.78
+      },
+      {
+        "profile": "dev",
+        "seconds": 79.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 17.75
+      },
+      {
+        "profile": "dev",
+        "seconds": 79.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 17.37
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.98
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.9
+      },
+      {
+        "profile": "dev",
+        "seconds": 123.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 72.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.49
+      },
+      {
+        "profile": "dev",
+        "seconds": 105.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 74.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.48
+      },
+      {
+        "profile": "dev",
+        "seconds": 48.8
+      },
+      {
+        "profile": "dev",
+        "seconds": 35.5
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.28
+      },
+      {
+        "profile": "dev",
+        "seconds": 93.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 65.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.51
+      },
+      {
+        "profile": "dev",
+        "seconds": 11.93
+      },
+      {
+        "profile": "dev",
+        "seconds": 6.96
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.05
+      },
+      {
+        "profile": "dev",
+        "seconds": 97.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 66.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.54
+      },
+      {
+        "profile": "dev",
+        "seconds": 86.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 77.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.6
+      },
+      {
+        "profile": "dev",
+        "seconds": 4.71
+      },
+      {
+        "profile": "dev",
+        "seconds": 4.53
+      },
+      {
+        "profile": "dev",
+        "seconds": 1.15
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.45
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.33
+      },
+      {
+        "profile": "dev",
+        "seconds": 16.78
+      },
+      {
+        "profile": "dev",
+        "seconds": 19.25
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.33
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.37
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.63
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.36
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.45
+      },
+      {
+        "profile": "dev",
+        "seconds": 31.55
+      },
+      {
+        "profile": "dev",
+        "seconds": 14.87
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.72
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.3
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.27
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.28
+      },
+      {
+        "profile": "dev",
+        "seconds": 1.08
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.29
+      },
+      {
+        "profile": "dev",
+        "seconds": 15.12
+      },
+      {
+        "profile": "dev",
+        "seconds": 14.43
+      },
+      {
+        "profile": "dev",
+        "seconds": 26.83
+      },
+      {
+        "profile": "dev",
+        "seconds": 17.88
+      },
+      {
+        "profile": "dev",
+        "seconds": 24.57
+      },
+      {
+        "profile": "dev",
+        "seconds": 17.61
+      },
+      {
+        "profile": "dev",
+        "seconds": 56.13
+      },
+      {
+        "profile": "dev",
+        "seconds": 96.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 65.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 12.77
+      },
+      {
+        "profile": "dev",
+        "seconds": 7.85
+      },
+      {
+        "profile": "dev",
+        "seconds": 1.18
+      },
+      {
+        "profile": "dev",
+        "seconds": 1.16
+      },
+      {
+        "profile": "dev",
+        "seconds": 49.35
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.69
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.6
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.36
+      },
+      {
+        "profile": "dev",
+        "seconds": 96.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.51
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.24
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.23
+      },
+      {
+        "profile": "dev",
+        "seconds": 10.37
+      },
+      {
+        "profile": "dev",
+        "seconds": 92.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 90.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.5
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.18
+      },
+      {
+        "profile": "dev",
+        "seconds": 81.0
+      },
+      {
+        "profile": "test",
+        "seconds": 72.0
+      },
+      {
+        "profile": "test",
+        "seconds": 2.04
+      },
+      {
+        "profile": "dev",
+        "seconds": 8.64
+      },
+      {
+        "profile": "dev",
+        "seconds": 48.22
+      },
+      {
+        "profile": "dev",
+        "seconds": 48.7
+      },
+      {
+        "profile": "dev",
+        "seconds": 28.75
+      },
+      {
+        "profile": "dev",
+        "seconds": 105.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.52
+      },
+      {
+        "profile": "dev",
+        "seconds": 76.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 1.46
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.26
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.23
+      },
+      {
+        "profile": "dev",
+        "seconds": 19.13
+      },
+      {
+        "profile": "dev",
+        "seconds": 90.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 92.0
+      },
+      {
+        "profile": "test",
+        "seconds": 38.94
+      },
+      {
+        "profile": "dev",
+        "seconds": 99.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.48
+      },
+      {
+        "profile": "dev",
+        "seconds": 79.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.63
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.25
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.28
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.34
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.21
+      },
+      {
+        "profile": "dev",
+        "seconds": 6.08
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.3
+      },
+      {
+        "profile": "dev",
+        "seconds": 1.78
+      },
+      {
+        "profile": "dev",
+        "seconds": 21.01
+      },
+      {
+        "profile": "dev",
+        "seconds": 92.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 94.0
+      },
+      {
+        "profile": "test",
+        "seconds": 157.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 31.2
+      },
+      {
+        "profile": "test",
+        "seconds": 34.12
+      },
+      {
+        "profile": "dev",
+        "seconds": 3.46
+      },
+      {
+        "profile": "dev",
+        "seconds": 7.33
+      },
+      {
+        "profile": "dev",
+        "seconds": 8.77
+      },
+      {
+        "profile": "dev",
+        "seconds": 10.84
+      },
+      {
+        "profile": "dev",
+        "seconds": 45.05
+      },
+      {
+        "profile": "dev",
+        "seconds": 53.23
+      },
+      {
+        "profile": "dev",
+        "seconds": 53.83
+      },
+      {
+        "profile": "dev",
+        "seconds": 54.94
+      },
+      {
+        "profile": "dev",
+        "seconds": 64.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 65.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 73.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 75.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 75.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 75.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 79.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 87.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 90.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 91.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 99.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 99.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 100.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 100.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 102.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 2.7
+      },
+      {
+        "profile": "dev",
+        "seconds": 1.78
+      },
+      {
+        "profile": "dev",
+        "seconds": 3.19
+      },
+      {
+        "profile": "dev",
+        "seconds": 1.1
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.49
+      },
+      {
+        "profile": "dev",
+        "seconds": 12.99
+      },
+      {
+        "profile": "dev",
+        "seconds": 3.03
+      },
+      {
+        "profile": "dev",
+        "seconds": 1.39
+      },
+      {
+        "profile": "dev",
+        "seconds": 69.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 42.44
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.51
+      },
+      {
+        "profile": "dev",
+        "seconds": 13.66
+      },
+      {
+        "profile": "dev",
+        "seconds": 1.61
+      },
+      {
+        "profile": "dev",
+        "seconds": 1.02
+      },
+      {
+        "profile": "dev",
+        "seconds": 38.91
+      },
+      {
+        "profile": "dev",
+        "seconds": 12.58
+      },
+      {
+        "profile": "dev",
+        "seconds": 59.37
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.79
+      },
+      {
+        "profile": "dev",
+        "seconds": 25.57
+      },
+      {
+        "profile": "dev",
+        "seconds": 23.56
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.87
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.75
+      },
+      {
+        "profile": "dev",
+        "seconds": 11.77
+      },
+      {
+        "profile": "dev",
+        "seconds": 5.88
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.8
+      },
+      {
+        "profile": "dev",
+        "seconds": 3.54
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.39
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.27
+      },
+      {
+        "profile": "dev",
+        "seconds": 12.02
+      },
+      {
+        "profile": "dev",
+        "seconds": 23.78
+      },
+      {
+        "profile": "dev",
+        "seconds": 2.29
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.57
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.74
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.55
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.69
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.56
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.77
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.63
+      },
+      {
+        "profile": "dev",
+        "seconds": 7.83
+      },
+      {
+        "profile": "dev",
+        "seconds": 29.6
+      },
+      {
+        "profile": "dev",
+        "seconds": 31.66
+      },
+      {
+        "profile": "dev",
+        "seconds": 25.42
+      },
+      {
+        "profile": "dev",
+        "seconds": 7.83
+      },
+      {
+        "profile": "dev",
+        "seconds": 16.93
+      },
+      {
+        "profile": "dev",
+        "seconds": 10.44
+      },
+      {
+        "profile": "dev",
+        "seconds": 29.08
+      },
+      {
+        "profile": "dev",
+        "seconds": 1.14
+      },
+      {
+        "profile": "dev",
+        "seconds": 1.52
+      },
+      {
+        "profile": "dev",
+        "seconds": 1.58
+      },
+      {
+        "profile": "dev",
+        "seconds": 1.02
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.9
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.94
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.35
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.4
+      },
+      {
+        "profile": "dev",
+        "seconds": 2.15
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.59
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.6
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.59
+      },
+      {
+        "profile": "dev",
+        "seconds": 3.29
+      },
+      {
+        "profile": "dev",
+        "seconds": 1.28
+      },
+      {
+        "profile": "dev",
+        "seconds": 1.98
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.85
+      },
+      {
+        "profile": "dev",
+        "seconds": 12.52
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.57
+      },
+      {
+        "profile": "dev",
+        "seconds": 4.94
+      },
+      {
+        "profile": "dev",
+        "seconds": 22.95
+      },
+      {
+        "profile": "dev",
+        "seconds": 2.28
+      },
+      {
+        "profile": "dev",
+        "seconds": 1.4
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.47
+      },
+      {
+        "profile": "dev",
+        "seconds": 25.88
+      },
+      {
+        "profile": "dev",
+        "seconds": 12.98
+      },
+      {
+        "profile": "dev",
+        "seconds": 30.31
+      },
+      {
+        "profile": "dev",
+        "seconds": 17.29
+      },
+      {
+        "profile": "dev",
+        "seconds": 16.64
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.62
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.29
+      },
+      {
+        "profile": "dev",
+        "seconds": 6.6
+      },
+      {
+        "profile": "dev",
+        "seconds": 1.2
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.57
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.57
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.48
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.44
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.42
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.36
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.33
+      },
+      {
+        "profile": "dev",
+        "seconds": 46.06
+      }
+    ],
+    "log": "runs/20261112T072340.229714Z-2a631b4b2e37.log",
+    "ended_at": "2026-11-12T09:04:07.119578+00:00",
+    "command_seconds": 6026.57781,
+    "exit_code": 0,
+    "cargo_build_seconds": 6453.119999999999
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T072902.257823Z-65b336062c9c",
+    "started_at": "2026-11-12T07:29:02.257823+00:00",
+    "status": "passed",
+    "label": "00057 inspect nextest discovery progress",
+    "kind": "other",
+    "scope": "other",
+    "cache": "unknown",
+    "command": [
+      "python3",
+      "/private/tmp/00057-processes.py"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": true,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_build_stages": [],
+    "log": "runs/20261112T072902.257823Z-65b336062c9c.log",
+    "ended_at": "2026-11-12T07:29:02.472106+00:00",
+    "command_seconds": 0.070134,
+    "exit_code": 0,
+    "cargo_build_seconds": null
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T072942.296074Z-6f36c9bae11c",
+    "started_at": "2026-11-12T07:29:42.296074+00:00",
+    "status": "failed",
+    "label": "00057 no panic lock and fixture invariants",
+    "kind": "check",
+    "scope": "other",
+    "cache": "warm",
+    "command": [
+      "python3",
+      "/private/tmp/00057-invariants.py"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": true,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_build_stages": [],
+    "log": "runs/20261112T072942.296074Z-6f36c9bae11c.log",
+    "ended_at": "2026-11-12T07:29:42.556863+00:00",
+    "command_seconds": 0.101833,
+    "exit_code": 1,
+    "cargo_build_seconds": null
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T073002.038403Z-15c9c88df01c",
+    "started_at": "2026-11-12T07:30:02.038403+00:00",
+    "status": "passed",
+    "label": "00057 no panic invariants attribute aware audit",
+    "kind": "check",
+    "scope": "other",
+    "cache": "warm",
+    "command": [
+      "python3",
+      "/private/tmp/00057-invariants.py"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": true,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_build_stages": [],
+    "log": "runs/20261112T073002.038403Z-15c9c88df01c.log",
+    "ended_at": "2026-11-12T07:30:02.339784+00:00",
+    "command_seconds": 0.127619,
+    "exit_code": 0,
+    "cargo_build_seconds": null
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T073457.307217Z-0939531b130e",
+    "started_at": "2026-11-12T07:34:57.307217+00:00",
+    "status": "passed",
+    "label": "00057 default exact database create drop pairs",
+    "kind": "check",
+    "scope": "other",
+    "cache": "warm",
+    "command": [
+      "python3",
+      "/private/tmp/00057-db-pairs.py"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": true,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_build_stages": [],
+    "log": "runs/20261112T073457.307217Z-0939531b130e.log",
+    "ended_at": "2026-11-12T07:34:57.543492+00:00",
+    "command_seconds": 0.02943,
+    "exit_code": 0,
+    "cargo_build_seconds": null
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T073630.216055Z-19a4a75eb791",
+    "started_at": "2026-11-12T07:36:30.216055+00:00",
+    "status": "passed",
+    "label": "00057 retire completed checkpoint target near budget",
+    "kind": "clean",
+    "scope": "consumer",
+    "cache": "warm",
+    "command": [
+      "cargo",
+      "clean",
+      "--manifest-path",
+      "examples/api-checkpoint/tool/Cargo.toml",
+      "--target-dir",
+      "target/00057-integration/api-checkpoint"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": true,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_build_stages": [],
+    "log": "runs/20261112T073630.216055Z-19a4a75eb791.log",
+    "ended_at": "2026-11-12T07:36:31.006960+00:00",
+    "command_seconds": 0.639724,
+    "exit_code": 0,
+    "cargo_build_seconds": null
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T073757.331766Z-1fc7ca3a671c",
+    "started_at": "2026-11-12T07:37:57.331766+00:00",
+    "status": "passed",
+    "label": "00057 retire completed build host target near budget",
+    "kind": "clean",
+    "scope": "consumer",
+    "cache": "warm",
+    "command": [
+      "cargo",
+      "clean",
+      "--manifest-path",
+      "crates/framework/framework/consumers/build-host/Cargo.toml",
+      "--target-dir",
+      "target/00057-integration/consumer-aggregate-build-host"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": true,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_build_stages": [],
+    "log": "runs/20261112T073757.331766Z-1fc7ca3a671c.log",
+    "ended_at": "2026-11-12T07:37:57.906456+00:00",
+    "command_seconds": 0.42448,
+    "exit_code": 0,
+    "cargo_build_seconds": null
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T074255.881845Z-15d9444da7ae",
+    "started_at": "2026-11-12T07:42:55.881845+00:00",
+    "status": "passed",
+    "label": "00057 verification tool versions",
+    "kind": "other",
+    "scope": "other",
+    "cache": "unknown",
+    "command": [
+      "python3",
+      "/private/tmp/00057-versions.py"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": true,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_build_stages": [],
+    "log": "runs/20261112T074255.881845Z-15d9444da7ae.log",
+    "ended_at": "2026-11-12T07:42:56.485058+00:00",
+    "command_seconds": 0.422469,
+    "exit_code": 0,
+    "cargo_build_seconds": null
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T074430.993717Z-c2b9d29d8f64",
+    "started_at": "2026-11-12T07:44:30.993717+00:00",
+    "status": "passed",
+    "label": "00057 native default compatible exact database pairs",
+    "kind": "check",
+    "scope": "other",
+    "cache": "warm",
+    "command": [
+      "python3",
+      "/private/tmp/00057-db-pairs.py"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": true,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_build_stages": [],
+    "log": "runs/20261112T074430.993717Z-c2b9d29d8f64.log",
+    "ended_at": "2026-11-12T07:44:31.175285+00:00",
+    "command_seconds": 0.032625,
+    "exit_code": 0,
+    "cargo_build_seconds": null
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T074556.218217Z-19ac48c87c18",
+    "started_at": "2026-11-12T07:45:56.218217+00:00",
+    "status": "passed",
+    "label": "00057 retire completed native proof executables",
+    "kind": "clean",
+    "scope": "selected",
+    "cache": "warm",
+    "command": [
+      "python3",
+      "/private/tmp/00057-retire-proofs.py"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": true,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_build_stages": [],
+    "log": "runs/20261112T074556.218217Z-19ac48c87c18.log",
+    "ended_at": "2026-11-12T07:45:59.096160+00:00",
+    "command_seconds": 2.662008,
+    "exit_code": 0,
+    "cargo_build_seconds": null
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T074841.405008Z-a7571445ba8c",
+    "started_at": "2026-11-12T07:48:41.405008+00:00",
+    "status": "passed",
+    "label": "00057 completed consumer retirement and disk monitor",
+    "kind": "clean",
+    "scope": "consumer",
+    "cache": "warm",
+    "command": [
+      "python3",
+      "/private/tmp/00057-monitor.py"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": true,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_build_stages": [],
+    "log": "runs/20261112T074841.405008Z-a7571445ba8c.log",
+    "ended_at": "2026-11-12T09:04:07.666939+00:00",
+    "command_seconds": 4526.057685,
+    "exit_code": 0,
+    "cargo_build_seconds": null
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T075410.415311Z-95041993ab66",
+    "started_at": "2026-11-12T07:54:10.415311+00:00",
+    "status": "passed",
+    "label": "00057 23 release candidates standalone clippy",
+    "kind": "check",
+    "scope": "selected",
+    "cache": "cold",
+    "command": [
+      "python3",
+      "/private/tmp/00057-clippy-alone.py"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": true,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 196,
+      "checking": 613,
+      "documenting": 0
+    },
+    "cargo_build_stages": [
+      {
+        "profile": "dev",
+        "seconds": 73.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.38
+      },
+      {
+        "profile": "dev",
+        "seconds": 20.37
+      },
+      {
+        "profile": "dev",
+        "seconds": 13.41
+      },
+      {
+        "profile": "dev",
+        "seconds": 6.16
+      },
+      {
+        "profile": "dev",
+        "seconds": 9.07
+      },
+      {
+        "profile": "dev",
+        "seconds": 12.29
+      },
+      {
+        "profile": "dev",
+        "seconds": 3.99
+      },
+      {
+        "profile": "dev",
+        "seconds": 1.25
+      },
+      {
+        "profile": "dev",
+        "seconds": 4.32
+      },
+      {
+        "profile": "dev",
+        "seconds": 5.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 3.76
+      },
+      {
+        "profile": "dev",
+        "seconds": 6.4
+      },
+      {
+        "profile": "dev",
+        "seconds": 2.48
+      },
+      {
+        "profile": "dev",
+        "seconds": 27.91
+      },
+      {
+        "profile": "dev",
+        "seconds": 0.59
+      },
+      {
+        "profile": "dev",
+        "seconds": 1.95
+      },
+      {
+        "profile": "dev",
+        "seconds": 2.58
+      },
+      {
+        "profile": "dev",
+        "seconds": 32.33
+      },
+      {
+        "profile": "dev",
+        "seconds": 41.72
+      },
+      {
+        "profile": "dev",
+        "seconds": 24.22
+      },
+      {
+        "profile": "dev",
+        "seconds": 7.15
+      },
+      {
+        "profile": "dev",
+        "seconds": 1.2
+      }
+    ],
+    "log": "runs/20261112T075410.415311Z-95041993ab66.log",
+    "ended_at": "2026-11-12T07:59:14.695417+00:00",
+    "command_seconds": 303.846465,
+    "exit_code": 0,
+    "cargo_build_seconds": 301.5299999999999
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T085208.854055Z-c6040bbb5c33",
+    "started_at": "2026-11-12T08:52:08.854055+00:00",
+    "status": "passed",
+    "label": "00057 fresh live inclusive workspace coverage",
+    "kind": "coverage",
+    "scope": "workspace",
+    "cache": "cold",
+    "command": [
+      "python3",
+      "/private/tmp/00057-coverage.py"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": true,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 731,
+      "checking": 276,
+      "documenting": 0
+    },
+    "cargo_build_stages": [
+      {
+        "profile": "test",
+        "seconds": 294.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 124.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 117.0
+      },
+      {
+        "profile": "dev",
+        "seconds": 26.63
+      }
+    ],
+    "log": "runs/20261112T085208.854055Z-c6040bbb5c33.log",
+    "ended_at": "2026-11-12T09:07:22.047491+00:00",
+    "command_seconds": 913.042659,
+    "exit_code": 0,
+    "cargo_build_seconds": 561.63
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T085955.747713Z-efc92a28b89a",
+    "started_at": "2026-11-12T08:59:55.747713+00:00",
+    "status": "passed",
+    "label": "00057 retire completed core before facade budget growth",
+    "kind": "clean",
+    "scope": "workspace",
+    "cache": "warm",
+    "command": [
+      "python3",
+      "/private/tmp/00057-retire-core.py"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": true,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_build_stages": [],
+    "log": "runs/20261112T085955.747713Z-efc92a28b89a.log",
+    "ended_at": "2026-11-12T09:00:02.357601+00:00",
+    "command_seconds": 6.353733,
+    "exit_code": 0,
+    "cargo_build_seconds": null
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T090712.029627Z-2bb90216e30d",
+    "started_at": "2026-11-12T09:07:12.029627+00:00",
+    "status": "passed",
+    "label": "00057 final merged no panic and frozen source invariants",
+    "kind": "check",
+    "scope": "other",
+    "cache": "warm",
+    "command": [
+      "python3",
+      "/private/tmp/00057-invariants.py"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": true,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_build_stages": [],
+    "log": "runs/20261112T090712.029627Z-2bb90216e30d.log",
+    "ended_at": "2026-11-12T09:07:12.362812+00:00",
+    "command_seconds": 0.122268,
+    "exit_code": 0,
+    "cargo_build_seconds": null
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T090841.777502Z-ca037bdec046",
+    "started_at": "2026-11-12T09:08:41.777502+00:00",
+    "status": "passed",
+    "label": "00057 final live database catalog audit",
+    "kind": "check",
+    "scope": "other",
+    "cache": "warm",
+    "command": [
+      "python3",
+      "/private/tmp/00057-db-audit.py",
+      "after"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": true,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_build_stages": [],
+    "log": "runs/20261112T090841.777502Z-ca037bdec046.log",
+    "ended_at": "2026-11-12T09:08:43.380680+00:00",
+    "command_seconds": 1.26574,
+    "exit_code": 0,
+    "cargo_build_seconds": null
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T090842.871649Z-6ec2d8149b29",
+    "started_at": "2026-11-12T09:08:42.871649+00:00",
+    "status": "passed",
+    "label": "00057 release candidate source coverage attribution",
+    "kind": "check",
+    "scope": "selected",
+    "cache": "warm",
+    "command": [
+      "python3",
+      "/private/tmp/00057-summarize-coverage.py"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": true,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_build_stages": [],
+    "log": "runs/20261112T090842.871649Z-6ec2d8149b29.log",
+    "ended_at": "2026-11-12T09:08:43.440814+00:00",
+    "command_seconds": 0.397443,
+    "exit_code": 0,
+    "cargo_build_seconds": null
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T090931.069443Z-79d7c957936b",
+    "started_at": "2026-11-12T09:09:31.069443+00:00",
+    "status": "passed",
+    "label": "00057 final all live exact create drop pairing",
+    "kind": "check",
+    "scope": "other",
+    "cache": "warm",
+    "command": [
+      "python3",
+      "/private/tmp/00057-db-pairs.py"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": true,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_build_stages": [],
+    "log": "runs/20261112T090931.069443Z-79d7c957936b.log",
+    "ended_at": "2026-11-12T09:09:31.440357+00:00",
+    "command_seconds": 0.032755,
+    "exit_code": 0,
+    "cargo_build_seconds": null
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T091003.533841Z-2db3d29a8105",
+    "started_at": "2026-11-12T09:10:03.533841+00:00",
+    "status": "passed",
+    "label": "00057 post coverage frozen invariants",
+    "kind": "check",
+    "scope": "other",
+    "cache": "warm",
+    "command": [
+      "python3",
+      "/private/tmp/00057-invariants.py"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": true,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_build_stages": [],
+    "log": "runs/20261112T091003.533841Z-2db3d29a8105.log",
+    "ended_at": "2026-11-12T09:10:03.973757+00:00",
+    "command_seconds": 0.115482,
+    "exit_code": 0,
+    "cargo_build_seconds": null
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T091103.139648Z-5358def08313",
+    "started_at": "2026-11-12T09:11:03.139648+00:00",
+    "status": "failed",
+    "label": "00057 receipt KB inherited diagnostics comparison",
+    "kind": "check",
+    "scope": "other",
+    "cache": "warm",
+    "command": [
+      "python3",
+      "/private/tmp/00057-final-validation.py"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": true,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_build_stages": [],
+    "log": "runs/20261112T091103.139648Z-5358def08313.log",
+    "ended_at": "2026-11-12T09:11:03.845969+00:00",
+    "command_seconds": 0.394685,
+    "exit_code": 1,
+    "cargo_build_seconds": null
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T091106.049557Z-3b204a17b2fa",
+    "started_at": "2026-11-12T09:11:06.049557+00:00",
+    "status": "passed",
+    "label": "00057 final diff whitespace check",
+    "kind": "check",
+    "scope": "other",
+    "cache": "warm",
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": true,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_build_stages": [],
+    "log": "runs/20261112T091106.049557Z-3b204a17b2fa.log",
+    "ended_at": "2026-11-12T09:11:06.220158+00:00",
+    "command_seconds": 0.02488,
+    "exit_code": 0,
+    "cargo_build_seconds": null
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T091313.628709Z-0a0c776b8c2d",
+    "started_at": "2026-11-12T09:13:13.628709+00:00",
+    "status": "passed",
+    "label": "00057 receipt KB inherited diagnostics comparison final",
+    "kind": "check",
+    "scope": "other",
+    "cache": "warm",
+    "command": [
+      "python3",
+      "/private/tmp/00057-final-validation.py"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": true,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_build_stages": [],
+    "log": "runs/20261112T091313.628709Z-0a0c776b8c2d.log",
+    "ended_at": "2026-11-12T09:13:14.275264+00:00",
+    "command_seconds": 0.37145,
+    "exit_code": 0,
+    "cargo_build_seconds": null
+  },
+  {
+    "schema_version": 1,
+    "id": "20261112T091316.912643Z-30f0ac8c29db",
+    "started_at": "2026-11-12T09:13:16.912643+00:00",
+    "status": "passed",
+    "label": "00057 final diff whitespace check final",
+    "kind": "check",
+    "scope": "other",
+    "cache": "warm",
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "cwd": "/private/tmp/hardening-int",
+    "commit": "80263b2a36ebadd50b2618f77a4b38a831bd7a0f",
+    "branch": "hardening/integration",
+    "dirty": true,
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "environment": {
+      "CARGO_TARGET_DIR": "/private/tmp/hardening-int/target/00057-integration",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "2"
+    },
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_build_stages": [],
+    "log": "runs/20261112T091316.912643Z-30f0ac8c29db.log",
+    "ended_at": "2026-11-12T09:13:17.084401+00:00",
+    "command_seconds": 0.025653,
+    "exit_code": 0,
+    "cargo_build_seconds": null
+  }
+]

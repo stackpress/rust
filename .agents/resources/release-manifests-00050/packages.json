@@ -3,7 +3,7 @@
     "name": "stackpress-leptos",
     "directory": "crates/leptos",
     "file_count": 183,
-    "source_bytes": 937696,
+    "source_bytes": 943546,
     "files": [
       ".cargo_vcs_info.json",
       "Cargo.lock",
@@ -191,13 +191,15 @@
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
+    "archive_bytes": 268397,
+    "archive_payload_bytes": 1012303,
     "pending_test_references": []
   },
   {
     "name": "stackpress-framework-language",
     "directory": "crates/framework/framework-language",
     "file_count": 8,
-    "source_bytes": 12176,
+    "source_bytes": 12327,
     "files": [
       ".cargo_vcs_info.json",
       "Cargo.lock",
@@ -210,6 +212,8 @@
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
+    "archive_bytes": 5518,
+    "archive_payload_bytes": 13901,
     "pending_test_references": []
   },
   {
@@ -296,13 +300,15 @@
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
+    "archive_bytes": 166364,
+    "archive_payload_bytes": 812687,
     "pending_test_references": []
   },
   {
     "name": "stackpress-lib",
     "directory": "crates/lib",
     "file_count": 80,
-    "source_bytes": 850714,
+    "source_bytes": 851755,
     "files": [
       ".cargo_vcs_info.json",
       "Cargo.lock",
@@ -387,13 +393,15 @@
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
+    "archive_bytes": 220325,
+    "archive_payload_bytes": 869439,
     "pending_test_references": []
   },
   {
     "name": "stackpress-idea-parser",
     "directory": "crates/idea/idea-parser",
     "file_count": 72,
-    "source_bytes": 848202,
+    "source_bytes": 848353,
     "files": [
       ".cargo_vcs_info.json",
       "Cargo.lock",
@@ -470,13 +478,15 @@
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
+    "archive_bytes": 103633,
+    "archive_payload_bytes": 853681,
     "pending_test_references": []
   },
   {
     "name": "stackpress-sql-sqlite",
     "directory": "crates/sql/sql-sqlite",
     "file_count": 48,
-    "source_bytes": 300727,
+    "source_bytes": 300878,
     "files": [
       ".cargo_vcs_info.json",
       "Cargo.lock",
@@ -529,13 +539,15 @@
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
+    "archive_bytes": 82849,
+    "archive_payload_bytes": 336456,
     "pending_test_references": []
   },
   {
     "name": "stackpress-sql-postgres",
     "directory": "crates/sql/sql-postgres",
     "file_count": 56,
-    "source_bytes": 285703,
+    "source_bytes": 285854,
     "files": [
       ".cargo_vcs_info.json",
       "CODECS.md",
@@ -599,13 +611,15 @@
       "stackpress_framework_schema",
       "stackpress_framework_sql"
     ],
+    "archive_bytes": 88829,
+    "archive_payload_bytes": 327459,
     "pending_test_references": []
   },
   {
     "name": "stackpress-sql-mysql",
     "directory": "crates/sql/sql-mysql",
     "file_count": 55,
-    "source_bytes": 301531,
+    "source_bytes": 301682,
     "files": [
       ".cargo_vcs_info.json",
       "CODECS.md",
@@ -668,13 +682,15 @@
       "stackpress_framework_schema",
       "stackpress_framework_sql"
     ],
+    "archive_bytes": 91702,
+    "archive_payload_bytes": 342902,
     "pending_test_references": []
   },
   {
     "name": "stackpress-server",
     "directory": "crates/server/server",
     "file_count": 67,
-    "source_bytes": 603459,
+    "source_bytes": 604615,
     "files": [
       ".cargo_vcs_info.json",
       "Cargo.lock",
@@ -746,13 +762,15 @@
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
+    "archive_bytes": 153696,
+    "archive_payload_bytes": 623469,
     "pending_test_references": []
   },
   {
     "name": "stackpress-idea-transformer",
     "directory": "crates/idea/idea-transformer",
     "file_count": 61,
-    "source_bytes": 407454,
+    "source_bytes": 409415,
     "files": [
       ".cargo_vcs_info.json",
       "Cargo.lock",
@@ -818,13 +836,15 @@
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
+    "archive_bytes": 110613,
+    "archive_payload_bytes": 428543,
     "pending_test_references": []
   },
   {
     "name": "stackpress-server-http",
     "directory": "crates/server/http",
     "file_count": 54,
-    "source_bytes": 321697,
+    "source_bytes": 322486,
     "files": [
       ".cargo_vcs_info.json",
       "Cargo.lock",
@@ -883,13 +903,15 @@
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
+    "archive_bytes": 94703,
+    "archive_payload_bytes": 351652,
     "pending_test_references": []
   },
   {
     "name": "stackpress-cli",
     "directory": "tools/cli",
     "file_count": 48,
-    "source_bytes": 366892,
+    "source_bytes": 367109,
     "files": [
       ".cargo_vcs_info.json",
       "Cargo.lock",
@@ -942,13 +964,15 @@
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
+    "archive_bytes": 104773,
+    "archive_payload_bytes": 387765,
     "pending_test_references": []
   },
   {
     "name": "stackpress-framework-view",
     "directory": "crates/framework/framework-view",
     "file_count": 86,
-    "source_bytes": 405552,
+    "source_bytes": 406380,
     "files": [
       ".cargo_vcs_info.json",
       "Cargo.lock",
@@ -1039,13 +1063,15 @@
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
+    "archive_bytes": 125250,
+    "archive_payload_bytes": 459167,
     "pending_test_references": []
   },
   {
     "name": "stackpress-framework-csrf",
     "directory": "crates/framework/framework-csrf",
     "file_count": 18,
-    "source_bytes": 40185,
+    "source_bytes": 40336,
     "files": [
       ".cargo_vcs_info.json",
       "Cargo.lock",
@@ -1068,13 +1094,15 @@
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
+    "archive_bytes": 19135,
+    "archive_payload_bytes": 59596,
     "pending_test_references": []
   },
   {
     "name": "stackpress-framework-email",
     "directory": "crates/framework/framework-email",
     "file_count": 54,
-    "source_bytes": 354967,
+    "source_bytes": 356308,
     "files": [
       ".cargo_vcs_info.json",
       "Cargo.lock",
@@ -1133,13 +1161,15 @@
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
+    "archive_bytes": 109199,
+    "archive_payload_bytes": 408641,
     "pending_test_references": []
   },
   {
     "name": "stackpress-idea",
     "directory": "crates/idea/idea",
     "file_count": 12,
-    "source_bytes": 47481,
+    "source_bytes": 47632,
     "files": [
       ".cargo_vcs_info.json",
       "Cargo.lock",
@@ -1156,6 +1186,8 @@
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
+    "archive_bytes": 20035,
+    "archive_payload_bytes": 66312,
     "pending_test_references": []
   },
   {
@@ -1262,13 +1294,15 @@
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
+    "archive_bytes": 150155,
+    "archive_payload_bytes": 645518,
     "pending_test_references": []
   },
   {
     "name": "stackpress-framework-sql",
     "directory": "crates/framework/framework-sql",
     "file_count": 176,
-    "source_bytes": 1927455,
+    "source_bytes": 1927497,
     "files": [
       ".cargo_vcs_info.json",
       "Cargo.lock",
@@ -1449,13 +1483,15 @@
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
+    "archive_bytes": 286167,
+    "archive_payload_bytes": 1972108,
     "pending_test_references": []
   },
   {
     "name": "stackpress-framework-admin",
     "directory": "crates/framework/framework-admin",
-    "file_count": 79,
-    "source_bytes": 474206,
+    "file_count": 84,
+    "source_bytes": 518533,
     "files": [
       ".cargo_vcs_info.json",
       "Cargo.lock",
@@ -1522,8 +1558,12 @@
       "src/source/roles/props.rs",
       "src/source/roles/rich.rs",
       "src/transfer/csv.rs",
+      "src/transfer/encoding.rs",
       "src/transfer/mod.rs",
+      "src/transfer/sniff.rs",
+      "src/transfer/upload.rs",
       "tests/admin_state.rs",
+      "tests/capability_boundaries.rs",
       "tests/catalog.rs",
       "tests/fixtures/framework-api.idea",
       "tests/fixtures/framework-session.idea",
@@ -1535,17 +1575,20 @@
       "tests/source/editor.rs",
       "tests/source/remaining.rs",
       "tests/template_codegen.rs",
-      "tests/transfer.rs"
+      "tests/transfer.rs",
+      "tests/transfer_tolerant.rs"
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
+    "archive_bytes": 148797,
+    "archive_payload_bytes": 588689,
     "pending_test_references": []
   },
   {
     "name": "stackpress-framework-session",
     "directory": "crates/framework/framework-session",
     "file_count": 229,
-    "source_bytes": 1711418,
+    "source_bytes": 1711283,
     "files": [
       ".cargo_vcs_info.json",
       "Cargo.lock",
@@ -1779,13 +1822,15 @@
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
+    "archive_bytes": 307098,
+    "archive_payload_bytes": 1832097,
     "pending_test_references": []
   },
   {
     "name": "stackpress-framework-api",
     "directory": "crates/framework/framework-api",
     "file_count": 161,
-    "source_bytes": 1188884,
+    "source_bytes": 1165011,
     "files": [
       ".cargo_vcs_info.json",
       "Cargo.lock",
@@ -1951,6 +1996,8 @@
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
+    "archive_bytes": 210527,
+    "archive_payload_bytes": 1284138,
     "pending_test_references": []
   },
   {
@@ -2050,13 +2097,15 @@
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
+    "archive_bytes": 147583,
+    "archive_payload_bytes": 713095,
     "pending_test_references": []
   },
   {
     "name": "stackpress",
     "directory": ".",
     "file_count": 7,
-    "source_bytes": 221238,
+    "source_bytes": 221389,
     "files": [
       ".cargo_vcs_info.json",
       "Cargo.lock",
@@ -2068,6 +2117,8 @@
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
+    "archive_bytes": 41158,
+    "archive_payload_bytes": 162777,
     "pending_test_references": []
   }
 ]

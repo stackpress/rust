@@ -1,0 +1,442 @@
+[
+  {
+    "phase": "dependency-licenses",
+    "command": [
+      "python3",
+      "tools/release/check_dep_licenses.py"
+    ],
+    "code": 0,
+    "command_seconds": 0.659821,
+    "target": "/private/tmp/hardening-int/target/00057-integration",
+    "log": ".agents/resources/release-manifests-00050/gate-logs/dependency-licenses.log"
+  },
+  {
+    "phase": "fmt",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "code": 0,
+    "command_seconds": 2.869933,
+    "target": "/private/tmp/hardening-int/target/00057-integration",
+    "log": ".agents/resources/release-manifests-00050/gate-logs/fmt.log"
+  },
+  {
+    "phase": "clippy-default",
+    "command": [
+      "cargo",
+      "clippy",
+      "--workspace",
+      "--locked",
+      "--offline",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0,
+    "command_seconds": 47.847487,
+    "target": "/private/tmp/hardening-int/target/00057-integration",
+    "log": ".agents/resources/release-manifests-00050/gate-logs/clippy-default.log"
+  },
+  {
+    "phase": "nextest-default",
+    "command": [
+      "cargo",
+      "nextest",
+      "run",
+      "--workspace",
+      "--locked",
+      "--offline",
+      "--all-targets",
+      "--test-threads",
+      "2",
+      "--no-fail-fast",
+      "-E",
+      "not test(tcp_watchdog)"
+    ],
+    "code": 0,
+    "command_seconds": 523.045486,
+    "target": "/private/tmp/hardening-int/target/00057-integration",
+    "log": ".agents/resources/release-manifests-00050/gate-logs/nextest-default.log"
+  },
+  {
+    "phase": "nextest-tcp-default",
+    "command": [
+      "cargo",
+      "nextest",
+      "run",
+      "--workspace",
+      "--locked",
+      "--offline",
+      "--all-targets",
+      "--test-threads",
+      "1",
+      "-E",
+      "test(tcp_watchdog)"
+    ],
+    "code": 0,
+    "command_seconds": 2.206399,
+    "target": "/private/tmp/hardening-int/target/00057-integration",
+    "log": ".agents/resources/release-manifests-00050/gate-logs/nextest-tcp-default.log"
+  },
+  {
+    "phase": "doctests-default",
+    "command": [
+      "cargo",
+      "test",
+      "--workspace",
+      "--locked",
+      "--offline",
+      "--doc"
+    ],
+    "code": 0,
+    "command_seconds": 38.371284,
+    "target": "/private/tmp/hardening-int/target/00057-integration",
+    "log": ".agents/resources/release-manifests-00050/gate-logs/doctests-default.log"
+  },
+  {
+    "phase": "rustdoc-default",
+    "command": [
+      "cargo",
+      "doc",
+      "--workspace",
+      "--locked",
+      "--offline",
+      "--no-deps"
+    ],
+    "code": 0,
+    "command_seconds": 41.834398,
+    "target": "/private/tmp/hardening-int/target/00057-integration",
+    "log": ".agents/resources/release-manifests-00050/gate-logs/rustdoc-default.log"
+  },
+  {
+    "phase": "clippy-compatible",
+    "command": [
+      "cargo",
+      "clippy",
+      "--workspace",
+      "--locked",
+      "--offline",
+      "--features",
+      "framework-aggregate-full,framework-aggregate-ui-session,framework-aggregate-ui-api,framework-aggregate-ui-admin,framework-aggregate-ui-view,framework-aggregate-ssr,framework-api-codegen,framework-csrf-server,framework-email-server,stackpress-framework/codegen,stackpress-framework-schema/providers,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-schema/source,stackpress-framework-sql/source",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0,
+    "command_seconds": 55.139695,
+    "target": "/private/tmp/hardening-int/target/00057-integration",
+    "log": ".agents/resources/release-manifests-00050/gate-logs/clippy-compatible.log"
+  },
+  {
+    "phase": "nextest-compatible",
+    "command": [
+      "cargo",
+      "nextest",
+      "run",
+      "--workspace",
+      "--locked",
+      "--offline",
+      "--features",
+      "framework-aggregate-full,framework-aggregate-ui-session,framework-aggregate-ui-api,framework-aggregate-ui-admin,framework-aggregate-ui-view,framework-aggregate-ssr,framework-api-codegen,framework-csrf-server,framework-email-server,stackpress-framework/codegen,stackpress-framework-schema/providers,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-schema/source,stackpress-framework-sql/source",
+      "--all-targets",
+      "--test-threads",
+      "2",
+      "--no-fail-fast",
+      "-E",
+      "not test(tcp_watchdog)"
+    ],
+    "code": 0,
+    "command_seconds": 487.926255,
+    "target": "/private/tmp/hardening-int/target/00057-integration",
+    "log": ".agents/resources/release-manifests-00050/gate-logs/nextest-compatible.log"
+  },
+  {
+    "phase": "nextest-tcp-compatible",
+    "command": [
+      "cargo",
+      "nextest",
+      "run",
+      "--workspace",
+      "--locked",
+      "--offline",
+      "--features",
+      "framework-aggregate-full,framework-aggregate-ui-session,framework-aggregate-ui-api,framework-aggregate-ui-admin,framework-aggregate-ui-view,framework-aggregate-ssr,framework-api-codegen,framework-csrf-server,framework-email-server,stackpress-framework/codegen,stackpress-framework-schema/providers,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-schema/source,stackpress-framework-sql/source",
+      "--all-targets",
+      "--test-threads",
+      "1",
+      "-E",
+      "test(tcp_watchdog)"
+    ],
+    "code": 0,
+    "command_seconds": 2.319087,
+    "target": "/private/tmp/hardening-int/target/00057-integration",
+    "log": ".agents/resources/release-manifests-00050/gate-logs/nextest-tcp-compatible.log"
+  },
+  {
+    "phase": "doctests-compatible",
+    "command": [
+      "cargo",
+      "test",
+      "--workspace",
+      "--locked",
+      "--offline",
+      "--features",
+      "framework-aggregate-full,framework-aggregate-ui-session,framework-aggregate-ui-api,framework-aggregate-ui-admin,framework-aggregate-ui-view,framework-aggregate-ssr,framework-api-codegen,framework-csrf-server,framework-email-server,stackpress-framework/codegen,stackpress-framework-schema/providers,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-schema/source,stackpress-framework-sql/source",
+      "--doc"
+    ],
+    "code": 0,
+    "command_seconds": 43.645789,
+    "target": "/private/tmp/hardening-int/target/00057-integration",
+    "log": ".agents/resources/release-manifests-00050/gate-logs/doctests-compatible.log"
+  },
+  {
+    "phase": "rustdoc-compatible",
+    "command": [
+      "cargo",
+      "doc",
+      "--workspace",
+      "--locked",
+      "--offline",
+      "--features",
+      "framework-aggregate-full,framework-aggregate-ui-session,framework-aggregate-ui-api,framework-aggregate-ui-admin,framework-aggregate-ui-view,framework-aggregate-ssr,framework-api-codegen,framework-csrf-server,framework-email-server,stackpress-framework/codegen,stackpress-framework-schema/providers,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-schema/source,stackpress-framework-sql/source",
+      "--no-deps"
+    ],
+    "code": 0,
+    "command_seconds": 49.928381,
+    "target": "/private/tmp/hardening-int/target/00057-integration",
+    "log": ".agents/resources/release-manifests-00050/gate-logs/rustdoc-compatible.log"
+  },
+  {
+    "phase": "aggregate-graphs",
+    "command": [
+      "python3",
+      "crates/framework/framework/consumers/graphs.py",
+      "--check"
+    ],
+    "code": 0,
+    "command_seconds": 363.879405,
+    "target": "/private/tmp/hardening-int/target/00057-integration",
+    "log": ".agents/resources/release-manifests-00050/gate-logs/aggregate-graphs.log"
+  },
+  {
+    "phase": "aggregate-consumers",
+    "command": [
+      "python3",
+      "crates/framework/framework/consumers/run.py"
+    ],
+    "code": 0,
+    "command_seconds": 1092.158902,
+    "target": "/private/tmp/hardening-int/target/00057-integration",
+    "log": ".agents/resources/release-manifests-00050/gate-logs/aggregate-consumers.log"
+  },
+  {
+    "phase": "session-graphs",
+    "command": [
+      "python3",
+      "crates/framework/framework-session/consumers/graphs.py",
+      "--check"
+    ],
+    "code": 0,
+    "command_seconds": 134.800251,
+    "target": "/private/tmp/hardening-int/target/00057-integration",
+    "log": ".agents/resources/release-manifests-00050/gate-logs/session-graphs.log"
+  },
+  {
+    "phase": "session-consumers",
+    "command": [
+      "python3",
+      "crates/framework/framework-session/consumers/run.py"
+    ],
+    "code": 0,
+    "command_seconds": 331.369089,
+    "target": "/private/tmp/hardening-int/target/00057-integration",
+    "log": ".agents/resources/release-manifests-00050/gate-logs/session-consumers.log"
+  },
+  {
+    "phase": "generated-workspace",
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "generated-workspace-tool",
+      "--locked",
+      "--offline",
+      "--",
+      "emit",
+      "generate",
+      "--check",
+      "true"
+    ],
+    "code": 0,
+    "command_seconds": 2.511087,
+    "target": "/private/tmp/hardening-int/target/00057-integration",
+    "log": ".agents/resources/release-manifests-00050/gate-logs/generated-workspace.log"
+  },
+  {
+    "phase": "generated-admin",
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "generated-admin-tool",
+      "--locked",
+      "--offline",
+      "--",
+      "emit",
+      "generate",
+      "--check"
+    ],
+    "code": 0,
+    "command_seconds": 2.786312,
+    "target": "/private/tmp/hardening-int/target/00057-integration",
+    "log": ".agents/resources/release-manifests-00050/gate-logs/generated-admin.log"
+  },
+  {
+    "phase": "api-checkpoint",
+    "command": [
+      "cargo",
+      "run",
+      "--manifest-path",
+      "examples/api-checkpoint/tool/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--",
+      "--check"
+    ],
+    "code": 0,
+    "command_seconds": 50.603299,
+    "target": "/private/tmp/hardening-int/target/00057-integration/api-checkpoint",
+    "log": ".agents/resources/release-manifests-00050/gate-logs/api-checkpoint.log"
+  },
+  {
+    "phase": "regenerate_session_models",
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "stackpress-framework-session",
+      "--example",
+      "regenerate_session_models",
+      "--locked",
+      "--offline",
+      "--features",
+      "auth-server,leptos-ssr",
+      "--",
+      "--check"
+    ],
+    "code": 0,
+    "command_seconds": 2.960969,
+    "target": "/private/tmp/hardening-int/target/00057-integration",
+    "log": ".agents/resources/release-manifests-00050/gate-logs/regenerate_session_models.log"
+  },
+  {
+    "phase": "regenerate_api_models",
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "stackpress-framework-api",
+      "--example",
+      "regenerate_api_models",
+      "--locked",
+      "--offline",
+      "--features",
+      "sql,codegen,ui-ssr",
+      "--",
+      "--check"
+    ],
+    "code": 0,
+    "command_seconds": 2.685587,
+    "target": "/private/tmp/hardening-int/target/00057-integration",
+    "log": ".agents/resources/release-manifests-00050/gate-logs/regenerate_api_models.log"
+  },
+  {
+    "phase": "regenerate_aggregate_models",
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "stackpress-framework",
+      "--example",
+      "regenerate_aggregate_models",
+      "--locked",
+      "--offline",
+      "--features",
+      "full,codegen",
+      "--",
+      "--check"
+    ],
+    "code": 0,
+    "command_seconds": 1.391315,
+    "target": "/private/tmp/hardening-int/target/00057-integration",
+    "log": ".agents/resources/release-manifests-00050/gate-logs/regenerate_aggregate_models.log"
+  },
+  {
+    "phase": "blog",
+    "command": [
+      "python3",
+      "tools/examples/blog/gate.py"
+    ],
+    "code": 0,
+    "command_seconds": 1812.737741,
+    "target": "/private/tmp/hardening-int/target/00050-blog/native",
+    "log": ".agents/resources/release-manifests-00050/gate-logs/blog.log"
+  },
+  {
+    "phase": "checker-controls",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tools/release",
+      "-p",
+      "test_*.py"
+    ],
+    "code": 0,
+    "command_seconds": 0.14642,
+    "target": "/private/tmp/hardening-int/target/00057-integration",
+    "log": ".agents/resources/release-manifests-00050/gate-logs/checker-controls.log"
+  },
+  {
+    "phase": "readmes",
+    "command": [
+      "python3",
+      "tools/release/check_readmes.py"
+    ],
+    "code": 0,
+    "command_seconds": 35.656202,
+    "target": "/private/tmp/hardening-int/target/00057-integration",
+    "log": ".agents/resources/release-manifests-00050/gate-logs/readmes.log"
+  },
+  {
+    "phase": "packages-and-dry-runs",
+    "command": [
+      "python3",
+      "tools/release/package_workspace.py",
+      "--allow-dirty"
+    ],
+    "code": 0,
+    "command_seconds": 134.847063,
+    "target": "/private/tmp/hardening-int/target/00057-integration",
+    "log": ".agents/resources/release-manifests-00050/gate-logs/packages-and-dry-runs.log"
+  },
+  {
+    "phase": "facade",
+    "command": [
+      "python3",
+      "tools/release/check_facade.py"
+    ],
+    "code": 0,
+    "command_seconds": 762.111594,
+    "target": "/private/tmp/hardening-int/target/00057-integration",
+    "log": ".agents/resources/release-manifests-00050/gate-logs/facade.log"
+  }
+]

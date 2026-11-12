@@ -1,0 +1,14 @@
+{
+  "store": "/Users/cblanquera/server/projects/stackpress/rust/.agents/resources/build-benchmarks",
+  "attempts": 40,
+  "by_status": {
+    "passed": 36,
+    "failed": 4
+  },
+  "attempts_with_observed_compilation": 9,
+  "successful_declared_cold_workspace_builds": 1,
+  "command_seconds": 13148.109915,
+  "cargo_build_seconds": 8428.06,
+  "records_with_no_cargo_stage": 27,
+  "note": "Overlapping proof, monitoring and cleanup commands; sums are not elapsed time or complete compilation time."
+}

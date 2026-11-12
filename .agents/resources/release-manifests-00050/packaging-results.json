@@ -144,9 +144,8 @@
     "phase": "archive-checker",
     "command": [
       "python3",
-      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-manifests/tools/release/check_packages.py",
-      "--archives",
-      "--pending-tests"
+      "/private/tmp/hardening-int/tools/release/check_packages.py",
+      "--archives"
     ],
     "code": 0
   },

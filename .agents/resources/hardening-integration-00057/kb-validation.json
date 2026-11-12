@@ -1,0 +1,8 @@
+{
+  "validator_exit_code": 1,
+  "errors": 146,
+  "warnings": 44,
+  "baseline_identical": true,
+  "added_diagnostics": [],
+  "removed_diagnostics": []
+}

@@ -1,0 +1,24 @@
+{
+  "command": [
+    "cargo",
+    "llvm-cov",
+    "nextest",
+    "--workspace",
+    "--all-targets",
+    "--features",
+    "framework-aggregate-full,framework-aggregate-ui-session,framework-aggregate-ui-api,framework-aggregate-ui-admin,framework-aggregate-ui-view,framework-aggregate-ssr,framework-api-codegen,framework-csrf-server,framework-email-server,stackpress-framework/codegen,stackpress-framework-schema/providers,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-schema/source,stackpress-framework-sql/source",
+    "--locked",
+    "--offline",
+    "--no-fail-fast",
+    "--test-threads",
+    "2",
+    "--json",
+    "--summary-only",
+    "--output-path",
+    "/private/tmp/00057-evidence/coverage.json"
+  ],
+  "target": "/private/tmp/hardening-int/target/00057-coverage",
+  "features": "framework-aggregate-full,framework-aggregate-ui-session,framework-aggregate-ui-api,framework-aggregate-ui-admin,framework-aggregate-ui-view,framework-aggregate-ssr,framework-api-codegen,framework-csrf-server,framework-email-server,stackpress-framework/codegen,stackpress-framework-schema/providers,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-schema/source,stackpress-framework-sql/source",
+  "postgres": "postgres://postgres@localhost:5432/postgres",
+  "mysql": "mysql://root@127.0.0.1:3306/mysql"
+}

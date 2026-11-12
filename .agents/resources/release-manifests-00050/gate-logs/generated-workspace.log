@@ -1,0 +1,4 @@
+   Compiling generated-workspace-tool v0.1.0 (/private/tmp/hardening-int/examples/generated-workspace/tool)
+    Finished `dev` profile [unoptimized] target(s) in 1.18s
+     Running `target/00057-integration/debug/generated-workspace-tool emit generate --check true`
+{"code":200,"status":"OK","errors":{},"results":{"differences":[]},"total":1}

@@ -2,6 +2,8 @@
 # Exact declarations are preserved, including legacy slash syntax.
 # This inventory records the current state for owner review; it is not licence policy.
 expressions = [
+  # libfuzzer-sys 0.4.10 in the unpublished fuzz/ workspace (G62).
+  "(MIT OR Apache-2.0) AND NCSA",
   "(MIT OR Apache-2.0) AND Unicode-3.0",
   "0BSD",
   "0BSD OR MIT OR Apache-2.0",

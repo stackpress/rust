@@ -1,0 +1,14 @@
+[
+  {
+    "target": "idea_parser",
+    "executions": 1743693
+  },
+  {
+    "target": "admin_csv",
+    "executions": 370210
+  },
+  {
+    "target": "lib_query_form",
+    "executions": 721240
+  }
+]

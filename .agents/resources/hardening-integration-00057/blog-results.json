@@ -1,0 +1,422 @@
+[
+  {
+    "name": "bootstrap-generate-app",
+    "command": [
+      "cargo",
+      "run",
+      "--manifest-path",
+      "/private/tmp/hardening-int/examples/blog/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "blog-tool",
+      "--",
+      "generate-app"
+    ],
+    "code": 0,
+    "seconds": 98.029126,
+    "timeout": false,
+    "target_bytes": 943947776
+  },
+  {
+    "name": "bootstrap-generate",
+    "command": [
+      "cargo",
+      "run",
+      "--manifest-path",
+      "/private/tmp/hardening-int/examples/blog/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "blog-tool",
+      "--",
+      "generate"
+    ],
+    "code": 0,
+    "seconds": 1.753738,
+    "timeout": false,
+    "target_bytes": 943947776
+  },
+  {
+    "name": "bootstrap-extension",
+    "command": [
+      "python3",
+      "/private/tmp/hardening-int/tools/examples/blog/extension.py"
+    ],
+    "code": 0,
+    "seconds": 3.65238,
+    "timeout": false,
+    "target_bytes": 943947776
+  },
+  {
+    "name": "browser-build",
+    "command": [
+      "cargo",
+      "xtask",
+      "build-browser"
+    ],
+    "code": 0,
+    "seconds": 196.752969,
+    "timeout": false,
+    "target_bytes": 2839883776
+  },
+  {
+    "name": "format",
+    "command": [
+      "python3",
+      "/private/tmp/hardening-int/tools/examples/blog/format.py"
+    ],
+    "code": 0,
+    "seconds": 0.221166,
+    "timeout": false,
+    "target_bytes": 2839883776
+  },
+  {
+    "name": "javascript",
+    "command": [
+      "node",
+      "/private/tmp/hardening-int/examples/blog/tests/hot-reload.cjs"
+    ],
+    "code": 0,
+    "seconds": 0.216041,
+    "timeout": false,
+    "target_bytes": 2839883776
+  },
+  {
+    "name": "javascript-flows",
+    "command": [
+      "node",
+      "--check",
+      "/private/tmp/hardening-int/examples/blog/tests/flows.cjs"
+    ],
+    "code": 0,
+    "seconds": 0.079235,
+    "timeout": false,
+    "target_bytes": 2839883776
+  },
+  {
+    "name": "generated-freshness",
+    "command": [
+      "python3",
+      "/private/tmp/hardening-int/tools/examples/blog/freshness.py"
+    ],
+    "code": 0,
+    "seconds": 3.149139,
+    "timeout": false,
+    "target_bytes": 2839883776
+  },
+  {
+    "name": "clippy-native",
+    "command": [
+      "cargo",
+      "clippy",
+      "--manifest-path",
+      "/private/tmp/hardening-int/examples/blog/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--workspace",
+      "--all-targets",
+      "--features",
+      "blog-tool/native-proof,blog-app/ssr,blog-web/extension-proof",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0,
+    "seconds": 81.996825,
+    "timeout": false,
+    "target_bytes": 3216580608
+  },
+  {
+    "name": "nextest-native",
+    "command": [
+      "cargo",
+      "nextest",
+      "run",
+      "--manifest-path",
+      "/private/tmp/hardening-int/examples/blog/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--workspace",
+      "--all-targets",
+      "--features",
+      "blog-tool/native-proof,blog-app/ssr,blog-web/extension-proof",
+      "--test-threads",
+      "2",
+      "--no-fail-fast"
+    ],
+    "code": 0,
+    "seconds": 97.900789,
+    "timeout": false,
+    "target_bytes": 4651061248
+  },
+  {
+    "name": "doctests",
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "/private/tmp/hardening-int/examples/blog/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--workspace",
+      "--doc",
+      "--features",
+      "blog-tool/native-proof,blog-app/ssr,blog-web/extension-proof"
+    ],
+    "code": 0,
+    "seconds": 3.134859,
+    "timeout": false,
+    "target_bytes": 4651520000
+  },
+  {
+    "name": "rustdoc",
+    "command": [
+      "cargo",
+      "doc",
+      "--manifest-path",
+      "/private/tmp/hardening-int/examples/blog/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--workspace",
+      "--no-deps",
+      "--features",
+      "blog-tool/native-proof,blog-app/ssr,blog-web/extension-proof"
+    ],
+    "code": 0,
+    "seconds": 8.791733,
+    "timeout": false,
+    "target_bytes": 4664709120
+  },
+  {
+    "name": "graphs",
+    "command": [
+      "python3",
+      "/private/tmp/hardening-int/tools/examples/blog/graphs.py"
+    ],
+    "code": 0,
+    "seconds": 0.829667,
+    "timeout": false,
+    "target_bytes": 4664709120
+  },
+  {
+    "name": "clippy-hydrate",
+    "command": [
+      "cargo",
+      "clippy",
+      "--manifest-path",
+      "/private/tmp/hardening-int/examples/blog/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "blog-client",
+      "--target",
+      "wasm32-unknown-unknown",
+      "--no-default-features",
+      "--features",
+      "hydrate",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0,
+    "seconds": 48.468797,
+    "timeout": false,
+    "target_bytes": 4848353280
+  },
+  {
+    "name": "clippy-csr",
+    "command": [
+      "cargo",
+      "clippy",
+      "--manifest-path",
+      "/private/tmp/hardening-int/examples/blog/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "blog-client",
+      "--target",
+      "wasm32-unknown-unknown",
+      "--no-default-features",
+      "--features",
+      "csr",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0,
+    "seconds": 48.896889,
+    "timeout": false,
+    "target_bytes": 5031841792
+  },
+  {
+    "name": "browser-probe",
+    "command": [
+      "cargo",
+      "build",
+      "--manifest-path",
+      "/private/tmp/hardening-int/examples/blog/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "blog-web",
+      "--bin",
+      "probe"
+    ],
+    "code": 0,
+    "seconds": 28.916684,
+    "timeout": false,
+    "target_bytes": 5461196800
+  },
+  {
+    "name": "browser-public-matrix",
+    "command": [
+      "python3",
+      "/private/tmp/hardening-int/tools/examples/blog/browser.py",
+      "--public-only",
+      "--matrix"
+    ],
+    "code": 0,
+    "seconds": 18.041107,
+    "timeout": false,
+    "target_bytes": 5461196800
+  },
+  {
+    "name": "browser-full",
+    "command": [
+      "python3",
+      "/private/tmp/hardening-int/tools/examples/blog/browser.py"
+    ],
+    "code": 0,
+    "seconds": 14.56532,
+    "timeout": false,
+    "target_bytes": 5461196800
+  },
+  {
+    "name": "nickname-prepare",
+    "command": [
+      "python3",
+      "/private/tmp/hardening-int/tools/examples/blog/nickname.py",
+      "prepare"
+    ],
+    "code": 0,
+    "seconds": 869.823328,
+    "timeout": false,
+    "target_bytes": 5461196800
+  },
+  {
+    "name": "nickname-freshness",
+    "command": [
+      "python3",
+      "/private/tmp/hardening-int/tools/examples/blog/nickname.py",
+      "check"
+    ],
+    "code": 0,
+    "seconds": 0.273141,
+    "timeout": false,
+    "target_bytes": 5461196800
+  },
+  {
+    "name": "nickname-browser",
+    "command": [
+      "python3",
+      "/private/tmp/hardening-int/tools/examples/blog/nickname.py",
+      "browser"
+    ],
+    "code": 0,
+    "seconds": 17.413388,
+    "timeout": false,
+    "target_bytes": 5461196800
+  },
+  {
+    "name": "coverage-nextest",
+    "command": [
+      "cargo",
+      "nextest",
+      "run",
+      "--manifest-path",
+      "/private/tmp/hardening-int/examples/blog/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--workspace",
+      "--all-targets",
+      "--features",
+      "blog-tool/native-proof,blog-app/ssr,blog-web/extension-proof",
+      "--test-threads",
+      "2",
+      "--no-fail-fast"
+    ],
+    "code": 0,
+    "seconds": 187.94276,
+    "timeout": false,
+    "target_bytes": 10222587904
+  },
+  {
+    "name": "coverage-binaries",
+    "command": [
+      "cargo",
+      "build",
+      "--manifest-path",
+      "/private/tmp/hardening-int/examples/blog/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "blog-web",
+      "--bins"
+    ],
+    "code": 0,
+    "seconds": 31.431021,
+    "timeout": false,
+    "target_bytes": 11434385408
+  },
+  {
+    "name": "coverage-native-http-browser",
+    "command": [
+      "python3",
+      "/private/tmp/hardening-int/tools/examples/blog/browser.py",
+      "--mode",
+      "hydrate"
+    ],
+    "code": 0,
+    "seconds": 10.992046,
+    "timeout": false,
+    "target_bytes": 11445051392
+  },
+  {
+    "name": "coverage-blog-client-g56",
+    "code": 0,
+    "status": "exempt",
+    "decision": "G56",
+    "scope": "startup/mount/disposal and thin DOM/navigation/fetch/AbortController glue",
+    "browser_evidence": "browser-public-matrix exercises both real entries; browser-full is a separate gate phase"
+  },
+  {
+    "name": "lock-controls",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "/private/tmp/hardening-int/tools/examples/blog/tests",
+      "-p",
+      "test_locks.py"
+    ],
+    "code": 0,
+    "seconds": 0.3341,
+    "timeout": false,
+    "target_bytes": 11459387392
+  },
+  {
+    "name": "lock-invariants",
+    "command": [
+      "python3",
+      "/private/tmp/hardening-int/tools/examples/blog/locks.py",
+      "check"
+    ],
+    "code": 0,
+    "seconds": 0.257663,
+    "timeout": false,
+    "target_bytes": 11459387392
+  }
+]

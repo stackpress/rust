@@ -1,0 +1,43 @@
+   1  (MIT OR Apache-2.0) AND NCSA
+   1  (MIT OR Apache-2.0) AND Unicode-3.0
+   1  0BSD
+   1  0BSD OR MIT OR Apache-2.0
+   4  Apache-2.0
+   1  Apache-2.0 / MIT
+   1  Apache-2.0 AND ISC
+   1  Apache-2.0 AND MIT
+   1  Apache-2.0 OR BSL-1.0 OR MIT
+   3  Apache-2.0 OR ISC OR MIT
+  59  Apache-2.0 OR MIT
+   1  Apache-2.0 WITH LLVM-exception
+   5  Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT
+   5  Apache-2.0/MIT
+   2  BSD-2-Clause OR Apache-2.0 OR MIT
+   5  BSD-3-Clause
+   1  BSD-3-Clause AND MIT
+   2  BSD-3-Clause OR MIT OR Apache-2.0
+   1  BSD-3-Clause/MIT
+   1  BSL-1.0
+   1  CC0-1.0
+   1  CC0-1.0 OR MIT-0 OR Apache-2.0
+   2  CDLA-Permissive-2.0
+   3  ISC
+   1  ISC AND (Apache-2.0 OR ISC)
+   1  ISC AND (Apache-2.0 OR ISC) AND Apache-2.0 AND MIT AND BSD-3-Clause AND (Apache-2.0 OR ISC OR MIT) AND (Apache-2.0 OR ISC OR MIT-0)
+ 164  MIT
+ 323  MIT OR Apache-2.0
+   1  MIT OR Apache-2.0 OR BSD-1-Clause
+   2  MIT OR Apache-2.0 OR LGPL-2.1-or-later
+   3  MIT OR Apache-2.0 OR Zlib
+   2  MIT OR Zlib OR Apache-2.0
+  30  MIT/Apache-2.0
+   6  MPL-2.0
+  34  Unicode-3.0
+  10  Unlicense OR MIT
+   2  Unlicense/MIT
+   7  Zlib
+  17  Zlib OR Apache-2.0 OR MIT
+METADATA: atomic-polyfill 1.0.3: crates.io API, 2026-11-12
+METADATA: curve25519-dalek-derive 0.1.1: crates.io API, 2026-11-12
+METADATA: fiat-crypto 0.2.9: crates.io API, 2026-11-12
+Dependency licences: 707 unique registry packages in 23 locks; 707 declarations read; 3 dated metadata fallbacks; 39 expressions; 0 failures

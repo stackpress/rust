@@ -1,0 +1,4 @@
+   Compiling generated-admin-tool v0.1.0 (/private/tmp/hardening-int/examples/generated-admin/tool)
+    Finished `dev` profile [unoptimized] target(s) in 1.16s
+     Running `target/00057-integration/debug/generated-admin-tool emit generate --check`
+{"differences":[]}

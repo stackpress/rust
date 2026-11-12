@@ -1,0 +1,285 @@
+{
+  "frozen_files": 72,
+  "frozen_changes": [],
+  "registry_tuples": 699,
+  "registry_unchanged": true,
+  "deny_roots": [
+    {
+      "crate": "stackpress-leptos",
+      "path": "crates/leptos/src/lib.rs",
+      "denied": [
+        "unwrap_used",
+        "expect_used",
+        "panic",
+        "unimplemented",
+        "todo",
+        "unreachable"
+      ]
+    },
+    {
+      "crate": "stackpress-framework-language",
+      "path": "crates/framework/framework-language/src/lib.rs",
+      "denied": [
+        "unwrap_used",
+        "expect_used",
+        "panic",
+        "unimplemented",
+        "todo",
+        "unreachable"
+      ]
+    },
+    {
+      "crate": "stackpress-sql",
+      "path": "crates/sql/sql/src/lib.rs",
+      "denied": [
+        "unwrap_used",
+        "expect_used",
+        "panic",
+        "unimplemented",
+        "todo",
+        "unreachable"
+      ]
+    },
+    {
+      "crate": "stackpress-lib",
+      "path": "crates/lib/src/lib.rs",
+      "denied": [
+        "unwrap_used",
+        "expect_used",
+        "panic",
+        "unimplemented",
+        "todo",
+        "unreachable"
+      ]
+    },
+    {
+      "crate": "stackpress-idea-parser",
+      "path": "crates/idea/idea-parser/src/lib.rs",
+      "denied": [
+        "unwrap_used",
+        "expect_used",
+        "panic",
+        "unimplemented",
+        "todo",
+        "unreachable"
+      ]
+    },
+    {
+      "crate": "stackpress-sql-sqlite",
+      "path": "crates/sql/sql-sqlite/src/lib.rs",
+      "denied": [
+        "unwrap_used",
+        "expect_used",
+        "panic",
+        "unimplemented",
+        "todo",
+        "unreachable"
+      ]
+    },
+    {
+      "crate": "stackpress-sql-postgres",
+      "path": "crates/sql/sql-postgres/src/lib.rs",
+      "denied": [
+        "unwrap_used",
+        "expect_used",
+        "panic",
+        "unimplemented",
+        "todo",
+        "unreachable"
+      ]
+    },
+    {
+      "crate": "stackpress-sql-mysql",
+      "path": "crates/sql/sql-mysql/src/lib.rs",
+      "denied": [
+        "unwrap_used",
+        "expect_used",
+        "panic",
+        "unimplemented",
+        "todo",
+        "unreachable"
+      ]
+    },
+    {
+      "crate": "stackpress-server",
+      "path": "crates/server/server/src/lib.rs",
+      "denied": [
+        "unwrap_used",
+        "expect_used",
+        "panic",
+        "unimplemented",
+        "todo",
+        "unreachable"
+      ]
+    },
+    {
+      "crate": "stackpress-idea-transformer",
+      "path": "crates/idea/idea-transformer/src/lib.rs",
+      "denied": [
+        "unwrap_used",
+        "expect_used",
+        "panic",
+        "unimplemented",
+        "todo",
+        "unreachable"
+      ]
+    },
+    {
+      "crate": "stackpress-server-http",
+      "path": "crates/server/http/src/lib.rs",
+      "denied": [
+        "unwrap_used",
+        "expect_used",
+        "panic",
+        "unimplemented",
+        "todo",
+        "unreachable"
+      ]
+    },
+    {
+      "crate": "stackpress-cli",
+      "path": "tools/cli/src/lib.rs",
+      "denied": [
+        "unwrap_used",
+        "expect_used",
+        "panic",
+        "unimplemented",
+        "todo",
+        "unreachable"
+      ]
+    },
+    {
+      "crate": "stackpress-framework-view",
+      "path": "crates/framework/framework-view/src/lib.rs",
+      "denied": [
+        "unwrap_used",
+        "expect_used",
+        "panic",
+        "unimplemented",
+        "todo",
+        "unreachable"
+      ]
+    },
+    {
+      "crate": "stackpress-framework-csrf",
+      "path": "crates/framework/framework-csrf/src/lib.rs",
+      "denied": [
+        "unwrap_used",
+        "expect_used",
+        "panic",
+        "unimplemented",
+        "todo",
+        "unreachable"
+      ]
+    },
+    {
+      "crate": "stackpress-framework-email",
+      "path": "crates/framework/framework-email/src/lib.rs",
+      "denied": [
+        "unwrap_used",
+        "expect_used",
+        "panic",
+        "unimplemented",
+        "todo",
+        "unreachable"
+      ]
+    },
+    {
+      "crate": "stackpress-idea",
+      "path": "crates/idea/idea/src/lib.rs",
+      "denied": [
+        "unwrap_used",
+        "expect_used",
+        "panic",
+        "unimplemented",
+        "todo",
+        "unreachable"
+      ]
+    },
+    {
+      "crate": "stackpress-framework-schema",
+      "path": "crates/framework/framework-schema/src/lib.rs",
+      "denied": [
+        "unwrap_used",
+        "expect_used",
+        "panic",
+        "unimplemented",
+        "todo",
+        "unreachable"
+      ]
+    },
+    {
+      "crate": "stackpress-framework-sql",
+      "path": "crates/framework/framework-sql/src/lib.rs",
+      "denied": [
+        "unwrap_used",
+        "expect_used",
+        "panic",
+        "unimplemented",
+        "todo",
+        "unreachable"
+      ]
+    },
+    {
+      "crate": "stackpress-framework-admin",
+      "path": "crates/framework/framework-admin/src/lib.rs",
+      "denied": [
+        "unwrap_used",
+        "expect_used",
+        "panic",
+        "unimplemented",
+        "todo",
+        "unreachable"
+      ]
+    },
+    {
+      "crate": "stackpress-framework-session",
+      "path": "crates/framework/framework-session/src/lib.rs",
+      "denied": [
+        "unwrap_used",
+        "expect_used",
+        "panic",
+        "unimplemented",
+        "todo",
+        "unreachable"
+      ]
+    },
+    {
+      "crate": "stackpress-framework-api",
+      "path": "crates/framework/framework-api/src/lib.rs",
+      "denied": [
+        "unwrap_used",
+        "expect_used",
+        "panic",
+        "unimplemented",
+        "todo",
+        "unreachable"
+      ]
+    },
+    {
+      "crate": "stackpress-framework",
+      "path": "crates/framework/framework/src/lib.rs",
+      "denied": [
+        "unwrap_used",
+        "expect_used",
+        "panic",
+        "unimplemented",
+        "todo",
+        "unreachable"
+      ]
+    },
+    {
+      "crate": "stackpress",
+      "path": "src/lib.rs",
+      "denied": [
+        "unwrap_used",
+        "expect_used",
+        "panic",
+        "unimplemented",
+        "todo",
+        "unreachable"
+      ]
+    }
+  ],
+  "manifest_changes": []
+}

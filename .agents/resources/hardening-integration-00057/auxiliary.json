@@ -1,0 +1,36 @@
+[
+  {
+    "command": [
+      "python3",
+      "tools/release/check_test_boundaries.py"
+    ],
+    "code": 0
+  },
+  {
+    "command": [
+      "python3",
+      "tools/release/check_test_copies.py"
+    ],
+    "code": 0
+  },
+  {
+    "command": [
+      "python3",
+      "tools/release/check_dep_licenses.py"
+    ],
+    "code": 0
+  },
+  {
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tools/release",
+      "-p",
+      "test_*.py"
+    ],
+    "code": 0
+  }
+]

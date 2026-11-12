@@ -5,6 +5,10 @@ use stackpress_framework_schema::{
 };
 
 /// Complete source metadata, including relations, UI props and private attributes.
+#[expect(
+    clippy::expect_used,
+    reason = "generator serializes a checked Model into this constant JSON literal"
+)]
 pub fn describe() -> Model {
     stackpress_framework_schema::source::__private::serde_json::from_str("{\"name\":\"Slugged\",\"rust_name\":\"Slugged\",\"module\":\"slugged\",\"fields\":[{\"name\":\"slug\",\"rust_name\":\"slug\",\"column\":\"slug\",\"value_type\":{\"kind\":\"String\"},\"required\":true,\"multiple\":false,\"key\":true,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":{\"provider\":\"cuid\",\"args\":[],\"revision\":\"cuid2-3.3.0\"},\"rules\":[],\"documentation\":{\"label\":null,\"description\":null,\"examples\":[],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[{\"role\":\"list\",\"component\":\"stackpress.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":false},{\"role\":\"view\",\"component\":\"stackpress.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":false}],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"id\",\"value\":true},{\"name\":\"default\",\"value\":[\"cuid()\"]},{\"name\":\"list.string\",\"value\":true},{\"name\":\"view.string\",\"value\":true}]},{\"name\":\"title\",\"rust_name\":\"title\",\"column\":\"title\",\"value_type\":{\"kind\":\"String\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":true,\"value_rule\":null,\"rules\":[],\"documentation\":{\"label\":null,\"description\":null,\"examples\":[],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[{\"role\":\"field\",\"component\":\"stackpress.source.field.input\",\"props\":{},\"definition_revision\":\"source-1\",\"available\":false},{\"role\":\"list\",\"component\":\"stackpress.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":false},{\"role\":\"view\",\"component\":\"stackpress.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":false}],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"field.input\",\"value\":true},{\"name\":\"list.string\",\"value\":true},{\"name\":\"view.string\",\"value\":true}]}],\"documentation\":{\"label\":null,\"description\":null,\"examples\":[],\"display\":null,\"icon\":null,\"labels\":[]},\"query\":[],\"attributes\":[]}").expect("generator emitted valid source metadata")
 }
@@ -13,33 +17,25 @@ pub fn describe() -> Model {
 pub fn columns() -> Vec<SourceColumn> {
     let model = describe();
     let catalog = std::sync::Arc::new(super::_catalog::describe());
-    let codecs = vec![
-        (
-            "slug",
-            Column {
-                kind: Kind::String,
-                nullable: false,
-            },
-        ),
-        (
-            "title",
-            Column {
-                kind: Kind::String,
-                nullable: false,
-            },
-        ),
-    ];
-    // Pair by exact identity instead of dropping or shifting a virtual relation slot.
-    codecs
+    // Visit source fields in declaration order; virtual relations have no storage codec.
+    model
+        .fields
         .into_iter()
-        .map(|(name, codec)| {
-            let field = model
-                .fields
-                .iter()
-                .find(|field| field.name == name)
-                .expect("generated column has source field")
-                .clone();
-            SourceColumn::new(codec, field).with_catalog(catalog.clone())
+        .filter_map(|field| {
+            let codec = match field.name.as_str() {
+                "slug" => Column {
+                    kind: Kind::String,
+                    nullable: false,
+                },
+
+                "title" => Column {
+                    kind: Kind::String,
+                    nullable: false,
+                },
+
+                _ => return None,
+            };
+            Some(SourceColumn::new(codec, field).with_catalog(catalog.clone()))
         })
         .collect()
 }
