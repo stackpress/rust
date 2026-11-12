@@ -192,7 +192,7 @@ mod tests {
                         FormatErrorKind::Date => CalendarDate::parse(&hostile).unwrap_err(),
                         FormatErrorKind::Time => TimeOfDay::parse(&hostile).unwrap_err(),
                         FormatErrorKind::Offset => OffsetDateTime::parse(&hostile).unwrap_err(),
-                        _ => unreachable!("fixed fixture categories"),
+                        _ => panic!("fixed fixture categories"),
                     };
                     assert!(matches!(
                         error.kind(),

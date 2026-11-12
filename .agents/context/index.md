@@ -11,4 +11,6 @@ This is the read-first map for the Rust monorepo. Context records accepted proje
 7. [Source catalog and authority](source-catalog.md): load for provenance, preserved notes, historical versus accepted claims, current versions, and ingestion verification.
 8. [Accepted source structure](source-structure.md): load for the root Cargo workspace/facade, grouped framework/Idea/server/SQL crates, package and namespace catalog, optional backend adapters, and dependency boundaries accepted on 2026-10-23 with the server grouping requested on 2026-10-28.
 
+9. [Named no-panic exceptions](no-panic-exceptions.md): load when changing G62 lint expectations or a listed constant parser; records exact literals, reasons and proving tests.
+
 For a new session, start with project direction and source authority, then load the coding/quality topics for the requested task. Those owners route to implementation workflows and the continuation handoff.

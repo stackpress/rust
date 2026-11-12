@@ -10,7 +10,7 @@ pub(super) async fn delegate(
 ) -> Result<Flow> {
     let state = inv.service::<Fixture>()?;
     let mut snapshot = Response::new();
-    snapshot.results_value(stackpress_lib::Value::Object(req.data.entries().clone()))?;
+    snapshot.results_value(stackpress_lib::Value::Object(req.data.entries()?.clone()))?;
     let input = auth::events::json_result(&snapshot)?;
     state.hook_input.lock().unwrap().push(input.clone());
     // Explicit barriers prove nonawaiting and ownership without depending on scheduler delays.

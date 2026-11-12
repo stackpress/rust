@@ -45,6 +45,13 @@ pub struct SelectOption {
 /// Validated options with unique values and a bounded render footprint.
 #[derive(Clone, Debug)]
 pub struct SelectOptions(Vec<SelectOption>);
+
+impl Default for SelectOptions {
+    /// An empty option list has no duplicate or reserved values.
+    fn default() -> Self {
+        Self(Vec::new())
+    }
+}
 /// Reserved internal placeholder is disabled and never submitted as user data.
 const UNSELECTED: &str = "__stackpress_unselected__";
 impl SelectOptions {

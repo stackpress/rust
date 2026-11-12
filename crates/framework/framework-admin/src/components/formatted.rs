@@ -134,8 +134,11 @@ impl EditPolicy for TemporalPresentation {
     fn check(&self, value: &IsoValue) -> Result<(), EditError> {
         self.inner.check(value)
     }
-    fn display(&self, value: &IsoValue, locale: DisplayLocale) -> String {
-        temporal_text(&self.inner.display(value, locale), self.precision)
+    fn display(&self, value: &IsoValue, locale: DisplayLocale) -> Result<String, EditError> {
+        Ok(temporal_text(
+            &self.inner.display(value, locale)?,
+            self.precision,
+        ))
     }
     fn canonical(&self, value: &IsoValue) -> String {
         self.inner.canonical(value)

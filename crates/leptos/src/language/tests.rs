@@ -196,3 +196,12 @@ fn translated_nodes_render_as_safe_views() {
     });
     owner.cleanup();
 }
+
+/// The infallible default preserves the source consent page's exact language settings.
+#[test]
+fn default_matches_source_consent_language() {
+    assert_eq!(
+        Language::default(),
+        Language::new("en".into(), BTreeMap::new(), "%s".into()).unwrap()
+    );
+}

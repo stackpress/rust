@@ -1,3 +1,12 @@
+#![deny(
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::panic,
+    clippy::unimplemented,
+    clippy::todo,
+    clippy::unreachable
+)]
+
 //! Build-host transforms over Idea config, with exclusive cooperative output ownership.
 //!
 //! Native and in-memory loaders compose bounded importer-relative Idea/JSON sources, retaining

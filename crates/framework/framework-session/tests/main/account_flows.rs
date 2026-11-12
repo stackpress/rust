@@ -27,7 +27,7 @@ async fn child(req: &mut Request, res: &mut Response, inv: Invocation<'_>) -> Re
     let oracle = inv.service::<Oracle>()?;
     let data = Json::Object(
         req.data
-            .entries()
+            .entries()?
             .iter()
             .map(|(k, v)| Ok((k.clone(), v.to_json()?)))
             .collect::<Result<_>>()?,

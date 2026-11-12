@@ -336,6 +336,16 @@ pub(crate) fn decode_uri(input: &str) -> EmailResult<String> {
     Ok(String::from_utf8(bytes)?)
 }
 
+/// Parse only the embedded source service JSON, independently of runtime service input.
+#[expect(
+    clippy::expect_used,
+    reason = "the embedded versioned service JSON is a validated constant literal"
+)]
+fn service_catalog() -> Map<String, Value> {
+    serde_json::from_str(include_str!("../data/nodemailer-services.json"))
+        .expect("versioned source service JSON")
+}
+
 /// Resolve the upstream versioned service data, including aliases/domains/email keys.
 fn service_options(service: &str) -> Option<Map<String, Value>> {
     let normalize = |v: &str| {
@@ -345,9 +355,7 @@ fn service_options(service: &str) -> Option<Map<String, Value>> {
             .to_lowercase()
     };
     let key = normalize(service.rsplit('@').next()?);
-    let catalog: Map<String, Value> =
-        serde_json::from_str(include_str!("../data/nodemailer-services.json"))
-            .expect("versioned source service JSON");
+    let catalog = service_catalog();
     for (name, settings) in catalog {
         let settings = settings.as_object()?;
         let matches = normalize(&name) == key
@@ -371,4 +379,18 @@ fn service_options(service: &str) -> Option<Map<String, Value>> {
         }
     }
     None
+}
+
+#[cfg(test)]
+mod no_panic_tests {
+    use super::*;
+
+    /// The named exception parses only this embedded, versioned JSON literal.
+    #[test]
+    fn embedded_services_are_valid_json() {
+        let data: Map<String, Value> =
+            serde_json::from_str(include_str!("../data/nodemailer-services.json")).unwrap();
+        assert!(!data.is_empty());
+        assert!(service_options("gmail").is_some());
+    }
 }

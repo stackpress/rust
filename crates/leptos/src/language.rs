@@ -48,6 +48,17 @@ impl TryFrom<LanguageData> for Language {
     }
 }
 
+impl Default for Language {
+    /// English with source phrases and the conventional literal interpolation token.
+    fn default() -> Self {
+        Self {
+            locale: "en".into(),
+            phrases: BTreeMap::new(),
+            placeholder: "%s".into(),
+        }
+    }
+}
+
 impl Language {
     /// Check locale/map/placeholder before publishing them to a UI root.
     ///

@@ -41,7 +41,8 @@ impl ContentResolver for NativeContentResolver {
             if is_url(&request.location) {
                 let client = http_client()?;
                 let mut location = url::Url::parse(&request.location)?;
-                for redirects in 0..=5 {
+                let mut redirects = 0;
+                loop {
                     let mut get = client
                         .get(location.clone())
                         .header("accept-encoding", "gzip,deflate");
@@ -62,6 +63,7 @@ impl ContentResolver for NativeContentResolver {
                         if redirects == 5 {
                             return Err(io::Error::other("Maximum redirect count exceeded").into());
                         }
+                        redirects += 1;
                         location = location.join(next.to_str()?)?;
                         continue;
                     }
@@ -74,7 +76,6 @@ impl ContentResolver for NativeContentResolver {
                     }
                     return Ok(response.bytes().await?.to_vec());
                 }
-                unreachable!("the fifth redirect returns an error");
             }
             Ok(tokio::fs::read(request.location).await?)
         })

@@ -46,7 +46,7 @@ pub(crate) fn source(value: &stackpress_lib::Value) -> Result<Value> {
 /// Read exact aggregate operation input, including rich Date fields from nested events.
 pub(crate) fn input(req: &Request) -> Result<Record> {
     req.data
-        .entries()
+        .entries()?
         .iter()
         .map(|(key, value)| Ok((key.clone(), source(value)?)))
         .collect::<Result<_>>()

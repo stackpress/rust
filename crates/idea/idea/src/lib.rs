@@ -1,3 +1,12 @@
+#![deny(
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::panic,
+    clippy::unimplemented,
+    clippy::todo,
+    clippy::unreachable
+)]
+
 //! Small generation orchestration over independently usable parser and transformer crates.
 //!
 //! This synchronous build-host API composes imports through a caller-selected source loader,

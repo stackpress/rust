@@ -1,0 +1,1195 @@
+[
+  {
+    "id": "20261112T041435.456309Z-27914f110035",
+    "label": "00053 fresh clean",
+    "kind": "clean",
+    "scope": "selected",
+    "cache": "unknown",
+    "status": "passed",
+    "command": [
+      "cargo",
+      "clean",
+      "--locked",
+      "--offline"
+    ],
+    "command_seconds": 0.430657,
+    "cargo_build_seconds": null,
+    "exit_code": 0,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T041446.939128Z-0494e4dd86fc",
+    "label": "00053 coverage clean",
+    "kind": "clean",
+    "scope": "selected",
+    "cache": "unknown",
+    "status": "passed",
+    "command": [
+      "cargo",
+      "llvm-cov",
+      "clean",
+      "--workspace"
+    ],
+    "command_seconds": 0.831092,
+    "cargo_build_seconds": null,
+    "exit_code": 0,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T041802.414259Z-909344735835",
+    "label": "00053 edit loop lib",
+    "kind": "test",
+    "scope": "selected",
+    "cache": "unknown",
+    "status": "passed",
+    "command": [
+      "cargo",
+      "nextest",
+      "run",
+      "-p",
+      "stackpress-lib",
+      "--locked",
+      "--offline"
+    ],
+    "command_seconds": 45.17286,
+    "cargo_build_seconds": 19.85,
+    "exit_code": 0,
+    "cargo_activity": {
+      "compiling": 62,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T041914.827615Z-d8c72e67fefd",
+    "label": "00053 edit loop server transformer",
+    "kind": "test",
+    "scope": "selected",
+    "cache": "unknown",
+    "status": "passed",
+    "command": [
+      "cargo",
+      "nextest",
+      "run",
+      "-p",
+      "stackpress-server",
+      "-p",
+      "stackpress-server-http",
+      "-p",
+      "stackpress-cli",
+      "-p",
+      "stackpress-idea-transformer",
+      "--locked",
+      "--offline"
+    ],
+    "command_seconds": 53.007191,
+    "cargo_build_seconds": 20.63,
+    "exit_code": 0,
+    "cargo_activity": {
+      "compiling": 53,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T041942.132271Z-916aa13a81dc",
+    "label": "00053 edit loop leptos views email",
+    "kind": "test",
+    "scope": "selected",
+    "cache": "unknown",
+    "status": "failed",
+    "command": [
+      "cargo",
+      "nextest",
+      "run",
+      "-p",
+      "stackpress-leptos",
+      "-p",
+      "stackpress-framework-view",
+      "-p",
+      "stackpress-framework-email",
+      "-p",
+      "stackpress-framework-language",
+      "--features",
+      "stackpress-leptos/ssr,stackpress-leptos/format,stackpress-leptos/async,stackpress-leptos/stream,stackpress-leptos/rich,stackpress-framework-view/leptos-ssr,stackpress-framework-email/server",
+      "--locked",
+      "--offline"
+    ],
+    "command_seconds": 97.410432,
+    "cargo_build_seconds": null,
+    "exit_code": 101,
+    "cargo_activity": {
+      "compiling": 228,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T042026.743632Z-7bf42f3fa630",
+    "label": "00053 format implementation",
+    "kind": "other",
+    "scope": "selected",
+    "cache": "unknown",
+    "status": "passed",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all"
+    ],
+    "command_seconds": 3.311336,
+    "cargo_build_seconds": null,
+    "exit_code": 0,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T042245.567344Z-9597565965fc",
+    "label": "00053 round 1 logic",
+    "kind": "test",
+    "scope": "selected",
+    "cache": "unknown",
+    "status": "failed",
+    "command": [
+      "cargo",
+      "nextest",
+      "run",
+      "-p",
+      "stackpress-leptos",
+      "-p",
+      "stackpress-framework-view",
+      "-p",
+      "stackpress-framework-email",
+      "-p",
+      "stackpress-framework-language",
+      "--features",
+      "stackpress-leptos/ssr,stackpress-leptos/format,stackpress-leptos/stream,stackpress-leptos/rich,stackpress-framework-view/leptos-ssr,stackpress-framework-email/server",
+      "--locked",
+      "--offline"
+    ],
+    "command_seconds": 81.657576,
+    "cargo_build_seconds": 67.0,
+    "exit_code": 100,
+    "cargo_activity": {
+      "compiling": 62,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T042405.597146Z-e7adabd4b2d4",
+    "label": "00053 round 2 responsibility",
+    "kind": "test",
+    "scope": "selected",
+    "cache": "unknown",
+    "status": "failed",
+    "command": [
+      "cargo",
+      "nextest",
+      "run",
+      "-p",
+      "stackpress-lib",
+      "-p",
+      "stackpress-leptos",
+      "-p",
+      "stackpress-framework-email",
+      "--features",
+      "stackpress-leptos/ssr,stackpress-leptos/format,stackpress-leptos/stream,stackpress-leptos/rich,stackpress-framework-email/server",
+      "--locked",
+      "--offline"
+    ],
+    "command_seconds": 55.126216,
+    "cargo_build_seconds": 38.17,
+    "exit_code": 100,
+    "cargo_activity": {
+      "compiling": 12,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T042449.508025Z-e9cb51659e5d",
+    "label": "00053 round 3 formatting",
+    "kind": "other",
+    "scope": "selected",
+    "cache": "unknown",
+    "status": "passed",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all"
+    ],
+    "command_seconds": 4.333209,
+    "cargo_build_seconds": null,
+    "exit_code": 0,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T042516.443251Z-96222e2bb8f1",
+    "label": "00053 round 1 final logic evidence",
+    "kind": "test",
+    "scope": "selected",
+    "cache": "unknown",
+    "status": "passed",
+    "command": [
+      "cargo",
+      "nextest",
+      "run",
+      "-p",
+      "stackpress-lib",
+      "-p",
+      "stackpress-leptos",
+      "-p",
+      "stackpress-framework-email",
+      "-p",
+      "stackpress-idea-transformer",
+      "-p",
+      "stackpress-server",
+      "-p",
+      "stackpress-server-http",
+      "-p",
+      "stackpress-cli",
+      "--features",
+      "stackpress-leptos/ssr,stackpress-leptos/format,stackpress-leptos/stream,stackpress-leptos/rich,stackpress-framework-email/server",
+      "--locked",
+      "--offline",
+      "--test-threads",
+      "2",
+      "--no-fail-fast",
+      "-E",
+      "not test(tcp_watchdog)"
+    ],
+    "command_seconds": 123.890861,
+    "cargo_build_seconds": 75.0,
+    "exit_code": 0,
+    "cargo_activity": {
+      "compiling": 32,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T042753.115241Z-9be6c81c9f45",
+    "label": "00053 round 2 ownership no-change proof",
+    "kind": "test",
+    "scope": "selected",
+    "cache": "unknown",
+    "status": "passed",
+    "command": [
+      "cargo",
+      "nextest",
+      "run",
+      "-p",
+      "stackpress-lib",
+      "-p",
+      "stackpress-leptos",
+      "-p",
+      "stackpress-framework-email",
+      "-p",
+      "stackpress-idea-transformer",
+      "-p",
+      "stackpress-server",
+      "-p",
+      "stackpress-server-http",
+      "-p",
+      "stackpress-cli",
+      "--features",
+      "stackpress-leptos/ssr,stackpress-leptos/format,stackpress-leptos/stream,stackpress-leptos/rich,stackpress-framework-email/server",
+      "--locked",
+      "--offline",
+      "--test-threads",
+      "2",
+      "-E",
+      "test(presentation_errors) or test(nested) or test(complete_install_failure_matrix) or test(context) or test(source_signup)"
+    ],
+    "command_seconds": 4.145283,
+    "cargo_build_seconds": 0.6,
+    "exit_code": 0,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T042821.255410Z-57072736a95d",
+    "label": "00053 round 3 consistency format",
+    "kind": "other",
+    "scope": "selected",
+    "cache": "unknown",
+    "status": "passed",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all"
+    ],
+    "command_seconds": 4.295539,
+    "cargo_build_seconds": null,
+    "exit_code": 0,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T042839.877919Z-8dbfdd27a944",
+    "label": "00053 round 3 documented contract proof",
+    "kind": "test",
+    "scope": "selected",
+    "cache": "unknown",
+    "status": "passed",
+    "command": [
+      "cargo",
+      "nextest",
+      "run",
+      "-p",
+      "stackpress-lib",
+      "-p",
+      "stackpress-leptos",
+      "-p",
+      "stackpress-framework-email",
+      "-p",
+      "stackpress-idea-transformer",
+      "-p",
+      "stackpress-server",
+      "-p",
+      "stackpress-server-http",
+      "-p",
+      "stackpress-cli",
+      "--features",
+      "stackpress-leptos/ssr,stackpress-leptos/format,stackpress-leptos/stream,stackpress-leptos/rich,stackpress-framework-email/server",
+      "--locked",
+      "--offline",
+      "--test-threads",
+      "2",
+      "-E",
+      "test(default_url_literal) or test(default_matches_source) or test(embedded_) or test(unknown_icon_name) or test(presentation_errors) or test(complete_install_failure_matrix)"
+    ],
+    "command_seconds": 80.803344,
+    "cargo_build_seconds": 54.97,
+    "exit_code": 0,
+    "cargo_activity": {
+      "compiling": 7,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T042926.978763Z-7172f31ded1a",
+    "label": "00053 round 3 production-only expectations format",
+    "kind": "other",
+    "scope": "selected",
+    "cache": "unknown",
+    "status": "passed",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all"
+    ],
+    "command_seconds": 4.102229,
+    "cargo_build_seconds": null,
+    "exit_code": 0,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T043010.929010Z-4cdafb2c75ef",
+    "label": "00053 gate",
+    "kind": "check",
+    "scope": "workspace",
+    "cache": "unknown",
+    "status": "failed",
+    "command": [
+      "python3",
+      "target/evidence-00053/gate.py"
+    ],
+    "command_seconds": 203.658303,
+    "cargo_build_seconds": null,
+    "exit_code": 101,
+    "cargo_activity": {
+      "compiling": 1,
+      "checking": 3,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T043404.791106Z-d85c8b8e8922",
+    "label": "00053 gate standalone continuation",
+    "kind": "check",
+    "scope": "selected",
+    "cache": "unknown",
+    "status": "failed",
+    "command": [
+      "python3",
+      "target/evidence-00053/gate.py",
+      "alone-stackpress-lib",
+      "alone-stackpress-server",
+      "alone-stackpress-server-http",
+      "alone-stackpress-cli",
+      "alone-stackpress-leptos",
+      "alone-stackpress-idea-parser",
+      "alone-stackpress-idea-transformer",
+      "alone-stackpress-idea",
+      "alone-stackpress-sql-sqlite",
+      "alone-stackpress-sql-postgres",
+      "alone-stackpress-sql-mysql",
+      "alone-stackpress-framework-view",
+      "alone-stackpress-framework-csrf",
+      "alone-stackpress-framework-email",
+      "alone-stackpress-framework-language",
+      "alone-stackpress"
+    ],
+    "command_seconds": 6.857394,
+    "cargo_build_seconds": null,
+    "exit_code": 101,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T043426.069878Z-28865ae51eb6",
+    "label": "00053 gate expectation correction fmt",
+    "kind": "other",
+    "scope": "selected",
+    "cache": "unknown",
+    "status": "passed",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all"
+    ],
+    "command_seconds": 2.807313,
+    "cargo_build_seconds": null,
+    "exit_code": 0,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T043447.678709Z-6f1b6a7e8c3f",
+    "label": "00053 gate expectation correction format",
+    "kind": "other",
+    "scope": "selected",
+    "cache": "unknown",
+    "status": "passed",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all"
+    ],
+    "command_seconds": 3.001641,
+    "cargo_build_seconds": null,
+    "exit_code": 0,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T043514.894043Z-370cc39486b4",
+    "label": "00053 gate resumed after coordinated callers",
+    "kind": "check",
+    "scope": "workspace",
+    "cache": "unknown",
+    "status": "failed",
+    "command": [
+      "python3",
+      "target/evidence-00053/gate.py"
+    ],
+    "command_seconds": 18.078305,
+    "cargo_build_seconds": null,
+    "exit_code": 101,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T043625.912692Z-bdf506bd3ba3",
+    "label": "00053 gate caller test correction",
+    "kind": "check",
+    "scope": "workspace",
+    "cache": "unknown",
+    "status": "failed",
+    "command": [
+      "python3",
+      "target/evidence-00053/gate.py"
+    ],
+    "command_seconds": 25.999928,
+    "cargo_build_seconds": null,
+    "exit_code": 101,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T043743.634779Z-4fea62533a55",
+    "label": "00053 gate helper lint fix format",
+    "kind": "other",
+    "scope": "selected",
+    "cache": "unknown",
+    "status": "passed",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all"
+    ],
+    "command_seconds": 3.134936,
+    "cargo_build_seconds": null,
+    "exit_code": 0,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T043754.351253Z-4954da4a152e",
+    "label": "00053 gate helper correction continuation",
+    "kind": "check",
+    "scope": "workspace",
+    "cache": "unknown",
+    "status": "failed",
+    "command": [
+      "python3",
+      "target/evidence-00053/gate.py"
+    ],
+    "command_seconds": 12.867478,
+    "cargo_build_seconds": null,
+    "exit_code": 101,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T043918.051396Z-5055ad824b55",
+    "label": "00053 gate helper lint formatting",
+    "kind": "other",
+    "scope": "selected",
+    "cache": "unknown",
+    "status": "passed",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all"
+    ],
+    "command_seconds": 4.779982,
+    "cargo_build_seconds": null,
+    "exit_code": 0,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T043937.107659Z-1bdc323d1773",
+    "label": "00053 gate fixture helper continuation",
+    "kind": "check",
+    "scope": "workspace",
+    "cache": "unknown",
+    "status": "failed",
+    "command": [
+      "python3",
+      "target/evidence-00053/gate.py"
+    ],
+    "command_seconds": 37.019498,
+    "cargo_build_seconds": 7.5,
+    "exit_code": 101,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T044047.581698Z-17c1e8271a4f",
+    "label": "00053 gate standalone checks",
+    "kind": "check",
+    "scope": "selected",
+    "cache": "unknown",
+    "status": "passed",
+    "command": [
+      "python3",
+      "target/evidence-00053/gate.py",
+      "alone-stackpress-lib",
+      "alone-stackpress-server",
+      "alone-stackpress-server-http",
+      "alone-stackpress-cli",
+      "alone-stackpress-leptos",
+      "alone-stackpress-idea-parser",
+      "alone-stackpress-idea-transformer",
+      "alone-stackpress-idea",
+      "alone-stackpress-sql-sqlite",
+      "alone-stackpress-sql-postgres",
+      "alone-stackpress-sql-mysql",
+      "alone-stackpress-framework-view",
+      "alone-stackpress-framework-csrf",
+      "alone-stackpress-framework-email",
+      "alone-stackpress-framework-language",
+      "alone-stackpress"
+    ],
+    "command_seconds": 220.687368,
+    "cargo_build_seconds": 218.01999999999998,
+    "exit_code": 0,
+    "cargo_activity": {
+      "compiling": 2,
+      "checking": 1,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T044121.297874Z-6cce6c32e60d",
+    "label": "00053 gate authorized adapter formatting",
+    "kind": "other",
+    "scope": "selected",
+    "cache": "unknown",
+    "status": "passed",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all"
+    ],
+    "command_seconds": 4.996378,
+    "cargo_build_seconds": null,
+    "exit_code": 0,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T044506.674642Z-68ff5ccdbbd7",
+    "label": "00053 gate compatible and integration continuation",
+    "kind": "check",
+    "scope": "workspace",
+    "cache": "unknown",
+    "status": "failed",
+    "command": [
+      "python3",
+      "target/evidence-00053/gate.py"
+    ],
+    "command_seconds": 29.9799,
+    "cargo_build_seconds": null,
+    "exit_code": 101,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T044637.033639Z-c1fe4465930b",
+    "label": "00053 gate email caller format",
+    "kind": "other",
+    "scope": "selected",
+    "cache": "unknown",
+    "status": "passed",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all"
+    ],
+    "command_seconds": 3.011878,
+    "cargo_build_seconds": null,
+    "exit_code": 0,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T044650.318573Z-90f8d262e8d9",
+    "label": "00053 gate compatible caller continuation",
+    "kind": "check",
+    "scope": "workspace",
+    "cache": "unknown",
+    "status": "failed",
+    "command": [
+      "python3",
+      "target/evidence-00053/gate.py"
+    ],
+    "command_seconds": 23.171095,
+    "cargo_build_seconds": null,
+    "exit_code": 101,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T044735.788090Z-6451a33b3e6f",
+    "label": "00053 gate remaining caller formatting",
+    "kind": "other",
+    "scope": "selected",
+    "cache": "unknown",
+    "status": "passed",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all"
+    ],
+    "command_seconds": 2.761551,
+    "cargo_build_seconds": null,
+    "exit_code": 0,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T044745.619589Z-5c1815430792",
+    "label": "00053 gate complete caller compatibility",
+    "kind": "check",
+    "scope": "workspace",
+    "cache": "unknown",
+    "status": "failed",
+    "command": [
+      "python3",
+      "target/evidence-00053/gate.py"
+    ],
+    "command_seconds": 16.672329,
+    "cargo_build_seconds": null,
+    "exit_code": 101,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T044928.331847Z-ea8e0755b8bb",
+    "label": "00053 gate admin test caller format",
+    "kind": "other",
+    "scope": "selected",
+    "cache": "unknown",
+    "status": "passed",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all"
+    ],
+    "command_seconds": 3.467094,
+    "cargo_build_seconds": null,
+    "exit_code": 0,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T044931.849630Z-149885e9130d",
+    "label": "00053 gate all coordinated callers reconciled",
+    "kind": "check",
+    "scope": "workspace",
+    "cache": "unknown",
+    "status": "failed",
+    "command": [
+      "python3",
+      "target/evidence-00053/gate.py"
+    ],
+    "command_seconds": 26.877557,
+    "cargo_build_seconds": 22.28,
+    "exit_code": 94,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T045104.332304Z-2ebf13e08a1b",
+    "label": "00053 gate nextest filter correction",
+    "kind": "test",
+    "scope": "workspace",
+    "cache": "unknown",
+    "status": "failed",
+    "command": [
+      "python3",
+      "target/evidence-00053/gate.py"
+    ],
+    "command_seconds": 5786.180989,
+    "cargo_build_seconds": 4293.119999999999,
+    "exit_code": 100,
+    "cargo_activity": {
+      "compiling": 69,
+      "checking": 12,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T052045.395401Z-fad4d61d6b89",
+    "label": "00053 gate capacity retire completed compile fixtures",
+    "kind": "clean",
+    "scope": "selected",
+    "cache": "unknown",
+    "status": "passed",
+    "command": [
+      "python3",
+      "-c",
+      "import pathlib,shutil; p=pathlib.Path(\"target/00053-foundation/tests\"); print(\"Retiring completed compile-test target\",p); shutil.rmtree(p)"
+    ],
+    "command_seconds": 2.946474,
+    "cargo_build_seconds": null,
+    "exit_code": 0,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T052219.355363Z-fc104cb61361",
+    "label": "00053 gate capacity retire completed native executable copies",
+    "kind": "clean",
+    "scope": "selected",
+    "cache": "unknown",
+    "status": "passed",
+    "command": [
+      "python3",
+      "target/evidence-00053/retire_test_executables.py"
+    ],
+    "command_seconds": 0.621015,
+    "cargo_build_seconds": null,
+    "exit_code": 0,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T061004.558362Z-b1d1a242e0fb",
+    "label": "00053 coverage report CLI options",
+    "kind": "other",
+    "scope": "selected",
+    "cache": "unknown",
+    "status": "passed",
+    "command": [
+      "cargo",
+      "llvm-cov",
+      "report",
+      "--help"
+    ],
+    "command_seconds": 0.038549,
+    "cargo_build_seconds": null,
+    "exit_code": 0,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T061653.599262Z-b4e1f12611ac",
+    "label": "00053 coverage capacity retire completed non-instrumented proofs",
+    "kind": "clean",
+    "scope": "selected",
+    "cache": "unknown",
+    "status": "passed",
+    "command": [
+      "python3",
+      "target/evidence-00053/retire_noncoverage.py"
+    ],
+    "command_seconds": 6.240228,
+    "cargo_build_seconds": null,
+    "exit_code": 0,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T062411.938935Z-2a872e000884",
+    "label": "00053 coverage tool version",
+    "kind": "other",
+    "scope": "selected",
+    "cache": "unknown",
+    "status": "passed",
+    "command": [
+      "cargo",
+      "llvm-cov",
+      "--version"
+    ],
+    "command_seconds": 0.042261,
+    "cargo_build_seconds": null,
+    "exit_code": 0,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T063148.803766Z-5354380a5d04",
+    "label": "00053 gate coverage serial continuation",
+    "kind": "coverage",
+    "scope": "workspace",
+    "cache": "unknown",
+    "status": "failed",
+    "command": [
+      "python3",
+      "target/evidence-00053/gate.py",
+      "coverage",
+      "coverage-json",
+      "postgres-clean",
+      "mysql-clean"
+    ],
+    "command_seconds": 545.752513,
+    "cargo_build_seconds": 124.99000000000001,
+    "exit_code": 1,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T064112.771761Z-5e68ff4cfcc3",
+    "label": "00053 gate coverage export continuation",
+    "kind": "coverage",
+    "scope": "workspace",
+    "cache": "unknown",
+    "status": "passed",
+    "command": [
+      "python3",
+      "target/evidence-00053/gate.py",
+      "coverage-json",
+      "postgres-clean",
+      "mysql-clean"
+    ],
+    "command_seconds": 9.377728,
+    "cargo_build_seconds": null,
+    "exit_code": 0,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  {
+    "id": "20261112T064233.777376Z-55857fb69834",
+    "label": "00053 gate explicit package coverage export",
+    "kind": "coverage",
+    "scope": "selected",
+    "cache": "unknown",
+    "status": "passed",
+    "command": [
+      "python3",
+      "target/evidence-00053/gate.py",
+      "coverage-json",
+      "postgres-clean",
+      "mysql-clean"
+    ],
+    "command_seconds": 8.482147,
+    "cargo_build_seconds": null,
+    "exit_code": 0,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "cargo_version": "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "host": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  }
+]

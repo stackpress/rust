@@ -88,8 +88,8 @@ impl EditPolicy for PhonePolicy {
         Ok(())
     }
     /// International metadata formatting is deterministic across en/fr and regions.
-    fn display(&self, value: &E164Phone, _locale: DisplayLocale) -> String {
-        value.display()
+    fn display(&self, value: &E164Phone, _locale: DisplayLocale) -> Result<String, EditError> {
+        Ok(value.display())
     }
     /// Submission contains only complete E.164, never national draft text.
     fn canonical(&self, value: &E164Phone) -> String {

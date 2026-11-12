@@ -1,3 +1,12 @@
+#![deny(
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::panic,
+    clippy::unimplemented,
+    clippy::todo,
+    clippy::unreachable
+)]
+
 //! Transport-neutral primitives for Stackpress capability execution.
 //!
 //! The foundation does not choose an executor or depend on a native host.

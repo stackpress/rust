@@ -950,13 +950,13 @@ impl SharedAncestry {
         self.0.as_ref().map_or(0, |node| node.depth)
     }
     /// Append one immutable frame, sharing existing ancestry explicitly.
-    fn push(&self, frame: InvocationFrame) -> Self {
+    fn push(&self, frame: InvocationFrame) -> Arc<AncestryNode> {
         // Only this current frame is new; all parent nodes are visibly shared and immutable.
-        Self(Some(Arc::new(AncestryNode {
+        Arc::new(AncestryNode {
             frame,
             parent: self.clone(),
             depth: self.depth() + 1,
-        })))
+        })
     }
     /// Materialize a root-first diagnostic snapshot only on request/error.
     fn snapshot(&self) -> Vec<InvocationFrame> {
@@ -1284,7 +1284,7 @@ impl EventEmitter {
         action
             .invoke(req, res, invocation)
             .await
-            .map_err(|error| error.with_frames(ancestry.snapshot()))
+            .map_err(|error| error.with_frames(SharedAncestry(Some(ancestry)).snapshot()))
     }
     /// Box recursive dispatch; no registry or callback lock survives an await.
     fn emit_nested<'a>(
@@ -1343,7 +1343,7 @@ pub struct Invocation<'a> {
     /// Borrowed immutable runtime table; the context cannot escape its lifetime.
     emitter: &'a EventEmitter,
     /// Current phase link, retained while a nested child temporarily borrows this invocation.
-    ancestry: SharedAncestry,
+    ancestry: Arc<AncestryNode>,
     /// Borrowed captures for this listener only; raw dispatch never injects them into request data.
     captures: &'a MatchData,
     /// Optional explicit host borrow; child dispatch never replaces it with request data.
@@ -1431,7 +1431,7 @@ impl Invocation<'_> {
             event,
             input,
             DispatchContext {
-                ancestry: self.ancestry.clone(),
+                ancestry: SharedAncestry(Some(self.ancestry.clone())),
                 state: self.context,
             },
         )
@@ -1458,12 +1458,8 @@ impl Invocation<'_> {
     /// # Ok::<(), stackpress_lib::Error>(())
     /// ```
     pub fn listener(&self) -> &InvocationFrame {
-        // Invocation is constructed only with a nonempty ancestry link owned for its borrow
-        // lifetime.
-        match self.ancestry.0.as_deref() {
-            Some(node) => &node.frame,
-            None => unreachable!("Invocation always has a frame"),
-        }
+        // The invocation owns a nonempty node; an empty dispatch ancestry cannot reach this API.
+        &self.ancestry.frame
     }
     /// Inspect this invocation's event rather than a global current-event slot.
     ///
@@ -1540,7 +1536,7 @@ impl Invocation<'_> {
     pub fn path(&self) -> Vec<InvocationFrame> {
         // Materialize a diagnostic vector only for explicit inspection, not on every listener
         // entry.
-        self.ancestry.snapshot()
+        SharedAncestry(Some(self.ancestry.clone())).snapshot()
     }
     /// Dispatch a nested operation, reborrowing caller values and inheriting ancestry.
     ///
@@ -1579,7 +1575,7 @@ impl Invocation<'_> {
             req,
             res,
             DispatchContext {
-                ancestry: self.ancestry.clone(),
+                ancestry: SharedAncestry(Some(self.ancestry.clone())),
                 state: self.context,
             },
         )

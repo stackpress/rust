@@ -45,7 +45,7 @@ async fn fake_child(req: &mut Request, res: &mut Response, inv: Invocation<'_>) 
     let oracle = inv.service::<Oracle>()?;
     let input = Json::Object(
         req.data
-            .entries()
+            .entries()?
             .iter()
             .filter(|(key, _)| key.as_str() != "csrf")
             .map(|(key, value)| (key.clone(), json_value(value.clone())))
@@ -268,6 +268,7 @@ async fn source_process_invocation_traces() {
         let mut actual = Json::Object(
             req.data
                 .entries()
+                .unwrap()
                 .iter()
                 .filter(|(key, _)| key.as_str() != "csrf")
                 .map(|(key, value)| (key.clone(), json_value(value.clone())))

@@ -270,7 +270,7 @@ impl Nest {
     /// ```
     pub fn len(&self) -> usize {
         // Count top-level fields independently of the cached recursive node count.
-        self.entries().len()
+        self.root.as_object().map_or(0, DataMap::len)
     }
     /// Report an empty object.
     ///
@@ -295,15 +295,16 @@ impl Nest {
     /// # use stackpress_lib::{DataPath, Nest, Value};
     /// let mut data = Nest::new();
     /// data.set_path("profile.name", "Ada")?;
-    /// assert!(data.entries().contains_key("profile"));
+    /// assert!(data.entries()?.contains_key("profile"));
     /// # Ok::<(), stackpress_lib::Error>(())
     /// ```
-    pub fn entries(&self) -> &DataMap<String, Value> {
-        // Construction and edits always retain an object root.
-        match &self.root {
-            Value::Object(values) => values,
-            _ => unreachable!("Nest object invariant"),
-        }
+    /// # Errors
+    /// Reports a violated object-root invariant. Accepted construction and mutation retain it.
+    pub fn entries(&self) -> Result<&DataMap<String, Value>> {
+        // Construction and edits retain an object root; propagate any invariant failure.
+        self.root
+            .as_object()
+            .ok_or_else(|| Error::invalid("nested data requires an object root"))
     }
     /// Iterate literal keys in insertion order.
     ///
@@ -318,7 +319,7 @@ impl Nest {
     /// ```
     pub fn keys(&self) -> impl Iterator<Item = &String> {
         // Expose insertion order without copying key strings.
-        self.entries().keys()
+        self.root.as_object().into_iter().flat_map(DataMap::keys)
     }
     /// Iterate values in insertion order.
     ///
@@ -333,7 +334,7 @@ impl Nest {
     /// ```
     pub fn values(&self) -> impl Iterator<Item = &Value> {
         // Borrow payloads so inspecting a native value does not add shared owners.
-        self.entries().values()
+        self.root.as_object().into_iter().flat_map(DataMap::values)
     }
     /// Borrow a literal top-level key; punctuation is not parsed.
     ///
@@ -349,7 +350,7 @@ impl Nest {
     /// ```
     pub fn get(&self, key: &str) -> Option<&Value> {
         // Literal punctuation belongs to the key; only the path APIs parse separators.
-        self.entries().get(key)
+        self.root.as_object().and_then(|values| values.get(key))
     }
     /// Inspect presence, including a present null.
     ///
@@ -522,8 +523,8 @@ impl Nest {
         let usage = change
             .project(self.usage, &self.limits)
             .map_err(|error| qualify_error(error, &path))?;
-        // All Result-producing work has succeeded; commit moves only the affected branch.
-        let previous = commit(&mut self.root, &plan, Some(value));
+        // Input preflight has succeeded; commit moves only the affected branch.
+        let previous = commit(&mut self.root, &plan, Some(value))?;
         // Publish totals only after the matching tree mutation is complete.
         self.usage = usage;
         // A final Shared payload may have a panicking user Drop; its unwind must see consistent
@@ -561,7 +562,7 @@ impl Nest {
         let usage = change
             .project(self.usage, &self.limits)
             .map_err(|error| qualify_error(error, &path))?;
-        let removed = commit(&mut self.root, &plan, None);
+        let removed = commit(&mut self.root, &plan, None)?;
         self.usage = usage;
         Ok(removed)
     }
@@ -616,7 +617,7 @@ impl Nest {
             nodes: incoming.nodes - 1,
             bytes: incoming.bytes,
         })?;
-        for (key, _) in other.entries() {
+        for (key, _) in other.entries()? {
             if let Some(old) = self.get(key) {
                 let old = old.measure(&self.limits)?;
                 // An overlapping key keeps its existing position and is counted once.

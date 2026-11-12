@@ -201,7 +201,7 @@ impl ConfigLayers {
             candidate
                 .layers
                 .last_mut()
-                .expect("just appended layer")
+                .ok_or_else(|| Error::invalid("configuration layer was not retained"))?
                 .registered = layer.registered;
         }
         Ok(candidate)
@@ -277,9 +277,9 @@ impl Sections {
         let mut wrapper = checked_object(Value::Object(wrapper))?;
         let value = wrapper
             .as_object_mut()
-            .expect("checked defaults wrapper")
+            .ok_or_else(|| Error::invalid("configuration defaults require an object"))?
             .remove(key)
-            .expect("inserted default section");
+            .ok_or_else(|| Error::invalid("configuration default section is missing"))?;
         // Retain one decoder only after name/type/default validation has succeeded.
         self.0.push(Section {
             key: key.into(),
@@ -336,7 +336,12 @@ impl Sections {
         for section in &self.0 {
             merged
                 .as_object_mut()
-                .expect("object accumulator")
+                .ok_or_else(|| {
+                    section.failure(
+                        Error::invalid("configuration requires an object"),
+                        "defaults",
+                    )
+                })?
                 .insert(section.key.clone(), section.defaults.clone());
             // Aggregate default budgets can fail even when each section fits independently.
             validate(&merged).map_err(|error| section.failure(error, "defaults"))?;
@@ -356,7 +361,13 @@ impl Sections {
                 error,
             };
             // Reject unclaimed roots with their actual input layer before any validator runs.
-            for key in value.as_object().expect("validated layer").keys() {
+            for key in value
+                .as_object()
+                .ok_or_else(|| {
+                    layer_failure(Error::invalid("configuration layer requires an object"))
+                })?
+                .keys()
+            {
                 // Unclaimed input keys are diagnostic identities too; never format raw controls.
                 crate::plugin::identity(key).map_err(&layer_failure)?;
                 // Unknown roots have no owner and cannot activate a plugin or reach typed
@@ -387,14 +398,30 @@ impl Sections {
             .insert(Arc::new(ConfigPresence {
                 keys: last_layers.keys().cloned().collect(),
             }))
-            .expect("configuration presence has one decoder-owned slot");
+            .map_err(|error| BuildError {
+                stage: StartupStage::Config,
+                plugin: None,
+                label: "configuration presence".into(),
+                registered: SourceLocation::caller(),
+                error,
+            })?;
         // Consume each registered decoder once; a failed build never exposes a partial host.
         for section in self.0 {
             let value = merged
                 .as_object_mut()
-                .expect("object accumulator")
+                .ok_or_else(|| {
+                    section.failure(
+                        Error::invalid("configuration requires an object"),
+                        "defaults",
+                    )
+                })?
                 .remove(&section.key)
-                .expect("registered default section");
+                .ok_or_else(|| {
+                    section.failure(
+                        Error::invalid("configuration section is missing"),
+                        "defaults",
+                    )
+                })?;
             // All typed values are private until every decoder and validator succeeds.
             let last_layer = last_layers
                 .get(&section.key)

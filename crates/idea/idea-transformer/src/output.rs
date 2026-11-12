@@ -28,7 +28,9 @@ const CLEANUP_INTENT: &str = "stackpress-cleanup-v1\n";
 /// Native generated root requiring exclusive/cooperative ownership by all writers.
 ///
 /// No operation follows output symlinks. A lock prevents competing managed writers, but
-/// uncooperative external edits can still race checks. No crash-atomic/durability claim is made.
+/// uncooperative external edits can still race checks. File contents are synced before
+/// publication; Unix parent-directory sync is best effort. Replacements still require
+/// explicit recovery after interruption and do not promise crash atomicity.
 pub struct OutputWorkspace {
     /// Validated destination, independent of process cwd changes.
     root: PathBuf,
@@ -279,7 +281,7 @@ impl OutputWorkspace {
             if let Some(parent) = destination.parent() {
                 fs::create_dir_all(parent)?;
             }
-            fs::write(destination, contents)?;
+            write_synced(&destination, contents.as_bytes(), &mut fault)?;
         }
         let marker = serde_json::to_vec_pretty(&manifest).map_err(|cause| {
             TransformError::caused(
@@ -288,16 +290,17 @@ impl OutputWorkspace {
                 cause,
             )
         })?;
-        fs::write(temporary.path().join(MANIFEST), marker)?;
+        write_synced(&temporary.path().join(MANIFEST), &marker, &mut fault)?;
         fault(Phase::StagePublish)?;
-        fs::rename(temporary.path(), &self.stage)?;
+        rename_synced(temporary.path(), &self.stage)?;
         // Every recovery path is a fixed validated sibling; journal data never supplies paths.
         fault(Phase::IntentWrite)?;
-        fs::OpenOptions::new()
+        let mut journal = fs::OpenOptions::new()
             .write(true)
             .create_new(true)
-            .open(&self.journal)?
-            .write_all(INSTALL_INTENT.as_bytes())?;
+            .open(&self.journal)?;
+        journal.write_all(INSTALL_INTENT.as_bytes())?;
+        journal.sync_all()?;
         fault(Phase::IntentPublished)?;
         fault(Phase::BackupRename)?;
         if exists(&self.root)? {
@@ -305,12 +308,12 @@ impl OutputWorkspace {
             if !exists(&self.root.join(MANIFEST))? {
                 fs::remove_dir(&self.root)?;
             } else {
-                fs::rename(&self.root, &self.backup)?;
+                rename_synced(&self.root, &self.backup)?;
             }
         }
         fault(Phase::BackupRetained)?;
         fault(Phase::InstallRename)?;
-        fs::rename(&self.stage, &self.root)?;
+        rename_synced(&self.stage, &self.root)?;
         fault(Phase::Installed)?;
         self.finish_at(&mut fault)?;
         Ok(())
@@ -394,7 +397,7 @@ impl OutputWorkspace {
                 ));
             }
             inspect_owned(source)?;
-            fs::rename(source, &self.root)?;
+            rename_synced(source, &self.root)?;
         }
         inspect_owned(&self.root)?;
         Ok(())
@@ -418,11 +421,19 @@ impl OutputWorkspace {
         }
         // Publish cleanup intent by rename, so interrupted recursive deletion is recognizable.
         // Construction fixes root to canonical_parent.join(name), so it always has a parent.
-        let mut marker = tempfile::NamedTempFile::new_in(self.root.parent().unwrap())?;
+        let parent = self.root.parent().ok_or_else(|| {
+            TransformError::classified(
+                crate::TransformErrorKind::Ownership,
+                "generated root lost its parent",
+            )
+        })?;
+        let mut marker = tempfile::NamedTempFile::new_in(parent)?;
         marker.write_all(CLEANUP_INTENT.as_bytes())?;
+        marker.as_file().sync_all()?;
         marker
             .persist(&self.journal)
             .map_err(|error| TransformError::from(error.error))?;
+        sync_parent(&self.journal);
         for path in [&self.backup, &self.stage] {
             if exists(path)? {
                 fault(Phase::CleanupTree)?;
@@ -433,6 +444,41 @@ impl OutputWorkspace {
         fs::remove_file(&self.journal)?;
         Ok(())
     }
+}
+
+/// Write and sync complete file contents while the temporary tree still owns cleanup.
+fn write_synced(
+    path: &Path,
+    contents: &[u8],
+    fault: &mut impl FnMut(Phase) -> Result<()>,
+) -> Result<()> {
+    // Preserve the original write-phase diagnostic even after an earlier file was synced.
+    fault(Phase::StageWrite)?;
+    let mut file = fs::File::create(path)?;
+    file.write_all(contents)?;
+    // The injected boundary proves sync errors cannot publish a partial replacement tree.
+    fault(Phase::StageSync)?;
+    file.sync_all()?;
+    Ok(())
+}
+
+/// Rename only after file synchronization, then flush directory metadata where supported.
+fn rename_synced(from: impl AsRef<Path>, to: impl AsRef<Path>) -> std::io::Result<()> {
+    fs::rename(from.as_ref(), to.as_ref())?;
+    sync_parent(to.as_ref());
+    Ok(())
+}
+
+/// Directory synchronization is best effort; unsupported filesystems keep existing IO semantics.
+fn sync_parent(path: &Path) {
+    #[cfg(unix)]
+    if let Some(parent) = path.parent()
+        && let Ok(directory) = fs::File::open(parent)
+    {
+        let _ = directory.sync_all();
+    }
+    #[cfg(not(unix))]
+    let _ = path;
 }
 
 /// Remove a validated retained tree while preserving its ownership marker through partial errors.
@@ -466,6 +512,7 @@ fn purge_retained(root: &Path, fault: &mut impl FnMut(Phase) -> Result<()>) -> R
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum Phase {
     StageWrite,
+    StageSync,
     StagePublish,
     IntentWrite,
     IntentPublished,

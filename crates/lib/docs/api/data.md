@@ -636,15 +636,15 @@ assert!(!data.is_empty());
 
 ### 5.10. Nest::entries
 
-`entries(&self) -> &DataMap<String, Value>`
+`entries(&self) -> Result<&DataMap<String, Value>>`
 
 Borrow root entries in insertion order.
 
 ```rust
-assert!(data.entries().contains_key("profile"));
+assert!(data.entries()?.contains_key("profile"));
 ```
 
-**Returns** An immutable root map.
+**Returns** An immutable root map. Reports an error if the private object-root invariant is violated.
 
 ### 5.11. Nest::keys
 

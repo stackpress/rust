@@ -1,3 +1,12 @@
+#![deny(
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::panic,
+    clippy::unimplemented,
+    clippy::todo,
+    clippy::unreachable
+)]
+
 //! Source-shaped email configuration and per-invocation native transport ownership.
 //!
 //! Direct SMTP, JSON, stream, sendmail and SES adapters use owned native providers.

@@ -308,8 +308,7 @@ impl ComboboxState {
                 self.status.set(SuggestionStatus::Ready);
             }
             Err(_) => {
-                self.options
-                    .set(SelectOptions::new(Vec::new()).expect("empty options"));
+                self.options.set(SelectOptions::default());
                 self.status.set(SuggestionStatus::Failed);
             }
         }

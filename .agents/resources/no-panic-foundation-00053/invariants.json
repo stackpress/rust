@@ -1,0 +1,20 @@
+{
+  "coverage_json_sha256": "9e668c49b1fcc8027594a9d5615f1019685b5c9c6c8bca3ccbeba522925dda80",
+  "registry_tuples": 699,
+  "root_lock_sha256": "a9ba9fe3bf92b32d6c21ddf09bb0f91d4b48a739931d326f9459bc65f82f51bc",
+  "frozen_locks_stderr_files": 64,
+  "all_frozen_hashes_unchanged": true,
+  "final_postgres_catalog": [
+    "stackpress_g46_postgres_a9f2_18e732004ee40478",
+    "stackpress_g46_postgres_b447_18e732020b1d9ef0",
+    "stackpress_g46_postgres_d902_18e7320b289e2590"
+  ],
+  "final_mysql_catalog": [],
+  "foreign_postgres_names_authorized_by_coordinator": [
+    "stackpress_g46_postgres_a9f2_18e732004ee40478",
+    "stackpress_g46_postgres_b447_18e732020b1d9ef0",
+    "stackpress_g46_postgres_d902_18e7320b289e2590"
+  ],
+  "foreign_fixture_ruling": "Concurrent framework lane owns these three; coordinator authorizes proceeding when this lane create/drop pairs all match.",
+  "git_diff_check": 0
+}

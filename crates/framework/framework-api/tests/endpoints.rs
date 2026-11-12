@@ -135,7 +135,7 @@ pub(super) fn fixture(state: Arc<State>) -> Result<ServerBuilder> {
 /// Source lookup input contains only the header ID, never the original browser request.
 async fn detail(req: &mut Request, res: &mut Response, inv: Invocation<'_>) -> Result<Flow> {
     assert_eq!(req.method.as_str(), "GET");
-    assert_eq!(req.data.entries().len(), 1);
+    assert_eq!(req.data.len(), 1);
     assert!(req.headers.get("authorization").is_none());
     assert!(req.headers.get("cookie").is_none());
     assert!(req.session.is_empty());

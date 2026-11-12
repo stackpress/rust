@@ -47,7 +47,7 @@ impl<'a> Json<'a> {
         let unexpected = match self.0 {
             Value::Array(_) => de::Unexpected::Seq,
             Value::Object(_) => de::Unexpected::Map,
-            _ => unreachable!("preflight and scalar delegation cover every other variant"),
+            _ => de::Unexpected::Other("non-JSON value"),
         };
         de::Error::invalid_type(unexpected, expected)
     }
@@ -119,7 +119,9 @@ impl Serialize for Json<'_> {
                 }
                 map.end()
             }
-            _ => unreachable!("complete preflight rejected unsupported variants"),
+            _ => Err(serde::ser::Error::custom(
+                "non-JSON value requires an explicit wire representation",
+            )),
         }
     }
 }
@@ -148,10 +150,10 @@ impl<'de> Deserializer<'de> for Json<'de> {
         match self.0 {
             Value::Array(values) => sequence(values, visitor),
             Value::Object(values) => object(values, visitor),
-            _ => self
-                .scalar()
-                .expect("preflight proved JSON scalar")
-                .deserialize_any(visitor),
+            _ => match self.scalar() {
+                Some(value) => value.deserialize_any(visitor),
+                None => Err(self.invalid(&visitor)),
+            },
         }
     }
 

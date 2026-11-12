@@ -42,12 +42,12 @@ impl IsoValue {
                 .offset_seconds(),
         };
         // The strict upstream admission above establishes all ASCII slicing invariants.
-        let number = |s: &str| s.parse::<i128>().expect("admitted ISO digits");
+        let number = |s: &str| s.parse::<i128>().map_err(|_| EditError::Invalid);
         let mut order = 0;
         if kind != TemporalKind::Time {
-            let y = number(&text[..4]);
-            let m = number(&text[5..7]);
-            let d = number(&text[8..10]);
+            let y = number(&text[..4])?;
+            let m = number(&text[5..7])?;
+            let d = number(&text[8..10])?;
             let previous = y - 1;
             let leap = y % 4 == 0 && (y % 100 != 0 || y % 400 == 0);
             let days = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
@@ -75,16 +75,16 @@ impl IsoValue {
             } else {
                 time
             };
-            let hour = number(&time[..2]);
-            let minute = number(&time[3..5]);
+            let hour = number(&time[..2])?;
+            let minute = number(&time[3..5])?;
             let second = if time.len() >= 8 {
-                number(&time[6..8])
+                number(&time[6..8])?
             } else {
                 0
             };
             let fraction = if time.len() > 8 {
                 let fraction = &time[9..];
-                number(fraction) * 10_i128.pow(9 - fraction.len() as u32)
+                number(fraction)? * 10_i128.pow(9 - fraction.len() as u32)
             } else {
                 0
             };
@@ -279,8 +279,8 @@ impl EditPolicy for TemporalPolicy {
         check_bounds(value, &self.min, &self.max, |a, b| a.order.cmp(&b.order))
     }
     /// ISO field text remains explicit and stable at both supported display locales.
-    fn display(&self, value: &IsoValue, _locale: DisplayLocale) -> String {
-        value.wire.clone()
+    fn display(&self, value: &IsoValue, _locale: DisplayLocale) -> Result<String, EditError> {
+        Ok(value.wire.clone())
     }
     /// Submit validated ISO only, with an explicit offset for instants.
     fn canonical(&self, value: &IsoValue) -> String {

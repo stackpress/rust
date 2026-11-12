@@ -110,7 +110,9 @@ pub trait EditPolicy: Clone + Send + Sync + 'static {
     /// Recheck a typed value against this policy's limits and inclusive/exclusive bounds.
     fn check(&self, value: &Self::Value) -> Result<(), EditError>;
     /// Render an already validated value at the chosen locale.
-    fn display(&self, value: &Self::Value, locale: DisplayLocale) -> String;
+    /// # Errors
+    /// Returns a presentation/data error before the editor publishes a new value or draft.
+    fn display(&self, value: &Self::Value, locale: DisplayLocale) -> Result<String, EditError>;
     /// Canonical storage text, never a localized display string.
     fn canonical(&self, value: &Self::Value) -> String;
     /// Tokens retained through presentation changes; grouping/phone spacing is ignored.
@@ -186,6 +188,7 @@ impl<P: EditPolicy> EditState<P> {
         let draft = value
             .as_ref()
             .map(|v| policy.display(v, locale))
+            .transpose()?
             .unwrap_or_default();
         // Typed values still pass the raw presentation budget before state is retained.
         policy.budget(&draft)?;
@@ -424,6 +427,10 @@ impl<P: EditPolicy> EditState<P> {
         let next = value
             .as_ref()
             .map(|v| self.policy.display(v, self.locale))
+            .transpose()
+            .inspect_err(|error| {
+                self.error = Some(*error);
+            })?
             .unwrap_or_default();
         let changed = self.value != value;
         self.value = value;
@@ -458,26 +465,42 @@ impl<P: EditPolicy> EditState<P> {
         self.draft_locale
     }
     /// Explicitly abandon outstanding edits; committed values are not reparsed.
+    /// Presentation failure retains the draft and is available through [`Self::error`].
     pub fn cancel(&mut self) {
-        self.draft = self
+        let next = self
             .value
             .as_ref()
             .map(|v| self.policy.display(v, self.locale))
-            .unwrap_or_default();
+            .transpose();
+        let draft = match next {
+            Ok(draft) => draft.unwrap_or_default(),
+            Err(error) => {
+                self.error = Some(error);
+                return;
+            }
+        };
+        self.draft = draft;
         self.selection = EditSelection::end(&self.draft);
         self.dirty = false;
         self.composition = Composition::Idle;
         self.error = None;
     }
     /// Change presentation locale; a dirty draft keeps its captured grammar until commit.
+    /// Presentation failure retains the locale/draft and is available through [`Self::error`].
     pub fn set_locale(&mut self, locale: DisplayLocale) {
-        self.locale = locale;
         if !self.dirty && !self.composing() {
             let next = self
                 .value
                 .as_ref()
                 .map(|v| self.policy.display(v, locale))
-                .unwrap_or_default();
+                .transpose();
+            let next = match next {
+                Ok(next) => next.unwrap_or_default(),
+                Err(error) => {
+                    self.error = Some(error);
+                    return;
+                }
+            };
             self.selection = self.selection.remap(&self.draft, &next, |ch, new| {
                 self.policy
                     .semantic(ch, if new { locale } else { self.draft_locale })
@@ -485,6 +508,7 @@ impl<P: EditPolicy> EditState<P> {
             self.draft = next;
             self.draft_locale = locale;
         }
+        self.locale = locale;
     }
     /// Switch explicit region/bounds only from a clean state; no silent reinterpretation.
     /// # Errors
@@ -498,8 +522,18 @@ impl<P: EditPolicy> EditState<P> {
         if let Some(value) = &self.value {
             policy.check(value)?;
         }
+        // Prepare presentation before changing policy, preserving state on data failures.
+        let draft = self
+            .value
+            .as_ref()
+            .map(|value| policy.display(value, self.locale))
+            .transpose()?;
         self.policy = policy;
-        self.cancel();
+        self.draft = draft.unwrap_or_default();
+        self.selection = EditSelection::end(&self.draft);
+        self.dirty = false;
+        self.composition = Composition::Idle;
+        self.error = None;
         Ok(())
     }
 }

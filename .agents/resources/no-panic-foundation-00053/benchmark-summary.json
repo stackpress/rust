@@ -1,0 +1,21 @@
+{
+  "status_counts": {
+    "passed": 27,
+    "failed": 15
+  },
+  "exit_code_counts": {
+    "0": 27,
+    "101": 10,
+    "100": 3,
+    "94": 1,
+    "1": 1
+  },
+  "attempts": 42,
+  "command_seconds": 7568.029657,
+  "observed_cargo_build_seconds": 4942.129999999999,
+  "records_with_cargo_stage_time": 12,
+  "cache_note": "All task records use unknown cache declarations; target retained warm, sccache on. No cold-workspace rebuild count inferred.",
+  "target_peak": {
+    "peak_bytes": 12104949760
+  }
+}

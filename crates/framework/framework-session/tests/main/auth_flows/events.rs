@@ -331,7 +331,7 @@ async fn suspended_hook(req: &mut Request, _: &mut Response, inv: Invocation<'_>
         .entered
         .send(
             req.data
-                .entries()
+                .entries()?
                 .iter()
                 .map(|(key, value)| (key.clone(), Value::from(json_value(value.clone()))))
                 .collect(),
