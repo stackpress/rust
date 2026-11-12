@@ -163,3 +163,16 @@ Production Rust and all managed source bytes, licences, notices, goldens, oracle
 Full live-inclusive release coverage is not repeated for this version-only task;
 [00057](00057-hardening-integration.md) records its earlier passing measurement.
 No install, development server, commit, push, login, upload or tag was performed.
+
+## Coordinator verification
+
+Committed as `f7e0f3a` and merged into main as `b817f05`. One coordinator edit: the changelog intro now says "beta release: the API may still change before 1.0" instead of an internal note. Reviewed: version, lock, docs and test-version changes only; no behaviour or managed-output change.
+
+Independent checks on main after the merge (2026-11-12):
+- 699 registry tuples identical; `cargo tree --workspace --locked --offline` consistent;
+- no release-crate requirement left at 0.1.0. The three `examples/api-checkpoint/*` own package versions are unpublished standalone examples;
+- `check_dep_licenses.py`: 707 packages, 23 locks, 0 failures;
+- strict `check_test_boundaries.py` and `check_packages.py` pass;
+- `./publish.sh --plan`: 23 new versions of existing crates, no rate-limit waiting.
+
+The worker's single gate (27/27, 23 standalone Clippy, README doctests) is recorded above. Publication is the owner's step.
