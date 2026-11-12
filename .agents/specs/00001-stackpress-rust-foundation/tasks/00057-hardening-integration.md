@@ -110,3 +110,17 @@ Local results above are implementation evidence. Coordinator independent verific
 ## Coordinator note
 
 The raw coverage report and log (`coverage.json`, `coverage.log`, about 760 KB) are kept locally under the ignored `target/evidence-00057/`, not in git; `coverage-summary.json` holds the per-crate numbers.
+
+## Coordinator verification
+
+The four hardening branches (00053–00056) were merged into `hardening/integration`. A coordinator integration commit swapped in `Language::default()`/`PublicLocation::session_asset()` and added the template exceptions to `.agents/context/no-panic-exceptions.md`. Then this task. Main was fast-forwarded to `d9a8561`.
+
+Independent sanity check on a detached clean checkout of `d9a8561`, 2026-11-12:
+- 699 registry tuples identical;
+- strict test-boundary, test-copy and dependency-licence checks; release tooling unit tests;
+- fmt; compatible Clippy `-D warnings`;
+- compatible nextest: 1,304 passed; `tcp_watchdog` alone passed;
+- aggregate consumers;
+- `package_workspace.py`: all 23 archives verified, strict `check_packages.py --archives`, five leaf `cargo publish --dry-run` runs with the upload aborted.
+
+The full gate and live coverage are the integration worker's run above.
