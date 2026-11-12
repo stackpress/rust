@@ -1,0 +1,406 @@
+{
+  "blog-tool": {
+    "covered": 102,
+    "executable": 113,
+    "percent": 90.26548672566372,
+    "files": [
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/tool/src/lib.rs",
+        "covered": 73,
+        "executable": 80
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/tool/src/main.rs",
+        "covered": 29,
+        "executable": 33
+      }
+    ]
+  },
+  "blog-web": {
+    "covered": 2206,
+    "executable": 3121,
+    "percent": 70.68247356616469,
+    "files": [
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/web/src/bin/probe.rs",
+        "covered": 44,
+        "executable": 49
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/web/src/bin/serve.rs",
+        "covered": 0,
+        "executable": 45
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/web/src/bin/setup.rs",
+        "covered": 0,
+        "executable": 10
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/web/src/client.rs",
+        "covered": 128,
+        "executable": 132
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/web/src/commands.rs",
+        "covered": 138,
+        "executable": 166
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/web/src/config.rs",
+        "covered": 114,
+        "executable": 117
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/web/src/dev.rs",
+        "covered": 49,
+        "executable": 51
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/web/src/generated/../../../.build/app-generated/client/framework.rs",
+        "covered": 76,
+        "executable": 76
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/web/src/generated/../../../.build/app-generated/source/_catalog.rs",
+        "covered": 14,
+        "executable": 14
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/web/src/generated/../../../.build/app-generated/source/application.rs",
+        "covered": 94,
+        "executable": 233
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/web/src/generated/../../../.build/app-generated/source/article.rs",
+        "covered": 142,
+        "executable": 200
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/web/src/generated/../../../.build/app-generated/source/auth.rs",
+        "covered": 90,
+        "executable": 211
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/web/src/generated/../../../.build/app-generated/source/catalog.rs",
+        "covered": 58,
+        "executable": 80
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/web/src/generated/../../../.build/app-generated/source/category.rs",
+        "covered": 82,
+        "executable": 149
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/web/src/generated/../../../.build/app-generated/source/comment.rs",
+        "covered": 78,
+        "executable": 154
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/web/src/generated/../../../.build/app-generated/source/profile.rs",
+        "covered": 90,
+        "executable": 229
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/web/src/generated/../../../.build/app-generated/source/session.rs",
+        "covered": 86,
+        "executable": 207
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/web/src/generated/../../../.build/app-generated/stores/application.rs",
+        "covered": 5,
+        "executable": 5
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/web/src/generated/../../../.build/app-generated/stores/article.rs",
+        "covered": 5,
+        "executable": 5
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/web/src/generated/../../../.build/app-generated/stores/auth.rs",
+        "covered": 5,
+        "executable": 5
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/web/src/generated/../../../.build/app-generated/stores/catalog.rs",
+        "covered": 5,
+        "executable": 5
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/web/src/generated/../../../.build/app-generated/stores/category.rs",
+        "covered": 5,
+        "executable": 5
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/web/src/generated/../../../.build/app-generated/stores/comment.rs",
+        "covered": 5,
+        "executable": 5
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/web/src/generated/../../../.build/app-generated/stores/profile.rs",
+        "covered": 5,
+        "executable": 5
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/web/src/generated/../../../.build/app-generated/stores/session.rs",
+        "covered": 5,
+        "executable": 5
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/web/src/history.rs",
+        "covered": 130,
+        "executable": 134
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/web/src/history/codec.rs",
+        "covered": 106,
+        "executable": 118
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/web/src/history/planning.rs",
+        "covered": 336,
+        "executable": 391
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/web/src/http.rs",
+        "covered": 20,
+        "executable": 20
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/web/src/lib.rs",
+        "covered": 41,
+        "executable": 42
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/web/src/main.rs",
+        "covered": 53,
+        "executable": 54
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/web/src/render.rs",
+        "covered": 131,
+        "executable": 131
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/web/src/seed.rs",
+        "covered": 12,
+        "executable": 13
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/web/src/storage.rs",
+        "covered": 54,
+        "executable": 55
+      }
+    ]
+  },
+  "blog-app": {
+    "covered": 2419,
+    "executable": 2760,
+    "percent": 87.64492753623189,
+    "files": [
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/plugins/app/src/../../../.build/app-generated/ui/application.rs",
+        "covered": 268,
+        "executable": 305
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/plugins/app/src/../../../.build/app-generated/ui/article.rs",
+        "covered": 324,
+        "executable": 368
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/plugins/app/src/../../../.build/app-generated/ui/auth.rs",
+        "covered": 244,
+        "executable": 278
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/plugins/app/src/../../../.build/app-generated/ui/catalog.rs",
+        "covered": 60,
+        "executable": 102
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/plugins/app/src/../../../.build/app-generated/ui/category.rs",
+        "covered": 174,
+        "executable": 200
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/plugins/app/src/../../../.build/app-generated/ui/comment.rs",
+        "covered": 184,
+        "executable": 210
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/plugins/app/src/../../../.build/app-generated/ui/host.rs",
+        "covered": 11,
+        "executable": 11
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/plugins/app/src/../../../.build/app-generated/ui/pages.rs",
+        "covered": 128,
+        "executable": 136
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/plugins/app/src/../../../.build/app-generated/ui/profile.rs",
+        "covered": 238,
+        "executable": 290
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/plugins/app/src/../../../.build/app-generated/ui/session.rs",
+        "covered": 232,
+        "executable": 264
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/plugins/app/src/browser.rs",
+        "covered": 39,
+        "executable": 39
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/plugins/app/src/form.rs",
+        "covered": 27,
+        "executable": 27
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/plugins/app/src/helpers.rs",
+        "covered": 101,
+        "executable": 101
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/plugins/app/src/page.rs",
+        "covered": 9,
+        "executable": 9
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/plugins/app/src/pages/article.rs",
+        "covered": 38,
+        "executable": 40
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/plugins/app/src/pages/error.rs",
+        "covered": 64,
+        "executable": 72
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/plugins/app/src/pages/home.rs",
+        "covered": 15,
+        "executable": 17
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/plugins/app/src/root.rs",
+        "covered": 37,
+        "executable": 57
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/plugins/app/src/server.rs",
+        "covered": 45,
+        "executable": 48
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/plugins/app/src/views/article.rs",
+        "covered": 47,
+        "executable": 48
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/plugins/app/src/views/error.rs",
+        "covered": 21,
+        "executable": 22
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/plugins/app/src/views/home.rs",
+        "covered": 70,
+        "executable": 71
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/plugins/app/src/views/layout.rs",
+        "covered": 15,
+        "executable": 16
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/plugins/app/src/views/mod.rs",
+        "covered": 28,
+        "executable": 29
+      }
+    ]
+  },
+  "blog-store": {
+    "covered": 38,
+    "executable": 39,
+    "percent": 97.43589743589743,
+    "files": [
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/plugins/store/src/connect.rs",
+        "covered": 7,
+        "executable": 7
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/plugins/store/src/lib.rs",
+        "covered": 31,
+        "executable": 32
+      }
+    ]
+  },
+  "blog-assets": {
+    "covered": 70,
+    "executable": 78,
+    "percent": 89.74358974358974,
+    "files": [
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/plugins/assets/src/lib.rs",
+        "covered": 70,
+        "executable": 78
+      }
+    ]
+  },
+  "blog-xtask": {
+    "covered": 955,
+    "executable": 1213,
+    "percent": 78.73042044517724,
+    "files": [
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/xtask/src/dev/build.rs",
+        "covered": 204,
+        "executable": 223
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/xtask/src/dev/change.rs",
+        "covered": 112,
+        "executable": 113
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/xtask/src/dev/markup.rs",
+        "covered": 213,
+        "executable": 220
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/xtask/src/dev/mod.rs",
+        "covered": 38,
+        "executable": 117
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/xtask/src/dev/reload.rs",
+        "covered": 81,
+        "executable": 191
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/xtask/src/dev/session.rs",
+        "covered": 123,
+        "executable": 141
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/xtask/src/lib.rs",
+        "covered": 184,
+        "executable": 190
+      },
+      {
+        "file": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/xtask/src/main.rs",
+        "covered": 0,
+        "executable": 18
+      }
+    ]
+  },
+  "blog-client": {
+    "status": "exempt",
+    "decision": "G56",
+    "scope": "startup/mount/disposal and thin DOM/navigation/fetch/AbortController glue only",
+    "evidence": "tests/browser.cjs public matrix exercises actual hydration/CSR entries; gate requires its passing phase",
+    "decisions": "plugins/app/src/{form,browser,root}.rs are target-independent and included in native coverage"
+  }
+}

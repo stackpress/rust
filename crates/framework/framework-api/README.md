@@ -1,5 +1,7 @@
 # API source-search execution
 
+**Beta:** 0.2.x is the supported release series; 0.1.x users should upgrade. The API may still change before 1.0.
+
 The API crate exposes source Application/Session models and stores behind `sql`.
 [SQLite tests](tests/sql.rs) and [dialect adapters](../framework-sql/src/source/statement.rs) pin PostgreSQL ILIKE
 versus SQLite/MySQL LIKE. The new [live executable](tests/live_search.rs) runs actual actions

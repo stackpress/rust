@@ -1,5 +1,7 @@
 # stackpress-lib
 
+**Beta:** 0.2.x is the supported release series; 0.1.x users should upgrade. The API may still change before 1.0.
+
 Transport-neutral values, requests, responses and ordered event dispatch form the foundation shared by Stackpress hosts and plugins.
 
 ```rust

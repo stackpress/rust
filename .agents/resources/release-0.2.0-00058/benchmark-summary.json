@@ -1,0 +1,21 @@
+{
+  "attempts": 21,
+  "status_counts": {
+    "passed": 19,
+    "failed": 2
+  },
+  "command_seconds": 12829.940302,
+  "observed_cargo_build_seconds": 7018.35,
+  "records_without_observed_cargo_stage": 18,
+  "last_record": "20261112T145202.065419Z-026515a58835",
+  "failures": [
+    {
+      "id": "20261112T131333.053199Z-5177a1c0a7f5",
+      "label": "00058 task target budget monitoring and completed consumer cleanup"
+    },
+    {
+      "id": "20261112T144052.423377Z-2a723e1d2365",
+      "label": "00058 retire completed native executables for final facade matrix reserve"
+    }
+  ]
+}

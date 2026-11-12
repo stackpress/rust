@@ -1,0 +1,23 @@
+{
+  "manifests": [
+    "Cargo.toml",
+    "crates/framework/framework-admin/Cargo.toml",
+    "crates/framework/framework-api/Cargo.toml",
+    "crates/framework/framework-csrf/Cargo.toml",
+    "crates/framework/framework-email/Cargo.toml",
+    "crates/framework/framework-schema/Cargo.toml",
+    "crates/framework/framework-session/Cargo.toml",
+    "crates/framework/framework-sql/Cargo.toml",
+    "crates/framework/framework-view/Cargo.toml",
+    "crates/framework/framework/Cargo.toml",
+    "crates/idea/idea-transformer/Cargo.toml",
+    "crates/idea/idea/Cargo.toml",
+    "crates/server/http/Cargo.toml",
+    "crates/server/server/Cargo.toml",
+    "crates/sql/sql-mysql/Cargo.toml",
+    "crates/sql/sql-postgres/Cargo.toml",
+    "crates/sql/sql-sqlite/Cargo.toml",
+    "tools/cli/Cargo.toml"
+  ],
+  "internal_versioned_edges": 114
+}

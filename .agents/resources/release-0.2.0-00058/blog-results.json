@@ -1,0 +1,422 @@
+[
+  {
+    "name": "bootstrap-generate-app",
+    "command": [
+      "cargo",
+      "run",
+      "--manifest-path",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "blog-tool",
+      "--",
+      "generate-app"
+    ],
+    "code": 0,
+    "seconds": 105.821596,
+    "timeout": false,
+    "target_bytes": 944189440
+  },
+  {
+    "name": "bootstrap-generate",
+    "command": [
+      "cargo",
+      "run",
+      "--manifest-path",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "blog-tool",
+      "--",
+      "generate"
+    ],
+    "code": 0,
+    "seconds": 1.718954,
+    "timeout": false,
+    "target_bytes": 944189440
+  },
+  {
+    "name": "bootstrap-extension",
+    "command": [
+      "python3",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/tools/examples/blog/extension.py"
+    ],
+    "code": 0,
+    "seconds": 3.866395,
+    "timeout": false,
+    "target_bytes": 944189440
+  },
+  {
+    "name": "browser-build",
+    "command": [
+      "cargo",
+      "xtask",
+      "build-browser"
+    ],
+    "code": 0,
+    "seconds": 226.957892,
+    "timeout": false,
+    "target_bytes": 2840453120
+  },
+  {
+    "name": "format",
+    "command": [
+      "python3",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/tools/examples/blog/format.py"
+    ],
+    "code": 0,
+    "seconds": 0.241873,
+    "timeout": false,
+    "target_bytes": 2840453120
+  },
+  {
+    "name": "javascript",
+    "command": [
+      "node",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/tests/hot-reload.cjs"
+    ],
+    "code": 0,
+    "seconds": 0.175879,
+    "timeout": false,
+    "target_bytes": 2840453120
+  },
+  {
+    "name": "javascript-flows",
+    "command": [
+      "node",
+      "--check",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/tests/flows.cjs"
+    ],
+    "code": 0,
+    "seconds": 0.110971,
+    "timeout": false,
+    "target_bytes": 2840453120
+  },
+  {
+    "name": "generated-freshness",
+    "command": [
+      "python3",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/tools/examples/blog/freshness.py"
+    ],
+    "code": 0,
+    "seconds": 3.414962,
+    "timeout": false,
+    "target_bytes": 2840453120
+  },
+  {
+    "name": "clippy-native",
+    "command": [
+      "cargo",
+      "clippy",
+      "--manifest-path",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--workspace",
+      "--all-targets",
+      "--features",
+      "blog-tool/native-proof,blog-app/ssr,blog-web/extension-proof",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0,
+    "seconds": 97.175943,
+    "timeout": false,
+    "target_bytes": 3217276928
+  },
+  {
+    "name": "nextest-native",
+    "command": [
+      "cargo",
+      "nextest",
+      "run",
+      "--manifest-path",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--workspace",
+      "--all-targets",
+      "--features",
+      "blog-tool/native-proof,blog-app/ssr,blog-web/extension-proof",
+      "--test-threads",
+      "2",
+      "--no-fail-fast"
+    ],
+    "code": 0,
+    "seconds": 112.304314,
+    "timeout": false,
+    "target_bytes": 4651188224
+  },
+  {
+    "name": "doctests",
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--workspace",
+      "--doc",
+      "--features",
+      "blog-tool/native-proof,blog-app/ssr,blog-web/extension-proof"
+    ],
+    "code": 0,
+    "seconds": 3.948176,
+    "timeout": false,
+    "target_bytes": 4651646976
+  },
+  {
+    "name": "rustdoc",
+    "command": [
+      "cargo",
+      "doc",
+      "--manifest-path",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--workspace",
+      "--no-deps",
+      "--features",
+      "blog-tool/native-proof,blog-app/ssr,blog-web/extension-proof"
+    ],
+    "code": 0,
+    "seconds": 9.072384,
+    "timeout": false,
+    "target_bytes": 4664836096
+  },
+  {
+    "name": "graphs",
+    "command": [
+      "python3",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/tools/examples/blog/graphs.py"
+    ],
+    "code": 0,
+    "seconds": 0.859852,
+    "timeout": false,
+    "target_bytes": 4664836096
+  },
+  {
+    "name": "clippy-hydrate",
+    "command": [
+      "cargo",
+      "clippy",
+      "--manifest-path",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "blog-client",
+      "--target",
+      "wasm32-unknown-unknown",
+      "--no-default-features",
+      "--features",
+      "hydrate",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0,
+    "seconds": 51.693925,
+    "timeout": false,
+    "target_bytes": 4848529408
+  },
+  {
+    "name": "clippy-csr",
+    "command": [
+      "cargo",
+      "clippy",
+      "--manifest-path",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "blog-client",
+      "--target",
+      "wasm32-unknown-unknown",
+      "--no-default-features",
+      "--features",
+      "csr",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0,
+    "seconds": 53.903319,
+    "timeout": false,
+    "target_bytes": 5032075264
+  },
+  {
+    "name": "browser-probe",
+    "command": [
+      "cargo",
+      "build",
+      "--manifest-path",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "blog-web",
+      "--bin",
+      "probe"
+    ],
+    "code": 0,
+    "seconds": 34.548629,
+    "timeout": false,
+    "target_bytes": 5461495808
+  },
+  {
+    "name": "browser-public-matrix",
+    "command": [
+      "python3",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/tools/examples/blog/browser.py",
+      "--public-only",
+      "--matrix"
+    ],
+    "code": 0,
+    "seconds": 22.206722,
+    "timeout": false,
+    "target_bytes": 5461495808
+  },
+  {
+    "name": "browser-full",
+    "command": [
+      "python3",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/tools/examples/blog/browser.py"
+    ],
+    "code": 0,
+    "seconds": 14.905023,
+    "timeout": false,
+    "target_bytes": 5461495808
+  },
+  {
+    "name": "nickname-prepare",
+    "command": [
+      "python3",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/tools/examples/blog/nickname.py",
+      "prepare"
+    ],
+    "code": 0,
+    "seconds": 926.553242,
+    "timeout": false,
+    "target_bytes": 5461041152
+  },
+  {
+    "name": "nickname-freshness",
+    "command": [
+      "python3",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/tools/examples/blog/nickname.py",
+      "check"
+    ],
+    "code": 0,
+    "seconds": 0.309411,
+    "timeout": false,
+    "target_bytes": 5461041152
+  },
+  {
+    "name": "nickname-browser",
+    "command": [
+      "python3",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/tools/examples/blog/nickname.py",
+      "browser"
+    ],
+    "code": 0,
+    "seconds": 19.082695,
+    "timeout": false,
+    "target_bytes": 5461041152
+  },
+  {
+    "name": "coverage-nextest",
+    "command": [
+      "cargo",
+      "nextest",
+      "run",
+      "--manifest-path",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--workspace",
+      "--all-targets",
+      "--features",
+      "blog-tool/native-proof,blog-app/ssr,blog-web/extension-proof",
+      "--test-threads",
+      "2",
+      "--no-fail-fast"
+    ],
+    "code": 0,
+    "seconds": 188.291577,
+    "timeout": false,
+    "target_bytes": 10226241536
+  },
+  {
+    "name": "coverage-binaries",
+    "command": [
+      "cargo",
+      "build",
+      "--manifest-path",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/examples/blog/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "blog-web",
+      "--bins"
+    ],
+    "code": 0,
+    "seconds": 33.718773,
+    "timeout": false,
+    "target_bytes": 11438993408
+  },
+  {
+    "name": "coverage-native-http-browser",
+    "command": [
+      "python3",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/tools/examples/blog/browser.py",
+      "--mode",
+      "hydrate"
+    ],
+    "code": 0,
+    "seconds": 11.650237,
+    "timeout": false,
+    "target_bytes": 11449651200
+  },
+  {
+    "name": "coverage-blog-client-g56",
+    "code": 0,
+    "status": "exempt",
+    "decision": "G56",
+    "scope": "startup/mount/disposal and thin DOM/navigation/fetch/AbortController glue",
+    "browser_evidence": "browser-public-matrix exercises both real entries; browser-full is a separate gate phase"
+  },
+  {
+    "name": "lock-controls",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/tools/examples/blog/tests",
+      "-p",
+      "test_locks.py"
+    ],
+    "code": 0,
+    "seconds": 0.452544,
+    "timeout": false,
+    "target_bytes": 11463970816
+  },
+  {
+    "name": "lock-invariants",
+    "command": [
+      "python3",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-0/tools/examples/blog/locks.py",
+      "check"
+    ],
+    "code": 0,
+    "seconds": 0.258227,
+    "timeout": false,
+    "target_bytes": 11463970816
+  }
+]

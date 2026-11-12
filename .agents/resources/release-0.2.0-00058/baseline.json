@@ -1,0 +1,113 @@
+[
+  {
+    "crate": "stackpress-lib",
+    "sha256": "b50764ee43ec30a95e503a7d3b716705afb156bb275efbda8a70489235b264ff",
+    "vcs": {
+      "git": {
+        "sha1": "d563f8d0e34182cdf220567409289f305155547c"
+      },
+      "path_in_vcs": "crates/lib"
+    },
+    "comparisons": [
+      {
+        "commit": "84010d7",
+        "matched_files": 77,
+        "different": [],
+        "absent_from_git_archive": []
+      },
+      {
+        "commit": "d563f8d",
+        "matched_files": 77,
+        "different": [],
+        "absent_from_git_archive": []
+      },
+      {
+        "commit": "25567fb",
+        "matched_files": 77,
+        "different": [],
+        "absent_from_git_archive": []
+      }
+    ],
+    "normalized_metadata": {
+      "checked_package_fields": true,
+      "version": "0.1.0",
+      "internal_requirements_checked": 0,
+      "archive_external_registry_subset": true,
+      "external_registry_tuples": 64
+    }
+  },
+  {
+    "crate": "stackpress-leptos",
+    "sha256": "d39f7373766eebdef1ac6612e9a529e679f1b3b7997ab87618e255426adcfbbe",
+    "vcs": {
+      "git": {
+        "sha1": "d563f8d0e34182cdf220567409289f305155547c"
+      },
+      "path_in_vcs": "crates/leptos"
+    },
+    "comparisons": [
+      {
+        "commit": "84010d7",
+        "matched_files": 180,
+        "different": [],
+        "absent_from_git_archive": []
+      },
+      {
+        "commit": "d563f8d",
+        "matched_files": 180,
+        "different": [],
+        "absent_from_git_archive": []
+      },
+      {
+        "commit": "25567fb",
+        "matched_files": 180,
+        "different": [],
+        "absent_from_git_archive": []
+      }
+    ],
+    "normalized_metadata": {
+      "checked_package_fields": true,
+      "version": "0.1.0",
+      "internal_requirements_checked": 0,
+      "archive_external_registry_subset": true,
+      "external_registry_tuples": 255
+    }
+  },
+  {
+    "crate": "stackpress-framework-email",
+    "sha256": "e38ddc0f08d2e391c354227fa6b387ed02f0198c2d8677fb9b6a3615f315e32a",
+    "vcs": {
+      "git": {
+        "sha1": "d563f8d0e34182cdf220567409289f305155547c"
+      },
+      "path_in_vcs": "crates/framework/framework-email"
+    },
+    "comparisons": [
+      {
+        "commit": "84010d7",
+        "matched_files": 51,
+        "different": [],
+        "absent_from_git_archive": []
+      },
+      {
+        "commit": "d563f8d",
+        "matched_files": 51,
+        "different": [],
+        "absent_from_git_archive": []
+      },
+      {
+        "commit": "25567fb",
+        "matched_files": 51,
+        "different": [],
+        "absent_from_git_archive": []
+      }
+    ],
+    "normalized_metadata": {
+      "checked_package_fields": true,
+      "version": "0.1.0",
+      "internal_requirements_checked": 2,
+      "archive_external_registry_subset": true,
+      "external_registry_tuples": 203
+    }
+  }
+]

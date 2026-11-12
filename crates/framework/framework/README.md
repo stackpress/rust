@@ -1,5 +1,7 @@
 # Stackpress framework aggregate
 
+**Beta:** 0.2.x is the supported release series; 0.1.x users should upgrade. The API may still change before 1.0.
+
 Compose the selected Stackpress plugins in source order with one ordinary registration function. Use this crate when an application wants the standard composition; each constituent remains independently usable. Features are selected before compilation, and disabling one requires rebuilding the application.
 
 Start with [your first aggregate event](docs/getting-started.md), then read the [composition model](docs/concepts.md). The aggregate contributes no global guard or route ownership arbitration: several matching handlers may run, in priority then registration order, and any may Abort. Plugins and routes secure their own configured processes, following G42/G43.

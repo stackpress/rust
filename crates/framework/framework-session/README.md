@@ -1,5 +1,7 @@
 # Stackpress session, authentication and account UI
 
+**Beta:** 0.2.x is the supported release series; 0.1.x users should upgrade. The API may still change before 1.0.
+
 Use `stackpress-framework-session` to read a cookie JWT, check configured permissions, manage Auth/Profile records, or reuse the account and sign-in pages. Start with a direct identity check, then select the server and UI features your application needs.
 
 ## Start here

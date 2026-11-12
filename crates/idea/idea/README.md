@@ -1,5 +1,7 @@
 # stackpress-idea
 
+**Beta:** 0.2.x is the supported release series; 0.1.x users should upgrade. The API may still change before 1.0.
+
 Combine the independent Idea parser and transformer in one synchronous generation API. Stackpress application tools supply their schema entrypoint, transforms and generated output owner.
 
 ```rust

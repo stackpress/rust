@@ -1,5 +1,7 @@
 # stackpress-sql-sqlite
 
+**Beta:** 0.2.x is the supported release series; 0.1.x users should upgrade. The API may still change before 1.0.
+
 Execute Stackpress SQL through a native Tokio/SQLx SQLite adapter with finite pool and query budgets. Applications own the database file, runtime, transactions and shutdown.
 
 ```rust

@@ -6,7 +6,7 @@ import tomllib
 
 ROOT = Path(__file__).resolve().parents[2]
 EVIDENCE = ROOT / ".agents/resources/release-manifests-00050"
-VERSION = "0.1.0"
+VERSION = "0.2.0"
 # Explicit G59/G61 scope; private examples are never inferred as releases.
 CANDIDATES = [
     "crates/leptos", "crates/framework/framework-language", "crates/sql/sql", "crates/lib",

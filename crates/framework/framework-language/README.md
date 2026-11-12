@@ -1,5 +1,7 @@
 # stackpress-framework-language
 
+**Beta:** 0.2.x is the supported release series; 0.1.x users should upgrade. The API may still change before 1.0.
+
 Validate an explicit locale registry and direct aliases. Stackpress view preferences use these pure values; cookies, routing and hosts belong to other crates.
 
 ```rust

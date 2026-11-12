@@ -1,0 +1,415 @@
+[
+  {
+    "id": "20261112T125540.468758Z-670c44011bda",
+    "label": "00058 fresh effort clean",
+    "status": "passed",
+    "exit_code": 0,
+    "command": [
+      "cargo",
+      "clean"
+    ],
+    "command_seconds": 0.582314,
+    "cargo_build_seconds": null,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "started_at": "2026-11-12T12:55:40.468758+00:00",
+    "ended_at": "2026-11-12T12:55:41.726568+00:00"
+  },
+  {
+    "id": "20261112T125628.702460Z-d751991c60d2",
+    "label": "00058 fresh effort coverage cleanup",
+    "status": "passed",
+    "exit_code": 0,
+    "command": [
+      "cargo",
+      "llvm-cov",
+      "clean",
+      "--workspace"
+    ],
+    "command_seconds": 1.072191,
+    "cargo_build_seconds": null,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "started_at": "2026-11-12T12:56:28.702460+00:00",
+    "ended_at": "2026-11-12T12:56:30.091553+00:00"
+  },
+  {
+    "id": "20261112T125632.866317Z-1a1d20a14b23",
+    "label": "00058 root and 22 nested lock refresh offline",
+    "status": "passed",
+    "exit_code": 0,
+    "command": [
+      "python3",
+      "/private/tmp/stackpress-00058/refresh_locks.py"
+    ],
+    "command_seconds": 4.906206,
+    "cargo_build_seconds": null,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "started_at": "2026-11-12T12:56:32.866317+00:00",
+    "ended_at": "2026-11-12T12:56:37.911007+00:00"
+  },
+  {
+    "id": "20261112T125911.476987Z-b9097e3599f3",
+    "label": "00058 release tooling version controls",
+    "status": "passed",
+    "exit_code": 0,
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tools/release",
+      "-p",
+      "test_*.py"
+    ],
+    "command_seconds": 0.202032,
+    "cargo_build_seconds": null,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "started_at": "2026-11-12T12:59:11.476987+00:00",
+    "ended_at": "2026-11-12T12:59:11.946910+00:00"
+  },
+  {
+    "id": "20261112T125930.243228Z-9b1318061647",
+    "label": "00058 final combined release gate",
+    "status": "passed",
+    "exit_code": 0,
+    "command": [
+      "python3",
+      "tools/release/gate.py",
+      "--allow-dirty"
+    ],
+    "command_seconds": 6595.941316,
+    "cargo_build_seconds": 6700.610000000003,
+    "cargo_activity": {
+      "compiling": 10014,
+      "checking": 4196,
+      "documenting": 107
+    },
+    "started_at": "2026-11-12T12:59:30.243228+00:00",
+    "ended_at": "2026-11-12T14:49:26.519377+00:00"
+  },
+  {
+    "id": "20261112T125934.096043Z-3d061eea3173",
+    "label": "00058 read-only 0.2.0 publication plan",
+    "status": "passed",
+    "exit_code": 0,
+    "command": [
+      "./publish.sh",
+      "--plan"
+    ],
+    "command_seconds": 20.988836,
+    "cargo_build_seconds": null,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "started_at": "2026-11-12T12:59:34.096043+00:00",
+    "ended_at": "2026-11-12T12:59:55.257079+00:00"
+  },
+  {
+    "id": "20261112T130055.934950Z-c5f5d04310b6",
+    "label": "00058 strict boundaries copies and dependency licences",
+    "status": "passed",
+    "exit_code": 0,
+    "command": [
+      "python3",
+      "/private/tmp/stackpress-00058/auxiliary.py"
+    ],
+    "command_seconds": 3.462077,
+    "cargo_build_seconds": null,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "started_at": "2026-11-12T13:00:55.934950+00:00",
+    "ended_at": "2026-11-12T13:00:59.591555+00:00"
+  },
+  {
+    "id": "20261112T131333.053199Z-5177a1c0a7f5",
+    "label": "00058 task target budget monitoring and completed consumer cleanup",
+    "status": "failed",
+    "exit_code": 1,
+    "command": [
+      "python3",
+      "/private/tmp/stackpress-00058/monitor.py"
+    ],
+    "command_seconds": 1226.849435,
+    "cargo_build_seconds": null,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "started_at": "2026-11-12T13:13:33.053199+00:00",
+    "ended_at": "2026-11-12T13:34:00.041136+00:00"
+  },
+  {
+    "id": "20261112T131545.564577Z-18e0aece56f5",
+    "label": "00058 canonical published baseline proof offline",
+    "status": "passed",
+    "exit_code": 0,
+    "command": [
+      "python3",
+      "/private/tmp/stackpress-00058/verify_baseline.py"
+    ],
+    "command_seconds": 0.392515,
+    "cargo_build_seconds": null,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "started_at": "2026-11-12T13:15:45.564577+00:00",
+    "ended_at": "2026-11-12T13:15:46.234574+00:00"
+  },
+  {
+    "id": "20261112T132406.049099Z-bf9fce3e9085",
+    "label": "00058 retire completed trybuild scratch before consumers",
+    "status": "passed",
+    "exit_code": 0,
+    "command": [
+      "python3",
+      "-c",
+      "from pathlib import Path; import shutil; p=Path(\"target/00058-release/tests\"); print(\"Retiring completed trybuild scratch:\", p); shutil.rmtree(p)"
+    ],
+    "command_seconds": 1.792674,
+    "cargo_build_seconds": null,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "started_at": "2026-11-12T13:24:06.049099+00:00",
+    "ended_at": "2026-11-12T13:24:08.010062+00:00"
+  },
+  {
+    "id": "20261112T133019.355568Z-491467b74225",
+    "label": "00058 published archive normalized metadata proof offline",
+    "status": "passed",
+    "exit_code": 0,
+    "command": [
+      "python3",
+      "/private/tmp/stackpress-00058/verify_archive_metadata.py"
+    ],
+    "command_seconds": 0.144815,
+    "cargo_build_seconds": null,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "started_at": "2026-11-12T13:30:19.355568+00:00",
+    "ended_at": "2026-11-12T13:30:19.727793+00:00"
+  },
+  {
+    "id": "20261112T133737.148110Z-61889f0fb69e",
+    "label": "00058 task budget monitor retry for concurrent file replacement",
+    "status": "passed",
+    "exit_code": 0,
+    "command": [
+      "python3",
+      "/private/tmp/stackpress-00058/monitor.py"
+    ],
+    "command_seconds": 4370.413654,
+    "cargo_build_seconds": null,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "started_at": "2026-11-12T13:37:37.148110+00:00",
+    "ended_at": "2026-11-12T14:50:27.816251+00:00"
+  },
+  {
+    "id": "20261112T140314.878746Z-9acdf845b050",
+    "label": "00058 retire completed API checkpoint target before final checks",
+    "status": "passed",
+    "exit_code": 0,
+    "command": [
+      "python3",
+      "-c",
+      "from pathlib import Path; import shutil; p=Path(\"target/00058-release/api-checkpoint\"); print(\"Retiring completed API checkpoint target:\",p); shutil.rmtree(p)"
+    ],
+    "command_seconds": 0.668669,
+    "cargo_build_seconds": null,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "started_at": "2026-11-12T14:03:14.878746+00:00",
+    "ended_at": "2026-11-12T14:03:15.783467+00:00"
+  },
+  {
+    "id": "20261112T140519.447595Z-df90ac30e6ac",
+    "label": "00058 all 23 standalone all-target Clippy checks",
+    "status": "passed",
+    "exit_code": 0,
+    "command": [
+      "python3",
+      "/private/tmp/stackpress-00058/finish_checks.py"
+    ],
+    "command_seconds": 187.052098,
+    "cargo_build_seconds": 184.94,
+    "cargo_activity": {
+      "compiling": 25,
+      "checking": 325,
+      "documenting": 0
+    },
+    "started_at": "2026-11-12T14:05:19.447595+00:00",
+    "ended_at": "2026-11-12T14:08:26.828523+00:00"
+  },
+  {
+    "id": "20261112T140849.533592Z-a9ccf9365844",
+    "label": "00058 13 additional official managed output freshness checks",
+    "status": "passed",
+    "exit_code": 0,
+    "command": [
+      "python3",
+      "/private/tmp/stackpress-00058/freshness.py"
+    ],
+    "command_seconds": 146.918754,
+    "cargo_build_seconds": 132.8,
+    "cargo_activity": {
+      "compiling": 192,
+      "checking": 0,
+      "documenting": 0
+    },
+    "started_at": "2026-11-12T14:08:49.533592+00:00",
+    "ended_at": "2026-11-12T14:11:16.682879+00:00"
+  },
+  {
+    "id": "20261112T141327.556834Z-ba4cab1c71ef",
+    "label": "00058 retire completed native test executables for archive reserve",
+    "status": "passed",
+    "exit_code": 0,
+    "command": [
+      "python3",
+      "/private/tmp/stackpress-00058/retire_executables.py"
+    ],
+    "command_seconds": 12.383364,
+    "cargo_build_seconds": null,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "started_at": "2026-11-12T14:13:27.556834+00:00",
+    "ended_at": "2026-11-12T14:13:40.158081+00:00"
+  },
+  {
+    "id": "20261112T144052.423377Z-2a723e1d2365",
+    "label": "00058 retire completed native executables for final facade matrix reserve",
+    "status": "failed",
+    "exit_code": 1,
+    "command": [
+      "python3",
+      "/private/tmp/stackpress-00058/retire_executables.py",
+      "retired-executables-final-reserve.json"
+    ],
+    "command_seconds": 29.656556,
+    "cargo_build_seconds": null,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "started_at": "2026-11-12T14:40:52.423377+00:00",
+    "ended_at": "2026-11-12T14:41:22.272501+00:00"
+  },
+  {
+    "id": "20261112T144239.878997Z-b5b7c7354b03",
+    "label": "00058 final facade reserve cleanup retry for concurrent file replacement",
+    "status": "passed",
+    "exit_code": 0,
+    "command": [
+      "python3",
+      "/private/tmp/stackpress-00058/retire_executables.py",
+      "retired-executables-final-reserve.json"
+    ],
+    "command_seconds": 224.5858,
+    "cargo_build_seconds": null,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "started_at": "2026-11-12T14:42:39.878997+00:00",
+    "ended_at": "2026-11-12T14:46:24.615237+00:00"
+  },
+  {
+    "id": "20261112T144758.275762Z-39c53fc1ff25",
+    "label": "00058 retire completed README Rustdoc and WASM graph outputs for final facade headroom",
+    "status": "passed",
+    "exit_code": 0,
+    "command": [
+      "python3",
+      "-c",
+      "from pathlib import Path; import shutil; base=Path(\"target/00058-release\"); names=[\"readme-build\",\"doc\",\"wasm32-unknown-unknown\"]; [(print(\"Retiring completed target:\",base/name),shutil.rmtree(base/name)) for name in names if (base/name).exists()]"
+    ],
+    "command_seconds": 0.886281,
+    "cargo_build_seconds": null,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "started_at": "2026-11-12T14:47:58.275762+00:00",
+    "ended_at": "2026-11-12T14:47:59.393689+00:00"
+  },
+  {
+    "id": "20261112T145048.295559Z-9607365c78ce",
+    "label": "00058 archive final release evidence and restore historical reports",
+    "status": "passed",
+    "exit_code": 0,
+    "command": [
+      "python3",
+      "/private/tmp/stackpress-00058/archive_evidence.py"
+    ],
+    "command_seconds": 0.075406,
+    "cargo_build_seconds": null,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "started_at": "2026-11-12T14:50:48.295559+00:00",
+    "ended_at": "2026-11-12T14:50:48.687937+00:00"
+  },
+  {
+    "id": "20261112T145202.065419Z-026515a58835",
+    "label": "00058 final ownership version locks links and KB validation",
+    "status": "passed",
+    "exit_code": 0,
+    "command": [
+      "python3",
+      "/private/tmp/stackpress-00058/final_checks.py"
+    ],
+    "command_seconds": 0.965309,
+    "cargo_build_seconds": null,
+    "cargo_activity": {
+      "compiling": 0,
+      "checking": 0,
+      "documenting": 0
+    },
+    "started_at": "2026-11-12T14:52:02.065419+00:00",
+    "ended_at": "2026-11-12T14:52:03.318464+00:00"
+  }
+]

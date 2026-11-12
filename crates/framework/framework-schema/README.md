@@ -1,5 +1,7 @@
 # stackpress-framework-schema
 
+**Beta:** 0.2.x is the supported release series; 0.1.x users should upgrade. The API may still change before 1.0.
+
 Share owned schema values, validation and public UI descriptors across Stackpress targets. Optional code generation consumes finalized Idea configuration; native providers are explicitly selected.
 
 ```rust
