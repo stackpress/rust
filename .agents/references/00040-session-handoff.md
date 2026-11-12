@@ -1,5 +1,7 @@
 # Next-session handoff: Stackpress Rust
 
+Historical scope: this records the initial KB setup/assessment, not the current implementation or pending design. Use the [current source catalog](../context/source-catalog.md) and its implementation topics for active work; load this reference only for setup provenance.
+
 Owner: [context index](../context/index.md). Load once at the start of the next session in `/Users/cblanquera/server/projects/stackpress/rust`.
 
 ## Start here

@@ -1,68 +1,43 @@
 # Source catalog and authority
 
-Load for provenance, historical references, conflict resolution, or KB refresh. Capture date: 2026-10-23, Asia/Manila.
+Load for source provenance, claim verification, historical material or KB maintenance. This context describes the checked-out Rust implementation; it is maintained from source rather than from the old setup narrative.
 
-## Authority order
+## Authority and evidence
 
-1. Current explicit project-owner instructions govern target scope/decisions/style/coverage and override older proposals or imported contributor policy.
-2. Rust context records the accepted reusable target direction and rules. New implementation truth requires source/test evidence.
-3. Existing source code and manifests establish current source-system behavior, scoped to their checked revision/hash. The imported KB routes detailed understanding but can drift.
-4. Complete discussion references retain proposals, rationale, and open questions. They do not freeze a crate tree or fictional API.
-5. Raw resource copies preserve source evidence. They do not independently establish current target authority.
+1. Current explicit owner instructions govern scope, behavior, process and authorization.
+2. Current-branch Rust source and manifests establish implemented crates, APIs, features, commands and checks. [Source structure](source-structure.md) inventories packages; [source map](source-map.md) routes implementation and consumers. Verify at the semantic owner before changing a claim.
+3. Accepted decisions G01–G62 in [the foundation ledger](../specs/00001-stackpress-rust-foundation/decisions.md) supply approved semantics. Later decisions supersede earlier ones: G41 removes framework-ui, G59 removes premade framework-models, G60 sets licences and G61 sets the 23-package release scope/facade exemption. Current manifests and the accepted release workflow set the version at 0.2.0 beta; the ledger's earlier 0.1.0 choice is not the current version.
+4. Verified [task receipts](../specs/00001-stackpress-rust-foundation/tasks/status.md) establish bounded build/test and platform evidence. They do not turn a historical proof into universal support. Source/manifests are authoritative for the implemented state.
+5. Imported upstream contracts and discussion references retain their original scope/revision/provenance. Proposals, capture records and old open questions are historical material, not active target decisions.
 
-The owner's later explicit approval establishes the [accepted source structure](source-structure.md); load it for the current root workspace/facade, grouped crate layout, names, and boundaries. The [conversation extract](../resources/conversation/2026-10-23-source-structure-acceptance.txt) preserves the proposal, accepted response, and exact approval. This supersedes earlier layout and Ingest/Inquire naming proposals without changing archived discussion bodies. The acceptance record is a later source, separate from the original setup ingestion manifest/receipt; those historical hashes and receipts remain unchanged.
+`.agents/context/` is the accepted reusable layer for future work. The owner has authorized this source-based promotion; leave planning, chronology and task narratives in the spec/references. For another unapproved source/context conflict, report it before silently changing accepted behavior. Do not consult other branches/worktrees merely to fill a claim.
 
-## Preserved discussion
+## Current source families
 
-All seven original note files were preserved byte-for-byte before migration. Their relative links are interpreted against the original directory recorded in the manifest. Live reference copies rebase prose links into this workspace or to canonical retained sources; fenced examples remain literal.
+- Root [Cargo.toml](../../Cargo.toml) and [src/lib.rs](../../src/lib.rs): membership, 0.2.0/edition/MSRV, lints, features, direct exports and optional namespace aliases.
+- Linked per-crate manifests and sources in [the inventory](source-structure.md): all 23 release candidates, their local feature names and public facade paths, plus independent CLI use.
+- [Parser provenance](../../crates/idea/idea-parser/PROVENANCE.md): the implemented extracted/repaired core, grammar/fixture provenance and retained Apache licence, separate from Node distribution.
+- [Framework source schema loader](../../crates/framework/framework/src/native/commands/schema.rs): original `.idea` sources and compiled package imports; app-owned generated families replace premade models.
+- [Release inventory/tooling](../../tools/release/common.py), [release policy](release-and-licensing.md), [ATTRIBUTION.md](../../ATTRIBUTION.md): coordinated scope, packaging/licences, copied-test inputs and dependency declarations.
+- [Sync receipt](../specs/00001-stackpress-rust-foundation/tasks/00059-kb-sync.md): load when auditing this promotion's source/path verification, lossless demotions and workspace-validator limits.
 
-- [Discussion Working Summary](../references/00004-discussion-working-summary.md): load for complete historical detail in this topic, including superseded suggestions and explicit uncertainties.
-- [Discussion Feature Feasibility](../references/00005-discussion-feature-feasibility.md): load for complete historical detail in this topic, including superseded suggestions and explicit uncertainties.
-- [Discussion Crate Plugin Proposals](../references/00006-discussion-crate-plugin-proposals.md): load for complete historical detail in this topic, including superseded suggestions and explicit uncertainties.
-- [Discussion Frontend Decision History](../references/00007-discussion-frontend-decision-history.md): load for complete historical detail in this topic, including superseded suggestions and explicit uncertainties.
-- [Discussion Diagnostics Existing Parser](../references/00008-discussion-diagnostics-existing-parser.md): load for complete historical detail in this topic, including superseded suggestions and explicit uncertainties.
-- [Discussion Cargo Namespace](../references/00009-discussion-cargo-namespace.md): load for complete historical detail in this topic, including superseded suggestions and explicit uncertainties.
-- [Discussion Source Index](../references/00010-discussion-source-index.md): load for complete historical detail in this topic, including superseded suggestions and explicit uncertainties.
+## Historical context demotions
 
-[Current setup request](../resources/conversation/2026-10-23-setup-request.txt) records the authorized monorepo/skills/KB/style/refactoring/coverage work. The [ingestion manifest](../resources/provenance/ingestion-manifest.json) records original paths, hashes, raw/reference mappings, headings, source repositories, source anchors, skills, and package facts.
+The following references retain the complete prior owner texts with only prose links rebased. Their stale claims and unresolved questions have no current authority; active equivalents live in context. Load only the matching audit topic:
 
-## Upstream KB and source coverage
+- [Preimplementation direction and runtime](../references/00042-preimplementation-direction-runtime.md): earlier goals, UI rationale, lifecycle/generation proposals and questions resolved by implementation.
+- [Preimplementation source structure](../references/00043-preimplementation-source-structure.md): accepted initial tree/namespace proposal, illustrative facade, dependency rationale, earlier publication questions and original technical links.
+- [Preimplementation source map and provenance](../references/00044-preimplementation-source-provenance.md): original sibling source anchors, checked HEADs/worktree states, capture-version distinctions, parser-branch assessment, seven discussion routes, source archive/ingestion scope, skill installation and setup evidence.
+- [Preimplementation style and quality](../references/00045-preimplementation-style-quality.md): full prior style/quality text, unchosen edition/MSRV wording, proposed coverage tooling and pre-Cargo command templates.
 
-Preservation scope is the eight topic Context Files and all fifteen domain Reference Files (00004–00018), plus the original index. The complete 23 documents are available as rebased live references, not summary-only replacements. Managed Agent Workspace rules were installed separately from the requested knowledge skill instead of copying the old project operating surface.
+[Setup handoff](../references/00040-session-handoff.md) and [initial open questions](../references/00039-open-design-questions.md) are also historical: load only for initial intent/provenance. Do not use them as a current implementation inventory or re-ask questions resolved by source and the accepted ledger.
 
-The raw non-code KB snapshot lives under `.agents/resources/upstream-stackpress-kb/`. Source code stays in the eight canonical sibling checkouts. No source trees, generated client, database, dependencies, or secrets were archived. Related Frui/r22n manifest facts and source pointers support UI contract understanding.
+## Preserved upstream material and integrity
 
-Read [the upstream contract router](upstream-stackpress.md) for all imported contract owners and [the source map](source-map.md) for exact code locations. [Ingestion and verification detail](../references/00038-ingestion-provenance.md) explains the checks and their limits; load it when auditing or refreshing this KB.
+[Upstream contract router](upstream-stackpress.md) routes the complete imported architecture, APIs, generation, configuration, UI, package inventories and source-behavior supplements. [Ingestion provenance](../references/00038-ingestion-provenance.md) records exact preservation methods and their limits; load for a historical-import audit. Captured source versions/HEADs are dated observations, not freshly verified sibling checkouts.
 
-## Checked repositories
+The [ingestion manifest](../resources/provenance/ingestion-manifest.json) pins original paths/hashes and raw/reference/skill mappings; [setup receipt](../resources/provenance/setup-receipt.json) records that setup's result. Raw discussion and upstream non-code snapshots remain in resources. Code remains in its source location; do not mirror source trees or regenerate capture hashes to conceal drift.
 
-| Source | Checked HEAD | Worktree |
-| --- | --- | --- |
-| `lib` | `e2cc6b8cad77b5ad18be8a94e0d40e72e2f6183a` | Clean at capture |
-| `idea` | `cf8e922ba6e57746e15a05c26df0546dda2cc5c9` | Clean at capture |
-| `ingest` | `477ec47f8b5dafa5713b13f9c964d06c61c22938` | Clean at capture |
-| `inquire` | `039a1b5f41500aa63286a9f9b34f4c7f71b990a0` | Clean at capture |
-| `reactus` | `357569a4923821d9086adf565c5ed22f0e082631` | Clean at capture |
-| `stackpress` | `a71d683051ba8350fdd12d6b5a33f268fdcc285f` | Dirty; see per-file hashes |
-| `frui` | `096fd14580f0f49b6e159fa0aa5ae2a5bce8fb0e` | Clean at capture |
-| `r22n` | `48c50dd1ba57a0555c9afbd4bfa4cb41e702cb68` | Dirty; see per-file hashes |
+Project-local coding, knowledge and documentation skill packages retain their own provenance. Rust uses the owner's explicit coding adaptation and standing refactor authorization; JS-specific syntax/audit-only defaults do not override it. No KB MCP publisher/index/service is installed by this documentation sync.
 
-Main-branch manifests in the six original foundation/framework repositories report version 0.10.8. Existing KB text can retain older version literals and examples. Source HEAD plus current file hash is the relevant observation, especially in a dirty checkout.
-
-The Rust parser branch is separately pinned at `6c289d1f3fba17c758baafb2d4dcefd87fd448ea`; no branch merge, parser extraction, compile, or parity test occurred.
-
-## Skill installation
-
-Installed complete `chrisai-coding` and `chrisai-knowledge` packages from `cblanquera/chrisai` main at `c3be0b52e797f48ba8400893bb4aae693eaeb221` using the official skill installer, at `.agents/skills`. The knowledge installer was dry-run before apply. Package file counts/hashes are in the ingestion manifest.
-
-On 2026-10-24 the owner also requested `chrisai-docing`, installed at `.agents/skills/chrisai-docing` from the same `cblanquera/chrisai` revision `c3be0b52e797f48ba8400893bb4aae693eaeb221` (8 files, byte-identical to the source tree). It supplies the technical-writing standards for crate documentation: API reference, guided learning, formatting, and copy editing. The provenance verifier's integrity check still covers only the original two packages.
-
-The coding skill currently scopes itself to existing JS/TS/React/HTML/CSS. The owner explicitly requests its principles for Rust. The project style/workflow adapts those principles while preserving installed packages. The user-authorized repeated refactor pass supersedes audit-only stops inside the requested coding task; unrelated scope still requires a decision.
-
-No MCP publisher/index/service was requested or installed. This is a Markdown KB; there is no automatic semantic-indexing or external-serving claim.
-
-## Refresh and evidence limits
-
-Run `.agents/scripts/verify-kb-provenance.py` for preservation/import/skill integrity and optional `--check-sources` for live source drift. Run `.agents/scripts/validate-agent-workspace.py` for links, routing, naming, and line caps. Neither proves semantic completeness of a Rust implementation.
-
-Preserve older evidence before refreshing; update accepted owners and references without promoting speculation. If a source hash changes, inspect/reconcile the changed contract instead of regenerating a manifest to hide drift.
+Use `python3 .agents/scripts/validate-agent-workspace.py` for routing, references, links and line caps. Use `python3 .agents/scripts/verify-kb-provenance.py` for preserved import/skill integrity; its optional `--check-sources` reads canonical sibling source files and must respect the task's source-access boundary. Neither check proves Rust behavior, platform support or coverage. Preserve prior evidence and reconcile the changed contract before any accepted refresh.

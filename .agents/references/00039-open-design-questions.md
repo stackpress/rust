@@ -1,5 +1,7 @@
 # Open design questions and first-proof proposal
 
+Historical scope: this records the initial KB setup/assessment, not the current implementation or pending design. Use the [current source catalog](../context/source-catalog.md) and its implementation topics for active work; load this reference only for setup provenance.
+
 Owner: [project direction](../context/project-direction.md). Load when preparing an implementation brief. Questions and suggested proofs here are not accepted design answers or a Frozen implementation spec.
 
 ## Settled; do not re-ask by default
