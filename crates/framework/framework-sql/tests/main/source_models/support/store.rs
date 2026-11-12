@@ -43,7 +43,7 @@ impl<S: SourceSchema<Value = Value, Record = Record>> SourceStore for Store<S> {
             _ => None,
         }))
     }
-    fn create(&self) -> Create {
+    fn create(&self) -> Result<Create, ActionError> {
         let model = S::describe();
         let mut table = Create::new(model.module);
         for field in &model.fields {
@@ -59,7 +59,7 @@ impl<S: SourceSchema<Value = Value, Record = Record>> SourceStore for Store<S> {
                 column
             });
         }
-        table.primary_key(["id"])
+        Ok(table.primary_key(["id"]))
     }
     fn alter(&self, _to: Option<&Create>) -> Result<Alter, ActionError> {
         Ok(Alter::new(S::describe().module))

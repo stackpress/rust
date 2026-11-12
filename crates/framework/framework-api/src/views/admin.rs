@@ -131,6 +131,29 @@ pub fn register_queued_with<M: SessionModels>(
     ))
 }
 
+/// Borrow the original CSV upload bytes without UTF-8 validation or lossy decoding.
+/// A structured csv field keeps precedence; existing row batches bypass raw-body fallback.
+fn csv_bytes(req: &Request) -> Option<&[u8]> {
+    match req.data.get("csv") {
+        Some(stackpress_lib::Value::String(text)) => Some(text.as_bytes()),
+        Some(stackpress_lib::Value::Bytes(bytes)) => Some(bytes),
+        Some(stackpress_lib::Value::File(file)) => Some(&file.data),
+        _ if req.data.has("rows") => None,
+        _ => match req.body() {
+            Body::Bytes(bytes) => Some(bytes),
+            Body::Text(text)
+                if req
+                    .headers
+                    .get("content-type")
+                    .is_some_and(|value| value.starts_with("text/csv")) =>
+            {
+                Some(text.as_bytes())
+            }
+            _ => None,
+        },
+    }
+}
+
 /// Source prior-body/non-200 guard, shared event response and page-owned mutation sequencing.
 async fn page<M: SessionModels>(
     req: &mut Request,
@@ -228,7 +251,7 @@ async fn page<M: SessionModels>(
         return Ok(Flow::Continue);
     } else if write {
         if action == Action::Import
-            && let Some(csv) = req.data.get("csv").and_then(stackpress_lib::Value::as_str)
+            && let Some(csv) = csv_bytes(req)
         {
             let rows = super::management::import_csv(csv).map_err(Error::from_source)?;
             req.data
@@ -517,4 +540,38 @@ pub fn export(rows: &Value) -> Result<String> {
     ];
     rows.extend(body);
     Ok(rows.join("\n"))
+}
+
+#[cfg(test)]
+mod upload_tests {
+    use super::*;
+
+    /// Existing JSON row batches must reach the batch event without CSV reinterpretation.
+    #[test]
+    fn json_import_rows_keep_their_original_body_path() {
+        let mut request = Request::builder()
+            .body(Body::Bytes(br#"{"rows":[]}"#.to_vec()))
+            .build()
+            .unwrap();
+        request
+            .data
+            .set("rows", stackpress_lib::Value::try_from(json!([])).unwrap())
+            .unwrap();
+        assert!(csv_bytes(&request).is_none());
+    }
+
+    #[test]
+    fn csv_upload_keeps_non_utf8_body_bytes() {
+        let bytes = b"name\nCaf\xe9\n".to_vec();
+        let request = Request::builder()
+            .body(Body::Bytes(bytes.clone()))
+            .build()
+            .unwrap();
+        let raw = csv_bytes(&request).unwrap();
+        assert_eq!(raw, bytes);
+        let Body::Bytes(body) = request.body() else {
+            panic!("request body must retain the supplied bytes");
+        };
+        assert!(std::ptr::eq(raw.as_ptr(), body.as_ptr()));
+    }
 }

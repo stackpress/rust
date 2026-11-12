@@ -210,11 +210,15 @@ pub async fn remove_factor(
             csrf.generate(res)?;
             return Ok(Flow::Continue);
         }
-        let query = Value::from(json!({"id":auth,"profileId":id(&data),"type":"2fa"}));
+        let query = Record::from_iter([
+            ("id".into(), auth.into()),
+            ("profileId".into(), id(&data)),
+            ("type".into(), "2fa".into()),
+        ]);
         let exists = b::resolve(
             &inv,
             "auth-search",
-            Record::from_iter([("eq".into(), query.clone())]),
+            Record::from_iter([("eq".into(), Value::Object(query.clone()))]),
         )
         .await?;
         if !b::ok(&exists) {
@@ -222,7 +226,7 @@ pub async fn remove_factor(
             csrf.generate(res)?;
             return Ok(Flow::Continue);
         }
-        let removed = b::resolve(&inv, "auth-remove", query.as_object().unwrap().clone()).await?;
+        let removed = b::resolve(&inv, "auth-remove", query).await?;
         if !b::ok(&removed) {
             res.apply_envelope(removed.to_envelope())?;
             csrf.generate(res)?;

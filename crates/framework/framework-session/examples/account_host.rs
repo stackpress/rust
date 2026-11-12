@@ -105,12 +105,11 @@ async fn main() -> Result<()> {
     let token = server
         .host()
         .service::<Service>()?
-        .create(
-            json!({"id":profile["id"],"name":"Ada Lovelace","roles":["USER"]})
-                .as_object()
-                .unwrap()
-                .clone(),
-        )
+        .create(serde_json::Map::from_iter([
+            ("id".into(), json!(profile["id"])),
+            ("name".into(), json!("Ada Lovelace")),
+            ("roles".into(), json!(["USER"])),
+        ]))
         .await
         .map_err(stackpress_lib::Error::from_source)?;
     let mut artifacts = Vec::new();

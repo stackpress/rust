@@ -592,6 +592,7 @@ async fn delete_cascade_maintenance_and_explicit_transaction_affinity() {
         .app
         .store
         .create()
+        .unwrap()
         .add_field(Field::new("extra", SqlType::Text));
     f.app.upgrade(&to).await.unwrap();
     f.app.purge(false).await.unwrap();
@@ -636,7 +637,7 @@ fn source_forward_relation_fallbacks_preserve_the_last_edge() {
             2,
         ),
     ] {
-        let selector = session.paths(path).into_iter().next().unwrap();
+        let selector = session.paths(path).unwrap().into_iter().next().unwrap();
         assert_eq!(
             (
                 selector.model.as_str(),
@@ -650,16 +651,16 @@ fn source_forward_relation_fallbacks_preserve_the_last_edge() {
             columns: vec![path.into()],
             ..Default::default()
         };
-        assert_eq!(session.joins(&query).len(), joins, "{path}");
+        assert_eq!(session.joins(&query).unwrap().len(), joins, "{path}");
     }
     let app = ApplicationStore::new("".into(), 0);
-    assert_eq!(app.paths("profile.unknown")[0].column, "profile");
+    assert_eq!(app.paths("profile.unknown").unwrap()[0].column, "profile");
     assert!(
-        app.paths("session.*").is_empty(),
+        app.paths("session.*").unwrap().is_empty(),
         "reverse arrays do not become joins"
     );
     assert!(
-        session.paths("unknown.profile").is_empty(),
+        session.paths("unknown.profile").unwrap().is_empty(),
         "no valid leading edge"
     );
 }
@@ -676,12 +677,12 @@ fn source_backend_rendering_and_selected_paths() {
         eq: record(json!({"application":{"profile":{"name":["Ada","Bob"]}}})),
         ..Default::default()
     };
-    assert!(store.paths("unknown").is_empty());
+    assert!(store.paths("unknown").unwrap().is_empty());
     assert_eq!(
-        store.paths("application.session.*")[0].column,
+        store.paths("application.session.*").unwrap()[0].column,
         "application"
     );
-    assert_eq!(store.joins(&query).len(), 3);
+    assert_eq!(store.joins(&query).unwrap().len(), 3);
     for dialect in [DialectId::Sqlite, DialectId::Postgres, DialectId::Mysql] {
         let sql = store
             .select(&query, dialect)
@@ -690,7 +691,7 @@ fn source_backend_rendering_and_selected_paths() {
             .unwrap();
         assert!(sql.sql().contains("INNER JOIN"));
         assert_eq!(sql.binds().len(), 3);
-        assert!(store.create().render(dialect).is_ok());
+        assert!(store.create().unwrap().render(dialect).is_ok());
     }
     let query = StoreQuery {
         q: Some("search".into()),
@@ -719,7 +720,7 @@ fn source_backend_rendering_and_selected_paths() {
             .contains("RETURNING")
     );
     assert!(store.alter(None).is_ok());
-    assert!(store.alter(Some(&store.create())).is_ok());
+    assert!(store.alter(Some(&store.create().unwrap())).is_ok());
 }
 #[tokio::test]
 async fn generated_events_detail_search_crud_restore_and_batch() {

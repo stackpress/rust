@@ -2,6 +2,13 @@
 use super::{ComponentDefinition, PropDefinition, PropType};
 use serde_json::Value;
 
+// Fixed props are typed literal maps; no fallible JSON decode is needed.
+macro_rules! fixed {
+    ({$($key:literal: $value:expr),* $(,)?}) => {
+        serde_json::Map::from_iter([$(($key.into(), serde_json::json!($value))),*])
+    };
+}
+
 /// The original 44 contracts, including import provenance and required positional arguments.
 pub(super) fn components() -> Vec<ComponentDefinition> {
     vec![
@@ -15,7 +22,7 @@ pub(super) fn components() -> Vec<ComponentDefinition> {
                 ("numbers", PropType::String, false),
                 ("setup", PropType::String, false),
             ],
-            serde_json::json!({}),
+            fixed!({}),
         ),
         // attributes.ts:1327 -> frui/form/ColorInput
         (
@@ -26,7 +33,7 @@ pub(super) fn components() -> Vec<ComponentDefinition> {
                 ("picker", PropType::Json, false),
                 ("style", PropType::Json, false),
             ],
-            serde_json::json!({}),
+            fixed!({}),
         ),
         // attributes.ts:1377 -> frui/form/CountrySelect
         (
@@ -40,7 +47,7 @@ pub(super) fn components() -> Vec<ComponentDefinition> {
                 ("searchable", PropType::Json, false),
                 ("style", PropType::Json, false),
             ],
-            serde_json::json!({}),
+            fixed!({}),
         ),
         // attributes.ts:1457 -> frui/form/CurrencySelect
         (
@@ -54,7 +61,7 @@ pub(super) fn components() -> Vec<ComponentDefinition> {
                 ("searchable", PropType::Json, false),
                 ("style", PropType::Json, false),
             ],
-            serde_json::json!({}),
+            fixed!({}),
         ),
         // attributes.ts:1697 -> frui/form/Input
         (
@@ -63,7 +70,7 @@ pub(super) fn components() -> Vec<ComponentDefinition> {
                 ("className", PropType::String, false),
                 ("style", PropType::Json, false),
             ],
-            serde_json::json!({"type": "email"}),
+            fixed!({"type": "email"}),
         ),
         // attributes.ts:1728 -> frui/form/FileInput
         (
@@ -73,7 +80,7 @@ pub(super) fn components() -> Vec<ComponentDefinition> {
                 ("style", PropType::Json, false),
                 ("uploading", PropType::String, false),
             ],
-            serde_json::json!({}),
+            fixed!({}),
         ),
         // attributes.ts:1806 -> frui/form/ImageInput
         (
@@ -82,7 +89,7 @@ pub(super) fn components() -> Vec<ComponentDefinition> {
                 ("className", PropType::String, false),
                 ("style", PropType::Json, false),
             ],
-            serde_json::json!({}),
+            fixed!({}),
         ),
         // attributes.ts:1970 -> frui/form/CodeEditor
         (
@@ -92,7 +99,7 @@ pub(super) fn components() -> Vec<ComponentDefinition> {
                 ("extensions", PropType::String, false),
                 ("numbers", PropType::String, false),
             ],
-            serde_json::json!({"language": "json", "setup": "basic"}),
+            fixed!({"language": "json", "setup": "basic"}),
         ),
         // attributes.ts:2012 -> frui/form/MarkdownEditor
         (
@@ -102,7 +109,7 @@ pub(super) fn components() -> Vec<ComponentDefinition> {
                 ("rows", PropType::Number, false),
                 ("style", PropType::Json, false),
             ],
-            serde_json::json!({}),
+            fixed!({}),
         ),
         // attributes.ts:2051 -> frui/form/MaskInput
         (
@@ -112,7 +119,7 @@ pub(super) fn components() -> Vec<ComponentDefinition> {
                 ("mask", PropType::String, true),
                 ("style", PropType::Json, false),
             ],
-            serde_json::json!({}),
+            fixed!({}),
         ),
         // attributes.ts:2511 -> frui/form/Radio
         (
@@ -130,7 +137,7 @@ pub(super) fn components() -> Vec<ComponentDefinition> {
                 ("square", PropType::Boolean, false),
                 ("style", PropType::Json, false),
             ],
-            serde_json::json!({}),
+            fixed!({}),
         ),
         // attributes.ts:3052 -> frui/form/NumberInput
         (
@@ -139,7 +146,7 @@ pub(super) fn components() -> Vec<ComponentDefinition> {
                 ("className", PropType::String, false),
                 ("style", PropType::Json, false),
             ],
-            serde_json::json!({"max": 9, "min": 0, "step": 1}),
+            fixed!({"max": 9, "min": 0, "step": 1}),
         ),
         // attributes.ts:3132 -> frui/form/SuggestInput
         (
@@ -150,7 +157,7 @@ pub(super) fn components() -> Vec<ComponentDefinition> {
                 ("remote", PropType::String, false),
                 ("style", PropType::Json, false),
             ],
-            serde_json::json!({}),
+            fixed!({}),
         ),
         // attributes.ts:1568 -> frui/form/TextList
         (
@@ -161,7 +168,7 @@ pub(super) fn components() -> Vec<ComponentDefinition> {
                 ("placeholder", PropType::String, false),
                 ("style", PropType::Json, false),
             ],
-            serde_json::json!({"type": "date"}),
+            fixed!({"type": "date"}),
         ),
         // attributes.ts:1648 -> frui/form/TextList
         (
@@ -172,7 +179,7 @@ pub(super) fn components() -> Vec<ComponentDefinition> {
                 ("placeholder", PropType::String, false),
                 ("style", PropType::Json, false),
             ],
-            serde_json::json!({"type": "datetime"}),
+            fixed!({"type": "datetime"}),
         ),
         // attributes.ts:1767 -> frui/form/FileList
         (
@@ -182,7 +189,7 @@ pub(super) fn components() -> Vec<ComponentDefinition> {
                 ("style", PropType::Json, false),
                 ("uploading", PropType::String, false),
             ],
-            serde_json::json!({}),
+            fixed!({}),
         ),
         // attributes.ts:1837 -> frui/form/ImageList
         (
@@ -191,7 +198,7 @@ pub(super) fn components() -> Vec<ComponentDefinition> {
                 ("className", PropType::String, false),
                 ("style", PropType::Json, false),
             ],
-            serde_json::json!({}),
+            fixed!({}),
         ),
         // attributes.ts:2248 -> frui/form/TextList
         (
@@ -202,7 +209,7 @@ pub(super) fn components() -> Vec<ComponentDefinition> {
                 ("placeholder", PropType::String, false),
                 ("style", PropType::Json, false),
             ],
-            serde_json::json!({"type": "number"}),
+            fixed!({"type": "number"}),
         ),
         // attributes.ts:3733 -> frui/form/TextList
         (
@@ -213,10 +220,10 @@ pub(super) fn components() -> Vec<ComponentDefinition> {
                 ("placeholder", PropType::String, false),
                 ("style", PropType::Json, false),
             ],
-            serde_json::json!({"type": "time"}),
+            fixed!({"type": "time"}),
         ),
         // attributes.ts:3816 -> Fieldset
-        ("field.fieldset", vec![], serde_json::json!({})),
+        ("field.fieldset", vec![], fixed!({})),
         // attributes.ts:4008 -> frui/view/TextOverflow
         (
             "view.chars",
@@ -224,7 +231,7 @@ pub(super) fn components() -> Vec<ComponentDefinition> {
                 ("length", PropType::Json, false),
                 ("hellip", PropType::Boolean, false),
             ],
-            serde_json::json!({}),
+            fixed!({}),
         ),
         // attributes.ts:4205 -> frui/view/Spread
         (
@@ -233,7 +240,7 @@ pub(super) fn components() -> Vec<ComponentDefinition> {
                 ("className", PropType::String, false),
                 ("style", PropType::Json, false),
             ],
-            serde_json::json!({"separator": ", "}),
+            fixed!({"separator": ", "}),
         ),
         // attributes.ts:4236 -> frui/view/Country
         (
@@ -247,7 +254,7 @@ pub(super) fn components() -> Vec<ComponentDefinition> {
                 ("style", PropType::Json, false),
                 ("text", PropType::Boolean, false),
             ],
-            serde_json::json!({}),
+            fixed!({}),
         ),
         // attributes.ts:4307 -> frui/view/Currency
         (
@@ -261,7 +268,7 @@ pub(super) fn components() -> Vec<ComponentDefinition> {
                 ("style", PropType::Json, false),
                 ("text", PropType::Boolean, false),
             ],
-            serde_json::json!({}),
+            fixed!({}),
         ),
         // attributes.ts:4409 -> frui/view/EmailLink
         (
@@ -272,13 +279,13 @@ pub(super) fn components() -> Vec<ComponentDefinition> {
                 ("target", PropType::String, false),
                 ("title", PropType::String, false),
             ],
-            serde_json::json!({}),
+            fixed!({}),
         ),
         // attributes.ts:4456 -> frui/view/Formula
         (
             "view.formula",
             vec![("formula", PropType::String, false)],
-            serde_json::json!({}),
+            fixed!({}),
         ),
         // attributes.ts:4668 -> frui/view/Spread
         (
@@ -287,19 +294,19 @@ pub(super) fn components() -> Vec<ComponentDefinition> {
                 ("className", PropType::String, false),
                 ("style", PropType::Json, false),
             ],
-            serde_json::json!({"separator": "line"}),
+            fixed!({"separator": "line"}),
         ),
         // attributes.ts:5025 -> frui/view/DateFormat
         (
             "view.relative",
             vec![("locale", PropType::String, false)],
-            serde_json::json!({"format": "ago"}),
+            fixed!({"format": "ago"}),
         ),
         // attributes.ts:5235 -> frui/view/TextTransform
         (
             "view.transform",
             vec![("format", PropType::String, false)],
-            serde_json::json!({}),
+            fixed!({}),
         ),
         // attributes.ts:5286 -> frui/view/TextOverflow
         (
@@ -308,7 +315,7 @@ pub(super) fn components() -> Vec<ComponentDefinition> {
                 ("length", PropType::Json, false),
                 ("hellip", PropType::Boolean, false),
             ],
-            serde_json::json!({"words": true}),
+            fixed!({"words": true}),
         ),
         // attributes.ts:3913 -> frui/view/ImageCarousel
         (
@@ -325,7 +332,7 @@ pub(super) fn components() -> Vec<ComponentDefinition> {
                 ("scroll", PropType::Boolean, false),
                 ("style", PropType::Json, false),
             ],
-            serde_json::json!({}),
+            fixed!({}),
         ),
         // attributes.ts:4039 -> frui/view/Code
         (
@@ -342,7 +349,7 @@ pub(super) fn components() -> Vec<ComponentDefinition> {
                 ("startingLineNumber", PropType::Number, false),
                 ("style", PropType::Json, false),
             ],
-            serde_json::json!({}),
+            fixed!({}),
         ),
         // attributes.ts:4134 -> frui/view/Color
         (
@@ -356,7 +363,7 @@ pub(super) fn components() -> Vec<ComponentDefinition> {
                 ("style", PropType::Json, false),
                 ("text", PropType::Boolean, false),
             ],
-            serde_json::json!({}),
+            fixed!({}),
         ),
         // attributes.ts:4621 -> frui/view/ImageFilm
         (
@@ -367,7 +374,7 @@ pub(super) fn components() -> Vec<ComponentDefinition> {
                 ("image", PropType::Json, false),
                 ("style", PropType::Json, false),
             ],
-            serde_json::json!({}),
+            fixed!({}),
         ),
         // attributes.ts:4532 -> frui/view/Code
         (
@@ -383,10 +390,10 @@ pub(super) fn components() -> Vec<ComponentDefinition> {
                 ("startingLineNumber", PropType::Number, false),
                 ("style", PropType::Json, false),
             ],
-            serde_json::json!({"language": "json"}),
+            fixed!({"language": "json"}),
         ),
         // attributes.ts:4783 -> frui/view/Markdown
-        ("view.markdown", vec![], serde_json::json!({})),
+        ("view.markdown", vec![], fixed!({})),
         // attributes.ts:4963 -> frui/view/Rating
         (
             "view.rating",
@@ -395,16 +402,16 @@ pub(super) fn components() -> Vec<ComponentDefinition> {
                 ("remainder", PropType::Boolean, false),
                 ("round", PropType::String, false),
             ],
-            serde_json::json!({}),
+            fixed!({}),
         ),
         // attributes.ts:4746 -> frui/view/List
         (
             "view.list",
             vec![("ordered", PropType::Boolean, false)],
-            serde_json::json!({}),
+            fixed!({}),
         ),
         // attributes.ts:4875 -> frui/view/List
-        ("view.ol", vec![], serde_json::json!({"ordered": true})),
+        ("view.ol", vec![], fixed!({"ordered": true})),
         // attributes.ts:5048 -> frui/view/Spread
         (
             "view.spread",
@@ -413,7 +420,7 @@ pub(super) fn components() -> Vec<ComponentDefinition> {
                 ("separator", PropType::String, false),
                 ("style", PropType::Json, false),
             ],
-            serde_json::json!({}),
+            fixed!({}),
         ),
         // attributes.ts:5087 -> frui/view/Tabular
         (
@@ -423,17 +430,17 @@ pub(super) fn components() -> Vec<ComponentDefinition> {
                 ("className", PropType::String, false),
                 ("stripes", PropType::Json, false),
             ],
-            serde_json::json!({}),
+            fixed!({}),
         ),
         // attributes.ts:5258 -> frui/view/List
-        ("view.ul", vec![], serde_json::json!({})),
+        ("view.ul", vec![], fixed!({})),
         // attributes.ts:5351 -> Fieldset
-        ("view.fieldset", vec![], serde_json::json!({})),
+        ("view.fieldset", vec![], fixed!({})),
         // attributes.ts:5002 -> frui/view/DateFormat
         (
             "view.rel",
             vec![("locale", PropType::String, false)],
-            serde_json::json!({"format": "a"}),
+            fixed!({"format": "a"}),
         ),
     ]
     .into_iter()
@@ -442,7 +449,11 @@ pub(super) fn components() -> Vec<ComponentDefinition> {
 }
 
 /// Build one metadata-only source definition without repeating revision/public/fixed policies.
-fn definition(name: &str, props: Vec<(&str, PropType, bool)>, fixed: Value) -> ComponentDefinition {
+fn definition(
+    name: &str,
+    props: Vec<(&str, PropType, bool)>,
+    fixed: serde_json::Map<String, Value>,
+) -> ComponentDefinition {
     let mut props = props
         .into_iter()
         .map(|(name, value_type, required)| PropDefinition {
@@ -454,7 +465,7 @@ fn definition(name: &str, props: Vec<(&str, PropType, bool)>, fixed: Value) -> C
         .collect::<Vec<_>>();
     // Registry validation also checks fixed attributes. Append their signatures after
     // the complete original positional list, so no authored source argument shifts.
-    for (name, value) in fixed.as_object().expect("literal source fixed props") {
+    for (name, value) in &fixed {
         if !props.iter().any(|prop| prop.name == *name) {
             let value_type = match value {
                 Value::Bool(_) => PropType::Boolean,
@@ -475,7 +486,7 @@ fn definition(name: &str, props: Vec<(&str, PropType, bool)>, fixed: Value) -> C
         key: format!("stackpress.source.{name}"),
         revision: "source-1".into(),
         props,
-        fixed: serde_json::from_value(fixed).expect("literal source fixed props"),
+        fixed: fixed.into_iter().collect(),
         available: false,
     }
 }

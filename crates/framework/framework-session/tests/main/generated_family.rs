@@ -432,3 +432,66 @@ async fn generated_session_only_external_family_registers_and_installs_only_two_
         .await;
     engine.close().await.unwrap();
 }
+
+/// The official emitter's constant descriptors compile and reconstruct the exact source graph.
+#[test]
+fn generated_constant_descriptors_round_trip_the_composed_source() {
+    use stackpress_framework_schema::{Schema, codegen::NormalizeOptions};
+    use stackpress_idea_transformer::{Composer, CompositionLimits, PackageLoader, ProjectLoader};
+    let base = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures");
+    let loader = PackageLoader::new(ProjectLoader::new(&base).unwrap())
+        .with_source(
+            "stackpress-session/schema.idea",
+            stackpress_framework_session::SCHEMA_SOURCE,
+        )
+        .unwrap();
+    let config = Composer::new(loader, CompositionLimits::default())
+        .compose("extended.idea")
+        .unwrap()
+        .config;
+    let graph = Schema::normalize_source(
+        &config,
+        NormalizeOptions::default(),
+        &["Application", "Session"],
+    )
+    .unwrap();
+    // This checks emitted, compiled functions, rather than just their encoded JSON spelling.
+    assert_eq!(generated::_catalog::describe(), graph.catalog().unwrap());
+    assert_eq!(generated::_catalog::models(), graph.models());
+    for model in [generated::profile::describe(), generated::auth::describe()] {
+        assert_eq!(
+            &model,
+            graph
+                .models()
+                .iter()
+                .find(|expected| expected.name == model.name)
+                .unwrap()
+        );
+    }
+    for (columns, model) in [
+        (
+            generated::profile::columns(),
+            generated::profile::describe(),
+        ),
+        (generated::auth::columns(), generated::auth::describe()),
+    ] {
+        let stored: Vec<_> = model
+            .fields
+            .into_iter()
+            .filter(|field| {
+                !matches!(
+                    field.value_type,
+                    stackpress_framework_schema::ValueType::Model(_)
+                )
+            })
+            .collect();
+        assert_eq!(
+            columns
+                .into_iter()
+                .map(|column| column.field)
+                .collect::<Vec<_>>(),
+            stored
+        );
+    }
+    super::fixture_generation::fixtures(true).unwrap();
+}

@@ -162,7 +162,7 @@ where
         results
     }
     async fn install(&self) -> Result<(), ActionError> {
-        let plan = self.store.create().render(self.engine.dialect())?;
+        let plan = self.store.create()?.render(self.engine.dialect())?;
         stackpress_framework_sql::setup::execute_plan(&self.engine, &plan).await?;
         Ok(())
     }

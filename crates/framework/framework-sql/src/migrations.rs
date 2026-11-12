@@ -552,6 +552,8 @@ pub enum MigrationStep {
 /// Complete immutable plan with typed execution and canonical review artifacts.
 #[derive(Clone, Debug)]
 pub struct MigrationPlan {
+    /// Backend validated while reconstructing the canonical recipe.
+    backend: DialectId,
     /// Checked predecessor and its explicit physical layout.
     from: RevisionSnapshot,
     /// Checked target with retained/appended physical slots.
@@ -639,7 +641,7 @@ impl MigrationPlan {
     }
     /// Inspect the backend without opening a database.
     pub fn dialect(&self) -> DialectId {
-        dialect(&self.recipe.dialect).expect("planner validated dialect")
+        self.backend
     }
     /// Serialize checked execution authority with a hash over re-rendered operations and binds.
     pub fn artifact(&self) -> DataResult<String> {

@@ -102,7 +102,7 @@ async fn scenario_steps(engine: Arc<Engine>) -> support::TestResult<()> {
     query.like = record(json!({"id":"ALPHA"}));
     assert_eq!(auth.count(&query).await?, 1);
     // G48 keeps real store alteration and explicit teardown on the same native setup policy.
-    let mut target = auth.store.create().definition()?;
+    let mut target = auth.store.create()?.definition()?;
     target.fields.push(stackpress_sql::Field::new(
         "g48_note",
         stackpress_sql::SqlType::Integer,
@@ -119,7 +119,7 @@ async fn scenario_steps(engine: Arc<Engine>) -> support::TestResult<()> {
     auth.purge(true).await?;
     println!("stage: Auth uninstall");
     auth.uninstall().await?;
-    let mut target = profile.store.create().definition()?;
+    let mut target = profile.store.create()?.definition()?;
     target.fields.push(stackpress_sql::Field::new(
         "g48_note",
         stackpress_sql::SqlType::Integer,
@@ -169,7 +169,7 @@ async fn mysql_purge_boundaries(profile: &ProfileActions) -> support::TestResult
     // generated parent. Only this app-owned boundary table needs fixture DDL.
     let mut field = profile
         .store
-        .create()
+        .create()?
         .definition()?
         .fields
         .into_iter()

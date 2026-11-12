@@ -389,7 +389,13 @@ async fn invoke<
                     };
                     results(res, rows.into_iter().next(), representation)?;
                 }
-                _ => unreachable!(),
+                _ => {
+                    return Err(ActionError::new(
+                        500,
+                        "invalid source mutation event",
+                        Record::new(),
+                    ));
+                }
             }
         }
         Event::Get => {

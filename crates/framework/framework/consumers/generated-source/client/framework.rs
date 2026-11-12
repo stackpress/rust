@@ -12,7 +12,7 @@ pub fn describe() -> Vec<stackpress_framework_schema::Model> {
     ]
 }
 /// Explicit DDL preparation; installing this module performs no database work.
-pub fn definition() -> stackpress_sql::Result<Vec<stackpress_sql::TableDefinition>> {
+pub fn definition() -> Result<Vec<stackpress_sql::TableDefinition>> {
     Ok(vec![
         table::<super::super::stores::profile::ProfileModel>()?,
         table::<super::super::stores::application::ApplicationModel>()?,
@@ -21,8 +21,12 @@ pub fn definition() -> stackpress_sql::Result<Vec<stackpress_sql::TableDefinitio
     ])
 }
 /// Prepare a definition from the actual associated generated store, without an Engine.
-fn table<M: SourceModel>() -> stackpress_sql::Result<stackpress_sql::TableDefinition> {
-    M::Store::new(String::new(), 0).create().definition()
+fn table<M: SourceModel>() -> Result<stackpress_sql::TableDefinition> {
+    M::Store::new(String::new(), 0)
+        .create()
+        .map_err(stackpress_lib::Error::from_source)?
+        .definition()
+        .map_err(stackpress_lib::Error::from_source)
 }
 
 /// Queue only this model's generated source event inventory, preserving catalog order.

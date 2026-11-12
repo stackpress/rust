@@ -138,18 +138,18 @@
     {
       "source": "crates/sql/sql-postgres/src/tests/m2.rs",
       "copy": "examples/generated-workspace/app/tests/support/driver_stores/postgres.rs",
-      "sha256": "76cd2d969330dfee74f4226e3e39d8fb7fd95a6863632268e0a83dc44a269eac",
+      "sha256": "1f7baa1a870b824fce4d7a6cce0e7cdafbddd0442ee8b9d46d0126491fd2e0ac",
       "provenance": "// Copied from crates/sql/sql-postgres/src/tests/m2.rs; checked by tools/release/check_test_copies.py.",
       "divergence_reason": "Repository integration fixture retains M2 parent CREATE/DROP and watchdog ownership, with a distinct prefix, generated-store child suite and read-only final catalog listing; adapter contract and stress scenarios remain crate-local.",
-      "copy_sha256": "a13f5d67521c4c48ffa10bafed5ffd435992a6601d5fe1f63810c0284e2a02c1"
+      "copy_sha256": "92a47ddc2d551408b58b504995831ace0579c5a3918703d40fedfcf078eb516f"
     },
     {
       "source": "crates/sql/sql-mysql/src/tests/m2.rs",
       "copy": "examples/generated-workspace/app/tests/support/driver_stores/mysql.rs",
-      "sha256": "2021fd8fc232158abe0428e69853ff2a042941dbf4c00f859fdfeec308c169fa",
+      "sha256": "197b96060f830d551fc1d35a7ed7256b27d2f8a9ab9e878f3a222baec04b9be3",
       "provenance": "// Copied from crates/sql/sql-mysql/src/tests/m2.rs; checked by tools/release/check_test_copies.py.",
       "divergence_reason": "Repository integration fixture retains M2 parent CREATE/DROP and watchdog ownership, with a distinct prefix, generated-store child suite and read-only final catalog listing; adapter contract and stress scenarios remain crate-local.",
-      "copy_sha256": "b4ce0ec194811305c76a713b388a447e2a44ac5b785563187fbaddb238ddfb64"
+      "copy_sha256": "b1a48ed9eee804358df89ba8b48442c2b4f21712df38c744fd079ac987eaf6a8"
     }
   ]
 }

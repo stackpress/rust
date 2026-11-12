@@ -40,7 +40,7 @@ pub fn emit_source_contracts(graph: &SourceGraph, output: &mut OutputPlan) -> Re
                 "nullable": !field.required && !field.multiple,
             }));
         }
-        let metadata = serde_json::to_string(model).map_err(encoding_error)?;
+        let metadata = serde_json::to_string(model).map_err(source::encoding_error)?;
         let text = source::generate(
             "templates/source-model.rs.tpl",
             include_str!("templates/source-model.rs.tpl"),
@@ -62,7 +62,7 @@ pub fn emit_source_contracts(graph: &SourceGraph, output: &mut OutputPlan) -> Re
         &json!({
             "models": models,
             "externals": graph.external_models().iter().map(|name| source::string_literal(name)).collect::<Vec<_>>(),
-            "catalog": source::string_literal(&serde_json::to_string(&metadata).map_err(encoding_error)?),
+            "catalog": source::string_literal(&serde_json::to_string(&metadata).map_err(source::encoding_error)?),
         }),
     )?;
     // The existing plan/writer owns module indexes, path validation and atomic installation.
@@ -96,17 +96,6 @@ fn codec(field: &Field) -> SchemaResult<&'static str> {
             ));
         }
     })
-}
-
-/// Preserve a structured cause when encoding a trusted normalized descriptor fails.
-fn encoding_error(cause: serde_json::Error) -> stackpress_idea_transformer::TransformError {
-    transform_error(
-        crate::SchemaError::new(
-            crate::SchemaErrorKind::Codec,
-            "source descriptor encoding failed",
-        )
-        .with_cause(cause),
-    )
 }
 
 /// Generated Rust module identity, independent of the SQL table spelling.

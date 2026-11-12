@@ -2,8 +2,8 @@
   {
     "name": "stackpress-leptos",
     "directory": "crates/leptos",
-    "file_count": 182,
-    "source_bytes": 932915,
+    "file_count": 183,
+    "source_bytes": 937696,
     "files": [
       ".cargo_vcs_info.json",
       "Cargo.lock",
@@ -135,6 +135,7 @@
       "src/stream.rs",
       "src/stream_replay.rs",
       "tests/async_feasibility.rs",
+      "tests/fixtures/corpus.json",
       "tests/render_seams.rs",
       "tests/suggestions.rs",
       "tests/support/async_watchdog.rs",
@@ -190,11 +191,7 @@
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
-    "archive_bytes": 265648,
-    "archive_payload_bytes": 1001691,
-    "pending_test_references": [
-      "src/rich.rs:215: include_str!../../../examples/ui-format/corpus.json missing from package"
-    ]
+    "pending_test_references": []
   },
   {
     "name": "stackpress-framework-language",
@@ -213,15 +210,13 @@
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
-    "archive_bytes": 5468,
-    "archive_payload_bytes": 13769,
     "pending_test_references": []
   },
   {
     "name": "stackpress-sql",
     "directory": "crates/sql/sql",
-    "file_count": 74,
-    "source_bytes": 772965,
+    "file_count": 75,
+    "source_bytes": 778566,
     "files": [
       ".cargo_vcs_info.json",
       "Cargo.lock",
@@ -296,16 +291,12 @@
       "tests/network.rs",
       "tests/network/cases.rs",
       "tests/safety.rs",
-      "tests/storage_policy.rs"
+      "tests/storage_policy.rs",
+      "tests/support/harness.rs"
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
-    "archive_bytes": 164665,
-    "archive_payload_bytes": 807105,
-    "pending_test_references": [
-      "tests/harness.rs:3: #[path] ../../test-support/harness.rs missing from package",
-      "tests/network.rs:6: #[path] ../../test-support/harness.rs missing from package"
-    ]
+    "pending_test_references": []
   },
   {
     "name": "stackpress-lib",
@@ -396,8 +387,6 @@
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
-    "archive_bytes": 220049,
-    "archive_payload_bytes": 868417,
     "pending_test_references": []
   },
   {
@@ -481,15 +470,13 @@
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
-    "archive_bytes": 103578,
-    "archive_payload_bytes": 853549,
     "pending_test_references": []
   },
   {
     "name": "stackpress-sql-sqlite",
     "directory": "crates/sql/sql-sqlite",
-    "file_count": 37,
-    "source_bytes": 297901,
+    "file_count": 48,
+    "source_bytes": 300727,
     "files": [
       ".cargo_vcs_info.json",
       "Cargo.lock",
@@ -514,7 +501,7 @@
       "src/options.rs",
       "src/session.rs",
       "src/tests.rs",
-      "src/tests/host.rs",
+      "src/tests/contention.rs",
       "src/tests/m1.rs",
       "src/tests/m1/outcomes.rs",
       "src/tests/m1/pool.rs",
@@ -527,24 +514,28 @@
       "src/tests/m2/queries.rs",
       "src/tests/rounds.rs",
       "src/tests/transitions.rs",
-      "src/tests/watchdog.rs"
+      "src/tests/watchdog.rs",
+      "tests/support/watchdog.rs",
+      "tests/ui/alias.rs",
+      "tests/ui/alias.stderr",
+      "tests/ui/clone.rs",
+      "tests/ui/clone.stderr",
+      "tests/ui/consumed.rs",
+      "tests/ui/consumed.stderr",
+      "tests/ui/escape.rs",
+      "tests/ui/escape.stderr",
+      "tests/ui/non_send_future.rs",
+      "tests/ui/non_send_future.stderr"
     ],
     "errors": [],
-    "stripped_dev_dependencies": [
-      "stackpress_server"
-    ],
-    "archive_bytes": 81922,
-    "archive_payload_bytes": 333481,
-    "pending_test_references": [
-      "src/maintenance/tests.rs:16: #[path] ../../../../../examples/generated-workspace/support/watchdog.rs missing from package",
-      "src/tests/host.rs:7: references stripped dev-dependency stackpress_server"
-    ]
+    "stripped_dev_dependencies": [],
+    "pending_test_references": []
   },
   {
     "name": "stackpress-sql-postgres",
     "directory": "crates/sql/sql-postgres",
-    "file_count": 59,
-    "source_bytes": 314636,
+    "file_count": 56,
+    "source_bytes": 285703,
     "files": [
       ".cargo_vcs_info.json",
       "CODECS.md",
@@ -578,14 +569,17 @@
       "src/reuse.rs",
       "src/session.rs",
       "src/tests.rs",
+      "src/tests/binds.rs",
       "src/tests/environment.rs",
       "src/tests/m1.rs",
       "src/tests/m1/lifecycle.rs",
       "src/tests/m1/outcomes.rs",
+      "src/tests/m1/publication.rs",
       "src/tests/m1/reuse.rs",
       "src/tests/m1/values.rs",
       "src/tests/m2.rs",
       "src/tests/process.rs",
+      "src/tests/publication.rs",
       "src/tests/support/README.md",
       "src/tests/support/contract.rs",
       "src/tests/support/contract/errors.rs",
@@ -593,54 +587,25 @@
       "src/tests/support/contract/outcomes.rs",
       "src/tests/support/contract/transactions.rs",
       "src/tests/support/contract/values.rs",
-      "src/tests/support/diagnostics.rs",
       "src/tests/support/process.rs",
+      "src/tests/support/sql_diagnostics.rs",
       "src/tests/support/sqlite.rs",
-      "src/tests/support/stores/fixture.rs",
-      "src/tests/support/stores/mod.rs",
-      "src/tests/support/stores/observe.rs",
-      "src/tests/support/stores/preflight.rs",
-      "src/tests/support/stores/reads.rs",
-      "src/tests/support/stores/writes.rs",
-      "src/tests/support/stores/writes/mysql.rs",
       "src/tests/support/stress.rs",
-      "tests/m0.rs"
+      "tests/m0.rs",
+      "tests/support/harness.rs"
     ],
     "errors": [],
     "stripped_dev_dependencies": [
-      "generated_workspace_app",
       "stackpress_framework_schema",
       "stackpress_framework_sql"
     ],
-    "archive_bytes": 93696,
-    "archive_payload_bytes": 356260,
-    "pending_test_references": [
-      "src/tests/m1.rs:5: #[path] ../../../test-support/harness.rs missing from package",
-      "src/tests/m2.rs:5: #[path] ../../../test-support/harness.rs missing from package",
-      "src/tests/support/diagnostics.rs:8: references stripped dev-dependency stackpress_framework_sql",
-      "src/tests/support/stores/fixture.rs:3: references stripped dev-dependency stackpress_framework_sql",
-      "src/tests/support/stores/fixture.rs:8: references stripped dev-dependency generated_workspace_app",
-      "src/tests/support/stores/fixture.rs:61: references stripped dev-dependency stackpress_framework_sql",
-      "src/tests/support/stores/fixture.rs:82: references stripped dev-dependency stackpress_framework_sql",
-      "src/tests/support/stores/fixture.rs:103: references stripped dev-dependency stackpress_framework_sql",
-      "src/tests/support/stores/fixture.rs:170: references stripped dev-dependency stackpress_framework_sql",
-      "src/tests/support/stores/mod.rs:3: references stripped dev-dependency generated_workspace_app",
-      "src/tests/support/stores/mod.rs:16: references stripped dev-dependency stackpress_framework_schema",
-      "src/tests/support/stores/mod.rs:17: references stripped dev-dependency stackpress_framework_sql",
-      "src/tests/support/stores/preflight.rs:3: references stripped dev-dependency generated_workspace_app",
-      "src/tests/support/stores/preflight.rs:8: references stripped dev-dependency stackpress_framework_schema",
-      "src/tests/support/stores/reads.rs:3: references stripped dev-dependency stackpress_framework_schema",
-      "src/tests/support/stores/reads.rs:4: references stripped dev-dependency stackpress_framework_sql",
-      "src/tests/support/stores/writes.rs:3: references stripped dev-dependency stackpress_framework_sql",
-      "src/tests/support/stores/writes.rs:351: references stripped dev-dependency stackpress_framework_sql",
-      "tests/m0.rs:5: #[path] ../../test-support/harness.rs missing from package"
-    ]
+    "pending_test_references": []
   },
   {
     "name": "stackpress-sql-mysql",
     "directory": "crates/sql/sql-mysql",
-    "file_count": 40,
-    "source_bytes": 231932,
+    "file_count": 55,
+    "source_bytes": 301531,
     "files": [
       ".cargo_vcs_info.json",
       "CODECS.md",
@@ -678,37 +643,38 @@
       "src/tests/m1.rs",
       "src/tests/m1/lifecycle.rs",
       "src/tests/m1/outcomes.rs",
+      "src/tests/m1/publication.rs",
       "src/tests/m1/reuse.rs",
       "src/tests/m1/values.rs",
       "src/tests/m2.rs",
-      "tests/m0.rs"
+      "src/tests/publication.rs",
+      "tests/fixtures/g37-ddl.json",
+      "tests/m0.rs",
+      "tests/support/harness.rs",
+      "tests/support/postgres/process.rs",
+      "tests/support/postgres/support/contract.rs",
+      "tests/support/postgres/support/contract/errors.rs",
+      "tests/support/postgres/support/contract/lifecycle.rs",
+      "tests/support/postgres/support/contract/outcomes.rs",
+      "tests/support/postgres/support/contract/transactions.rs",
+      "tests/support/postgres/support/contract/values.rs",
+      "tests/support/postgres/support/process.rs",
+      "tests/support/postgres/support/sql_diagnostics.rs",
+      "tests/support/postgres/support/sqlite.rs",
+      "tests/support/postgres/support/stress.rs"
     ],
     "errors": [],
     "stripped_dev_dependencies": [
-      "generated_workspace_app",
       "stackpress_framework_schema",
       "stackpress_framework_sql"
     ],
-    "archive_bytes": 72713,
-    "archive_payload_bytes": 273171,
-    "pending_test_references": [
-      "src/tests.rs:4: #[path] ../../sql-postgres/src/tests/process.rs missing from package",
-      "src/tests/g37.rs:6: include_str!../../../../framework/framework-sql/tests/fixtures/g37-ddl.json missing from package",
-      "src/tests/m1.rs:5: #[path] ../../../test-support/harness.rs missing from package",
-      "src/tests/m1.rs:179: #[path] ../../../sql-postgres/src/tests/support/process.rs missing from package",
-      "src/tests/m2.rs:5: #[path] ../../../test-support/harness.rs missing from package",
-      "src/tests/m2.rs:180: #[path] ../../../sql-postgres/src/tests/support/process.rs missing from package",
-      "src/tests/m2.rs:184: #[path] ../../../sql-postgres/src/tests/support/diagnostics.rs missing from package",
-      "src/tests/m2.rs:188: #[path] ../../../sql-postgres/src/tests/support/contract.rs missing from package",
-      "src/tests/m2.rs:190: #[path] ../../../sql-postgres/src/tests/support/stress.rs missing from package",
-      "tests/m0.rs:5: #[path] ../../test-support/harness.rs missing from package"
-    ]
+    "pending_test_references": []
   },
   {
     "name": "stackpress-server",
     "directory": "crates/server/server",
-    "file_count": 66,
-    "source_bytes": 600472,
+    "file_count": 67,
+    "source_bytes": 603459,
     "files": [
       ".cargo_vcs_info.json",
       "Cargo.lock",
@@ -768,6 +734,7 @@
       "tests/lifecycle.rs",
       "tests/on_request.rs",
       "tests/ownership.rs",
+      "tests/support/watchdog.rs",
       "tests/ui/escaping_host.rs",
       "tests/ui/escaping_host.stderr",
       "tests/ui/non_send_service.rs",
@@ -779,13 +746,7 @@
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
-    "archive_bytes": 152425,
-    "archive_payload_bytes": 619345,
-    "pending_test_references": [
-      "src/core_tests.rs:19: #[path] ../../../lib/tests/support/watchdog.rs missing from package",
-      "tests/concurrency.rs:17: #[path] ../../../lib/tests/support/watchdog.rs missing from package",
-      "tests/ownership.rs:7: #[path] ../../../lib/tests/support/watchdog.rs missing from package"
-    ]
+    "pending_test_references": []
   },
   {
     "name": "stackpress-idea-transformer",
@@ -857,8 +818,6 @@
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
-    "archive_bytes": 110126,
-    "archive_payload_bytes": 426601,
     "pending_test_references": []
   },
   {
@@ -924,15 +883,13 @@
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
-    "archive_bytes": 94553,
-    "archive_payload_bytes": 350882,
     "pending_test_references": []
   },
   {
     "name": "stackpress-cli",
     "directory": "tools/cli",
-    "file_count": 47,
-    "source_bytes": 364051,
+    "file_count": 48,
+    "source_bytes": 366892,
     "files": [
       ".cargo_vcs_info.json",
       "Cargo.lock",
@@ -979,28 +936,19 @@
       "tests/run_contracts.rs",
       "tests/support/tty_probe.py",
       "tests/support/tty_prompt_probe.py",
+      "tests/support/watchdog.rs",
       "tests/tty_contracts.rs",
       "tests/tty_prompt_contracts.rs"
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
-    "archive_bytes": 103600,
-    "archive_payload_bytes": 384726,
-    "pending_test_references": [
-      "src/lib.rs:41: #[path] ../../../crates/lib/tests/support/watchdog.rs missing from package",
-      "tests/entry_contracts.rs:18: #[path] ../../../crates/lib/tests/support/watchdog.rs missing from package",
-      "tests/prompt_contracts.rs:20: #[path] ../../../crates/lib/tests/support/watchdog.rs missing from package",
-      "tests/render_contracts.rs:12: #[path] ../../../crates/lib/tests/support/watchdog.rs missing from package",
-      "tests/run_contracts.rs:26: #[path] ../../../crates/lib/tests/support/watchdog.rs missing from package",
-      "tests/tty_contracts.rs:19: #[path] ../../../crates/lib/tests/support/watchdog.rs missing from package",
-      "tests/tty_prompt_contracts.rs:20: #[path] ../../../crates/lib/tests/support/watchdog.rs missing from package"
-    ]
+    "pending_test_references": []
   },
   {
     "name": "stackpress-framework-view",
     "directory": "crates/framework/framework-view",
-    "file_count": 85,
-    "source_bytes": 402536,
+    "file_count": 86,
+    "source_bytes": 405552,
     "files": [
       ".cargo_vcs_info.json",
       "Cargo.lock",
@@ -1086,21 +1034,18 @@
       "tests/lifecycle.rs",
       "tests/policies.rs",
       "tests/presentation_registration.rs",
-      "tests/support/async_watchdog.rs"
+      "tests/support/async_watchdog.rs",
+      "tests/support/watchdog.rs"
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
-    "archive_bytes": 124026,
-    "archive_payload_bytes": 455342,
-    "pending_test_references": [
-      "tests/leptos_cleanup.rs:166: #[path] ../../../lib/tests/support/watchdog.rs missing from package"
-    ]
+    "pending_test_references": []
   },
   {
     "name": "stackpress-framework-csrf",
     "directory": "crates/framework/framework-csrf",
     "file_count": 18,
-    "source_bytes": 40165,
+    "source_bytes": 40185,
     "files": [
       ".cargo_vcs_info.json",
       "Cargo.lock",
@@ -1123,15 +1068,13 @@
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
-    "archive_bytes": 19064,
-    "archive_payload_bytes": 59444,
     "pending_test_references": []
   },
   {
     "name": "stackpress-framework-email",
     "directory": "crates/framework/framework-email",
-    "file_count": 52,
-    "source_bytes": 347397,
+    "file_count": 54,
+    "source_bytes": 354967,
     "files": [
       ".cargo_vcs_info.json",
       "Cargo.lock",
@@ -1183,17 +1126,13 @@
       "src/smtp_error.rs",
       "src/smtp_tests.rs",
       "src/tasks.rs",
+      "src/tests/content.rs",
+      "src/tests/publication.rs",
       "tests/fixtures/tls-cert.pem",
       "tests/fixtures/tls-key.pem"
     ],
     "errors": [],
-    "stripped_dev_dependencies": [
-      "stackpress_framework_schema",
-      "stackpress_framework_session",
-      "stackpress_framework_sql"
-    ],
-    "archive_bytes": 114292,
-    "archive_payload_bytes": 432918,
+    "stripped_dev_dependencies": [],
     "pending_test_references": []
   },
   {
@@ -1217,15 +1156,13 @@
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
-    "archive_bytes": 19984,
-    "archive_payload_bytes": 66180,
     "pending_test_references": []
   },
   {
     "name": "stackpress-framework-schema",
     "directory": "crates/framework/framework-schema",
-    "file_count": 93,
-    "source_bytes": 599552,
+    "file_count": 95,
+    "source_bytes": 617831,
     "files": [
       ".cargo_vcs_info.json",
       "Cargo.lock",
@@ -1310,6 +1247,8 @@
       "src/validation.rs",
       "src/values.rs",
       "tests/extension-oracles.json",
+      "tests/fixtures/api.idea",
+      "tests/fixtures/session.idea",
       "tests/m0.rs",
       "tests/m1.rs",
       "tests/source_emission.rs",
@@ -1323,20 +1262,13 @@
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
-    "archive_bytes": 146697,
-    "archive_payload_bytes": 627258,
-    "pending_test_references": [
-      "tests/source_emission.rs:57: include_str!../../framework-session/schema.idea missing from package",
-      "tests/source_emission.rs:62: include_str!../../framework-api/schema.idea missing from package",
-      "tests/source_graph.rs:22: include_str!../../framework-session/schema.idea missing from package",
-      "tests/source_graph.rs:27: include_str!../../framework-api/schema.idea missing from package"
-    ]
+    "pending_test_references": []
   },
   {
     "name": "stackpress-framework-sql",
     "directory": "crates/framework/framework-sql",
-    "file_count": 168,
-    "source_bytes": 1893833,
+    "file_count": 176,
+    "source_bytes": 1927455,
     "files": [
       ".cargo_vcs_info.json",
       "Cargo.lock",
@@ -1424,6 +1356,7 @@
       "src/source/select.rs",
       "src/source/statement.rs",
       "src/source/store.rs",
+      "src/source/tests/store.rs",
       "src/source/text.rs",
       "src/source/values.rs",
       "src/stores.rs",
@@ -1432,6 +1365,8 @@
       "tests/codecs.rs",
       "tests/conflict.rs",
       "tests/executor_budgets.rs",
+      "tests/fixtures/framework-api.idea",
+      "tests/fixtures/framework-session.idea",
       "tests/fixtures/g37-ddl.json",
       "tests/fixtures/g37-v2/one.json",
       "tests/fixtures/g37-v2/plan.json",
@@ -1442,6 +1377,10 @@
       "tests/fixtures/m3/postgres-baseline.sql",
       "tests/fixtures/m3/postgres-down.sql",
       "tests/fixtures/m3/postgres-up.sql",
+      "tests/fixtures/release/matrix.idea",
+      "tests/fixtures/release/names.idea",
+      "tests/fixtures/release/native.idea",
+      "tests/fixtures/release/schema.idea",
       "tests/m3.rs",
       "tests/m3_review.rs",
       "tests/m3_seeds.rs",
@@ -1453,15 +1392,14 @@
       "tests/main/source_models/model.rs.tpl",
       "tests/main/source_models/ownership.rs",
       "tests/main/source_models/runtime.rs",
+      "tests/main/source_models/runtime_publication.rs",
       "tests/main/source_models/support.rs",
       "tests/main/source_models/support/actions.rs",
       "tests/main/source_models/support/store.rs",
       "tests/main/source_models/witnesses.rs",
       "tests/migrations.rs",
-      "tests/proofs/lengths/README.md",
-      "tests/proofs/lengths/main.rs",
-      "tests/proofs/lengths/prove.py",
-      "tests/proofs/lengths/schema.idea",
+      "tests/operation_publication.rs",
+      "tests/publication.rs",
       "tests/setup.rs",
       "tests/source-pass/default_family.rs",
       "tests/source-pass/extended_family.rs",
@@ -1505,37 +1443,19 @@
       "tests/source-ui/wrong_core_type.stderr",
       "tests/storage_codegen.rs",
       "tests/storage_length.rs",
-      "tests/support/g54.rs"
+      "tests/support/g54.rs",
+      "tests/support/recording.rs",
+      "tests/support/watchdog.rs"
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
-    "archive_bytes": 279202,
-    "archive_payload_bytes": 1938302,
-    "pending_test_references": [
-      "src/migrations/faults.rs:6: #[path] ../../../../../examples/generated-workspace/support/watchdog.rs missing from package",
-      "tests/conflict.rs:11: #[path] ../../../../examples/generated-workspace/support/watchdog.rs missing from package",
-      "tests/executor_budgets.rs:12: #[path] ../../../../examples/generated-workspace/support/watchdog.rs missing from package",
-      "tests/m3.rs:12: #[path] ../../../../examples/generated-workspace/support/watchdog.rs missing from package",
-      "tests/m3_seeds.rs:13: #[path] ../../../../examples/generated-workspace/support/watchdog.rs missing from package",
-      "tests/main/codegen.rs:118: include_str!../../../../../examples/generated-workspace/contracts/matrix.idea missing from package",
-      "tests/main/codegen.rs:119: include_str!../../../../../examples/generated-workspace/app/schema.idea missing from package",
-      "tests/main/codegen.rs:120: include_str!../../../../../examples/generated-workspace/app/native.idea missing from package",
-      "tests/main/codegen.rs:121: include_str!../../../../../examples/generated-workspace/app/names.idea missing from package",
-      "tests/main/source_models/emission.rs:78: include_str!../../../../framework-session/schema.idea missing from package",
-      "tests/main/source_models/mod.rs:79: include_str!../../../../framework-session/schema.idea missing from package",
-      "tests/main/source_models/mod.rs:84: include_str!../../../../framework-api/schema.idea missing from package",
-      "tests/main/source_models/ownership.rs:27: #[path] ../../../../../../examples/generated-workspace/support/watchdog.rs missing from package",
-      "tests/migrations.rs:16: #[path] ../../../../examples/generated-workspace/support/watchdog.rs missing from package",
-      "tests/proofs/lengths/main.rs:2: mod generated missing from package",
-      "tests/setup.rs:4: #[path] ../../../sql/sql/examples/support/mod.rs missing from package",
-      "tests/storage_length.rs:10: #[path] ../../../../examples/generated-workspace/support/watchdog.rs missing from package"
-    ]
+    "pending_test_references": []
   },
   {
     "name": "stackpress-framework-admin",
     "directory": "crates/framework/framework-admin",
-    "file_count": 76,
-    "source_bytes": 442866,
+    "file_count": 79,
+    "source_bytes": 474206,
     "files": [
       ".cargo_vcs_info.json",
       "Cargo.lock",
@@ -1605,8 +1525,11 @@
       "src/transfer/mod.rs",
       "tests/admin_state.rs",
       "tests/catalog.rs",
+      "tests/fixtures/framework-api.idea",
+      "tests/fixtures/framework-session.idea",
       "tests/pages.rs",
       "tests/presentation.rs",
+      "tests/publication.rs",
       "tests/roles.rs",
       "tests/source.rs",
       "tests/source/editor.rs",
@@ -1616,18 +1539,13 @@
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
-    "archive_bytes": 131370,
-    "archive_payload_bytes": 512826,
-    "pending_test_references": [
-      "tests/source.rs:23: include_str!../../framework-session/schema.idea missing from package",
-      "tests/source.rs:28: include_str!../../framework-api/schema.idea missing from package"
-    ]
+    "pending_test_references": []
   },
   {
     "name": "stackpress-framework-session",
     "directory": "crates/framework/framework-session",
-    "file_count": 208,
-    "source_bytes": 1534563,
+    "file_count": 229,
+    "source_bytes": 1711418,
     "files": [
       ".cargo_vcs_info.json",
       "Cargo.lock",
@@ -1718,6 +1636,27 @@
       "tests/account-flows.json",
       "tests/account-removal-join.json",
       "tests/auth-flows.json",
+      "tests/email/fixtures/README.md",
+      "tests/email/fixtures/generation.rs",
+      "tests/email/fixtures/models.idea",
+      "tests/email/fixtures/models/.stackpress-generated.json",
+      "tests/email/fixtures/models/mod.rs",
+      "tests/email/fixtures/models/source/auth.rs",
+      "tests/email/fixtures/models/source/catalog.rs",
+      "tests/email/fixtures/models/source/mod.rs",
+      "tests/email/fixtures/models/source/profile.rs",
+      "tests/email/fixtures/models/stores/auth.rs",
+      "tests/email/fixtures/models/stores/family.rs",
+      "tests/email/fixtures/models/stores/mod.rs",
+      "tests/email/fixtures/models/stores/profile.rs",
+      "tests/email/fixtures/regenerate.rs",
+      "tests/email/fixtures/source-page-boundaries.json",
+      "tests/email/integration/mod.rs",
+      "tests/email/integration/rendering.rs",
+      "tests/email/integration/signup.rs",
+      "tests/email/integration/support.rs",
+      "tests/email/integration/transports.rs",
+      "tests/email_integration.rs",
       "tests/empty-seed.json",
       "tests/fixtures/README.md",
       "tests/fixtures/extended.idea",
@@ -1840,15 +1779,13 @@
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
-    "archive_bytes": 277725,
-    "archive_payload_bytes": 1651507,
     "pending_test_references": []
   },
   {
     "name": "stackpress-framework-api",
     "directory": "crates/framework/framework-api",
     "file_count": 161,
-    "source_bytes": 1184148,
+    "source_bytes": 1188884,
     "files": [
       ".cargo_vcs_info.json",
       "Cargo.lock",
@@ -2014,15 +1951,13 @@
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
-    "archive_bytes": 209483,
-    "archive_payload_bytes": 1303261,
     "pending_test_references": []
   },
   {
     "name": "stackpress-framework",
     "directory": "crates/framework/framework",
-    "file_count": 87,
-    "source_bytes": 585049,
+    "file_count": 88,
+    "source_bytes": 588056,
     "files": [
       ".cargo_vcs_info.json",
       "Cargo.lock",
@@ -2094,6 +2029,7 @@
       "tests/fixtures/models/stores/session.rs",
       "tests/fixtures/process.rs",
       "tests/fixtures/regenerate.rs",
+      "tests/fixtures/source-client.idea",
       "tests/fixtures/source-commands.json",
       "tests/fixtures/source-order.json",
       "tests/fixtures/source-scripts.json",
@@ -2114,17 +2050,13 @@
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
-    "archive_bytes": 146701,
-    "archive_payload_bytes": 710107,
-    "pending_test_references": [
-      "tests/cases/generated_family.rs:14: include_str!../../consumers/build-host/source.idea missing from package"
-    ]
+    "pending_test_references": []
   },
   {
     "name": "stackpress",
     "directory": ".",
     "file_count": 7,
-    "source_bytes": 221507,
+    "source_bytes": 221238,
     "files": [
       ".cargo_vcs_info.json",
       "Cargo.lock",
@@ -2136,8 +2068,6 @@
     ],
     "errors": [],
     "stripped_dev_dependencies": [],
-    "archive_bytes": 41121,
-    "archive_payload_bytes": 162645,
     "pending_test_references": []
   }
 ]

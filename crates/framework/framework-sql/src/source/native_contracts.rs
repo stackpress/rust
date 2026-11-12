@@ -17,7 +17,7 @@ impl<S: SourceSchema<Value = Value, Record = Record>> SourceStore for NativeStor
     fn query(&self, input: &Record) -> SourceResult<StoreQuery> {
         StoreQuery::from_record(input)
     }
-    fn create(&self) -> Create {
+    fn create(&self) -> SourceResult<Create> {
         self.create()
     }
     fn alter(&self, to: Option<&Create>) -> SourceResult<Alter> {

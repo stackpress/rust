@@ -2,6 +2,7 @@
 use stackpress_framework_schema::{Model, SchemaResult, source::{Column, Kind, Record, Value, SourceColumn, SourceSchema as SourceSchemaContract}};
 
 /// Complete source metadata, including relations, UI props and private attributes.
+#[expect(clippy::expect_used, reason = "generator serializes a checked Model into this constant JSON literal")]
 pub fn describe() -> Model {
     stackpress_framework_schema::source::__private::serde_json::from_str([%model%]).expect("generator emitted valid source metadata")
 }
@@ -10,15 +11,15 @@ pub fn describe() -> Model {
 pub fn columns() -> Vec<SourceColumn> {
     let model = describe();
     let catalog=std::sync::Arc::new(super::[%catalog_module%]::describe());
-    let codecs = vec![
+    // Visit source fields in declaration order; virtual relations have no storage codec.
+    model.fields.into_iter().filter_map(|field| {
+        let codec = match field.name.as_str() {
 [%#@:columns column%]
-        ([%column.name%], Column { kind: Kind::[%column.kind%], nullable: [%column.nullable%] }),
+            [%column.name%] => Column { kind: Kind::[%column.kind%], nullable: [%column.nullable%] },
 [%/@:columns%]
-    ];
-    // Pair by exact identity instead of dropping or shifting a virtual relation slot.
-    codecs.into_iter().map(|(name, codec)| {
-        let field = model.fields.iter().find(|field| field.name == name).expect("generated column has source field").clone();
-        SourceColumn::new(codec, field).with_catalog(catalog.clone())
+            _ => return None,
+        };
+        Some(SourceColumn::new(codec, field).with_catalog(catalog.clone()))
     }).collect()
 }
 

@@ -40,10 +40,10 @@ pub(super) fn emit(schema: &Schema, model: &Model) -> Result<String> {
                         ValueType::Integer
                     }
                 })
-                .expect("checked enum");
+                .ok_or_else(|| transform_error(super::invalid("query enum has no variants")))?;
         }
         predicate["kind"] = json!(source::string_literal(
-            &serde_json::to_string(&kind).expect("scalar kind serialization")
+            &serde_json::to_string(&kind).map_err(source::encoding_error)?
         ));
         predicate["multiple"] = json!(field.multiple);
         predicate["nullable"] = json!(!field.required);
@@ -64,7 +64,7 @@ pub(super) fn emit(schema: &Schema, model: &Model) -> Result<String> {
             && !field.multiple
     });
     let ui = serde_json::to_string(&schema.project_ui().map_err(transform_error)?)
-        .expect("checked UI schema serialization");
+        .map_err(source::encoding_error)?;
     source::generate(
         "templates/query.rs.tpl",
         include_str!("templates/query.rs.tpl"),

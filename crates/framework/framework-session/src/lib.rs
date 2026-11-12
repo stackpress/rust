@@ -1,3 +1,12 @@
+#![deny(
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::panic,
+    clippy::unimplemented,
+    clippy::todo,
+    clippy::unreachable
+)]
+
 //! Configured identity mechanisms following the original Stackpress Session contract.
 //!
 //! Default builds expose portable configuration and permission data only. `native` adds

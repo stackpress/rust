@@ -80,8 +80,10 @@ pub(super) fn normalize(
     };
     // Optional messages are data, never derived from rejected values. Variadic option
     // uses an explicit array to disambiguate its optional trailing message.
-    if code == "option" && args.first().is_some_and(Value::is_array) {
-        let mut choices = args[0].as_array().expect("array checked").clone();
+    if code == "option"
+        && let Some(Value::Array(choices)) = args.first()
+    {
+        let mut choices = choices.clone();
         choices.extend(args.into_iter().skip(1));
         args = choices;
     }

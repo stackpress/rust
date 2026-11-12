@@ -7,7 +7,7 @@ impl<S: SourceSchema<Value = Value, Record = Record>> NativeActions<S> {
     pub async fn install(&self) -> Result<()> {
         crate::setup::execute_plan(
             &self.engine,
-            &self.store.create().render(self.engine.dialect())?,
+            &self.store.create()?.render(self.engine.dialect())?,
         )
         .await?;
         Ok(())
@@ -16,7 +16,7 @@ impl<S: SourceSchema<Value = Value, Record = Record>> NativeActions<S> {
     pub async fn upgrade(&self, to: &Create) -> Result<()> {
         if let Some(plan) = self
             .store
-            .create()
+            .create()?
             .definition()?
             .diff(&to.definition()?)?
             .render(self.engine.dialect())?

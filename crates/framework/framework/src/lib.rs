@@ -1,3 +1,12 @@
+#![deny(
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::panic,
+    clippy::unimplemented,
+    clippy::todo,
+    clippy::unreachable
+)]
+
 //! Explicit compiled composition of the Stackpress framework.
 //!
 //! The default feature set selects no plugin or native host. `full` selects the nine

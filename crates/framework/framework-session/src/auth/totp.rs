@@ -42,9 +42,10 @@ pub fn generate_at(secret: &str, seconds: u64, window: i64, step: u64) -> Result
     let bytes = digest.as_ref();
     let offset = usize::from(bytes[bytes.len() - 1] & 15);
     let code = u32::from_be_bytes(
-        bytes[offset..offset + 4]
-            .try_into()
-            .expect("SHA1 dynamic offset fits"),
+        bytes
+            .get(offset..offset + 4)
+            .and_then(|slice| slice.try_into().ok())
+            .ok_or_else(|| Error::invalid("TOTP digest offset out of range"))?,
     ) & 0x7fff_ffff;
     Ok(format!("{:06}", code % 1_000_000))
 }

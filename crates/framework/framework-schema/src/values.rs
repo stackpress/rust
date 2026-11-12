@@ -144,9 +144,20 @@ pub struct DateValue(String);
 #[serde(transparent)]
 pub struct TimeValue(String);
 /// Canonical UTC RFC3339 instant, seconds required, with up to nine fractional digits.
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+/// Retains the checked instant privately for comparisons; only canonical text is serialized.
+#[derive(Clone, PartialEq, Eq, Serialize)]
 #[serde(transparent)]
-pub struct DatetimeValue(String);
+pub struct DatetimeValue(String, #[serde(skip)] OffsetDateTime);
+
+impl std::fmt::Debug for DatetimeValue {
+    /// Keep the canonical-text debug representation independent of the private cache.
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter
+            .debug_tuple("DatetimeValue")
+            .field(&self.0)
+            .finish()
+    }
+}
 
 impl DateValue {
     /// Parse an exact calendar date without timezone inference.
@@ -220,17 +231,15 @@ impl DatetimeValue {
         let text = instant
             .format(&format_description::well_known::Rfc3339)
             .map_err(|_| invalid())?;
-        Ok(Self(text))
+        Ok(Self(text, instant))
     }
     /// Borrow the canonical UTC representation.
     pub fn as_str(&self) -> &str {
         &self.0
     }
-    /// Return nanoseconds since the Unix epoch for explicit-clock comparisons.
+    /// Return cached nanoseconds since the Unix epoch for explicit-clock comparisons.
     pub fn unix_nanos(&self) -> i128 {
-        OffsetDateTime::parse(&self.0, &format_description::well_known::Rfc3339)
-            .expect("checked datetime invariant")
-            .unix_timestamp_nanos()
+        self.1.unix_timestamp_nanos()
     }
 }
 

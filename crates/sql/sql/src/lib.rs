@@ -1,3 +1,12 @@
+#![deny(
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::panic,
+    clippy::unimplemented,
+    clippy::todo,
+    clippy::unreachable
+)]
+
 //! Build SQL, inspect its text and binds, then choose an executor explicitly.
 //!
 //! `stackpress-sql` supplies six detached builder families, SQLite/PostgreSQL/MySQL

@@ -154,8 +154,7 @@ pub(crate) fn encode(value: &str) -> String {
         if byte.is_ascii_alphanumeric() || b"-_.!~*'()".contains(&byte) {
             encoded.push(char::from(byte));
         } else {
-            use std::fmt::Write;
-            write!(&mut encoded, "%{byte:02X}").expect("String write");
+            encoded.push_str(&format!("%{byte:02X}"));
         }
     }
     encoded

@@ -25,11 +25,11 @@ const GATE: &str = "STACKPRESS_TEST_MYSQL_URL";
 /// Fixed backend identity: the fixture never infers it from untrusted URL text.
 const DIALECT: DialectId = DialectId::Mysql;
 
-/// Only the successful CREATE path can arm this cleanup authority.
+/// The unique reserved name grants cleanup authority before CREATE can have side effects.
 struct Fixture {
     /// Generated bounded ASCII identifier, never copied from an environment URL.
     name: String,
-    /// True only after this process's CREATE acknowledged success.
+    /// Reserved before CREATE; retained even if the server outcome is uncertain.
     armed: bool,
 }
 impl Fixture {
@@ -41,8 +41,10 @@ impl Fixture {
             SystemTime::now().duration_since(UNIX_EPOCH)?.as_nanos()
         );
         validate_name(&name)?;
-        println!("attempting CREATE of exact database {name}");
-        let create_name = name.clone();
+        // A timed-out CREATE can still succeed on the server. Reserve cleanup first.
+        let fixture = Self { name, armed: true };
+        println!("attempting CREATE of exact database {}", fixture.name);
+        let create_name = fixture.name.clone();
         bounded_admin(move |connection| {
             Box::pin(async move {
                 let sql = format!("CREATE DATABASE {}", quoted(&create_name));
@@ -52,9 +54,8 @@ impl Fixture {
                 Ok(())
             })
         })?;
-        // Arm only after CREATE succeeds; failure before this point never runs DROP.
-        println!("created owned database {name}");
-        Ok(Self { name, armed: true })
+        println!("created owned database {}", fixture.name);
+        Ok(fixture)
     }
     /// Close-owning child has exited/reaped before this independent cleanup deadline starts.
     fn cleanup(&mut self) -> TestResult<()> {
@@ -62,12 +63,13 @@ impl Fixture {
             return Ok(());
         }
         let name = self.name.clone();
+        println!("attempting DROP IF EXISTS of exact reserved database {name}");
         let result = bounded_admin(move |connection| {
             Box::pin(async move {
                 // PostgreSQL 12 has no FORCE. A just-disposed own socket may still finish
                 // its current statement; retry only DROP of this armed database, no catalogs.
                 loop {
-                    let sql = format!("DROP DATABASE {}", quoted(&name));
+                    let sql = format!("DROP DATABASE IF EXISTS {}", quoted(&name));
                     match connection
                         .execute(sqlx::AssertSqlSafe(sql).into_sql_str())
                         .await

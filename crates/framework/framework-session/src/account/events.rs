@@ -180,7 +180,7 @@ pub async fn profile_detail_with<M: SessionModels>(
     {
         query.columns = columns
             .iter()
-            .map(|column| column.as_str().unwrap().into())
+            .filter_map(|column| column.as_str().map(Into::into))
             .collect();
     }
     let profile = actions.profile();

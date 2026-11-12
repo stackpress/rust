@@ -36,8 +36,8 @@ the test. Administrative cleanup has an independent deadline.
 ## Preserve fixture ownership
 
 Each M0/M1/M2 runner creates one unique bounded ASCII database name with CREATE DATABASE,
-without IF NOT EXISTS. Cleanup is armed only after creation succeeds. Children touch only
-that database. The parent closes its own connections and drops that exact database on
+without IF NOT EXISTS. Cleanup is armed before sending CREATE, because a timeout can hide server-side success.
+Children touch only that database. The parent closes its own connections and runs DROP DATABASE IF EXISTS for that exact reserved name on
 success, failure and unwind; PostgreSQL 12 uses no DROP WITH (FORCE).
 
 Never enumerate other databases, change roles/global settings, terminate unrelated sessions
