@@ -1,5 +1,7 @@
 # stackpress-cli
 
+**Beta:** 0.2.x is the supported release series; 0.1.x users should upgrade. The API may still change before 1.0.
+
 Build an application-owned command-line executable around Stackpress operations. Argument parsing, formatting and prompts work independently; the crate supplies adapter primitives rather than a stock binary.
 
 ```rust

@@ -1,0 +1,26 @@
+[20:59:34] Release version 0.2.0
+[20:59:55] 23 to publish: 23 new version(s) of existing crates, 0 brand-new crate(s); about 0 minute(s) of rate-limit waiting.
+  stackpress-leptos                  update
+  stackpress-framework-language      update
+  stackpress-sql                     update
+  stackpress-lib                     update
+  stackpress-idea-parser             update
+  stackpress-sql-sqlite              update
+  stackpress-sql-postgres            update
+  stackpress-sql-mysql               update
+  stackpress-server                  update
+  stackpress-idea-transformer        update
+  stackpress-server-http             update
+  stackpress-cli                     update
+  stackpress-framework-view          update
+  stackpress-framework-csrf          update
+  stackpress-framework-email         update
+  stackpress-idea                    update
+  stackpress-framework-schema        update
+  stackpress-framework-sql           update
+  stackpress-framework-admin         update
+  stackpress-framework-session       update
+  stackpress-framework-api           update
+  stackpress-framework               update
+  stackpress                         update
+Benchmark: /Users/cblanquera/server/projects/stackpress/rust/.agents/resources/build-benchmarks/runs/20261112T125934.096043Z-3d061eea3173.json

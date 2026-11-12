@@ -1,5 +1,7 @@
 # stackpress-server
 
+**Beta:** 0.2.x is the supported release series; 0.1.x users should upgrade. The API may still change before 1.0.
+
 Compile-time plugins configure a transport-neutral Stackpress host. Top-level handling runs the request, operation, response and error lifecycle; nested dispatch stays explicit.
 
 ```rust

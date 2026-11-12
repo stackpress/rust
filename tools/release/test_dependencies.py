@@ -20,11 +20,11 @@ class DependencyPolicy(unittest.TestCase):
 
     def test_later_dev_edge_is_path_only(self):
         self.assertEqual(self.audit('dev-dependencies', 'late'), ([], {'other_crate'}))
-        self.assertTrue(self.audit('dev-dependencies', 'late', '0.1.0')[0])
+        self.assertTrue(self.audit('dev-dependencies', 'late', '0.2.0')[0])
 
     def test_earlier_dev_edge_requires_version(self):
         self.assertTrue(self.audit('dev-dependencies', 'early')[0])
-        self.assertEqual(self.audit('dev-dependencies', 'early', '0.1.0'), ([], set()))
+        self.assertEqual(self.audit('dev-dependencies', 'early', '0.2.0'), ([], set()))
 
     def test_private_normal_dependency_fails(self):
         self.assertTrue(self.audit('dependencies', 'private')[0])

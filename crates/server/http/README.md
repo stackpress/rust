@@ -1,5 +1,7 @@
 # Stackpress HTTP host
 
+**Beta:** 0.2.x is the supported release series; 0.1.x users should upgrade. The API may still change before 1.0.
+
 `stackpress-server-http` serves a built Stackpress application over HTTP/1.1 using
 Hyper and Tokio. It owns finite admission, deadlines, sequential connection reuse,
 cancellation, optional Rustls HTTPS, and bounded shutdown. Runtime creation and

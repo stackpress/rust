@@ -1,0 +1,19 @@
+{
+  "main_peak_bytes": 12716191744,
+  "current_main_bytes": 12716191744,
+  "retired_completed_consumers": [
+    "target/00058-release/consumer-aggregate-build-host",
+    "target/00058-release/consumer-aggregate-full",
+    "target/00058-release/consumer-aggregate-direct",
+    "target/00058-release/consumer-aggregate-headless",
+    "target/00058-release/consumer-aggregate-api-disabled",
+    "target/00058-release/consumer-aggregate-disabled",
+    "target/00058-release/consumer-aggregate-facade",
+    "target/00058-release/consumer-aggregate-website",
+    "target/00058-release/consumer-session-direct",
+    "target/00058-release/consumer-session-facade",
+    "target/00058-release/consumer-session-plugin",
+    "target/00058-release/consumer-session-disabled"
+  ],
+  "transient_du_races": 3
+}

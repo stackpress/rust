@@ -67,7 +67,7 @@ class BoundaryTests(unittest.TestCase):
             "host": {"package": "stackpress-server", "path": "../server"},
             "stackpress-lib": {"path": "../lib"},
             "repo-proof": {"path": "../repo-proof"},
-            "stackpress-framework-api": "0.1",
+            "stackpress-framework-api": "0.2",
             "tempfile": "3",
         }}
         unavailable = boundaries.unavailable_dev_dependencies("stackpress-sql-sqlite", manifest)

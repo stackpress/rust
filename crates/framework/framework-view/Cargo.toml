@@ -31,7 +31,7 @@ leptos-csr = ["leptos", "stackpress-leptos/csr"]
 leptos-stream = ["leptos-ssr", "stackpress-leptos/stream"]
 
 [dependencies]
-stackpress-leptos = { path = "../../leptos", version = "0.1.0", optional = true, default-features = false }
+stackpress-leptos = { path = "../../leptos", version = "0.2.0", optional = true, default-features = false }
 leptos = { version = "=0.8.22", optional = true, default-features = false }
 leptos_meta = { version = "=0.8.7", optional = true, default-features = false }
 leptos_router = { version = "=0.8.17", optional = true, default-features = false }
@@ -39,15 +39,15 @@ futures = { version = "0.3", optional = true }
 
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-stackpress-framework-language = { path = "../framework-language", version = "0.1.0", optional = true }
+stackpress-framework-language = { path = "../framework-language", version = "0.2.0", optional = true }
 url = { version = "=2.5.8", optional = true }
 
 [target.'cfg(all(unix, not(target_arch = "wasm32")))'.dependencies]
 libc = { version = "=0.2.191", optional = true }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-stackpress-lib = { path = "../../lib", version = "0.1.0", optional = true }
-stackpress-server = { path = "../../server/server", version = "0.1.0", optional = true }
+stackpress-lib = { path = "../../lib", version = "0.2.0", optional = true }
+stackpress-server = { path = "../../server/server", version = "0.2.0", optional = true }
 
 [dev-dependencies]
 futures = "0.3"

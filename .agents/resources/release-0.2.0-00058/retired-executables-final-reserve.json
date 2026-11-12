@@ -1,0 +1,1454 @@
+{
+  "before_bytes": 11823443968,
+  "after_bytes": 11899052032,
+  "retired": [
+    {
+      "file": "target/00058-release/debug/deps/tcp-044889954f8b568b",
+      "bytes": 10849136
+    },
+    {
+      "file": "target/00058-release/debug/deps/tcp-8ce9429fc4782705",
+      "bytes": 10828672
+    },
+    {
+      "file": "target/00058-release/debug/deps/sqlite_service-49deb301db36b1fa",
+      "bytes": 10556928
+    },
+    {
+      "file": "target/00058-release/debug/deps/sqlite_service-93144b1ea695f4a3",
+      "bytes": 10556688
+    },
+    {
+      "file": "target/00058-release/debug/deps/source_graph-6ebbed06fe07726b",
+      "bytes": 10480768
+    },
+    {
+      "file": "target/00058-release/debug/deps/sqlite_host-c0ff68a2583b40ab",
+      "bytes": 10467856
+    },
+    {
+      "file": "target/00058-release/debug/deps/sqlite_host-3fd349904ce553ca",
+      "bytes": 10467136
+    },
+    {
+      "file": "target/00058-release/debug/deps/source_graph-933ea0b3360e8080",
+      "bytes": 10460176
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_framework_admin-6f42d77d40bb26f5",
+      "bytes": 10418752
+    },
+    {
+      "file": "target/00058-release/debug/deps/operation_publication-1ae4247f5f8a4fd8",
+      "bytes": 10414160
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_profile_ui_native-3bf1c2626db09761",
+      "bytes": 10322768
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_profile_ui_native-afc8c7b2b451d4b6",
+      "bytes": 10295856
+    },
+    {
+      "file": "target/00058-release/debug/deps/m1-283c583e8a2d2f32",
+      "bytes": 10029376
+    },
+    {
+      "file": "target/00058-release/debug/deps/m1-bedfb33c30072ab6",
+      "bytes": 10009360
+    },
+    {
+      "file": "target/00058-release/debug/deps/presentation_registration-e74ca728ea5b9eb3",
+      "bytes": 10006432
+    },
+    {
+      "file": "target/00058-release/debug/deps/presentation_registration-b90c2ce79413d2c8",
+      "bytes": 9977376
+    },
+    {
+      "file": "target/00058-release/debug/deps/source_extensions-ad6e0a68776ef342",
+      "bytes": 9808640
+    },
+    {
+      "file": "target/00058-release/debug/deps/source_extensions-fa7c6316c5366f37",
+      "bytes": 9787136
+    },
+    {
+      "file": "target/00058-release/debug/deps/m0-f8fbe283b5ca6250",
+      "bytes": 9705552
+    },
+    {
+      "file": "target/00058-release/debug/deps/m0-a40083c76138fbdd",
+      "bytes": 9685024
+    },
+    {
+      "file": "target/00058-release/debug/deps/contracts-c62196220538110d",
+      "bytes": 9677520
+    },
+    {
+      "file": "target/00058-release/debug/deps/parity-9f732ee7d92308b7",
+      "bytes": 9675728
+    },
+    {
+      "file": "target/00058-release/debug/deps/parity-8fb3988f468d5e88",
+      "bytes": 9670384
+    },
+    {
+      "file": "target/00058-release/debug/deps/operation_publication-eed3de5110e1fd12",
+      "bytes": 9598368
+    },
+    {
+      "file": "target/00058-release/debug/deps/http_output-a2dcc90455db7d8f",
+      "bytes": 9525664
+    },
+    {
+      "file": "target/00058-release/debug/deps/http_output-8c1c34cb03bd7b60",
+      "bytes": 9520560
+    },
+    {
+      "file": "target/00058-release/debug/deps/http_input-c64662fddd3c79b3",
+      "bytes": 9460720
+    },
+    {
+      "file": "target/00058-release/debug/deps/http_input-892f505453ba5543",
+      "bytes": 9438800
+    },
+    {
+      "file": "target/00058-release/debug/deps/http-3549957680f9bfef",
+      "bytes": 9425584
+    },
+    {
+      "file": "target/00058-release/debug/deps/http-7a39c767e15ba6a7",
+      "bytes": 9420176
+    },
+    {
+      "file": "target/00058-release/debug/deps/cli-6217947766b07fae",
+      "bytes": 9417232
+    },
+    {
+      "file": "target/00058-release/debug/deps/cli-dff1c4736f716342",
+      "bytes": 9412256
+    },
+    {
+      "file": "target/00058-release/debug/deps/http_stream-1eb070f7e87fac36",
+      "bytes": 9401152
+    },
+    {
+      "file": "target/00058-release/debug/deps/http_stream-8b264dd464384c52",
+      "bytes": 9396304
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_server-4e0ebf91b9e5cbac",
+      "bytes": 9360416
+    },
+    {
+      "file": "target/00058-release/debug/deps/storage_length-da825817aeeaecad",
+      "bytes": 9360048
+    },
+    {
+      "file": "target/00058-release/debug/deps/storage_length-ba72539c7660ec7e",
+      "bytes": 9355536
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_server-1c2bcf820aa69ee3",
+      "bytes": 9354928
+    },
+    {
+      "file": "target/00058-release/debug/deps/transfer-15d8fbc675bcda4f",
+      "bytes": 9337328
+    },
+    {
+      "file": "target/00058-release/debug/deps/http_immutable-89c523733e919138",
+      "bytes": 9280656
+    },
+    {
+      "file": "target/00058-release/debug/deps/http_immutable-0ba8544218852492",
+      "bytes": 9258896
+    },
+    {
+      "file": "target/00058-release/debug/deps/transfer-589a2e9164874f96",
+      "bytes": 9248016
+    },
+    {
+      "file": "target/00058-release/debug/deps/admin_state-923a8825a48af148",
+      "bytes": 9164112
+    },
+    {
+      "file": "target/00058-release/debug/deps/source_emission-e1fc8cf3221111db",
+      "bytes": 9160432
+    },
+    {
+      "file": "target/00058-release/debug/deps/source_emission-cf9b8ae5221dfca9",
+      "bytes": 9160272
+    },
+    {
+      "file": "target/00058-release/debug/deps/executables-8e97e268d7714bb1",
+      "bytes": 9142912
+    },
+    {
+      "file": "target/00058-release/debug/deps/admin_state-c656065dcaba6cd4",
+      "bytes": 9141168
+    },
+    {
+      "file": "target/00058-release/debug/deps/executables-bba2832046c7a127",
+      "bytes": 9137600
+    },
+    {
+      "file": "target/00058-release/debug/deps/lifecycle-13b566ae74da9341",
+      "bytes": 9120272
+    },
+    {
+      "file": "target/00058-release/debug/deps/lifecycle-3fbf38a1352a16ee",
+      "bytes": 9115264
+    },
+    {
+      "file": "target/00058-release/debug/deps/foundation-8cbf4187d43ffdea",
+      "bytes": 9053312
+    },
+    {
+      "file": "target/00058-release/debug/deps/construction-30f61a3f5af146c8",
+      "bytes": 9027616
+    },
+    {
+      "file": "target/00058-release/debug/deps/profiles-f3ddea64cc453d0c",
+      "bytes": 9013200
+    },
+    {
+      "file": "target/00058-release/debug/deps/construction-552544ee6ccfaf7b",
+      "bytes": 9006464
+    },
+    {
+      "file": "target/00058-release/debug/deps/profiles-14da79d5c137dbed",
+      "bytes": 8991632
+    },
+    {
+      "file": "target/00058-release/debug/deps/contracts-f4d081f84986a123",
+      "bytes": 8955104
+    },
+    {
+      "file": "target/00058-release/debug/deps/lifecycle-3d8ba8651311fd0c",
+      "bytes": 8932800
+    },
+    {
+      "file": "target/00058-release/debug/deps/lifecycle-ab0858e41e1be4f1",
+      "bytes": 8931936
+    },
+    {
+      "file": "target/00058-release/debug/deps/lifecycle-5224a9b0983653e7",
+      "bytes": 8927696
+    },
+    {
+      "file": "target/00058-release/debug/deps/contracts-a96d07b78ac79c42",
+      "bytes": 8920656
+    },
+    {
+      "file": "target/00058-release/debug/deps/contracts-b78fc95be130639a",
+      "bytes": 8917536
+    },
+    {
+      "file": "target/00058-release/debug/deps/lifecycle-3acf6c96804a116c",
+      "bytes": 8906560
+    },
+    {
+      "file": "target/00058-release/debug/deps/generated_admin_shared-05f0140b331b5ece",
+      "bytes": 8898304
+    },
+    {
+      "file": "target/00058-release/debug/deps/generated_admin_shared-615b167e695c19f7",
+      "bytes": 8883312
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_framework_schema-a0ea0831a9234c87",
+      "bytes": 8830128
+    },
+    {
+      "file": "target/00058-release/debug/deps/experimental-7501fb7eaa7ba2ea",
+      "bytes": 8822112
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_framework_schema-68a4f976790b8ca5",
+      "bytes": 8808608
+    },
+    {
+      "file": "target/00058-release/debug/deps/experimental-e6e8d31f42518f05",
+      "bytes": 8784128
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_framework_view-196753abea779869",
+      "bytes": 8711872
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_framework_view-2d78228412853aaf",
+      "bytes": 8705584
+    },
+    {
+      "file": "target/00058-release/debug/deps/profile_app-f0568c0c2ec13c7c",
+      "bytes": 8603520
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress-c29289395edaabcf",
+      "bytes": 8598976
+    },
+    {
+      "file": "target/00058-release/debug/deps/profile_app-1139f78ca4df8e17",
+      "bytes": 8597664
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress-73112dcf66065cd5",
+      "bytes": 8593184
+    },
+    {
+      "file": "target/00058-release/debug/deps/conflict-88c275ab099b6de8",
+      "bytes": 8515184
+    },
+    {
+      "file": "target/00058-release/debug/deps/executor_budgets-01beece9d49459f3",
+      "bytes": 8415728
+    },
+    {
+      "file": "target/00058-release/debug/deps/handler_signature-7b8fa30e5e4e0a38",
+      "bytes": 8394240
+    },
+    {
+      "file": "target/00058-release/debug/deps/handler_signature-60f7e647211ca0fa",
+      "bytes": 8392144
+    },
+    {
+      "file": "target/00058-release/debug/deps/foundation-574b45bd40ad1767",
+      "bytes": 8231216
+    },
+    {
+      "file": "target/00058-release/debug/deps/transfer-d36f2a7b956a904e",
+      "bytes": 8124560
+    },
+    {
+      "file": "target/00058-release/debug/deps/transfer-c4a5b8c6206e8709",
+      "bytes": 8123408
+    },
+    {
+      "file": "target/00058-release/debug/deps/generation-7973b1802697c223",
+      "bytes": 8098528
+    },
+    {
+      "file": "target/00058-release/debug/deps/generation-0060966c3273fa14",
+      "bytes": 8095472
+    },
+    {
+      "file": "target/00058-release/debug/deps/event_contracts-6b7f11a74072ecf5",
+      "bytes": 8089952
+    },
+    {
+      "file": "target/00058-release/debug/deps/event_contracts-bd189757a203cbdf",
+      "bytes": 8069088
+    },
+    {
+      "file": "target/00058-release/debug/deps/contracts-8b060e327cd8c925",
+      "bytes": 7815488
+    },
+    {
+      "file": "target/00058-release/debug/deps/contracts-b210a829f2b36890",
+      "bytes": 7812224
+    },
+    {
+      "file": "target/00058-release/debug/deps/profile_codegen-41c955b421d0dfab",
+      "bytes": 7759744
+    },
+    {
+      "file": "target/00058-release/debug/deps/profile_codegen-9696a653bf291744",
+      "bytes": 7758368
+    },
+    {
+      "file": "target/00058-release/debug/deps/sql_profile_setup-3e52527e94b4ee46",
+      "bytes": 7687360
+    },
+    {
+      "file": "target/00058-release/debug/deps/sql_profile_setup-743f3f99a45adb46",
+      "bytes": 7686080
+    },
+    {
+      "file": "target/00058-release/debug/deps/prompt_contracts-e24c4b7b50c2f47f",
+      "bytes": 7628624
+    },
+    {
+      "file": "target/00058-release/debug/deps/prompt_contracts-45a297771018ec6c",
+      "bytes": 7625904
+    },
+    {
+      "file": "target/00058-release/debug/deps/leptos_routing-eeaa229642492d51",
+      "bytes": 7375680
+    },
+    {
+      "file": "target/00058-release/debug/deps/leptos_routing-cee0e4fe0c2193ee",
+      "bytes": 7369776
+    },
+    {
+      "file": "target/00058-release/debug/deps/source_ui-0f3e9831ed5784ca",
+      "bytes": 7173408
+    },
+    {
+      "file": "target/00058-release/debug/deps/source_ui-d7a48815a72ca3dc",
+      "bytes": 7172160
+    },
+    {
+      "file": "target/00058-release/debug/deps/profile_codegen-5ee25d4442bc72b6",
+      "bytes": 7112848
+    },
+    {
+      "file": "target/00058-release/debug/deps/error_contracts-970233a64671f46e",
+      "bytes": 6683088
+    },
+    {
+      "file": "target/00058-release/debug/deps/error_contracts-0c07fe8c0ae18a72",
+      "bytes": 6678400
+    },
+    {
+      "file": "target/00058-release/debug/deps/leptos_async_renderer-7b1fa74ce0bc3515",
+      "bytes": 6360880
+    },
+    {
+      "file": "target/00058-release/debug/deps/leptos_async_renderer-06054fe5b3f5b0e3",
+      "bytes": 6360464
+    },
+    {
+      "file": "target/00058-release/debug/deps/run_contracts-2b0bfc9bc6c68143",
+      "bytes": 5871520
+    },
+    {
+      "file": "target/00058-release/debug/deps/run_contracts-23a5f7ba21f25e56",
+      "bytes": 5869808
+    },
+    {
+      "file": "target/00058-release/debug/deps/concurrency-f2bf94097a6fcd38",
+      "bytes": 5675424
+    },
+    {
+      "file": "target/00058-release/debug/deps/concurrency-9b85cd9c1ec9d371",
+      "bytes": 5673584
+    },
+    {
+      "file": "target/00058-release/debug/deps/m3_review-790faca6f82004b9",
+      "bytes": 5512144
+    },
+    {
+      "file": "target/00058-release/debug/deps/entry_contracts-9bad5ef2762cbfce",
+      "bytes": 5432144
+    },
+    {
+      "file": "target/00058-release/debug/deps/entry_contracts-69eeac62c832f7f2",
+      "bytes": 5430544
+    },
+    {
+      "file": "target/00058-release/debug/deps/request_response_contracts-58b7303dacd34b92",
+      "bytes": 5185712
+    },
+    {
+      "file": "target/00058-release/debug/deps/request_response_contracts-715dc2bc0eea0dea",
+      "bytes": 5183648
+    },
+    {
+      "file": "target/00058-release/debug/deps/main-a5f54c1797eb2e5d",
+      "bytes": 4900592
+    },
+    {
+      "file": "target/00058-release/debug/deps/main-1b8c9e69ae17819d",
+      "bytes": 4898016
+    },
+    {
+      "file": "target/00058-release/debug/deps/async_feasibility-1b3b2bab181d8db3",
+      "bytes": 4869184
+    },
+    {
+      "file": "target/00058-release/debug/deps/async_feasibility-36802490bf1b00ad",
+      "bytes": 4867968
+    },
+    {
+      "file": "target/00058-release/debug/deps/ownership-1af454c05e665e20",
+      "bytes": 4830704
+    },
+    {
+      "file": "target/00058-release/debug/deps/ownership-9dd6ac532f6c5e35",
+      "bytes": 4830704
+    },
+    {
+      "file": "target/00058-release/debug/deps/render_seams-4a2e4bbe7cdc967a",
+      "bytes": 4799808
+    },
+    {
+      "file": "target/00058-release/debug/deps/render_seams-f2ea2148dccf2501",
+      "bytes": 4798256
+    },
+    {
+      "file": "target/00058-release/debug/deps/m3_review-e9da82aa7b647dc8",
+      "bytes": 4791376
+    },
+    {
+      "file": "target/00058-release/debug/deps/on_request-19b46d2a028c2612",
+      "bytes": 4705872
+    },
+    {
+      "file": "target/00058-release/debug/deps/on_request-4011e1c7cfa83a18",
+      "bytes": 4687232
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_idea_transformer-8932d1fb1bb1d619",
+      "bytes": 4649504
+    },
+    {
+      "file": "target/00058-release/debug/deps/context_contracts-218471016019f6f7",
+      "bytes": 4636864
+    },
+    {
+      "file": "target/00058-release/debug/deps/context_contracts-938fd342cc29e523",
+      "bytes": 4634784
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_idea_transformer-60f9b1f7dd9e7f2b",
+      "bytes": 4629024
+    },
+    {
+      "file": "target/00058-release/debug/deps/generation-b7d307154065beb3",
+      "bytes": 4602624
+    },
+    {
+      "file": "target/00058-release/debug/deps/generation-a99a9ca248786c63",
+      "bytes": 4599696
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_profile_codegen-9bb4e6f06d0560c2",
+      "bytes": 4591968
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_profile_codegen-74ef9cfaa4aa3fe4",
+      "bytes": 4588480
+    },
+    {
+      "file": "target/00058-release/debug/deps/leptos_system_theme-f1db20acaf481298",
+      "bytes": 4326112
+    },
+    {
+      "file": "target/00058-release/debug/deps/leptos_system_theme-e1915c7510520301",
+      "bytes": 4324864
+    },
+    {
+      "file": "target/00058-release/debug/deps/error_kinds-934ee3e91e3be0b1",
+      "bytes": 4199776
+    },
+    {
+      "file": "target/00058-release/debug/deps/error_kinds-4cccd3baf8fd6e97",
+      "bytes": 4180032
+    },
+    {
+      "file": "target/00058-release/debug/deps/leptos_cleanup-a0c7e6f7e5fa4f57",
+      "bytes": 4176256
+    },
+    {
+      "file": "target/00058-release/debug/deps/leptos_cleanup-dfcdd1a6de4b489b",
+      "bytes": 4175408
+    },
+    {
+      "file": "target/00058-release/debug/deps/package_sources-85a4e98b6a82e9ac",
+      "bytes": 3949456
+    },
+    {
+      "file": "target/00058-release/debug/deps/data_contracts-0debb3f83670dc1f",
+      "bytes": 3762480
+    },
+    {
+      "file": "target/00058-release/debug/deps/data_contracts-cd7b09f9dda668c5",
+      "bytes": 3761216
+    },
+    {
+      "file": "target/00058-release/debug/deps/leptos_executor-ec90495d02130dc7",
+      "bytes": 3739952
+    },
+    {
+      "file": "target/00058-release/debug/deps/leptos_executor-a2d3be1b51111f91",
+      "bytes": 3739264
+    },
+    {
+      "file": "target/00058-release/debug/deps/setup-218b09880b4f1d80",
+      "bytes": 3683008
+    },
+    {
+      "file": "target/00058-release/debug/deps/compose_rules-76fd58c1d81530b4",
+      "bytes": 3527888
+    },
+    {
+      "file": "target/00058-release/debug/deps/compose_rules-860ca50b2a3a71bf",
+      "bytes": 3525312
+    },
+    {
+      "file": "target/00058-release/debug/deps/tty_prompt_contracts-759eb3769eb005b6",
+      "bytes": 3465104
+    },
+    {
+      "file": "target/00058-release/debug/deps/compose_references-1e7cd4abeb3a3d15",
+      "bytes": 3455552
+    },
+    {
+      "file": "target/00058-release/debug/deps/compose_references-959becda4891f4c4",
+      "bytes": 3453232
+    },
+    {
+      "file": "target/00058-release/debug/deps/tty_prompt_contracts-b2c3e4c67aa32782",
+      "bytes": 3446912
+    },
+    {
+      "file": "target/00058-release/debug/deps/package_loader-b4f453dedb9a2b69",
+      "bytes": 3396176
+    },
+    {
+      "file": "target/00058-release/debug/deps/compose_json-dd773deef4f24858",
+      "bytes": 3382304
+    },
+    {
+      "file": "target/00058-release/debug/deps/package_loader-f5677cfa27362673",
+      "bytes": 3377088
+    },
+    {
+      "file": "target/00058-release/debug/deps/config_presence-48cec4652d84645c",
+      "bytes": 3367792
+    },
+    {
+      "file": "target/00058-release/debug/deps/config_presence-a4eb89609e3398f0",
+      "bytes": 3366128
+    },
+    {
+      "file": "target/00058-release/debug/deps/compose_json-6a7a37ba65479ccf",
+      "bytes": 3363168
+    },
+    {
+      "file": "target/00058-release/debug/deps/publication-93f62c7687d62247",
+      "bytes": 3306192
+    },
+    {
+      "file": "target/00058-release/debug/deps/codecs-52c281ae8ed74d63",
+      "bytes": 3267024
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_sql_postgres-cb8881c257bbde97",
+      "bytes": 3186512
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_sql_postgres-48158965011927f1",
+      "bytes": 3168864
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_cli-8508a52b1bbc7920",
+      "bytes": 3130832
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_cli-a29cef32105df08b",
+      "bytes": 3129312
+    },
+    {
+      "file": "target/00058-release/debug/deps/m1-067aee537aca67c0",
+      "bytes": 3120816
+    },
+    {
+      "file": "target/00058-release/debug/deps/setup-78a177fd3ebb9d45",
+      "bytes": 2968064
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_lib-bfa914667ae2d563",
+      "bytes": 2929872
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_lib-bccc8fd913b738dd",
+      "bytes": 2927792
+    },
+    {
+      "file": "target/00058-release/debug/deps/serialization_contracts-6e2d93a2f15a4a01",
+      "bytes": 2898240
+    },
+    {
+      "file": "target/00058-release/debug/deps/serialization_contracts-511bc5793977abe2",
+      "bytes": 2896720
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_sql_mysql-2d7362bd8885dd28",
+      "bytes": 2850704
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_sql_mysql-716364dda8dbf9e3",
+      "bytes": 2849696
+    },
+    {
+      "file": "target/00058-release/debug/deps/transfer-f0acb012d4bcbb09",
+      "bytes": 2803584
+    },
+    {
+      "file": "target/00058-release/debug/deps/transfer-1c7f79c86ec95ece",
+      "bytes": 2798976
+    },
+    {
+      "file": "target/00058-release/debug/deps/render_contracts-0b82ce5f8e0ef02c",
+      "bytes": 2768448
+    },
+    {
+      "file": "target/00058-release/debug/deps/render_contracts-01c71c1125a1b1f6",
+      "bytes": 2766880
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_ui_preferences_shared-8b0a63c875b7787b",
+      "bytes": 2737600
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_ui_preferences_shared-7b83d3a26ccda134",
+      "bytes": 2737440
+    },
+    {
+      "file": "target/00058-release/debug/deps/tty_contracts-7981b6d893574978",
+      "bytes": 2702128
+    },
+    {
+      "file": "target/00058-release/debug/deps/tty_contracts-c2d9b4b57d16fa1f",
+      "bytes": 2700768
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_framework_sql-af9fc86d9b64d645",
+      "bytes": 2595664
+    },
+    {
+      "file": "target/00058-release/debug/deps/publication-ee013240b29ccc60",
+      "bytes": 2593440
+    },
+    {
+      "file": "target/00058-release/debug/deps/crud-9b102ef34269acee",
+      "bytes": 2591568
+    },
+    {
+      "file": "target/00058-release/debug/deps/crud-b772cab450cbce1b",
+      "bytes": 2570208
+    },
+    {
+      "file": "target/00058-release/debug/deps/rounds-45ad75db642b4649",
+      "bytes": 2570048
+    },
+    {
+      "file": "target/00058-release/debug/deps/codecs-a164932f24980896",
+      "bytes": 2553104
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_profile_ui_client-679f6b7faf3b618c",
+      "bytes": 2511168
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_profile_ui_client-c0ead61b6f917e8d",
+      "bytes": 2510144
+    },
+    {
+      "file": "target/00058-release/debug/deps/suggestions-5e36c6a3c9c1fee5",
+      "bytes": 2305376
+    },
+    {
+      "file": "target/00058-release/debug/deps/suggestions-f6b7b593e84d7527",
+      "bytes": 2303680
+    },
+    {
+      "file": "target/00058-release/debug/deps/engine-5f14c4857b682682",
+      "bytes": 2114064
+    },
+    {
+      "file": "target/00058-release/debug/deps/engine-cd50c77c1eab90ef",
+      "bytes": 2114016
+    },
+    {
+      "file": "target/00058-release/debug/deps/args_control_contracts-a8b5b167abd726eb",
+      "bytes": 2077168
+    },
+    {
+      "file": "target/00058-release/debug/deps/args_control_contracts-1953b7ae2c29fa0a",
+      "bytes": 2076496
+    },
+    {
+      "file": "target/00058-release/debug/deps/contracts-ce30c56b7fd2a250",
+      "bytes": 2044240
+    },
+    {
+      "file": "target/00058-release/debug/deps/dialects-b4e7d9ddb2722425",
+      "bytes": 2014992
+    },
+    {
+      "file": "target/00058-release/debug/deps/dialects-3f7917e1bfd1bef4",
+      "bytes": 2014976
+    },
+    {
+      "file": "target/00058-release/debug/deps/safety-05e57d45cee627b7",
+      "bytes": 1990000
+    },
+    {
+      "file": "target/00058-release/debug/deps/safety-7b5f9d55d6e265a6",
+      "bytes": 1989952
+    },
+    {
+      "file": "target/00058-release/debug/deps/wire-acd3c830625f41ac",
+      "bytes": 1988000
+    },
+    {
+      "file": "target/00058-release/debug/deps/wire-b7ecb648374ee666",
+      "bytes": 1987328
+    },
+    {
+      "file": "target/00058-release/debug/deps/reply-fb02d02f0e6c56b1",
+      "bytes": 1982864
+    },
+    {
+      "file": "target/00058-release/debug/deps/reply-5092e3f14f47ef59",
+      "bytes": 1981504
+    },
+    {
+      "file": "target/00058-release/debug/deps/policies-e23aaf321af77406",
+      "bytes": 1939712
+    },
+    {
+      "file": "target/00058-release/debug/deps/policies-e01d29e8732e8599",
+      "bytes": 1939184
+    },
+    {
+      "file": "target/00058-release/debug/deps/generated_admin_web-c240c3e09210dd44",
+      "bytes": 1926896
+    },
+    {
+      "file": "target/00058-release/debug/deps/generated_admin_web-27cdba9111e688a3",
+      "bytes": 1926592
+    },
+    {
+      "file": "target/00058-release/debug/deps/dml-b1e86712e5306147",
+      "bytes": 1914304
+    },
+    {
+      "file": "target/00058-release/debug/deps/dml-afe1d77f59f8eb36",
+      "bytes": 1914256
+    },
+    {
+      "file": "target/00058-release/debug/deps/error_causes-938feba7097a6158",
+      "bytes": 1842480
+    },
+    {
+      "file": "target/00058-release/debug/deps/error_causes-1ce65a1b3f512896",
+      "bytes": 1841728
+    },
+    {
+      "file": "target/00058-release/debug/deps/config-fa32f2b542332ff2",
+      "bytes": 1764720
+    },
+    {
+      "file": "target/00058-release/debug/deps/config-17c82b3ec1bbe4ab",
+      "bytes": 1762592
+    },
+    {
+      "file": "target/00058-release/debug/deps/diff-9c3e93ac49d20b60",
+      "bytes": 1742224
+    },
+    {
+      "file": "target/00058-release/debug/deps/diff-bcd1a7d8f0f2ab9b",
+      "bytes": 1742224
+    },
+    {
+      "file": "target/00058-release/debug/deps/ddl-0ad2e227582f67f9",
+      "bytes": 1738832
+    },
+    {
+      "file": "target/00058-release/debug/deps/ddl-80837892e58cbd3c",
+      "bytes": 1738800
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_framework_session-c0c6d295b62baa1e",
+      "bytes": 1720992
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_sql_profile-87baeda6e9ea5fb6",
+      "bytes": 1668000
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_sql_profile-128d5ad43364ea01",
+      "bytes": 1668000
+    },
+    {
+      "file": "target/00058-release/debug/deps/generated_workspace_tool-54dad7fa7416e7f5",
+      "bytes": 1668000
+    },
+    {
+      "file": "target/00058-release/debug/deps/generated_workspace_app-f368300a4224fa68",
+      "bytes": 1668000
+    },
+    {
+      "file": "target/00058-release/debug/deps/json_values-4a7c895bf33899d7",
+      "bytes": 1620432
+    },
+    {
+      "file": "target/00058-release/debug/deps/json_values-8355cfdcf738d9b7",
+      "bytes": 1620416
+    },
+    {
+      "file": "target/00058-release/debug/deps/transfer_tolerant-d833340c0d278495",
+      "bytes": 1563472
+    },
+    {
+      "file": "target/00058-release/debug/deps/transfer_tolerant-ac3d063f5c6ea5d2",
+      "bytes": 1563456
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_ui_stream_client-91a03239ffc89c8e",
+      "bytes": 1550928
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_ui_stream_client-195b8756b5bf1eaf",
+      "bytes": 1550112
+    },
+    {
+      "file": "target/00058-release/debug/deps/consumer-f75851f1c2076774",
+      "bytes": 1539152
+    },
+    {
+      "file": "target/00058-release/debug/deps/consumer-26601c5a632a7a49",
+      "bytes": 1539152
+    },
+    {
+      "file": "target/00058-release/debug/deps/finite-8345cd243c2ab600",
+      "bytes": 1508016
+    },
+    {
+      "file": "target/00058-release/debug/deps/finite-4759278f39290bff",
+      "bytes": 1507952
+    },
+    {
+      "file": "target/00058-release/debug/deps/storage_policy-5dc86ed244fdbba9",
+      "bytes": 1461632
+    },
+    {
+      "file": "target/00058-release/debug/deps/storage_policy-7df745bc936f2398",
+      "bytes": 1461632
+    },
+    {
+      "file": "target/00058-release/debug/deps/finite-eb1de011a376efe2",
+      "bytes": 1455872
+    },
+    {
+      "file": "target/00058-release/debug/deps/finite-38d0728c4a746050",
+      "bytes": 1455856
+    },
+    {
+      "file": "target/00058-release/debug/deps/contracts-3d2e5ae778390a60",
+      "bytes": 1452784
+    },
+    {
+      "file": "target/00058-release/debug/deps/contracts-93c1b092b656f3db",
+      "bytes": 1451760
+    },
+    {
+      "file": "target/00058-release/debug/deps/source_loaders-7d16e91d45ca4d58",
+      "bytes": 1404464
+    },
+    {
+      "file": "target/00058-release/debug/deps/source_loaders-6bd57f0ac7ba8668",
+      "bytes": 1402944
+    },
+    {
+      "file": "target/00058-release/debug/deps/contracts-f8d66405103f220f",
+      "bytes": 1389472
+    },
+    {
+      "file": "target/00058-release/debug/deps/contracts-9275818465200d37",
+      "bytes": 1389472
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_sql-bcd5f0c83cfa5d7a",
+      "bytes": 1367440
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_sql-8bac21a6804d99c8",
+      "bytes": 1367424
+    },
+    {
+      "file": "target/00058-release/debug/deps/read_source_policy-9fae2aff3a427717",
+      "bytes": 1239536
+    },
+    {
+      "file": "target/00058-release/debug/deps/read_source_policy-d5898acaab61468e",
+      "bytes": 1220896
+    },
+    {
+      "file": "target/00058-release/debug/deps/generation-e881ddfdc763d627",
+      "bytes": 1206512
+    },
+    {
+      "file": "target/00058-release/debug/deps/generation-cc9a89f2bb7049a6",
+      "bytes": 1206496
+    },
+    {
+      "file": "target/00058-release/debug/deps/page-478bcb8eb43f961d",
+      "bytes": 1161376
+    },
+    {
+      "file": "target/00058-release/debug/deps/page-1fdbe714577ee5ef",
+      "bytes": 1161312
+    },
+    {
+      "file": "target/00058-release/debug/deps/routes-1a316647f30c2c93",
+      "bytes": 1158368
+    },
+    {
+      "file": "target/00058-release/debug/deps/routes-fd0ef8bec84260b4",
+      "bytes": 1139360
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_framework_language-72f76cf0500f5f88",
+      "bytes": 1133280
+    },
+    {
+      "file": "target/00058-release/debug/deps/leptos_safety-30262d2c34323e3c",
+      "bytes": 1078720
+    },
+    {
+      "file": "target/00058-release/debug/deps/leptos_safety-7e3561f5e6faa7e4",
+      "bytes": 1078688
+    },
+    {
+      "file": "target/00058-release/debug/deps/finite-b914bad46afed0ef",
+      "bytes": 1021856
+    },
+    {
+      "file": "target/00058-release/debug/deps/finite-fbe8172f65986399",
+      "bytes": 1021840
+    },
+    {
+      "file": "target/00058-release/debug/deps/contextual_cause-8ce3ea1c45d3c5d4",
+      "bytes": 1004656
+    },
+    {
+      "file": "target/00058-release/debug/deps/contextual_cause-98973f303a910882",
+      "bytes": 1002944
+    },
+    {
+      "file": "target/00058-release/debug/deps/harness-57dac4f10da30548",
+      "bytes": 1001248
+    },
+    {
+      "file": "target/00058-release/debug/deps/harness-47a93da46bac4f7d",
+      "bytes": 1001232
+    },
+    {
+      "file": "target/00058-release/debug/deps/generated_workspace_app-d069f5d4c216de7d",
+      "bytes": 976352
+    },
+    {
+      "file": "target/00058-release/debug/deps/generated_workspace_tool-5fe85d29ef9fa608",
+      "bytes": 976352
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_framework_session-2cf24a235d321057",
+      "bytes": 976336
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_capability_host-fa82f6b467434009",
+      "bytes": 924240
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_profile_ui_web-60368a8d32b65947",
+      "bytes": 924240
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_ui_preferences_web-6bdc1411a2c74712",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_capability_host-b381dafc4b329642",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_generated_profile-c3048536c4d35765",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_profile_ui_contracts-d8475c29c6742db1",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_ui_gallery_web-ab59b4709df22bc5",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_profile_ui_web-c4d4eaf71eb445f9",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_ui_gallery_client-d73e64de913bc4fe",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_profile_ui_gateway-3427506ca979f1cd",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_ui_gallery_web-a40f6019c858ba1d",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_ui_gallery_web-dfb27558124a29a9",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_ui_preferences_web-bb37f970ee3c470c",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_profile_ui_web-269d252b56c24462",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_ui_preferences_client-a689a98d01ddf376",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_generated_profile-65b153b4ba01bd58",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_review_preview-16167e442a3bf783",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_ui_preferences_client-c198745545927404",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_ui_gallery_web-e0f5d66a6147d1d7",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_profile_ui_web-32ca93eabcb71b84",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_ui_stream_shared-e18a0c8b1630345e",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_ui_stream_web-87dce966fd3e5b73",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_profile_ui_contracts-46e2f41ae497c7b3",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_ui_stream_web-3dc46b68c22beae0",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_ui_gallery_client-e5c4ee3db0270ca4",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_ui_stream_web-8cbe2f1a5ae716b1",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_ui_preferences_web-d92df7ab3e13756e",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_ui_stream_web-eabd1e74c2590a8e",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_profile_ui_gateway-3aa9225421409abc",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_ui_stream_shared-cbf63baee2939ead",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_ui_preferences_web-c4f14fa00ac1d24d",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00058-release/debug/deps/sql_profile_setup-9523717d4c7bbef2",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00058-release/debug/deps/generated_admin_client-c10759eccf00fa87",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00058-release/debug/deps/data_quickstart-870d40ba20b67f3c",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_server_http-d4365e22b3983211",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_ui_format-76251195476a8b06",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00058-release/debug/deps/matrix_contracts-1b2c56010cca4a0a",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00058-release/debug/deps/executor_budgets-0e4df7fbb16db3f6",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00058-release/debug/deps/names_contracts-cc0123fc9609dd73",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_idea_parser-0f542f4fb426fe94",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00058-release/debug/deps/matrix_contracts-8aae302e8d1106ae",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00058-release/debug/deps/generated_admin_tool-70b406f33453ae2e",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00058-release/debug/deps/sql_profile_setup-f5757ac537bc86d6",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00058-release/debug/deps/data_quickstart-787a31d4a634c3de",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00058-release/debug/deps/generated_admin_tool-1e10a34e4338899e",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00058-release/debug/deps/email_integration-51a7db9ecdb3ec2e",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00058-release/debug/deps/generated_workspace_tool-4d9d169714528762",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00058-release/debug/deps/generated_workspace_contracts-7a420d7320c1736c",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_example_ui_format-828feb556834c157",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_idea-0f6b3e77330d2d58",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00058-release/debug/deps/package_sources-6e72be1ef849244f",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_framework_csrf-5bec07ff23ea8f78",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00058-release/debug/deps/generated_admin_client-31c4d88ad8dc6e82",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00058-release/debug/deps/profile_codegen-1b4cb66acd0d322a",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00058-release/debug/deps/profile_codegen-e93290d4e3851f76",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_framework_csrf-e136779f0bec98c0",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00058-release/debug/deps/generated_admin_web-7eb355052b170ba4",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_framework-a3c4ff6b33a165d4",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00058-release/debug/deps/capability_boundaries-31874175e6aa3340",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00058-release/debug/deps/generated_workspace_tool-ab4c553449dbfd61",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00058-release/debug/deps/names_contracts-f166fdd9e814fec5",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_server_http-d026edd45c0708ef",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00058-release/debug/deps/generated_workspace_contracts-8f885cb9bac53d06",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00058-release/debug/deps/generated_admin_web-6895ec67425c6e97",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress_idea-c6e3b5fb4ebb706b",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00058-release/debug/deps/storage_length-f8af5fee1140b15e",
+      "bytes": 924176
+    },
+    {
+      "file": "target/00058-release/debug/deps/maintenance-78421a1b848f7a14",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00058-release/debug/deps/matrix-57b07d9c8e19219f",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress-68e6d5b7125e01d8",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00058-release/debug/deps/native-72a8c38086ef5443",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00058-release/debug/deps/sql_profile-575bb16ca09dba1a",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00058-release/debug/deps/main-55c38b78cd2e8584",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00058-release/debug/deps/cli-3ae47de121152ef7",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00058-release/debug/deps/source-a403afe31463de23",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00058-release/debug/deps/profile_app-a775e36c594fc0c0",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00058-release/debug/deps/disabled-1a113dfab00e0100",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00058-release/debug/deps/m3_seeds-3b38c7b3e2511492",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress-150f852ab4e84a35",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00058-release/debug/deps/matrix-7a22ab78ac3daeb4",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00058-release/debug/deps/probe-2f4c4907851468e6",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00058-release/debug/deps/profile_app-4455308d4a49f316",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00058-release/debug/deps/sql_profile-83be452ca4b1cd54",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00058-release/debug/deps/operations-0757ac1b61d5fb30",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00058-release/debug/deps/m3-51ac3a46d6a82cbd",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00058-release/debug/deps/migrations-a47964dded3d788a",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00058-release/debug/deps/maintenance-8b4c1f238961837f",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00058-release/debug/deps/publication-41405f412599acbe",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00058-release/debug/deps/leaves-35b6c94d6205b93a",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00058-release/debug/deps/operations-d405f2906cf80363",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00058-release/debug/deps/names-c3b0c51c9401dba0",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00058-release/debug/deps/sqlite-505fbea19a5c31d9",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00058-release/debug/deps/idea-1d158bc486482f50",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00058-release/debug/deps/idea-024e4a5daeb04df5",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00058-release/debug/deps/native-6ea0b1c1813c8346",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00058-release/debug/deps/conflict-5683467b9a15fd2d",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00058-release/debug/deps/leaves-dde937592e81e97d",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress-5a0078ab1ee27f1d",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00058-release/debug/deps/sqlite-048fa6f2c6aa1be0",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00058-release/debug/deps/disabled-1a30f9c53ed14725",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00058-release/debug/deps/names-e3f1cdbec0c9fa1d",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00058-release/debug/deps/stackpress-0613a4eba071f673",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00058-release/debug/deps/probe-7d91017ab4660adc",
+      "bytes": 924160
+    }
+  ]
+}

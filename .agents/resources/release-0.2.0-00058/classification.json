@@ -1,0 +1,287 @@
+{
+  "baseline": "25567fb",
+  "published_commit": "d563f8d0e34182cdf220567409289f305155547c",
+  "tree": "340953fc0691d09425b637b9c104faac4049c80b",
+  "crates": [
+    {
+      "crate": "stackpress-leptos",
+      "classification": "Breaking / Added / Changed / Fixed",
+      "review": "Fallible EditPolicy::display; Language/SelectOptions defaults; editor draft/error ordering; completed render quiescence; invariant/paging/icon fixes.",
+      "reviewed_source_files": [
+        "crates/leptos/src/async_render.rs",
+        "crates/leptos/src/components/bounded_inputs.rs",
+        "crates/leptos/src/components/breadth_tests.rs",
+        "crates/leptos/src/components/combobox.rs",
+        "crates/leptos/src/components/inputs.rs",
+        "crates/leptos/src/components/paging.rs",
+        "crates/leptos/src/components/table_state.rs",
+        "crates/leptos/src/components/text_editor/toolbar/icons.rs",
+        "crates/leptos/src/edit/decimal.rs",
+        "crates/leptos/src/edit/mod.rs",
+        "crates/leptos/src/edit/phone.rs",
+        "crates/leptos/src/edit/temporal.rs",
+        "crates/leptos/src/edit/tests.rs",
+        "crates/leptos/src/format.rs",
+        "crates/leptos/src/language.rs",
+        "crates/leptos/src/language/tests.rs",
+        "crates/leptos/src/lib.rs",
+        "crates/leptos/src/stream.rs"
+      ]
+    },
+    {
+      "crate": "stackpress-framework-language",
+      "classification": "Changed",
+      "review": "No-panic lint policy only; no signature or supported-behavior change.",
+      "reviewed_source_files": [
+        "crates/framework/framework-language/src/lib.rs"
+      ]
+    },
+    {
+      "crate": "stackpress-sql",
+      "classification": "Changed",
+      "review": "No-panic lint policy only; no signature or supported-behavior change.",
+      "reviewed_source_files": [
+        "crates/sql/sql/src/lib.rs"
+      ]
+    },
+    {
+      "crate": "stackpress-lib",
+      "classification": "Breaking / Changed / Fixed",
+      "review": "Nest::entries returns Result; fallible internal serialization/mutation; structurally nonempty invocation ancestry; existing Request default constant exception.",
+      "reviewed_source_files": [
+        "crates/lib/src/data/json.rs",
+        "crates/lib/src/data/mutation.rs",
+        "crates/lib/src/data/nest.rs",
+        "crates/lib/src/event.rs",
+        "crates/lib/src/lib.rs",
+        "crates/lib/src/request.rs"
+      ]
+    },
+    {
+      "crate": "stackpress-idea-parser",
+      "classification": "Changed",
+      "review": "No-panic lint policy only; no parser signature change.",
+      "reviewed_source_files": [
+        "crates/idea/idea-parser/src/lib.rs"
+      ]
+    },
+    {
+      "crate": "stackpress-sql-sqlite",
+      "classification": "Changed",
+      "review": "No-panic lint policy only; no driver signature change.",
+      "reviewed_source_files": [
+        "crates/sql/sql-sqlite/src/lib.rs"
+      ]
+    },
+    {
+      "crate": "stackpress-sql-postgres",
+      "classification": "Changed / Fixed",
+      "review": "No driver signature change; no-panic policy; live-fixture CREATE-error cleanup in tests.",
+      "reviewed_source_files": [
+        "crates/sql/sql-postgres/src/lib.rs",
+        "crates/sql/sql-postgres/src/tests/m1.rs",
+        "crates/sql/sql-postgres/src/tests/m2.rs"
+      ]
+    },
+    {
+      "crate": "stackpress-sql-mysql",
+      "classification": "Changed / Fixed",
+      "review": "No driver signature change; no-panic policy; live-fixture CREATE-error cleanup in tests.",
+      "reviewed_source_files": [
+        "crates/sql/sql-mysql/src/lib.rs",
+        "crates/sql/sql-mysql/src/tests/m1.rs",
+        "crates/sql/sql-mysql/src/tests/m2.rs"
+      ]
+    },
+    {
+      "crate": "stackpress-server",
+      "classification": "Changed / Fixed",
+      "review": "Existing config Result paths now carry invariant failures; no signature change.",
+      "reviewed_source_files": [
+        "crates/server/server/src/config.rs",
+        "crates/server/server/src/lib.rs"
+      ]
+    },
+    {
+      "crate": "stackpress-idea-transformer",
+      "classification": "Changed / Fixed",
+      "review": "Durable staged writes and journal sync; best-effort Unix parent sync; existing public error channels retained.",
+      "reviewed_source_files": [
+        "crates/idea/idea-transformer/src/lib.rs",
+        "crates/idea/idea-transformer/src/output.rs",
+        "crates/idea/idea-transformer/src/output/tests.rs"
+      ]
+    },
+    {
+      "crate": "stackpress-server-http",
+      "classification": "Changed / Fixed",
+      "review": "Typed rejection statuses; completed observed futures stay quiescent; supported HTTP status/framing behavior retained.",
+      "reviewed_source_files": [
+        "crates/server/http/src/connection.rs",
+        "crates/server/http/src/input.rs",
+        "crates/server/http/src/lib.rs",
+        "crates/server/http/src/observe.rs"
+      ]
+    },
+    {
+      "crate": "stackpress-cli",
+      "classification": "Changed / Fixed",
+      "review": "Invalid internal completion action returns configuration error; no signature change.",
+      "reviewed_source_files": [
+        "tools/cli/src/lib.rs",
+        "tools/cli/src/prompt/driver.rs"
+      ]
+    },
+    {
+      "crate": "stackpress-framework-view",
+      "classification": "Added / Changed",
+      "review": "PublicLocation::session_asset; no-panic policy.",
+      "reviewed_source_files": [
+        "crates/framework/framework-view/src/lib.rs",
+        "crates/framework/framework-view/src/policy.rs",
+        "crates/framework/framework-view/src/presentation_tests.rs"
+      ]
+    },
+    {
+      "crate": "stackpress-framework-csrf",
+      "classification": "Changed",
+      "review": "No-panic lint policy only; no signature change.",
+      "reviewed_source_files": [
+        "crates/framework/framework-csrf/src/lib.rs"
+      ]
+    },
+    {
+      "crate": "stackpress-framework-email",
+      "classification": "Changed / Fixed",
+      "review": "Redirect-loop invariant removal; tested service/MIME constant exceptions; no signature change. TLS provider fix predates this baseline.",
+      "reviewed_source_files": [
+        "crates/framework/framework-email/src/compose/node.rs",
+        "crates/framework/framework-email/src/content.rs",
+        "crates/framework/framework-email/src/lib.rs",
+        "crates/framework/framework-email/src/options.rs"
+      ]
+    },
+    {
+      "crate": "stackpress-idea",
+      "classification": "Changed",
+      "review": "No-panic lint policy only; no facade declaration change.",
+      "reviewed_source_files": [
+        "crates/idea/idea/src/lib.rs"
+      ]
+    },
+    {
+      "crate": "stackpress-framework-schema",
+      "classification": "Changed / Fixed",
+      "review": "Existing generator errors replace invariant panics; source column order retained; tested describe literals; private datetime cache preserves wire/debug output.",
+      "reviewed_source_files": [
+        "crates/framework/framework-schema/src/codegen/assertions.rs",
+        "crates/framework/framework-schema/src/codegen/create.rs",
+        "crates/framework/framework-schema/src/codegen/inputs.rs",
+        "crates/framework/framework-schema/src/codegen/query.rs",
+        "crates/framework/framework-schema/src/codegen/registry.rs",
+        "crates/framework/framework-schema/src/codegen/source.rs",
+        "crates/framework/framework-schema/src/codegen/source_emit.rs",
+        "crates/framework/framework-schema/src/codegen/source_roles_remaining.rs",
+        "crates/framework/framework-schema/src/codegen/source_ui.rs",
+        "crates/framework/framework-schema/src/codegen/templates/source-catalog.rs.tpl",
+        "crates/framework/framework-schema/src/codegen/templates/source-model.rs.tpl",
+        "crates/framework/framework-schema/src/lib.rs",
+        "crates/framework/framework-schema/src/values.rs"
+      ]
+    },
+    {
+      "crate": "stackpress-framework-sql",
+      "classification": "Breaking / Changed / Fixed",
+      "review": "SourceStore::create and NativeStore create/paths/selectors/joins return Result; relation/unique metadata errors; private migration dialect cache.",
+      "reviewed_source_files": [
+        "crates/framework/framework-sql/src/lib.rs",
+        "crates/framework/framework-sql/src/migrations.rs",
+        "crates/framework/framework-sql/src/migrations/planner.rs",
+        "crates/framework/framework-sql/src/source/events.rs",
+        "crates/framework/framework-sql/src/source/maintenance.rs",
+        "crates/framework/framework-sql/src/source/mod.rs",
+        "crates/framework/framework-sql/src/source/native_actions.rs",
+        "crates/framework/framework-sql/src/source/native_contracts.rs",
+        "crates/framework/framework-sql/src/source/predicates.rs",
+        "crates/framework/framework-sql/src/source/query.rs",
+        "crates/framework/framework-sql/src/source/select.rs",
+        "crates/framework/framework-sql/src/source/store.rs"
+      ]
+    },
+    {
+      "crate": "stackpress-framework-admin",
+      "classification": "Breaking / Added / Changed / Fixed",
+      "review": "Upload.csv becomes CsvBytes; byte-array serialization; conversions/methods; RoleContext::from_draft; tolerant bounded encoding/delimiter import; rejected malformed children/catalogs; fallible formatted display.",
+      "reviewed_source_files": [
+        "crates/framework/framework-admin/src/codegen/pages.rs",
+        "crates/framework/framework-admin/src/codegen/source.rs",
+        "crates/framework/framework-admin/src/codegen/templates/source-roles.rs.tpl",
+        "crates/framework/framework-admin/src/codegen/templates/tests.rs",
+        "crates/framework/framework-admin/src/components.rs",
+        "crates/framework/framework-admin/src/components/catalog_inputs.rs",
+        "crates/framework/framework-admin/src/components/collection_inputs.rs",
+        "crates/framework/framework-admin/src/components/formatted.rs",
+        "crates/framework/framework-admin/src/components/formatted_tests.rs",
+        "crates/framework/framework-admin/src/components/sync.rs",
+        "crates/framework/framework-admin/src/draft.rs",
+        "crates/framework/framework-admin/src/lib.rs",
+        "crates/framework/framework-admin/src/source/roles.rs",
+        "crates/framework/framework-admin/src/source/roles/countries.rs",
+        "crates/framework/framework-admin/src/source/roles/display.rs",
+        "crates/framework/framework-admin/src/source/roles/fieldset.rs",
+        "crates/framework/framework-admin/src/transfer/csv.rs",
+        "crates/framework/framework-admin/src/transfer/encoding.rs",
+        "crates/framework/framework-admin/src/transfer/mod.rs",
+        "crates/framework/framework-admin/src/transfer/sniff.rs",
+        "crates/framework/framework-admin/src/transfer/upload.rs"
+      ]
+    },
+    {
+      "crate": "stackpress-framework-session",
+      "classification": "Changed / Fixed",
+      "review": "Updated entries callers; typed token/TOTP/record invariants; fixed conventional asset; no new signature; live-fixture CREATE-error cleanup.",
+      "reviewed_source_files": [
+        "crates/framework/framework-session/src/account/events.rs",
+        "crates/framework/framework-session/src/account/profile.rs",
+        "crates/framework/framework-session/src/account/totp.rs",
+        "crates/framework/framework-session/src/auth/bridge.rs",
+        "crates/framework/framework-session/src/auth/totp.rs",
+        "crates/framework/framework-session/src/lib.rs",
+        "crates/framework/framework-session/src/presentation.rs"
+      ]
+    },
+    {
+      "crate": "stackpress-framework-api",
+      "classification": "Breaking / Changed / Fixed",
+      "review": "import_csv changes from &str to impl AsRef<[u8]>; native raw-byte upload path retains JSON batches; entries callers; Language default; no other signature break; live-fixture cleanup.",
+      "reviewed_source_files": [
+        "crates/framework/framework-api/src/helpers.rs",
+        "crates/framework/framework-api/src/lib.rs",
+        "crates/framework/framework-api/src/pages/mod.rs",
+        "crates/framework/framework-api/src/pages/oauth.rs",
+        "crates/framework/framework-api/src/views/admin.rs",
+        "crates/framework/framework-api/src/views/management.rs",
+        "crates/framework/framework-api/src/views/mod.rs",
+        "crates/framework/framework-api/src/webhooks/mod.rs"
+      ]
+    },
+    {
+      "crate": "stackpress-framework",
+      "classification": "Breaking / Changed / Fixed",
+      "review": "Generated client definition changes SQL Result to lib Result; generated store errors propagated; language formatting invariant removal; live-fixture cleanup.",
+      "reviewed_source_files": [
+        "crates/framework/framework/src/lib.rs",
+        "crates/framework/framework/src/native/commands/source_client.rs",
+        "crates/framework/framework/src/native/language.rs"
+      ]
+    },
+    {
+      "crate": "stackpress",
+      "classification": "Breaking / Changed",
+      "review": "Re-exports the changed contracts; no new facade feature or direct export. Lockstep release and no-panic policy.",
+      "reviewed_source_files": [
+        "src/lib.rs"
+      ]
+    }
+  ]
+}

@@ -1018,7 +1018,7 @@ dependencies = [
 
 [[package]]
 name = "data-quickstart"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -1811,7 +1811,7 @@ dependencies = [
 
 [[package]]
 name = "generated-admin-client"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "generated-admin-shared",
  "js-sys",
@@ -1824,7 +1824,7 @@ dependencies = [
 
 [[package]]
 name = "generated-admin-shared"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "leptos",
  "serde",
@@ -1836,7 +1836,7 @@ dependencies = [
 
 [[package]]
 name = "generated-admin-tool"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "generated-workspace-tool",
  "serde_json",
@@ -1849,7 +1849,7 @@ dependencies = [
 
 [[package]]
 name = "generated-admin-web"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "generated-admin-shared",
  "http",
@@ -1870,7 +1870,7 @@ dependencies = [
 
 [[package]]
 name = "generated-workspace-app"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "http",
  "serde",
@@ -1892,7 +1892,7 @@ dependencies = [
 
 [[package]]
 name = "generated-workspace-contracts"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -1901,7 +1901,7 @@ dependencies = [
 
 [[package]]
 name = "generated-workspace-tool"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde_json",
  "stackpress-cli",
@@ -5757,7 +5757,7 @@ checksum = "6ce2be8dc25455e1f91df71bfa12ad37d7af1092ae736f3a6cd0e37bc7810596"
 
 [[package]]
 name = "stackpress"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -5787,7 +5787,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-cli"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "crossterm",
  "regex",
@@ -5801,7 +5801,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-example-capability-host"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -5813,7 +5813,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-example-generated-profile"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -5826,7 +5826,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-example-profile-codegen"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde_json",
  "stackpress-cli",
@@ -5839,7 +5839,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-example-profile-ui-client"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "js-sys",
  "leptos",
@@ -5855,7 +5855,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-example-profile-ui-contracts"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -5864,7 +5864,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-example-profile-ui-gateway"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "http-body-util",
  "hyper",
@@ -5884,7 +5884,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-example-profile-ui-native"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde_json",
  "stackpress-example-generated-profile",
@@ -5900,7 +5900,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-example-profile-ui-shared"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "leptos",
  "stackpress-example-profile-ui-contracts",
@@ -5911,7 +5911,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-example-profile-ui-web"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "http",
  "leptos",
@@ -5931,7 +5931,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-example-review-preview"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "base64 0.22.1",
  "generated-admin-shared",
@@ -5959,7 +5959,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-example-sql-profile"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -5975,7 +5975,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-example-ui-format"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "js-sys",
  "leptos",
@@ -5988,7 +5988,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-example-ui-gallery-client"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "js-sys",
  "leptos",
@@ -6000,7 +6000,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-example-ui-gallery-shared"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "futures",
  "leptos",
@@ -6017,7 +6017,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-example-ui-gallery-web"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "http",
  "leptos",
@@ -6034,7 +6034,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-example-ui-preferences-client"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "js-sys",
  "leptos",
@@ -6050,7 +6050,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-example-ui-preferences-shared"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "js-sys",
  "leptos",
@@ -6066,7 +6066,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-example-ui-preferences-web"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "http",
  "leptos",
@@ -6083,7 +6083,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-example-ui-stream-client"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "js-sys",
  "leptos",
@@ -6096,7 +6096,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-example-ui-stream-shared"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "futures",
  "js-sys",
@@ -6111,7 +6111,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-example-ui-stream-web"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "futures",
  "leptos",
@@ -6127,7 +6127,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-framework"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -6152,7 +6152,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-framework-admin"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "chrono",
  "leptos",
@@ -6168,7 +6168,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-framework-api"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "chrono",
  "leptos",
@@ -6195,7 +6195,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-framework-csrf"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "ring",
  "serde",
@@ -6208,7 +6208,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-framework-email"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "base64 0.22.1",
  "lettre",
@@ -6224,11 +6224,11 @@ dependencies = [
 
 [[package]]
 name = "stackpress-framework-language"
-version = "0.1.0"
+version = "0.2.0"
 
 [[package]]
 name = "stackpress-framework-schema"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "aes",
  "base64 0.22.1",
@@ -6248,7 +6248,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-framework-session"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "base64 0.22.1",
  "jsonwebtoken",
@@ -6285,7 +6285,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-framework-sql"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -6303,7 +6303,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-framework-view"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "futures",
  "hydration_context",
@@ -6323,7 +6323,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-idea"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "stackpress-idea-parser",
  "stackpress-idea-transformer",
@@ -6332,7 +6332,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-idea-parser"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "indexmap 2.14.2",
  "serde",
@@ -6341,7 +6341,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-idea-transformer"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -6353,7 +6353,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-leptos"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "ammonia",
  "any_spawner",
@@ -6378,7 +6378,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-lib"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "httpdate",
  "indexmap 2.14.2",
@@ -6392,7 +6392,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-server"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "futures-core",
  "http",
@@ -6405,7 +6405,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-server-http"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "bytes",
  "futures-core",
@@ -6427,7 +6427,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-sql"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "sqlx",
  "tokio",
@@ -6435,7 +6435,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-sql-mysql"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -6448,7 +6448,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-sql-postgres"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -6462,7 +6462,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-sql-sqlite"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",

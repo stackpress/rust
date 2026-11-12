@@ -1,5 +1,7 @@
 # Email for direct calls and events
 
+**Beta:** 0.2.x is the supported release series; 0.1.x users should upgrade. The API may still change before 1.0.
+
 Send source-shaped email options through a transport owned by each call, or select the reusable `email-send` event. Start locally with JSON output, then choose a transport or bind an application provider.
 
 [Getting started](docs/getting-started.md) produces inspectable output without delivery. [Concepts](docs/concepts.md) explains configuration, per-call ownership and native streams after that first example.

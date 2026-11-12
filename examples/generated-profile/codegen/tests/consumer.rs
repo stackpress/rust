@@ -74,7 +74,7 @@ fn copy_package(example: &Path, name: &str, root: &Path, repository: &Path) -> P
     copy_source(&example.join(name).join("src"), &destination.join("src"));
     let mut manifest = fs::read_to_string(example.join(name).join("Cargo.toml")).unwrap();
     for (key, value) in [
-        ("version", "0.1.0"),
+        ("version", "0.2.0"),
         ("edition", "2024"),
         ("rust-version", "1.96"),
     ] {

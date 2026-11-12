@@ -1,5 +1,7 @@
 # stackpress-sql-mysql
 
+**Beta:** 0.2.x is the supported release series; 0.1.x users should upgrade. The API may still change before 1.0.
+
 Bounded native MySQL execution for Stackpress SQL, using SQLx 0.9.0 and the caller's
 Tokio runtime.
 

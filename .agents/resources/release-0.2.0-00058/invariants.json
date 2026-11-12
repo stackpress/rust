@@ -1,0 +1,56 @@
+{
+  "root_registry_tuples": 699,
+  "all_23_registry_sets_identical": true,
+  "all_23_beta_readmes": true,
+  "production_rust_unchanged": true,
+  "managed_output_unchanged": true,
+  "licences_goldens_oracles_stderr_unchanged": true,
+  "publish_plan_updates": 23,
+  "publish_plan_wait_minutes": 0,
+  "checked_links": [
+    [
+      "README.md",
+      "CHANGELOG.md"
+    ],
+    [
+      "README.md",
+      "docs/migrating-0.1-to-0.2.md"
+    ],
+    [
+      "README.md",
+      "AGENTS.md"
+    ],
+    [
+      "README.md",
+      ".agents/context/index.md"
+    ],
+    [
+      "README.md",
+      ".agents/references/00040-session-handoff.md"
+    ],
+    [
+      "README.md",
+      ".agents/workflows/rust-programming.md"
+    ],
+    [
+      "README.md",
+      ".agents/context/rust-code-style.md"
+    ],
+    [
+      "README.md",
+      ".agents/context/testing-and-quality.md"
+    ],
+    [
+      "README.md",
+      "LICENSE"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/migrating-0.1-to-0.2.md"
+    ],
+    [
+      "docs/migrating-0.1-to-0.2.md",
+      "../CHANGELOG.md"
+    ]
+  ]
+}

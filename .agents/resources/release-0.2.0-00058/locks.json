@@ -1,0 +1,446 @@
+{
+  "root_registry_tuples": 699,
+  "root_workspace_packages_bumped": 52,
+  "nested": [
+    {
+      "lock": "crates/framework/framework-email/consumers/direct/Cargo.lock",
+      "registry_before": 203,
+      "registry_after": 203,
+      "frozen_extras": 0,
+      "subset_passed": true,
+      "command": [
+        "cargo",
+        "tree",
+        "--manifest-path",
+        "crates/framework/framework-email/consumers/direct/Cargo.toml",
+        "--workspace",
+        "--offline",
+        "-e",
+        "normal",
+        "--depth",
+        "0"
+      ],
+      "sha256": "08d7be415305e412557fef5dcca541799d59f831d5b17c962f6010b4133dbf10"
+    },
+    {
+      "lock": "crates/framework/framework-email/consumers/disabled/Cargo.lock",
+      "registry_before": 203,
+      "registry_after": 203,
+      "frozen_extras": 0,
+      "subset_passed": true,
+      "command": [
+        "cargo",
+        "tree",
+        "--manifest-path",
+        "crates/framework/framework-email/consumers/disabled/Cargo.toml",
+        "--workspace",
+        "--offline",
+        "-e",
+        "normal",
+        "--depth",
+        "0"
+      ],
+      "sha256": "466c7acdcb270a02245679b88614f950e8706776c79cb5b73bdd0b85b8fc8bdb"
+    },
+    {
+      "lock": "crates/framework/framework-email/consumers/event/Cargo.lock",
+      "registry_before": 203,
+      "registry_after": 203,
+      "frozen_extras": 0,
+      "subset_passed": true,
+      "command": [
+        "cargo",
+        "tree",
+        "--manifest-path",
+        "crates/framework/framework-email/consumers/event/Cargo.toml",
+        "--workspace",
+        "--offline",
+        "-e",
+        "normal",
+        "--depth",
+        "0"
+      ],
+      "sha256": "9892cdbc45c308342ad395ee53e2a50e61640a4bd367da0348d40d5b9e9de300"
+    },
+    {
+      "lock": "crates/framework/framework-session/consumers/browser/Cargo.lock",
+      "registry_before": 209,
+      "registry_after": 209,
+      "frozen_extras": 0,
+      "subset_passed": true,
+      "command": [
+        "cargo",
+        "tree",
+        "--manifest-path",
+        "crates/framework/framework-session/consumers/browser/Cargo.toml",
+        "--workspace",
+        "--offline",
+        "-e",
+        "normal",
+        "--depth",
+        "0"
+      ],
+      "sha256": "4fac98e6905164bc1116b14fbb37e4585f4147cb2dc7b02b07f0899ba146c618"
+    },
+    {
+      "lock": "crates/framework/framework-session/consumers/direct/Cargo.lock",
+      "registry_before": 152,
+      "registry_after": 152,
+      "frozen_extras": 0,
+      "subset_passed": true,
+      "command": [
+        "cargo",
+        "tree",
+        "--manifest-path",
+        "crates/framework/framework-session/consumers/direct/Cargo.toml",
+        "--workspace",
+        "--offline",
+        "-e",
+        "normal",
+        "--depth",
+        "0"
+      ],
+      "sha256": "9932de2bc65f5429787cfa29448cfd9da9317201b3f3ce557b948d24a3ae4959"
+    },
+    {
+      "lock": "crates/framework/framework-session/consumers/disabled/Cargo.lock",
+      "registry_before": 48,
+      "registry_after": 48,
+      "frozen_extras": 0,
+      "subset_passed": true,
+      "command": [
+        "cargo",
+        "tree",
+        "--manifest-path",
+        "crates/framework/framework-session/consumers/disabled/Cargo.toml",
+        "--workspace",
+        "--offline",
+        "-e",
+        "normal",
+        "--depth",
+        "0"
+      ],
+      "sha256": "6350f0f6c830d355a317d36c65c8d38102fd2ed39e6824ad9dd60a8b1453e38e"
+    },
+    {
+      "lock": "crates/framework/framework-session/consumers/facade/Cargo.lock",
+      "registry_before": 152,
+      "registry_after": 152,
+      "frozen_extras": 0,
+      "subset_passed": true,
+      "command": [
+        "cargo",
+        "tree",
+        "--manifest-path",
+        "crates/framework/framework-session/consumers/facade/Cargo.toml",
+        "--workspace",
+        "--offline",
+        "-e",
+        "normal",
+        "--depth",
+        "0"
+      ],
+      "sha256": "9b61ad7993e33baa22c5c77308f22d524f8b7099aaedcc1524d9f883e451a7a4"
+    },
+    {
+      "lock": "crates/framework/framework-session/consumers/plugin/Cargo.lock",
+      "registry_before": 384,
+      "registry_after": 384,
+      "frozen_extras": 0,
+      "subset_passed": true,
+      "command": [
+        "cargo",
+        "tree",
+        "--manifest-path",
+        "crates/framework/framework-session/consumers/plugin/Cargo.toml",
+        "--workspace",
+        "--offline",
+        "-e",
+        "normal",
+        "--depth",
+        "0"
+      ],
+      "sha256": "4719d66ec851ceeeadc44aba79fb33b662f1449982cd50b1a43fb3d19f1642c2"
+    },
+    {
+      "lock": "crates/framework/framework/consumers/api-disabled/Cargo.lock",
+      "registry_before": 384,
+      "registry_after": 384,
+      "frozen_extras": 0,
+      "subset_passed": true,
+      "command": [
+        "cargo",
+        "tree",
+        "--manifest-path",
+        "crates/framework/framework/consumers/api-disabled/Cargo.toml",
+        "--workspace",
+        "--offline",
+        "-e",
+        "normal",
+        "--depth",
+        "0"
+      ],
+      "sha256": "d84a9ad3d7e3835869f848d3903f8b669e07cc74b592866c6d084f187707d1bf"
+    },
+    {
+      "lock": "crates/framework/framework/consumers/build-host/Cargo.lock",
+      "registry_before": 320,
+      "registry_after": 320,
+      "frozen_extras": 0,
+      "subset_passed": true,
+      "command": [
+        "cargo",
+        "tree",
+        "--manifest-path",
+        "crates/framework/framework/consumers/build-host/Cargo.toml",
+        "--workspace",
+        "--offline",
+        "-e",
+        "normal",
+        "--depth",
+        "0"
+      ],
+      "sha256": "1fe6575326d3bc67f701fc637c13a75e1ec5852dc541570486d5038b50d9cf69"
+    },
+    {
+      "lock": "crates/framework/framework/consumers/direct/Cargo.lock",
+      "registry_before": 384,
+      "registry_after": 384,
+      "frozen_extras": 0,
+      "subset_passed": true,
+      "command": [
+        "cargo",
+        "tree",
+        "--manifest-path",
+        "crates/framework/framework/consumers/direct/Cargo.toml",
+        "--workspace",
+        "--offline",
+        "-e",
+        "normal",
+        "--depth",
+        "0"
+      ],
+      "sha256": "4b5ee47a3096531760a31d40ee850b076490a1622b82c496ec46bd5139ede076"
+    },
+    {
+      "lock": "crates/framework/framework/consumers/disabled/Cargo.lock",
+      "registry_before": 48,
+      "registry_after": 48,
+      "frozen_extras": 0,
+      "subset_passed": true,
+      "command": [
+        "cargo",
+        "tree",
+        "--manifest-path",
+        "crates/framework/framework/consumers/disabled/Cargo.toml",
+        "--workspace",
+        "--offline",
+        "-e",
+        "normal",
+        "--depth",
+        "0"
+      ],
+      "sha256": "fc70d39d097d1ca2d33114b461bcc0dfb4c013a34cb0f29c0db486de33f4916f"
+    },
+    {
+      "lock": "crates/framework/framework/consumers/facade/Cargo.lock",
+      "registry_before": 384,
+      "registry_after": 384,
+      "frozen_extras": 0,
+      "subset_passed": true,
+      "command": [
+        "cargo",
+        "tree",
+        "--manifest-path",
+        "crates/framework/framework/consumers/facade/Cargo.toml",
+        "--workspace",
+        "--offline",
+        "-e",
+        "normal",
+        "--depth",
+        "0"
+      ],
+      "sha256": "d7f022fd2bb9a87a75813d153dc18e03a89cd5ea316ad2a7795d0eab6b6eaf58"
+    },
+    {
+      "lock": "crates/framework/framework/consumers/full/Cargo.lock",
+      "registry_before": 384,
+      "registry_after": 384,
+      "frozen_extras": 0,
+      "subset_passed": true,
+      "command": [
+        "cargo",
+        "tree",
+        "--manifest-path",
+        "crates/framework/framework/consumers/full/Cargo.toml",
+        "--workspace",
+        "--offline",
+        "-e",
+        "normal",
+        "--depth",
+        "0"
+      ],
+      "sha256": "36c2f865c14946e5ea67359dc4c59e3b53af8b5265fca952ccc0544f2484e16b"
+    },
+    {
+      "lock": "crates/framework/framework/consumers/headless/Cargo.lock",
+      "registry_before": 264,
+      "registry_after": 264,
+      "frozen_extras": 0,
+      "subset_passed": true,
+      "command": [
+        "cargo",
+        "tree",
+        "--manifest-path",
+        "crates/framework/framework/consumers/headless/Cargo.toml",
+        "--workspace",
+        "--offline",
+        "-e",
+        "normal",
+        "--depth",
+        "0"
+      ],
+      "sha256": "07b4eb405a61dc3da37d1b6bfcfcf0558810048f5ba7d4f9a9da27d4b039f22d"
+    },
+    {
+      "lock": "crates/framework/framework/consumers/website/Cargo.lock",
+      "registry_before": 436,
+      "registry_after": 436,
+      "frozen_extras": 0,
+      "subset_passed": true,
+      "command": [
+        "cargo",
+        "tree",
+        "--manifest-path",
+        "crates/framework/framework/consumers/website/Cargo.toml",
+        "--workspace",
+        "--offline",
+        "-e",
+        "normal",
+        "--depth",
+        "0"
+      ],
+      "sha256": "0fcd8f5134b141993c7944a1aa4caa930dec01cb3a7f068127b6172f631007bc"
+    },
+    {
+      "lock": "examples/api-checkpoint/client/Cargo.lock",
+      "registry_before": 318,
+      "registry_after": 318,
+      "frozen_extras": 0,
+      "subset_passed": true,
+      "command": [
+        "cargo",
+        "tree",
+        "--manifest-path",
+        "examples/api-checkpoint/client/Cargo.toml",
+        "--workspace",
+        "--offline",
+        "-e",
+        "normal",
+        "--depth",
+        "0"
+      ],
+      "sha256": "d49b3d5d8cfc21eb5da2be1b57ba1f0ebc141d13e8463cb56f96ed2aa9f0a869"
+    },
+    {
+      "lock": "examples/api-checkpoint/tool/Cargo.lock",
+      "registry_before": 371,
+      "registry_after": 371,
+      "frozen_extras": 0,
+      "subset_passed": true,
+      "command": [
+        "cargo",
+        "tree",
+        "--manifest-path",
+        "examples/api-checkpoint/tool/Cargo.toml",
+        "--workspace",
+        "--offline",
+        "-e",
+        "normal",
+        "--depth",
+        "0"
+      ],
+      "sha256": "4d174a233414730aabb397d47a869506a268f9c139e94133347bdf8568426228"
+    },
+    {
+      "lock": "examples/api-checkpoint/web/Cargo.lock",
+      "registry_before": 401,
+      "registry_after": 401,
+      "frozen_extras": 0,
+      "subset_passed": true,
+      "command": [
+        "cargo",
+        "tree",
+        "--manifest-path",
+        "examples/api-checkpoint/web/Cargo.toml",
+        "--workspace",
+        "--offline",
+        "-e",
+        "normal",
+        "--depth",
+        "0"
+      ],
+      "sha256": "89d8e1f128ef4a76091bff3745f8e0b1a528b8c9ac997e663f1de3e4ac01eac4"
+    },
+    {
+      "lock": "examples/blog/Cargo.lock",
+      "registry_before": 448,
+      "registry_after": 448,
+      "frozen_extras": 6,
+      "subset_passed": true,
+      "command": [
+        "cargo",
+        "tree",
+        "--manifest-path",
+        "examples/blog/Cargo.toml",
+        "--workspace",
+        "--offline",
+        "-e",
+        "normal",
+        "--depth",
+        "0"
+      ],
+      "sha256": "6bb5631ae936096bc069f27e25563a10ce9bd256195c3d91b5025631e9757232"
+    },
+    {
+      "lock": "examples/leptos-independent/Cargo.lock",
+      "registry_before": 255,
+      "registry_after": 255,
+      "frozen_extras": 0,
+      "subset_passed": true,
+      "command": [
+        "cargo",
+        "tree",
+        "--manifest-path",
+        "examples/leptos-independent/Cargo.toml",
+        "--workspace",
+        "--offline",
+        "-e",
+        "normal",
+        "--depth",
+        "0"
+      ],
+      "sha256": "eb9c58d07ca99282aca82c0647b86ab2be85048d7ed93e48ea9bf0f040049de1"
+    },
+    {
+      "lock": "fuzz/Cargo.lock",
+      "registry_before": 196,
+      "registry_after": 196,
+      "frozen_extras": 2,
+      "subset_passed": true,
+      "command": [
+        "cargo",
+        "tree",
+        "--manifest-path",
+        "fuzz/Cargo.toml",
+        "--workspace",
+        "--offline",
+        "-e",
+        "normal",
+        "--depth",
+        "0"
+      ],
+      "sha256": "ad7ca865a08126c1e9300d0ed341c3ea0cc5b42000d5fbb91aba18d9543af040"
+    }
+  ]
+}

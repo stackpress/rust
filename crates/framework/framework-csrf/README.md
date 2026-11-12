@@ -1,5 +1,7 @@
 # CSRF for explicit handlers
 
+**Beta:** 0.2.x is the supported release series; 0.1.x users should upgrade. The API may still change before 1.0.
+
 Generate a cookie/form token, compare the next request's incoming values, and clear outgoing state after a successful process. The crate supplies the mechanism; each route or event chooses when to call it.
 
 Start with [getting started](docs/getting-started.md) for a complete local round trip. Read [concepts](docs/concepts.md) to understand incoming versus outgoing state, then [protect a process](docs/guides/protect-a-process.md) to compose it with server events.

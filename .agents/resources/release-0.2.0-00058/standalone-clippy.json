@@ -1,0 +1,393 @@
+[
+  {
+    "crate": "stackpress-leptos",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-leptos",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0,
+    "command_seconds": 21.221082
+  },
+  {
+    "crate": "stackpress-framework-language",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-framework-language",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0,
+    "command_seconds": 0.406134
+  },
+  {
+    "crate": "stackpress-sql",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-sql",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0,
+    "command_seconds": 10.863479
+  },
+  {
+    "crate": "stackpress-lib",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-lib",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0,
+    "command_seconds": 5.792456
+  },
+  {
+    "crate": "stackpress-idea-parser",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-idea-parser",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0,
+    "command_seconds": 2.352774
+  },
+  {
+    "crate": "stackpress-sql-sqlite",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-sql-sqlite",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0,
+    "command_seconds": 7.417639
+  },
+  {
+    "crate": "stackpress-sql-postgres",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-sql-postgres",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0,
+    "command_seconds": 11.382787
+  },
+  {
+    "crate": "stackpress-sql-mysql",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-sql-mysql",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0,
+    "command_seconds": 4.765098
+  },
+  {
+    "crate": "stackpress-server",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-server",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0,
+    "command_seconds": 1.493355
+  },
+  {
+    "crate": "stackpress-idea-transformer",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-idea-transformer",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0,
+    "command_seconds": 3.601979
+  },
+  {
+    "crate": "stackpress-server-http",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-server-http",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0,
+    "command_seconds": 4.619953
+  },
+  {
+    "crate": "stackpress-cli",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-cli",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0,
+    "command_seconds": 2.973154
+  },
+  {
+    "crate": "stackpress-framework-view",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-framework-view",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0,
+    "command_seconds": 7.329089
+  },
+  {
+    "crate": "stackpress-framework-csrf",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-framework-csrf",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0,
+    "command_seconds": 1.011402
+  },
+  {
+    "crate": "stackpress-framework-email",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-framework-email",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0,
+    "command_seconds": 5.849817
+  },
+  {
+    "crate": "stackpress-idea",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-idea",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0,
+    "command_seconds": 0.51935
+  },
+  {
+    "crate": "stackpress-framework-schema",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-framework-schema",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0,
+    "command_seconds": 1.875266
+  },
+  {
+    "crate": "stackpress-framework-sql",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-framework-sql",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0,
+    "command_seconds": 2.652249
+  },
+  {
+    "crate": "stackpress-framework-admin",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-framework-admin",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0,
+    "command_seconds": 37.319076
+  },
+  {
+    "crate": "stackpress-framework-session",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-framework-session",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0,
+    "command_seconds": 23.358264
+  },
+  {
+    "crate": "stackpress-framework-api",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-framework-api",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0,
+    "command_seconds": 20.865685
+  },
+  {
+    "crate": "stackpress-framework",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress-framework",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0,
+    "command_seconds": 7.935078
+  },
+  {
+    "crate": "stackpress",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "stackpress",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "code": 0,
+    "command_seconds": 1.358727
+  }
+]

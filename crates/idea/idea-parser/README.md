@@ -1,5 +1,7 @@
 # stackpress-idea-parser
 
+**Beta:** 0.2.x is the supported release series; 0.1.x users should upgrade. The API may still change before 1.0.
+
 Parse Idea schemas into checked syntax and serializable configuration. Stackpress generation tools use this independent parser without filesystem IO or ambient environment reads.
 
 ```rust

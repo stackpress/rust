@@ -2455,7 +2455,7 @@ checksum = "6ce2be8dc25455e1f91df71bfa12ad37d7af1092ae736f3a6cd0e37bc7810596"
 
 [[package]]
 name = "stackpress-framework"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -2471,7 +2471,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-framework-admin"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "leptos",
  "serde",
@@ -2484,7 +2484,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-framework-api"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "reqwest",
  "serde",
@@ -2496,7 +2496,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-framework-schema"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "regex",
  "serde",
@@ -2511,7 +2511,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-framework-session"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "regex",
  "serde",
@@ -2520,7 +2520,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-framework-sql"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -2532,7 +2532,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-idea"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "stackpress-idea-parser",
  "stackpress-idea-transformer",
@@ -2540,7 +2540,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-idea-parser"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "indexmap",
  "serde",
@@ -2549,7 +2549,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-idea-transformer"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -2561,7 +2561,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-leptos"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "icu_calendar",
  "icu_datetime",
@@ -2579,7 +2579,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-lib"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "httpdate",
  "indexmap",
@@ -2591,7 +2591,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-server"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -2600,7 +2600,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-sql"
-version = "0.1.0"
+version = "0.2.0"
 
 [[package]]
 name = "strum"
