@@ -431,9 +431,7 @@ fn metadata_string(value: &Value) -> String {
     match value {
         Value::Null => "null".into(),
         Value::Bool(value) => value.to_string(),
-        Value::Number(value) => stackpress_framework_schema::__private::source_number_text(
-            value.as_f64().expect("JSON number"),
-        ),
+        Value::Number(value) => number_text(value),
         Value::String(value) => value.clone(),
         Value::Array(values) => values
             .iter()
@@ -448,6 +446,14 @@ fn metadata_string(value: &Value) -> String {
             .join(","),
         Value::Object(_) => "[object Object]".into(),
     }
+}
+
+/// Preserve JavaScript number formatting; retain an unrepresentable JSON number verbatim.
+fn number_text(value: &serde_json::Number) -> String {
+    value
+        .as_f64()
+        .map(stackpress_framework_schema::__private::source_number_text)
+        .unwrap_or_else(|| value.to_string())
 }
 
 /// Source select options reuse the shared select with the authored choice order and labels.
@@ -530,22 +536,23 @@ pub fn MetadataView(
             let class = class.clone();
             // The source component's declared children are strings/numbers. Like React,
             // an object child is a rendering failure, not an invented JSON display.
-            let text = metadata_child(&value);
-            view! {<tr><td class=class.clone()>{key}</td><td class=class>{text}</td></tr>}
+            let text = metadata_child(&value)?;
+            Ok(view! {<tr><td class=class.clone()>{key}</td><td class=class>{text}</td></tr>})
         })
-        .collect_view();
+        .collect::<Result<Vec<_>, &'static str>>();
+    let Ok(rows) = rows else {
+        return crate::components::sync::rejected();
+    };
     view! {<table><tbody>{rows}</tbody></table>}.into_any()
 }
 
-/// React's primitive/array children are text; an object child fails source rendering.
-fn metadata_child(value: &Value) -> String {
+/// React's primitive/array children are text; G62 reports invalid object children as errors.
+fn metadata_child(value: &Value) -> Result<String, &'static str> {
     match value {
-        Value::String(value) => value.clone(),
-        Value::Number(value) => stackpress_framework_schema::__private::source_number_text(
-            value.as_f64().expect("JSON number"),
-        ),
-        Value::Null | Value::Bool(_) => String::new(),
+        Value::String(value) => Ok(value.clone()),
+        Value::Number(value) => Ok(number_text(value)),
+        Value::Null | Value::Bool(_) => Ok(String::new()),
         Value::Array(values) => values.iter().map(metadata_child).collect(),
-        Value::Object(_) => panic!("source metadata object is not a renderable child"),
+        Value::Object(_) => Err("source metadata object is not a renderable child"),
     }
 }

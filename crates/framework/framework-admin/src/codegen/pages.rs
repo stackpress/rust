@@ -155,7 +155,12 @@ fn model_data(
     definitions: &DefinitionRegistry,
 ) -> SchemaResult<Value> {
     let public = public_type(&model.id)?;
-    let name = public.strip_prefix("Public").expect("public type prefix");
+    let name = public.strip_prefix("Public").ok_or_else(|| {
+        stackpress_framework_schema::SchemaError::new(
+            stackpress_framework_schema::SchemaErrorKind::Invalid,
+            "admin public type requires Public prefix",
+        )
+    })?;
     let spec = json!({"module":module,"model":model,"soft_remove":soft}).to_string();
     let mut controls = Vec::new();
     for field in &model.fields {

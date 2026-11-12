@@ -78,13 +78,13 @@
     },
     "ui/application.rs": {
       "owner": "source-client",
-      "sha256": "c36e343de5bbebeefa7955c7abd7395817d187180e91b1cc61c1f97f41d85ab6",
-      "bytes": 29036
+      "sha256": "e429f07697dc80f9ecdfa67317d3888db2bb4b43ef38cf1b7840f57b68f13923",
+      "bytes": 22787
     },
     "ui/auth.rs": {
       "owner": "source-client",
-      "sha256": "7f844205b26c357ccfa57e62b69fe5bee3a0eb0aa934c421aaa9347a4235d04d",
-      "bytes": 25890
+      "sha256": "9adde84debe8f5b1c8117c88a0624c14ab2cd10d5f6c0834d0826f724c4bdae9",
+      "bytes": 20294
     },
     "ui/host.rs": {
       "owner": "source-client",
@@ -103,13 +103,13 @@
     },
     "ui/profile.rs": {
       "owner": "source-client",
-      "sha256": "ab89d0754fcbd17aef1a3aa9e3bdd58c5c9c3831fa5a57ac70fbe3bd64d74966",
-      "bytes": 31364
+      "sha256": "46373b491ce85069d271ba3d337b144f461480756828763d27d64899964f4857",
+      "bytes": 24469
     },
     "ui/session.rs": {
       "owner": "source-client",
-      "sha256": "1e9b864ba73dcf891bb0679bda57e3c047ba844bce5960b45a5869cfa513a0e4",
-      "bytes": 25339
+      "sha256": "49f3e98fd5263cba987762bd8170c886ef78183e5e664a1f1080aaa3fdafa05c",
+      "bytes": 20049
     }
   }
 }

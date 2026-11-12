@@ -87,7 +87,11 @@ pub fn FieldsetField(
         let nested=owner.with(||{
             let row_prefix=if multiple{format!("{}[{index}]",prefix.get_value().trim_end_matches("[]"))}else{prefix.get_value()};
             provide_context(SourceFormPrefix(row_prefix));
-            let draft=Draft::new(&fields.get_value(),&seed,role).expect("generated fieldset source object");let child=draft.clone();let initial=StoredValue::new(child.snapshot().expect("generated child draft"));
+            // Invalid caller-owned row seeds render the ordinary adapter rejection.
+            let Ok(draft)=Draft::new(&fields.get_value(),&seed,role) else {return crate::components::sync::rejected();};
+            let child=draft.clone();
+            let Ok(snapshot)=child.snapshot() else {return crate::components::sync::rejected();};
+            let initial=StoredValue::new(snapshot);
             Effect::new(move|_|{
                 // Track every child signal; snapshot deliberately uses untracked reads itself.
                 for field in fields.get_value(){if let Some(value)=child.get(&field.wire_name){let _=value.get();}}

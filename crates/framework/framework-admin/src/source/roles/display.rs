@@ -11,23 +11,23 @@ use stackpress_leptos::components::source::{
 use stackpress_leptos::components::{TextCase, TextTransform};
 
 /// Source array primitive values, preserving repeats, empty strings and zero.
-fn values(context: &RoleContext, join: bool) -> Vec<String> {
+fn values(context: &RoleContext, join: bool) -> Result<Vec<String>, &'static str> {
     match context.value.get() {
         Presence::Value(Value::Array(values)) => values
             .iter()
             .map(|value| {
                 if join {
                     if value.is_null() {
-                        String::new()
+                        Ok(String::new())
                     } else {
-                        super::metadata_string(value)
+                        Ok(super::metadata_string(value))
                     }
                 } else {
                     metadata_child(value)
                 }
             })
             .collect(),
-        _ => Vec::new(),
+        _ => Ok(Vec::new()),
     }
 }
 
@@ -46,7 +46,7 @@ pub fn ColorView(
     } else {
         12
     };
-    view! {<SourceColor value=content(&context) box_visible=context.bool_prop("box",true) text=context.bool_prop("text",true) size appearance=appearance(&context)/ >}
+    view! {<SourceColor value=content(&context) box_visible=context.bool_prop("box",true) text=context.bool_prop("text",true) size appearance=appearance(&context)/ >}.into_any()
 }
 
 /// Unvalidated source mailbox link with exact title, target and style props.
@@ -55,7 +55,7 @@ pub fn EmailView(
     /// Selected source mailbox and authored props.
     context: RoleContext,
 ) -> impl IntoView {
-    view! {<SourceEmailLink value=content(&context) target=context.text_prop("target","") title=context.text_prop("title","") appearance=appearance(&context)/ >}
+    view! {<SourceEmailLink value=content(&context) target=context.text_prop("target","") title=context.text_prop("title","") appearance=appearance(&context)/ >}.into_any()
 }
 
 /// Reuse the existing shared CSS text transform; unknown formats leave text unchanged.
@@ -90,7 +90,10 @@ pub fn SpreadView(
     /// Selected source array and separator/style props.
     context: RoleContext,
 ) -> impl IntoView {
-    view! {<SourceSpread value=values(&context,true) separator=context.text_prop("separator"," ") appearance=appearance(&context)/ >}
+    let Ok(values) = values(&context, true) else {
+        return crate::components::sync::rejected();
+    };
+    view! {<SourceSpread value=values separator=context.text_prop("separator"," ") appearance=appearance(&context)/ >}.into_any()
 }
 
 /// Shared unordered/ordered presentation for list, ol and ul.
@@ -99,7 +102,10 @@ pub fn ListView(
     /// Selected source list and ordered flag.
     context: RoleContext,
 ) -> impl IntoView {
-    view! {<SourceList value=values(&context,false) ordered=context.bool_prop("ordered",false) appearance=appearance(&context)/ >}
+    let Ok(values) = values(&context, false) else {
+        return crate::components::sync::rejected();
+    };
+    view! {<SourceList value=values ordered=context.bool_prop("ordered",false) appearance=appearance(&context)/ >}.into_any()
 }
 
 /// Source Object.keys(first)/Object.values(each) table, without width normalization.
@@ -121,15 +127,22 @@ pub fn TabularView(
         .iter()
         .map(|row| {
             row.as_object()
-                .map(|row| row.values().map(metadata_child).collect())
-                .unwrap_or_default()
+                .map(|row| {
+                    row.values()
+                        .map(metadata_child)
+                        .collect::<Result<Vec<_>, _>>()
+                })
+                .unwrap_or_else(|| Ok(Vec::new()))
         })
-        .collect();
+        .collect::<Result<Vec<_>, _>>();
+    let Ok(rows) = rows else {
+        return crate::components::sync::rejected();
+    };
     let stripes = prop(&context, "stripes")
         .and_then(Value::as_array)
         .map(|values| values.iter().map(super::metadata_string).collect())
         .unwrap_or_default();
-    view! {<SourceTable columns rows stripes appearance=appearance(&context)/ >}
+    view! {<SourceTable columns rows stripes appearance=appearance(&context)/ >}.into_any()
 }
 
 /// Native/browser Date and Moment-compatible English/short relative presentation.

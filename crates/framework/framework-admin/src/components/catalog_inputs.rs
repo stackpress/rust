@@ -61,11 +61,16 @@ pub fn SliderField(
     let Ok(initial) = number(context.value.get_untracked(), scale) else {
         return rejected();
     };
-    let state = RangeState::new(scale, RangeValue::Single(initial)).expect("admitted scale/value");
+    let Ok(state) = RangeState::new(scale, RangeValue::Single(initial)) else {
+        return rejected();
+    };
     let integer = context.field.value_type.value == ValueType::Integer;
     let error = connect(
         context.value,
-        move || state.handle(0).expect("single handle"),
+        // Both modes have a first value; matching avoids a fallible indexed lookup.
+        move || match state.value() {
+            RangeValue::Single(value) | RangeValue::Pair { lower: value, .. } => value,
+        },
         move |value| {
             state.edit(0, &value.to_string());
         },
@@ -196,7 +201,9 @@ pub fn RatingField(
     let Ok(initial) = rating(context.value.get_untracked(), min, max) else {
         return rejected();
     };
-    let state = RatingState::new(max, initial).expect("admitted rating");
+    let Ok(state) = RatingState::new(max, initial) else {
+        return rejected();
+    };
     let error = connect(
         context.value,
         move || state.value(),

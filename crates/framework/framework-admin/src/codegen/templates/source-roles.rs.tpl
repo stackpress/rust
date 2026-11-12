@@ -7,6 +7,7 @@ use stackpress_framework_admin::RoleContext;
 use stackpress_framework_schema::__private::serde_json;
 use stackpress_framework_admin::Draft;
 /// Only portable presentation metadata; no native descriptors or providers.
+#[expect(clippy::expect_used, reason = "generator serializes and round-trip validates this compile-time UiModel literal")]
 pub fn model()->UiModel { serde_json::from_str([%model%]).expect("generated source UI descriptor") }
 /// Source field order and props, detached from private metadata.
 pub fn descriptors()->SchemaResult<Vec<UiField>> {Ok(model().fields)}
@@ -28,15 +29,13 @@ pub fn descriptors()->SchemaResult<Vec<UiField>> {Ok(model().fields)}
 [%/?:role.display%]
     let [%#?:role.has_controls%]mut [%/?:role.has_controls%]controls=Vec::<AnyView>::new();
 [%#@:role.controls control%]    {
-        let field=fields.iter().find(|field|field.wire_name==[%control.wire%]).expect("generated role field").clone();
-        let value=draft.get([%control.wire%]).expect("source role admitted draft");
-        let context=RoleContext {id:format!("{instance}-[%role.name%]-{}",[%control.wire%]),field,role:Role::[%role.variant%],value};
+        let context=RoleContext::from_draft(format!("{instance}-[%role.name%]-{}",[%control.wire%]),&fields,draft,[%control.wire%],Role::[%role.variant%])?;
 [%#?:role.prefix%]        let context=stackpress_framework_admin::source::roles::fieldset_context(context);
 [%/?:role.prefix%][%#?:control.row%]        let row=value_row.clone();
 [%/?:control.row%][%#?:control.nested%]        let fields=super::[%control.nested_module%]::descriptors()?;
-[%#?:control.nested_display%]        let render=Callback::new(|(value,instance):(serde_json::Value,String)|super::[%control.nested_module%]::[%control.nested_function%](&value,&instance).expect("generated fieldset display"));
+[%#?:control.nested_display%]        let render=Callback::new(|(value,instance):(serde_json::Value,String)|super::[%control.nested_module%]::[%control.nested_function%](&value,&instance).unwrap_or_else(|_|vec![view!{<p role="alert">"Value is incompatible with this control"</p>}.into_any()]));
 [%|%]        let fieldset_label=super::[%control.nested_module%]::model().label;
-        let render=Callback::new(|(draft,instance):(Draft,String)|super::[%control.nested_module%]::[%control.nested_function%](&draft,&instance).expect("generated fieldset inputs"));
+        let render=Callback::new(|(draft,instance):(Draft,String)|super::[%control.nested_module%]::[%control.nested_function%](&draft,&instance).unwrap_or_else(|_|view!{<p role="alert">"Value is incompatible with this control"</p>}.into_any()));
 [%/?:control.nested_display%][%/?:control.nested%]        controls.push(view!{<[%control.module%]::[%control.symbol%] context [%#?:control.row%]row[%/?:control.row%][%#?:control.nested%] fields render [%#?:control.nested_display%][%|%]fieldset_label[%/?:control.nested_display%][%/?:control.nested%]/>}.into_any());
     }
 [%/@:role.controls%]    [%#?:role.cells%]Ok(controls)[%|%]Ok(controls.collect_view().into_any())[%/?:role.cells%]

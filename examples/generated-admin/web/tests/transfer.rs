@@ -611,3 +611,38 @@ fn large_export_refuses_without_truncating_and_can_be_narrowed() {
     assert!(text.len() > 600_000 && text.len() < 1_048_576);
     assert!(!text.contains("Beta"));
 }
+
+/// Raw legacy bytes must survive the actual finite HTTP adapter before CSV detection.
+#[test]
+fn raw_uploads_decode_before_preview_and_preserve_typed_cells() {
+    let f = Fixture::new("/");
+    for (csv, name) in [
+        (b"id;name\na;caf\xe9".to_vec(), "café"),
+        (b"id\tname\na\t\xe3\xd1\xcd\xc8\xc7".to_vec(), "مرحبا"),
+        (
+            [
+                vec![0xff, 0xfe],
+                "id;name\na;🦀"
+                    .encode_utf16()
+                    .flat_map(u16::to_le_bytes)
+                    .collect(),
+            ]
+            .concat(),
+            "🦀",
+        ),
+    ] {
+        let reply = f.call(
+            "POST",
+            "api/profile/preview",
+            Some(json!({"csv":csv})),
+            "editor",
+            true,
+            false,
+            None,
+            false,
+        );
+        assert_eq!(reply["status"], 200, "{reply}");
+        let body: Value = serde_json::from_str(reply["body"].as_str().unwrap()).unwrap();
+        assert_eq!(body["results"]["rows"][0]["values"]["name"], name);
+    }
+}

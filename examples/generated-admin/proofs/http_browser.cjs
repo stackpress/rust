@@ -86,7 +86,7 @@ module.exports = async function run(flow) {
       }
       const method = request.method(), headers = await request.allHeaders();
       const transfer = target.pathname.endsWith('/preview') || target.pathname.endsWith('/confirm');
-      const body = transfer ? { csv: request.postData() || '', decode_export_guards: headers['x-admin-decode-export-guards'] === '1', confirm: headers['x-admin-confirmed'] === 'true' } : request.postData() ? JSON.parse(request.postData()) : undefined;
+      const body = transfer ? { csv: Array.from(request.postDataBuffer() || Buffer.alloc(0)), decode_export_guards: headers['x-admin-decode-export-guards'] === '1', confirm: headers['x-admin-confirmed'] === 'true' } : request.postData() ? JSON.parse(request.postData()) : undefined;
       h.calls.push({ method, pathname: target.pathname });
       const fault = h.faultNext && method === 'POST';
       if (fault) h.faultNext = false;

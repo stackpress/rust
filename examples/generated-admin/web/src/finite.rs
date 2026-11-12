@@ -118,11 +118,13 @@ pub async fn run(input: Input) -> Result<Output> {
             if body.get("confirm") == Some(&Value::Bool(true)) {
                 request = request.header("x-admin-confirmed", "true");
             }
-            body.get("csv")
-                .and_then(Value::as_str)
-                .unwrap_or_default()
-                .as_bytes()
-                .to_vec()
+            // The proof protocol accepts the same byte array or legacy text as Upload.
+            serde_json::from_value::<stackpress_framework_admin::transfer::CsvBytes>(
+                body.get("csv").cloned().unwrap_or_default(),
+            )
+            .map_err(native)?
+            .as_bytes()
+            .to_vec()
         } else {
             if input.body.is_some() {
                 request = request.header("content-type", "application/json");

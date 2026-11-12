@@ -1,0 +1,40 @@
+[package]
+name = "stackpress-fuzz"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+[package.metadata]
+cargo-fuzz = true
+
+# A separate nested workspace owns its lock and never changes the root dependency graph.
+[workspace]
+members = ["."]
+resolver = "2"
+
+[dependencies]
+libfuzzer-sys = "=0.4.10"
+stackpress-idea-parser = { path = "../crates/idea/idea-parser" }
+stackpress-framework-admin = { path = "../crates/framework/framework-admin" }
+stackpress-lib = { path = "../crates/lib" }
+
+[[bin]]
+name = "idea_parser"
+path = "fuzz_targets/idea_parser.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "admin_csv"
+path = "fuzz_targets/admin_csv.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "lib_query_form"
+path = "fuzz_targets/lib_query_form.rs"
+test = false
+doc = false
+bench = false

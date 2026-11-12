@@ -62,7 +62,6 @@ fn strict_parser_and_lowerable_budgets() {
         b"a\nx\"y",
         b"a\n\"x\"x",
         b"a\r1",
-        b"a\n\xff",
     ] {
         assert!(transfer::parse(bytes, limits).is_err(), "{bytes:?}");
     }

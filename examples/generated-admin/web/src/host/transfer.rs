@@ -235,7 +235,7 @@ async fn check_rows(
     Ok(())
 }
 
-/// The MIME is opaque to HTTP parsing. Admit raw file size before UTF-8 validation or copying.
+/// The MIME is opaque to HTTP parsing. Admit raw file size before decoder allocation or copying.
 fn upload(request: &Request, limits: transfer::Limits) -> Result<Upload> {
     let Body::Bytes(bytes) = request.body() else {
         return Err(Error::invalid("CSV upload required"));
@@ -250,13 +250,8 @@ fn upload(request: &Request, limits: transfer::Limits) -> Result<Upload> {
         Some("1") => true,
         _ => return Err(Error::invalid("invalid export decoding option")),
     };
-    let text = std::str::from_utf8(bytes).map_err(|cause| {
-        Error::invalid("invalid CSV UTF-8")
-            .with_public_message("CSV must be UTF-8")
-            .with_cause(cause)
-    })?;
     Ok(Upload {
-        csv: text.into(),
+        csv: bytes.clone().into(),
         decode_export_guards: guards,
         confirm: false,
     })

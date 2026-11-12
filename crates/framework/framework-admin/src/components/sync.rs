@@ -78,6 +78,6 @@ where
 }
 
 /// Fail closed for a direct caller's invalid seed instead of rendering a coerced value.
-pub(super) fn rejected() -> AnyView {
+pub(crate) fn rejected() -> AnyView {
     view! { <p role="alert">"Value is incompatible with this control"</p> }.into_any()
 }

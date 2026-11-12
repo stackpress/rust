@@ -1,4 +1,4 @@
-//! Strict bounded RFC-style CSV; LF and CRLF records, embedded quoted line breaks, no recovery.
+//! Bounded CSV structure with G62 decoding/sniffing; no structural error recovery.
 use super::{Limits, invalid};
 use stackpress_framework_schema::SchemaResult;
 
@@ -12,13 +12,12 @@ enum State {
 }
 /// Validate byte/cell/column/row budgets before each allocation or append.
 /// # Errors
-/// Rejects malformed UTF-8, quote transitions, lone record CRs and structural/budget excess.
+/// Rejects malformed BOM-marked encoding, quote transitions, lone record CRs and budget excess.
 pub fn parse(bytes: &[u8], limits: Limits) -> SchemaResult<Vec<Vec<String>>> {
     let limits = limits.validate()?;
-    if bytes.len() > limits.bytes {
-        return Err(invalid("CSV file byte limit exceeded"));
-    }
-    std::str::from_utf8(bytes).map_err(|cause| invalid("CSV must be UTF-8").with_cause(cause))?;
+    let decoded = super::encoding::decode(bytes, limits)?;
+    let bytes = decoded.as_bytes();
+    let delimiter = super::sniff::delimiter(bytes);
     let mut records = Vec::new();
     let mut row = Vec::new();
     let mut cell = Vec::new();
@@ -41,10 +40,10 @@ pub fn parse(bytes: &[u8], limits: Limits) -> SchemaResult<Vec<Vec<String>>> {
             } else {
                 push(&mut cell, byte, limits)?;
             }
-        } else if byte == b',' || byte == b'\n' || byte == b'\r' {
+        } else if byte == delimiter || byte == b'\n' || byte == b'\r' {
             finish_cell(&mut row, &mut cell, limits)?;
             state = State::Start;
-            if byte != b',' {
+            if byte != delimiter {
                 if byte == b'\r' {
                     if bytes.get(index + 1) != Some(&b'\n') {
                         return Err(invalid("CSV record CR requires LF"));

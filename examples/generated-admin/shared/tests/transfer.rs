@@ -13,7 +13,7 @@ fn import_ssr_preserves_drafts_and_requires_preview_then_confirmation() {
         transfer::FileDraft {
             name: "</script> hostile.csv".into(),
             csv: "id,name\nx,Draft".into(),
-            error: "Unable to read UTF-8 CSV file".into(),
+            error: "Unable to read CSV file".into(),
             ..Default::default()
         },
     ] {

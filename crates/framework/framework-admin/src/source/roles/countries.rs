@@ -53,9 +53,9 @@ pub fn CountryField(
     let option = slot(&context, "option");
     let appearance = appearance(&context);
     let control = if currency {
-        view!{<SourceCurrencySelect id=id.clone() name initial searchable search_placeholder placeholder display dropdown option appearance on_update=Callback::new(move|value:CurrencyData|draft.set(Presence::Value(serde_json::to_value(value).expect("static currency record"))))/>}.into_any()
+        view!{<SourceCurrencySelect id=id.clone() name initial searchable search_placeholder placeholder display dropdown option appearance on_update=Callback::new(move|value:CurrencyData|{ if let Ok(value) = serde_json::to_value(value) { draft.set(Presence::Value(value)); } })/>}.into_any()
     } else {
-        view!{<SourceCountrySelect id=id.clone() name initial searchable search_placeholder placeholder display dropdown option appearance on_update=Callback::new(move|value:CountryData|draft.set(Presence::Value(serde_json::to_value(value).expect("static country record"))))/>}.into_any()
+        view!{<SourceCountrySelect id=id.clone() name initial searchable search_placeholder placeholder display dropdown option appearance on_update=Callback::new(move|value:CountryData|{ if let Ok(value) = serde_json::to_value(value) { draft.set(Presence::Value(value)); } })/>}.into_any()
     };
     view! {<FieldControl for_id=id label=context.field.label>{control}</FieldControl>}
 }

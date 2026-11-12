@@ -27,7 +27,9 @@ fn strings(value: Input<Value>) -> Admission<Vec<String>> {
 }
 
 /// Assign initial identities once; later user edits/reorders retain the checked row itself.
-fn rows<T: stackpress_leptos::components::CollectionValue>(values: Vec<T>) -> BoundedList<T> {
+fn rows<T: stackpress_leptos::components::CollectionValue>(
+    values: Vec<T>,
+) -> Admission<BoundedList<T>> {
     BoundedList::new(
         values
             .into_iter()
@@ -39,7 +41,7 @@ fn rows<T: stackpress_leptos::components::CollectionValue>(values: Vec<T>) -> Bo
             .collect(),
         100,
     )
-    .expect("adapter admission checks the complete bounded collection")
+    .map_err(|_| "Expected bounded collection rows")
 }
 
 /// Exact bounded text/tag list. Empty strings, duplicates and explicit empty arrays survive.
@@ -51,7 +53,11 @@ pub fn TextListField(
     let Ok(initial) = strings(context.value.get_untracked()) else {
         return rejected();
     };
-    let list = RwSignal::new(rows(initial));
+    // Keep direct or future adapter callers fallible at the controller boundary.
+    let Ok(initial) = rows(initial) else {
+        return rejected();
+    };
+    let list = RwSignal::new(initial);
     let error = connect(
         context.value,
         move || {
@@ -62,7 +68,11 @@ pub fn TextListField(
                     .collect::<Vec<_>>()
             })
         },
-        move |values| list.set(rows(values)),
+        move |values| {
+            if let Ok(next) = rows(values) {
+                list.set(next);
+            }
+        },
         strings,
         |values| {
             Ok(Input::Value(Value::Array(
@@ -122,7 +132,11 @@ pub fn MetadataField(
     let Ok(initial) = metadata(context.value.get_untracked()) else {
         return rejected();
     };
-    let list = RwSignal::new(rows(initial));
+    // Keep direct or future adapter callers fallible at the controller boundary.
+    let Ok(initial) = rows(initial) else {
+        return rejected();
+    };
+    let list = RwSignal::new(initial);
     let error = connect(
         context.value,
         move || {
@@ -133,7 +147,11 @@ pub fn MetadataField(
                     .collect::<Vec<_>>()
             })
         },
-        move |values| list.set(rows(values)),
+        move |values| {
+            if let Ok(next) = rows(values) {
+                list.set(next);
+            }
+        },
         metadata,
         object,
     );

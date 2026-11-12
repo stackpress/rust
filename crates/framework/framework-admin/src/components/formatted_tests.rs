@@ -4,34 +4,30 @@ use serde_json::json;
 use stackpress_framework_schema::{FieldAccess, Role, Schema, codegen::DefinitionRegistry};
 use stackpress_leptos::format::edit::EditSelection;
 
-fn field(kind: &str, selection: &str) -> UiField {
+/// Normalize real field metadata; test functions own any fixture-construction failure.
+fn field(kind: &str, selection: &str) -> Result<UiField, Box<dyn std::error::Error>> {
     let source = format!("model Example {{ id String @id value {kind} {selection} }}");
-    let parsed =
-        stackpress_idea_parser::parse("format.idea", &source, &Default::default()).unwrap();
+    let parsed = stackpress_idea_parser::parse("format.idea", &source, &Default::default())?;
     let mut registry = DefinitionRegistry::standard();
     for name in ["id", "value"] {
-        registry = registry
-            .with_field_policy(
-                "Example",
-                name,
-                FieldAccess {
-                    readable: true,
-                    writable: true,
-                    sensitive: false,
-                    publish_default: true,
-                },
-            )
-            .unwrap();
+        registry = registry.with_field_policy(
+            "Example",
+            name,
+            FieldAccess {
+                readable: true,
+                writable: true,
+                sensitive: false,
+                publish_default: true,
+            },
+        )?;
     }
-    let registry = crate::codegen::register_components(registry, vec![]).unwrap();
-    Schema::normalize(&parsed, &registry, Default::default())
-        .unwrap()
-        .project_ui()
-        .unwrap()
+    let registry = crate::codegen::register_components(registry, vec![])?;
+    Ok(Schema::normalize(&parsed, &registry, Default::default())?
+        .project_ui()?
         .models
         .remove(0)
         .fields
-        .remove(1)
+        .remove(1))
 }
 #[test]
 fn typed_policies_and_wire_boundaries() {
@@ -40,7 +36,7 @@ fn typed_policies_and_wire_boundaries() {
         ("Integer?", "@field.integer", json!(0)),
         ("Number?", "@field.number", json!(12.5)),
     ] {
-        let field = field(kind, selection);
+        let field = field(kind, selection).unwrap();
         let binding = &field.roles[0];
         configuration(&field, binding).unwrap();
         let canonical = if let Some(value) = value.as_str() {
@@ -73,7 +69,7 @@ fn typed_policies_and_wire_boundaries() {
             json!(expected)
         );
     }
-    let field = field("String?", "@field.phone({ region \"US\" })");
+    let field = field("String?", "@field.phone({ region \"US\" })").unwrap();
     let binding = &field.roles[0];
     let policy = phone(&field, binding).unwrap();
     let mut state = EditState::new(policy, None, DisplayLocale::English).unwrap();
@@ -93,7 +89,7 @@ fn typed_policies_and_wire_boundaries() {
 }
 #[test]
 fn partials_and_valid_blur_keep_distinct_state() {
-    let field = field("Number?", "@field.number");
+    let field = field("Number?", "@field.number").unwrap();
     let policy = decimal(&field, &field.roles[0]).unwrap();
     let mut state = EditState::new(
         policy,
@@ -143,7 +139,7 @@ fn temporal_presentation_keeps_exact_commits_and_declared_precision() {
             "2024-02-29T12:30:00.000-02:00",
         ),
     ] {
-        let field = field(kind, selection);
+        let field = field(kind, selection).unwrap();
         let (kind, policy) = temporal(&field, &field.roles[0]).unwrap();
         let value = IsoValue::parse(kind, raw).unwrap();
         assert_eq!(
@@ -199,7 +195,7 @@ fn props_types_and_all_rendered_families() {
                 json!("+12025550123"),
             ),
         ] {
-            let field = field(kind, selection);
+            let field = field(kind, selection).unwrap();
             let mut context = RoleContext {
                 id: "formatted-proof".into(),
                 field: field.clone(),
@@ -241,7 +237,7 @@ fn props_types_and_all_rendered_families() {
             binding.props.insert("locale".into(), json!("ambient"));
             assert!(configuration(&field, &binding).is_err());
         }
-        let field = field("Integer?", "@field.integer");
+        let field = field("Integer?", "@field.integer").unwrap();
         let mut binding = field.roles[0].clone();
         binding.props.insert("scale".into(), json!(1));
         assert!(configuration(&field, &binding).is_err());

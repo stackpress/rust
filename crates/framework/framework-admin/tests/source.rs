@@ -356,13 +356,15 @@ fn source_metadata_keeps_two_column_order_escaping_and_primitive_child_semantics
 }
 
 #[test]
-#[should_panic(expected = "source metadata object is not a renderable child")]
 fn source_metadata_does_not_invent_a_display_for_non_renderable_object_children() {
-    let _ = display(
+    let html = display(
         "model Article { metadata Hash @view.metadata }",
         serde_json::json!({"object":{"x":1}}),
         true,
     );
+    assert!(html.contains("role=\"alert\""));
+    assert!(html.contains("Value is incompatible with this control"));
+    assert!(!html.contains("<table"));
 }
 
 #[test]
@@ -448,6 +450,108 @@ fn source_metadata_field_projects_original_string_entries_without_mutating_draft
             original,
             "presentation is not a data mutation"
         );
+    });
+    owner.cleanup();
+}
+
+/// G62 crash regression: caller-supplied fieldset metadata need not belong to the graph.
+#[test]
+fn source_missing_fieldset_metadata_returns_a_generation_error() {
+    let config = stackpress_idea_parser::parse(
+        "missing-fieldset.idea",
+        "type Detail { name String @field.input } model Proof { detail Detail @field.fieldset }",
+        &Default::default(),
+    )
+    .unwrap();
+    let graph = Schema::normalize_source(&config, Default::default(), &[]).unwrap();
+    let definitions = source_definitions().unwrap();
+    let mut ui = graph.project_source_ui(&definitions).unwrap();
+    ui.models[0].fields[0].value_type.value =
+        stackpress_framework_schema::ValueType::Fieldset("Absent".into());
+    let error =
+        emit_source_pages(&graph, &ui, &definitions, &mut OutputPlan::default()).unwrap_err();
+    assert!(format!("{error:?}").contains("source fieldset has no normalized metadata"));
+}
+
+/// G62 crash regression: a fieldset in the page-model catalog cannot become a stored-model page.
+#[test]
+fn source_page_catalog_fieldset_returns_a_generation_error() {
+    fn mismatched(
+        context: &TransformContext<'_>,
+        output: &mut OutputPlan,
+    ) -> stackpress_idea_transformer::Result<()> {
+        let graph = Schema::normalize_source(context.schema(), Default::default(), &[])
+            .map_err(transform_error)?;
+        let definitions = source_definitions().map_err(transform_error)?;
+        let mut ui = graph
+            .project_source_ui(&definitions)
+            .map_err(transform_error)?;
+        ui.models = std::mem::take(&mut ui.fieldsets);
+        emit_source_pages(&graph, &ui, &definitions, output)
+    }
+    let config = stackpress_idea_parser::parse(
+        "fieldset-page.idea",
+        "type Detail { name String @field.input } model Proof { detail Detail }",
+        &Default::default(),
+    )
+    .unwrap();
+    let mut registry = Registry::new();
+    registry
+        .add(
+            TransformSpec::new("mismatched-ui").owns(&["ui"]),
+            mismatched,
+        )
+        .unwrap();
+    let error = registry.plan(&config, vec![]).unwrap_err();
+    assert!(format!("{error:?}").contains("source page has no normalized model"));
+}
+
+/// Generated controls share descriptor/signal admission and retain the original error precedence.
+#[test]
+fn generated_role_context_reports_missing_members_without_mutating_the_draft() {
+    use leptos::prelude::*;
+    use stackpress_framework_admin::{Draft, RoleContext};
+    use stackpress_framework_schema::Input;
+    let config = stackpress_idea_parser::parse(
+        "context.idea",
+        "model Proof { text String? @field.input }",
+        &Default::default(),
+    )
+    .unwrap();
+    let graph = Schema::normalize_source(&config, Default::default(), &[]).unwrap();
+    let ui = graph
+        .project_source_ui(&source_definitions().unwrap())
+        .unwrap();
+    let fields = &ui.models[0].fields;
+    let owner = Owner::new();
+    owner.with(|| {
+        let draft = Draft::new(fields, &serde_json::json!({"text":"kept"}), Role::Field).unwrap();
+        let context =
+            RoleContext::from_draft("control", fields, &draft, "text", Role::Field).unwrap();
+        assert_eq!(context.id, "control");
+        assert_eq!(context.field.wire_name, "text");
+        assert_eq!(context.role, Role::Field);
+        let missing =
+            RoleContext::from_draft("control", &[], &Draft::default(), "text", Role::Field);
+        assert!(
+            missing
+                .err()
+                .unwrap()
+                .to_string()
+                .contains("generated role field missing")
+        );
+        let missing =
+            RoleContext::from_draft("control", fields, &Draft::default(), "text", Role::Field);
+        assert!(
+            missing
+                .err()
+                .unwrap()
+                .to_string()
+                .contains("source role draft field missing")
+        );
+        assert_eq!(draft.snapshot().unwrap()["text"], "kept");
+        context.value.set(Input::Value(serde_json::json!("edited")));
+        assert_eq!(draft.snapshot().unwrap()["text"], "edited");
     });
     owner.cleanup();
 }
