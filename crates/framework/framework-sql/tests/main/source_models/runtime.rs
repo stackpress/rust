@@ -12,7 +12,7 @@ mod g54;
 
 /// A real composed schema delegates all mechanics to the same descriptor owner as emitted code.
 macro_rules! schema {
-    ($name:ident, $model:literal) => {
+    ($name:ident, $model:literal $(, $corrupt:expr)?) => {
         struct $name(SourceRecordSchema);
         impl SourceSchema for $name {
             type Value = Value;
@@ -33,7 +33,10 @@ macro_rules! schema {
                     .unwrap()
             }
             fn catalog() -> SourceCatalog {
-                super::source_schema(true).catalog().unwrap()
+                let catalog = super::source_schema(true).catalog().unwrap();
+                $(let mut catalog = catalog;
+                ($corrupt)(&mut catalog);)?
+                catalog
             }
             fn seed(&self) -> &str {
                 self.0.seed()
@@ -222,14 +225,20 @@ fn source_query_boundary_sort_and_terminal_paths() {
         assert_eq!(error.code, 500);
     }
     let auth = NativeStore::<Auth>::new("seed".into(), 0);
-    assert_eq!(auth.paths("profile.name")[0].model, "Profile");
-    assert_eq!(auth.paths("profile.unknown")[0].field, "profile");
-    assert_eq!(auth.paths("profile")[0].field, "profile");
+    assert_eq!(auth.paths("profile.name").unwrap()[0].model, "Profile");
+    assert_eq!(auth.paths("profile.unknown").unwrap()[0].field, "profile");
+    assert_eq!(auth.paths("profile").unwrap()[0].field, "profile");
     assert!(
-        store.paths("auth.*").is_empty(),
+        store.paths("auth.*").unwrap().is_empty(),
         "reverse lists do not synthesize stored joins"
     );
-    assert_eq!(store.selectors(&["name".into(), "name".into()]).len(), 1);
+    assert_eq!(
+        store
+            .selectors(&["name".into(), "name".into()])
+            .unwrap()
+            .len(),
+        1
+    );
 }
 
 #[tokio::test]
@@ -339,7 +348,7 @@ fn source_scalar_codecs_keep_missing_null_and_invalid_shapes_distinct() {
 #[test]
 fn source_unique_indexes_precede_ordinary_indexes_for_every_table() {
     let store = NativeStore::<Auth>::new("seed".into(), 0);
-    let definition = store.create().definition().unwrap();
+    let definition = store.create().unwrap().definition().unwrap();
     assert_eq!(
         definition.indexes.first().unwrap().name,
         "auth_token_unique"
@@ -470,4 +479,36 @@ async fn g54_hasnt_none_values_and_absence_on_real_sqlite() {
         .await
         .unwrap();
     engine.close().await.unwrap();
+}
+
+/// Handwritten SourceSchema implementations can supply invalid catalogs; reject them before SQL.
+#[test]
+fn missing_relation_keys_return_errors_instead_of_panicking() {
+    schema!(MissingLocal, "Auth", |catalog: &mut SourceCatalog| {
+        let auth = catalog
+            .models
+            .iter_mut()
+            .find(|model| model.name == "Auth")
+            .unwrap();
+        auth.fields.retain(|field| field.name != "profileId");
+    });
+    schema!(MissingForeign, "Auth", |catalog: &mut SourceCatalog| {
+        let profile = catalog
+            .models
+            .iter_mut()
+            .find(|model| model.name == "Profile")
+            .unwrap();
+        profile.fields.retain(|field| field.name != "id");
+    });
+    let local = NativeStore::<MissingLocal>::new(String::new(), 0);
+    let foreign = NativeStore::<MissingForeign>::new(String::new(), 0);
+    for error in [
+        local.create().unwrap_err(),
+        foreign.create().unwrap_err(),
+        local.paths("profile.name").unwrap_err(),
+        foreign.paths("profile.name").unwrap_err(),
+    ] {
+        assert_eq!(error.code, 500);
+        assert!(error.error.contains("relation") && error.error.contains("key is missing"));
+    }
 }

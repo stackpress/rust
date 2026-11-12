@@ -61,3 +61,11 @@ fn transform_error(asset: &'static str, cause: TemplateError) -> TransformError 
     // Only a short authored asset path reaches this context; preserve constructor errors if changed.
     .unwrap_or_else(|error| error)
 }
+
+/// Preserve a typed schema codec cause when preparing a normalized descriptor literal.
+pub(super) fn encoding_error(cause: serde_json::Error) -> TransformError {
+    super::transform_error(
+        SchemaError::new(SchemaErrorKind::Codec, "schema descriptor encoding failed")
+            .with_cause(cause),
+    )
+}

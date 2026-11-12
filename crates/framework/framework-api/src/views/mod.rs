@@ -38,6 +38,10 @@ pub struct Consent {
 }
 impl Consent {
     /// Source defaults for a directly constructed page; no resource acquisition occurs here.
+    #[expect(
+        clippy::expect_used,
+        reason = "literal default; pending foundation infallible constructor"
+    )]
     pub fn new(config: Value, request: Value, application: Value) -> Self {
         Self {
             config,
@@ -148,4 +152,20 @@ pub fn seed(value: &impl Serialize) -> Result<String, serde_json::Error> {
         .replace('<', "\\u003c")
         .replace('>', "\\u003e")
         .replace('&', "\\u0026"))
+}
+
+#[cfg(test)]
+mod default_tests {
+    use super::*;
+
+    /// The temporary literal constructor keeps exactly the approved infallible default.
+    #[test]
+    fn literal_default_language_is_valid() {
+        let page = Consent::new(Value::Null, Value::Null, Value::Null);
+        assert_eq!(page.language.locale(), "en");
+        assert_eq!(
+            page.language.text("Hello %s", &["world".into()]),
+            "Hello world"
+        );
+    }
 }

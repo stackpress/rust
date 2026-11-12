@@ -6,13 +6,18 @@ use serde_json::json;
 use stackpress_idea_transformer::Result;
 
 /// Construct a sanitized input policy. Published shapes include writable fields only.
-fn policy(schema: &Schema, model: &Model, public: bool, patch: bool) -> InputSchema {
+fn policy(
+    schema: &Schema,
+    model: &Model,
+    public: bool,
+    patch: bool,
+) -> crate::SchemaResult<InputSchema> {
     let mut record = projection::record_schema(schema, model);
     for target in std::iter::once(&mut record.model).chain(&mut record.fieldsets) {
         let original = std::iter::once(model)
             .chain(schema.fieldsets())
             .find(|item| item.name == target.name)
-            .expect("checked input model");
+            .ok_or_else(|| super::invalid("input model is missing"))?;
         target.fields.retain(|field| {
             !field.generated
                 && !matches!(field.value_type, ValueType::Model(_))
@@ -28,7 +33,7 @@ fn policy(schema: &Schema, model: &Model, public: bool, patch: bool) -> InputSch
                 .fields
                 .iter()
                 .find(|item| item.name == field.name)
-                .expect("checked input field");
+                .ok_or_else(|| super::invalid("input field is missing"))?;
             if !patch && original.access.publish_default && !original.access.sensitive {
                 field.default = original
                     .default
@@ -44,7 +49,7 @@ fn policy(schema: &Schema, model: &Model, public: bool, patch: bool) -> InputSch
             }
         }
     }
-    InputSchema { record, patch }
+    Ok(InputSchema { record, patch })
 }
 
 /// Emit methods sharing the same business validator without executing providers twice.
@@ -57,15 +62,16 @@ pub(super) fn methods(schema: &Schema, model: &Model, public: bool, patch: bool)
         }),
     )?;
     let descriptor =
-        serde_json::to_string(&policy(schema, model, public, patch)).map_err(|cause| {
-            transform_error(
-                crate::SchemaError::new(
-                    crate::SchemaErrorKind::Codec,
-                    "input policy encoding failed",
+        serde_json::to_string(&policy(schema, model, public, patch).map_err(transform_error)?)
+            .map_err(|cause| {
+                transform_error(
+                    crate::SchemaError::new(
+                        crate::SchemaErrorKind::Codec,
+                        "input policy encoding failed",
+                    )
+                    .with_cause(cause),
                 )
-                .with_cause(cause),
-            )
-        })?;
+            })?;
     source::generate(
         "templates/input-methods.rs.tpl",
         include_str!("templates/input-methods.rs.tpl"),

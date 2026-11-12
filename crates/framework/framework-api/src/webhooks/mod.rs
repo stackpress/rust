@@ -39,7 +39,9 @@ impl Webhook {
         let PredicateValue::Object(predicate) =
             PredicateValue::from_json(&Json::Object(config.validity.clone()))?
         else {
-            unreachable!("a typed validity object decodes as an object");
+            return Err(stackpress_lib::Error::new(
+                "webhook validity must be an object",
+            ));
         };
         Ok(Self { config, predicate })
     }

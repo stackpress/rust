@@ -68,7 +68,7 @@
     {
       "source": "crates/framework/framework-session/tests/fixtures/live_support.rs",
       "copy": "crates/framework/framework-api/tests/fixtures/live_support.rs",
-      "sha256": "473764b47f5eae73b952cf2f5fb5152d4959d56cf41993e4469048d7bc021530"
+      "sha256": "18a2f758e2ab3ac2498b0b36603d461e54a5915cae33b76c40ce866b35bf315e"
     },
     {
       "source": "crates/sql/test-support/harness.rs",
@@ -103,7 +103,7 @@
     {
       "source": "crates/framework/framework-session/tests/fixtures/live_support.rs",
       "copy": "crates/framework/framework/tests/fixtures/live_support.rs",
-      "sha256": "473764b47f5eae73b952cf2f5fb5152d4959d56cf41993e4469048d7bc021530"
+      "sha256": "18a2f758e2ab3ac2498b0b36603d461e54a5915cae33b76c40ce866b35bf315e"
     }
   ]
 }

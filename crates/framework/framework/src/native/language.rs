@@ -113,7 +113,11 @@ impl Scalar<'_> {
             Self::Number(value) if *value == 0.0 => "0".into(),
             Self::Number(value) if value.abs() >= 1e21 || value.abs() < 1e-6 => {
                 let exponent = format!("{value:e}");
-                let (mantissa, power) = exponent.split_once('e').expect("scientific notation");
+                // Finite scientific formatting always contains e; retain the formatted value
+                // if the formatter ever supplies another representation.
+                let Some((mantissa, power)) = exponent.split_once('e') else {
+                    return exponent;
+                };
                 format!(
                     "{mantissa}e{}{power}",
                     if power.starts_with('-') { "" } else { "+" }

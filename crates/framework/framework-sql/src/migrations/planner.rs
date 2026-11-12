@@ -363,7 +363,7 @@ pub(super) fn from_recipe(recipe: PlanRecipe) -> DataResult<MigrationPlan> {
             length_checks: checks,
         })?))
     };
-    finish(from, to, recipe, build, reverse)
+    finish(backend, from, to, recipe, build, reverse)
 }
 /// Mutable pure construction state; never stores native resources or caller SQL.
 pub(super) struct Build {
@@ -746,6 +746,7 @@ fn dependency_order(tables: &[TableDefinition]) -> DataResult<Vec<&TableDefiniti
 }
 /// Final aggregate preflight and exact approval hash, including reverse/capability metadata.
 fn finish(
+    backend: DialectId,
     from: RevisionSnapshot,
     to: RevisionSnapshot,
     recipe: PlanRecipe,
@@ -809,6 +810,7 @@ fn finish(
         reverse_identity,
     ))?);
     Ok(MigrationPlan {
+        backend,
         from,
         to,
         queries,

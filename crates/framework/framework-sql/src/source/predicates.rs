@@ -104,7 +104,7 @@ impl<S: SourceSchema<Value = Value, Record = Record>> NativeStore<S> {
         compare: Compare,
         like: bool,
     ) -> Result<Option<Expr>> {
-        let Some(selector) = self.selectors(&[expression.into()]).into_iter().next() else {
+        let Some(selector) = self.selectors(&[expression.into()])?.into_iter().next() else {
             return Ok(None);
         };
         let schema = self.sibling(&selector.model);

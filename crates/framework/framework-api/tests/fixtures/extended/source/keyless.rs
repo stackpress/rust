@@ -5,6 +5,10 @@ use stackpress_framework_schema::{
 };
 
 /// Complete source metadata, including relations, UI props and private attributes.
+#[expect(
+    clippy::expect_used,
+    reason = "generator serializes a checked Model into this constant JSON literal"
+)]
 pub fn describe() -> Model {
     stackpress_framework_schema::source::__private::serde_json::from_str("{\"name\":\"Keyless\",\"rust_name\":\"Keyless\",\"module\":\"keyless\",\"fields\":[{\"name\":\"value\",\"rust_name\":\"value\",\"column\":\"value\",\"value_type\":{\"kind\":\"String\"},\"required\":false,\"multiple\":false,\"key\":false,\"default\":\"fallback\",\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":null,\"rules\":[],\"documentation\":{\"label\":null,\"description\":null,\"examples\":[],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"default\",\"value\":[\"fallback\"]}]}],\"documentation\":{\"label\":null,\"description\":null,\"examples\":[],\"display\":null,\"icon\":null,\"labels\":[]},\"query\":[],\"attributes\":[]}").expect("generator emitted valid source metadata")
 }
@@ -13,24 +17,20 @@ pub fn describe() -> Model {
 pub fn columns() -> Vec<SourceColumn> {
     let model = describe();
     let catalog = std::sync::Arc::new(super::_catalog::describe());
-    let codecs = vec![(
-        "value",
-        Column {
-            kind: Kind::String,
-            nullable: true,
-        },
-    )];
-    // Pair by exact identity instead of dropping or shifting a virtual relation slot.
-    codecs
+    // Visit source fields in declaration order; virtual relations have no storage codec.
+    model
+        .fields
         .into_iter()
-        .map(|(name, codec)| {
-            let field = model
-                .fields
-                .iter()
-                .find(|field| field.name == name)
-                .expect("generated column has source field")
-                .clone();
-            SourceColumn::new(codec, field).with_catalog(catalog.clone())
+        .filter_map(|field| {
+            let codec = match field.name.as_str() {
+                "value" => Column {
+                    kind: Kind::String,
+                    nullable: true,
+                },
+
+                _ => return None,
+            };
+            Some(SourceColumn::new(codec, field).with_catalog(catalog.clone()))
         })
         .collect()
 }

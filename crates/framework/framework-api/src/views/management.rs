@@ -382,16 +382,16 @@ fn CsvImport(
     let csv = RwSignal::new(String::new());
     let error = RwSignal::new(String::new());
     view! {<form method="post" on:submit=move |event| {
-        if let Some(submit)=&submit {event.prevent_default();match import_csv(&csv.get_untracked()) {Ok(rows)=>submit.run(json!({"rows":rows})),Err(_)=>error.set("CSV parsing error".into())}}
+        if let Some(submit)=&submit {event.prevent_default();match import_csv(csv.get_untracked().as_bytes()) {Ok(rows)=>submit.run(json!({"rows":rows})),Err(_)=>error.set("CSV parsing error".into())}}
     }><FieldControl for_id="api-csv" label="CSV file"><input id="api-csv" type="file" accept=".csv,text/csv" data-api-csv/></FieldControl>
     <FieldControl for_id="api-csv-text" label="CSV rows"><Textarea id="api-csv-text" name="csv" value=csv required=true/></FieldControl>
     <p role="alert">{move ||error.get()}</p><Button button_type=ButtonType::Submit>"Import"</Button></form>}
 }
-/// Parse source header/value strings with the existing shared CSV parser, without write policy.
+/// Pass original upload bytes to the shared CSV decoder and build source header/value rows.
 /// # Errors
 /// Existing parser representation ceilings/quote errors fail before constructing a batch.
-pub fn import_csv(csv: &str) -> SchemaResult<Vec<Value>> {
-    let records = stackpress_framework_admin::transfer::parse(csv.as_bytes(), Default::default())?;
+pub fn import_csv(csv: impl AsRef<[u8]>) -> SchemaResult<Vec<Value>> {
+    let records = stackpress_framework_admin::transfer::parse(csv.as_ref(), Default::default())?;
     let Some(head) = records.first() else {
         return Ok(Vec::new());
     };

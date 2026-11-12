@@ -1,3 +1,12 @@
+#![deny(
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::panic,
+    clippy::unimplemented,
+    clippy::todo,
+    clippy::unreachable
+)]
+
 //! Generated-store support over exact borrowed SQL executors, with no ambient transactions.
 //!
 //! `DataSession` is exclusive and non-Clone. The caller owns transaction completion;

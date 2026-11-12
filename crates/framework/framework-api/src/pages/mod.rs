@@ -146,13 +146,12 @@ fn now() -> Result<i64> {
 
 /// JavaScript encodeURIComponent's byte escape set, used for the signin continuation only.
 fn encode(value: &str) -> String {
-    use std::fmt::Write;
     let mut output = String::new();
     for byte in value.bytes() {
         if byte.is_ascii_alphanumeric() || b"-_.!~*'()".contains(&byte) {
             output.push(char::from(byte));
         } else {
-            write!(output, "%{byte:02X}").expect("String write");
+            output.push_str(&format!("%{byte:02X}"));
         }
     }
     output

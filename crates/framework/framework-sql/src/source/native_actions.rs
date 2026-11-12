@@ -3,7 +3,7 @@ use super::{ActionError, NativeStore, SourceResult as Result, StoreQuery};
 use crate::DataSession;
 use stackpress_framework_schema::{
     ValueType,
-    source::{Record, SourceSchema, Value},
+    source::{Record, SourceRecordSchema, SourceSchema, Value},
 };
 use stackpress_sql::{Engine, Row, SqlValue};
 use std::sync::Arc;
@@ -76,14 +76,7 @@ impl<S: SourceSchema<Value = Value, Record = Record>> NativeActions<S> {
             {
                 errors.insert(
                     field.name.clone(),
-                    self.store
-                        .record
-                        .columns()
-                        .iter()
-                        .find(|c| c.name() == field.name)
-                        .expect("stored unique column")
-                        .uniqueness_error(value)
-                        .into(),
+                    uniqueness_error(&self.store.record, &field.name, value)?.into(),
                 );
             }
         }
@@ -144,7 +137,7 @@ impl<S: SourceSchema<Value = Value, Record = Record>> NativeActions<S> {
         db: &mut DataSession<'_>,
         query: &StoreQuery,
     ) -> Result<Vec<Record>> {
-        let selectors = self.store.selectors(&query.columns);
+        let selectors = self.store.selectors(&query.columns)?;
         let rows = db.fetch(&self.store.select(query, db.dialect())?).await?;
 
         rows.iter()
@@ -207,7 +200,7 @@ impl<S: SourceSchema<Value = Value, Record = Record>> NativeActions<S> {
         )
         .alias("total")])
         .from(self.store.table());
-        for join in self.store.joins(&query) {
+        for join in self.store.joins(&query)? {
             select = select.join(join);
         }
         if let Some(filter) = self.store.where_clause(&query, db.dialect())? {
@@ -268,14 +261,7 @@ impl<S: SourceSchema<Value = Value, Record = Record>> NativeActions<S> {
                 {
                     errors.insert(
                         field.name.clone(),
-                        self.store
-                            .record
-                            .columns()
-                            .iter()
-                            .find(|c| c.name() == field.name)
-                            .expect("stored unique column")
-                            .uniqueness_error(value)
-                            .into(),
+                        uniqueness_error(&self.store.record, &field.name, value)?.into(),
                     );
                 }
             }
@@ -432,4 +418,29 @@ fn camel(value: &str) -> String {
 /// G51 adds action validation for is.unique; only @unique owns DDL/upsert selector metadata.
 fn validates_unique(field: &stackpress_framework_schema::Field) -> bool {
     field.unique || field.rules.iter().any(|rule| rule.code == "unique")
+}
+
+/// Resolve the storage-owned uniqueness message identically for create and update.
+/// Missing metadata from a handwritten schema is an action error, before a write occurs.
+fn uniqueness_error(schema: &SourceRecordSchema, name: &str, value: &Value) -> Result<String> {
+    let column = schema
+        .column(name)
+        .ok_or_else(|| ActionError::new(500, "unique storage column is missing", Record::new()))?;
+    Ok(column.uniqueness_error(value))
+}
+
+#[cfg(test)]
+mod metadata_tests {
+    use super::*;
+
+    /// An inconsistent custom schema previously reached expect after a duplicate was found.
+    #[test]
+    fn missing_unique_column_is_an_error_instead_of_a_panic() {
+        let schema = SourceRecordSchema::new(Vec::new(), String::new(), 0);
+        let error =
+            uniqueness_error(&schema, "email", &Value::String("duplicate".into())).unwrap_err();
+        assert_eq!(error.code, 500);
+        assert_eq!(error.error, "unique storage column is missing");
+        assert!(error.errors.is_empty());
+    }
 }

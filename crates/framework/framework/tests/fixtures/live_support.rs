@@ -1,7 +1,7 @@
 //! Test-only owned network databases, shared by the session and API search executables.
 //!
 //! Adapter M2 fixtures are private; reuse their public adapters and reachable process/discovery
-//! helpers. This owner follows their CREATE/armed/exact-DROP contract without a library API.
+//! helpers. This owner follows their reserve/CREATE/exact-DROP contract without a library API.
 
 #[path = "harness.rs"]
 mod harness;
@@ -97,15 +97,22 @@ impl Backend {
     }
 }
 
-/// Only a successful CREATE acknowledgement grants authority to drop this generated name.
+/// Reserving a unique generated name grants exact cleanup authority before CREATE.
 struct Fixture {
     backend: Backend,
     name: String,
-    /// The administrative worker publishes CREATE/DROP acknowledgement before socket close.
+    /// Reservation survives uncertain CREATE; DROP acknowledgement clears it before socket close.
     armed: Arc<AtomicBool>,
 }
 impl Fixture {
     fn create(backend: Backend) -> TestResult<Self> {
+        Self::create_with(backend, |_| Ok(()))
+    }
+    /// The injected boundary simulates a lost CREATE acknowledgement after server-side success.
+    fn create_with(
+        backend: Backend,
+        after_create: impl FnOnce(&str) -> TestResult<()>,
+    ) -> TestResult<Self> {
         backend.host()?;
         let name = format!(
             "stackpress_g46_{}_{:x}_{:x}",
@@ -117,15 +124,17 @@ impl Fixture {
         let fixture = Self {
             backend,
             name,
-            armed: Arc::new(AtomicBool::new(false)),
+            armed: Arc::new(AtomicBool::new(true)),
         };
-        // Keep the owner alive while CREATE runs, including an error after acknowledgement.
+        // Reserve before sending CREATE so every error path attempts exact-name cleanup.
+        println!("attempting CREATE of exact database {}", fixture.name);
         admin(
             backend,
             "CREATE",
             fixture.name.clone(),
             fixture.armed.clone(),
         )?;
+        after_create(&fixture.name)?;
         Ok(fixture)
     }
     fn cleanup(&mut self) -> TestResult<()> {
@@ -186,16 +195,24 @@ fn admin(
                         Backend::Mysql => format!("`{name}`"),
                     };
                     // Dynamic SQL contains only the validated, harness-generated exact identifier.
+                    let statement = if verb == "DROP" {
+                        "DROP DATABASE IF EXISTS"
+                    } else {
+                        "CREATE DATABASE"
+                    };
+                    println!("attempting {statement} of exact reserved database {name}");
                     let query = Sql::trusted(
                         backend.dialect(),
-                        TrustedSql::audited(format!("{verb} DATABASE {quoted}")),
+                        TrustedSql::audited(format!("{statement} {quoted}")),
                     )
                     .render(backend.dialect())?;
                     let result = engine.execute(&query).await;
-                    // Creation grants exact-name cleanup authority immediately. Successful DROP
-                    // revokes it immediately, so a later close error cannot cause a second DROP.
+                    // Reservation precedes CREATE. Only acknowledged DROP revokes cleanup;
+                    // a later socket-close error cannot cause a second destructive action.
                     if result.is_ok() {
-                        armed.store(verb == "CREATE", Ordering::SeqCst);
+                        if verb == "DROP" {
+                            armed.store(false, Ordering::SeqCst);
+                        }
                         if verb == "CREATE" {
                             println!("created owned database {name}");
                         } else {
@@ -219,6 +236,50 @@ fn admin(
         .join()
         .map_err(|_| "administrative worker panicked")?;
     result
+}
+
+/// Prove an error after server-side CREATE still removes precisely the reserved name.
+fn create_error_cleanup(backend: Backend) -> TestResult<()> {
+    let mut name = String::new();
+    let result = Fixture::create_with(backend, |created| {
+        name = created.to_owned();
+        Err("injected CREATE acknowledgement failure".into())
+    });
+    match result {
+        Err(error) => assert_eq!(error.to_string(), "injected CREATE acknowledgement failure"),
+        Ok(_) => return Err("injected CREATE failure was lost".into()),
+    }
+    validate_name(&name)?;
+    let runtime = tokio::runtime::Builder::new_current_thread()
+        .enable_all()
+        .build()?;
+    runtime.block_on(async {
+        let engine = backend
+            .open(match backend {
+                Backend::Postgres => "postgres",
+                Backend::Mysql => "mysql",
+            })
+            .await?;
+        // The identifier is generated/validated above; this read is exact, never prefix cleanup.
+        let statement = match backend {
+            Backend::Postgres => {
+                format!("SELECT datname FROM pg_database WHERE datname = '{name}'")
+            }
+            Backend::Mysql => format!(
+                "SELECT SCHEMA_NAME FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '{name}'"
+            ),
+        };
+        let query = Sql::trusted(backend.dialect(), TrustedSql::audited(statement));
+        let rows = engine.fetch(&query).await;
+        let close = engine.close().await;
+        assert!(
+            rows?.is_empty(),
+            "reserved database survived CREATE error: {name}"
+        );
+        close?;
+        println!("CREATE error exact-name absence confirmed: {name}");
+        Ok(())
+    })
 }
 
 /// Report safe first-party context only; raw native diagnostics and URLs are never printed.
@@ -282,6 +343,11 @@ where
     let cases = [
         ("g46_live::postgres_ascii_search", Some(Backend::Postgres)),
         ("g46_live::mysql_ascii_search", Some(Backend::Mysql)),
+        (
+            "g46_live::postgres_create_error_cleanup",
+            Some(Backend::Postgres),
+        ),
+        ("g46_live::mysql_create_error_cleanup", Some(Backend::Mysql)),
         ("g46_live::watchdog_forced_kill", None),
     ];
     if harness.discover(cases.iter().map(|(name, backend)| {
@@ -307,6 +373,9 @@ where
         }
         let result = std::panic::catch_unwind(|| -> TestResult<()> {
             if let Some(backend) = backend {
+                if name.ends_with("create_error_cleanup") {
+                    return create_error_cleanup(backend);
+                }
                 let mut fixture = Fixture::create(backend)?;
                 let status = process::watchdog(
                     Command::new(std::env::current_exe()?)

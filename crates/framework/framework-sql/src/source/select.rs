@@ -10,11 +10,11 @@ impl<S: SourceSchema<Value = Value, Record = Record>> NativeStore<S> {
         query: &StoreQuery,
         dialect: DialectId,
     ) -> Result<SourceStatement<Select>> {
-        let selectors = self.selectors(&query.columns).into_iter().map(|selector| {
+        let selectors = self.selectors(&query.columns)?.into_iter().map(|selector| {
             Selector::expression(Expr::column(selector.identifier())).alias(selector.alias)
         });
         let mut select = Select::new(selectors).from(self.table());
-        for join in self.joins(query) {
+        for join in self.joins(query)? {
             select = select.join(join);
         }
         if let Some(filter) = self.where_clause(query, dialect)? {
@@ -35,7 +35,7 @@ impl<S: SourceSchema<Value = Value, Record = Record>> NativeStore<S> {
                 "desc" => Order::Desc,
                 _ => continue,
             };
-            if let Some(selector) = self.selectors(&[expression]).first() {
+            if let Some(selector) = self.selectors(&[expression])?.first() {
                 // Sort expressions use the SQL crate's typed expression form, including JSON.
                 select = select.sort(stackpress_sql::Sort {
                     expression: selector.operand()?,

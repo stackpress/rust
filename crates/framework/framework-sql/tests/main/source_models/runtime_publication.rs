@@ -15,7 +15,7 @@ fn generic_store_contract_preserves_metadata_queries_and_scalar_codecs() {
     let store = <Store as SourceStore>::new("seed".into(), 0);
     assert_eq!(SourceStore::schema(&store).seed(), "seed");
     let query = SourceStore::query(&store, &record(serde_json::json!({"eq":{"id":"p"}}))).unwrap();
-    let create = SourceStore::create(&store);
+    let create = SourceStore::create(&store).unwrap();
     assert!(
         !create
             .render(DialectId::Sqlite)
@@ -156,7 +156,7 @@ async fn generic_actions_keep_transaction_affinity_and_source_lifecycle() {
     assert_eq!(SourceActions::store(&actions).table(), "profile");
     SourceActions::install(&actions).await.unwrap();
     SourceActions::upgrade(&actions, None).await.unwrap();
-    SourceActions::upgrade(&actions, Some(&actions.store.create()))
+    SourceActions::upgrade(&actions, Some(&actions.store.create().unwrap()))
         .await
         .unwrap();
     let original = SourceActions::create(

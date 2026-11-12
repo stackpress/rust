@@ -309,8 +309,8 @@ impl DefinitionRegistry {
         match args {
             AttributeValue::Boolean(_) => require_flag(args)?,
             AttributeValue::Array(args) => {
-                if args.len() == 1 && args[0].is_object() {
-                    for (key, value) in args[0].as_object().expect("object checked") {
+                if let [serde_json::Value::Object(props)] = args.as_slice() {
+                    for (key, value) in props {
                         values.insert(key.clone(), value.clone());
                     }
                 } else {

@@ -806,3 +806,33 @@ mod generation {
         }
     }
 }
+
+/// Retaining the parsed instant preserves the public string wire format and nanosecond comparisons.
+#[test]
+fn datetime_cached_instant_round_trips_canonical_text() {
+    let epoch = DatetimeValue::parse("1970-01-01T00:00:00Z").unwrap();
+    assert_eq!(
+        format!("{epoch:?}"),
+        "DatetimeValue(\"1970-01-01T00:00:00Z\")"
+    );
+    for input in [
+        "1970-01-01T00:00:00Z",
+        "1969-12-31T23:59:59.999999999Z",
+        "2024-03-01T01:00:00+01:00",
+        "0001-01-01T00:00:00Z",
+        "9999-12-31T23:59:59.123456789Z",
+    ] {
+        let value = DatetimeValue::parse(input).unwrap();
+        let wire = serde_json::to_value(&value).unwrap();
+        assert_eq!(wire, Value::String(value.as_str().to_owned()));
+        let decoded: DatetimeValue = serde_json::from_value(wire).unwrap();
+        assert_eq!(decoded, value);
+        assert_eq!(decoded.unix_nanos(), value.unix_nanos());
+    }
+    assert_eq!(
+        DatetimeValue::parse("1969-12-31T23:59:59.999999999Z")
+            .unwrap()
+            .unix_nanos(),
+        -1
+    );
+}

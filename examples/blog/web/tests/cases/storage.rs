@@ -6,6 +6,86 @@ use stackpress_server::{ConfigLayers, Server};
 use stackpress_sql::Engine;
 use std::path::Path;
 
+/// The generated client and explicit installer must prepare the same actual table inventory.
+#[test]
+fn generated_client_definitions_match_explicit_installation() {
+    use blog_web::generated::{client::framework, source};
+    use stackpress_sql::DialectId;
+
+    // Compare rendered definitions per backend, so declaration order cannot hide a lost key.
+    let generated = framework::definition().unwrap();
+    let installed = blog_web::storage::tables().unwrap();
+    for dialect in [DialectId::Sqlite, DialectId::Postgres, DialectId::Mysql] {
+        let render = |tables: &[stackpress_sql::TableDefinition]| {
+            let mut statements: Vec<_> = tables
+                .iter()
+                .map(|table| {
+                    table
+                        .create()
+                        .render(dialect)
+                        .unwrap()
+                        .queries()
+                        .iter()
+                        .map(|query| query.sql().to_owned())
+                        .collect::<Vec<_>>()
+                })
+                .collect();
+            statements.sort();
+            statements
+        };
+        assert_eq!(render(&generated), render(&installed));
+    }
+    assert_eq!(framework::describe(), source::_catalog::models());
+}
+
+/// Generated schema conveniences retain declared fields, typed bindings and storage conversion.
+#[test]
+fn generated_article_schema_retains_native_fields_and_storage_round_trip() {
+    use blog_web::generated::source::{self, article::ArticleSchema};
+    use stackpress_framework_schema::source::{
+        Active, Record, References, SourceField, SourceSchema, Tags,
+    };
+
+    let schema = ArticleSchema::new("schema-proof".into(), -330);
+    assert_eq!(schema.seed(), "schema-proof");
+    assert_eq!(schema.offset_minutes(), -330);
+    assert_eq!(ArticleSchema::describe(), source::article::describe());
+    assert_eq!(ArticleSchema::catalog(), source::_catalog::describe());
+    assert!(schema.column("profile").is_none());
+    assert!(schema.column("title").is_some());
+    assert_eq!(schema.columns().len(), source::article::columns().len());
+
+    // Bind lists, optional objects and booleans through their real generated field traits.
+    let mut row: Record = serde_json::from_value(json!({
+        "id":"round-trip", "profileId":"developer", "title":"Generated schema", "slug":"schema"
+    }))
+    .unwrap();
+    <ArticleSchema as SourceField<Tags>>::write(&mut row, vec!["rust".into(), "sql".into()]);
+    <ArticleSchema as SourceField<References>>::write(&mut row, None);
+    <ArticleSchema as SourceField<Active>>::write(&mut row, true);
+    assert_eq!(
+        <ArticleSchema as SourceField<Tags>>::read(&row),
+        Some(vec!["rust".into(), "sql".into()])
+    );
+    assert_eq!(
+        <ArticleSchema as SourceField<References>>::read(&row),
+        Some(None)
+    );
+    assert_eq!(
+        <ArticleSchema as SourceField<Active>>::read(&row),
+        Some(true)
+    );
+
+    // Resolve the actual authored defaults, then preserve native values through storage codecs.
+    let mut input = schema.defaults_at(1_750_000_000_000).unwrap();
+    input.extend(row);
+    let input = schema.filter(&input, false).unwrap();
+    assert!(schema.assert(&input, true).is_none());
+    let stored = schema.serialize(&input, true).unwrap();
+    let decoded = schema.unserialize(&stored, true).unwrap();
+    assert_eq!(decoded, input);
+}
+
 /// Use exactly one app-owned file layer above shared defaults.
 fn layers(path: &Path) -> ConfigLayers {
     let mut layers = ConfigLayers::new();

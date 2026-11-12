@@ -55,7 +55,9 @@ pub trait SourceStore: Send + Sync + Sized + 'static {
         input: &<Self::Schema as SourceSchema>::Record,
     ) -> Result<Self::Query, Self::Error>;
     /// Source table DDL; explicit setup callers choose G48 execution semantics.
-    fn create(&self) -> Create;
+    /// # Errors
+    /// Returns the store's metadata/preparation failure before the setup caller performs IO.
+    fn create(&self) -> Result<Create, Self::Error>;
     /// Source adjacent alteration; callers retain revision/force/ordering policy.
     fn alter(&self, to: Option<&Create>) -> Result<Alter, Self::Error>;
     /// Convert source values to declared SQL columns without routing through public DTOs.

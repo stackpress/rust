@@ -1,5 +1,5 @@
 //! Metadata-driven native stores. No framework model names or plugin dependencies live here.
-use super::{SourceResult as Result, SourceStatement, StoreQuery};
+use super::{ActionError, SourceResult as Result, SourceStatement, StoreQuery};
 use stackpress_framework_schema::{
     Model, ValueType,
     source::{Record, SourceRecordSchema, SourceSchema, Value},
@@ -71,7 +71,10 @@ impl<S: SourceSchema<Value = Value, Record = Record>> NativeStore<S> {
             })
     }
     /// Source DDL including defaults, unique/index metadata and owning foreign keys.
-    pub fn create(&self) -> Create {
+    /// # Errors
+    /// Rejects missing local/foreign keys in handwritten owning relation metadata.
+    /// Declared external targets retain the existing no-foreign-key behavior.
+    pub fn create(&self) -> Result<Create> {
         let mut create = Create::new(self.table());
         let mut unique = Vec::new();
         let mut indexes = Vec::new();
@@ -181,12 +184,16 @@ impl<S: SourceSchema<Value = Value, Record = Record>> NativeStore<S> {
                     .fields
                     .iter()
                     .find(|f| f.name == relation.local)
-                    .expect("normalized local key");
+                    .ok_or_else(|| {
+                        ActionError::new(500, "relation local key is missing", Record::new())
+                    })?;
                 let foreign = target
                     .fields
                     .iter()
                     .find(|f| f.name == relation.foreign)
-                    .expect("normalized foreign key");
+                    .ok_or_else(|| {
+                        ActionError::new(500, "relation foreign key is missing", Record::new())
+                    })?;
                 let mut key = ForeignKey::new(
                     format!("{}_{}_foreign", self.table(), local.column),
                     [&local.column],
@@ -198,17 +205,19 @@ impl<S: SourceSchema<Value = Value, Record = Record>> NativeStore<S> {
                 create = create.add_foreign_key(key);
             }
         }
-        create
+        Ok(create)
     }
     /// Adjacent alteration uses the accepted SQL definition diff, without introspection.
     pub fn alter(&self, to: Option<&Create>) -> Result<Alter> {
         let Some(to) = to else {
             return Ok(Alter::new(self.table()));
         };
-        Ok(match self.create().definition()?.diff(&to.definition()?)? {
-            SchemaDiff::Changes { alteration, .. } => *alteration,
-            _ => Alter::new(self.table()),
-        })
+        Ok(
+            match self.create()?.definition()?.diff(&to.definition()?)? {
+                SchemaDiff::Changes { alteration, .. } => *alteration,
+                _ => Alter::new(self.table()),
+            },
+        )
     }
     /// Storage codecs map declared input to SQL spellings, including app-added members.
     pub fn scalarize(&self, input: &Record) -> Result<Vec<(String, SqlValue)>> {

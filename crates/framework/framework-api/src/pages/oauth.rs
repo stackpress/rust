@@ -39,7 +39,9 @@ pub async fn oauth(req: &mut Request, res: &mut Response, inv: Invocation<'_>) -
             json!({"name":"Stackpress","logo":"/logo.png","icon":"/icon.png","favicon":"/favicon.ico"}),
         ),
     ] {
-        let mut selected = defaults.as_object().expect("object defaults").clone();
+        let serde_json::Value::Object(mut selected) = defaults else {
+            return Err(Error::new("OAuth defaults must be an object"));
+        };
         for (field, fallback) in &mut selected {
             if let Some(value) = source.get(field) {
                 let native = stackpress_lib::Value::try_from(value.clone())?;

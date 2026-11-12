@@ -1,3 +1,12 @@
+#![deny(
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::panic,
+    clippy::unimplemented,
+    clippy::todo,
+    clippy::unreachable
+)]
+
 //! Owned, serializable schema contracts, independent of native hosts and database drivers.
 //!
 //! The optional `codegen` feature interprets finalized Idea config and emits Rust before

@@ -28,7 +28,11 @@ impl SourceGraph {
                         let args = match &attribute.value {
                             serde_json::Value::Bool(value) => AttributeValue::Boolean(*value),
                             serde_json::Value::Array(value) => AttributeValue::Array(value.clone()),
-                            _ => unreachable!("normalized role arguments"),
+                            _ => {
+                                return Err(super::invalid(
+                                    "source role arguments must be a flag or array",
+                                ));
+                            }
                         };
                         roles.push(definitions.role(&attribute.name, &args)?);
                     }

@@ -1,3 +1,12 @@
+#![deny(
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::panic,
+    clippy::unimplemented,
+    clippy::todo,
+    clippy::unreachable
+)]
+
 //! Source-compatible API mechanics over existing Stackpress request/event contracts.
 //!
 //! Configured public/application/API-session endpoints and source CORS callbacks run over

@@ -494,16 +494,23 @@ async fn predicates_sort_projection_join_and_maintenance() {
         record(json!({"id":"a1","profile":{"name":"Ada"}}))
     );
     assert_eq!(auth.count(&query).await.unwrap(), 1);
-    assert!(ProfileStore::new("".into(), 0).paths("auth.*").is_empty());
+    assert!(
+        ProfileStore::new("".into(), 0)
+            .paths("auth.*")
+            .unwrap()
+            .is_empty()
+    );
     assert_eq!(
         auth.store
             .selectors(&["*".into(), "id".into(), "profile.*".into()])
+            .unwrap()
             .len(),
         20
     );
     let target = profile
         .store
         .create()
+        .unwrap()
         .add_field(Field::new("note", SqlType::Text));
     assert!(
         !profile
@@ -632,10 +639,18 @@ async fn password_precedence_upsert_and_validation() {
         auth.auth()
             .store
             .create()
+            .unwrap()
             .render(DialectId::Postgres)
             .is_ok()
     );
-    assert!(auth.auth().store.create().render(DialectId::Mysql).is_ok());
+    assert!(
+        auth.auth()
+            .store
+            .create()
+            .unwrap()
+            .render(DialectId::Mysql)
+            .is_ok()
+    );
     let input = record(json!({"id":"a","profileId":"p","token":"identifier","secret":"hello"}));
     assert!(
         !auth

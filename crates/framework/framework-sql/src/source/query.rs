@@ -1,6 +1,6 @@
 //! Source selector/path traversal and owning joins from the immutable generated catalog.
 use super::membership::{flatten, path};
-use super::{NativeStore, SourceResult as Result, StoreQuery};
+use super::{ActionError, NativeStore, SourceResult as Result, StoreQuery};
 use stackpress_framework_schema::{
     Field, ValueType,
     source::{Record, SourceSchema, Value},
@@ -46,13 +46,15 @@ impl<S: SourceSchema<Value = Value, Record = Record>> NativeStore<S> {
     /// Profile has no reverse store relations even though Idea declares reverse metadata.
     /// A valid relation followed by an unknown child retains its last relation selector;
     /// the database reports that non-column path rather than silently dropping the filter.
-    pub fn paths(&self, expression: &str) -> Vec<StoreSelector> {
+    /// # Errors
+    /// Rejects a missing local/foreign key in a handwritten owning relation catalog.
+    pub fn paths(&self, expression: &str) -> Result<Vec<StoreSelector>> {
         self.selectors(&[expression.into()])
     }
 
     /// Resolve all forward stored relations, including Session.application.profile.
     /// Reverse Idea arrays have no generated @relation and therefore no store join.
-    fn resolve(&self, expression: &str) -> (Vec<Field>, String, String, Vec<Edge>) {
+    fn resolve(&self, expression: &str) -> Result<Resolution> {
         let (field, _) = expression.split_once(':').unwrap_or((expression, ""));
         let mut model = &self.model;
         let mut table = self.table().to_owned();
@@ -66,15 +68,26 @@ impl<S: SourceSchema<Value = Value, Record = Record>> NativeStore<S> {
                 .cloned()
                 .collect();
             if part == "*" {
-                return (stored, model.name.clone(), table, edges);
+                return Ok(Resolution {
+                    fields: stored,
+                    model: model.name.clone(),
+                    table,
+                    edges,
+                });
             }
             if let Some(column) = stored.iter().find(|f| f.name == part) {
-                return (vec![column.clone()], model.name.clone(), table, edges);
+                return Ok(Resolution {
+                    fields: vec![column.clone()],
+                    model: model.name.clone(),
+                    table,
+                    edges,
+                });
             }
-            let Some(relation_field) = model
+            let Some((relation_field, relation)) = model
                 .fields
                 .iter()
-                .find(|f| f.name == part && f.relation.is_some())
+                .filter(|field| field.name == part)
+                .find_map(|field| field.relation.as_ref().map(|relation| (field, relation)))
             else {
                 break;
             };
@@ -84,20 +97,22 @@ impl<S: SourceSchema<Value = Value, Record = Record>> NativeStore<S> {
             let Some(next) = self.catalog.models.iter().find(|m| &m.name == target) else {
                 break;
             };
-            let relation = relation_field
-                .relation
-                .as_ref()
-                .expect("checked owning relation");
+            // Generated catalogs already contain these keys; handwritten schemas can omit them.
+            // Fail before building a partial edge, while unknown source selectors still skip above.
             let local = model
                 .fields
                 .iter()
                 .find(|f| f.name == relation.local)
-                .expect("checked local key");
+                .ok_or_else(|| {
+                    ActionError::new(500, "relation local key is missing", Record::new())
+                })?;
             let foreign = next
                 .fields
                 .iter()
                 .find(|f| f.name == relation.foreign)
-                .expect("checked foreign key");
+                .ok_or_else(|| {
+                    ActionError::new(500, "relation foreign key is missing", Record::new())
+                })?;
             last = Some((
                 vec![relation_field.clone()],
                 model.name.clone(),
@@ -119,14 +134,26 @@ impl<S: SourceSchema<Value = Value, Record = Record>> NativeStore<S> {
         // The original keeps a terminal/unknown-child relation selector; SQL may reject its virtual column.
         let (fields, model, table) =
             last.unwrap_or_else(|| (Vec::new(), model.name.clone(), table));
-        (fields, model, table, edges)
+        Ok(Resolution {
+            fields,
+            model,
+            table,
+            edges,
+        })
     }
     /// Expand source wildcards and de-duplicate expressions in supplied order.
-    pub fn selectors(&self, expressions: &[String]) -> Vec<StoreSelector> {
+    /// # Errors
+    /// Propagates malformed owning-relation metadata without changing unknown-path skips.
+    pub fn selectors(&self, expressions: &[String]) -> Result<Vec<StoreSelector>> {
         let mut selectors: Vec<StoreSelector> = Vec::new();
         for expression in expressions {
             let (_, json) = expression.split_once(':').unwrap_or((expression, ""));
-            let (columns, model, table, _) = self.resolve(expression);
+            let Resolution {
+                fields: columns,
+                model,
+                table,
+                ..
+            } = self.resolve(expression)?;
             for column in columns {
                 let expanded = expression.replacen('*', &column.name, 1);
                 if selectors
@@ -161,11 +188,13 @@ impl<S: SourceSchema<Value = Value, Record = Record>> NativeStore<S> {
                 });
             }
         }
-        selectors
+        Ok(selectors)
     }
     /// Required inner joins arise from selections and every filter/sort path, without
     /// adding active/expiry predicates to the joined Application or Profile.
-    pub fn joins(&self, query: &StoreQuery) -> Vec<Join> {
+    /// # Errors
+    /// Rejects an owning relation whose local or foreign key is absent from its model.
+    pub fn joins(&self, query: &StoreQuery) -> Result<Vec<Join>> {
         let mut expressions = query.columns.clone();
         for map in [
             &query.eq,
@@ -181,13 +210,13 @@ impl<S: SourceSchema<Value = Value, Record = Record>> NativeStore<S> {
         }
         let mut edges: Vec<Edge> = Vec::new();
         for expression in expressions {
-            for edge in self.resolve(&expression).3 {
+            for edge in self.resolve(&expression)?.edges {
                 if !edges.contains(&edge) {
                     edges.push(edge);
                 }
             }
         }
-        edges
+        Ok(edges
             .into_iter()
             .map(|edge| Join {
                 kind: if edge.required {
@@ -203,7 +232,7 @@ impl<S: SourceSchema<Value = Value, Record = Record>> NativeStore<S> {
                     ),
                 ),
             })
-            .collect()
+            .collect())
     }
 }
 /// One checked owning edge, resolved from the generated catalog.
@@ -226,4 +255,16 @@ fn snake(value: &str) -> String {
         out.extend(c.to_lowercase());
     }
     out
+}
+
+/// One traversal result keeps selected fields, output ownership and required joins together.
+struct Resolution {
+    /// Stored columns, or the retained terminal relation for source-faithful invalid SQL.
+    fields: Vec<Field>,
+    /// Model owning the final selected values.
+    model: String,
+    /// Base table or relation alias used by those values.
+    table: String,
+    /// Forward edges needed to reach the selected model.
+    edges: Vec<Edge>,
 }

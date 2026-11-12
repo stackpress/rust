@@ -167,7 +167,7 @@ impl DatabaseName {
         format!("{quote}{}{quote}", self.0)
     }
 }
-/// Cleanup is armed only after CREATE succeeds and remains active during errors/unwind.
+/// Cleanup is armed before CREATE and remains active during errors or uncertain outcomes.
 struct DropDatabase {
     name: DatabaseName,
     url: String,
@@ -177,17 +177,19 @@ struct DropDatabase {
 impl DropDatabase {
     /// Create exactly one owned database, without IF NOT EXISTS or catalog access.
     async fn create(url: &str, dialect: DialectId, admin: &mut Native) -> TestResult<Self> {
-        let name = DatabaseName::unique();
-        admin
-            .administration(&format!("CREATE DATABASE {}", name.quoted(dialect)))
-            .await?;
-        println!("created owned database {}", name.0);
-        Ok(Self {
-            name,
+        let fixture = Self {
+            name: DatabaseName::unique(),
             url: url.into(),
             dialect,
             armed: true,
-        })
+        };
+        // The unique reservation must survive an error after server-side creation.
+        println!("attempting CREATE of exact database {}", fixture.name.0);
+        admin
+            .administration(&format!("CREATE DATABASE {}", fixture.name.quoted(dialect)))
+            .await?;
+        println!("created owned database {}", fixture.name.0);
+        Ok(fixture)
     }
     /// Remove only the owned database on a separate bounded runtime, including on unwind.
     fn cleanup(&mut self) -> TestResult<()> {
@@ -197,6 +199,10 @@ impl DropDatabase {
         let url = self.url.clone();
         let dialect = self.dialect;
         let sql = format!("DROP DATABASE IF EXISTS {}", self.name.quoted(dialect));
+        println!(
+            "attempting DROP IF EXISTS of exact reserved database {}",
+            self.name.0
+        );
         std::thread::spawn(move || -> TestResult<()> {
             let runtime = tokio::runtime::Builder::new_current_thread()
                 .enable_all()

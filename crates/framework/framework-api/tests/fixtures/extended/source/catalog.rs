@@ -5,6 +5,10 @@ use stackpress_framework_schema::{
 };
 
 /// Complete source metadata, including relations, UI props and private attributes.
+#[expect(
+    clippy::expect_used,
+    reason = "generator serializes a checked Model into this constant JSON literal"
+)]
 pub fn describe() -> Model {
     stackpress_framework_schema::source::__private::serde_json::from_str("{\"name\":\"Catalog\",\"rust_name\":\"Catalog\",\"module\":\"catalog\",\"fields\":[{\"name\":\"id\",\"rust_name\":\"id\",\"column\":\"id\",\"value_type\":{\"kind\":\"String\"},\"required\":true,\"multiple\":false,\"key\":true,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":true,\"value_rule\":null,\"rules\":[],\"documentation\":{\"label\":null,\"description\":null,\"examples\":[],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"id\",\"value\":true}]},{\"name\":\"unknowns\",\"rust_name\":\"unknowns\",\"column\":\"unknowns\",\"value_type\":{\"kind\":\"Unknown\"},\"required\":true,\"multiple\":true,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":true,\"value_rule\":null,\"rules\":[],\"documentation\":{\"label\":null,\"description\":null,\"examples\":[],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[]}],\"documentation\":{\"label\":null,\"description\":null,\"examples\":[],\"display\":null,\"icon\":null,\"labels\":[]},\"query\":[],\"attributes\":[]}").expect("generator emitted valid source metadata")
 }
@@ -13,33 +17,25 @@ pub fn describe() -> Model {
 pub fn columns() -> Vec<SourceColumn> {
     let model = describe();
     let catalog = std::sync::Arc::new(super::_catalog::describe());
-    let codecs = vec![
-        (
-            "id",
-            Column {
-                kind: Kind::String,
-                nullable: false,
-            },
-        ),
-        (
-            "unknowns",
-            Column {
-                kind: Kind::String,
-                nullable: false,
-            },
-        ),
-    ];
-    // Pair by exact identity instead of dropping or shifting a virtual relation slot.
-    codecs
+    // Visit source fields in declaration order; virtual relations have no storage codec.
+    model
+        .fields
         .into_iter()
-        .map(|(name, codec)| {
-            let field = model
-                .fields
-                .iter()
-                .find(|field| field.name == name)
-                .expect("generated column has source field")
-                .clone();
-            SourceColumn::new(codec, field).with_catalog(catalog.clone())
+        .filter_map(|field| {
+            let codec = match field.name.as_str() {
+                "id" => Column {
+                    kind: Kind::String,
+                    nullable: false,
+                },
+
+                "unknowns" => Column {
+                    kind: Kind::String,
+                    nullable: false,
+                },
+
+                _ => return None,
+            };
+            Some(SourceColumn::new(codec, field).with_catalog(catalog.clone()))
         })
         .collect()
 }

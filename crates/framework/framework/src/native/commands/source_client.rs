@@ -170,11 +170,11 @@ pub fn describe()->Vec<stackpress_framework_schema::Model> { vec![
 [%#@:models model%]    super::super::source::[%model.schema%]::describe(),
 [%/@:models%]] }
 /// Explicit DDL preparation; installing this module performs no database work.
-pub fn definition()->stackpress_sql::Result<Vec<stackpress_sql::TableDefinition>> { Ok(vec![
+pub fn definition()->Result<Vec<stackpress_sql::TableDefinition>> { Ok(vec![
 [%#@:models model%]    table::<super::super::stores::[%model.store%]::[%model.rust%]Model>()?,
 [%/@:models%]]) }
 /// Prepare a definition from the actual associated generated store, without an Engine.
-fn table<M:SourceModel>()->stackpress_sql::Result<stackpress_sql::TableDefinition> { M::Store::new(String::new(),0).create().definition() }
+fn table<M:SourceModel>()->Result<stackpress_sql::TableDefinition> { M::Store::new(String::new(),0).create().map_err(stackpress_lib::Error::from_source)?.definition().map_err(stackpress_lib::Error::from_source) }
 [%#@:models model%]
 /// Queue only this model's generated source event inventory, preserving catalog order.
 fn listen_[%model.store%](app:&mut ServerBuilder)->Result<()> { stackpress_framework_sql::source::register_with::<super::super::stores::[%model.store%]::[%model.rust%]Model>(app,stackpress_framework_sql::source::ResponseValues::[%model.representation%]) }

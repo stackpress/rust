@@ -105,7 +105,7 @@ async fn scenario_steps(engine: Arc<Engine>) -> support::TestResult<()> {
     assert_eq!(session.find_all(&ignored_q).await?[0]["id"], "s");
     assert_eq!(session.count(&ignored_q).await?, 1);
     // G48 changes only setup selection; each real source action still owns its own teardown.
-    let mut target = session.store.create().definition()?;
+    let mut target = session.store.create()?.definition()?;
     target.fields.push(stackpress_sql::Field::new(
         "g48_note",
         stackpress_sql::SqlType::Integer,
@@ -116,7 +116,7 @@ async fn scenario_steps(engine: Arc<Engine>) -> support::TestResult<()> {
     session.purge(true).await?;
     println!("stage: Session uninstall");
     session.uninstall().await?;
-    let mut target = app.store.create().definition()?;
+    let mut target = app.store.create()?.definition()?;
     target.fields.push(stackpress_sql::Field::new(
         "g48_note",
         stackpress_sql::SqlType::Integer,

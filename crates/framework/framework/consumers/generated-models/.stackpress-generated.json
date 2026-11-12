@@ -8,18 +8,18 @@
     },
     "source/application.rs": {
       "owner": "consumer-models",
-      "sha256": "681766e0d871ac6280b0c648e820f17e6fff065250b85563ca103185e3d548d8",
-      "bytes": 36564
+      "sha256": "a75615eac2a8aa86f5f4311841ee08e57012c9622271b622cf6a3a0940a2be39",
+      "bytes": 36411
     },
     "source/auth.rs": {
       "owner": "consumer-models",
-      "sha256": "20c2a8bf520335251818c449d8a5523e196b4f4db7d791d599e7809e00df9686",
-      "bytes": 32110
+      "sha256": "185ac9d16f6a23b09d229a62524b3189840a3de77ae86ae9038c1ed2f9f78723",
+      "bytes": 31971
     },
     "source/catalog.rs": {
       "owner": "consumer-models",
-      "sha256": "c7cae744f5d8126ec7fef8522b2ad6f5d335721492b043708c50bc3115eccb0e",
-      "bytes": 81142
+      "sha256": "be48765f9b7ab48e20a939cf428ad39b853dd1cbb61eac0452a6f42994e0b74e",
+      "bytes": 81272
     },
     "source/mod.rs": {
       "owner": "aggregate",
@@ -28,13 +28,13 @@
     },
     "source/profile.rs": {
       "owner": "consumer-models",
-      "sha256": "f10f056db9737f726bcef82b343a3d83b7f10b4b7e0736cb5919581ec6d477ca",
-      "bytes": 35397
+      "sha256": "a631cd5d2b9a29f50b5f08660808cae43f772c373d8e67c5eba2ed130f6795ba",
+      "bytes": 35258
     },
     "source/session.rs": {
       "owner": "consumer-models",
-      "sha256": "5630702181314a77fbb7a0a08493a3e53251a3fd7a618dca35bb8b57ccc84f96",
-      "bytes": 32039
+      "sha256": "140d8f2552e08e09e738a353a8f9c2628c146c39fe02b2dfe426168b9b648df2",
+      "bytes": 31914
     },
     "stores/application.rs": {
       "owner": "consumer-models",

@@ -5,6 +5,10 @@ use stackpress_framework_schema::{
 };
 
 /// Complete source metadata, including relations, UI props and private attributes.
+#[expect(
+    clippy::expect_used,
+    reason = "generator serializes a checked Model into this constant JSON literal"
+)]
 pub fn describe() -> Model {
     stackpress_framework_schema::source::__private::serde_json::from_str("{\"name\":\"Session\",\"rust_name\":\"Session\",\"module\":\"session\",\"fields\":[{\"name\":\"id\",\"rust_name\":\"id\",\"column\":\"id\",\"value_type\":{\"kind\":\"String\"},\"required\":true,\"multiple\":false,\"key\":true,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":{\"provider\":\"cuid\",\"args\":[],\"revision\":\"cuid2-3.3.0\"},\"rules\":[],\"documentation\":{\"label\":\"ID\",\"description\":\"Unique generated identifier.\",\"examples\":[\"7e2lig3iuej3bcftg8dz7pjf\"],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[{\"role\":\"list\",\"component\":\"stackpress.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":false},{\"role\":\"view\",\"component\":\"stackpress.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":false}],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"ID\"]},{\"name\":\"id\",\"value\":true},{\"name\":\"default\",\"value\":[\"cuid()\"]},{\"name\":\"list.string\",\"value\":true},{\"name\":\"view.string\",\"value\":true},{\"name\":\"description\",\"value\":[\"Unique generated identifier.\"]},{\"name\":\"examples\",\"value\":[\"7e2lig3iuej3bcftg8dz7pjf\"]}]},{\"name\":\"applicationId\",\"rust_name\":\"application_id\",\"column\":\"application_id\",\"value_type\":{\"kind\":\"String\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":true,\"value_rule\":null,\"rules\":[{\"code\":\"required\",\"args\":[],\"client_checkable\":true,\"message\":\"App is required\",\"definition_revision\":\"1\"}],\"documentation\":{\"label\":\"App\",\"description\":\"Application this session belongs to.\",\"examples\":[\"tg8bcf7e2lig3iuej3dz7pjf\"],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[{\"role\":\"field\",\"component\":\"stackpress.source.field.relation\",\"props\":{\"id\":\"id\",\"search\":\"/admin/application/search?json\",\"template\":\"{{name}}\"},\"definition_revision\":\"source-1\",\"available\":false},{\"role\":\"filter\",\"component\":\"stackpress.source.field.relation\",\"props\":{\"id\":\"id\",\"search\":\"/admin/application/search?json\",\"template\":\"{{name}}\"},\"definition_revision\":\"source-1\",\"available\":false},{\"role\":\"list\",\"component\":\"stackpress.source.view.template\",\"props\":{\"template\":\"{{application.name}}\"},\"definition_revision\":\"source-1\",\"available\":false},{\"role\":\"view\",\"component\":\"stackpress.source.view.template\",\"props\":{\"template\":\"{{application.name}}\"},\"definition_revision\":\"source-1\",\"available\":false}],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"App\"]},{\"name\":\"field.relation\",\"value\":[{\"id\":\"id\",\"search\":\"/admin/application/search?json\",\"template\":\"{{name}}\"}]},{\"name\":\"is.required\",\"value\":[\"App is required\"]},{\"name\":\"filter.relation\",\"value\":[{\"id\":\"id\",\"search\":\"/admin/application/search?json\",\"template\":\"{{name}}\"}]},{\"name\":\"list.template\",\"value\":[{\"template\":\"{{application.name}}\"}]},{\"name\":\"view.template\",\"value\":[{\"template\":\"{{application.name}}\"}]},{\"name\":\"description\",\"value\":[\"Application this session belongs to.\"]},{\"name\":\"examples\",\"value\":[\"tg8bcf7e2lig3iuej3dz7pjf\"]}]},{\"name\":\"profileId\",\"rust_name\":\"profile_id\",\"column\":\"profile_id\",\"value_type\":{\"kind\":\"String\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":true,\"value_rule\":null,\"rules\":[{\"code\":\"required\",\"args\":[],\"client_checkable\":true,\"message\":\"Profile is required\",\"definition_revision\":\"1\"}],\"documentation\":{\"label\":\"Profile\",\"description\":\"Profile this session belongs to.\",\"examples\":[\"pjfdz7tg8bcf7e2lig3iuej3\"],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[{\"role\":\"field\",\"component\":\"stackpress.source.field.relation\",\"props\":{\"id\":\"id\",\"search\":\"/admin/profile/search?json&q={{query}}\",\"template\":\"{{name}}\"},\"definition_revision\":\"source-1\",\"available\":false},{\"role\":\"filter\",\"component\":\"stackpress.source.field.relation\",\"props\":{\"id\":\"id\",\"search\":\"/admin/profile/search?json&q={{query}}\",\"template\":\"{{name}}\"},\"definition_revision\":\"source-1\",\"available\":false},{\"role\":\"list\",\"component\":\"stackpress.source.view.template\",\"props\":{\"template\":\"{{profile.name}}\"},\"definition_revision\":\"source-1\",\"available\":false},{\"role\":\"view\",\"component\":\"stackpress.source.view.template\",\"props\":{\"template\":\"{{profile.name}}\"},\"definition_revision\":\"source-1\",\"available\":false}],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Profile\"]},{\"name\":\"field.relation\",\"value\":[{\"id\":\"id\",\"search\":\"/admin/profile/search?json&q={{query}}\",\"template\":\"{{name}}\"}]},{\"name\":\"is.required\",\"value\":[\"Profile is required\"]},{\"name\":\"filter.relation\",\"value\":[{\"id\":\"id\",\"search\":\"/admin/profile/search?json&q={{query}}\",\"template\":\"{{name}}\"}]},{\"name\":\"list.template\",\"value\":[{\"template\":\"{{profile.name}}\"}]},{\"name\":\"view.template\",\"value\":[{\"template\":\"{{profile.name}}\"}]},{\"name\":\"description\",\"value\":[\"Profile this session belongs to.\"]},{\"name\":\"examples\",\"value\":[\"pjfdz7tg8bcf7e2lig3iuej3\"]}]},{\"name\":\"secret\",\"rust_name\":\"secret\",\"column\":\"secret\",\"value_type\":{\"kind\":\"String\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":{\"provider\":\"cuid\",\"args\":[],\"revision\":\"cuid2-3.3.0\"},\"rules\":[],\"documentation\":{\"label\":\"Secret\",\"description\":\"Generated unique hash needed to perform write operations (POST, PUT, DELETE, etc.)\",\"examples\":[\"lig3iuej37e2bcftg8dz7pjf\"],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[{\"role\":\"list\",\"component\":\"stackpress.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":false},{\"role\":\"view\",\"component\":\"stackpress.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":false}],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Secret\"]},{\"name\":\"default\",\"value\":[\"cuid()\"]},{\"name\":\"list.string\",\"value\":true},{\"name\":\"view.string\",\"value\":true},{\"name\":\"description\",\"value\":[\"Generated unique hash needed to perform write operations (POST, PUT, DELETE, etc.)\"]},{\"name\":\"examples\",\"value\":[\"lig3iuej37e2bcftg8dz7pjf\"]}]},{\"name\":\"scopes\",\"rust_name\":\"scopes\",\"column\":\"scopes\",\"value_type\":{\"kind\":\"String\"},\"required\":true,\"multiple\":true,\"key\":false,\"default\":[],\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":null,\"rules\":[],\"documentation\":{\"label\":\"Scopes\",\"description\":\"API scopes that this session can request. This is mapped with endpoints.\",\"examples\":[[\"commerce\",\"location\",\"account\"]],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[{\"role\":\"field\",\"component\":\"stackpress.field.tags\",\"props\":{},\"definition_revision\":\"1\",\"available\":false},{\"role\":\"list\",\"component\":\"stackpress.source.view.tags\",\"props\":{\"className\":\"frui-mr-md\",\"pill\":true,\"warning\":true},\"definition_revision\":\"source-1\",\"available\":false},{\"role\":\"view\",\"component\":\"stackpress.source.view.tags\",\"props\":{\"className\":\"frui-mr-md\",\"pill\":true,\"warning\":true},\"definition_revision\":\"source-1\",\"available\":false}],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Scopes\"]},{\"name\":\"default\",\"value\":[[]]},{\"name\":\"field.taglist\",\"value\":true},{\"name\":\"list.taglist\",\"value\":[{\"warning\":true,\"pill\":true,\"className\":\"frui-mr-md\"}]},{\"name\":\"view.taglist\",\"value\":[{\"warning\":true,\"pill\":true,\"className\":\"frui-mr-md\"}]},{\"name\":\"description\",\"value\":[\"API scopes that this session can request. This is mapped with endpoints.\"]},{\"name\":\"examples\",\"value\":[[\"commerce\",\"location\",\"account\"]]}]},{\"name\":\"active\",\"rust_name\":\"active\",\"column\":\"active\",\"value_type\":{\"kind\":\"Boolean\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":true,\"nonempty\":false,\"active\":true,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":null,\"rules\":[],\"documentation\":{\"label\":\"Active\",\"description\":\"Special flag to indicate active rows. Inactive rows are not shown in the list view, but can be viewed in the detail view.\",\"examples\":[true],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[{\"role\":\"filter\",\"component\":\"stackpress.field.switch\",\"props\":{},\"definition_revision\":\"1\",\"available\":false},{\"role\":\"view\",\"component\":\"stackpress.view.yesno\",\"props\":{},\"definition_revision\":\"1\",\"available\":false}],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Active\"]},{\"name\":\"default\",\"value\":[true]},{\"name\":\"active\",\"value\":true},{\"name\":\"filter.switch\",\"value\":true},{\"name\":\"view.yesno\",\"value\":true},{\"name\":\"description\",\"value\":[\"Special flag to indicate active rows. Inactive rows are not shown in the list view, but can be viewed in the detail view.\"]},{\"name\":\"examples\",\"value\":[true]}]},{\"name\":\"expires\",\"rust_name\":\"expires\",\"column\":\"expires\",\"value_type\":{\"kind\":\"Datetime\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":true,\"timestamp\":false,\"generated\":false,\"input_required\":true,\"value_rule\":null,\"rules\":[{\"code\":\"required\",\"args\":[],\"client_checkable\":true,\"message\":\"Expires is required\",\"definition_revision\":\"1\"}],\"documentation\":{\"label\":\"Expires\",\"description\":\"Expiration date of the session. After this date, the session will not be able to perform any operations.\",\"examples\":[\"2025-12-31T23:59:59Z\"],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[{\"role\":\"field\",\"component\":\"stackpress.field.datetime\",\"props\":{},\"definition_revision\":\"1\",\"available\":false},{\"role\":\"list\",\"component\":\"stackpress.source.view.date\",\"props\":{\"format\":\"m d, Y h:iA\"},\"definition_revision\":\"source-1\",\"available\":false},{\"role\":\"view\",\"component\":\"stackpress.source.view.date\",\"props\":{\"format\":\"m d, Y h:iA\"},\"definition_revision\":\"source-1\",\"available\":false}],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Expires\"]},{\"name\":\"sortable\",\"value\":true},{\"name\":\"field.datetime\",\"value\":true},{\"name\":\"is.required\",\"value\":[\"Expires is required\"]},{\"name\":\"list.date\",\"value\":[\"m d, Y h:iA\"]},{\"name\":\"view.date\",\"value\":[\"m d, Y h:iA\"]},{\"name\":\"description\",\"value\":[\"Expiration date of the session. After this date, the session will not be able to perform any operations.\"]},{\"name\":\"examples\",\"value\":[\"2025-12-31T23:59:59Z\"]}]},{\"name\":\"created\",\"rust_name\":\"created\",\"column\":\"created\",\"value_type\":{\"kind\":\"Datetime\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":true,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":{\"provider\":\"now\",\"args\":[],\"revision\":\"1\"},\"rules\":[],\"documentation\":{\"label\":\"Created\",\"description\":\"Generated timestamp when row was created.\",\"examples\":[\"2025-10-01T12:00:00Z\"],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[{\"role\":\"list\",\"component\":\"stackpress.source.view.date\",\"props\":{\"format\":\"m d, Y h:iA\"},\"definition_revision\":\"source-1\",\"available\":false},{\"role\":\"view\",\"component\":\"stackpress.source.view.date\",\"props\":{\"format\":\"m d, Y h:iA\"},\"definition_revision\":\"source-1\",\"available\":false}],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Created\"]},{\"name\":\"default\",\"value\":[\"now()\"]},{\"name\":\"sortable\",\"value\":true},{\"name\":\"list.date\",\"value\":[\"m d, Y h:iA\"]},{\"name\":\"view.date\",\"value\":[\"m d, Y h:iA\"]},{\"name\":\"description\",\"value\":[\"Generated timestamp when row was created.\"]},{\"name\":\"examples\",\"value\":[\"2025-10-01T12:00:00Z\"]}]},{\"name\":\"updated\",\"rust_name\":\"updated\",\"column\":\"updated\",\"value_type\":{\"kind\":\"Datetime\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":null,\"unique\":false,\"searchable\":false,\"sortable\":true,\"timestamp\":true,\"generated\":false,\"input_required\":false,\"value_rule\":{\"provider\":\"now\",\"args\":[],\"revision\":\"1\"},\"rules\":[],\"documentation\":{\"label\":\"Updated\",\"description\":\"Generated timestamp that is updated whenever the row has changed.\",\"examples\":[\"2025-10-01T12:00:00Z\"],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[{\"role\":\"list\",\"component\":\"stackpress.source.view.date\",\"props\":{\"format\":\"m d, Y h:iA\"},\"definition_revision\":\"source-1\",\"available\":false},{\"role\":\"view\",\"component\":\"stackpress.source.view.date\",\"props\":{\"format\":\"m d, Y h:iA\"},\"definition_revision\":\"source-1\",\"available\":false}],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"label\",\"value\":[\"Updated\"]},{\"name\":\"default\",\"value\":[\"now()\"]},{\"name\":\"timestamp\",\"value\":true},{\"name\":\"sortable\",\"value\":true},{\"name\":\"list.date\",\"value\":[\"m d, Y h:iA\"]},{\"name\":\"view.date\",\"value\":[\"m d, Y h:iA\"]},{\"name\":\"description\",\"value\":[\"Generated timestamp that is updated whenever the row has changed.\"]},{\"name\":\"examples\",\"value\":[\"2025-10-01T12:00:00Z\"]}]},{\"name\":\"application\",\"rust_name\":\"application\",\"column\":\"application\",\"value_type\":{\"kind\":\"Model\",\"name\":\"Application\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":{\"local\":\"applicationId\",\"foreign\":\"id\",\"inverse\":null},\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":null,\"rules\":[],\"documentation\":{\"label\":null,\"description\":null,\"examples\":[],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"relation\",\"value\":[{\"local\":\"applicationId\",\"foreign\":\"id\"}]}]},{\"name\":\"profile\",\"rust_name\":\"profile\",\"column\":\"profile\",\"value_type\":{\"kind\":\"Model\",\"name\":\"Profile\"},\"required\":true,\"multiple\":false,\"key\":false,\"default\":null,\"nonempty\":false,\"active\":false,\"relation\":{\"local\":\"profileId\",\"foreign\":\"id\",\"inverse\":null},\"unique\":false,\"searchable\":false,\"sortable\":false,\"timestamp\":false,\"generated\":false,\"input_required\":false,\"value_rule\":null,\"rules\":[],\"documentation\":{\"label\":null,\"description\":null,\"examples\":[],\"display\":null,\"icon\":null,\"labels\":[]},\"roles\":[],\"access\":{\"readable\":false,\"writable\":false,\"sensitive\":false,\"publish_default\":false},\"attributes\":[{\"name\":\"relation\",\"value\":[{\"local\":\"profileId\",\"foreign\":\"id\"}]}]}],\"documentation\":{\"label\":null,\"description\":null,\"examples\":[],\"display\":\"{{profile.name}}\",\"icon\":\"coffee\",\"labels\":[\"Session\",\"Sessions\"]},\"query\":[\"*\",\"profile.*\",\"application.*\"],\"attributes\":[{\"name\":\"labels\",\"value\":[\"Session\",\"Sessions\"]},{\"name\":\"display\",\"value\":[\"{{profile.name}}\"]},{\"name\":\"icon\",\"value\":[\"coffee\"]},{\"name\":\"query\",\"value\":[\"*\",\"profile.*\",\"application.*\"]}]}").expect("generator emitted valid source metadata")
 }
@@ -13,82 +17,60 @@ pub fn describe() -> Model {
 pub fn columns() -> Vec<SourceColumn> {
     let model = describe();
     let catalog = std::sync::Arc::new(super::catalog::describe());
-    let codecs = vec![
-        (
-            "id",
-            Column {
-                kind: Kind::String,
-                nullable: false,
-            },
-        ),
-        (
-            "applicationId",
-            Column {
-                kind: Kind::String,
-                nullable: false,
-            },
-        ),
-        (
-            "profileId",
-            Column {
-                kind: Kind::String,
-                nullable: false,
-            },
-        ),
-        (
-            "secret",
-            Column {
-                kind: Kind::String,
-                nullable: false,
-            },
-        ),
-        (
-            "scopes",
-            Column {
-                kind: Kind::Strings,
-                nullable: false,
-            },
-        ),
-        (
-            "active",
-            Column {
-                kind: Kind::Boolean,
-                nullable: false,
-            },
-        ),
-        (
-            "expires",
-            Column {
-                kind: Kind::Date,
-                nullable: false,
-            },
-        ),
-        (
-            "created",
-            Column {
-                kind: Kind::Date,
-                nullable: false,
-            },
-        ),
-        (
-            "updated",
-            Column {
-                kind: Kind::Date,
-                nullable: false,
-            },
-        ),
-    ];
-    // Pair by exact identity instead of dropping or shifting a virtual relation slot.
-    codecs
+    // Visit source fields in declaration order; virtual relations have no storage codec.
+    model
+        .fields
         .into_iter()
-        .map(|(name, codec)| {
-            let field = model
-                .fields
-                .iter()
-                .find(|field| field.name == name)
-                .expect("generated column has source field")
-                .clone();
-            SourceColumn::new(codec, field).with_catalog(catalog.clone())
+        .filter_map(|field| {
+            let codec = match field.name.as_str() {
+                "id" => Column {
+                    kind: Kind::String,
+                    nullable: false,
+                },
+
+                "applicationId" => Column {
+                    kind: Kind::String,
+                    nullable: false,
+                },
+
+                "profileId" => Column {
+                    kind: Kind::String,
+                    nullable: false,
+                },
+
+                "secret" => Column {
+                    kind: Kind::String,
+                    nullable: false,
+                },
+
+                "scopes" => Column {
+                    kind: Kind::Strings,
+                    nullable: false,
+                },
+
+                "active" => Column {
+                    kind: Kind::Boolean,
+                    nullable: false,
+                },
+
+                "expires" => Column {
+                    kind: Kind::Date,
+                    nullable: false,
+                },
+
+                "created" => Column {
+                    kind: Kind::Date,
+                    nullable: false,
+                },
+
+                "updated" => Column {
+                    kind: Kind::Date,
+                    nullable: false,
+                },
+
+                _ => return None,
+            };
+            Some(SourceColumn::new(codec, field).with_catalog(catalog.clone()))
         })
         .collect()
 }

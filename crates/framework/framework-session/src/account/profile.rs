@@ -213,10 +213,10 @@ pub async fn update_auth(
     token: Option<Value>,
     secret: Option<Value>,
 ) -> Result<Option<Response>> {
-    if !has_token(token.as_ref()) {
+    let Some(token) = token.filter(|token| has_token(Some(token))) else {
         return Ok(None);
-    }
-    let mut input = Record::from_iter([("token".into(), token.unwrap())]);
+    };
+    let mut input = Record::from_iter([("token".into(), token)]);
     let event = if let Some(id) = id.filter(columns::truthy) {
         input.insert("id".into(), id);
         "auth-update"

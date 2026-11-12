@@ -32,6 +32,10 @@ pub struct Presentation {
 }
 impl Default for Presentation {
     /// Source generic brand fallbacks plus conventional app-owned assets; no files are served.
+    #[expect(
+        clippy::expect_used,
+        reason = "literal default; pending foundation infallible constructor"
+    )]
     fn default() -> Self {
         Self {
             config: views::Config {
@@ -217,4 +221,18 @@ pub(crate) fn account_routes(start: &mut StartupContext, base: &str) -> Result<(
         )?;
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod default_tests {
+    use super::*;
+
+    /// The temporary checked literal is the same path as the pending foundation constructor.
+    #[test]
+    fn literal_default_session_asset_is_valid() {
+        assert_eq!(
+            Presentation::default().assets.module.as_str(),
+            "/assets/session.js"
+        );
+    }
 }

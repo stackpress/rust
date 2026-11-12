@@ -2,6 +2,7 @@
 use stackpress_framework_schema::Model;
 
 /// Complete derived relation/query catalog; raw attributes remain in each model.
+#[expect(clippy::expect_used, reason = "generator serializes a checked SourceCatalog into this constant JSON literal")]
 pub fn describe() -> stackpress_framework_schema::SourceCatalog {
     stackpress_framework_schema::source::__private::serde_json::from_str([%catalog%]).expect("generator emitted valid source catalog")
 }

@@ -15,7 +15,7 @@ fn input_type(schema: &Schema, field: &Field) -> crate::SchemaResult<String> {
             .fieldsets()
             .iter()
             .find(|model| model.name == *name)
-            .expect("checked fieldset");
+            .ok_or_else(|| super::invalid("input fieldset is missing"))?;
         let stored = source::type_fragment(
             "super::[%module%]::[%name%]",
             &[("module", &model.module), ("name", &model.rust_name)],
@@ -71,8 +71,7 @@ fn missing(schema: &Schema, model: &Model, field: &Field) -> Result<String> {
                 .with_cause(cause),
             )
         })?;
-        let kind =
-            serde_json::to_string(&field.value_type).expect("checked provider type serialization");
+        let kind = serde_json::to_string(&field.value_type).map_err(source::encoding_error)?;
         source::generate(
             "templates/create-default-rule.rs.tpl",
             include_str!("templates/create-default-rule.rs.tpl"),

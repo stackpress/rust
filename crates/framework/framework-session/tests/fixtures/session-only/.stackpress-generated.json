@@ -8,13 +8,13 @@
     },
     "source/auth.rs": {
       "owner": "source-models",
-      "sha256": "20c2a8bf520335251818c449d8a5523e196b4f4db7d791d599e7809e00df9686",
-      "bytes": 32110
+      "sha256": "185ac9d16f6a23b09d229a62524b3189840a3de77ae86ae9038c1ed2f9f78723",
+      "bytes": 31971
     },
     "source/catalog.rs": {
       "owner": "source-models",
-      "sha256": "4bc4b9f13a55ddb1850ff3be0b6bd1a5b0084853105c77f896ebbb02a3dea460",
-      "bytes": 40868
+      "sha256": "0dc51be7e5d980d41b7d2cce77d202213313cd246d29baae0c4385a215bf841f",
+      "bytes": 40998
     },
     "source/mod.rs": {
       "owner": "aggregate",
@@ -23,8 +23,8 @@
     },
     "source/profile.rs": {
       "owner": "source-models",
-      "sha256": "3d124e78b84a827385fa9d9d57a2bd412438e3005d018f84a9cd5a4652888b78",
-      "bytes": 36181
+      "sha256": "d6ca3019c00ef4c559a695ca8c6c0229f28e85f8a9784a5a215fdb66b01c05c3",
+      "bytes": 36028
     },
     "stores/auth.rs": {
       "owner": "source-models",
