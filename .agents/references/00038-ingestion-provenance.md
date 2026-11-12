@@ -1,5 +1,7 @@
 # Ingestion provenance and verification
 
+Historical scope: this records the initial KB setup/assessment, not the current implementation or pending design. Use the [current source catalog](../context/source-catalog.md) and its implementation topics for active work; load this reference only for setup provenance.
+
 Owner: [source catalog](../context/source-catalog.md). Load for auditing the handoff, refreshing knowledge, or investigating a drift warning.
 
 ## Sources and preservation

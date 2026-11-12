@@ -1,14 +1,22 @@
 # Rust code style and human readability
 
-Authority: project-owner instructions plus Rust community conventions. This is the Rust adaptation of installed chrisai-coding principles; its JS-specific syntax rules are not Rust rules.
+Authority: project-owner instructions, [workspace lints](../../Cargo.toml), [Clippy configuration](../../clippy.toml) and release crate roots. This is the Rust adaptation of installed chrisai-coding principles; its JS-specific syntax rules are not Rust rules.
 
 ## Formatting and naming
 
 - Use conventional Rust formatting with rustfmt defaults, four-space indentation, snake_case modules/functions/variables, PascalCase types/traits/variants, and SCREAMING_SNAKE_CASE constants.
 - Prefer clear names over abbreviations. Name lifecycle stages, domain rules, and ownership rather than generic helpers/managers.
 - Keep imports explicit and organized by responsibility. Use deliberate public re-exports, not broad glob exports that conceal the public API.
-- Follow the repository's eventual edition/MSRV/toolchain choice. No Cargo manifest or compiler baseline is selected by this KB setup; edition 2024 in the existing parser branch is a source fact, not an automatic workspace decision.
+- Use edition **2024**, Cargo resolver **3** and MSRV **1.96**, as declared in the root workspace manifest (G09). Do not silently raise the compiler baseline.
 - Use `// ` with a space and normal readable prose; do not transfer the coding skill's JS-specific no-space first-comment convention.
+
+## Enforced lints and no-panic policy
+
+All 23 release manifests inherit workspace `unsafe_code = "forbid"` and `missing_docs = "deny"`. Their library roots deny `clippy::{unwrap_used, expect_used, panic, unimplemented, todo, unreachable}` (G62). Strict Clippy runs with `-D warnings`; warning-clean Rustdoc uses `RUSTDOCFLAGS="-D warnings"`. Compiler `missing_docs` covers public documentation; the broader private-helper/comment conventions below also require review.
+
+Use errors or non-panicking representations for fallible runtime input, configuration and state. Every crash fix must include an owning-crate regression test that crashed on the old code. Do not weaken the lints with `allow` or invent a general invariant exception.
+
+[Named no-panic exceptions](no-panic-exceptions.md) is the exact approved registry: only compile-time constant parsing may use a narrowly scoped `#[expect(clippy::expect_used, reason = "...")]`, with tests proving the exact literal. It also lists generator-template constants once rather than every generated copy. Load it before touching an exception; ordinary tests may unwrap/expect/panic for clear failure intent under `clippy.toml`'s three test-specific settings. Those settings do not authorize production panic paths.
 
 ## Responsibilities and abstraction
 
@@ -27,8 +35,8 @@ Authority: project-owner instructions plus Rust community conventions. This is t
 - Map meaningful decision paths before simplifying. Use named predicates, guards, exhaustive matches, and focused phases when they improve comprehension.
 - Preserve rule ordering, side effects, and error precedence during refactoring. Reducing line count is not the goal.
 - Prefer borrowing to unnecessary cloning, but choose a justified clone over lifetime machinery that obscures simple ownership.
-- Use Result/Option, typed error variants, and cause chains. Avoid unwrap/expect in fallible library/runtime paths unless an invariant is proven and documented; tests may use them with clear failure intent.
-- Keep unsafe exceptional, minimal, and locally justified with a `// SAFETY:` explanation and relevant tests.
+- Use Result/Option, typed error variants and cause chains. Follow the no-panic policy in this file; a runtime invariant is not permission for unwrap/expect.
+- Release crates inherit `unsafe_code = "forbid"`; keep their implementation safe Rust. Do not introduce an unsafe escape or relax the lint without an accepted change to policy.
 - Avoid holding a lock or entered tracing guard across await. Propagate event/task context explicitly where required.
 - Explain cancellation, partial mutation, transaction scope, retries, idempotency, ordering, and sent-response behavior next to the code that establishes them.
 
@@ -38,8 +46,8 @@ Authority: project-owner instructions plus Rust community conventions. This is t
 - Every function and method, including meaningful private helpers, gets a concise `///` purpose/contract explanation. Public structs/enums/traits/aliases/constants, public fields/variants, and important private state also receive documentation appropriate to their role.
 - Public API docs explain inputs/outputs, mutation and side effects, errors, panic conditions when any, ordering/cancellation, platform/feature limits, and relevant ownership expectations.
 - Use standard `# Examples`, `# Errors`, `# Panics`, and `# Safety` sections when applicable. Do not add empty boilerplate sections.
-- Examples must use real eventual APIs, compile as doctests when practical, and explain non-obvious lines. Use `no_run` for meaningful external-resource examples; avoid ignored examples that silently rot.
-- Prefer intra-doc links to related real items. Use `cargo test --doc` and warning-clean `cargo doc --no-deps` for the relevant crate/features once code exists.
+- Examples must use real APIs, compile as doctests when practical, and explain non-obvious lines. Use `no_run` for meaningful external-resource examples; avoid ignored examples that silently rot.
+- Prefer intra-doc links to related real items. Use `cargo test --doc` and warning-clean `cargo doc --no-deps` for the relevant crate/features, through the benchmark workflow.
 - Do not publish speculative code examples as working Rust APIs.
 
 ## Explanatory comments are required
@@ -67,3 +75,5 @@ The installed [coding logic signals](../skills/chrisai-coding/references/logic-r
 - [Rust Style Guide](https://doc.rust-lang.org/style-guide/): default formatting conventions.
 - [Rustdoc writing guide](https://doc.rust-lang.org/rustdoc/how-to-write-documentation.html): clear public documentation and meaningful examples.
 - [Clippy cognitive complexity](https://clippy.rust-lang.org/master/index.html#cognitive_complexity): limitations of the lint as a comprehension metric.
+
+[Historical style and quality context](../references/00045-preimplementation-style-quality.md) preserves the former unchosen-toolchain and proposed-tooling statements; load only when auditing superseded setup guidance.

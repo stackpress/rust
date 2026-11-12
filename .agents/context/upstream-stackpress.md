@@ -1,10 +1,10 @@
 # Existing Stackpress knowledge and contract router
 
-Authority: source-backed knowledge of the existing TypeScript ecosystem, preserved in full as references. This is accepted knowledge about the source system, not a statement that Rust implementations exist. The owner has authorized these sources for port planning.
+Authority: source-backed knowledge of the existing TypeScript ecosystem, preserved in full as references. These are accepted descriptions of the captured source system. Current Rust implementations, features and public paths are documented in [source structure](source-structure.md) and [runtime](runtime-and-portability.md); the imported reference alone does not prove a Rust claim.
 
 ## How to use
 
-Start with the smallest responsibility/contract. Follow detailed source anchors and current manifests before implementing; the snapshot is not a substitute for rereading changed code. Rust target decisions and quality policy override legacy frontend, package, naming, and coverage conventions.
+Start with the smallest responsibility/contract. Follow detailed source anchors when tracing an original contract, then inspect the current-branch Rust producer and tests. Captured sibling anchors/revisions are not a fresh inspection of those repositories. Rust target decisions and quality policy override legacy frontend, package, naming, and coverage conventions.
 
 ## Architecture and composition
 
@@ -43,11 +43,11 @@ Start with the smallest responsibility/contract. Follow detailed source anchors 
 
 ## Explicit source-to-target differences
 
-- Existing React/Reactus/Frui/r22n runtime APIs are source behavior. Leptos/Tauri is the selected target, with analogous UI/translation capabilities to implement deliberately.
+- Existing React/Reactus/Frui/r22n runtime APIs are source behavior. The implemented UI uses stackpress-leptos plus framework-view; the blog has SSR/hydrate/CSR, while desktop is deferred and MCP unsupported (G52). Port exceptions and target limits are explicit in [runtime](runtime-and-portability.md).
 - Existing Node transports/module loading, JS callable objects, CJS/ESM/ts-morph/Vite, Electron packaging, and npm release coordination do not automatically become Rust requirements.
 - Existing contributor documents demand >90% coverage for all new changes. Rust policy is >=70% development and >=90% before publication; use [testing and quality](testing-and-quality.md).
-- Source KB passages contain 0.10.7/default literals while current source manifests report 0.10.8. Do not unify them into a false exact-version claim.
-- The config catalog describes permission allowlisting, while detailed session behavior permits all when the access map is empty. Read current Session/guard source before deciding target default policy; default-deny is not an established Rust decision.
+- The imported KB contains 0.10.7/default literals; the original source capture recorded 0.10.8 manifests. These are historical version observations, separate from Rust's current 0.2.0 manifests. Do not unify them into a false current-version claim.
+- The config catalog's allowlist language does not override source empty-access behavior. G42/G43 preserve configured protection and each route/event's responsibility; no new global default-deny policy is implied. See [project direction](project-direction.md) and the Rust session/API implementations.
 - Source contracts distinguish architectural, implemented, tested, demonstrated, and supported. Preserve those evidence labels for Rust and each target/database/adapter.
 
-See [source catalog](source-catalog.md) for authority, immutable source copies, hashes, drift checks, and exact archive scope.
+See [source catalog](source-catalog.md) for authority, preserved non-code snapshots, historical source hashes, demotions and current authority.

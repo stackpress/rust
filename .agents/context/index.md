@@ -1,16 +1,16 @@
 # Stackpress Rust context index
 
-This is the read-first map for the Rust monorepo. Context records accepted project direction and rules; linked discussion proposals and upstream contracts retain their declared lower or historical authority.
+Read this first, then load the smallest topic for the task. Context contains accepted reusable truth verified against this branch's source/manifests and accepted decisions. Historical references retain their lower authority.
 
-1. [Project direction](project-direction.md): load for confirmed goals, Cargo namespace, plugin minimalism, shared targets, and scope boundaries.
-2. [Runtime and portability contracts](runtime-and-portability.md): load for event/lifecycle semantics, requests/responses, errors, code generation, Leptos/Tauri, and platform boundaries.
-3. [Rust code style](rust-code-style.md): load before authoring or refactoring Rust; includes ownership, abstraction, consistent patterns, Rustdoc, and high comment density.
-4. [Testing and quality](testing-and-quality.md): load for unit/contract/integration tests, three-round refactoring, 70% development and 90% publication coverage, and evidence limits.
-5. [Upstream Stackpress knowledge](upstream-stackpress.md): load to find full existing architecture and package API contracts across Lib, Idea, Ingest, Inquire, Reactus, and framework packages.
-6. [Foundation and package source map](source-map.md): load to locate exact source files, manifests, package roles, tests, and existing Rust parser work.
-7. [Source catalog and authority](source-catalog.md): load for provenance, preserved notes, historical versus accepted claims, current versions, and ingestion verification.
-8. [Accepted source structure](source-structure.md): load for the root Cargo workspace/facade, grouped framework/Idea/server/SQL crates, package and namespace catalog, optional backend adapters, and dependency boundaries accepted on 2026-10-23 with the server grouping requested on 2026-10-28.
+1. [Project direction](project-direction.md): goals, implemented architecture, function plugins, faithful source-port policy, shared targets and current scope.
+2. [Runtime and portability](runtime-and-portability.md): ordered dispatch, lifecycle/errors, config, HTTP dates/cookies, app-generated families, Leptos/Tauri boundaries and named port exceptions.
+3. [Rust code style](rust-code-style.md): edition 2024/MSRV 1.96, enforced lints/no-panic policy, responsibility/ownership, Rustdoc and required explanations.
+4. [Testing and quality](testing-and-quality.md): 70%/90% floors and exemptions, nextest/LLVM coverage, live DB rules, cached browser/fuzz proofs and packaged-test boundaries.
+5. [Source structure and crate inventory](source-structure.md): all 23 release packages, paths, purposes, facade aliases, features and dependency ownership.
+6. [Source map](source-map.md): every other workspace/nested package, examples/blog plugin layout and xtask, consumers, tools and fuzz paths.
+7. [Release and licensing](release-and-licensing.md): lockstep 0.2.0 beta, 11/12 licence split, attribution/snapshot checks, release gate and owner publication pacing.
+8. [Source catalog and authority](source-catalog.md): source/decision/receipt provenance, demoted setup records, imported references and integrity limits.
+9. [Upstream Stackpress contracts](upstream-stackpress.md): complete TypeScript architecture/API/config/generation references and explicit source-to-Rust differences.
+10. [Named no-panic exceptions](no-panic-exceptions.md): exact approved constant literals, generator templates, reasons and proving tests; load before altering an exception.
 
-9. [Named no-panic exceptions](no-panic-exceptions.md): load when changing G62 lint expectations or a listed constant parser; records exact literals, reasons and proving tests.
-
-For a new session, start with project direction and source authority, then load the coding/quality topics for the requested task. Those owners route to implementation workflows and the continuation handoff.
+Use root `AGENTS.md` for contributor process and authorization boundaries, and `.agents/AGENTS.md` for lossless maintenance and accepted-truth placement. Setup-era handoffs and unresolved-question lists are provenance only; current source-backed topics above route active work.
