@@ -8,6 +8,7 @@ and shared store specified in Task 00050:
 
 ```sh
 python3 tools/release/check_packages.py
+python3 tools/release/check_dep_licenses.py
 python3 tools/release/check_readmes.py
 python3 tools/release/check_facade.py
 python3 tools/release/package_workspace.py
@@ -75,6 +76,43 @@ initial offline leaf dry-runs required HTTP; their final dry-runs permit anonymo
 registry reads as authorized by the coordinator. They always retain `--dry-run` and
 `--locked`. No credential is added. `--exclude-lockfile` was investigated and rejected:
 it could hide first-release dependency ordering failures rather than resolve them.
+
+## Dependency licence snapshot
+
+Run `python3 tools/release/check_dep_licenses.py` to check the G62 frozen inventory
+in [dependency-licenses.toml](dependency-licenses.toml). The release gate runs it as
+the `dependency-licenses` phase; `gate.py --only dependency-licenses` reruns it.
+
+The checker reads the root lock and every nested source `Cargo.lock`, including
+examples, consumers, blog and fuzz workspaces when present. It skips hidden
+directories, `target`, `node_modules` and Python bytecode caches. Registry packages
+are deduplicated by name, version and registry source; path/git packages are outside
+this registry check. No resolution, download, Cargo invocation or network is used.
+
+Declarations come from `$CARGO_HOME/registry/src/*/<name>-<version>/Cargo.toml`,
+defaulting to `~/.cargo`. Exact licence expressions are compared without rewriting
+order, spaces or historical slash syntax. The allowlist records the current state
+for owner review; it does not establish licence policy or compatibility. The tool
+has no command to regenerate or extend it.
+
+Three exact crates.io name/version entries have coordinator-supplied metadata from
+the public API on 2026-11-12, recorded with provenance in `[registry-metadata]`:
+`atomic-polyfill 1.0.3`, `curve25519-dalek-derive 0.1.1` and `fiat-crypto 0.2.9`.
+Only these entries may use metadata when source is absent. Cached source takes
+precedence; an invalid cached manifest cannot use the fallback. The checker prints
+every metadata fallback separately so an offline result's evidence remains visible.
+
+Exit status is zero only when every registry package has a listed declaration.
+Unlisted expressions, other uncached sources, malformed/conflicting manifests and
+missing licence declarations fail. A `license-file` without an SPDX expression is
+read and reported for review, then fails; the checker never guesses an identifier
+from prose. The summary reports lock/package counts, declaration counts, fallback
+usage, expressions and failures. Release tooling unit tests include an unlisted
+fake package and controls for absent sources and fallback boundaries.
+
+Vendored assets and data have a separate [attribution index](../../ATTRIBUTION.md)
+linking their existing notices and licence texts. Own licences and notices remain
+unchanged.
 
 ## Crate-name availability
 

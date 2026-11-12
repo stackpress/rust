@@ -55,6 +55,7 @@ def main():
         write_report(EVIDENCE / 'gate-results.json', results)
         return code
 
+    phase('dependency-licenses', ['python3', 'tools/release/check_dep_licenses.py'])
     phase('fmt', ['cargo', 'fmt', '--all', '--', '--check'])
     for name, features in [('default', []), ('compatible', ['--features', COMPATIBLE])]:
         common = ['--workspace', '--locked', '--offline', *features]
