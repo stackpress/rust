@@ -138,7 +138,13 @@ pub fn emit_source_roles(
                         let stackpress_framework_schema::ValueType::Fieldset(name)=&field.value_type.value else {
                             return Err(stackpress_framework_schema::SchemaError::new(stackpress_framework_schema::SchemaErrorKind::Invalid,"source fieldset role requires a fieldset type"));
                         };
-                        Some(source_module(graph.fieldsets().iter().find(|fieldset|fieldset.name==*name).expect("normalized fieldset")).to_owned())
+                        // A public catalog can be supplied separately from its graph.
+                        let metadata = graph.fieldsets().iter().find(|fieldset| fieldset.name == *name)
+                            .ok_or_else(|| stackpress_framework_schema::SchemaError::new(
+                                stackpress_framework_schema::SchemaErrorKind::Invalid,
+                                "source fieldset has no normalized metadata",
+                            ))?;
+                        Some(source_module(metadata).to_owned())
                     }else{None};
                     Ok(serde_json::json!({"wire":literal(&field.wire_name),"module":import.module,"symbol":import.symbol,"nested":nested.is_some(),"nested_module":nested.unwrap_or_default(),"nested_display":matches!(role,Role::List|Role::View),"nested_function":match role{Role::List=>"list_cells",Role::View=>"view_cells",_=>super::emit::role_name(role)},"row":matches!(role,Role::List|Role::View)&&import.module=="stackpress_framework_admin::source::roles"&&matches!(import.symbol.as_str(),"TemplateView"|"FormulaView")}))
                 }).collect::<SchemaResult<Vec<_>>>().map_err(source_error)?;
@@ -147,7 +153,28 @@ pub fn emit_source_roles(
                 .any(|control| control["row"].as_bool() == Some(true));
             roles.push(serde_json::json!({"name":super::emit::role_name(role),"function":match role {Role::List=>"list_cells",Role::View if cells=>"view_cells",_=>super::emit::role_name(role)},"cells":cells,"prefix":nested_target && !matches!(role,Role::View|Role::List),"list":role==Role::List,"variant":format!("{role:?}"),"display":matches!(role,Role::List|Role::View),"uses_row":uses_row,"has_controls":!controls.is_empty(),"controls":controls}));
         }
-        let text=renderer.render(Asset::SourceRoles,&serde_json::json!({"model":literal(&serde_json::to_string(model).expect("portable descriptor")),"rendering":roles.iter().any(|role|role["has_controls"].as_bool()==Some(true)),"roles":roles})).map_err(source_error)?;
+        let descriptor = serde_json::to_string(model).map_err(|cause| {
+            source_error(
+                stackpress_framework_schema::SchemaError::new(
+                    stackpress_framework_schema::SchemaErrorKind::Invalid,
+                    "source descriptor serialization failed",
+                )
+                .with_cause(cause),
+            )
+        })?;
+        // Generated model() parses only this validated constant, never caller-owned input.
+        serde_json::from_str::<stackpress_framework_schema::UiModel>(&descriptor).map_err(
+            |cause| {
+                source_error(
+                    stackpress_framework_schema::SchemaError::new(
+                        stackpress_framework_schema::SchemaErrorKind::Invalid,
+                        "source descriptor round-trip failed",
+                    )
+                    .with_cause(cause),
+                )
+            },
+        )?;
+        let text=renderer.render(Asset::SourceRoles,&serde_json::json!({"model":literal(&descriptor),"rendering":roles.iter().any(|role|role["has_controls"].as_bool()==Some(true)),"roles":roles})).map_err(source_error)?;
         files.push((source_module(metadata).to_owned(), text));
     }
     for (module, text) in files {
@@ -168,11 +195,23 @@ pub fn emit_source_pages(
 ) -> Result<()> {
     emit_source_roles(graph, ui, definitions, output)?;
     let mut renderer = Renderer::new().map_err(source_error)?;
-    let models=ui.models.iter().map(|model|{
-        let metadata=graph.models().iter().find(|item|item.name==model.id).expect("projection model");
-        let module=source_module(metadata);
-        serde_json::json!({"module":module,"module_literal":literal(module),"name_literal":literal(&model.id),"label_literal":literal(&model.label),"plural_literal":literal(metadata.documentation.labels.get(1).unwrap_or(&model.label)),"icon_literal":metadata.documentation.icon.as_deref().map(literal).unwrap_or_else(||"null".into()),"soft_remove":metadata.fields.iter().any(|field|field.active)})
-    }).collect::<Vec<_>>();
+    let models = ui.models.iter().map(|model| {
+        // Catalog membership must resolve specifically to a stored model for page emission.
+        let metadata = graph.models().iter().find(|item| item.name == model.id)
+            .ok_or_else(|| stackpress_idea_transformer::TransformError::new(
+                "source page has no normalized model",
+            ))?;
+        let module = source_module(metadata);
+        Ok(serde_json::json!({
+            "module": module,
+            "module_literal": literal(module),
+            "name_literal": literal(&model.id),
+            "label_literal": literal(&model.label),
+            "plural_literal": literal(metadata.documentation.labels.get(1).unwrap_or(&model.label)),
+            "icon_literal": metadata.documentation.icon.as_deref().map(literal).unwrap_or_else(|| "null".into()),
+            "soft_remove": metadata.fields.iter().any(|field| field.active),
+        }))
+    }).collect::<Result<Vec<_>>>()?;
     // Catalog helper names avoid every actual model module, including Pages/Host/Catalog.
     let fresh = |mut name: String| {
         while graph

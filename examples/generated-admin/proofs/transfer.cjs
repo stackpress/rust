@@ -32,7 +32,7 @@ module.exports = async function flow(h, page) {
   };
   const preview=async()=>{await page.locator('#import-preview').click();await page.waitForFunction(()=>document.querySelector('#import-status').textContent!=='Validating every row; nothing is being written…');};
   const confirm=async()=>{await page.locator('#import-confirm-check').check();await page.locator('#import-confirm').click();await page.waitForFunction(()=>document.querySelector('#import-status').textContent!=='Applying one atomic batch…');};
-  // Display-only names cannot break UTF-8 admission or narrow layout.
+  // Display-only names cannot break raw file admission or narrow layout.
   await file('id,name\nx,Name','🦀'.repeat(127)+'X🌈.csv');
   assert.equal((await page.locator('#import-file-error').textContent()).trim(),'');
   assert.equal(await page.locator('#import-file-name').textContent(),'🦀'.repeat(127)+'X');
@@ -52,8 +52,17 @@ module.exports = async function flow(h, page) {
   }
   // Unknown headers fail before a row preview, retaining the selected file.
   await file('id,private\nbad,hidden');await preview();assert.match(await page.locator('#import-status').textContent(),/header/);
-  await file(Buffer.from([0xff]),'invalid.csv');await page.waitForFunction(()=>document.querySelector('#import-file-error').textContent.length>0);
-  assert.match(await page.locator('#import-file-error').textContent(),/UTF-8/);
+  // Legacy bytes remain exact across browser, JSON bridge and HTTP, then decode on the host.
+  for (const [csv, expected] of [
+    [Buffer.from('id;name\na;Ada'), 'Ada'],
+    [Buffer.from([0x69,0x64,9,0x6e,0x61,0x6d,0x65,10,0x61,9,0xe3,0xd1,0xcd,0xc8,0xc7]), 'مرحبا'],
+    [Buffer.concat([Buffer.from([0xff,0xfe]),Buffer.from('id;name\na;🦀','utf16le')]), '🦀'],
+    [Buffer.from([0x69,0x64,0x3b,0x6e,0x61,0x6d,0x65,10,0x61,0x3b,0x63,0x61,0x66,0xe9]), 'café'],
+  ]) {
+    await file(csv);await preview();
+    assert.equal((await page.locator('#import-file-error').textContent()).trim(),'');
+    assert.match(await page.locator('#import-preview-table').textContent(),new RegExp(expected));
+  }
   await file(Buffer.alloc(1048577,120),'oversize.csv');await page.waitForFunction(()=>document.querySelector('#import-file-error').textContent.length>0);
   assert.match(await page.locator('#import-file-error').textContent(),/byte limit/);assert.equal(await page.locator('#import-preview').isDisabled(),true);
   // Ordinary uploads retain apostrophes; opt-in decoding changes only documented guards.

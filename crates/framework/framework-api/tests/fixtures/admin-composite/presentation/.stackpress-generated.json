@@ -8,8 +8,8 @@
     },
     "ui/catalog.rs": {
       "owner": "admin-composite-ui",
-      "sha256": "93172d75b820e27adab7c5c98e599ecf2cedf9f9511e9360f0a1f01054ce85bb",
-      "bytes": 8909
+      "sha256": "74b59a241e093c76322a469866a6a5ef71f2fecdb846a2e7098eca590cc2f0f2",
+      "bytes": 7491
     },
     "ui/host.rs": {
       "owner": "admin-composite-ui",
@@ -28,8 +28,8 @@
     },
     "ui/slugged.rs": {
       "owner": "admin-composite-ui",
-      "sha256": "2b797de8179ec5d767f96430936492f6c48742ccd0e238b5493db9862e6cc17e",
-      "bytes": 6642
+      "sha256": "5cf8a8861a81ecb073110cdcf3d21948718d692f020bd37eb4eab08f95b80356",
+      "bytes": 5682
     }
   }
 }

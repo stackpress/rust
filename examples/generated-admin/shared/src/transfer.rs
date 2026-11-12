@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::json;
 use stackpress_framework_admin::{
     pages::{Command, Reply, Snapshot},
-    transfer::{Phase, Preview},
+    transfer::{CsvBytes, Phase, Preview},
 };
 
 /// Browser adapter result, never a server file name/path capability.
@@ -13,8 +13,8 @@ use stackpress_framework_admin::{
 pub struct FileDraft {
     /// Display-only bounded base name.
     pub name: String,
-    /// Whole bounded UTF-8 upload retained only by this mounted browser root.
-    pub csv: String,
+    /// Whole bounded raw upload retained only by this mounted browser root.
+    pub csv: CsvBytes,
     /// Safe adapter error; native/browser IO diagnostics are never copied here.
     pub error: String,
     /// A bounded file read is pending; no import request has been sent.
@@ -30,7 +30,7 @@ pub struct UploadState(pub RwSignal<FileDraft>);
 #[derive(Clone, Debug, PartialEq)]
 struct Selection {
     generation: u64,
-    csv: String,
+    csv: CsvBytes,
     decode: bool,
 }
 impl Selection {

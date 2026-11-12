@@ -12,6 +12,15 @@
 //! # Ok::<(), stackpress_framework_schema::SchemaError>(())
 //! ```
 
+#![deny(
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::panic,
+    clippy::unimplemented,
+    clippy::todo,
+    clippy::unreachable
+)]
+
 mod draft;
 pub use draft::{Draft, RoleContext};
 #[cfg(feature = "codegen")]

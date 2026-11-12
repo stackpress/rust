@@ -64,9 +64,20 @@ fn public_wording_and_labels() {
     assert_eq!(record_label(&model, &json!({"id":"x","name":"Ada"})), "Ada");
     assert_eq!(record_label(&model, &json!({"id":"x"})), "View x");
     assert_eq!(record_label(&model, &json!({})), "View record");
+    // Fallback labels preserve false/zero identities and tolerate unusable host row values.
+    assert_eq!(record_label(&model, &json!({"id":0})), "View 0");
+    assert_eq!(record_label(&model, &json!({"id":false})), "View false");
+    assert_eq!(record_label(&model, &json!({"id":[]})), "View record");
     let mut invalid = issue("invalid");
     let specific = submitted_issues(&model, vec![invalid.clone()], &json!({"name":""}));
     assert_eq!(specific[0].message, "Name is required");
+    // A missing required input and an explicit disallowed null require distinct explanations.
+    let absent = submitted_issues(&model, vec![invalid.clone()], &json!({}));
+    assert_eq!(absent[0].code, "required");
+    assert_eq!(absent[0].message, "Name is required");
+    let null = submitted_issues(&model, vec![invalid.clone()], &json!({"name":null}));
+    assert_eq!(null[0].code, "null");
+    assert_eq!(null[0].message, "Name cannot be empty");
     invalid.path = vec!["note".into()];
     let specific = submitted_issues(
         &model,
@@ -85,6 +96,55 @@ fn public_wording_and_labels() {
         submitted_issues(&model, vec![invalid], &json!({"name":""}))[0].code,
         "invalid"
     );
+}
+
+/// Strict length rules describe their inclusive user-facing limits without echoing input.
+#[test]
+fn public_errors_explain_strict_lengths_and_scalar_failures() {
+    let parsed = stackpress_idea_parser::parse(
+        "wording.idea",
+        "model Word { id String @id short String @is.clt(3) long String @is.cgt(3) exact String @is.ceq(3) }",
+        &Default::default(),
+    )
+    .unwrap();
+    let mut registry = DefinitionRegistry::standard();
+    for name in ["id", "short", "long", "exact"] {
+        registry = registry
+            .with_field_policy(
+                "Word",
+                name,
+                FieldAccess {
+                    readable: true,
+                    writable: true,
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+    }
+    let model = Schema::normalize(&parsed, &registry, Default::default())
+        .unwrap()
+        .project_ui()
+        .unwrap()
+        .models
+        .remove(0);
+    let fields = &model.fields[1..];
+    for (field, code, expected) in [
+        (&fields[0], "clt", "short must contain at most 2 characters"),
+        (&fields[1], "cgt", "long must contain at least 4 characters"),
+        (&fields[2], "ceq", "exact must contain exactly 3 characters"),
+        (&fields[0], "cge", "short has an invalid length"),
+        (&fields[0], "null", "short cannot be empty"),
+        (&fields[0], "limit", "short exceeds the allowed size"),
+        (&fields[0], "number", "short must be a valid number"),
+        (&fields[0], "date", "short must be a valid date"),
+    ] {
+        let issue = FieldIssue {
+            path: vec![field.wire_name.clone()],
+            code: code.into(),
+            message: "validation failed".into(),
+        };
+        assert_eq!(issue_message(field, &issue), expected);
+    }
 }
 #[test]
 fn presence_is_only_offered_when_meaningful() {

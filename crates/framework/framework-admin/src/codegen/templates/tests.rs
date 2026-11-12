@@ -218,3 +218,35 @@ fn reused_controls_start_with_fresh_data_after_a_failed_render() {
     assert!(second.contains("draft.get(\"second [%inert%]\")"));
     assert!(!second.contains("draft.get(\"first\")"));
 }
+
+/// The template's sole no-panic exception parses a generator-validated constant UiModel.
+#[test]
+fn generated_source_descriptor_constant_roundtrips() {
+    use stackpress_framework_schema::{Schema, UiModel};
+    let parsed = stackpress_idea_parser::parse(
+        "constant.idea",
+        "model Example { id String @id text String @field.input }",
+        &Default::default(),
+    )
+    .unwrap();
+    let graph = Schema::normalize_source(&parsed, Default::default(), &[]).unwrap();
+    let ui = graph
+        .project_source_ui(&crate::codegen::source_definitions().unwrap())
+        .unwrap();
+    let model = &ui.models[0];
+    let descriptor = serde_json::to_string(model).unwrap();
+    let restored: UiModel = serde_json::from_str(&descriptor).unwrap();
+    assert_eq!(
+        serde_json::to_value(restored).unwrap(),
+        serde_json::to_value(model).unwrap()
+    );
+    let source = Renderer::new()
+        .unwrap()
+        .render(
+            Asset::SourceRoles,
+            &json!({"model":literal(&descriptor),"rendering":false,"roles":[]}),
+        )
+        .unwrap();
+    assert!(source.contains(&format!("serde_json::from_str({})", literal(&descriptor))));
+    assert!(source.contains("#[expect(clippy::expect_used, reason ="));
+}

@@ -111,6 +111,38 @@ pub struct RoleContext {
 }
 
 impl RoleContext {
+    /// Bind one generated control to its public descriptor and existing root-owned signal.
+    ///
+    /// This lookup does not grant field authority or create a new signal. The caller supplies
+    /// the already selected role and public descriptors, as the generated wrappers do.
+    /// # Errors
+    /// Returns an Invalid error for absent metadata or an absent draft member, without mutation.
+    pub fn from_draft(
+        id: impl Into<String>,
+        fields: &[UiField],
+        draft: &Draft,
+        wire_name: &str,
+        role: Role,
+    ) -> SchemaResult<Self> {
+        // Resolve metadata first, preserving the generated wrapper's existing error order.
+        let field = fields
+            .iter()
+            .find(|field| field.wire_name == wire_name)
+            .ok_or_else(|| {
+                SchemaError::new(SchemaErrorKind::Invalid, "generated role field missing")
+            })?;
+        // Reuse the admitted signal; failure must not silently manufacture a missing control.
+        let value = draft.get(wire_name).ok_or_else(|| {
+            SchemaError::new(SchemaErrorKind::Invalid, "source role draft field missing")
+        })?;
+        Ok(Self {
+            id: id.into(),
+            field: field.clone(),
+            role,
+            value,
+        })
+    }
+
     /// Creation/span requiredness never turns an optional query filter into a required input.
     pub fn input_required(&self) -> bool {
         matches!(self.role, Role::Field | Role::Span)

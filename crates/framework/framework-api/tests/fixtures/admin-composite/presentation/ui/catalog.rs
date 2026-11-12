@@ -7,6 +7,10 @@ use stackpress_framework_schema::{SchemaResult, UiField, UiModel};
 use stackpress_framework_admin::Draft;
 use stackpress_framework_schema::__private::serde_json;
 /// Only portable presentation metadata; no native descriptors or providers.
+#[expect(
+    clippy::expect_used,
+    reason = "generator serializes and round-trip validates this compile-time UiModel literal"
+)]
 pub fn model() -> UiModel {
     serde_json::from_str("{\"id\":\"Catalog\",\"label\":\"Catalog\",\"fields\":[{\"id\":\"Catalog.categoryId\",\"wire_name\":\"categoryId\",\"label\":\"categoryId\",\"value_type\":{\"value\":{\"kind\":\"String\"},\"multiple\":false,\"choices\":[]},\"required\":true,\"input_required\":false,\"readable\":true,\"writable\":false,\"sensitive\":false,\"nullable\":false,\"default\":\"HostGenerated\",\"validation\":[],\"filterable\":false,\"searchable\":false,\"sortable\":false,\"roles\":[{\"role\":\"list\",\"component\":\"stackpress.ui.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"view\",\"component\":\"stackpress.ui.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":true}],\"relation\":null},{\"id\":\"Catalog.articleId\",\"wire_name\":\"articleId\",\"label\":\"articleId\",\"value_type\":{\"value\":{\"kind\":\"String\"},\"multiple\":false,\"choices\":[]},\"required\":true,\"input_required\":false,\"readable\":true,\"writable\":false,\"sensitive\":false,\"nullable\":false,\"default\":\"HostGenerated\",\"validation\":[],\"filterable\":false,\"searchable\":false,\"sortable\":false,\"roles\":[{\"role\":\"list\",\"component\":\"stackpress.ui.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"view\",\"component\":\"stackpress.ui.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":true}],\"relation\":null},{\"id\":\"Catalog.title\",\"wire_name\":\"title\",\"label\":\"title\",\"value_type\":{\"value\":{\"kind\":\"String\"},\"multiple\":false,\"choices\":[]},\"required\":true,\"input_required\":true,\"readable\":true,\"writable\":true,\"sensitive\":false,\"nullable\":false,\"default\":\"None\",\"validation\":[],\"filterable\":false,\"searchable\":false,\"sortable\":false,\"roles\":[{\"role\":\"field\",\"component\":\"stackpress.source.field.input\",\"props\":{},\"definition_revision\":\"source-1\",\"available\":true},{\"role\":\"list\",\"component\":\"stackpress.ui.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":true},{\"role\":\"view\",\"component\":\"stackpress.ui.view.text\",\"props\":{},\"definition_revision\":\"1\",\"available\":true}],\"relation\":null},{\"id\":\"Catalog.active\",\"wire_name\":\"active\",\"label\":\"active\",\"value_type\":{\"value\":{\"kind\":\"Boolean\"},\"multiple\":false,\"choices\":[]},\"required\":true,\"input_required\":false,\"readable\":false,\"writable\":false,\"sensitive\":false,\"nullable\":false,\"default\":\"None\",\"validation\":[],\"filterable\":false,\"searchable\":false,\"sortable\":false,\"roles\":[],\"relation\":null}],\"key\":[\"categoryId\",\"articleId\"],\"query_fields\":[],\"default_selection\":[],\"operations\":[]}").expect("generated source UI descriptor")
 }
@@ -21,18 +25,13 @@ pub fn field(draft: &Draft, instance: &str) -> SchemaResult<AnyView> {
 
     let mut controls = Vec::<AnyView>::new();
     {
-        let field = fields
-            .iter()
-            .find(|field| field.wire_name == "title")
-            .expect("generated role field")
-            .clone();
-        let value = draft.get("title").expect("source role admitted draft");
-        let context = RoleContext {
-            id: format!("{instance}-field-{}", "title"),
-            field,
-            role: Role::Field,
-            value,
-        };
+        let context = RoleContext::from_draft(
+            format!("{instance}-field-{}", "title"),
+            &fields,
+            draft,
+            "title",
+            Role::Field,
+        )?;
         controls.push(
             view! {<stackpress_framework_admin::source::roles::InputField context />}.into_any(),
         );
@@ -64,50 +63,35 @@ pub fn list_cells(value: &serde_json::Value, instance: &str) -> SchemaResult<Vec
 
     let mut controls = Vec::<AnyView>::new();
     {
-        let field = fields
-            .iter()
-            .find(|field| field.wire_name == "categoryId")
-            .expect("generated role field")
-            .clone();
-        let value = draft.get("categoryId").expect("source role admitted draft");
-        let context = RoleContext {
-            id: format!("{instance}-list-{}", "categoryId"),
-            field,
-            role: Role::List,
-            value,
-        };
+        let context = RoleContext::from_draft(
+            format!("{instance}-list-{}", "categoryId"),
+            &fields,
+            draft,
+            "categoryId",
+            Role::List,
+        )?;
         controls
             .push(view! {<stackpress_framework_admin::components::TextView context />}.into_any());
     }
     {
-        let field = fields
-            .iter()
-            .find(|field| field.wire_name == "articleId")
-            .expect("generated role field")
-            .clone();
-        let value = draft.get("articleId").expect("source role admitted draft");
-        let context = RoleContext {
-            id: format!("{instance}-list-{}", "articleId"),
-            field,
-            role: Role::List,
-            value,
-        };
+        let context = RoleContext::from_draft(
+            format!("{instance}-list-{}", "articleId"),
+            &fields,
+            draft,
+            "articleId",
+            Role::List,
+        )?;
         controls
             .push(view! {<stackpress_framework_admin::components::TextView context />}.into_any());
     }
     {
-        let field = fields
-            .iter()
-            .find(|field| field.wire_name == "title")
-            .expect("generated role field")
-            .clone();
-        let value = draft.get("title").expect("source role admitted draft");
-        let context = RoleContext {
-            id: format!("{instance}-list-{}", "title"),
-            field,
-            role: Role::List,
-            value,
-        };
+        let context = RoleContext::from_draft(
+            format!("{instance}-list-{}", "title"),
+            &fields,
+            draft,
+            "title",
+            Role::List,
+        )?;
         controls
             .push(view! {<stackpress_framework_admin::components::TextView context />}.into_any());
     }
@@ -126,50 +110,35 @@ pub fn view(value: &serde_json::Value, instance: &str) -> SchemaResult<AnyView> 
 
     let mut controls = Vec::<AnyView>::new();
     {
-        let field = fields
-            .iter()
-            .find(|field| field.wire_name == "categoryId")
-            .expect("generated role field")
-            .clone();
-        let value = draft.get("categoryId").expect("source role admitted draft");
-        let context = RoleContext {
-            id: format!("{instance}-view-{}", "categoryId"),
-            field,
-            role: Role::View,
-            value,
-        };
+        let context = RoleContext::from_draft(
+            format!("{instance}-view-{}", "categoryId"),
+            &fields,
+            draft,
+            "categoryId",
+            Role::View,
+        )?;
         controls
             .push(view! {<stackpress_framework_admin::components::TextView context />}.into_any());
     }
     {
-        let field = fields
-            .iter()
-            .find(|field| field.wire_name == "articleId")
-            .expect("generated role field")
-            .clone();
-        let value = draft.get("articleId").expect("source role admitted draft");
-        let context = RoleContext {
-            id: format!("{instance}-view-{}", "articleId"),
-            field,
-            role: Role::View,
-            value,
-        };
+        let context = RoleContext::from_draft(
+            format!("{instance}-view-{}", "articleId"),
+            &fields,
+            draft,
+            "articleId",
+            Role::View,
+        )?;
         controls
             .push(view! {<stackpress_framework_admin::components::TextView context />}.into_any());
     }
     {
-        let field = fields
-            .iter()
-            .find(|field| field.wire_name == "title")
-            .expect("generated role field")
-            .clone();
-        let value = draft.get("title").expect("source role admitted draft");
-        let context = RoleContext {
-            id: format!("{instance}-view-{}", "title"),
-            field,
-            role: Role::View,
-            value,
-        };
+        let context = RoleContext::from_draft(
+            format!("{instance}-view-{}", "title"),
+            &fields,
+            draft,
+            "title",
+            Role::View,
+        )?;
         controls
             .push(view! {<stackpress_framework_admin::components::TextView context />}.into_any());
     }

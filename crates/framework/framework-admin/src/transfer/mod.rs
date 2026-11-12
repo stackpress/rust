@@ -13,13 +13,17 @@ use stackpress_framework_schema::{
     FieldIssue, SchemaError, SchemaErrorKind, SchemaResult, UiField, UiModel, ValueType,
 };
 mod csv;
+mod encoding;
+mod sniff;
+mod upload;
 pub use csv::{parse, write};
+pub use upload::CsvBytes;
 
 /// App-selected ceilings. Every entry may only be lowered from the G36 maximum.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(default, deny_unknown_fields)]
 pub struct Limits {
-    /// Import file / exported CSV bytes (UTF-8, including delimiters).
+    /// Import raw and decoded byte ceilings / UTF-8 exported bytes, including delimiters.
     pub bytes: usize,
     /// Data rows, excluding the one header row; also the atomic batch maximum.
     pub rows: usize,
@@ -63,8 +67,8 @@ impl Limits {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Upload {
-    /// UTF-8 CSV, never a server file path.
-    pub csv: String,
+    /// Raw CSV bytes, never a server file path; legacy string uploads remain accepted.
+    pub csv: CsvBytes,
     /// Explicit opt-in; ordinary imports preserve apostrophes literally.
     #[serde(default)]
     pub decode_export_guards: bool,

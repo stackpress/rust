@@ -28,3 +28,5 @@ together after reviewing the canonical change; the checker never rewrites files.
 The checker regression suite is `python3 -m unittest discover -s tools/release`.
 Source scanning complements the coordinator's extracted-package verification;
 it does not certify extracted archives or platform-specific behavior.
+
+G62 parser fuzzing uses a separate unpublished workspace; see [parser fuzzing before release](FUZZING.md) for its finite-run and lock requirements.

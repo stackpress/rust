@@ -1,0 +1,3 @@
+id,text,count,flag
+a,\N,0,false
+b,\\N,-1,true

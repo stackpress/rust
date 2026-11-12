@@ -17,7 +17,7 @@ mod catalog_inputs;
 mod collection_inputs;
 #[cfg(feature = "format")]
 mod formatted;
-mod sync;
+pub(crate) mod sync;
 pub use catalog_inputs::{ComboboxField, RatingField, SliderField, SlugField};
 #[cfg(feature = "codegen")]
 pub(crate) use catalog_inputs::{range_scale, rating_limit, rating_minimum};

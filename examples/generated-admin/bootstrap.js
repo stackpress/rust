@@ -18,7 +18,9 @@ const request = async event => {
       headers['x-admin-decode-export-guards']=command.input.decode_export_guards?'1':'0';
       if(command.input.confirm===true)headers['x-admin-confirmed']='true';
     }
-    const response = await fetch(endpoint, { method:'POST', credentials:'same-origin', headers, body:transfer?command.input.csv:JSON.stringify(command.input), signal:controller.signal });
+    // The JSON bridge carries bytes; fetch must send them without text decoding.
+    const body=transfer?new Uint8Array(command.input.csv):JSON.stringify(command.input);
+    const response = await fetch(endpoint, { method:'POST', credentials:'same-origin', headers, body, signal:controller.signal });
     reply = { status:response.status, envelope:await response.json() };
   } catch {
     reply = { status:500, envelope:{code:500,error:command.write?'Write acknowledgement unavailable':'Unable to load records',errors:command.write?{outcome:'unknown'}:{}} };
@@ -31,7 +33,7 @@ const upload = value => {if(!disposed)window.dispatchEvent(new CustomEvent('stac
 const fileChanged = async event => {
   if(event.target.id!=='admin-import-file'||event.target.disabled)return;
   const generation=++uploadGeneration,file=event.target.files?.[0];
-  const empty={name:'',csv:'',error:'',reading:false,generation};
+  const empty={name:'',csv:[],error:'',reading:false,generation};
   if(!file){upload(empty);return;}
   // Truncate by Unicode scalar, preserving valid UTF-8 when a name ends at an emoji boundary.
   const name=Array.from(file.name).slice(0,128).join(''),max=page.transfer_limits.bytes;
@@ -41,9 +43,10 @@ const fileChanged = async event => {
     const bytes=await file.arrayBuffer();
     if(disposed||generation!==uploadGeneration)return;
     if(bytes.byteLength>max){upload({...empty,name,error:'CSV file exceeds byte limit'});return;}
-    const csv=new TextDecoder('utf-8',{fatal:true}).decode(bytes);
+    // The server chooses the encoding after checking the original file byte count.
+    const csv=Array.from(new Uint8Array(bytes));
     upload({...empty,name,csv});
-  } catch {if(generation===uploadGeneration)upload({...empty,name,error:'Unable to read UTF-8 CSV file'});}
+  } catch {if(generation===uploadGeneration)upload({...empty,name,error:'Unable to read CSV file'});}
 };
 const cancelUpload = event => {if(event.target.id==='admin-import-cancel'&&!event.target.disabled){uploadGeneration++;const input=document.getElementById('admin-import-file');if(input)input.value='';}};
 document.addEventListener('change',fileChanged);

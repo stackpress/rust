@@ -371,3 +371,55 @@ fn optional_and_plain_tags_preserve_unadorned_source_output() {
         owner.cleanup();
     }
 }
+
+/// G62 crash regression: an input-driven non-object row reaches the child draft admission.
+#[test]
+fn malformed_fieldset_row_renders_rejection_instead_of_panicking() {
+    let (fields, children) = fields(
+        "type Detail { label String @field.input } model Proof { details Detail[] @field.fieldset }",
+    );
+    let owner = Owner::new();
+    let html = owner.with(|| {
+        let context = RoleContext {
+            id: "invalid-row".into(),
+            field: fields[0].clone(),
+            role: Role::Field,
+            value: RwSignal::new(Input::Value(json!([7]))),
+        };
+        let render = Callback::new(|_: (Draft, String)| ().into_any());
+        view! {<FieldsetField context fields=children render/>}.to_html()
+    });
+    assert!(html.contains("role=\"alert\""), "{html}");
+    assert!(html.contains("Value is incompatible with this control"));
+    owner.cleanup();
+}
+
+/// G62 also contains object children reached through source list and table adapters.
+#[test]
+fn non_renderable_source_collection_children_reject_visibly() {
+    use stackpress_framework_admin::source::roles::{ListView, TabularView};
+    let (fields, _) = fields("model Proof { data String[] @view.list }");
+    for table in [false, true] {
+        let owner = Owner::new();
+        let html = owner.with(|| {
+            let context = RoleContext {
+                id: "invalid-child".into(),
+                field: fields[0].clone(),
+                role: Role::View,
+                value: RwSignal::new(Input::Value(if table {
+                    json!([{"value":{"nested":1}}])
+                } else {
+                    json!([{"nested":1}])
+                })),
+            };
+            if table {
+                view! {<TabularView context/>}.to_html()
+            } else {
+                view! {<ListView context/>}.to_html()
+            }
+        });
+        assert!(html.contains("role=\"alert\""), "{html}");
+        assert!(html.contains("Value is incompatible with this control"));
+        owner.cleanup();
+    }
+}
