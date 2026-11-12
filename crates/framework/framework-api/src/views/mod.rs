@@ -38,18 +38,13 @@ pub struct Consent {
 }
 impl Consent {
     /// Source defaults for a directly constructed page; no resource acquisition occurs here.
-    #[expect(
-        clippy::expect_used,
-        reason = "literal default; pending foundation infallible constructor"
-    )]
     pub fn new(config: Value, request: Value, application: Value) -> Self {
         Self {
             config,
             request,
             application,
             styles: Vec::new(),
-            language: Language::new("en".into(), Default::default(), "%s".into())
-                .expect("static language"),
+            language: Language::default(),
             theme: None,
         }
     }

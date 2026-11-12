@@ -32,10 +32,6 @@ pub struct Presentation {
 }
 impl Default for Presentation {
     /// Source generic brand fallbacks plus conventional app-owned assets; no files are served.
-    #[expect(
-        clippy::expect_used,
-        reason = "literal default; pending foundation infallible constructor"
-    )]
     fn default() -> Self {
         Self {
             config: views::Config {
@@ -49,7 +45,7 @@ impl Default for Presentation {
             assets: PageAssets {
                 build: "session-v1".into(),
                 base: BasePath::default(),
-                module: PublicLocation::new("/assets/session.js").expect("literal asset path"),
+                module: PublicLocation::session_asset(),
                 stylesheet: None,
                 theme_bootstrap: None,
             },

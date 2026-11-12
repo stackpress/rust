@@ -13,3 +13,12 @@ This is the complete foundation-lane list; other lanes add only approved literal
 | `crates/lib/src/request.rs:145` | `http://unknownhost/` | Fixed valid absolute HTTP URL; Request::new and Default remain infallible. | `default_url_literal_is_valid` |
 | `crates/framework/framework-email/src/options.rs:346` | `include_str!("../data/nodemailer-services.json")` | Embedded versioned source JSON; no runtime value is passed to its parser. | `embedded_services_are_valid_json` |
 | `crates/framework/framework-email/src/compose/node.rs:138` | `include_str!("../../data/nodemailer-mime.json")` | Embedded versioned source JSON; no runtime value is passed to its parser. | `embedded_mime_catalog_is_valid_json` |
+
+### Template-level exceptions (generated code)
+
+Each entry is listed once for its template, not per generated copy. Official freshness checks stop hand edits to generated output.
+
+| Template | Generated item | Constant literal | Proof |
+| --- | --- | --- | --- |
+| `crates/framework/framework-schema/src/codegen/templates/{source-model,source-catalog}.rs.tpl` | `describe()` | The generator serializes an already-checked `Model`/`SourceCatalog` into a constant JSON literal | Emit, compile, `describe()` and compare round-trip test (task 00054) |
+| `crates/framework/framework-admin/src/codegen/templates/source-roles.rs.tpl` | `model()` | The generator serializes a compile-time `UiModel` literal and round-trip validates it during generation | `generated_source_descriptor_constant_roundtrips` (task 00055) |
