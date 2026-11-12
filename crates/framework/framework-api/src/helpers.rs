@@ -76,9 +76,9 @@ pub fn unauthorized(response: &mut Response) -> Result<()> {
 /// its key, including intentional collisions; other names remain literal. No authority-key
 /// filtering or deep merge occurs.
 pub fn overlay(target: &mut Nest, fixed: &Nest) -> Result<()> {
-    for (key, value) in fixed.entries() {
+    for (key, value) in fixed.entries()? {
         // Source Nest.set('', value) uses Object.keys(pointer).length, even if that key exists.
-        let append_key = key.is_empty().then(|| target.entries().len().to_string());
+        let append_key = key.is_empty().then(|| target.len().to_string());
         // Other names, including dots, remain one literal segment in the source call.
         target.set(append_key.as_deref().unwrap_or(key), value.clone())?;
     }

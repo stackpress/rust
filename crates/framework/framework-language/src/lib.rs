@@ -1,3 +1,12 @@
+#![deny(
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::panic,
+    clippy::unimplemented,
+    clippy::todo,
+    clippy::unreachable
+)]
+
 //! Pure locale validation and explicit aliases, independent of locations, cookies and hosts.
 use std::collections::{BTreeMap, BTreeSet};
 /// Stable public preference failure without reflecting private/raw input.

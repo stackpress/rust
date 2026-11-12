@@ -44,7 +44,18 @@ pub(super) fn icon(name: &str) -> AnyView {
         "undo-2" => include_str!("../../../../third-party/lucide/undo-2.svg"),
         "video" => include_str!("../../../../third-party/lucide/video.svg"),
         "volume-2" => include_str!("../../../../third-party/lucide/volume-2.svg"),
-        _ => unreachable!("closed editor icon inventory"),
+        _ => return ().into_any(),
     };
     view! { <span class="sp-text-editor-icon" aria-hidden="true" inner_html=svg></span> }.into_any()
+}
+
+#[cfg(test)]
+mod no_panic_tests {
+    use super::*;
+
+    /// An unknown internal name used to panic; omit its geometry without emitting dynamic SVG.
+    #[test]
+    fn unknown_icon_name_is_empty() {
+        assert!(!icon("unrecognized").to_html().contains("<svg"));
+    }
 }

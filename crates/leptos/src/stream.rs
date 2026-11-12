@@ -264,20 +264,19 @@ impl<E> StreamWriter<E> {
             .await;
         // Admit the complete frozen prefix before the host can observe commitment.
         self.budget.check(opening.len())?;
-        if self
-            .ready
-            .lock()
-            .unwrap_or_else(|e| e.into_inner())
-            .take()
-            .expect("staging reports once")
-            .send(Ok(opening.into_bytes()))
-            .is_err()
-        {
+        let ready = self.ready.lock().unwrap_or_else(|e| e.into_inner()).take();
+        let Some(ready) = ready else {
+            return Ok(());
+        };
+        if ready.send(Ok(opening.into_bytes())).is_err() {
             // Staging was abandoned; the worker's outer owner still performs teardown.
             return Ok(());
         }
         // Ownership of this consuming writer proves both readiness/start are taken once.
-        if self.started.take().expect("starts once").await.is_err() {
+        let Some(started) = self.started.take() else {
+            return Ok(());
+        };
+        if started.await.is_err() {
             return Ok(());
         }
         let mut body = Box::pin(body);

@@ -44,6 +44,11 @@ impl PageLimits {
 pub struct PublicLocation(String);
 
 impl PublicLocation {
+    /// Conventional session browser module, with no dynamic input or URL normalization.
+    pub fn session_asset() -> Self {
+        Self("/assets/session.js".into())
+    }
+
     /// Validate an already percent-encoded public location without normalizing its meaning.
     ///
     /// # Errors
@@ -404,5 +409,19 @@ impl PageAssets {
         }
         assets.validate(&PageContract::new(1, build)?)?;
         Ok(assets)
+    }
+}
+
+#[cfg(test)]
+mod no_panic_tests {
+    use super::*;
+
+    /// Direct construction preserves exactly the checked conventional session asset.
+    #[test]
+    fn session_asset_matches_validated_location() {
+        assert_eq!(
+            PublicLocation::session_asset(),
+            PublicLocation::new("/assets/session.js").unwrap()
+        );
     }
 }

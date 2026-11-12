@@ -5,24 +5,22 @@ use stackpress_framework_language::{LocaleRegistry, PreferenceError};
 use std::{cell::Cell, collections::BTreeMap};
 
 /// Use a mounted app so cookie and return-path boundaries cannot pass accidentally.
-fn scope() -> CookieScope {
-    CookieScope::new(
+fn scope() -> Result<CookieScope, Box<dyn std::error::Error>> {
+    Ok(CookieScope::new(
         "https://preferences.invalid".into(),
-        BasePath::new("/demo").unwrap(),
-    )
-    .unwrap()
+        BasePath::new("/demo")?,
+    )?)
 }
 /// Compile two exact canonical locales and one explicit alias.
-fn action() -> SettingsAction {
-    SettingsAction::new(
+fn action() -> Result<SettingsAction, Box<dyn std::error::Error>> {
+    Ok(SettingsAction::new(
         LocaleRegistry::new(
             vec!["en".into(), "fr".into()],
             "en".into(),
             BTreeMap::from([("fr_FR".into(), "fr".into())]),
-        )
-        .unwrap(),
-        scope(),
-    )
+        )?,
+        scope()?,
+    ))
 }
 /// Serialize an intended dirty-page update with encoded query context.
 fn update() -> SettingsUpdate {
@@ -35,7 +33,7 @@ fn update() -> SettingsUpdate {
 /// Prefix and saved settings are deterministic, while corrupt/ambiguous values fall back.
 #[test]
 fn select_and_admit_settings() {
-    let action = action();
+    let action = action().unwrap();
     for (cookie, locale, theme) in [
         ("", "en", None),
         (
@@ -149,7 +147,7 @@ fn single_writer_and_failure_preserve_content() {
     };
     let mut state = PreferenceState::new(initial.clone(), "/demo/en/preferences".into());
     assert_eq!(state.status(), SaveState::Ready);
-    assert!(state.validate(&action(), "{}").is_err());
+    assert!(state.validate(&action().unwrap(), "{}").is_err());
     let desired = Preferences {
         locale: "fr".into(),
         theme: Some(ThemePreference::Dark),
@@ -157,13 +155,14 @@ fn single_writer_and_failure_preserve_content() {
     let submitted = state.begin(desired.clone()).unwrap();
     assert_eq!(state.status(), SaveState::Pending);
     assert!(state.begin(initial.clone()).is_none());
-    assert!(state.validate(&action(), "{}").is_err());
+    assert!(state.validate(&action().unwrap(), "{}").is_err());
     state.fail();
     assert_eq!(state.status(), SaveState::Failed);
     assert_eq!(state.current(), &initial);
     assert_eq!(state.location(), "/demo/en/preferences");
     let _ = state.begin(desired.clone()).unwrap();
     let reply = action()
+        .unwrap()
         .apply(
             "POST",
             Some("https://preferences.invalid"),
@@ -171,9 +170,9 @@ fn single_writer_and_failure_preserve_content() {
         )
         .unwrap();
     let text = serde_json::to_string(&reply).unwrap();
-    state.validate(&action(), &text).unwrap();
-    state.complete(&action(), &text).unwrap();
-    assert!(state.complete(&action(), &text).is_err());
+    state.validate(&action().unwrap(), &text).unwrap();
+    state.complete(&action().unwrap(), &text).unwrap();
+    assert!(state.complete(&action().unwrap(), &text).is_err());
     assert_eq!(state.current(), &desired);
     assert_eq!(state.location(), "/demo/fr/preferences");
     assert_eq!(state.status(), SaveState::Ready);
@@ -181,7 +180,7 @@ fn single_writer_and_failure_preserve_content() {
 /// Delete malformed/duplicate flash with the issuing scope, keep hostile text inert data.
 #[test]
 fn flash_consumption_bounds_and_root_dedupe() {
-    let flash = FlashCookie::new(scope());
+    let flash = FlashCookie::new(scope().unwrap());
     assert!(flash.consume("").unwrap().clear_cookie.is_none());
     let hostile = FlashNotice::new(
         "notice-1".into(),
@@ -304,7 +303,7 @@ fn explicit_host_policy_or_fail_closed() {
 /// A POST success is insufficient when cookies were blocked, partial or ambiguous.
 #[test]
 fn confirm_actual_cookie_readback() {
-    let action = action();
+    let action = action().unwrap();
     let body = serde_json::to_string(&update()).unwrap();
     let reply = action
         .confirm(
@@ -333,7 +332,7 @@ fn confirm_actual_cookie_readback() {
 /// Escaped wire expansion cannot create a cookie that this consumer cannot read.
 #[test]
 fn flash_wire_expansion_is_bounded() {
-    let flash = FlashCookie::new(scope());
+    let flash = FlashCookie::new(scope().unwrap());
     let controls = FlashNotice::new("id".into(), "\u{0000}".repeat(512)).unwrap();
     assert_eq!(flash.issue(&controls).unwrap_err(), PreferenceError::Limit);
     let safe = FlashNotice::new("id".into(), "x".repeat(512)).unwrap();
@@ -350,7 +349,7 @@ fn flash_wire_expansion_is_bounded() {
 /// Locale-only persistence never turns a frozen effective color into a saved choice.
 #[test]
 fn unset_is_absence_and_legacy_readback_only() {
-    let action = action();
+    let action = action().unwrap();
     let body = r#"{"locale":"fr","theme":null,"location":"/demo/en/preferences"}"#;
     let reply = action
         .apply("POST", Some("https://preferences.invalid"), body)

@@ -293,7 +293,9 @@ async fn prompt_inner<I: PromptInput>(
             PromptAction::Validate { .. } => {
                 // complete() only accepts/rejects; it cannot recursively request another
                 // validation.
-                unreachable!("completion never starts another validation")
+                return Err(PromptError::Configuration(
+                    "completion cannot start another validation",
+                ));
             }
         }
     }

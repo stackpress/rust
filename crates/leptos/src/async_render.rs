@@ -112,12 +112,10 @@ impl<E> Future for OwnedRender<E> {
     fn poll(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
         let _restore = RestoreOwner(Owner::current());
         let owner = self.owner.clone();
-        owner.with(|| {
-            self.inner
-                .as_mut()
-                .expect("future not polled after completion")
-                .as_mut()
-                .poll(cx)
+        owner.with(|| match self.inner.as_mut() {
+            Some(future) => future.as_mut().poll(cx),
+            // An absent assembly cannot publish more work or reenter disposed state.
+            None => Poll::Pending,
         })
     }
 }

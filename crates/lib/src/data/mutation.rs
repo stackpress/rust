@@ -1,4 +1,4 @@
-//! Read-only edit planning, incremental budgets and an infallible commit phase.
+//! Read-only edit planning, incremental budgets and a prevalidated commit phase.
 
 use super::nest::{canonical_index, make_object};
 use super::value::Usage;
@@ -315,9 +315,14 @@ fn numeric_key_bytes(length: usize) -> Result<usize> {
     Ok(bytes)
 }
 
-/// Commit a validated plan without fallible work, callback execution or payload cloning.
-pub(super) fn commit(container: &mut Value, steps: &[Step], value: Option<Value>) -> Option<Value> {
-    // Only a plan produced from this unchanged tree reaches this non-fallible mutation phase.
+/// Commit a validated plan without callback execution or payload cloning.
+/// Internal container invariant failures use the existing error channel.
+pub(super) fn commit(
+    container: &mut Value,
+    steps: &[Step],
+    value: Option<Value>,
+) -> Result<Option<Value>> {
+    // Only a plan produced from this unchanged tree reaches this mutation phase.
     let step = &steps[0];
     let last = steps.len() == 1;
     let setting = value.is_some();
@@ -335,7 +340,7 @@ pub(super) fn commit(container: &mut Value, steps: &[Step], value: Option<Value>
         // reference escapes.
         let child = &mut values[index];
         return if last {
-            value.map(|value| std::mem::replace(child, value))
+            Ok(value.map(|value| std::mem::replace(child, value)))
         } else {
             commit(child, &steps[1..], value)
         };
@@ -348,7 +353,7 @@ pub(super) fn commit(container: &mut Value, steps: &[Step], value: Option<Value>
     }
     // Preflight rejected scalar traversal, and every fallback array was moved to object form.
     let Value::Object(values) = container else {
-        unreachable!("read-only plan proved a container")
+        return Err(Error::invalid("mutation plan requires a container"));
     };
     let result = if last {
         if let Some(value) = value {
@@ -362,7 +367,7 @@ pub(super) fn commit(container: &mut Value, steps: &[Step], value: Option<Value>
             // succeeded.
             .entry(step.key.clone())
             .or_insert_with(|| Value::Object(DataMap::new()));
-        commit(child, &steps[1..], value)
+        commit(child, &steps[1..], value)?
     };
     if step.array {
         // The planner proved dense keys; swap removal avoids quadratic shifting.
@@ -375,5 +380,5 @@ pub(super) fn commit(container: &mut Value, steps: &[Step], value: Option<Value>
         }
         *container = Value::Array(array);
     }
-    result
+    Ok(result)
 }

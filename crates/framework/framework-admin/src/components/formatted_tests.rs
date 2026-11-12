@@ -146,7 +146,10 @@ fn temporal_presentation_keeps_exact_commits_and_declared_precision() {
         let field = field(kind, selection);
         let (kind, policy) = temporal(&field, &field.roles[0]).unwrap();
         let value = IsoValue::parse(kind, raw).unwrap();
-        assert_eq!(policy.display(&value, DisplayLocale::English), shown);
+        assert_eq!(
+            policy.display(&value, DisplayLocale::English).unwrap(),
+            shown
+        );
         assert_eq!(
             policy.canonical(&value),
             raw,

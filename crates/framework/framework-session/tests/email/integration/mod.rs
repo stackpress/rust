@@ -180,7 +180,7 @@ async fn host(case: Json, config: Option<Json>) -> (Arc<Server>, Arc<Fixture>) {
                         .offered
                         .lock()
                         .unwrap()
-                        .push(serde_json::to_value(req.data.entries())?);
+                        .push(serde_json::to_value(req.data.entries()?)?);
                     if state.case["sendStatus"] == 419 {
                         res.set_error(PublicError {
                             code: 419,

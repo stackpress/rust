@@ -3,7 +3,7 @@ use super::*;
 use leptos::prelude::*;
 
 /// Bounded immutable options include disabled, empty and zero machine values.
-fn options() -> SelectOptions {
+fn options() -> Result<SelectOptions, ControlError> {
     SelectOptions::new(vec![
         SelectOption {
             value: "".into(),
@@ -26,16 +26,15 @@ fn options() -> SelectOptions {
             disabled: false,
         },
     ])
-    .unwrap()
 }
 /// Required/optional/multiple and roving/typeahead choices have explicit decision boundaries.
 #[test]
 fn disclosure_and_choice_admission() {
     let owner = Owner::new();
     owner.with(|| {
-        assert!(ChoiceState::new(options(), Some("missing".into())).is_err());
-        assert!(ChoiceState::new(options(), Some("blocked".into())).is_err());
-        let choice = ChoiceState::new(options(), None).unwrap();
+        assert!(ChoiceState::new(options().unwrap(), Some("missing".into())).is_err());
+        assert!(ChoiceState::new(options().unwrap(), Some("blocked".into())).is_err());
+        let choice = ChoiceState::new(options().unwrap(), None).unwrap();
         assert_eq!(choice.focused(), Some(0));
         assert!(!choice.focus(1));
         assert!(!choice.focus(100));
@@ -59,16 +58,23 @@ fn disclosure_and_choice_admission() {
         let empty = ChoiceState::new(SelectOptions::new(vec![]).unwrap(), None).unwrap();
         assert_eq!(empty.navigate(ChoiceMove::Last, false), None);
         assert_eq!(empty.typeahead("g"), None);
-        assert!(DisclosureState::new(options(), vec![], false, false).is_err());
-        assert!(DisclosureState::new(options(), vec!["".into(), "0".into()], false, true).is_err());
-        assert!(DisclosureState::new(options(), vec!["0".into(), "0".into()], true, true).is_err());
-        let single = DisclosureState::new(options(), vec!["".into()], false, false).unwrap();
+        assert!(DisclosureState::new(options().unwrap(), vec![], false, false).is_err());
+        assert!(
+            DisclosureState::new(options().unwrap(), vec!["".into(), "0".into()], false, true)
+                .is_err()
+        );
+        assert!(
+            DisclosureState::new(options().unwrap(), vec!["0".into(), "0".into()], true, true)
+                .is_err()
+        );
+        let single =
+            DisclosureState::new(options().unwrap(), vec!["".into()], false, false).unwrap();
         assert!(!single.toggle(""));
         assert!(single.toggle("0"));
         assert!(!single.is_open(""));
         assert!(single.is_open("0"));
         assert!(!single.toggle("blocked"));
-        let multiple = DisclosureState::new(options(), vec![], true, true).unwrap();
+        let multiple = DisclosureState::new(options().unwrap(), vec![], true, true).unwrap();
         assert!(multiple.toggle(""));
         assert!(multiple.toggle("0"));
         assert!(multiple.is_open(""));
@@ -470,8 +476,8 @@ fn bounded_input_policies() {
 fn searchable_choice_boundaries() {
     let owner = Owner::new();
     owner.with(|| {
-        assert!(ComboboxState::new(options(), Some("blocked".into())).is_err());
-        let state = ComboboxState::new(options(), None).unwrap();
+        assert!(ComboboxState::new(options().unwrap(), Some("blocked".into())).is_err());
+        let state = ComboboxState::new(options().unwrap(), None).unwrap();
         state.adopt_query("G".into()).unwrap();
         assert_eq!(state.query(), "G");
         assert!(!state.open().get());
@@ -524,9 +530,9 @@ fn searchable_choice_boundaries() {
 fn foreign_suggestion_completion_is_rejected() {
     let owner = Owner::new();
     owner.with(|| {
-        let a = ComboboxState::new(options(), None).unwrap();
-        let b = ComboboxState::new(options(), None).unwrap();
-        let future = || async { Ok(options()) };
+        let a = ComboboxState::new(options().unwrap(), None).unwrap();
+        let b = ComboboxState::new(options().unwrap(), None).unwrap();
+        let future = || async { Ok(options().unwrap()) };
         let foreign =
             futures::executor::block_on(a.request("Ga".into(), future()).unwrap()).unwrap();
         let own = futures::executor::block_on(b.request("Ga".into(), future()).unwrap()).unwrap();
@@ -573,9 +579,9 @@ fn breadth_semantic_markup_and_hostile_text() {
     owner.with(||{
         let attack="</textarea><script>globalThis.pwned=1</script>&\"'\u{2028}";
         let error=RwSignal::new(attack.to_owned());
-        let choices=ChoiceState::new(options(),Some(String::new())).unwrap();
-        let disclosures=DisclosureState::new(options(),vec![],false,true).unwrap();
-        let combo=ComboboxState::new(options(),None).unwrap();
+        let choices=ChoiceState::new(options().unwrap(),Some(String::new())).unwrap();
+        let disclosures=DisclosureState::new(options().unwrap(),vec![],false,true).unwrap();
+        let combo=ComboboxState::new(options().unwrap(),None).unwrap();
         let empty=TableState::new(DisplayTable::new(vec![attack.to_owned()],vec![]).unwrap(),2).unwrap();
         let html=view!{
             <Breadcrumbs label=attack trail=BreadcrumbTrail::new(vec![Crumb{label:attack.into(),href:None}]).unwrap()/>

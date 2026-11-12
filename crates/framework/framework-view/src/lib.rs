@@ -1,3 +1,12 @@
+#![deny(
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::panic,
+    clippy::unimplemented,
+    clippy::todo,
+    clippy::unreachable
+)]
+
 //! Public page contracts independent of hosts and render engines.
 //!
 //! Applications explicitly project their public data into [`PageSnapshot`]. No

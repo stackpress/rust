@@ -257,6 +257,7 @@ fn imported_child_replaces_immutable_local_without_mutating_child() {
 fn complete_install_failure_matrix() {
     let phases = [
         Phase::StageWrite,
+        Phase::StageSync,
         Phase::StagePublish,
         Phase::IntentWrite,
         Phase::IntentPublished,
@@ -298,7 +299,10 @@ fn complete_install_failure_matrix() {
             assert!(error.to_string().contains(&format!("{phase:?}")), "{error}");
             assert!(std::error::Error::source(&error).is_some());
             assert!(!workspace.lock.exists());
-            if matches!(phase, Phase::StageWrite | Phase::StagePublish) {
+            if matches!(
+                phase,
+                Phase::StageWrite | Phase::StageSync | Phase::StagePublish
+            ) {
                 assert!(!workspace.stage.exists() && !workspace.journal.exists());
                 assert_eq!(
                     fs::read_dir(temp.path()).unwrap().count(),

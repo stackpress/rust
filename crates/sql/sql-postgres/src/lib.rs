@@ -1,3 +1,12 @@
+#![deny(
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::panic,
+    clippy::unimplemented,
+    clippy::todo,
+    clippy::unreachable
+)]
+
 //! Bounded native PostgreSQL execution on the caller's Tokio runtime.
 //!
 //! Importing this crate performs no IO. Open is eager; it never creates a database.

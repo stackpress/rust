@@ -1,3 +1,12 @@
+#![deny(
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::panic,
+    clippy::unimplemented,
+    clippy::todo,
+    clippy::unreachable
+)]
+
 //! Native Tokio/SQLx SQLite execution, with finite pool and query budgets.
 //!
 //! Open is eager and file-backed. Transactions own a lease across awaits; the adapter retires

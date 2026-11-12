@@ -1,3 +1,12 @@
+#![deny(
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::panic,
+    clippy::unimplemented,
+    clippy::todo,
+    clippy::unreachable
+)]
+
 //! Explicit CSRF mechanisms matching `stackpress-csrf/src/plugin.ts`.
 //!
 //! Generation stages outgoing cookie/form values; validation reads incoming values.

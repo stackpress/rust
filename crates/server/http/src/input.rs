@@ -26,7 +26,7 @@ pub(crate) fn check_head(
     request: &http::Request<Incoming>,
     limits: &crate::NetworkLimits,
     total: usize,
-) -> Option<(u16, &'static str)> {
+) -> Option<(http::StatusCode, &'static str)> {
     let header_bytes = total
         .saturating_sub(request.method().as_str().len())
         .saturating_sub(request.uri().to_string().len());
@@ -34,16 +34,25 @@ pub(crate) fn check_head(
         || header_bytes > limits.max_header_bytes
         || request.uri().to_string().len() > limits.max_target_bytes
     {
-        return Some((431, "HTTP head limit exceeded"));
+        return Some((
+            http::StatusCode::REQUEST_HEADER_FIELDS_TOO_LARGE,
+            "HTTP head limit exceeded",
+        ));
     }
     if total > limits.max_request_bytes {
-        return Some((431, "HTTP head aggregate exceeded"));
+        return Some((
+            http::StatusCode::REQUEST_HEADER_FIELDS_TOO_LARGE,
+            "HTTP head aggregate exceeded",
+        ));
     }
     let headers = request.headers();
     // G31: Hyper merges equal CLs and may drop CL after TE; reject only conflicts still visible.
     // The connection driver closes after every TE response, covering the otherwise invisible case.
     if headers.contains_key(TRANSFER_ENCODING) && headers.contains_key(CONTENT_LENGTH) {
-        return Some((400, "HTTP visible conflicting framing"));
+        return Some((
+            http::StatusCode::BAD_REQUEST,
+            "HTTP visible conflicting framing",
+        ));
     }
     if headers.contains_key(TRANSFER_ENCODING)
         && (headers.get_all(TRANSFER_ENCODING).iter().count() != 1
@@ -51,13 +60,19 @@ pub(crate) fn check_head(
                 .as_bytes()
                 .eq_ignore_ascii_case(b"chunked"))
     {
-        return Some((400, "HTTP transfer coding unsupported"));
+        return Some((
+            http::StatusCode::BAD_REQUEST,
+            "HTTP transfer coding unsupported",
+        ));
     }
     if headers.contains_key("trailer")
         || headers.contains_key("upgrade")
         || request.method() == http::Method::CONNECT
     {
-        return Some((400, "HTTP trailers/upgrades/tunnels unsupported"));
+        return Some((
+            http::StatusCode::BAD_REQUEST,
+            "HTTP trailers/upgrades/tunnels unsupported",
+        ));
     }
     None
 }

@@ -1,3 +1,12 @@
+#![deny(
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::panic,
+    clippy::unimplemented,
+    clippy::todo,
+    clippy::unreachable
+)]
+
 //! Convenient imports for the independently usable Stackpress libraries.
 //!
 //! The foundation provides values, parsing and ordered capability execution.

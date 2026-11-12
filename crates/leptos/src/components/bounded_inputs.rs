@@ -306,8 +306,10 @@ pub fn slugify(
                     return word.to_owned();
                 }
                 let mut chars = word.chars();
-                let first = chars.next().expect("nonempty split word");
-                format!("{}{}", first.to_uppercase(), chars.as_str())
+                match chars.next() {
+                    Some(first) => format!("{}{}", first.to_uppercase(), chars.as_str()),
+                    None => String::new(),
+                }
             })
             .collect(),
     })

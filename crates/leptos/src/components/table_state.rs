@@ -216,13 +216,7 @@ impl TableState {
     /// Keep paging totals synchronized at the same controlled mutation boundary.
     fn repage(self, reset: bool) {
         let count = self.matching().len() as u64;
-        self.page.update(|page| {
-            *page = PageWindow::new(
-                if reset { 0 } else { page.skip() },
-                page.limit(),
-                PageTotal::Known(count),
-            )
-            .expect("existing bounded page size")
-        });
+        self.page
+            .update(|page| *page = page.with_known_total(count, reset));
     }
 }

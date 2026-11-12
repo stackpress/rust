@@ -1,3 +1,12 @@
+#![deny(
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::panic,
+    clippy::unimplemented,
+    clippy::todo,
+    clippy::unreachable
+)]
+
 //! Bounded Idea parsing and ordered schema compilation, without IO or ambient environment.
 //!
 //! The extracted grammar/compiler layers expose immutable syntax through checked staged APIs.

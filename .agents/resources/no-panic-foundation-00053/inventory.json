@@ -1,0 +1,158 @@
+[
+  {
+    "crate": "stackpress-lib",
+    "path": "crates/lib",
+    "raw_non_test_file_sites": 11,
+    "production_sites_before": [
+      "crates/lib/src/request.rs:141:            url: url::Url::parse(\"http://unknownhost/\").expect(\"constant valid default URL\"),",
+      "crates/lib/src/event.rs:1465:            None => unreachable!(\"Invocation always has a frame\"),",
+      "crates/lib/src/data/mutation.rs:351:        unreachable!(\"read-only plan proved a container\")",
+      "crates/lib/src/data/nest.rs:305:            _ => unreachable!(\"Nest object invariant\"),",
+      "crates/lib/src/data/json.rs:50:            _ => unreachable!(\"preflight and scalar delegation cover every other variant\"),",
+      "crates/lib/src/data/json.rs:122:            _ => unreachable!(\"complete preflight rejected unsupported variants\"),",
+      "crates/lib/src/data/json.rs:153:                .expect(\"preflight proved JSON scalar\")"
+    ],
+    "production_sites_after": [
+      "crates/lib/src/request.rs:145: url: url::Url::parse(\"http://unknownhost/\").expect(\"constant valid default URL\"),"
+    ]
+  },
+  {
+    "crate": "stackpress-server",
+    "path": "crates/server/server",
+    "raw_non_test_file_sites": 29,
+    "production_sites_before": [
+      "crates/server/server/src/config.rs:204:                .expect(\"just appended layer\")",
+      "crates/server/server/src/config.rs:280:            .expect(\"checked defaults wrapper\")",
+      "crates/server/server/src/config.rs:282:            .expect(\"inserted default section\");",
+      "crates/server/server/src/config.rs:339:                .expect(\"object accumulator\")",
+      "crates/server/server/src/config.rs:359:            for key in value.as_object().expect(\"validated layer\").keys() {",
+      "crates/server/server/src/config.rs:390:            .expect(\"configuration presence has one decoder-owned slot\");",
+      "crates/server/server/src/config.rs:395:                .expect(\"object accumulator\")",
+      "crates/server/server/src/config.rs:397:                .expect(\"registered default section\");"
+    ],
+    "production_sites_after": []
+  },
+  {
+    "crate": "stackpress-server-http",
+    "path": "crates/server/http",
+    "raw_non_test_file_sites": 2,
+    "production_sites_before": [
+      "crates/server/http/src/connection.rs:265:    *response.status_mut() = http::StatusCode::from_u16(status).expect(\"fixed boundary status\");",
+      "crates/server/http/src/observe.rs:110:                .expect(\"observed future polled after completion\")"
+    ],
+    "production_sites_after": []
+  },
+  {
+    "crate": "stackpress-cli",
+    "path": "tools/cli",
+    "raw_non_test_file_sites": 1,
+    "production_sites_before": [
+      "tools/cli/src/prompt/driver.rs:296:                unreachable!(\"completion never starts another validation\")"
+    ],
+    "production_sites_after": []
+  },
+  {
+    "crate": "stackpress-leptos",
+    "path": "crates/leptos",
+    "raw_non_test_file_sites": 146,
+    "production_sites_before": [
+      "crates/leptos/src/stream.rs:272:            .expect(\"staging reports once\")",
+      "crates/leptos/src/stream.rs:280:        if self.started.take().expect(\"starts once\").await.is_err() {",
+      "crates/leptos/src/async_render.rs:118:                .expect(\"future not polled after completion\")",
+      "crates/leptos/src/edit/decimal.rs:179:                NumberFormat::new(self.scale, true).expect(\"checked scale\"),",
+      "crates/leptos/src/edit/decimal.rs:181:            .expect(\"compiled en/fr data\")",
+      "crates/leptos/src/edit/temporal.rs:45:        let number = |s: &str| s.parse::<i128>().expect(\"admitted ISO digits\");",
+      "crates/leptos/src/components/table_state.rs:225:            .expect(\"existing bounded page size\")",
+      "crates/leptos/src/components/combobox.rs:312:                    .set(SelectOptions::new(Vec::new()).expect(\"empty options\"));",
+      "crates/leptos/src/components/bounded_inputs.rs:309:                let first = chars.next().expect(\"nonempty split word\");",
+      "crates/leptos/src/components/text_editor/toolbar/icons.rs:47:        _ => unreachable!(\"closed editor icon inventory\"),"
+    ],
+    "production_sites_after": []
+  },
+  {
+    "crate": "stackpress-idea-parser",
+    "path": "crates/idea/idea-parser",
+    "raw_non_test_file_sites": 0,
+    "production_sites_before": [],
+    "production_sites_after": []
+  },
+  {
+    "crate": "stackpress-idea-transformer",
+    "path": "crates/idea/idea-transformer",
+    "raw_non_test_file_sites": 1,
+    "production_sites_before": [
+      "crates/idea/idea-transformer/src/output.rs:421:        let mut marker = tempfile::NamedTempFile::new_in(self.root.parent().unwrap())?;"
+    ],
+    "production_sites_after": []
+  },
+  {
+    "crate": "stackpress-idea",
+    "path": "crates/idea/idea",
+    "raw_non_test_file_sites": 0,
+    "production_sites_before": [],
+    "production_sites_after": []
+  },
+  {
+    "crate": "stackpress-sql-sqlite",
+    "path": "crates/sql/sql-sqlite",
+    "raw_non_test_file_sites": 0,
+    "production_sites_before": [],
+    "production_sites_after": []
+  },
+  {
+    "crate": "stackpress-sql-postgres",
+    "path": "crates/sql/sql-postgres",
+    "raw_non_test_file_sites": 2,
+    "production_sites_before": [],
+    "production_sites_after": []
+  },
+  {
+    "crate": "stackpress-sql-mysql",
+    "path": "crates/sql/sql-mysql",
+    "raw_non_test_file_sites": 2,
+    "production_sites_before": [],
+    "production_sites_after": []
+  },
+  {
+    "crate": "stackpress-framework-view",
+    "path": "crates/framework/framework-view",
+    "raw_non_test_file_sites": 134,
+    "production_sites_before": [],
+    "production_sites_after": []
+  },
+  {
+    "crate": "stackpress-framework-csrf",
+    "path": "crates/framework/framework-csrf",
+    "raw_non_test_file_sites": 0,
+    "production_sites_before": [],
+    "production_sites_after": []
+  },
+  {
+    "crate": "stackpress-framework-email",
+    "path": "crates/framework/framework-email",
+    "raw_non_test_file_sites": 50,
+    "production_sites_before": [
+      "crates/framework/framework-email/src/options.rs:350:            .expect(\"versioned source service JSON\");",
+      "crates/framework/framework-email/src/content.rs:77:                unreachable!(\"the fifth redirect returns an error\");",
+      "crates/framework/framework-email/src/compose/node.rs:134:            .expect(\"versioned source MIME catalog\")"
+    ],
+    "production_sites_after": [
+      "crates/framework/framework-email/src/options.rs:346: .expect(\"versioned source service JSON\")",
+      "crates/framework/framework-email/src/compose/node.rs:138: .expect(\"versioned source MIME catalog\")"
+    ]
+  },
+  {
+    "crate": "stackpress-framework-language",
+    "path": "crates/framework/framework-language",
+    "raw_non_test_file_sites": 0,
+    "production_sites_before": [],
+    "production_sites_after": []
+  },
+  {
+    "crate": "stackpress",
+    "path": ".",
+    "raw_non_test_file_sites": 0,
+    "production_sites_before": [],
+    "production_sites_after": []
+  }
+]

@@ -8,6 +8,8 @@ use std::{cmp::Ordering, ops::Bound};
 pub struct DecimalPolicy {
     scale: u8,
     digits: u8,
+    /// Validated precision reused by fallible display without reconstructing its policy.
+    display_options: NumberFormat,
     min: Bound<DecimalValue>,
     max: Bound<DecimalValue>,
 }
@@ -38,9 +40,12 @@ impl DecimalPolicy {
                 return Err(EditError::Bounds);
             }
         }
+        // Retain admitted precision so presentation never repeats a fallible scale constructor.
+        let display_options = NumberFormat::new(scale, true).map_err(|_| EditError::Precision)?;
         Ok(Self {
             scale,
             digits,
+            display_options,
             min,
             max,
         })
@@ -172,13 +177,10 @@ impl EditPolicy for DecimalPolicy {
         check_bounds(value, &self.min, &self.max, compare)
     }
     /// Group only on commit/clean locale changes, leaving native edit/undo intact.
-    fn display(&self, value: &DecimalValue, locale: DisplayLocale) -> String {
+    fn display(&self, value: &DecimalValue, locale: DisplayLocale) -> Result<String, EditError> {
         value
-            .display(
-                locale,
-                NumberFormat::new(self.scale, true).expect("checked scale"),
-            )
-            .expect("compiled en/fr data")
+            .display(locale, self.display_options)
+            .map_err(|_| EditError::Invalid)
     }
     /// Persist the admitted ASCII decimal with its committed scale/sign.
     fn canonical(&self, value: &DecimalValue) -> String {

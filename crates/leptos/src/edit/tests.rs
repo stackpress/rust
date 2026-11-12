@@ -528,3 +528,71 @@ fn utf16_transport_budgets() {
     assert_eq!(state.error(), Some(EditError::Limit));
     assert_eq!(state.canonical(), None);
 }
+
+/// Application policies can surface formatter/data failures without unwinding editor actions.
+#[derive(Clone)]
+struct FalliblePresentation(std::sync::Arc<std::sync::atomic::AtomicBool>);
+impl EditPolicy for FalliblePresentation {
+    type Value = String;
+    fn max_bytes(&self) -> usize {
+        128
+    }
+    fn parse(&self, draft: &str, _: DisplayLocale) -> Result<String, EditError> {
+        Ok(draft.into())
+    }
+    fn admit(&self, _: &str, _: DisplayLocale) -> Result<(), EditError> {
+        Ok(())
+    }
+    fn check(&self, _: &String) -> Result<(), EditError> {
+        Ok(())
+    }
+    fn display(&self, value: &String, _: DisplayLocale) -> Result<String, EditError> {
+        if self.0.load(std::sync::atomic::Ordering::Relaxed) {
+            Err(EditError::Invalid)
+        } else {
+            Ok(value.clone())
+        }
+    }
+    fn canonical(&self, value: &String) -> String {
+        value.clone()
+    }
+}
+
+/// Display failures must precede publication and preserve the caller's active native draft.
+#[test]
+fn presentation_errors_preserve_editor_state() {
+    use std::sync::{
+        Arc,
+        atomic::{AtomicBool, Ordering},
+    };
+    let fail = Arc::new(AtomicBool::new(false));
+    let policy = FalliblePresentation(fail.clone());
+    let mut state =
+        EditState::new(policy.clone(), Some("old".into()), DisplayLocale::English).unwrap();
+    input(&mut state, "new");
+    fail.store(true, Ordering::Relaxed);
+    assert!(
+        EditState::new(
+            policy.clone(),
+            Some("initial".into()),
+            DisplayLocale::English
+        )
+        .is_err()
+    );
+    assert_eq!(state.commit(true), Err(EditError::Invalid));
+    assert_eq!(state.value().map(String::as_str), Some("old"));
+    assert_eq!(state.draft(), "new");
+    state.cancel();
+    assert_eq!(state.draft(), "new");
+    assert_eq!(state.error(), Some(EditError::Invalid));
+    fail.store(false, Ordering::Relaxed);
+    state.cancel();
+    assert_eq!(state.draft(), "old");
+    let broken = FalliblePresentation(Arc::new(AtomicBool::new(true)));
+    assert_eq!(state.set_policy(broken), Err(EditError::Invalid));
+    assert_eq!(state.draft(), "old");
+    fail.store(true, Ordering::Relaxed);
+    state.set_locale(DisplayLocale::French);
+    assert_eq!(state.draft_locale(), DisplayLocale::English);
+    assert_eq!(state.error(), Some(EditError::Invalid));
+}

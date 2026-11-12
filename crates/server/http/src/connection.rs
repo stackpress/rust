@@ -141,7 +141,14 @@ impl HttpServer {
         let effective = match &self.policy {
             Some(policy) => match policy.check(request.uri(), request.headers(), peer) {
                 Ok(effective) => effective,
-                Err(error) => return Ok(reject_error(400, error.with_code(400), slot, monitor)),
+                Err(error) => {
+                    return Ok(reject_error(
+                        http::StatusCode::BAD_REQUEST,
+                        error.with_code(400),
+                        slot,
+                        monitor,
+                    ));
+                }
             },
             None => crate::proxy::EffectiveRequest {
                 origin: self.origin.clone(),
@@ -240,16 +247,21 @@ async fn drain<F: Future<Output = std::result::Result<(), hyper::Error>>>(
 
 /// Fixed empty native response at the pre-normalization boundary, closing unread input.
 fn reject(
-    status: u16,
+    status: http::StatusCode,
     message: &str,
     slot: ExchangeSlot,
     monitor: Arc<Monitor>,
 ) -> http::Response<TrackedBody> {
-    reject_error(status, boundary_error(status, message), slot, monitor)
+    reject_error(
+        status,
+        boundary_error(status.as_u16(), message),
+        slot,
+        monitor,
+    )
 }
 /// Retain the first typed policy cause while the native wire response stays fixed and empty.
 fn reject_error(
-    status: u16,
+    status: http::StatusCode,
     error: Error,
     slot: ExchangeSlot,
     monitor: Arc<Monitor>,
@@ -257,12 +269,12 @@ fn reject_error(
     {
         let mut state = lock(&slot);
         state.report.delivery = HttpDelivery::RejectedBeforeHost;
-        state.report.status = Some(status);
+        state.report.status = Some(status.as_u16());
         state.report.failure = Some(Arc::new(error));
     }
     monitor.output(None);
     let mut response = http::Response::new(TrackedBody::empty(slot, monitor));
-    *response.status_mut() = http::StatusCode::from_u16(status).expect("fixed boundary status");
+    *response.status_mut() = status;
     response
         .headers_mut()
         .insert(CONNECTION, http::HeaderValue::from_static("close"));

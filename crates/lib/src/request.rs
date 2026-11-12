@@ -130,6 +130,10 @@ impl Request {
     /// assert_eq!(req.url.host_str(), Some("unknownhost"));
     /// # Ok::<(), stackpress_lib::Error>(())
     /// ```
+    #[expect(
+        clippy::expect_used,
+        reason = "the fixed http://unknownhost/ literal is a valid absolute HTTP URL"
+    )]
     pub fn new() -> Self {
         // A fixed valid URL is a proven constructor invariant, not fallible input.
         Self {
@@ -756,4 +760,17 @@ pub fn with_unknown_host(text: &str) -> String {
         if text.starts_with('/') { "" } else { "/" },
         text
     )
+}
+
+#[cfg(test)]
+mod no_panic_tests {
+    use super::*;
+
+    /// Pin the exact constant URL covered by the named G62 exception.
+    #[test]
+    fn default_url_literal_is_valid() {
+        for request in [Request::new(), Request::default()] {
+            assert_eq!(request.url.as_str(), "http://unknownhost/");
+        }
+    }
 }

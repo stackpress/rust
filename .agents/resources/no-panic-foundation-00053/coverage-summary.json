@@ -1,0 +1,130 @@
+[
+  {
+    "crate": "stackpress-lib",
+    "covered": 4214,
+    "count": 4432,
+    "percent": 95.0812274368231,
+    "files": 24,
+    "floor_met": true
+  },
+  {
+    "crate": "stackpress-server",
+    "covered": 2350,
+    "count": 2539,
+    "percent": 92.55612445844821,
+    "files": 16,
+    "floor_met": true
+  },
+  {
+    "crate": "stackpress-server-http",
+    "covered": 1732,
+    "count": 1839,
+    "percent": 94.18162044589451,
+    "files": 15,
+    "floor_met": true
+  },
+  {
+    "crate": "stackpress-cli",
+    "covered": 1306,
+    "count": 1404,
+    "percent": 93.01994301994301,
+    "files": 10,
+    "floor_met": true
+  },
+  {
+    "crate": "stackpress-leptos",
+    "covered": 7967,
+    "count": 8779,
+    "percent": 90.75065497209249,
+    "files": 64,
+    "floor_met": true
+  },
+  {
+    "crate": "stackpress-idea-parser",
+    "covered": 2261,
+    "count": 2391,
+    "percent": 94.5629443747386,
+    "files": 12,
+    "floor_met": true
+  },
+  {
+    "crate": "stackpress-idea-transformer",
+    "covered": 2132,
+    "count": 2282,
+    "percent": 93.42681858019282,
+    "files": 18,
+    "floor_met": true
+  },
+  {
+    "crate": "stackpress-idea",
+    "covered": 41,
+    "count": 41,
+    "percent": 100.0,
+    "files": 1,
+    "floor_met": true
+  },
+  {
+    "crate": "stackpress-sql-sqlite",
+    "covered": 740,
+    "count": 808,
+    "percent": 91.58415841584159,
+    "files": 7,
+    "floor_met": true
+  },
+  {
+    "crate": "stackpress-sql-postgres",
+    "covered": 842,
+    "count": 889,
+    "percent": 94.71316085489315,
+    "files": 11,
+    "floor_met": true
+  },
+  {
+    "crate": "stackpress-sql-mysql",
+    "covered": 986,
+    "count": 1049,
+    "percent": 93.99428026692088,
+    "files": 11,
+    "floor_met": true
+  },
+  {
+    "crate": "stackpress-framework-view",
+    "covered": 1799,
+    "count": 1852,
+    "percent": 97.13822894168467,
+    "files": 23,
+    "floor_met": true
+  },
+  {
+    "crate": "stackpress-framework-csrf",
+    "covered": 67,
+    "count": 69,
+    "percent": 97.10144927536231,
+    "files": 2,
+    "floor_met": true
+  },
+  {
+    "crate": "stackpress-framework-email",
+    "covered": 2486,
+    "count": 2756,
+    "percent": 90.20319303338171,
+    "files": 21,
+    "floor_met": true
+  },
+  {
+    "crate": "stackpress-framework-language",
+    "covered": 54,
+    "count": 58,
+    "percent": 93.10344827586206,
+    "files": 1,
+    "floor_met": true
+  },
+  {
+    "crate": "stackpress",
+    "covered": 0,
+    "count": 0,
+    "percent": null,
+    "files": 0,
+    "floor_met": true
+  }
+]

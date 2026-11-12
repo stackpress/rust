@@ -127,6 +127,10 @@ pub(super) fn attachment_defaults(node: &mut Map<String, Value>, value: &Value, 
 }
 
 /// Source MIME catalog is versioned data, parsed once for the application process.
+#[expect(
+    clippy::expect_used,
+    reason = "the embedded versioned MIME JSON is a validated constant literal"
+)]
 fn catalog() -> &'static Value {
     static DATA: OnceLock<Value> = OnceLock::new();
     DATA.get_or_init(|| {
@@ -178,4 +182,18 @@ fn detect_extension(kind: &str) -> String {
             "bin"
         })
         .into()
+}
+
+#[cfg(test)]
+mod no_panic_tests {
+    use super::*;
+
+    /// The named exception parses only this embedded, versioned JSON literal.
+    #[test]
+    fn embedded_mime_catalog_is_valid_json() {
+        let data: Value =
+            serde_json::from_str(include_str!("../../data/nodemailer-mime.json")).unwrap();
+        assert_eq!(catalog(), &data);
+        assert_eq!(detect_mime("image.png"), "image/png");
+    }
 }

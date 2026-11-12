@@ -105,11 +105,11 @@ impl<F: Future<Output = ConnectionReport>> Future for Observed<F> {
         // Observe a task poll panic outside its unwind, then resume the original payload unchanged.
         // The future is never resumed after a panic; AssertUnwindSafe permits only its destruction.
         let polled = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-            self.future
-                .as_mut()
-                .expect("observed future polled after completion")
-                .as_mut()
-                .poll(cx)
+            match self.future.as_mut() {
+                Some(future) => future.as_mut().poll(cx),
+                // A completed adapter is quiescent; callbacks cannot run a second time.
+                None => Poll::Pending,
+            }
         }));
         let report = match polled {
             Ok(Poll::Pending) => return Poll::Pending,

@@ -47,6 +47,21 @@ impl PageWindow {
         };
         Ok(Self { skip, limit, total })
     }
+    /// Replace a known total while retaining the already checked offset and size.
+    pub(super) fn with_known_total(self, total: u64, reset: bool) -> Self {
+        // The existing size and offset passed construction; shrinking a total only clamps offset.
+        let skip = if reset || total == 0 {
+            0
+        } else {
+            self.skip
+                .min(((total - 1) / u64::from(self.limit)) * u64::from(self.limit))
+        };
+        Self {
+            skip,
+            total: PageTotal::Known(total),
+            ..self
+        }
+    }
     /// Offset in rows, not a fabricated page number.
     pub fn skip(self) -> u64 {
         self.skip

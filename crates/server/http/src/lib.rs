@@ -1,3 +1,12 @@
+#![deny(
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::panic,
+    clippy::unimplemented,
+    clippy::todo,
+    clippy::unreachable
+)]
+
 //! Bounded HTTP/1 hosting over caller-supplied IO and generic acceptors.
 //!
 //! Hyper owns parsing and framing. The host owns admission, deadlines, sequential reuse,
