@@ -18,6 +18,8 @@ For most crates the owner prefers [.agents/workflows/coordinated-crate-developme
 
 The user's standing instruction authorizes those routine behavior-preserving rounds inside the requested task. Do not stop between rounds for the coding skill's default audit-only approval question. Request a decision only for genuinely new scope, changed public behavior, or an unresolved product choice.
 
+When preparing a crates.io release, follow [.agents/workflows/release-versioning.md](.agents/workflows/release-versioning.md): choose the version by semver (a breaking change before 1.0 bumps the minor, e.g. `0.1.x` → `0.2.0`), apply it everywhere, update the changelog, migration guide and READMEs, then verify before the owner publishes.
+
 For builds and tests, follow [.agents/workflows/fast-build-and-test.md](.agents/workflows/fast-build-and-test.md): warm per-effort targets, `sccache`, `cargo nextest`, and narrow edit-loop tests with full checks at milestone gates.
 
 Follow [.agents/context/rust-code-style.md](.agents/context/rust-code-style.md): conventional Rust formatting/names, Rustdoc, explanatory comments for every logical block, and line-level explanation for branching/stateful/non-obvious work. Use the installed chrisai-coding principles with the explicit Rust adaptation; do not apply JS-specific syntax rules to Rust.
