@@ -1,8 +1,8 @@
 # Task 00047 — crates.io publication plan
 
-Current release: the owner published all 23 crates at 0.1.0 on 2026-11-11–12 UTC.
-Task [00058](00058-release-0.2.0-beta.md) prepares 0.2.0 beta; use the
-[current update runbook](#current-020-beta-runbook). The original audit and first-release
+Current published release: the owner published all 23 crates at 0.2.0 on 2026-11-12.
+Task [00062](00062-release-0.2.1.md) prepares additive 0.2.1 beta; use the
+[current update runbook](#current-021-beta-runbook). The original audit and first-release
 preparation sections below are historical.
 
 Historical preparation status: release preparation authorized by G59/G60/G61 and Task 00050; publication remains unauthorized. The original audit below is preserved as historical evidence. Snapshot: local `71c4118`, branch `trial/3-publication-plan`, 2026-11-10. Original audit findings are from that checkout and offline probes. G59/Task 00049 updates the candidate scope to 23 and removes the premade-model generator blocker; retained measured rows remain the original audit evidence.
@@ -259,27 +259,28 @@ Every package declares Rust **1.96** and edition **2024** through workspace inhe
 
 For each subsequent release: classify compatibility changes; choose the next coordinated version; update workspace/package versions and every relevant normal/build/optional/target/dev version requirement; refresh the lock deliberately; regenerate using official generators and freshness checks; rerun archive, per-crate coverage, feature/platform and integration gates; record changelogs/artifact hashes; create the owner-approved release tag and publish prerequisites before dependents. Independent versioning would require replacing some workspace version inheritance and tracking which facade version supports each component.
 
-## Current 0.2.0 beta runbook
+<a id="current-020-beta-runbook"></a>
 
-Task [00058](00058-release-0.2.0-beta.md) prepares the next lockstep release under
+## Current 0.2.1 beta runbook
+
+Task [00062](00062-release-0.2.1.md) prepares the next lockstep release under
 [release versioning](../../../workflows/release-versioning.md). All 23 names already
-exist at 0.1.0; the historical first-publication/name-availability instructions below
+exist at 0.2.0; the historical first-publication/name-availability instructions below
 are retained as evidence and do not apply to an update of those names.
 
-1. Review the [changelog](../../../../CHANGELOG.md) and
-   [migration guide](../../../../docs/migrating-0.1-to-0.2.md), final gate and standalone
-   Clippy results. Version 0.2.0 is a normal release, described as beta in the docs.
+1. Review the [changelog](../../../../CHANGELOG.md), final gate and standalone
+   Clippy results. No migration guide is needed for this additive release. Version 0.2.1 is a normal release, described as beta in the docs.
 2. The owner commits and pushes the approved release tree to main. From that clean,
    pushed tree, run `./publish.sh --plan`: it reads the workspace version and checks
    registry status. Expect 23 `update` entries and zero planned waiting before the
-   first upload, provided no 0.2.0 packages have been published meanwhile.
+   first upload, provided no 0.2.1 packages have been published meanwhile.
 3. The owner authenticates with `cargo login`, then runs `./publish.sh`. It publishes
    in the unchanged dependency order, skips already published versions and handles
    rate limits. Preparation does not authorize either command.
 4. Verify the uploaded archives and registry consumers, then create and push tag
-   `v0.2.0`. Publish corrections as new versions; published bytes cannot be replaced.
+   `v0.2.1`. Publish corrections as new versions; published bytes cannot be replaced.
 
-The 0.2.0 task permits a dirty-tree preparation gate and preserves all 699 root
+The 0.2.1 task permits a dirty-tree preparation gate and preserves all 706 root
 registry tuples. Final publication still requires a clean pushed tree. No licence
 change is part of this release. The first-release sections below are historical.
 

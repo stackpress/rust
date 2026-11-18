@@ -1,0 +1,23 @@
+{
+  "release_version": "0.2.1",
+  "release_packages": 23,
+  "internal_version_requirements": 114,
+  "registry_tuples": 706,
+  "root_only_workspace_versions_changed": true,
+  "nested_locks_unchanged_after_refresh": 22,
+  "registry_baseline_unchanged": true,
+  "production_rust_unchanged": true,
+  "only_rust_edit": "examples/generated-profile/codegen/tests/consumer.rs",
+  "goldens_oracles_stderr_licenses_notices_unchanged": true,
+  "release_tooling_changes_only_version_literals": true,
+  "historical_release_reports_restored": true,
+  "git_diff_check": true,
+  "no_staged_changes": true,
+  "kb_validation": {
+    "code": 1,
+    "errors": 146,
+    "warnings": 44,
+    "errors_in_changed_or_new_files": [],
+    "clean": false
+  }
+}

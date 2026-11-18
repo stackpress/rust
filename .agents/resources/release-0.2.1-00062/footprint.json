@@ -1,0 +1,579 @@
+[
+  {
+    "utc": "2026-11-18T07:15:18.833318+00:00",
+    "phase": "GATE clippy-compatible : cargo clippy --workspace --locked --offline --features framework-aggregate-full,framework-aggregate-ui-session,framework-aggregate-ui-api,framework-aggregate-ui-admin,framework-aggregate-ui-view,framework-aggregate-ssr,framework-api-codegen,framework-csrf-server,framework-email-server,stackpress-framework/codegen,stackpress-framework-schema/providers,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-schema/source,stackpress-framework-sql/source,server-http-sse,server-http-host-sse,server-http-host-websocket,server-http-host-tls,leptos-sse,leptos-websocket --all-targets -- -D warnings",
+    "bytes": {
+      "native": 5445873664
+    }
+  },
+  {
+    "utc": "2026-11-18T07:16:12.797898+00:00",
+    "phase": "GATE clippy-compatible : cargo clippy --workspace --locked --offline --features framework-aggregate-full,framework-aggregate-ui-session,framework-aggregate-ui-api,framework-aggregate-ui-admin,framework-aggregate-ui-view,framework-aggregate-ssr,framework-api-codegen,framework-csrf-server,framework-email-server,stackpress-framework/codegen,stackpress-framework-schema/providers,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-schema/source,stackpress-framework-sql/source,server-http-sse,server-http-host-sse,server-http-host-websocket,server-http-host-tls,leptos-sse,leptos-websocket --all-targets -- -D warnings",
+    "bytes": {
+      "native": 5595115520
+    }
+  },
+  {
+    "utc": "2026-11-18T07:17:07.006115+00:00",
+    "phase": "GATE nextest-compatible : cargo nextest run --workspace --locked --offline --features framework-aggregate-full,framework-aggregate-ui-session,framework-aggregate-ui-api,framework-aggregate-ui-admin,framework-aggregate-ui-view,framework-aggregate-ssr,framework-api-codegen,framework-csrf-server,framework-email-server,stackpress-framework/codegen,stackpress-framework-schema/providers,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-schema/source,stackpress-framework-sql/source,server-http-sse,server-http-host-sse,server-http-host-websocket,server-http-host-tls,leptos-sse,leptos-websocket --all-targets --test-threads 2 --no-fail-fast -E not test(tcp_watchdog)",
+    "bytes": {
+      "native": 6074687488
+    }
+  },
+  {
+    "utc": "2026-11-18T07:17:58.850568+00:00",
+    "phase": "GATE nextest-compatible : cargo nextest run --workspace --locked --offline --features framework-aggregate-full,framework-aggregate-ui-session,framework-aggregate-ui-api,framework-aggregate-ui-admin,framework-aggregate-ui-view,framework-aggregate-ssr,framework-api-codegen,framework-csrf-server,framework-email-server,stackpress-framework/codegen,stackpress-framework-schema/providers,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-schema/source,stackpress-framework-sql/source,server-http-sse,server-http-host-sse,server-http-host-websocket,server-http-host-tls,leptos-sse,leptos-websocket --all-targets --test-threads 2 --no-fail-fast -E not test(tcp_watchdog)",
+    "bytes": {
+      "native": 7716933632
+    }
+  },
+  {
+    "utc": "2026-11-18T07:19:15.886444+00:00",
+    "phase": "GATE nextest-compatible : cargo nextest run --workspace --locked --offline --features framework-aggregate-full,framework-aggregate-ui-session,framework-aggregate-ui-api,framework-aggregate-ui-admin,framework-aggregate-ui-view,framework-aggregate-ssr,framework-api-codegen,framework-csrf-server,framework-email-server,stackpress-framework/codegen,stackpress-framework-schema/providers,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-schema/source,stackpress-framework-sql/source,server-http-sse,server-http-host-sse,server-http-host-websocket,server-http-host-tls,leptos-sse,leptos-websocket --all-targets --test-threads 2 --no-fail-fast -E not test(tcp_watchdog)",
+    "bytes": {
+      "native": 9188261888
+    }
+  },
+  {
+    "utc": "2026-11-18T07:20:37.121745+00:00",
+    "phase": "GATE nextest-compatible : cargo nextest run --workspace --locked --offline --features framework-aggregate-full,framework-aggregate-ui-session,framework-aggregate-ui-api,framework-aggregate-ui-admin,framework-aggregate-ui-view,framework-aggregate-ssr,framework-api-codegen,framework-csrf-server,framework-email-server,stackpress-framework/codegen,stackpress-framework-schema/providers,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-schema/source,stackpress-framework-sql/source,server-http-sse,server-http-host-sse,server-http-host-websocket,server-http-host-tls,leptos-sse,leptos-websocket --all-targets --test-threads 2 --no-fail-fast -E not test(tcp_watchdog)",
+    "bytes": {
+      "native": 9188261888
+    }
+  },
+  {
+    "utc": "2026-11-18T07:21:36.585619+00:00",
+    "phase": "GATE nextest-compatible : cargo nextest run --workspace --locked --offline --features framework-aggregate-full,framework-aggregate-ui-session,framework-aggregate-ui-api,framework-aggregate-ui-admin,framework-aggregate-ui-view,framework-aggregate-ssr,framework-api-codegen,framework-csrf-server,framework-email-server,stackpress-framework/codegen,stackpress-framework-schema/providers,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-schema/source,stackpress-framework-sql/source,server-http-sse,server-http-host-sse,server-http-host-websocket,server-http-host-tls,leptos-sse,leptos-websocket --all-targets --test-threads 2 --no-fail-fast -E not test(tcp_watchdog)",
+    "bytes": {
+      "native": 9188261888
+    }
+  },
+  {
+    "utc": "2026-11-18T07:22:51.258959+00:00",
+    "phase": "GATE nextest-compatible : cargo nextest run --workspace --locked --offline --features framework-aggregate-full,framework-aggregate-ui-session,framework-aggregate-ui-api,framework-aggregate-ui-admin,framework-aggregate-ui-view,framework-aggregate-ssr,framework-api-codegen,framework-csrf-server,framework-email-server,stackpress-framework/codegen,stackpress-framework-schema/providers,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-schema/source,stackpress-framework-sql/source,server-http-sse,server-http-host-sse,server-http-host-websocket,server-http-host-tls,leptos-sse,leptos-websocket --all-targets --test-threads 2 --no-fail-fast -E not test(tcp_watchdog)",
+    "bytes": {
+      "native": 9366564864
+    }
+  },
+  {
+    "utc": "2026-11-18T07:23:43.777140+00:00",
+    "phase": "GATE nextest-compatible : cargo nextest run --workspace --locked --offline --features framework-aggregate-full,framework-aggregate-ui-session,framework-aggregate-ui-api,framework-aggregate-ui-admin,framework-aggregate-ui-view,framework-aggregate-ssr,framework-api-codegen,framework-csrf-server,framework-email-server,stackpress-framework/codegen,stackpress-framework-schema/providers,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-schema/source,stackpress-framework-sql/source,server-http-sse,server-http-host-sse,server-http-host-websocket,server-http-host-tls,leptos-sse,leptos-websocket --all-targets --test-threads 2 --no-fail-fast -E not test(tcp_watchdog)",
+    "bytes": {
+      "native": 9545641984
+    }
+  },
+  {
+    "utc": "2026-11-18T07:24:47.696330+00:00",
+    "phase": "GATE nextest-compatible : cargo nextest run --workspace --locked --offline --features framework-aggregate-full,framework-aggregate-ui-session,framework-aggregate-ui-api,framework-aggregate-ui-admin,framework-aggregate-ui-view,framework-aggregate-ssr,framework-api-codegen,framework-csrf-server,framework-email-server,stackpress-framework/codegen,stackpress-framework-schema/providers,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-schema/source,stackpress-framework-sql/source,server-http-sse,server-http-host-sse,server-http-host-websocket,server-http-host-tls,leptos-sse,leptos-websocket --all-targets --test-threads 2 --no-fail-fast -E not test(tcp_watchdog)",
+    "bytes": {
+      "native": 10088853504
+    }
+  },
+  {
+    "utc": "2026-11-18T07:25:42.125764+00:00",
+    "phase": "GATE rustdoc-compatible : cargo doc --workspace --locked --offline --features framework-aggregate-full,framework-aggregate-ui-session,framework-aggregate-ui-api,framework-aggregate-ui-admin,framework-aggregate-ui-view,framework-aggregate-ssr,framework-api-codegen,framework-csrf-server,framework-email-server,stackpress-framework/codegen,stackpress-framework-schema/providers,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-schema/source,stackpress-framework-sql/source,server-http-sse,server-http-host-sse,server-http-host-websocket,server-http-host-tls,leptos-sse,leptos-websocket --no-deps",
+    "bytes": {
+      "native": 10120384512
+    }
+  },
+  {
+    "utc": "2026-11-18T07:26:56.208458+00:00",
+    "phase": "GATE aggregate-graphs : python3 crates/framework/framework/consumers/graphs.py --check",
+    "bytes": {
+      "native": 10332315648
+    }
+  },
+  {
+    "utc": "2026-11-18T07:27:47.813111+00:00",
+    "phase": "GATE aggregate-graphs : python3 crates/framework/framework/consumers/graphs.py --check",
+    "bytes": {
+      "native": 10522836992
+    }
+  },
+  {
+    "utc": "2026-11-18T07:28:48.673416+00:00",
+    "phase": "GATE aggregate-graphs : python3 crates/framework/framework/consumers/graphs.py --check",
+    "bytes": {
+      "native": 10658349056
+    }
+  },
+  {
+    "utc": "2026-11-18T07:30:02.280755+00:00",
+    "phase": "GATE aggregate-graphs : python3 crates/framework/framework/consumers/graphs.py --check",
+    "bytes": {
+      "native": 10843807744
+    }
+  },
+  {
+    "utc": "2026-11-18T07:30:32.876044+00:00",
+    "phase": "GATE aggregate-graphs : python3 crates/framework/framework/consumers/graphs.py --check",
+    "bytes": {
+      "native": 10949619712
+    }
+  },
+  {
+    "utc": "2026-11-18T07:31:13.886361+00:00",
+    "phase": "GATE aggregate-graphs : python3 crates/framework/framework/consumers/graphs.py --check",
+    "bytes": {
+      "native": 11091148800
+    }
+  },
+  {
+    "utc": "2026-11-18T07:32:04.122257+00:00",
+    "phase": "GATE aggregate-graphs : python3 crates/framework/framework/consumers/graphs.py --check",
+    "bytes": {
+      "native": 11363852288
+    }
+  },
+  {
+    "utc": "2026-11-18T07:32:59.203648+00:00",
+    "phase": "GATE aggregate-consumers : python3 crates/framework/framework/consumers/run.py",
+    "bytes": {
+      "native": 11623317504
+    }
+  },
+  {
+    "utc": "2026-11-18T07:33:21.151837+00:00",
+    "phase": "GATE aggregate-consumers : python3 crates/framework/framework/consumers/run.py",
+    "bytes": {
+      "native": 6735351808
+    }
+  },
+  {
+    "utc": "2026-11-18T07:34:33.699771+00:00",
+    "phase": "GATE aggregate-consumers : python3 crates/framework/framework/consumers/run.py",
+    "bytes": {
+      "native": 7177523200
+    }
+  },
+  {
+    "utc": "2026-11-18T07:35:43.526780+00:00",
+    "phase": "GATE aggregate-consumers : python3 crates/framework/framework/consumers/run.py",
+    "bytes": {
+      "native": 7818088448
+    }
+  },
+  {
+    "utc": "2026-11-18T07:36:47.441094+00:00",
+    "phase": "GATE aggregate-consumers : python3 crates/framework/framework/consumers/run.py",
+    "bytes": {
+      "native": 8126345216
+    }
+  },
+  {
+    "utc": "2026-11-18T07:37:55.270139+00:00",
+    "phase": "GATE aggregate-consumers : python3 crates/framework/framework/consumers/run.py",
+    "bytes": {
+      "native": 8725446656
+    }
+  },
+  {
+    "utc": "2026-11-18T07:39:07.373066+00:00",
+    "phase": "GATE aggregate-consumers : python3 crates/framework/framework/consumers/run.py",
+    "bytes": {
+      "native": 9211002880
+    }
+  },
+  {
+    "utc": "2026-11-18T07:39:14.633429+00:00",
+    "phase": "GATE aggregate-consumers : python3 crates/framework/framework/consumers/run.py",
+    "bytes": {
+      "native": 9240649728
+    }
+  },
+  {
+    "utc": "2026-11-18T07:40:07.463678+00:00",
+    "phase": "GATE aggregate-consumers : python3 crates/framework/framework/consumers/run.py",
+    "bytes": {
+      "native": 9583390720
+    }
+  },
+  {
+    "utc": "2026-11-18T07:41:11.285348+00:00",
+    "phase": "GATE aggregate-consumers : python3 crates/framework/framework/consumers/run.py",
+    "bytes": {
+      "native": 10191101952
+    }
+  },
+  {
+    "utc": "2026-11-18T07:41:57.328732+00:00",
+    "phase": "GATE aggregate-consumers : python3 crates/framework/framework/consumers/run.py",
+    "bytes": {
+      "native": 6896861184
+    }
+  },
+  {
+    "utc": "2026-11-18T07:42:54.143268+00:00",
+    "phase": "GATE aggregate-consumers : python3 crates/framework/framework/consumers/run.py",
+    "bytes": {
+      "native": 7384481792
+    }
+  },
+  {
+    "utc": "2026-11-18T07:44:04.419815+00:00",
+    "phase": "GATE aggregate-consumers : python3 crates/framework/framework/consumers/run.py",
+    "bytes": {
+      "native": 7701159936
+    }
+  },
+  {
+    "utc": "2026-11-18T07:45:14.201116+00:00",
+    "phase": "GATE aggregate-consumers : python3 crates/framework/framework/consumers/run.py",
+    "bytes": {
+      "native": 8398004224
+    }
+  },
+  {
+    "utc": "2026-11-18T07:46:08.913218+00:00",
+    "phase": "GATE aggregate-consumers : python3 crates/framework/framework/consumers/run.py",
+    "bytes": {
+      "native": 8726306816
+    }
+  },
+  {
+    "utc": "2026-11-18T07:47:09.097767+00:00",
+    "phase": "GATE aggregate-consumers : python3 crates/framework/framework/consumers/run.py",
+    "bytes": {
+      "native": 9028407296
+    }
+  },
+  {
+    "utc": "2026-11-18T07:48:28.832116+00:00",
+    "phase": "GATE aggregate-consumers : python3 crates/framework/framework/consumers/run.py",
+    "bytes": {
+      "native": 9774034944
+    }
+  },
+  {
+    "utc": "2026-11-18T07:48:46.491097+00:00",
+    "phase": "GATE aggregate-consumers : python3 crates/framework/framework/consumers/run.py",
+    "bytes": {
+      "native": 6598676480
+    }
+  },
+  {
+    "utc": "2026-11-18T07:50:07.184519+00:00",
+    "phase": "GATE aggregate-consumers : python3 crates/framework/framework/consumers/run.py",
+    "bytes": {
+      "native": 7007129600
+    }
+  },
+  {
+    "utc": "2026-11-18T07:50:59.368418+00:00",
+    "phase": "GATE aggregate-consumers : python3 crates/framework/framework/consumers/run.py",
+    "bytes": {
+      "native": 7559917568
+    }
+  },
+  {
+    "utc": "2026-11-18T07:52:20.884983+00:00",
+    "phase": "GATE session-graphs : python3 crates/framework/framework-session/consumers/graphs.py --check",
+    "bytes": {
+      "native": 8172621824
+    }
+  },
+  {
+    "utc": "2026-11-18T07:53:16.284492+00:00",
+    "phase": "GATE session-graphs : python3 crates/framework/framework-session/consumers/graphs.py --check",
+    "bytes": {
+      "native": 8269193216
+    }
+  },
+  {
+    "utc": "2026-11-18T07:54:33.956388+00:00",
+    "phase": "GATE session-consumers : python3 crates/framework/framework-session/consumers/run.py",
+    "bytes": {
+      "native": 8770514944
+    }
+  },
+  {
+    "utc": "2026-11-18T07:55:42.560630+00:00",
+    "phase": "GATE session-consumers : python3 crates/framework/framework-session/consumers/run.py",
+    "bytes": {
+      "native": 9394720768
+    }
+  },
+  {
+    "utc": "2026-11-18T07:57:19.325044+00:00",
+    "phase": "GATE session-consumers : python3 crates/framework/framework-session/consumers/run.py",
+    "bytes": {
+      "native": 10103627776
+    }
+  },
+  {
+    "utc": "2026-11-18T07:58:22.607963+00:00",
+    "phase": "GATE session-consumers : python3 crates/framework/framework-session/consumers/run.py",
+    "bytes": {
+      "native": 10655969280
+    }
+  },
+  {
+    "utc": "2026-11-18T07:59:35.308030+00:00",
+    "phase": "GATE generated-admin : cargo run -p generated-admin-tool --locked --offline -- emit generate --check",
+    "bytes": {
+      "native": 11357425664
+    }
+  },
+  {
+    "utc": "2026-11-18T08:00:05.541171+00:00",
+    "phase": "GATE api-checkpoint : cargo run --manifest-path examples/api-checkpoint/tool/Cargo.toml --locked --offline -- --check",
+    "bytes": {
+      "native": 6848512000
+    }
+  },
+  {
+    "utc": "2026-11-18T08:01:13.844528+00:00",
+    "phase": "GATE api-checkpoint : cargo run --manifest-path examples/api-checkpoint/tool/Cargo.toml --locked --offline -- --check",
+    "bytes": {
+      "native": 7482150912
+    }
+  },
+  {
+    "utc": "2026-11-18T08:03:00.102425+00:00",
+    "phase": "GATE regenerate_aggregate_models : cargo run -p stackpress-framework --example regenerate_aggregate_models --locked --offline --features full,codegen -- --check",
+    "bytes": {
+      "native": 8779689984
+    }
+  },
+  {
+    "utc": "2026-11-18T08:04:23.840184+00:00",
+    "phase": "GATE realtime-browser-build : python3 tools/realtime/proof.py build",
+    "bytes": {
+      "native": 8799719424,
+      "browser-build": 702332928
+    }
+  },
+  {
+    "utc": "2026-11-18T08:05:15.146259+00:00",
+    "phase": "GATE realtime-browser-build : python3 tools/realtime/proof.py build",
+    "bytes": {
+      "native": 8799719424,
+      "browser-build": 1066479616
+    }
+  },
+  {
+    "utc": "2026-11-18T08:06:44.441396+00:00",
+    "phase": "GATE bootstrap-generate-app: ['cargo', 'run', '--manifest-path', '/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/examples/blog/Cargo.toml', '--locked', '--offline', '-p', 'blog-tool', '--', 'generate-app']",
+    "bytes": {
+      "native": 8903176192,
+      "browser-build": 1095135232,
+      "blog": 651984896
+    }
+  },
+  {
+    "utc": "2026-11-18T08:08:07.459204+00:00",
+    "phase": "GATE browser-build: ['cargo', 'xtask', 'build-browser']",
+    "bytes": {
+      "native": 8903176192,
+      "browser-build": 1095135232,
+      "blog": 1452056576
+    }
+  },
+  {
+    "utc": "2026-11-18T08:09:24.925443+00:00",
+    "phase": "GATE browser-build: ['cargo', 'xtask', 'build-browser']",
+    "bytes": {
+      "native": 8903176192,
+      "browser-build": 1095135232,
+      "blog": 2246483968
+    }
+  },
+  {
+    "utc": "2026-11-18T08:11:25.528709+00:00",
+    "phase": "GATE clippy-native: ['cargo', 'clippy', '--manifest-path', '/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/examples/blog/Cargo.toml', '--locked', '--offline', '--workspace', '--all-targets', '--features', 'blog-tool/native-proof,blog-app/ssr,blog-web/extension-proof', '--', '-D', 'warnings']",
+    "bytes": {
+      "native": 8903176192,
+      "browser-build": 1095135232,
+      "blog": 3200614400
+    }
+  },
+  {
+    "utc": "2026-11-18T08:13:08.026210+00:00",
+    "phase": "GATE rustdoc: ['cargo', 'doc', '--manifest-path', '/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/examples/blog/Cargo.toml', '--locked', '--offline', '--workspace', '--no-deps', '--features', 'blog-tool/native-proof,blog-app/ssr,blog-web/extension-proof']",
+    "bytes": {
+      "native": 8903176192,
+      "browser-build": 1095135232,
+      "blog": 4662820864
+    }
+  },
+  {
+    "utc": "2026-11-18T08:14:55.015809+00:00",
+    "phase": "GATE browser-probe: ['cargo', 'build', '--manifest-path', '/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/examples/blog/Cargo.toml', '--locked', '--offline', '-p', 'blog-web', '--bin', 'probe']",
+    "bytes": {
+      "native": 8903176192,
+      "browser-build": 1095135232,
+      "blog": 5260156928
+    }
+  },
+  {
+    "utc": "2026-11-18T08:16:35.721889+00:00",
+    "phase": "GATE nickname-prepare: ['python3', '/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/tools/examples/blog/nickname.py', 'prepare']",
+    "bytes": {
+      "native": 8903176192,
+      "browser-build": 1095135232,
+      "blog": 6006525952
+    }
+  },
+  {
+    "utc": "2026-11-18T08:18:12.170264+00:00",
+    "phase": "GATE nickname-prepare: ['python3', '/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/tools/examples/blog/nickname.py', 'prepare']",
+    "bytes": {
+      "native": 8903176192,
+      "browser-build": 1095135232,
+      "blog": 7034109952
+    }
+  },
+  {
+    "utc": "2026-11-18T08:19:49.953463+00:00",
+    "phase": "GATE nickname-prepare: ['python3', '/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/tools/examples/blog/nickname.py', 'prepare']",
+    "bytes": {
+      "native": 8903176192,
+      "browser-build": 1095135232,
+      "blog": 8037888000
+    }
+  },
+  {
+    "utc": "2026-11-18T08:20:58.039348+00:00",
+    "phase": "GATE nickname-prepare: ['python3', '/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/tools/examples/blog/nickname.py', 'prepare']",
+    "bytes": {
+      "native": 8903176192,
+      "browser-build": 1095135232,
+      "blog": 8757460992
+    }
+  },
+  {
+    "utc": "2026-11-18T08:22:43.822403+00:00",
+    "phase": "GATE nickname-prepare: ['python3', '/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/tools/examples/blog/nickname.py', 'prepare']",
+    "bytes": {
+      "native": 8903176192,
+      "browser-build": 1095135232,
+      "blog": 8490795008
+    }
+  },
+  {
+    "utc": "2026-11-18T08:24:30.945421+00:00",
+    "phase": "GATE nickname-prepare: ['python3', '/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/tools/examples/blog/nickname.py', 'prepare']",
+    "bytes": {
+      "native": 8903176192,
+      "browser-build": 1095135232,
+      "blog": 9537138688
+    }
+  },
+  {
+    "utc": "2026-11-18T08:25:27.505803+00:00",
+    "phase": "GATE nickname-prepare: ['python3', '/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/tools/examples/blog/nickname.py', 'prepare']",
+    "bytes": {
+      "native": 8903176192,
+      "browser-build": 1095135232,
+      "blog": 8321302528
+    }
+  },
+  {
+    "utc": "2026-11-18T08:26:30.887679+00:00",
+    "phase": "GATE nickname-prepare: ['python3', '/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/tools/examples/blog/nickname.py', 'prepare']",
+    "bytes": {
+      "native": 8903176192,
+      "browser-build": 1095135232,
+      "blog": 6021914624
+    }
+  },
+  {
+    "utc": "2026-11-18T08:28:27.483216+00:00",
+    "phase": "GATE nickname-prepare: ['python3', '/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/tools/examples/blog/nickname.py', 'prepare']",
+    "bytes": {
+      "native": 8903176192,
+      "browser-build": 1095135232,
+      "blog": 7297880064
+    }
+  },
+  {
+    "utc": "2026-11-18T08:30:11.944766+00:00",
+    "phase": "GATE coverage-nextest: ['cargo', 'nextest', 'run', '--manifest-path', '/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/examples/blog/Cargo.toml', '--locked', '--offline', '--workspace', '--all-targets', '--features', 'blog-tool/native-proof,blog-app/ssr,blog-web/extension-proof', '--test-threads', '2', '--no-fail-fast']",
+    "bytes": {
+      "native": 8903176192,
+      "browser-build": 1095135232,
+      "blog": 6338314240
+    }
+  },
+  {
+    "utc": "2026-11-18T08:32:21.230491+00:00",
+    "phase": "GATE coverage-native-http-browser: ['python3', '/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/tools/examples/blog/browser.py', '--mode', 'hydrate']",
+    "bytes": {
+      "native": 8903176192,
+      "browser-build": 1095135232,
+      "blog": 11445350400
+    }
+  },
+  {
+    "utc": "2026-11-18T08:33:56.016439+00:00",
+    "phase": "GATE packages-and-dry-runs : python3 tools/release/package_workspace.py --allow-dirty",
+    "bytes": {
+      "native": 9385086976,
+      "browser-build": 1095135232,
+      "blog": 11470356480
+    }
+  },
+  {
+    "utc": "2026-11-18T08:35:50.149579+00:00",
+    "phase": "GATE facade : python3 tools/release/check_facade.py",
+    "bytes": {
+      "native": 10217050112,
+      "browser-build": 1095135232,
+      "blog": 11470356480
+    }
+  },
+  {
+    "utc": "2026-11-18T08:38:00.426199+00:00",
+    "phase": "GATE facade : python3 tools/release/check_facade.py",
+    "bytes": {
+      "native": 11434377216,
+      "browser-build": 1095135232,
+      "blog": 11470356480
+    }
+  },
+  {
+    "utc": "2026-11-18T08:38:49.016515+00:00",
+    "phase": "GATE facade : python3 tools/release/check_facade.py",
+    "bytes": {
+      "native": 10473033728,
+      "browser-build": 1095135232,
+      "blog": 11470356480
+    }
+  },
+  {
+    "utc": "2026-11-18T08:40:13.447414+00:00",
+    "phase": "GATE facade : python3 tools/release/check_facade.py",
+    "bytes": {
+      "native": 11253243904,
+      "browser-build": 1095135232,
+      "blog": 11470356480
+    }
+  },
+  {
+    "utc": "2026-11-18T08:42:13.165515+00:00",
+    "phase": "GATE facade : python3 tools/release/check_facade.py",
+    "bytes": {
+      "native": 12169695232,
+      "browser-build": 1095135232,
+      "blog": 11470356480
+    }
+  },
+  {
+    "utc": "2026-11-18T08:44:51.329361+00:00",
+    "phase": "GATE facade : python3 tools/release/check_facade.py",
+    "bytes": {
+      "native": 13511028736,
+      "browser-build": 1095135232,
+      "blog": 11470356480
+    }
+  },
+  {
+    "utc": "2026-11-18T08:45:52.985792+00:00",
+    "phase": "GATE facade : python3 tools/release/check_facade.py",
+    "bytes": {
+      "native": 12232093696,
+      "browser-build": 1095135232,
+      "blog": 11470356480
+    }
+  }
+]

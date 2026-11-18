@@ -46,7 +46,7 @@ Start with the smallest responsibility/contract. Follow detailed source anchors 
 - Existing React/Reactus/Frui/r22n runtime APIs are source behavior. The implemented UI uses stackpress-leptos plus framework-view; the blog has SSR/hydrate/CSR, while desktop is deferred and MCP unsupported (G52). Port exceptions and target limits are explicit in [runtime](runtime-and-portability.md).
 - Existing Node transports/module loading, JS callable objects, CJS/ESM/ts-morph/Vite, Electron packaging, and npm release coordination do not automatically become Rust requirements.
 - Existing contributor documents demand >90% coverage for all new changes. Rust policy is >=70% development and >=90% before publication; use [testing and quality](testing-and-quality.md).
-- The imported KB contains 0.10.7/default literals; the original source capture recorded 0.10.8 manifests. These are historical version observations, separate from Rust's current 0.2.0 manifests. Do not unify them into a false current-version claim.
+- The imported KB contains 0.10.7/default literals; the original source capture recorded 0.10.8 manifests. These are historical version observations, separate from Rust's current 0.2.1 manifests. Do not unify them into a false current-version claim.
 - The config catalog's allowlist language does not override source empty-access behavior. G42/G43 preserve configured protection and each route/event's responsibility; no new global default-deny policy is implied. See [project direction](project-direction.md) and the Rust session/API implementations.
 - Source contracts distinguish architectural, implemented, tested, demonstrated, and supported. Preserve those evidence labels for Rust and each target/database/adapter.
 

@@ -4,7 +4,7 @@ Authority: [root manifest](../../Cargo.toml), each linked member manifest, and [
 
 ## Release packages
 
-These are the **23 published package names** in the release set (G59–G61). The checked-in manifests select **0.2.0 beta**; publication at that version is a separate owner action. The published 0.1.0 baseline is documented in the [0.2 preparation receipt](../specs/00001-stackpress-rust-foundation/tasks/00058-release-0.2.0-beta.md). Use [release and licensing](release-and-licensing.md) for the lockstep policy and licence split.
+These are the **23 published package names** in the release set (G59–G61). The checked-in manifests select **0.2.1 beta**; publication at that version is a separate owner action. The published 0.2.0 baseline is documented in the [0.2.1 preparation receipt](../specs/00001-stackpress-rust-foundation/tasks/00062-release-0.2.1.md). Use [release and licensing](release-and-licensing.md) for the lockstep policy and licence split.
 
 All rows below have `publish = true`. The facade has no default features and normally depends only on `stackpress-lib` among Stackpress crates. Library exports do not register plugins. Most crates have empty defaults; CLI alone defaults to `tty`. The local-feature column lists every declared non-`default` feature; open a manifest for exact dependency forwarding.
 

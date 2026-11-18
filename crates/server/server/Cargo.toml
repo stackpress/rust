@@ -20,7 +20,7 @@ http-sse = ["http-stream"]
 http-upgrade = ["http-stream"]
 
 [dependencies]
-stackpress-lib = { path = "../../lib", version = "0.2.0" }
+stackpress-lib = { path = "../../lib", version = "0.2.1" }
 serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1", features = ["preserve_order"] }
 http = { version = "1", optional = true }

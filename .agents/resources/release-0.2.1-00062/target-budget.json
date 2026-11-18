@@ -1,0 +1,20 @@
+{
+  "cap_bytes": 12884901888,
+  "sampled_peak_bytes": {
+    "native": 13965942784,
+    "browser-build": 1095135232,
+    "blog": 11470356480
+  },
+  "sampled_peak_gib": {
+    "native": 13.007,
+    "browser-build": 1.02,
+    "blog": 10.683
+  },
+  "current_bytes": {
+    "native": 8093376512,
+    "browser-build": 1095135232,
+    "blog": 11470356480
+  },
+  "native_tree_over_cap": true,
+  "note": "The shared native tree transiently exceeded 12 GiB during the facade matrix. Retired only completed independent consumer, trybuild, README/API and facade targets plus completed native test executables; active target outputs and package archives were preserved. No concurrent cargo clean."
+}

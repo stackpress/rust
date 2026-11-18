@@ -21,14 +21,14 @@ migrations = ["dep:sha2"]
 sqlite-maintenance = ["migrations", "dep:stackpress-sql-sqlite", "dep:tokio"]
 
 [dependencies]
-stackpress-framework-schema = { path = "../framework-schema", version = "0.2.0" }
-stackpress-sql = { path = "../../sql/sql", version = "0.2.0" }
+stackpress-framework-schema = { path = "../framework-schema", version = "0.2.1" }
+stackpress-sql = { path = "../../sql/sql", version = "0.2.1" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-stackpress-lib = { path = "../../lib", version = "0.2.0", optional = true }
-stackpress-server = { path = "../../server/server", version = "0.2.0", optional = true }
-stackpress-idea-transformer = { path = "../../idea/idea-transformer", version = "0.2.0", optional = true }
-stackpress-sql-sqlite = { path = "../../sql/sql-sqlite", version = "0.2.0", features = ["maintenance"], optional = true }
+stackpress-lib = { path = "../../lib", version = "0.2.1", optional = true }
+stackpress-server = { path = "../../server/server", version = "0.2.1", optional = true }
+stackpress-idea-transformer = { path = "../../idea/idea-transformer", version = "0.2.1", optional = true }
+stackpress-sql-sqlite = { path = "../../sql/sql-sqlite", version = "0.2.1", features = ["maintenance"], optional = true }
 sha2 = { version = "0.10.9", optional = true }
 
 tokio = { version = "1", features = ["time"], optional = true }

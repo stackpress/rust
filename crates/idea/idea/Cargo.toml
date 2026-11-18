@@ -13,8 +13,8 @@ license.workspace = true
 include = ["/src/**", "/README.md", "/LICENSE", "/*.md", "/tests/**", "/examples/**", "/docs/**/*.md", "/third-party/**", "/data/**", "/*.idea"]
 
 [dependencies]
-stackpress-idea-parser = { path = "../idea-parser", version = "0.2.0" }
-stackpress-idea-transformer = { path = "../idea-transformer", version = "0.2.0" }
+stackpress-idea-parser = { path = "../idea-parser", version = "0.2.1" }
+stackpress-idea-transformer = { path = "../idea-transformer", version = "0.2.1" }
 
 [dev-dependencies]
 tempfile = "3"

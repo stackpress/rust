@@ -1,0 +1,276 @@
+[
+  {
+    "name": "regenerate_email_models",
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "stackpress-framework-session",
+      "--example",
+      "regenerate_email_models",
+      "--locked",
+      "--offline",
+      "--features",
+      "auth-server",
+      "--",
+      "--check"
+    ],
+    "code": 0,
+    "command_seconds": 13.94253
+  },
+  {
+    "name": "composite_admin_fixture",
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "stackpress-framework-api",
+      "--example",
+      "composite_admin_fixture",
+      "--locked",
+      "--offline",
+      "--features",
+      "sql,codegen,ui-ssr",
+      "--",
+      "--check"
+    ],
+    "code": 0,
+    "command_seconds": 2.000057
+  },
+  {
+    "name": "contracts-matrix",
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "generated-workspace-tool",
+      "--locked",
+      "--offline",
+      "--",
+      "emit",
+      "generate",
+      "--input",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/examples/generated-workspace/contracts/matrix.idea",
+      "--output",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/examples/generated-workspace/contracts/src/matrix",
+      "--check",
+      "true"
+    ],
+    "code": 0,
+    "command_seconds": 1.296793
+  },
+  {
+    "name": "native-matrix",
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "generated-workspace-tool",
+      "--locked",
+      "--offline",
+      "--",
+      "emit",
+      "generate",
+      "--input",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/examples/generated-workspace/app/native.idea",
+      "--output",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/examples/generated-workspace/app/src/matrix_generated",
+      "--check",
+      "true"
+    ],
+    "code": 0,
+    "command_seconds": 1.331963
+  },
+  {
+    "name": "names",
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "generated-workspace-tool",
+      "--locked",
+      "--offline",
+      "--",
+      "emit",
+      "generate",
+      "--input",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/examples/generated-workspace/app/names.idea",
+      "--output",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/examples/generated-workspace/app/src/names_generated",
+      "--check",
+      "true"
+    ],
+    "code": 0,
+    "command_seconds": 1.147525
+  },
+  {
+    "name": "quickstart-v1",
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "generated-workspace-tool",
+      "--locked",
+      "--offline",
+      "--",
+      "emit",
+      "generate",
+      "--input",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/examples/data-quickstart/schema/001.idea",
+      "--output",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/examples/data-quickstart/src/generated/v1",
+      "--check",
+      "true"
+    ],
+    "code": 0,
+    "command_seconds": 1.061341
+  },
+  {
+    "name": "quickstart-v2",
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "generated-workspace-tool",
+      "--locked",
+      "--offline",
+      "--",
+      "emit",
+      "generate",
+      "--input",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/examples/data-quickstart/schema/002.idea",
+      "--output",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/examples/data-quickstart/src/generated/v2",
+      "--check",
+      "true"
+    ],
+    "code": 0,
+    "command_seconds": 1.032247
+  },
+  {
+    "name": "quickstart-v3",
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "generated-workspace-tool",
+      "--locked",
+      "--offline",
+      "--",
+      "emit",
+      "generate",
+      "--input",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/examples/data-quickstart/schema/003.idea",
+      "--output",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/examples/data-quickstart/src/generated/v3",
+      "--check",
+      "true"
+    ],
+    "code": 0,
+    "command_seconds": 1.125599
+  },
+  {
+    "name": "admin-format",
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "generated-admin-tool",
+      "--features",
+      "format",
+      "--locked",
+      "--offline",
+      "--",
+      "emit",
+      "generate",
+      "--input",
+      "examples/generated-admin/schema-format.idea",
+      "--output",
+      "examples/generated-admin/shared/src/generated-format",
+      "--check"
+    ],
+    "code": 0,
+    "command_seconds": 33.184507
+  },
+  {
+    "name": "profile",
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "stackpress-example-profile-codegen",
+      "--locked",
+      "--offline",
+      "--",
+      "emit",
+      "generate",
+      "--check",
+      "true"
+    ],
+    "code": 0,
+    "command_seconds": 2.216772
+  },
+  {
+    "name": "composite-models",
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "stackpress-framework-api",
+      "--example",
+      "regenerate_api_models",
+      "--locked",
+      "--offline",
+      "--",
+      "--input",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/crates/framework/framework-api/tests/fixtures/admin-composite/schema.idea",
+      "--output",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/crates/framework/framework-api/tests/fixtures/admin-composite/models",
+      "--check"
+    ],
+    "code": 0,
+    "command_seconds": 19.504857
+  },
+  {
+    "name": "session-plugin-models",
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "stackpress-framework-api",
+      "--example",
+      "regenerate_api_models",
+      "--locked",
+      "--offline",
+      "--",
+      "--input",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/crates/framework/framework-session/consumers/plugin/schema.idea",
+      "--output",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/crates/framework/framework-session/consumers/plugin/src/models",
+      "--check"
+    ],
+    "code": 0,
+    "command_seconds": 1.018522
+  },
+  {
+    "name": "sql-session-only",
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "stackpress-framework-session",
+      "--example",
+      "regenerate_session_models",
+      "--locked",
+      "--offline",
+      "--",
+      "--input",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/crates/framework/framework-session/tests/fixtures/session-only.idea",
+      "--output",
+      "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/crates/framework/framework-sql/tests/source-session-only",
+      "--check"
+    ],
+    "code": 0,
+    "command_seconds": 23.211545
+  }
+]

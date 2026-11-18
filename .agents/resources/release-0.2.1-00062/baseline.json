@@ -1,0 +1,67 @@
+{
+  "commit": "34be3146ffc3279595595b665bf371205744a3a2",
+  "head": "5436c94f1680f71f444a5c4870e9f12ac1168d9f",
+  "git_archive_compared": true,
+  "archives": [
+    {
+      "name": "stackpress-lib",
+      "url": "https://crates.io/api/v1/crates/stackpress-lib/0.2.0/download",
+      "sha256": "bfa9ac8af94c33162b8b27516043c1d090bd0edaab07196770001c42a3480d9e",
+      "vcs": {
+        "git": {
+          "sha1": "34be3146ffc3279595595b665bf371205744a3a2"
+        },
+        "path_in_vcs": "crates/lib"
+      },
+      "matched_files": 77,
+      "source_differences": [],
+      "normalized_metadata_matches": true,
+      "external_registry_subset": true,
+      "published_internal_registry": [],
+      "normalized_internal_requirements": []
+    },
+    {
+      "name": "stackpress-server",
+      "url": "https://crates.io/api/v1/crates/stackpress-server/0.2.0/download",
+      "sha256": "593ae0777f54ef1a308863c14a9c31c10457ca90bc9e5d2d2b904eb23e39bcf3",
+      "vcs": {
+        "git": {
+          "sha1": "34be3146ffc3279595595b665bf371205744a3a2"
+        },
+        "path_in_vcs": "crates/server/server"
+      },
+      "matched_files": 64,
+      "source_differences": [],
+      "normalized_metadata_matches": true,
+      "external_registry_subset": true,
+      "published_internal_registry": [
+        [
+          "stackpress-lib",
+          "0.2.0",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "bfa9ac8af94c33162b8b27516043c1d090bd0edaab07196770001c42a3480d9e"
+        ]
+      ],
+      "normalized_internal_requirements": [
+        "stackpress-lib"
+      ]
+    },
+    {
+      "name": "stackpress-leptos",
+      "url": "https://crates.io/api/v1/crates/stackpress-leptos/0.2.0/download",
+      "sha256": "24889e41111b11a5a4933eba40bb8e3a951d4f4c4512d173557ad6f910641830",
+      "vcs": {
+        "git": {
+          "sha1": "34be3146ffc3279595595b665bf371205744a3a2"
+        },
+        "path_in_vcs": "crates/leptos"
+      },
+      "matched_files": 180,
+      "source_differences": [],
+      "normalized_metadata_matches": true,
+      "external_registry_subset": true,
+      "published_internal_registry": [],
+      "normalized_internal_requirements": []
+    }
+  ]
+}
