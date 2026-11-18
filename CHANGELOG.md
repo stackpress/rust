@@ -3,7 +3,11 @@
 Changes are grouped by release in Keep a Changelog style. The 23 published crates
 share one version. Before 1.0, breaking changes bump the minor version.
 
-## Unreleased
+## 0.2.1 (beta) — 2026-11-18
+
+This additive release preserves the 0.2.0 public and generated APIs. No migration
+guide is needed; existing `"0.2"` dependency requirements remain valid. Beta describes
+maturity, without a semver pre-release suffix.
 
 ### Added
 
@@ -20,10 +24,17 @@ share one version. Before 1.0, breaking changes bump the minor version.
 
 - Valid WebSocket requests to explicitly enabled endpoints now answer **101** instead
   of the previous **400** rejection. Feature-off upgrade rejection remains unchanged.
+  With WebSocket support enabled, unsupported WebSocket versions receive **426**
+  with the supported version; malformed handshakes are rejected before route handlers.
   Applications must select Origin, authentication and per-message authorization policy.
 - Approved realtime connections use a separate finite one-hour session clock. Stop
   finishes the current SSE event then EOF; WebSockets send Close(1001) within host grace.
 - The blog lock is again a pure root subset; G63 retires G58's blog-only tuple exception.
+
+### Fixed
+
+- HTTP flushes that leave a response body unfinished no longer repeatedly wake the
+  connection supervisor. This prevents busy polling from starving timeout clocks.
 
 ## 0.2.0 (beta) — 2026-11-12
 

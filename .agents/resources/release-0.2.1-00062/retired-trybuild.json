@@ -1,0 +1,6 @@
+{
+  "phase": "GATE facade : python3 tools/release/check_facade.py",
+  "before_bytes": 13965942784,
+  "after_bytes": 12089479168,
+  "removed": "target/00062-release/native/tests/trybuild"
+}

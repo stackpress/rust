@@ -1,0 +1,10 @@
+{
+  "phase": "GATE facade : python3 tools/release/check_facade.py",
+  "before_bytes": 11823390720,
+  "after_bytes": 10430476288,
+  "removed": [
+    "target/00062-release/native/api-checkpoint",
+    "target/00062-release/native/readme-build"
+  ],
+  "facade_target_and_package_archives_preserved": true
+}

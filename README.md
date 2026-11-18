@@ -2,7 +2,7 @@
 
 **Beta:** 0.2.x is the supported release series; 0.1.x users should upgrade. The API may still change before 1.0.
 
-0.2.0 is a normal Cargo release; “beta” describes its maturity. Use Rust 1.96 or newer.
+0.2.1 is a normal Cargo release; “beta” describes its maturity. Use Rust 1.96 or newer.
 Read the [changelog](CHANGELOG.md) and [0.1 to 0.2 migration guide](docs/migrating-0.1-to-0.2.md).
 
 Opt-in [SSE and WebSocket hosting](crates/server/http/docs/guides/realtime.md) uses
@@ -19,7 +19,7 @@ stackpress = "0.2"
 
 Stackpress's Rust monorepo uses Leptos + Tauri, reusable event-driven capabilities,
 configuration, and compile-time function-based plugins. The workspace contains independent libraries, optional framework capabilities,
-and application examples. The 23 packages are being prepared for the coordinated 0.2.0 beta release.
+and application examples. The 23 packages are being prepared for the coordinated 0.2.1 beta release.
 
 Start with [AGENTS.md](AGENTS.md) and the [KB context index](.agents/context/index.md).
 The [next-session handoff](.agents/references/00040-session-handoff.md) records the
@@ -38,7 +38,7 @@ python3 .agents/scripts/verify-kb-provenance.py
 
 ## Crates and licences
 
-The 23 release candidates use lockstep version `0.2.0`. Examples and proof consumers
+The 23 release candidates use lockstep version `0.2.1`. Examples and proof consumers
 remain unpublished. Third-party notices accompany the affected crates.
 
 | Crates | Licence |

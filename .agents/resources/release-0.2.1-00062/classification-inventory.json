@@ -1,0 +1,238 @@
+[
+  {
+    "crate": "stackpress-leptos",
+    "path": "crates/leptos",
+    "changed_sources_and_templates": [
+      "crates/leptos/src/lib.rs",
+      "crates/leptos/src/realtime/dom.rs",
+      "crates/leptos/src/realtime/dom_sse.rs",
+      "crates/leptos/src/realtime/dom_ws.rs",
+      "crates/leptos/src/realtime/event_source.rs",
+      "crates/leptos/src/realtime/mod.rs",
+      "crates/leptos/src/realtime/websocket.rs"
+    ],
+    "existing_features_unchanged": true,
+    "added_features": [
+      "client-sse",
+      "client-websocket"
+    ],
+    "rust_version_unchanged": true
+  },
+  {
+    "crate": "stackpress-framework-language",
+    "path": "crates/framework/framework-language",
+    "changed_sources_and_templates": [],
+    "existing_features_unchanged": true,
+    "added_features": [],
+    "rust_version_unchanged": true
+  },
+  {
+    "crate": "stackpress-sql",
+    "path": "crates/sql/sql",
+    "changed_sources_and_templates": [],
+    "existing_features_unchanged": true,
+    "added_features": [],
+    "rust_version_unchanged": true
+  },
+  {
+    "crate": "stackpress-lib",
+    "path": "crates/lib",
+    "changed_sources_and_templates": [],
+    "existing_features_unchanged": true,
+    "added_features": [],
+    "rust_version_unchanged": true
+  },
+  {
+    "crate": "stackpress-idea-parser",
+    "path": "crates/idea/idea-parser",
+    "changed_sources_and_templates": [],
+    "existing_features_unchanged": true,
+    "added_features": [],
+    "rust_version_unchanged": true
+  },
+  {
+    "crate": "stackpress-sql-sqlite",
+    "path": "crates/sql/sql-sqlite",
+    "changed_sources_and_templates": [],
+    "existing_features_unchanged": true,
+    "added_features": [],
+    "rust_version_unchanged": true
+  },
+  {
+    "crate": "stackpress-sql-postgres",
+    "path": "crates/sql/sql-postgres",
+    "changed_sources_and_templates": [],
+    "existing_features_unchanged": true,
+    "added_features": [],
+    "rust_version_unchanged": true
+  },
+  {
+    "crate": "stackpress-sql-mysql",
+    "path": "crates/sql/sql-mysql",
+    "changed_sources_and_templates": [],
+    "existing_features_unchanged": true,
+    "added_features": [],
+    "rust_version_unchanged": true
+  },
+  {
+    "crate": "stackpress-server",
+    "path": "crates/server/server",
+    "changed_sources_and_templates": [
+      "crates/server/server/src/http.rs",
+      "crates/server/server/src/http/sse.rs",
+      "crates/server/server/src/http/sse/channel.rs",
+      "crates/server/server/src/http/sse/driver_tests.rs",
+      "crates/server/server/src/http/sse/tests.rs",
+      "crates/server/server/src/http/stream.rs",
+      "crates/server/server/src/http/upgrade.rs",
+      "crates/server/server/tests/http_stream.rs"
+    ],
+    "existing_features_unchanged": true,
+    "added_features": [
+      "http-sse",
+      "http-upgrade"
+    ],
+    "rust_version_unchanged": true
+  },
+  {
+    "crate": "stackpress-idea-transformer",
+    "path": "crates/idea/idea-transformer",
+    "changed_sources_and_templates": [],
+    "existing_features_unchanged": true,
+    "added_features": [],
+    "rust_version_unchanged": true
+  },
+  {
+    "crate": "stackpress-server-http",
+    "path": "crates/server/http",
+    "changed_sources_and_templates": [
+      "crates/server/http/examples/realtime.rs",
+      "crates/server/http/src/body.rs",
+      "crates/server/http/src/connection.rs",
+      "crates/server/http/src/deployment.rs",
+      "crates/server/http/src/input.rs",
+      "crates/server/http/src/lib.rs",
+      "crates/server/http/src/monitor.rs",
+      "crates/server/http/src/realtime.rs",
+      "crates/server/http/src/sse.rs",
+      "crates/server/http/src/supervisor.rs",
+      "crates/server/http/src/websocket/connection.rs",
+      "crates/server/http/src/websocket/connection_tests.rs",
+      "crates/server/http/src/websocket/driver.rs",
+      "crates/server/http/src/websocket/driver/tests.rs",
+      "crates/server/http/src/websocket/handshake.rs",
+      "crates/server/http/src/websocket/mod.rs",
+      "crates/server/http/src/websocket/tests.rs",
+      "crates/server/http/tests/realtime.rs",
+      "crates/server/http/tests/realtime_browser.rs"
+    ],
+    "existing_features_unchanged": true,
+    "added_features": [
+      "sse",
+      "websocket"
+    ],
+    "rust_version_unchanged": true
+  },
+  {
+    "crate": "stackpress-cli",
+    "path": "tools/cli",
+    "changed_sources_and_templates": [],
+    "existing_features_unchanged": true,
+    "added_features": [],
+    "rust_version_unchanged": true
+  },
+  {
+    "crate": "stackpress-framework-view",
+    "path": "crates/framework/framework-view",
+    "changed_sources_and_templates": [],
+    "existing_features_unchanged": true,
+    "added_features": [],
+    "rust_version_unchanged": true
+  },
+  {
+    "crate": "stackpress-framework-csrf",
+    "path": "crates/framework/framework-csrf",
+    "changed_sources_and_templates": [],
+    "existing_features_unchanged": true,
+    "added_features": [],
+    "rust_version_unchanged": true
+  },
+  {
+    "crate": "stackpress-framework-email",
+    "path": "crates/framework/framework-email",
+    "changed_sources_and_templates": [],
+    "existing_features_unchanged": true,
+    "added_features": [],
+    "rust_version_unchanged": true
+  },
+  {
+    "crate": "stackpress-idea",
+    "path": "crates/idea/idea",
+    "changed_sources_and_templates": [],
+    "existing_features_unchanged": true,
+    "added_features": [],
+    "rust_version_unchanged": true
+  },
+  {
+    "crate": "stackpress-framework-schema",
+    "path": "crates/framework/framework-schema",
+    "changed_sources_and_templates": [],
+    "existing_features_unchanged": true,
+    "added_features": [],
+    "rust_version_unchanged": true
+  },
+  {
+    "crate": "stackpress-framework-sql",
+    "path": "crates/framework/framework-sql",
+    "changed_sources_and_templates": [],
+    "existing_features_unchanged": true,
+    "added_features": [],
+    "rust_version_unchanged": true
+  },
+  {
+    "crate": "stackpress-framework-admin",
+    "path": "crates/framework/framework-admin",
+    "changed_sources_and_templates": [],
+    "existing_features_unchanged": true,
+    "added_features": [],
+    "rust_version_unchanged": true
+  },
+  {
+    "crate": "stackpress-framework-session",
+    "path": "crates/framework/framework-session",
+    "changed_sources_and_templates": [],
+    "existing_features_unchanged": true,
+    "added_features": [],
+    "rust_version_unchanged": true
+  },
+  {
+    "crate": "stackpress-framework-api",
+    "path": "crates/framework/framework-api",
+    "changed_sources_and_templates": [],
+    "existing_features_unchanged": true,
+    "added_features": [],
+    "rust_version_unchanged": true
+  },
+  {
+    "crate": "stackpress-framework",
+    "path": "crates/framework/framework",
+    "changed_sources_and_templates": [],
+    "existing_features_unchanged": true,
+    "added_features": [],
+    "rust_version_unchanged": true
+  },
+  {
+    "crate": "stackpress",
+    "path": ".",
+    "changed_sources_and_templates": [],
+    "existing_features_unchanged": true,
+    "added_features": [
+      "leptos-sse",
+      "leptos-websocket",
+      "server-http-host-sse",
+      "server-http-host-websocket",
+      "server-http-sse"
+    ],
+    "rust_version_unchanged": true
+  }
+]

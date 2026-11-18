@@ -1,10 +1,10 @@
 # Release and licensing
 
-Authority: current [workspace manifest](../../Cargo.toml), [release inventory](../../tools/release/common.py), G59–G62 and [release versioning workflow](../workflows/release-versioning.md). Load that workflow for an actual preparation task; it owns semver selection, coordinated edits, migration documentation and owner publication steps.
+Authority: current [workspace manifest](../../Cargo.toml), [release inventory](../../tools/release/common.py), G59–G63 and [release versioning workflow](../workflows/release-versioning.md). Load that workflow for an actual preparation task; it owns semver selection, coordinated edits, migration documentation and owner publication steps.
 
 ## Release set and version
 
-The [crate inventory](source-structure.md) lists all **23** release packages, each with `publish = true`. Examples, blog plugins, consumers and fuzz crates are unpublished. The release packages use lockstep **0.2.0**. “Beta” describes maturity; the version has no semver prerelease suffix. The [root README](../../README.md), [changelog](../../CHANGELOG.md) and [migration guide](../../docs/migrating-0.1-to-0.2.md) document the 0.2 series and public breaks. A manifest/preparation receipt does not establish that 0.2.0 has been uploaded.
+The [crate inventory](source-structure.md) lists all **23** release packages, each with `publish = true`. Examples, blog plugins, consumers and fuzz crates are unpublished. The release packages use lockstep **0.2.1**. “Beta” describes maturity; the version has no semver prerelease suffix. The [root README](../../README.md), [changelog](../../CHANGELOG.md) and [migration guide](../../docs/migrating-0.1-to-0.2.md) document the 0.2 series and public breaks. The owner published all 23 packages at 0.2.0 on 2026-11-12. Task [00062](../specs/00001-stackpress-rust-foundation/tasks/00062-release-0.2.1.md) records the published archive baseline and additive 0.2.1 preparation; no migration guide is needed for this patch. Preparation does not establish that 0.2.1 has been uploaded.
 
 Breaking public/generated API changes before 1.0 bump the minor (0.1.x → 0.2.0); apply a chosen version to workspace metadata, every internal version requirement, approved nested locks and generated/versioned docs. Keep registry tuples unchanged unless separately approved. Follow the workflow for the full semver and verification rules; never hand-edit managed generated output.
 
@@ -21,7 +21,7 @@ Licensing choices belong to the owner. Preserve third-party notices. [ATTRIBUTIO
 
 ## Verification and package boundaries
 
-[Release gate](../../tools/release/gate.py) runs the current 27 named phases with logs and retained retry evidence: licence check, format, default/compatible Clippy/nextest/watchdog/doctest/Rustdoc, isolated consumers/graphs, generators, blog, controls, README/package/leaf dry runs and facade. It requires the caller's `CARGO_TARGET_DIR` and cached browser tool configuration. Use [fast build/test](../workflows/fast-build-and-test.md) and [benchmark recording](../workflows/build-benchmarks.md); nothing in this KB sync runs or claims a fresh Cargo release gate.
+[Release gate](../../tools/release/gate.py) runs the current 30 named phases with logs and retained retry evidence: licence check, format, default/compatible Clippy/nextest/watchdog/doctest/Rustdoc, isolated consumers/graphs, generators, blog, controls, README/package/leaf dry runs and facade. It requires the caller's `CARGO_TARGET_DIR` and cached browser tool configuration. Use [fast build/test](../workflows/fast-build-and-test.md) and [benchmark recording](../workflows/build-benchmarks.md). Record verification against the prepared tree; a KB-only edit does not establish a fresh gate result.
 
 Publication preparation also requires standalone Clippy for every candidate, live-inclusive >=90% line coverage for non-facade crates and the finite [fuzz runs](../../tools/release/FUZZING.md). The facade uses its compatible build/import/default-tree proof (G61), and startup-only browser entry exemptions follow G56. [Testing and quality](testing-and-quality.md) defines scope, meaningful tests and evidence limits.
 

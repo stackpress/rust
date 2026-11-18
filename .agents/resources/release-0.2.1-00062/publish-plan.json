@@ -1,0 +1,8 @@
+{
+  "command": [
+    "./publish.sh",
+    "--plan"
+  ],
+  "code": 0,
+  "output": "[15:03:23] Release version 0.2.1\n[15:03:48] 23 to publish: 23 new version(s) of existing crates, 0 brand-new crate(s); about 0 minute(s) of rate-limit waiting.\n  stackpress-leptos                  update\n  stackpress-framework-language      update\n  stackpress-sql                     update\n  stackpress-lib                     update\n  stackpress-idea-parser             update\n  stackpress-sql-sqlite              update\n  stackpress-sql-postgres            update\n  stackpress-sql-mysql               update\n  stackpress-server                  update\n  stackpress-idea-transformer        update\n  stackpress-server-http             update\n  stackpress-cli                     update\n  stackpress-framework-view          update\n  stackpress-framework-csrf          update\n  stackpress-framework-email         update\n  stackpress-idea                    update\n  stackpress-framework-schema        update\n  stackpress-framework-sql           update\n  stackpress-framework-admin         update\n  stackpress-framework-session       update\n  stackpress-framework-api           update\n  stackpress-framework               update\n  stackpress                         update\n"
+}

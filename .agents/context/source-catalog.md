@@ -6,7 +6,7 @@ Load for source provenance, claim verification, historical material or KB mainte
 
 1. Current explicit owner instructions govern scope, behavior, process and authorization.
 2. Current-branch Rust source and manifests establish implemented crates, APIs, features, commands and checks. [Source structure](source-structure.md) inventories packages; [source map](source-map.md) routes implementation and consumers. Verify at the semantic owner before changing a claim.
-3. Accepted decisions G01–G62 in [the foundation ledger](../specs/00001-stackpress-rust-foundation/decisions.md) supply approved semantics. Later decisions supersede earlier ones: G41 removes framework-ui, G59 removes premade framework-models, G60 sets licences and G61 sets the 23-package release scope/facade exemption. Current manifests and the accepted release workflow set the version at 0.2.0 beta; the ledger's earlier 0.1.0 choice is not the current version.
+3. Accepted decisions G01–G63 in [the foundation ledger](../specs/00001-stackpress-rust-foundation/decisions.md) supply approved semantics. Later decisions supersede earlier ones: G41 removes framework-ui, G59 removes premade framework-models, G60 sets licences and G61 sets the 23-package release scope/facade exemption. Current manifests and the accepted release workflow set the version at 0.2.1 beta; the ledger's earlier 0.1.0 choice is not the current version.
 4. Verified [task receipts](../specs/00001-stackpress-rust-foundation/tasks/status.md) establish bounded build/test and platform evidence. They do not turn a historical proof into universal support. Source/manifests are authoritative for the implemented state.
 5. Imported upstream contracts and discussion references retain their original scope/revision/provenance. Proposals, capture records and old open questions are historical material, not active target decisions.
 
@@ -14,7 +14,7 @@ Load for source provenance, claim verification, historical material or KB mainte
 
 ## Current source families
 
-- Root [Cargo.toml](../../Cargo.toml) and [src/lib.rs](../../src/lib.rs): membership, 0.2.0/edition/MSRV, lints, features, direct exports and optional namespace aliases.
+- Root [Cargo.toml](../../Cargo.toml) and [src/lib.rs](../../src/lib.rs): membership, 0.2.1/edition/MSRV, lints, features, direct exports and optional namespace aliases.
 - Linked per-crate manifests and sources in [the inventory](source-structure.md): all 23 release candidates, their local feature names and public facade paths, plus independent CLI use.
 - [Parser provenance](../../crates/idea/idea-parser/PROVENANCE.md): the implemented extracted/repaired core, grammar/fixture provenance and retained Apache licence, separate from Node distribution.
 - [Framework source schema loader](../../crates/framework/framework/src/native/commands/schema.rs): original `.idea` sources and compiled package imports; app-owned generated families replace premade models.

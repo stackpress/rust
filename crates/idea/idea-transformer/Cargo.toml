@@ -13,8 +13,8 @@ license.workspace = true
 include = ["/src/**", "/README.md", "/LICENSE", "/*.md", "/tests/**", "/examples/**", "/docs/**/*.md", "/third-party/**", "/data/**", "/*.idea"]
 
 [dependencies]
-stackpress-idea-parser = { path = "../idea-parser", version = "0.2.0" }
-stackpress-lib = { path = "../../lib", version = "0.2.0" }
+stackpress-idea-parser = { path = "../idea-parser", version = "0.2.1" }
+stackpress-lib = { path = "../../lib", version = "0.2.1" }
 serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1", features = ["preserve_order"] }
 tempfile = "3"

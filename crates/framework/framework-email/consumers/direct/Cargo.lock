@@ -963,7 +963,7 @@ dependencies = [
  "once_cell",
  "socket2",
  "tracing",
- "windows-sys 0.52.0",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
@@ -1164,7 +1164,7 @@ dependencies = [
  "security-framework",
  "security-framework-sys",
  "webpki-root-certs",
- "windows-sys 0.52.0",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
@@ -1362,7 +1362,7 @@ checksum = "6ce2be8dc25455e1f91df71bfa12ad37d7af1092ae736f3a6cd0e37bc7810596"
 
 [[package]]
 name = "stackpress-framework-csrf"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "ring",
  "serde",
@@ -1373,7 +1373,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-framework-email"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "base64 0.22.1",
  "lettre",
@@ -1387,7 +1387,7 @@ dependencies = [
 
 [[package]]
 name = "stackpress-lib"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "httpdate",
  "indexmap",

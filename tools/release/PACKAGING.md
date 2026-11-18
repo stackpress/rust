@@ -1,7 +1,7 @@
 # Release manifests and packaging proofs
 
 The release scope is the explicit 23-package list in `common.py`. Private examples
-and consumers retain `publish = false`. Every candidate has version `0.2.0`.
+and consumers retain `publish = false`. Every candidate has version `0.2.1`.
 
 Run these proofs through `.agents/scripts/build-benchmark.py` with the environment
 and shared store specified in Task 00050:

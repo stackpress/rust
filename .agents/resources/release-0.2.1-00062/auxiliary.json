@@ -1,0 +1,29 @@
+[
+  {
+    "name": "boundaries",
+    "command": [
+      "python3",
+      "tools/release/check_test_boundaries.py"
+    ],
+    "code": 0,
+    "output": "stackpress: PASS (0 references)\nstackpress-lib: PASS (0 references)\nstackpress-server: PASS (0 references)\nstackpress-server-http: PASS (0 references)\nstackpress-cli: PASS (0 references)\nstackpress-idea-parser: PASS (0 references)\nstackpress-idea-transformer: PASS (0 references)\nstackpress-idea: PASS (0 references)\nstackpress-sql: PASS (0 references)\nstackpress-sql-sqlite: PASS (0 references)\nstackpress-sql-postgres: PASS (0 references)\nstackpress-sql-mysql: PASS (0 references)\nstackpress-framework-view: PASS (0 references)\nstackpress-leptos: PASS (0 references)\nstackpress-framework-language: PASS (0 references)\nstackpress-framework-schema: PASS (0 references)\nstackpress-framework-sql: PASS (0 references)\nstackpress-framework-admin: PASS (0 references)\nstackpress-framework-api: PASS (0 references)\nstackpress-framework-csrf: PASS (0 references)\nstackpress-framework-email: PASS (0 references)\nstackpress-framework-session: PASS (0 references)\nstackpress-framework: PASS (0 references)\nTest boundaries: 23 candidates; 0 errors outside pending work\n"
+  },
+  {
+    "name": "copies",
+    "command": [
+      "python3",
+      "tools/release/check_test_copies.py"
+    ],
+    "code": 0,
+    "output": "Test copies: 46 checked in 2 manifests; 0 errors\n"
+  },
+  {
+    "name": "licenses",
+    "command": [
+      "python3",
+      "tools/release/check_dep_licenses.py"
+    ],
+    "code": 0,
+    "output": "   1  (MIT OR Apache-2.0) AND NCSA\n   1  (MIT OR Apache-2.0) AND Unicode-3.0\n   1  0BSD\n   1  0BSD OR MIT OR Apache-2.0\n   4  Apache-2.0\n   1  Apache-2.0 / MIT\n   1  Apache-2.0 AND ISC\n   1  Apache-2.0 AND MIT\n   1  Apache-2.0 OR BSL-1.0 OR MIT\n   3  Apache-2.0 OR ISC OR MIT\n  59  Apache-2.0 OR MIT\n   1  Apache-2.0 WITH LLVM-exception\n   5  Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT\n   5  Apache-2.0/MIT\n   2  BSD-2-Clause OR Apache-2.0 OR MIT\n   5  BSD-3-Clause\n   1  BSD-3-Clause AND MIT\n   2  BSD-3-Clause OR MIT OR Apache-2.0\n   1  BSD-3-Clause/MIT\n   1  BSL-1.0\n   1  CC0-1.0\n   1  CC0-1.0 OR MIT-0 OR Apache-2.0\n   2  CDLA-Permissive-2.0\n   3  ISC\n   1  ISC AND (Apache-2.0 OR ISC)\n   1  ISC AND (Apache-2.0 OR ISC) AND Apache-2.0 AND MIT AND BSD-3-Clause AND (Apache-2.0 OR ISC OR MIT) AND (Apache-2.0 OR ISC OR MIT-0)\n 165  MIT\n 323  MIT OR Apache-2.0\n   1  MIT OR Apache-2.0 OR BSD-1-Clause\n   2  MIT OR Apache-2.0 OR LGPL-2.1-or-later\n   3  MIT OR Apache-2.0 OR Zlib\n   2  MIT OR Zlib OR Apache-2.0\n  30  MIT/Apache-2.0\n   6  MPL-2.0\n  34  Unicode-3.0\n  10  Unlicense OR MIT\n   2  Unlicense/MIT\n   7  Zlib\n  17  Zlib OR Apache-2.0 OR MIT\nMETADATA: atomic-polyfill 1.0.3: crates.io API, 2026-11-12\nMETADATA: fiat-crypto 0.2.9: crates.io API, 2026-11-12\nDependency licences: 708 unique registry packages in 23 locks; 708 declarations read; 2 dated metadata fallbacks; 39 expressions; 0 failures\n"
+  }
+]

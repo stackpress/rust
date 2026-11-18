@@ -1,0 +1,38 @@
+[
+  {
+    "before_bytes": 10400235520,
+    "after_bytes": 6843985920,
+    "removed": [
+      "target/00062-release/native/consumer-aggregate-build-host",
+      "target/00062-release/native/consumer-aggregate-full",
+      "target/00062-release/native/consumer-aggregate-direct"
+    ],
+    "runner_paused_during_cleanup": true,
+    "active_consumer_build_preserved": true
+  },
+  {
+    "before_bytes": 9851420672,
+    "after_bytes": 6582157312,
+    "removed": [
+      "target/00062-release/native/consumer-aggregate-headless",
+      "target/00062-release/native/consumer-aggregate-api-disabled",
+      "target/00062-release/native/consumer-aggregate-disabled",
+      "target/00062-release/native/consumer-aggregate-facade"
+    ],
+    "runner_paused_during_cleanup": true,
+    "active_consumer_build_preserved": true
+  },
+  {
+    "phase": "GATE api-checkpoint : cargo run --manifest-path examples/api-checkpoint/tool/Cargo.toml --locked --offline -- --check",
+    "before_bytes": 11578216448,
+    "after_bytes": 6824255488,
+    "removed": [
+      "target/00062-release/native/consumer-aggregate-website",
+      "target/00062-release/native/consumer-session-direct",
+      "target/00062-release/native/consumer-session-facade",
+      "target/00062-release/native/consumer-session-plugin",
+      "target/00062-release/native/consumer-session-disabled"
+    ],
+    "all_consumer_processes_completed": true
+  }
+]

@@ -1,0 +1,418 @@
+{
+  "store": "/Users/cblanquera/server/projects/stackpress/rust/.agents/resources/build-benchmarks",
+  "completed_records": 15,
+  "failed_records": 0,
+  "command_seconds_sum": 6502.679954,
+  "cargo_build_seconds_sum": 6609.15,
+  "timing_note": "Command durations can overlap across records. Cargo Finished durations can overlap/nest; neither sum is elapsed wall time or CPU time.",
+  "records": [
+    {
+      "id": "20261118T065959.837859Z-514c13c4e1da",
+      "label": "00062 fresh effort target cleanup",
+      "status": "passed",
+      "command": [
+        "cargo",
+        "clean"
+      ],
+      "cwd": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1",
+      "branch": "release/0.2.1",
+      "commit": "5436c94f1680f71f444a5c4870e9f12ac1168d9f",
+      "environment": {
+        "CARGO_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/target/00062-release/native",
+        "CARGO_LLVM_COV_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/target/00062-release/llvm-cov",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_BUILD_JOBS": "2"
+      },
+      "command_seconds": 0.551673,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "log": "runs/20261118T065959.837859Z-514c13c4e1da.log"
+    },
+    {
+      "id": "20261118T070038.813917Z-5dc549252420",
+      "label": "00062 fresh effort coverage target cleanup",
+      "status": "passed",
+      "command": [
+        "cargo",
+        "llvm-cov",
+        "clean",
+        "--workspace"
+      ],
+      "cwd": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1",
+      "branch": "release/0.2.1",
+      "commit": "5436c94f1680f71f444a5c4870e9f12ac1168d9f",
+      "environment": {
+        "CARGO_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/target/00062-release/native",
+        "CARGO_LLVM_COV_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/target/00062-release/llvm-cov",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_BUILD_JOBS": "2"
+      },
+      "command_seconds": 0.896859,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "log": "runs/20261118T070038.813917Z-5dc549252420.log"
+    },
+    {
+      "id": "20261118T070056.895038Z-4c8b5494daa2",
+      "label": "00062 root and 22 nested lock refresh offline",
+      "status": "passed",
+      "command": [
+        "python3",
+        "/private/tmp/stackpress-00062/refresh_locks.py"
+      ],
+      "cwd": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1",
+      "branch": "release/0.2.1",
+      "commit": "5436c94f1680f71f444a5c4870e9f12ac1168d9f",
+      "environment": {
+        "CARGO_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/target/00062-release/native",
+        "CARGO_LLVM_COV_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/target/00062-release/llvm-cov",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_BUILD_JOBS": "2"
+      },
+      "command_seconds": 9.602784,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "log": "runs/20261118T070056.895038Z-4c8b5494daa2.log"
+    },
+    {
+      "id": "20261118T070222.119434Z-f09da6516ae6",
+      "label": "00062 gate once final version docs tree",
+      "status": "passed",
+      "command": [
+        "python3",
+        "tools/release/gate.py",
+        "--allow-dirty"
+      ],
+      "cwd": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1",
+      "branch": "release/0.2.1",
+      "commit": "5436c94f1680f71f444a5c4870e9f12ac1168d9f",
+      "environment": {
+        "CARGO_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/target/00062-release/native",
+        "CARGO_LLVM_COV_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/target/00062-release/llvm-cov",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_BUILD_JOBS": "2"
+      },
+      "command_seconds": 6204.726673,
+      "cargo_build_seconds": 6384.089999999996,
+      "cargo_activity": {
+        "compiling": 10426,
+        "checking": 4206,
+        "documenting": 107
+      },
+      "log": "runs/20261118T070222.119434Z-f09da6516ae6.log"
+    },
+    {
+      "id": "20261118T070322.875023Z-23c09457e38d",
+      "label": "00062 read-only publication plan",
+      "status": "passed",
+      "command": [
+        "python3",
+        "/private/tmp/stackpress-00062/publish_plan.py"
+      ],
+      "cwd": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1",
+      "branch": "release/0.2.1",
+      "commit": "5436c94f1680f71f444a5c4870e9f12ac1168d9f",
+      "environment": {
+        "CARGO_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/target/00062-release/native",
+        "CARGO_LLVM_COV_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/target/00062-release/llvm-cov",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_BUILD_JOBS": "2"
+      },
+      "command_seconds": 25.547319,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "log": "runs/20261118T070322.875023Z-23c09457e38d.log"
+    },
+    {
+      "id": "20261118T070546.353216Z-25c02fe19f38",
+      "label": "00062 strict boundaries copies and licences",
+      "status": "passed",
+      "command": [
+        "python3",
+        "-"
+      ],
+      "cwd": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1",
+      "branch": "release/0.2.1",
+      "commit": "5436c94f1680f71f444a5c4870e9f12ac1168d9f",
+      "environment": {
+        "CARGO_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/target/00062-release/native",
+        "CARGO_LLVM_COV_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/target/00062-release/llvm-cov",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_BUILD_JOBS": "2"
+      },
+      "command_seconds": 3.347535,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "log": "runs/20261118T070546.353216Z-25c02fe19f38.log"
+    },
+    {
+      "id": "20261118T073315.642622Z-d6989d5b274b",
+      "label": "00062 retire completed native executables at target budget boundary",
+      "status": "passed",
+      "command": [
+        "python3",
+        "/private/tmp/stackpress-00062/retire_test_executables.py"
+      ],
+      "cwd": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1",
+      "branch": "release/0.2.1",
+      "commit": "5436c94f1680f71f444a5c4870e9f12ac1168d9f",
+      "environment": {
+        "CARGO_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/target/00062-release/native",
+        "CARGO_LLVM_COV_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/target/00062-release/llvm-cov",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_BUILD_JOBS": "2"
+      },
+      "command_seconds": 1.599298,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "log": "runs/20261118T073315.642622Z-d6989d5b274b.log"
+    },
+    {
+      "id": "20261118T074149.935665Z-1e35f804ee4f",
+      "label": "00062 retire completed consumer targets at budget boundary",
+      "status": "passed",
+      "command": [
+        "python3",
+        "/private/tmp/stackpress-00062/retire_consumers.py"
+      ],
+      "cwd": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1",
+      "branch": "release/0.2.1",
+      "commit": "5436c94f1680f71f444a5c4870e9f12ac1168d9f",
+      "environment": {
+        "CARGO_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/target/00062-release/native",
+        "CARGO_LLVM_COV_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/target/00062-release/llvm-cov",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_BUILD_JOBS": "2"
+      },
+      "command_seconds": 3.321195,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "log": "runs/20261118T074149.935665Z-1e35f804ee4f.log"
+    },
+    {
+      "id": "20261118T074841.229328Z-60ea6c82a8ea",
+      "label": "00062 retire completed consumers before website build",
+      "status": "passed",
+      "command": [
+        "python3",
+        "/private/tmp/stackpress-00062/retire_consumers.py"
+      ],
+      "cwd": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1",
+      "branch": "release/0.2.1",
+      "commit": "5436c94f1680f71f444a5c4870e9f12ac1168d9f",
+      "environment": {
+        "CARGO_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/target/00062-release/native",
+        "CARGO_LLVM_COV_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/target/00062-release/llvm-cov",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_BUILD_JOBS": "2"
+      },
+      "command_seconds": 2.940838,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "log": "runs/20261118T074841.229328Z-60ea6c82a8ea.log"
+    },
+    {
+      "id": "20261118T075958.222875Z-1410575479af",
+      "label": "00062 retire completed consumers after consumer gate",
+      "status": "passed",
+      "command": [
+        "python3",
+        "-"
+      ],
+      "cwd": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1",
+      "branch": "release/0.2.1",
+      "commit": "5436c94f1680f71f444a5c4870e9f12ac1168d9f",
+      "environment": {
+        "CARGO_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/target/00062-release/native",
+        "CARGO_LLVM_COV_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/target/00062-release/llvm-cov",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_BUILD_JOBS": "2"
+      },
+      "command_seconds": 3.680528,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "log": "runs/20261118T075958.222875Z-1410575479af.log"
+    },
+    {
+      "id": "20261118T083841.197023Z-1a421d2ea650",
+      "label": "00062 retire completed API and README targets at budget boundary",
+      "status": "passed",
+      "command": [
+        "python3",
+        "-"
+      ],
+      "cwd": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1",
+      "branch": "release/0.2.1",
+      "commit": "5436c94f1680f71f444a5c4870e9f12ac1168d9f",
+      "environment": {
+        "CARGO_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/target/00062-release/native",
+        "CARGO_LLVM_COV_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/target/00062-release/llvm-cov",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_BUILD_JOBS": "2"
+      },
+      "command_seconds": 1.536739,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "log": "runs/20261118T083841.197023Z-1a421d2ea650.log"
+    },
+    {
+      "id": "20261118T084535.113281Z-b123ad91e212",
+      "label": "00062 retire completed trybuild target",
+      "status": "passed",
+      "command": [
+        "python3",
+        "/private/tmp/stackpress-00062/retire_trybuild.py"
+      ],
+      "cwd": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1",
+      "branch": "release/0.2.1",
+      "commit": "5436c94f1680f71f444a5c4870e9f12ac1168d9f",
+      "environment": {
+        "CARGO_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/target/00062-release/native",
+        "CARGO_LLVM_COV_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/target/00062-release/llvm-cov",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_BUILD_JOBS": "2"
+      },
+      "command_seconds": 2.81258,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "log": "runs/20261118T084535.113281Z-b123ad91e212.log"
+    },
+    {
+      "id": "20261118T084626.704101Z-bf7b92b711cd",
+      "label": "00062 retire completed facade target",
+      "status": "passed",
+      "command": [
+        "python3",
+        "/private/tmp/stackpress-00062/retire_facade.py"
+      ],
+      "cwd": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1",
+      "branch": "release/0.2.1",
+      "commit": "5436c94f1680f71f444a5c4870e9f12ac1168d9f",
+      "environment": {
+        "CARGO_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/target/00062-release/native",
+        "CARGO_LLVM_COV_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/target/00062-release/llvm-cov",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_BUILD_JOBS": "2"
+      },
+      "command_seconds": 2.423878,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "log": "runs/20261118T084626.704101Z-bf7b92b711cd.log"
+    },
+    {
+      "id": "20261118T084631.808938Z-7594242e1bba",
+      "label": "00062 standalone Clippy and additional freshness",
+      "status": "passed",
+      "command": [
+        "python3",
+        "/private/tmp/stackpress-00062/auxiliary.py"
+      ],
+      "cwd": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1",
+      "branch": "release/0.2.1",
+      "commit": "5436c94f1680f71f444a5c4870e9f12ac1168d9f",
+      "environment": {
+        "CARGO_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/target/00062-release/native",
+        "CARGO_LLVM_COV_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/target/00062-release/llvm-cov",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_BUILD_JOBS": "2"
+      },
+      "command_seconds": 238.918909,
+      "cargo_build_seconds": 225.05999999999997,
+      "cargo_activity": {
+        "compiling": 174,
+        "checking": 336,
+        "documenting": 0
+      },
+      "log": "runs/20261118T084631.808938Z-7594242e1bba.log"
+    },
+    {
+      "id": "20261118T085049.629544Z-85c099b23da0",
+      "label": "00062 final invariants and KB audit",
+      "status": "passed",
+      "command": [
+        "python3",
+        "/private/tmp/stackpress-00062/final_check.py"
+      ],
+      "cwd": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1",
+      "branch": "release/0.2.1",
+      "commit": "5436c94f1680f71f444a5c4870e9f12ac1168d9f",
+      "environment": {
+        "CARGO_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/target/00062-release/native",
+        "CARGO_LLVM_COV_TARGET_DIR": "/Users/cblanquera/.paseo/worktrees/342ftjlj/release-0-2-1/target/00062-release/llvm-cov",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_BUILD_JOBS": "2"
+      },
+      "command_seconds": 0.773146,
+      "cargo_build_seconds": null,
+      "cargo_activity": {
+        "compiling": 0,
+        "checking": 0,
+        "documenting": 0
+      },
+      "log": "runs/20261118T085049.629544Z-85c099b23da0.log"
+    }
+  ]
+}

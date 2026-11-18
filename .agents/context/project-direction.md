@@ -34,7 +34,7 @@ The implemented database engines are MySQL, PostgreSQL and SQLite. Native adapte
 
 ## Delivery and contributor rules
 
-The 23 release packages use lockstep `0.2.0` beta manifests, edition 2024 and MSRV 1.96. See [release and licensing](release-and-licensing.md) for the 11/12 licence split, attribution and release checks. Publication remains an owner action.
+The 23 release packages use lockstep `0.2.1` beta manifests, edition 2024 and MSRV 1.96. See [release and licensing](release-and-licensing.md) for the 11/12 licence split, attribution and release checks. Publication remains an owner action.
 
 Use [Rust style](rust-code-style.md), [testing and quality](testing-and-quality.md), [programming](../workflows/rust-programming.md) and [coordinated development](../workflows/coordinated-crate-development.md). Preserve unrelated changes; commits, pushes, deployment, publication and KB MCP publishing require explicit authorization. Development listeners use an available session installation of devmetrics.
 

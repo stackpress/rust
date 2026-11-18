@@ -1,0 +1,2007 @@
+{
+  "phase": "GATE aggregate-consumers : python3 crates/framework/framework/consumers/run.py",
+  "before_bytes": 11693944832,
+  "after_bytes": 6715633664,
+  "removed": [
+    {
+      "file": "target/00062-release/native/debug/deps/admin_state-2b4bcf5dcaca2bd4",
+      "bytes": 9197424
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/admin_state-bf895bed3dd7e49f",
+      "bytes": 9225232
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/args_control_contracts-0437e51431ae0ac6",
+      "bytes": 2084000
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/args_control_contracts-1e85410a659214c7",
+      "bytes": 2078592
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/async_feasibility-034a91b66a8a357c",
+      "bytes": 4868176
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/async_feasibility-5bb260a9bcf60310",
+      "bytes": 4869104
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/atomic-520e8659da21b0b2",
+      "bytes": 15841072
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/atomic-e4a11fd841fbde15",
+      "bytes": 15860112
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/callable-5cc5521ad7ae20da",
+      "bytes": 19492224
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/callable-6ec907c308ea9424",
+      "bytes": 19467696
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/capability_boundaries-1a9313bf94f6fafa",
+      "bytes": 15511104
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/capability_boundaries-68e2b7ae208006b6",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/catalog-699b884f766ef4df",
+      "bytes": 43849568
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/catalog-ac8f94c722b7cff5",
+      "bytes": 43676224
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/cli-16611d8d825cf4cb",
+      "bytes": 9417360
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/cli-5876b1c31a153d2c",
+      "bytes": 9412160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/cli-cd92477a51a4d305",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/codec-33b6e76f88a8f1b7",
+      "bytes": 25111456
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/codec-e7ce746d65ee4cd4",
+      "bytes": 25188752
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/codecs-05e93e9f926ce388",
+      "bytes": 2554000
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/codecs-5f4533e3c1aca48b",
+      "bytes": 3272240
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/compose_json-02c387781c02d57c",
+      "bytes": 3418864
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/compose_json-2ec5ecd051b5e7d1",
+      "bytes": 3416304
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/compose_references-31543b835f9c65e8",
+      "bytes": 3493296
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/compose_references-7f9ba91628fbf774",
+      "bytes": 3495648
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/compose_rules-09f1d48b115f1d67",
+      "bytes": 3562032
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/compose_rules-3e6cb91297baf3d5",
+      "bytes": 3564400
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/concurrency-72072531e5375908",
+      "bytes": 5673952
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/concurrency-9332ed54ab9f89f3",
+      "bytes": 5675424
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/config-4377bd20b58b79c7",
+      "bytes": 1762512
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/config-76c2fd7b0a2fc034",
+      "bytes": 1764560
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/config_presence-98c82fa8864260f0",
+      "bytes": 3368096
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/config_presence-e08944faae8ea77e",
+      "bytes": 3366176
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/conflict-4cd9be78ac7c5c68",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/conflict-c99f47eba4f698fc",
+      "bytes": 8515248
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/construction-8cee3f0a80b354a9",
+      "bytes": 9027680
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/construction-bfaa1a377e4a34c1",
+      "bytes": 9007072
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/consumer-75a2f90203659e23",
+      "bytes": 1539152
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/consumer-ed880eb70c2db167",
+      "bytes": 1539152
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/context_contracts-8a31392b8ca0bc80",
+      "bytes": 4636720
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/context_contracts-f5d14193b898efa1",
+      "bytes": 4635072
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/contextual_cause-236373c10467cc06",
+      "bytes": 1002896
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/contextual_cause-6a000e07ab104f3c",
+      "bytes": 1004896
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/contracts-17088685e8f0a84e",
+      "bytes": 1389248
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/contracts-2256544032f436f2",
+      "bytes": 2044256
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/contracts-512f0c73357f93dc",
+      "bytes": 7810240
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/contracts-7172b5c26247159d",
+      "bytes": 8959216
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/contracts-79e728cb2da39e15",
+      "bytes": 1451888
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/contracts-8000f95e13c6e8b5",
+      "bytes": 8919056
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/contracts-81612e02c086d659",
+      "bytes": 1452704
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/contracts-89aaac69317a214d",
+      "bytes": 1389264
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/contracts-a8113913a4991ee9",
+      "bytes": 7813376
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/contracts-aa16de57c2a192a8",
+      "bytes": 9677472
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/contracts-bac4616b49f3975e",
+      "bytes": 8899680
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/crud-1e69cf5f61ca8b23",
+      "bytes": 2592704
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/crud-80baa42b39f0cf59",
+      "bytes": 2593136
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/data_contracts-c08e86e6dac848aa",
+      "bytes": 3761296
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/data_contracts-eba42b11d0cb7162",
+      "bytes": 3762736
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/data_quickstart-51bf639005d9e549",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/data_quickstart-cbdb0569df2ab920",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/ddl-bba3bf6d48323132",
+      "bytes": 1738928
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/ddl-c93aa7d7d53e8e84",
+      "bytes": 1738960
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/dialects-0a60c8c0ca1d3068",
+      "bytes": 2014992
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/dialects-ca0c045598c79ce0",
+      "bytes": 2014992
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/diff-bcd2ec6f19db29a2",
+      "bytes": 1742256
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/diff-daf064b8c86184ae",
+      "bytes": 1742256
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/disabled-2056ede2c5552c53",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/disabled-49ee5e083af792c5",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/dml-23b02d269743339b",
+      "bytes": 1914112
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/dml-61e075613edf4b09",
+      "bytes": 1914160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/document_errors-06bf1416911a2852",
+      "bytes": 68507088
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/document_errors-ffa99d53994031ed",
+      "bytes": 68441504
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/driver_stores-7950985d51dc2ece",
+      "bytes": 28683392
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/driver_stores-c07007723ba01b02",
+      "bytes": 28705568
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/duplex-71a20ead538ade94",
+      "bytes": 11196000
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/duplex-ba1c7243ea7c21d7",
+      "bytes": 18167152
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/email_integration-c067d976ee5ae0b9",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/email_integration-ce92bdb843f6a8b5",
+      "bytes": 63168512
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/engine-74a77fefcdd4ad48",
+      "bytes": 2114048
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/engine-de3cfb661bc31ea6",
+      "bytes": 2114064
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/entry_contracts-19f7759bbd37be67",
+      "bytes": 5456000
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/entry_contracts-c7a6701089b7adc1",
+      "bytes": 5430880
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/error_causes-0f2dfd92a32ad308",
+      "bytes": 1842352
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/error_causes-e3cb650fb68c0862",
+      "bytes": 1841760
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/error_contracts-245bfc193479ef24",
+      "bytes": 6683232
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/error_contracts-df8f17992c27d5f7",
+      "bytes": 6678336
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/error_kinds-078cf7718436ddf5",
+      "bytes": 4233808
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/error_kinds-d149e90d610ae443",
+      "bytes": 4237248
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/event_contracts-a0f52d4665d52f5a",
+      "bytes": 8069424
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/event_contracts-f5ca1b684f6a7c31",
+      "bytes": 8089952
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/executables-5a112282e9c8c243",
+      "bytes": 9167040
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/executables-a40e29224b904553",
+      "bytes": 9137648
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/executor_budgets-33db407dafbd297d",
+      "bytes": 8414464
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/executor_budgets-81750ce74db5dabd",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/experimental-5ff69146d01fc8dd",
+      "bytes": 8784112
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/experimental-cbbe4a7b7a0e7cf7",
+      "bytes": 8822272
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/finite-1ec821567ac86b07",
+      "bytes": 1508000
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/finite-41a2b2b9e529de92",
+      "bytes": 14349600
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/finite-52080f01ad3e7136",
+      "bytes": 1455888
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/finite-ce4be846d64c9781",
+      "bytes": 1455872
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/finite-d0160c34e6c538eb",
+      "bytes": 1507968
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/finite-e025e3fa71a799ab",
+      "bytes": 18371216
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/finite-ec534b66e8d1d742",
+      "bytes": 1021856
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/finite-f8418fec2c94337c",
+      "bytes": 1021888
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/foundation-0967dd6b40a0974e",
+      "bytes": 9050768
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/foundation-415fb3dd08020f62",
+      "bytes": 8231168
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/generated_admin_client-05f24b477f4b3ab6",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/generated_admin_client-a1d3953a17ac2fb6",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/generated_admin_shared-5f30e73c49e2f0d7",
+      "bytes": 8882656
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/generated_admin_shared-963d156cf33d2102",
+      "bytes": 8897936
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/generated_admin_tool-02e47b886a833e14",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/generated_admin_tool-10224928f21cbff9",
+      "bytes": 12698768
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/generated_admin_tool-4a2e105de10a4625",
+      "bytes": 13298432
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/generated_admin_tool-781be141b4b7a25d",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/generated_admin_tool-990a1412f2f3799b",
+      "bytes": 13665312
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/generated_admin_tool-d2005a39956b3cb2",
+      "bytes": 12314368
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/generated_admin_web-0553d3adf9d28a8f",
+      "bytes": 78255552
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/generated_admin_web-68f99846dbdf3f06",
+      "bytes": 1927408
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/generated_admin_web-7a115a7573676eab",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/generated_admin_web-8a33a4c64aac2db4",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/generated_admin_web-c3ff2966dfcf9b32",
+      "bytes": 1926544
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/generated_admin_web-e71c8253a3897fec",
+      "bytes": 78210320
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/generated_workspace_app-8acdc1b4616f5ffe",
+      "bytes": 1668016
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/generated_workspace_app-e0c284581293c408",
+      "bytes": 976320
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/generated_workspace_contracts-1670eea23753ead9",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/generated_workspace_contracts-d2fa8e0dc00cb11a",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/generated_workspace_tool-942a1fccfdbaaf23",
+      "bytes": 976336
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/generated_workspace_tool-9b0a96788e31812f",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/generated_workspace_tool-9c7e844ac3d40406",
+      "bytes": 1668000
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/generated_workspace_tool-cf03b3345549d7f9",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/generated_workspace_tool-ebbc8dfe837294ea",
+      "bytes": 19305488
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/generated_workspace_tool-fc22dc493a722717",
+      "bytes": 18447184
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/generation-0323747554eda2be",
+      "bytes": 1206528
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/generation-32e480827c52cf92",
+      "bytes": 13608112
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/generation-66a2f77e98d2cb0b",
+      "bytes": 1206480
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/generation-6e6b2bb12be04324",
+      "bytes": 8116592
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/generation-72ef4dfb779103f0",
+      "bytes": 4635696
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/generation-7f7ff350e824fdcf",
+      "bytes": 4655520
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/generation-89642d3278dc96b2",
+      "bytes": 12761520
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/generation-b19b684173642b23",
+      "bytes": 8116272
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/handler_signature-1cc26608bf18566d",
+      "bytes": 8392224
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/handler_signature-4cd710fec8498f95",
+      "bytes": 8394080
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/harness-8b26e44c831242b9",
+      "bytes": 1001248
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/harness-f6bc38366884f67c",
+      "bytes": 1001248
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/http-469594187d199034",
+      "bytes": 9425680
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/http-976e4c9aec656525",
+      "bytes": 9420080
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/http_immutable-2e366c20d3d3b5a1",
+      "bytes": 9283456
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/http_immutable-40750603517a2b37",
+      "bytes": 9289456
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/http_input-233bfc2610444ffd",
+      "bytes": 9460848
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/http_input-45bdd819e70869b9",
+      "bytes": 9439024
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/http_output-7eefbae104521a5a",
+      "bytes": 9521120
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/http_output-8f6c3dd3346bba09",
+      "bytes": 9525792
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/http_stream-05243407e283486b",
+      "bytes": 9502640
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/http_stream-0ca42d832f45b956",
+      "bytes": 9420832
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/idea-0b19ecae9abe31ba",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/idea-28c5d46862262081",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/json_values-75af158cc2de2b3b",
+      "bytes": 1620288
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/json_values-9e4c7e2c46598664",
+      "bytes": 1620288
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/leaves-83a33f4bd66abf34",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/leaves-a81b12f25208bd01",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/leptos_async_renderer-736f0d20693676da",
+      "bytes": 6361328
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/leptos_async_renderer-e65030d996924c10",
+      "bytes": 6339648
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/leptos_cleanup-3aa6b5e97e3d5107",
+      "bytes": 4171568
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/leptos_cleanup-ff3b15677538c7bd",
+      "bytes": 4175728
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/leptos_executor-aac041ae9e0c2ccb",
+      "bytes": 3739456
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/leptos_executor-ceb90efb7e325938",
+      "bytes": 3735520
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/leptos_routing-d9a731a9857c0950",
+      "bytes": 7376368
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/leptos_routing-ff3d0fc564daf241",
+      "bytes": 7348320
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/leptos_safety-31a92e45b251fb03",
+      "bytes": 1078880
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/leptos_safety-955b1312c84a3f64",
+      "bytes": 1078832
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/leptos_system_theme-a4cb5e4fe461587e",
+      "bytes": 4326800
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/leptos_system_theme-e306f094f21e8aac",
+      "bytes": 4325200
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/lifecycle-21cb69d36384143d",
+      "bytes": 9120416
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/lifecycle-4875ccdca3e72b1a",
+      "bytes": 8933488
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/lifecycle-67ff923dcb419293",
+      "bytes": 8928096
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/lifecycle-79a6ba1ca2f38cbb",
+      "bytes": 8932976
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/lifecycle-7fb87002def5e3a1",
+      "bytes": 8883408
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/lifecycle-ef9ce148f73638ef",
+      "bytes": 9115488
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/live_search-5750d10ba5f7e286",
+      "bytes": 22894768
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/live_search-f99f41450cd5f0c3",
+      "bytes": 23105808
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/live_setup-cdcab04134856156",
+      "bytes": 24798432
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/m0-2d7788fc4ce78c48",
+      "bytes": 12575984
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/m0-60d6f4b3ff0eeaf0",
+      "bytes": 9766048
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/m0-6fd4247c0df6978e",
+      "bytes": 11145104
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/m0-7a14152495ace2f4",
+      "bytes": 9745232
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/m0-a377cb3c6934d974",
+      "bytes": 20160736
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/m0-d0b6f62b09af54a6",
+      "bytes": 12597152
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/m0-d7f23ee36afff592",
+      "bytes": 20182208
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/m0-fe0de4177a8535f2",
+      "bytes": 11141280
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/m1-01d2fc0d3f3e00d1",
+      "bytes": 11873088
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/m1-1588f886a0bda44a",
+      "bytes": 10010768
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/m1-372a6fff8dea7da5",
+      "bytes": 11970240
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/m1-3dc45fc9464a14d2",
+      "bytes": 11474864
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/m1-495accfb20d27508",
+      "bytes": 10030384
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/m1-56a89cffd5a1b00c",
+      "bytes": 11453104
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/m1-7ab89feb177ce0dc",
+      "bytes": 12745696
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/m1-a57ffc783a88672c",
+      "bytes": 18013472
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/m1-d8ec60f06efc5bc3",
+      "bytes": 11975776
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/m1-dc7abc22f5f16037",
+      "bytes": 12766544
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/m1-f6b69aec918accc6",
+      "bytes": 3120976
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/m2-2679d32ce01f3c3d",
+      "bytes": 11888912
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/m2-90312500bee29003",
+      "bytes": 16583936
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/m2-b0cfae2600d6b7d1",
+      "bytes": 11855360
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/m2-b3f6ece10140bf2d",
+      "bytes": 18582864
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/m2-e0b79576a23475e4",
+      "bytes": 16588416
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/m2-fdc8020e2ed20920",
+      "bytes": 11876000
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/m3-5cefadd033bf0445",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/m3-88261a458b44ac9e",
+      "bytes": 13410128
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/m3_review-225d33c26fd90ad2",
+      "bytes": 15537648
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/m3_review-236527742b8e1b2e",
+      "bytes": 5515472
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/m3_review-5e85a17fd1f0da35",
+      "bytes": 16427008
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/m3_review-a2f5170bb3207dc8",
+      "bytes": 4788512
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/m3_seeds-0bcda1c312f798ee",
+      "bytes": 11916816
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/m3_seeds-786b411366eaf1a1",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/main-06c8018e7c6dfe6b",
+      "bytes": 108611840
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/main-2c7ea8117c030c5b",
+      "bytes": 26535344
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/main-3792ff6153d51356",
+      "bytes": 27709136
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/main-562a8eb71f8f9ea6",
+      "bytes": 77417712
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/main-66014fa96eb18aaf",
+      "bytes": 67330624
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/main-70830ce795b7ad23",
+      "bytes": 4900704
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/main-81953973eec10dcb",
+      "bytes": 14460992
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/main-89b383833d86d41b",
+      "bytes": 73630128
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/main-8fcb748f116383b1",
+      "bytes": 67355120
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/main-93f1fa81515f7683",
+      "bytes": 20928960
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/main-b024abcd361679b6",
+      "bytes": 4898624
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/main-d2e38aa648deb639",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/main-d99bd87aade968ee",
+      "bytes": 26346208
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/main-e5a0a43d95804a29",
+      "bytes": 20858992
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/maintenance-7645b2336e3524c1",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/maintenance-84a39332b2cf21b5",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/matrix-026f4a1a5dc2a45d",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/matrix-b9ec5fd03ce0c169",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/matrix_contracts-4c6560190dbeb46d",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/matrix_contracts-df750c7875b9fd31",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/migrations-6b9ffc945244d737",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/migrations-78c61ccc1cb95f75",
+      "bytes": 11907424
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/names-58a1a471f932504b",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/names-660bf6133eeeb5a1",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/names_contracts-882e22e7cd999379",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/names_contracts-cd44174250ded248",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/native-b64a56902a84c43f",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/native-e64adb133f7b6bcb",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/native_layer-9e49f76df1ce5101",
+      "bytes": 70205120
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/native_layer-a0afb310597dfde2",
+      "bytes": 70215616
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/network-115dc5c7dc521cf6",
+      "bytes": 13072912
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/network-a70e1d2b1635b186",
+      "bytes": 13069344
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/on_request-0cf0d2d5b1729698",
+      "bytes": 4705792
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/on_request-50182723d4c0d25f",
+      "bytes": 4704352
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/operation_publication-9a9204400bc4bc47",
+      "bytes": 9661408
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/operation_publication-ccaf0bf4f5857349",
+      "bytes": 10476096
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/operations-2be0270f5fe4218f",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/operations-97d264ef1d45cd91",
+      "bytes": 22982624
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/operations-dc3c73ab920eae0c",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/operations-ecfcebe73259d180",
+      "bytes": 23034112
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/outcomes-2c32cb8fa860e40e",
+      "bytes": 15504608
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/outcomes-8e2ae22c53ff8358",
+      "bytes": 15501904
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/ownership-03473da9f9b91bf7",
+      "bytes": 4830704
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/ownership-39c8146a31b9fe90",
+      "bytes": 4830704
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/package_loader-8c79c3c6cb0200b2",
+      "bytes": 3433696
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/package_loader-b71fa175f20862a8",
+      "bytes": 3431136
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/package_sources-7a0c1e38f9bd5542",
+      "bytes": 4004768
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/package_sources-8653b45e7e0c92bf",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/page-9c8a37d6b293a73b",
+      "bytes": 1161344
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/page-b0fb9cb79eaced7c",
+      "bytes": 1161280
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/pages-02b3a6ea81c7d7c0",
+      "bytes": 11321568
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/pages-0d15e472f7b125c0",
+      "bytes": 33672080
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/pages-a2c593200c818a68",
+      "bytes": 24741312
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/pages-c73334ce71025571",
+      "bytes": 24711584
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/pages-e998e0771b9be4c3",
+      "bytes": 33681056
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/pages-f333ce71ec49e82a",
+      "bytes": 11137104
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/parity-0dd151827ec8a620",
+      "bytes": 9675824
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/parity-be1104c3ea240596",
+      "bytes": 9670224
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/policies-2931c5f960878bc8",
+      "bytes": 1935552
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/policies-ac069b4c0f545b3e",
+      "bytes": 1939312
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/presentation-2184ad69029b85cf",
+      "bytes": 14927920
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/presentation-e19d005dd6896034",
+      "bytes": 14884736
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/presentation_registration-2f9b4e99c73c6a7c",
+      "bytes": 10001568
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/presentation_registration-44fa0aff44529694",
+      "bytes": 9973808
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/probe-009ac6f19726c9d1",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/probe-1480b31be09c030f",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/profile_app-31d76b6c075d6db7",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/profile_app-3c9f83111d0e9490",
+      "bytes": 8603680
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/profile_app-f3948fcb6e4e4894",
+      "bytes": 8597616
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/profile_app-f4518e1914be02fe",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/profile_codegen-4d65c042c701fb74",
+      "bytes": 7761296
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/profile_codegen-8d28393dea8d8e06",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/profile_codegen-eda593ed4676b1f9",
+      "bytes": 7760320
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/profile_codegen-f1af4844e20e7119",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/profiles-16d1699ffcaa0ec7",
+      "bytes": 8991952
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/profiles-6dff518b8c2b00a1",
+      "bytes": 9013328
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/prompt_contracts-16d788ec19d5467c",
+      "bytes": 7634928
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/prompt_contracts-5d6ba1039ade8ecf",
+      "bytes": 7625504
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/proof-98d261775ad9a024",
+      "bytes": 16009664
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/proof-f6576e7d65b26fa3",
+      "bytes": 16006608
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/public_boundary-40b64a1183efc518",
+      "bytes": 23423696
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/public_boundary-642dc11f9a46af27",
+      "bytes": 23396272
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/public_preflight-2b60e2c139db16b7",
+      "bytes": 15070192
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/public_preflight-e2599d7cb8507a35",
+      "bytes": 14255120
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/publication-0672fed68b24af1e",
+      "bytes": 32702880
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/publication-1d7a785fca9a6587",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/publication-a9d15f914e1fd9ea",
+      "bytes": 2580256
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/publication-cb166f28504cbf64",
+      "bytes": 3294864
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/read_source_policy-3c6d62baa4ed14e5",
+      "bytes": 1239488
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/read_source_policy-8396a29bad76baca",
+      "bytes": 1221776
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/reads-77f7a8db21aae24a",
+      "bytes": 17502048
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/reads-e640e85a24da01e7",
+      "bytes": 17479552
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/realtime-15f5b86507b1e716",
+      "bytes": 18635504
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/realtime-ab59e87ddf75fb36",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/realtime_browser-21b12537d8d95af3",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/realtime_browser-5ca63fa98713b490",
+      "bytes": 15114336
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/render-092537592b510655",
+      "bytes": 49394816
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/render-81c141505048c9b0",
+      "bytes": 49376832
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/render_contracts-157948b18f53f776",
+      "bytes": 2768064
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/render_contracts-b292cdbaa3529392",
+      "bytes": 2767792
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/render_seams-7f162605beb937dd",
+      "bytes": 4799904
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/render_seams-f5d43aaebb19e281",
+      "bytes": 4798256
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/reply-028a423cda973d6a",
+      "bytes": 1982432
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/reply-afccf4030c2cc100",
+      "bytes": 1981552
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/request_response_contracts-759f92658bd33002",
+      "bytes": 5184144
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/request_response_contracts-bc000ae80132695c",
+      "bytes": 5185568
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/reuse-671db11f9903a380",
+      "bytes": 24878816
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/reuse-7423d4c547915554",
+      "bytes": 24934592
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/roles-5acbfca5a9d28797",
+      "bytes": 23764640
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/roles-afed9886eb4d495e",
+      "bytes": 23943264
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/rounds-32b1feb159ea2011",
+      "bytes": 2570240
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/routes-24a39cd6e1004423",
+      "bytes": 1157952
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/routes-ecd191a6a8786b89",
+      "bytes": 1139376
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/run_contracts-5a2738d2a68a5a77",
+      "bytes": 5870144
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/run_contracts-f4ff6e1b8bf8e5aa",
+      "bytes": 5895360
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/safety-00c3879c13b3b44a",
+      "bytes": 1989968
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/safety-1e13a12f2223e18b",
+      "bytes": 1990048
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/serialization_contracts-573e7976379b5789",
+      "bytes": 2898224
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/serialization_contracts-a550a98496f9f987",
+      "bytes": 2896640
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/setup-63441b4b4cd521d4",
+      "bytes": 3683040
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/setup-6c765f6af6471c0f",
+      "bytes": 2966960
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/source-47b5e4760e9a33a5",
+      "bytes": 67689968
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/source-d021013013120d73",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/source_emission-9e7f50f9297a2190",
+      "bytes": 9199792
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/source_emission-a971be1ae65d34f1",
+      "bytes": 9199008
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/source_extensions-28c7bf9987dcafbf",
+      "bytes": 9839952
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/source_extensions-f0f7c4303133d9eb",
+      "bytes": 9845648
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/source_graph-760de04c8febaea5",
+      "bytes": 10517248
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/source_graph-dd57e79160571f06",
+      "bytes": 10521648
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/source_loaders-9f69c97d788b8695",
+      "bytes": 1404432
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/source_loaders-cf5dd3ba47c1b88d",
+      "bytes": 1402928
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/source_ui-3a486a512eb21b58",
+      "bytes": 7207568
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/source_ui-caade48f79733b6a",
+      "bytes": 7206800
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/sql_profile-714168c51b8c0cda",
+      "bytes": 14146272
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/sql_profile-96118260ce5f155a",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/sql_profile-c0066f9cef444b26",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/sql_profile-c9ae3fae74d9b0dc",
+      "bytes": 14148736
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/sql_profile_setup-72dc3a9e4f0d8bc3",
+      "bytes": 7686208
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/sql_profile_setup-9a51d8d6864f5ac4",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/sql_profile_setup-a17480b4004ebc1f",
+      "bytes": 7686048
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/sql_profile_setup-ba02a78c5b3fe5a7",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/sqlite-64366861af41f188",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/sqlite-908f1e34fcc807e3",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/sqlite_host-2727662c5c1dedbb",
+      "bytes": 10467120
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/sqlite_host-4be66caa62234b5c",
+      "bytes": 10468640
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/sqlite_service-0cb5e270f94ffe66",
+      "bytes": 10557760
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/sqlite_service-ee207cbf3f161b36",
+      "bytes": 10556640
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress-285d96fc91e33107",
+      "bytes": 8599136
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress-35bff4f7db55a8f8",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress-6c895ef0caaf226f",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress-df3029eac46e557e",
+      "bytes": 8593120
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress-ef74448389c87801",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress-f82eca0983923bb7",
+      "bytes": 924160
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_cli-96fbdff49b0bd112",
+      "bytes": 3130720
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_cli-97c1d782cae1bc7c",
+      "bytes": 3131328
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_capability_host-006aad3360a2f36e",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_capability_host-fa6de7a6ae4ffc84",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_generated_profile-47792e0095f7c85c",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_generated_profile-773683d3031a5d38",
+      "bytes": 924240
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_profile_codegen-3823a0ff4430bab6",
+      "bytes": 4599104
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_profile_codegen-e7216836c9c767ea",
+      "bytes": 4621408
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_profile_ui_client-453a7ad8ba57ed38",
+      "bytes": 2516640
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_profile_ui_client-a7a74e6f50391613",
+      "bytes": 2521920
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_profile_ui_contracts-c1d64fa0428f1f27",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_profile_ui_contracts-f5bb97242be16054",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_profile_ui_gateway-12a23e69dc6e2d5c",
+      "bytes": 27114080
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_profile_ui_gateway-57e05b9c62094ed4",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_profile_ui_gateway-6fdc2f6086a13bb1",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_profile_ui_gateway-96b0f02617925055",
+      "bytes": 27082368
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_profile_ui_native-0706d563ca675152",
+      "bytes": 10260064
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_profile_ui_native-113461bd42913116",
+      "bytes": 10292480
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_profile_ui_shared-a8283d727ad63f4b",
+      "bytes": 13167040
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_profile_ui_shared-d4884e6137785c88",
+      "bytes": 13167600
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_profile_ui_web-30559bc1cc24ea83",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_profile_ui_web-3816a9ca548bbce4",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_profile_ui_web-8211fb1217d1a05b",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_profile_ui_web-9828594e8861a57d",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_profile_ui_web-cc9443daae3c99f9",
+      "bytes": 24413440
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_profile_ui_web-d1de579363623949",
+      "bytes": 24357824
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_review_preview-ef6f6517fe49120c",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_sql_profile-28a55eecc01aacb6",
+      "bytes": 1668000
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_sql_profile-9bb88accf3034fb4",
+      "bytes": 1668000
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_ui_format-05f3978a76cdd2c9",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_ui_format-ca67f17d90e3189d",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_ui_gallery_client-af64def5f8fa5163",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_ui_gallery_client-b0cb555b1ee0789f",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_ui_gallery_shared-31f4d815ec3d62d3",
+      "bytes": 61926704
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_ui_gallery_shared-7b3ab9c6e25080e0",
+      "bytes": 61965776
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_ui_gallery_web-32199e59305797f7",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_ui_gallery_web-694f8b7fce5df57a",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_ui_gallery_web-70a19177c85acc2e",
+      "bytes": 74153808
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_ui_gallery_web-73bf03c34dfbea8b",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_ui_gallery_web-958c5a67fcc2c83e",
+      "bytes": 74253536
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_ui_gallery_web-e93f8b894e697455",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_ui_preferences_client-2144106c1a0c535b",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_ui_preferences_client-54ae10eddb99022a",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_ui_preferences_shared-01e614862449c9e2",
+      "bytes": 2730064
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_ui_preferences_shared-b9cfed9965e42127",
+      "bytes": 2732576
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_ui_preferences_web-0c7ed1fb0c290580",
+      "bytes": 11106144
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_ui_preferences_web-48e72ef91b0c9538",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_ui_preferences_web-624606c9489c79f1",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_ui_preferences_web-6a1294e622900d71",
+      "bytes": 11161776
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_ui_preferences_web-973b0ae9ebf041f2",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_ui_preferences_web-f76a45c044233c2d",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_ui_stream_client-b27f848d337cfa28",
+      "bytes": 1549856
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_ui_stream_client-c4028acb936d4d72",
+      "bytes": 1551536
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_ui_stream_shared-37e0ed874ec8ae75",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_ui_stream_shared-abb9a7f4699047f5",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_ui_stream_web-0f23b6053d4569f5",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_ui_stream_web-0f454d6a4cf17997",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_ui_stream_web-3f84ae5f51f41a01",
+      "bytes": 17902224
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_ui_stream_web-40c2ceefc40571f8",
+      "bytes": 1668048
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_ui_stream_web-44001a665ff6aee5",
+      "bytes": 924224
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_example_ui_stream_web-91f1e0fab3c4ece8",
+      "bytes": 13877056
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_framework-978fa2ee6d35ed37",
+      "bytes": 60417280
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_framework-d27a4ceda9b34180",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_framework_admin-3c448c202d82087f",
+      "bytes": 20299888
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_framework_admin-ac425a5b64856569",
+      "bytes": 10509488
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_framework_api-0439ed63e70db856",
+      "bytes": 11045472
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_framework_api-7f39b6e9dab32ccb",
+      "bytes": 12012592
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_framework_csrf-96353f8401b86fdb",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_framework_csrf-c603e01e69abac56",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_framework_email-2af50ee97395c952",
+      "bytes": 18063072
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_framework_email-2faedff32ca3595a",
+      "bytes": 18147296
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_framework_language-576887f4f8d9057f",
+      "bytes": 1133200
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_framework_schema-42d3fb5b4062f715",
+      "bytes": 8862320
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_framework_schema-95453ae2b8876e3d",
+      "bytes": 8840640
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_framework_session-7df876ed647fb7e8",
+      "bytes": 1721008
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_framework_session-f84ec601f398545e",
+      "bytes": 976336
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_framework_sql-4d4cf0880d0b0c2d",
+      "bytes": 12599904
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_framework_sql-af8e0d67a1a1e40e",
+      "bytes": 2578864
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_framework_view-2b250e037a37d144",
+      "bytes": 8707088
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_framework_view-bf6fdc34b92cefb3",
+      "bytes": 8678912
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_idea-1356e7bc5917800a",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_idea-ca7b2ccc858b9df7",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_idea_parser-2889a3133880feff",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_idea_transformer-80e62ceee4b613b7",
+      "bytes": 4685296
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_idea_transformer-afe0448624ba82fd",
+      "bytes": 4664704
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_leptos-55eaed6de9392f28",
+      "bytes": 47883616
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_leptos-efbd5a3e8d59d6f7",
+      "bytes": 56623088
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_lib-c70e9e02adc9bfe8",
+      "bytes": 2929904
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_lib-d3c4dda86b73ff5a",
+      "bytes": 2927808
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_server-aec9e481d5b74c71",
+      "bytes": 9355232
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_server-f4abf4b4576be8ae",
+      "bytes": 9533072
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_server_http-12514427d0d9038c",
+      "bytes": 7385408
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_server_http-d696b23f1729ed84",
+      "bytes": 924192
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_sql-7555ccbfa6e87c67",
+      "bytes": 1367568
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_sql-c787f2d0eb0dfab9",
+      "bytes": 1367440
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_sql_mysql-6be0d2b1e6e15424",
+      "bytes": 2850752
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_sql_mysql-c9df2177f55b716c",
+      "bytes": 2849616
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_sql_postgres-3daf4de3fcd4a5ba",
+      "bytes": 3186304
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_sql_postgres-b664636102d74ce5",
+      "bytes": 3168848
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_sql_sqlite-1267e63b93e04708",
+      "bytes": 15558992
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/stackpress_sql_sqlite-a7e8a26ee88e7a01",
+      "bytes": 14940512
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/storage_codegen-09558953624d4cb8",
+      "bytes": 12571760
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/storage_codegen-fb45af4d67a7363e",
+      "bytes": 13418240
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/storage_length-112f93bf235a0840",
+      "bytes": 924176
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/storage_length-17aa63be17b3e02e",
+      "bytes": 9419184
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/storage_length-8ffa83240615d2a5",
+      "bytes": 9397936
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/storage_length-900dfc07819efa9b",
+      "bytes": 15558000
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/storage_length-d7c121514825a68c",
+      "bytes": 16447120
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/storage_length-df39a3a1ddceca75",
+      "bytes": 13079344
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/storage_policy-5b3d505cb7b67496",
+      "bytes": 1461520
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/storage_policy-e61e780903e5a7cd",
+      "bytes": 1461520
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/suggestions-ae65a3efb8a180b6",
+      "bytes": 2305408
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/suggestions-b7bcea948f1e9275",
+      "bytes": 2304640
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/tcp-3735e2239a6abdd3",
+      "bytes": 10850752
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/tcp-f8606341125e11a8",
+      "bytes": 16288992
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/template_codegen-bb7fd1d535f706a9",
+      "bytes": 12088032
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/template_codegen-f317929138b50782",
+      "bytes": 12256896
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/transfer-07868bd8f7c65eca",
+      "bytes": 8124352
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/transfer-3c3e9bf8811cc1eb",
+      "bytes": 2822800
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/transfer-55c055932637e33c",
+      "bytes": 8125280
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/transfer-55e054e34ae08d62",
+      "bytes": 2822672
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/transfer-7126d6ae8e406d62",
+      "bytes": 9338320
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/transfer-b9031f60ebd5ae28",
+      "bytes": 9424896
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/transfer_tolerant-909c8862e86b4c5f",
+      "bytes": 1566208
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/transfer_tolerant-e36610899dab6984",
+      "bytes": 1564288
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/tty_contracts-32e024ba83cab679",
+      "bytes": 2700768
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/tty_contracts-f5170cdee36e71e7",
+      "bytes": 2702016
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/tty_prompt_contracts-6cbff57397b8c974",
+      "bytes": 3464672
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/tty_prompt_contracts-db5c2316618cbc8e",
+      "bytes": 3446944
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/wire-6fa8c972cc015b66",
+      "bytes": 1989440
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/wire-be76f7f19f5b0fc7",
+      "bytes": 1987680
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/writes-39752256330dfb00",
+      "bytes": 15459856
+    },
+    {
+      "file": "target/00062-release/native/debug/deps/writes-ef5e6313a955c807",
+      "bytes": 15440560
+    }
+  ]
+}
