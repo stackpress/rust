@@ -34,3 +34,5 @@ Packaged tests use package-local fixtures/helpers and earlier-published internal
 The script models crates.io limits as a burst of 5 brand-new names then one per 10 minutes, versus a burst of 30 new versions then one per minute. Its margins are 610 / 65 seconds, with at most six rate-limit retries per crate. Thus 23 existing-package updates fit its initial update burst; recent account activity can still trigger a retry. This is the checked-in script's pacing policy, not a fresh verification of remote limits.
 
 `./publish.sh --plan` performs registry reads and prints the pending names/kinds/wait estimate without upload. Publication, login, commits/pushes and tags remain owner actions unless explicitly authorized; no release preparation or validation pass grants upload authority.
+
+G63 adds exactly seven approved registry tuples to the root (706 total, all 699 prior tuples preserved). The [blog lock checker](../../tools/examples/blog/locks.py) now enforces a pure root subset again; only G58's historical tuple-placement exception is retired. Blog dev reload remains separate from production realtime hosting.

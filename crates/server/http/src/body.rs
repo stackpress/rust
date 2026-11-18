@@ -16,11 +16,40 @@ use std::{
 /// The exclusive producer and its report share the connection's bounded lifetime.
 pub(crate) struct TrackedBody {
     /// Dropped on EOF/error/disconnect; never polled after termination.
-    source: Option<HttpBody>,
+    source: Option<BodySource>,
     /// State owned also by the connection so a body drop cannot lose its report.
     exchange: ExchangeSlot,
     /// Shared only with this connection; EOF is followed by a separate native flush boundary.
     monitor: Arc<Monitor>,
+    #[cfg(feature = "websocket")]
+    upgraded: bool,
+}
+/// Native source alternatives keep SSE clocks/permits separate from ordinary body delivery.
+enum BodySource {
+    Http(HttpBody),
+    #[cfg(feature = "sse")]
+    Sse(Box<crate::sse::NativeSse>),
+}
+impl BodySource {
+    /// Inspect only known HTTP completion; SSE completes through its explicit EOF.
+    fn is_finished(&self) -> bool {
+        match self {
+            Self::Http(source) => source.is_finished(),
+            #[cfg(feature = "sse")]
+            Self::Sse(_) => false,
+        }
+    }
+}
+impl Stream for BodySource {
+    type Item = stackpress_lib::Result<Vec<u8>>;
+    /// Delegate one demand poll without an intermediate buffer or background task.
+    fn poll_next(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
+        match self.get_mut() {
+            Self::Http(source) => Pin::new(source).poll_next(cx),
+            #[cfg(feature = "sse")]
+            Self::Sse(source) => Pin::new(source.as_mut()).poll_next(cx),
+        }
+    }
 }
 impl TrackedBody {
     /// Wrap the already published producer without polling it.
@@ -30,12 +59,39 @@ impl TrackedBody {
             monitor.body_done();
             None
         } else {
-            Some(source)
+            Some(BodySource::Http(source))
         };
         Self {
             source,
             exchange,
             monitor,
+            #[cfg(feature = "websocket")]
+            upgraded: false,
+        }
+    }
+    /// Own the SSE admission until source EOF/drop, independently of descriptor views.
+    #[cfg(feature = "sse")]
+    pub(crate) fn sse(
+        source: crate::sse::NativeSse,
+        exchange: ExchangeSlot,
+        monitor: Arc<Monitor>,
+    ) -> Self {
+        Self {
+            source: Some(BodySource::Sse(Box::new(source))),
+            exchange,
+            monitor,
+            #[cfg(feature = "websocket")]
+            upgraded: false,
+        }
+    }
+    /// A 101 has no body-owned cancellation/flush authority over the handed-off IO.
+    #[cfg(feature = "websocket")]
+    pub(crate) fn upgrade(exchange: ExchangeSlot, monitor: Arc<Monitor>) -> Self {
+        Self {
+            source: None,
+            exchange,
+            monitor,
+            upgraded: true,
         }
     }
     /// An empty boundary rejection still has a native flush, without fabricating a host report.
@@ -45,6 +101,8 @@ impl TrackedBody {
             source: None,
             exchange,
             monitor,
+            #[cfg(feature = "websocket")]
+            upgraded: false,
         }
     }
 }
@@ -68,7 +126,7 @@ impl Body for TrackedBody {
                 // Counts measure handoff to Hyper, not a socket flush or remote ACK.
                 let length = bytes.len() as u64;
                 // A fixed-length buffered representation may never receive a final EOF poll.
-                let finished = self.source.as_ref().is_some_and(HttpBody::is_finished);
+                let finished = self.source.as_ref().is_some_and(BodySource::is_finished);
                 if finished {
                     self.source = None;
                 }
@@ -102,6 +160,10 @@ impl Body for TrackedBody {
 impl Drop for TrackedBody {
     /// Hyper dropping an unfinished body cancels its producer and trusted handler context.
     fn drop(&mut self) {
+        #[cfg(feature = "websocket")]
+        if self.upgraded {
+            return;
+        }
         let mut state = lock(&self.exchange);
         if self.source.is_some() && state.report.delivery == HttpDelivery::Published {
             state.report.delivery = HttpDelivery::Cancelled;

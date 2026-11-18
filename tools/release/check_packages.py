@@ -138,7 +138,7 @@ def main():
     approved = dict((path.resolve(), name) for path, name in candidates())
     positions = {path.resolve(): i for i, (path, _) in enumerate(candidates())}
     baseline = {tuple(row) for row in json.loads((EVIDENCE / 'registry-baseline.json').read_text())}
-    assert registry((ROOT / 'Cargo.lock').read_bytes()) == baseline and len(baseline) == 699
+    assert registry((ROOT / 'Cargo.lock').read_bytes()) == baseline and len(baseline) == 706
     original_notices = json.loads((EVIDENCE / 'notice-baseline.json').read_text())
     for source in ['LICENSE', 'crates/idea/idea-parser/LICENSE']:
         assert hashlib.sha256((ROOT / source).read_bytes()).hexdigest() == original_notices[source], source

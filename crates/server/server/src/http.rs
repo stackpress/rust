@@ -386,3 +386,10 @@ async fn publish(
         HttpOutput::Response,
     )
 }
+
+/// Bounded server-sent events and owned response selection.
+#[cfg(feature = "http-sse")]
+pub mod sse;
+/// Generic one-shot native output seam for protocol hosts.
+#[cfg(feature = "http-upgrade")]
+pub mod upgrade;

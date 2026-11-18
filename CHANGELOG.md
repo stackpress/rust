@@ -3,6 +3,28 @@
 Changes are grouped by release in Keep a Changelog style. The 23 published crates
 share one version. Before 1.0, breaking changes bump the minor version.
 
+## Unreleased
+
+### Added
+
+- Opt-in runtime-neutral SSE events, bounded subscription channels, response descriptors
+  and injectable heartbeat/age drivers (`stackpress-server/http-sse`).
+- Native SSE and WebSocket hosting, finite independent limits, session admission and
+  counters; owned WebSocket send/receive/close connections and explicit request snapshots.
+- Independent Leptos EventSource and WebSocket helpers with inert SSR, owner cleanup,
+  bounded latest values, send backpressure and optional bounded WebSocket reconnect.
+- Facade features `server-http-sse`, `server-http-host-sse`,
+  `server-http-host-websocket`, `leptos-sse` and `leptos-websocket`.
+
+### Changed
+
+- Valid WebSocket requests to explicitly enabled endpoints now answer **101** instead
+  of the previous **400** rejection. Feature-off upgrade rejection remains unchanged.
+  Applications must select Origin, authentication and per-message authorization policy.
+- Approved realtime connections use a separate finite one-hour session clock. Stop
+  finishes the current SSE event then EOF; WebSockets send Close(1001) within host grace.
+- The blog lock is again a pure root subset; G63 retires G58's blog-only tuple exception.
+
 ## 0.2.0 (beta) — 2026-11-12
 
 This is a beta release: the API may still change before 1.0. It is a normal Cargo

@@ -39,9 +39,10 @@ docs, dependency graphs, public/authenticated/copied-out browser flows, and nati
 for `blog-app`, `blog-assets`, `blog-store`, `blog-web`, `blog-tool` and `blog-xtask`. Browser graphs select
 `blog-app` UI without its server feature or either native plugin.
 The gate freezes root lock bytes from entry through exit. Workspace-only package/edge edits may precede the gate.
-The lock check compares all 699 registry tuples with HEAD and recomputes the example subset, without
-reading a marker. G58 allows exactly tungstenite 0.29.0 and its five enumerated transitive
-exceptions in the blog lock only; the check asserts their versions, sources and checksums.
+The lock check compares all 706 registry tuples with HEAD and recomputes the example subset, without
+reading a marker. G63 adds seven exact approved root tuples and retires G58's blog-only
+tuple-placement exception. The blog lock is a pure root subset again; its minimal
+dev-only tungstenite handshake dependency remains checked.
 The JavaScript phase also exercises the shipped hot-patch failure guard without a listener;
 xtask's tests cover classification, debounce, process cleanup, markup safety and in-memory WebSocket IO.
 Logs and per-phase results are in `examples/blog/.build/gate/`; compiled targets stay under
@@ -65,7 +66,7 @@ All paths are relative to the repository root; record each invocation through
 | `format.py` | Check authored Rust, including xtask; `--write` formats it. |
 | `freshness.py` | Check both generated trees without changing bytes or timestamps. |
 | `graphs.py` | Check native and separate browser dependency boundaries. |
-| `locks.py check` | Compare all 699 registry tuples with HEAD and check the example subset plus G58. |
+| `locks.py check` | Compare all 706 registry tuples with HEAD and check the example subset as a pure root subset. |
 | `extension.py` | Generate/check the extra Profile fixture used by the full gate. |
 | `browser.py` | Run public and authenticated browser flows through in-process routing. |
 | `nickname.py prepare\|check\|browser` | Prepare/check/test the copied app's Profile migration. |

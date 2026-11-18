@@ -125,6 +125,19 @@ impl HttpServer {
         }
         Ok(host)
     }
+    /// Bind a fully configured host, checking combined realtime caps before opening a socket.
+    /// Serving still requires an explicitly awaited `BoundHttpServer::serve_until` call.
+    pub async fn bind_prepared(self, address: SocketAddr) -> Result<BoundHttpServer> {
+        #[cfg(any(feature = "sse", feature = "websocket"))]
+        self.validate_realtime()?;
+        let listener = TcpListener::bind(address)
+            .await
+            .map_err(|cause| external("HTTP TCP bind failed", cause))?;
+        Ok(BoundHttpServer {
+            host: Arc::new(self),
+            listener,
+        })
+    }
     /// Validate all startup policy/TLS before binding one TCP listener; never starts serving.
     ///
     /// Assets must already be loaded and registered on the built application. This library owns

@@ -27,6 +27,7 @@ API reference and the relevant limits.
 | Stop admission and await all connection cleanup | [Shutdown and drain](guides/shutdown.md) |
 | Run the example on a managed development port | [Development recipe](guides/development.md) |
 | Attach an owned response producer | [Server streaming guide](../../server/docs/guides/streaming-http.md) |
+| Serve bounded SSE and WebSocket sessions | [Realtime endpoints](guides/realtime.md) |
 
 ## Returning to the API
 

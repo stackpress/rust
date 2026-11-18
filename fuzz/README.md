@@ -23,6 +23,7 @@ Replace `idea_parser` with `admin_csv` or `lib_query_form` for the other targets
 | --- | --- | --- |
 | `idea_parser` | `stackpress_idea_parser::parse` for valid UTF-8, with default parser budgets | `crates/idea/idea-parser/tests/fixtures/{type,prop,model}.idea` |
 | `admin_csv` | `transfer::parse` includes raw admission, decode, delimiter sniff and structure; successful `write` output must round-trip; a second parse uses lower ceilings | `framework-admin/tests/transfer.rs` and `transfer_tolerant.rs` cases |
+| `sse_encoder` | Bounded SSE data/comment encoding and metadata injection rejection; successful encodings fit 64 KiB and contain no CR | In-memory UTF-8 corpus; no network |
 | `lib_query_form` | `stackpress_lib::data::{parse_query, parse_body}` with URL-encoded media type and default budgets; both entries must agree on acceptance for valid UTF-8 | `crates/lib/tests/data_contracts.rs` query/form cases |
 
 Tracked seeds stay small. LibFuzzer may add files to `fuzz/corpus/<target>`; retain useful minimized regression seeds deliberately. Build output, crash artifacts and coverage directories are ignored.

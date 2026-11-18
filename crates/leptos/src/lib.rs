@@ -7,6 +7,11 @@
     clippy::unreachable
 )]
 
+//! Independent browser realtime helpers are available under `client-sse` and `client-websocket`.
+//! They open no connections during native SSR; Leptos owner disposal closes browser transports,
+//! removes listeners and cancels retries. Applications own Origin/CORS, credentials, replay and
+//! per-message authorization. See the realtime module when a client feature is enabled.
+//!
 //! Reusable Leptos components, root-scoped state and explicit rendering modes.
 //!
 //! Independent consumers supply values, callbacks and trusted document framing.
@@ -79,3 +84,7 @@ pub mod safety;
 
 #[cfg(feature = "async")]
 mod replay_error;
+
+/// Optional owner-scoped EventSource and WebSocket browser clients; native SSR is inert.
+#[cfg(any(feature = "client-sse", feature = "client-websocket"))]
+pub mod realtime;

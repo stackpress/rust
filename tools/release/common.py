@@ -24,7 +24,9 @@ COMPATIBLE = (
     "framework-api-codegen,framework-csrf-server,framework-email-server,"
     "stackpress-framework/codegen,stackpress-framework-schema/providers,"
     "stackpress-framework-sql/sqlite-maintenance,stackpress-framework-sql/codegen,"
-    "stackpress-framework-sql/server,stackpress-framework-schema/source,stackpress-framework-sql/source"
+    "stackpress-framework-sql/server,stackpress-framework-schema/source,stackpress-framework-sql/source,"
+    "server-http-sse,server-http-host-sse,server-http-host-websocket,server-http-host-tls,"
+    "leptos-sse,leptos-websocket"
 )
 
 

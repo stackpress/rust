@@ -37,6 +37,10 @@ impl HttpServer {
         I: AsyncRead + AsyncWrite + Unpin + Send + 'static,
         F: Future<Output = ()> + Send,
     {
+        #[cfg(any(feature = "sse", feature = "websocket"))]
+        if let Err(error) = self.validate_realtime() {
+            return report::rejected(error, 503);
+        }
         let crate::ConnectionContext {
             peer,
             started,
@@ -49,13 +53,20 @@ impl HttpServer {
         let mut shutdown = false;
         let mut forced = false;
         let mut timeout_phase = None;
+        #[cfg(feature = "websocket")]
+        let pending = Arc::new(Mutex::new(None));
+        tokio::pin!(stop);
         let result;
         {
             let registry = Arc::clone(&slots);
             let progress = Arc::clone(&monitor);
+            #[cfg(feature = "websocket")]
+            let upgrades = Arc::clone(&pending);
             let service = service_fn(move |request| {
                 let registry = Arc::clone(&registry);
                 let progress = Arc::clone(&progress);
+                #[cfg(feature = "websocket")]
+                let upgrades = Arc::clone(&upgrades);
                 async move {
                     // Hyper may prepare a successor early, but no successor callback passes the prior flush.
                     progress.turn().await;
@@ -66,8 +77,16 @@ impl HttpServer {
                         slot
                     };
                     progress.begin(Arc::clone(&slot));
-                    self.handle_request(request, peer, scheme, slot, progress)
-                        .await
+                    self.handle_request(
+                        request,
+                        peer,
+                        scheme,
+                        slot,
+                        progress,
+                        #[cfg(feature = "websocket")]
+                        upgrades,
+                    )
+                    .await
                 }
             });
             let mut builder = http1::Builder::new();
@@ -82,14 +101,18 @@ impl HttpServer {
                 ))
                 .header_read_timeout(self.limits.head_timeout);
             let connection = builder.serve_connection(TokioIo::new(io), service);
+            #[cfg(feature = "websocket")]
+            let connection = connection.with_upgrades();
             tokio::pin!(connection);
-            tokio::pin!(stop);
-            let lifetime = tokio::time::sleep_until(started + self.limits.connection_lifetime);
+            let lifetime = monitor.connection_expired(started);
             tokio::pin!(lifetime);
             result = tokio::select! {
                 biased;
                 ()=&mut stop=>{
-                    shutdown=true;connection.as_mut().graceful_shutdown();
+                    shutdown=true;
+                    #[cfg(any(feature="sse",feature="websocket"))]
+                    monitor.stop();
+                    connection.as_mut().graceful_shutdown();
                     drain(&mut connection,&monitor,self.limits.shutdown_grace,&mut forced,&mut timeout_phase).await
                 }
                 ()=&mut lifetime=>{
@@ -102,6 +125,39 @@ impl HttpServer {
                 }
                 result=&mut connection=>result.map_err(hyper_error),
             };
+        }
+        #[cfg(feature = "websocket")]
+        let mut result = result;
+        #[cfg(feature = "websocket")]
+        if result.is_ok() {
+            // Hyper's Upgraded retains any bytes read past the handshake, including a first frame.
+            let selected = lock(&pending).take();
+            if let Some((session, on_upgrade, slot)) = selected {
+                let handed = tokio::select! {biased;
+                    ()=&mut stop=>{shutdown=true;None}
+                    result=tokio::time::timeout(self.limits.response_timeout,on_upgrade)=>match result {Ok(Ok(io))=>Some(io),_=>None}
+                };
+                if let Some(io) = handed {
+                    let run = session.run(
+                        TokioIo::new(io),
+                        &mut stop,
+                        self.limits.shutdown_grace,
+                        self.realtime_stats.clone(),
+                    );
+                    let outcome = run.await;
+                    result = outcome.result;
+                    shutdown |= outcome.stopped;
+                    forced |= outcome.forced;
+                    let mut exchange = lock(&slot);
+                    exchange.settled = true;
+                    exchange.report.elapsed = exchange.started.elapsed();
+                    if result.is_ok() {
+                        exchange.report.delivery = HttpDelivery::Completed;
+                    }
+                } else {
+                    result = Err(Error::new("WebSocket handoff cancelled or failed"));
+                }
+            }
         }
         // Hyper has relinquished IO before timeout cleanup considers native rejection bytes.
         if let Some(phase) = timeout_phase {
@@ -126,6 +182,15 @@ impl HttpServer {
         scheme: &'static str,
         slot: ExchangeSlot,
         monitor: Arc<Monitor>,
+        #[cfg(feature = "websocket")] upgrades: Arc<
+            Mutex<
+                Option<(
+                    crate::websocket::Session,
+                    hyper::upgrade::OnUpgrade,
+                    ExchangeSlot,
+                )>,
+            >,
+        >,
     ) -> Result<http::Response<TrackedBody>> {
         let index = lock(&slot).report.exchange_id as usize;
         if index > self.limits.max_requests {
@@ -137,6 +202,39 @@ impl HttpServer {
         if let Some((status, message)) = rejection {
             return Ok(reject(status, message, slot, monitor));
         }
+        #[cfg(feature = "websocket")]
+        let checked = if crate::websocket::candidate(&request) {
+            match crate::websocket::validate(&request) {
+                Ok(checked) => Some(checked),
+                Err(error) => {
+                    let status = if error.code() == 426 {
+                        http::StatusCode::UPGRADE_REQUIRED
+                    } else {
+                        http::StatusCode::BAD_REQUEST
+                    };
+                    let mut response = reject_error(status, error, slot, monitor);
+                    if status == http::StatusCode::UPGRADE_REQUIRED {
+                        response.headers_mut().insert(
+                            "sec-websocket-version",
+                            http::HeaderValue::from_static("13"),
+                        );
+                    }
+                    return Ok(response);
+                }
+            }
+        } else {
+            None
+        };
+        #[cfg(feature = "websocket")]
+        let (request, on_upgrade) = {
+            let mut request = request;
+            let upgrade = if checked.is_some() {
+                Some(hyper::upgrade::on(&mut request))
+            } else {
+                None
+            };
+            (request, upgrade)
+        };
         // Deployment authority/trust checks precede normalization, body loading and all callbacks.
         let effective = match &self.policy {
             Some(policy) => match policy.check(request.uri(), request.headers(), peer) {
@@ -186,7 +284,7 @@ impl HttpServer {
             selected = stackpress_server::http::stream::StreamingHttpAdapter::new(options)?;
             &selected
         };
-        let adapter = adapter.handle_body(&self.app, parts, options, || async move {
+        let load = || async move {
             let result =
                 crate::input::load(&mut body, &self.limits, head_bytes, known_length).await;
             if result.is_err() {
@@ -194,8 +292,78 @@ impl HttpServer {
             }
             progress.lifecycle();
             result
-        });
-        let reply = adapter.await?;
+        };
+        #[cfg(feature = "sse")]
+        let mut pending_sse = None;
+        let body_preflight = |native| {
+            #[cfg(feature = "sse")]
+            return self.prepare_sse(native, monitor.is_stopping(), &mut pending_sse);
+            #[cfg(not(feature = "sse"))]
+            Ok(native)
+        };
+        #[cfg(not(feature = "websocket"))]
+        let reply = adapter
+            .handle_body_with(&self.app, parts, options, load, body_preflight)
+            .await?;
+        #[cfg(feature = "websocket")]
+        let reply = {
+            use stackpress_server::http::upgrade::NativeHttpOutput;
+            let reply = adapter
+                .handle_native_with(
+                    &self.app,
+                    parts,
+                    options,
+                    load,
+                    (
+                        |response, cookie| {
+                            self.prepare_websocket(
+                                response,
+                                cookie,
+                                checked.as_ref(),
+                                monitor.is_stopping(),
+                            )
+                        },
+                        body_preflight,
+                    ),
+                )
+                .await?;
+            let output = match reply.output {
+                NativeHttpOutput::Http(response) => StreamingHttpOutput::Response(response),
+                NativeHttpOutput::Suppressed => StreamingHttpOutput::Suppressed,
+                NativeHttpOutput::Unavailable { state } => {
+                    StreamingHttpOutput::Unavailable { state }
+                }
+                NativeHttpOutput::Native(prepared) => {
+                    lock(&slot).report.host = Some(reply.report);
+                    lock(&slot).report.delivery = HttpDelivery::Published;
+                    lock(&slot).report.status = Some(prepared.response.status().as_u16());
+                    let body = if let Some(mut session) = prepared.session {
+                        session.commit();
+                        let upgrade = on_upgrade.ok_or_else(|| {
+                            Error::new("WebSocket native upgrade ownership missing")
+                        })?;
+                        let limits = self
+                            .websocket
+                            .as_ref()
+                            .ok_or_else(|| Error::new("WebSocket host policy missing"))?;
+                        monitor.realtime(
+                            limits.age.min(self.limits.response_timeout),
+                            self.limits.write_idle_timeout,
+                        );
+                        *lock(&upgrades) = Some((session, upgrade, Arc::clone(&slot)));
+                        TrackedBody::upgrade(slot, monitor)
+                    } else {
+                        monitor.output(None);
+                        TrackedBody::empty(slot, monitor)
+                    };
+                    return Ok(prepared.response.map(|()| body));
+                }
+            };
+            stackpress_server::http::stream::StreamingHttpReply {
+                output,
+                report: reply.report,
+            }
+        };
         lock(&slot).report.host = Some(reply.report);
         match reply.output {
             StreamingHttpOutput::Response(mut native) => {
@@ -208,6 +376,30 @@ impl HttpServer {
                     let mut state = lock(&slot);
                     state.report.delivery = HttpDelivery::Published;
                     state.report.status = Some(native.status().as_u16());
+                }
+                #[cfg(feature = "sse")]
+                if let Some((options, permit)) = pending_sse.take() {
+                    // SSE EOF closes its connection; no successor can inherit a replaced lifetime.
+                    native
+                        .headers_mut()
+                        .insert(CONNECTION, http::HeaderValue::from_static("close"));
+                    // The driver rotates at age; allow only the existing write-idle budget to flush EOF.
+                    monitor.realtime(
+                        options.max_age().saturating_add(options.write_idle()),
+                        options.write_idle(),
+                    );
+                    let (parts, source) = native.into_parts();
+                    let source = crate::sse::NativeSse::new(
+                        source,
+                        options,
+                        permit,
+                        Arc::clone(&monitor),
+                        self.realtime_stats.clone(),
+                    );
+                    return Ok(http::Response::from_parts(
+                        parts,
+                        TrackedBody::sse(source, slot, monitor),
+                    ));
                 }
                 monitor.output(native.body().limits());
                 Ok(native.map(|source| TrackedBody::new(source, slot, monitor)))

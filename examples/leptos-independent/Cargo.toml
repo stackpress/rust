@@ -13,6 +13,7 @@ crate-type = ["cdylib", "rlib"]
 
 [features]
 default = []
+realtime = ["stackpress-leptos/client-sse", "stackpress-leptos/client-websocket"]
 ssr = ["leptos/ssr", "stackpress-leptos/ssr"]
 hydrate = ["leptos/hydrate", "stackpress-leptos/hydrate"]
 csr = ["leptos/csr", "stackpress-leptos/csr"]
@@ -42,3 +43,7 @@ required-features = ["ssr"]
 [lints.rust]
 unsafe_code = "forbid"
 missing_docs = "deny"
+
+[[example]]
+name = "realtime_document"
+required-features = ["ssr", "realtime"]

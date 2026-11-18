@@ -17,6 +17,7 @@ libfuzzer-sys = "=0.4.10"
 stackpress-idea-parser = { path = "../crates/idea/idea-parser" }
 stackpress-framework-admin = { path = "../crates/framework/framework-admin" }
 stackpress-lib = { path = "../crates/lib" }
+stackpress-server = { path = "../crates/server/server", features = ["http-sse"] }
 
 [[bin]]
 name = "idea_parser"
@@ -35,6 +36,13 @@ bench = false
 [[bin]]
 name = "lib_query_form"
 path = "fuzz_targets/lib_query_form.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "sse_encoder"
+path = "fuzz_targets/sse_encoder.rs"
 test = false
 doc = false
 bench = false

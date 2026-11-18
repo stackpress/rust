@@ -69,3 +69,7 @@ pub fn dictionary(locale: &str) -> Result<Language, &'static str> {
 /// Exact hostile Resource text shared by native and browser execution.
 pub const RESOURCE_TEXT: &str =
     "Resolved </script><script>globalThis.independentPwned=1</script>&雪";
+
+/// Independent realtime helper fixture, compiled only by its explicit browser proof.
+#[cfg(feature = "realtime")]
+pub mod realtime;

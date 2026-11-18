@@ -1,0 +1,14 @@
+{
+  "count": 2166,
+  "all_zero_hash": true,
+  "dependency_crates": {
+    "foldhash": 931,
+    "tachys": 1028,
+    "tracing": 28,
+    "tokio": 96,
+    "ring": 29,
+    "memchr": 54
+  },
+  "stackpress_symbols": 0,
+  "compact_export_file_summaries_identical": true
+}

@@ -502,3 +502,53 @@ async fn trusted_options_reach_both_entrypoints() -> Result<()> {
     assert_eq!(collect(native.into_body()).await?, b"trusted");
     Ok(())
 }
+
+/// The additive native seam preserves finalization authority before invoking host preflight.
+#[cfg(feature = "http-upgrade")]
+#[tokio::test]
+async fn native_preflight_obeys_stop_foreign_output_and_sanitized_errors() -> Result<()> {
+    use stackpress_server::http::upgrade::{NativeHttpOutput, prepare_headers};
+    for path in ["/stop", "/foreign", "/bad-header", "/headers"] {
+        let probe = Arc::new(Probe::default());
+        let app = app(Arc::clone(&probe)).await?;
+        let adapter = StreamingHttpAdapter::new(HttpOptions::default())?;
+        let (parts, ()) = http::Request::builder()
+            .uri(path)
+            .body(())
+            .unwrap()
+            .into_parts();
+        let calls = AtomicUsize::new(0);
+        let reply = adapter
+            .handle_native(
+                &app,
+                parts,
+                Default::default(),
+                || async { Ok(Vec::new()) },
+                |response, cookie| {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    prepare_headers(response, cookie).map(Some)
+                },
+            )
+            .await?;
+        match reply.output {
+            NativeHttpOutput::Suppressed => assert_eq!(path, "/stop"),
+            NativeHttpOutput::Unavailable { .. } => assert_eq!(path, "/foreign"),
+            NativeHttpOutput::Http(response) => {
+                assert_eq!(path, "/bad-header");
+                assert_eq!(response.status(), 500);
+                assert_eq!(response.headers().len(), 1);
+            }
+            NativeHttpOutput::Native(headers) => {
+                assert_eq!(path, "/headers");
+                assert_eq!(headers.get_all("set-cookie").iter().count(), 2);
+            }
+        }
+        assert_eq!(
+            calls.load(Ordering::SeqCst),
+            usize::from(!matches!(path, "/stop" | "/foreign"))
+        );
+        assert_eq!(probe.polls.load(Ordering::SeqCst), 0);
+        assert_eq!(probe.drops.load(Ordering::SeqCst), 1);
+    }
+    Ok(())
+}

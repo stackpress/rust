@@ -1,0 +1,8 @@
+{
+  "live_peak_bytes": 12744790016,
+  "before_cleanup_bytes": 12744790016,
+  "after_cleanup_bytes": 11304456192,
+  "raw_profiles_retired": 811,
+  "merged_profile_retained": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/target/task00061/coverage/run-t6osomrr/coverage.profdata",
+  "reports_retained": true
+}
