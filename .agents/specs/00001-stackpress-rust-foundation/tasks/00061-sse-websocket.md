@@ -70,3 +70,16 @@ The final export retains 2,299 mismatched-function warnings. A single-thread dia
 The exact CREATE/DROP audit passed **47 creations / 47 confirmed drops**, zero unmatched pairs, unconfirmed attempts or cleanup failures (`20261118T030244.614591Z-9ccebf1f8a5e`; [all exact owned names](../../../resources/sse-websocket-00061/database-live-pairs.json)). The new audit helper initially recognized only `drop confirmed:` and miscounted the existing `cleanup: dropped owned database` format; that helper was corrected without changing any test or oracle. Its failed record `20261118T025722.667115Z-719b6c93d1bc` remains. The final read-only catalog listing at **2026-11-18 03:02:47 UTC** found **PostgreSQL `[]`, MySQL `[]`** (`20261118T030247.332126Z-422a1255076b`; [catalog evidence](../../../resources/sse-websocket-00061/database-live-final.json)). Only exact test-owned throwaway databases were created/dropped; unrelated databases and server settings were untouched.
 
 Final syntax, whitespace, coverage/cleanup and lock invariants passed (`20261118T030345.095858Z-a52b0f89b997`): 699 original root tuples unchanged plus exactly seven G63 additions, blog pure root subset, fuzz extras unchanged, no existing golden/oracle/.stderr changes. The full release gate was not repeated. Completed raw profiles were retired only after merge, diagnostic comparison and runner exit (`20261118T030518.353301Z-52e3f8591d23`); merged data and reports remain. The live continuation peaked at 11.870 GiB; the task target is now 10.528 GiB ([footprint evidence](../../../resources/sse-websocket-00061/footprint-live.json)). No verification process or test listener remains running. The only remaining handoff is coordinator/owner acceptance; no commit, push or publication was performed.
+
+## Coordinator verification
+
+Committed as `b785ee7` and merged into main as `ec31063`. While committing, the coordinator restored unrelated tracked release-gate logs this task's gate had rewritten. That also reverted the task's 706-tuple `registry-baseline.json`, which was restored in `602f9a0`. Raw gate logs are untracked from `70ffe3a` onwards.
+
+Independent check on a detached clean checkout (2026-11-18):
+- the 699 original registry tuples are kept, plus exactly the seven G63 additions;
+- strict test-boundary, test-copy and dependency-licence checks; release tooling unit tests;
+- 23/23 standalone candidate Clippy;
+- `tools/release/gate.py`: every phase passed except packages, which failed only on the reverted baseline;
+- after the fix, on `70ffe3a`: `package_workspace.py` (strict archives for all 23, five leaf dry runs) passes.
+
+Live-inclusive coverage is the worker's run above: all non-facade crates ≥90%, 47/47 databases dropped.
