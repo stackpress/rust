@@ -151,3 +151,21 @@ Raw gate logs remain gitignored and untracked; the shared benchmark log preserve
 the combined output. Failed preliminary baseline attempts remain described above.
 No install, development listener, commit, push, login, upload or tag was performed.
 The coordinator reviews this local receipt; the owner decides publication.
+
+## Coordinator verification
+
+Committed as `a109a76` and merged into main as `2cc27c6` (2026-11-18). The raw gate logs stayed ignored and were not staged.
+
+Independent check on a fresh clone of main:
+- the root lock still has exactly 706 registry tuples, and `registry-baseline.json` is unchanged from `5436c94`;
+- all 44 workspace lock entries are at 0.2.1, and no manifest still requires 0.2.0;
+- `cargo tree --locked --offline` for the all-features facade resolves;
+- the dependency-licence check covers 708 packages in 23 locks with 0 failures;
+- the test-boundary check (23 candidates) and test-copy check (46 copies) pass, with 0 errors;
+- strict `check_packages` passes;
+- `check_facade` passes: 86 builds and 87 advertised paths;
+- `check_readmes` passes;
+- `cargo check` passes for the facade with the SSE, WebSocket and Leptos realtime features;
+- `./publish.sh --plan` lists 23 updates at 0.2.1, with no rate-limit waiting.
+
+Release-crate coverage was not rerun for this version-only change; task 00061's live-inclusive run (all non-facade crates at least 90%) stands. The full gate, standalone Clippy and freshness results are the worker's run above. Publishing and tagging stay with the owner.
