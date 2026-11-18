@@ -219,6 +219,12 @@ impl HttpServer {
         mut acceptor: A,
         stop: Shutdown,
     ) -> DrainReport {
+        #[cfg(any(feature = "sse", feature = "websocket"))]
+        if let Err(error) = self.validate_realtime() {
+            let mut report = DrainReport::new();
+            report.failure = Some(Arc::new(error));
+            return report;
+        }
         let mut tasks = JoinSet::new();
         let draining = Shutdown::new();
         let mut report = DrainReport::new();

@@ -20,8 +20,8 @@ PROOFS = Path(__file__).resolve().parent
 BASELINE = BLOG / '.build/lock-baseline.json'
 EXAMPLE_LOCK = BLOG / 'Cargo.lock'
 ROOT_LOCK = ROOT / 'Cargo.lock'
-# G58: handshake only, without TLS; source/checksum identity is part of the exception.
-G58_EXTRAS = {
+# G63 supersedes only G58 tuple placement; production approval adds exactly seven tuples.
+G63_ADDITIONS = {
     ('data-encoding', '2.11.1',
      'registry+https://github.com/rust-lang/crates.io-index',
      '4583a4551df46e2792f82ceeac45e850d2e2d5debba0b91f102385cda5b11f06'),
@@ -37,6 +37,9 @@ G58_EXTRAS = {
     ('sha1', '0.10.6',
      'registry+https://github.com/rust-lang/crates.io-index',
      'e3bf829a2d51ab4a5ddf1352d8470c140cadc8301b2ae1789db023f01cedd6ba'),
+    ('tokio-tungstenite', '0.29.0',
+     'registry+https://github.com/rust-lang/crates.io-index',
+     '8f72a05e828585856dacd553fba484c242c46e391fb0e58917c942ee9202915c'),
     ('tungstenite', '0.29.0',
      'registry+https://github.com/rust-lang/crates.io-index',
      '6c01152af293afb9c7c2a57e4b559c5620b421f6d133261c60dd2d0cdb38e6b8'),
@@ -54,28 +57,33 @@ def registry(data):
 
 def verify_root_registry(current, expected):
     """Permit workspace-edge edits while freezing every external identity and checksum."""
-    assert registry(current) == expected, 'root registry tuples/order changed'
-    assert len(expected) == 699, 'unexpected root registry baseline'
+    rows = registry(current)
+    if len(expected) == 699:
+        assert [row for row in rows if tuple(row) not in G63_ADDITIONS] == expected, 'root registry tuples/order changed'
+        assert {tuple(row) for row in rows} - {tuple(row) for row in expected} == G63_ADDITIONS, 'G63 additions changed'
+    else:
+        assert rows == expected, 'root registry tuples/order changed'
+    assert len(rows) == 706, 'unexpected root registry baseline'
 
 
 def verify(baseline):
-    """Reject registry mutation and every external tuple outside the root subset plus G58."""
+    """Reject registry mutation and every external tuple outside the root subset."""
     current = ROOT_LOCK.read_bytes()
     verify_root_registry(current, baseline['registry'])
 
     # Pruning unused root packages is expected in a standalone workspace. Neither a new
-    # registry version/checksum outside G58 nor a git-sourced package is permitted.
+    # registry version/checksum outside the root nor a git-sourced package is permitted.
     example = EXAMPLE_LOCK.read_bytes()
-    allowed = {tuple(p) for p in baseline['registry']}
+    allowed = {tuple(p) for p in registry(current)}
     selected = registry(example)
-    assert {tuple(p) for p in selected} - allowed == G58_EXTRAS, 'blog G58 exception tuples changed'
-    assert len(selected) == 448, 'blog registry inventory changed'
+    assert {tuple(p) for p in selected} <= allowed, 'blog registry tuples outside root'
+    assert {tuple(p) for p in selected if p[0] == 'tungstenite'} == {row for row in G63_ADDITIONS if row[0] == 'tungstenite'}, 'blog handshake tuple changed'
     packages = tomllib.loads(example.decode())['package']
     # The sole WebSocket edge is build tooling, with just the HTTP upgrade feature enabled.
     manifest = tomllib.loads((BLOG / 'xtask/Cargo.toml').read_text())['dependencies']['tungstenite']
     assert manifest == {'version': '=0.29.0', 'default-features': False, 'features': ['handshake']}, 'G58 requires minimal handshake features'
     assert all(not p.get('source') or p['source'].startswith('registry+') for p in packages)
-    print(f'locks: root 699 identical registry tuples; example {len(selected)} registry tuples are a root subset plus exactly the six G58 tuples')
+    print(f'locks: root 706 approved registry tuples; example {len(selected)} registry tuples are a pure root subset (G58 placement exception retired)')
 
 
 def check():
@@ -95,11 +103,11 @@ def seed(release=None):
         'root_sha256': hashlib.sha256(root_bytes).hexdigest(),
         'registry': registry(root_bytes),
     }
-    assert len(baseline['registry']) == 699, 'unexpected root registry baseline'
+    assert len(baseline['registry']) == 706, 'unexpected root registry baseline'
     if release is None:
         assert not EXAMPLE_LOCK.exists(), 'example lock already exists; use check, not seed'
     else:
-        assert release in ('g50-m3-exports', 'blog-web-stages', 'blog-post-g57', 'blog-plugin-crates', 'blog-xtask'), 'manifest amendment lacks an explicit release'
+        assert release in ('g50-m3-exports', 'blog-web-stages', 'blog-post-g57', 'blog-plugin-crates', 'blog-xtask', 'sse-websocket'), 'manifest amendment lacks an explicit release'
         assert EXAMPLE_LOCK.exists(), 'manifest amendment needs the previous lock'
         if release in ('blog-plugin-crates', 'blog-xtask'):
             baseline['example_registry'] = registry(EXAMPLE_LOCK.read_bytes())
@@ -134,7 +142,7 @@ def main():
     """Expose only the one-shot seed and later read-only invariant check."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('mode', choices=('seed', 'check'))
-    parser.add_argument('--release', choices=('g50-m3-exports', 'blog-web-stages', 'blog-post-g57', 'blog-plugin-crates', 'blog-xtask'))
+    parser.add_argument('--release', choices=('g50-m3-exports', 'blog-web-stages', 'blog-post-g57', 'blog-plugin-crates', 'blog-xtask', 'sse-websocket'))
     args = parser.parse_args()
     if args.mode == 'seed':
         return seed(args.release)

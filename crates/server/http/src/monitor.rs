@@ -47,6 +47,12 @@ pub(crate) struct Monitor {
     limits: NetworkLimits,
     /// Hyper's head timer reads this progress clock, including for buffered partial successors.
     pub(crate) last_read: Mutex<Instant>,
+    #[cfg(any(feature = "sse", feature = "websocket"))]
+    realtime: std::sync::atomic::AtomicBool,
+    #[cfg(any(feature = "sse", feature = "websocket"))]
+    stopping: std::sync::atomic::AtomicBool,
+    #[cfg(any(feature = "sse", feature = "websocket"))]
+    pub(crate) stop_waker: Mutex<Option<std::task::Waker>>,
 }
 impl Monitor {
     /// Begin head timing at admission, even when the peer sends no bytes.
@@ -65,7 +71,56 @@ impl Monitor {
             changed: Notify::new(),
             limits: limits.clone(),
             last_read: Mutex::new(now),
+            #[cfg(any(feature = "sse", feature = "websocket"))]
+            realtime: Default::default(),
+            #[cfg(any(feature = "sse", feature = "websocket"))]
+            stopping: Default::default(),
+            #[cfg(any(feature = "sse", feature = "websocket"))]
+            stop_waker: Mutex::new(None),
         })
+    }
+    /// Replace ordinary response/connection clocks only for a trusted committed descriptor.
+    #[cfg(any(feature = "sse", feature = "websocket"))]
+    pub(crate) fn realtime(&self, age: Duration, idle: Duration) {
+        let now = Instant::now();
+        let mut state = lock(&self.state);
+        state.phase = Phase::Output;
+        state.absolute = now + age;
+        state.idle = now + idle;
+        state.idle_budget = idle;
+        self.realtime
+            .store(true, std::sync::atomic::Ordering::Release);
+        drop(state);
+        self.changed.notify_waiters();
+    }
+    /// Detect a selected session without interpreting its MIME or headers.
+    pub(crate) fn is_realtime(&self) -> bool {
+        #[cfg(any(feature = "sse", feature = "websocket"))]
+        return self.realtime.load(std::sync::atomic::Ordering::Acquire);
+        #[cfg(not(any(feature = "sse", feature = "websocket")))]
+        false
+    }
+    /// Close publication and wake a quiet SSE source during graceful drain.
+    #[cfg(any(feature = "sse", feature = "websocket"))]
+    pub(crate) fn stop(&self) {
+        self.stopping
+            .store(true, std::sync::atomic::Ordering::Release);
+        if let Some(waker) = lock(&self.stop_waker).take() {
+            waker.wake();
+        }
+        self.changed.notify_waiters();
+    }
+    /// Observe the sticky stop before producer polling or native handoff.
+    #[cfg(any(feature = "sse", feature = "websocket"))]
+    pub(crate) fn is_stopping(&self) -> bool {
+        self.stopping.load(std::sync::atomic::Ordering::Acquire)
+    }
+    /// Preserve ordinary connection age until explicit realtime commitment replaces that clock.
+    pub(crate) async fn connection_expired(&self, started: Instant) {
+        tokio::time::sleep_until(started + self.limits.connection_lifetime).await;
+        if self.is_realtime() {
+            std::future::pending::<()>().await;
+        }
     }
     /// Wait for the previous body and native flush, so a second lifecycle cannot overlap.
     pub(crate) async fn turn(&self) {
@@ -153,21 +208,24 @@ impl Monitor {
     /// A completed producer plus flush establishes the previous exchange's final local boundary.
     pub(crate) fn flushed(&self) {
         let mut state = lock(&self.state);
-        if state.phase == Phase::Output && state.body_done {
-            if let Some(slot) = state.current.take() {
-                let mut exchange = lock(&slot);
-                exchange.settled = true;
-                exchange.report.elapsed = exchange.started.elapsed();
-                // Completed here still means local handoff/flush, never a remote ACK.
-                if exchange.report.delivery == HttpDelivery::Published {
-                    exchange.report.delivery = HttpDelivery::Completed;
-                }
-            }
-            state.phase = Phase::Idle;
-            state.absolute = Instant::now() + self.limits.keep_alive_idle;
-            state.idle = state.absolute;
-            state.wrote = false;
+        // An ordinary successful flush with an unfinished body changes no monitor state.
+        // Waking the supervisor here would continually repoll Hyper and starve clock advances.
+        if state.phase != Phase::Output || !state.body_done {
+            return;
         }
+        if let Some(slot) = state.current.take() {
+            let mut exchange = lock(&slot);
+            exchange.settled = true;
+            exchange.report.elapsed = exchange.started.elapsed();
+            // Completed here still means local handoff/flush, never a remote ACK.
+            if exchange.report.delivery == HttpDelivery::Published {
+                exchange.report.delivery = HttpDelivery::Completed;
+            }
+        }
+        state.phase = Phase::Idle;
+        state.absolute = Instant::now() + self.limits.keep_alive_idle;
+        state.idle = state.absolute;
+        state.wrote = false;
         drop(state);
         self.changed.notify_waiters();
     }

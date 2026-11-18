@@ -22,6 +22,7 @@ Use guides for an action and [API reference](api/README.md) for exact signatures
 | Adopt SSR nodes or mount a fresh client root | [Hydrate and mount](guides/hydrate-and-mount.md) |
 | Cancel pending loaders and publish current suggestions | [Own async work](guides/async-work.md) |
 | Stream through bounded owned chunks | [Stream HTML](guides/stream-html.md) |
+| Own browser SSE and WebSocket connections | [Realtime clients](api/realtime.md) |
 | Display checked rich content or edit typed decimals | [Optional helpers](guides/optional-helpers.md) |
 | Integrate page contracts, routes and hosts | [View integration](../../framework/framework-view/docs/integration-leptos.md) |
 
@@ -40,6 +41,8 @@ Leptos macros need a direct `leptos = "=0.8.22"` dependency with defaults off an
 | `stream` | Native supervised streaming; implies `ssr` | `leptos-stream` |
 | `rich` | Closed sanitizer and Markdown policy | `leptos-rich` |
 | `format` | Explicit-locale decimal/date/time/phone display and editing | `leptos-format` |
+| `client-sse` | Owner-scoped EventSource, inert during native SSR | `leptos-sse` |
+| `client-websocket` | Owner-scoped WebSocket with optional bounded reconnect | `leptos-websocket` |
 
 Build hydrate and CSR separately. Do not use `--all-features`. Native startup requires an
 active Tokio runtime and explicit `initialize_ssr`; importing a crate starts no runtime,

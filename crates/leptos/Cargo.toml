@@ -14,6 +14,8 @@ include = ["/src/**", "/README.md", "/LICENSE", "/*.md", "/tests/**", "/examples
 
 [features]
 default = []
+client-sse = ["web-sys/EventSource", "web-sys/EventSourceInit", "web-sys/MessageEvent", "web-sys/Event", "web-sys/EventTarget"]
+client-websocket = ["web-sys/WebSocket", "web-sys/BinaryType", "web-sys/CloseEvent", "web-sys/ErrorEvent", "web-sys/MessageEvent", "web-sys/Event", "web-sys/EventTarget"]
 ssr = ["leptos/ssr", "leptos_meta/ssr", "leptos_router/ssr", "async", "dep:hydration_context", "dep:serde_json", "dep:any_spawner", "dep:tokio"]
 hydrate = ["leptos/hydrate"]
 csr = ["leptos/csr"]

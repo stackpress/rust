@@ -83,7 +83,10 @@ def main():
                                        ('stackpress-framework', 'regenerate_aggregate_models', 'full,codegen')]:
         phase(example, ['cargo', 'run', '-p', package, '--example', example, '--locked', '--offline',
                          '--features', features, '--', '--check'])
-    phase('blog', ['python3', 'tools/examples/blog/gate.py'], target=ROOT / 'target/00050-blog/native')
+    phase('realtime-graphs', ['python3', 'tools/realtime/graphs.py'])
+    phase('realtime-browser-build', ['python3', 'tools/realtime/proof.py', 'build'])
+    phase('realtime-browser', ['cargo', 'test', '-p', 'stackpress-server-http', '--locked', '--offline', '--features', 'sse,websocket,tls', '--test', 'realtime_browser', 'browser_watchdog', '--', '--ignored', '--exact', '--nocapture'], extra={'REALTIME_ARTIFACTS': str(base.parent / 'browser-artifacts')})
+    phase('blog', ['python3', 'tools/examples/blog/gate.py'], target=base.parent / 'blog/native')
     phase('checker-controls', ['python3', '-m', 'unittest', 'discover', '-s', 'tools/release', '-p', 'test_*.py'])
     phase('readmes', ['python3', 'tools/release/check_readmes.py'])
     package_flags = (['--pending-tests'] if args.pending_tests else []) + (['--allow-dirty'] if args.allow_dirty else [])

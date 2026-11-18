@@ -66,7 +66,7 @@ pub(crate) fn check_head(
         ));
     }
     if headers.contains_key("trailer")
-        || headers.contains_key("upgrade")
+        || (headers.contains_key("upgrade") && !cfg!(feature = "websocket"))
         || request.method() == http::Method::CONNECT
     {
         return Some((

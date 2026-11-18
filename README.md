@@ -5,6 +5,13 @@
 0.2.0 is a normal Cargo release; “beta” describes its maturity. Use Rust 1.96 or newer.
 Read the [changelog](CHANGELOG.md) and [0.1 to 0.2 migration guide](docs/migrating-0.1-to-0.2.md).
 
+Opt-in [SSE and WebSocket hosting](crates/server/http/docs/guides/realtime.md) uses
+facade features `server-http-host-sse` and `server-http-host-websocket`.
+`server-http-sse` exposes the IO-independent SSE encoder and response adapter.
+[Browser helpers](crates/leptos/docs/api/realtime.md) use `leptos-sse` and
+`leptos-websocket` alongside the selected render mode. Applications own endpoint
+authorization and Origin checks; connections have finite limits and shutdown grace.
+
 ```toml
 [dependencies]
 stackpress = "0.2"

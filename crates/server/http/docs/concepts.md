@@ -87,8 +87,9 @@ stop also establishes that every task was reaped before return.
 
 ## Supported boundaries
 
-HTTP/1 is the only protocol family; there is no HTTP/2, upgrade, WebSocket,
-CONNECT tunnel, or request-trailer support. HTTPS supports explicit Rustls
+HTTP/1.1 is the only HTTP protocol family. Optional SSE and RFC 6455 WebSockets
+use the explicit [realtime policy](guides/realtime.md). Arbitrary upgrades, HTTP/2
+extended CONNECT, CONNECT tunnels and request trailers remain unsupported. HTTPS supports explicit Rustls
 TLS 1.2/1.3 with HTTP/1.1 ALPN. No mTLS, certificate issuance, discovery,
 password interface for encrypted keys, or certificate reload is supplied.
 

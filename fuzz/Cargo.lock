@@ -1478,6 +1478,7 @@ dependencies = [
  "stackpress-framework-admin",
  "stackpress-idea-parser",
  "stackpress-lib",
+ "stackpress-server",
 ]
 
 [[package]]
@@ -1512,6 +1513,17 @@ dependencies = [
  "serde",
  "serde_json",
  "url",
+]
+
+[[package]]
+name = "stackpress-server"
+version = "0.2.0"
+dependencies = [
+ "futures-core",
+ "http",
+ "serde",
+ "serde_json",
+ "stackpress-lib",
 ]
 
 [[package]]

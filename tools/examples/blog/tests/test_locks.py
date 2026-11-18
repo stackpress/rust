@@ -10,7 +10,7 @@ spec.loader.exec_module(locks)
 
 
 class RootRegistryTests(unittest.TestCase):
-    """The baseline is the real 699-entry root; probes change one contract dimension."""
+    """The baseline is the real 706-entry root; probes change one contract dimension."""
 
     def setUp(self):
         self.original = locks.ROOT_LOCK.read_bytes()
@@ -31,6 +31,13 @@ class RootRegistryTests(unittest.TestCase):
         self.assertEqual(count, 1)
         with self.assertRaisesRegex(AssertionError, 'root registry tuples/order changed'):
             locks.verify_root_registry(edited, self.expected)
+
+class BlogSubsetTests(unittest.TestCase):
+    def test_g58_placement_is_retired(self):
+        root = {tuple(row) for row in locks.registry(locks.ROOT_LOCK.read_bytes())}
+        blog = {tuple(row) for row in locks.registry(locks.EXAMPLE_LOCK.read_bytes())}
+        self.assertLessEqual(blog, root)
+        self.assertTrue(locks.G63_ADDITIONS <= root)
 
 
 if __name__ == '__main__':

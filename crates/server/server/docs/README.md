@@ -32,6 +32,7 @@ Choose a guide by the result you need. Each links to the corresponding lookup pa
 | Prove behavior without a transport | [Testing in process](guides/testing-in-process.md) |
 | Convert buffered HTTP input and output | [Using HTTP](guides/using-http.md) |
 | Publish owned one-shot HTTP output | [Streaming HTTP](guides/streaming-http.md) |
+| Encode events and attach a bounded SSE source | [Server-sent events](guides/sse.md) |
 | Serve real HTTP/HTTPS connections | [HTTP host](../../http/docs/getting-started.md) |
 
 ## Returning to the API

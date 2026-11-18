@@ -13,6 +13,14 @@
 //! cancellation, bounded drain and final reports. Binding is explicit; runtime/process signals
 //! remain caller-owned. Deployment policy adds strict authority/proxy trust and optional Rustls.
 //! Immutable assets register as ordinary routes before application build.
+//!
+//! Optional `sse` and `websocket` require explicit host policy selection. Realtime sessions own
+//! finite admission, message/queue/byte budgets and a separate one-hour clock. Stop finishes the
+//! current SSE event then EOF, or sends WebSocket Close(1001) within the host grace deadline.
+//! The application owns Origin/authentication, CSRF, session expiry and per-message authorization.
+//! Cookie-bearing cross-site WebSockets can enable cross-site WebSocket hijacking without app
+//! Origin checks; CORS is not a WebSocket guard. Proxies must permit Upgrade and SSE streaming.
+//! See the shipped `docs/guides/realtime.md` and `examples/realtime.rs` for limits and setup.
 
 mod assets;
 mod body;
@@ -24,7 +32,19 @@ mod monitor;
 mod observe;
 mod options;
 mod proxy;
+#[cfg(any(feature = "sse", feature = "websocket"))]
+mod realtime;
 mod report;
+#[cfg(feature = "sse")]
+mod sse;
+#[cfg(feature = "websocket")]
+pub mod websocket;
+#[cfg(any(feature = "sse", feature = "websocket"))]
+pub use realtime::RealtimeStats;
+#[cfg(feature = "sse")]
+pub use realtime::SseHostLimits;
+#[cfg(feature = "websocket")]
+pub use realtime::WebSocketHostLimits;
 mod startup;
 mod supervisor;
 mod timer;
@@ -98,6 +118,16 @@ pub struct HttpRequestContext {
 pub struct HttpServer {
     /// One built host is shared; per-request startup/registration never occurs.
     app: Arc<Server>,
+    #[cfg(feature = "sse")]
+    sse: Option<SseHostLimits>,
+    #[cfg(feature = "sse")]
+    sse_slots: Arc<Semaphore>,
+    #[cfg(feature = "websocket")]
+    websocket: Option<WebSocketHostLimits>,
+    #[cfg(feature = "websocket")]
+    ws_slots: Arc<Semaphore>,
+    #[cfg(any(feature = "sse", feature = "websocket"))]
+    realtime_stats: RealtimeStats,
     /// Existing normalization, lifecycle and one-shot publication authority.
     adapter: StreamingHttpAdapter,
     /// Cloned only when a validated proxy origin selects a different informational URL base.
@@ -135,6 +165,16 @@ impl HttpServer {
         let limits = NetworkLimits::default();
         Ok(Self {
             app,
+            #[cfg(feature = "sse")]
+            sse: None,
+            #[cfg(feature = "sse")]
+            sse_slots: Arc::new(Semaphore::new(0)),
+            #[cfg(feature = "websocket")]
+            websocket: None,
+            #[cfg(feature = "websocket")]
+            ws_slots: Arc::new(Semaphore::new(0)),
+            #[cfg(any(feature = "sse", feature = "websocket"))]
+            realtime_stats: Default::default(),
             http_options: options.clone(),
             policy: None,
             observer: None,

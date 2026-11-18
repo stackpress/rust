@@ -12,3 +12,10 @@ perform no sanitization.
 
 The shared [source-role family](docs/api/source-roles.md) also covers source inputs,
 choices, file upload hooks, collections and displays, with the G55 native rich-role contract.
+
+Independent `client-sse` and `client-websocket` features expose owner-scoped
+`realtime::use_event_source` and `realtime::use_websocket`. They open nothing on
+native SSR; browser effects connect after mount and disposal closes transports,
+removes listeners and cancels retry timers. See the [realtime guide](docs/api/realtime.md)
+for bounded state, backpressure and application security responsibilities.
+Facade equivalents are `leptos-sse` and `leptos-websocket`; no native host is pulled in.

@@ -1,0 +1,4540 @@
+{
+  "stackpress-leptos": {
+    "covered": 10536,
+    "total": 11355,
+    "percent": 92.78731836195509,
+    "files": [
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/async_render.rs",
+        "lines": {
+          "count": 90,
+          "covered": 89,
+          "percent": 98.88888888888889
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/advanced.rs",
+        "lines": {
+          "count": 102,
+          "covered": 93,
+          "percent": 91.17647058823529
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/bounded_inputs.rs",
+        "lines": {
+          "count": 268,
+          "covered": 255,
+          "percent": 95.1492537313433
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/breadth_tests.rs",
+        "lines": {
+          "count": 680,
+          "covered": 678,
+          "percent": 99.70588235294117
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/choice.rs",
+        "lines": {
+          "count": 204,
+          "covered": 192,
+          "percent": 94.11764705882352
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/collection_state.rs",
+        "lines": {
+          "count": 91,
+          "covered": 91,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/collections.rs",
+        "lines": {
+          "count": 232,
+          "covered": 165,
+          "percent": 71.12068965517241
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/combobox.rs",
+        "lines": {
+          "count": 340,
+          "covered": 299,
+          "percent": 87.94117647058823
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/controls.rs",
+        "lines": {
+          "count": 254,
+          "covered": 250,
+          "percent": 98.4251968503937
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/core_tests.rs",
+        "lines": {
+          "count": 241,
+          "covered": 241,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/disclosure.rs",
+        "lines": {
+          "count": 132,
+          "covered": 113,
+          "percent": 85.60606060606061
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/display_values.rs",
+        "lines": {
+          "count": 208,
+          "covered": 206,
+          "percent": 99.03846153846155
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/geometry.rs",
+        "lines": {
+          "count": 49,
+          "covered": 48,
+          "percent": 97.95918367346938
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/icons.rs",
+        "lines": {
+          "count": 35,
+          "covered": 34,
+          "percent": 97.14285714285714
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/inputs.rs",
+        "lines": {
+          "count": 353,
+          "covered": 329,
+          "percent": 93.20113314447592
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/layout.rs",
+        "lines": {
+          "count": 71,
+          "covered": 71,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/navigation.rs",
+        "lines": {
+          "count": 162,
+          "covered": 101,
+          "percent": 62.34567901234568
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/overlay.rs",
+        "lines": {
+          "count": 172,
+          "covered": 140,
+          "percent": 81.3953488372093
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/paging.rs",
+        "lines": {
+          "count": 99,
+          "covered": 93,
+          "percent": 93.93939393939394
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/presentation.rs",
+        "lines": {
+          "count": 210,
+          "covered": 210,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/source/code.rs",
+        "lines": {
+          "count": 95,
+          "covered": 79,
+          "percent": 83.15789473684211
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/source/color_input.rs",
+        "lines": {
+          "count": 104,
+          "covered": 89,
+          "percent": 85.57692307692307
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/source/countries.rs",
+        "lines": {
+          "count": 171,
+          "covered": 166,
+          "percent": 97.07602339181285
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/source/display.rs",
+        "lines": {
+          "count": 164,
+          "covered": 163,
+          "percent": 99.39024390243902
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/source/file_state.rs",
+        "lines": {
+          "count": 61,
+          "covered": 57,
+          "percent": 93.44262295081968
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/source/files.rs",
+        "lines": {
+          "count": 97,
+          "covered": 82,
+          "percent": 84.5360824742268
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/source/formula.rs",
+        "lines": {
+          "count": 189,
+          "covered": 180,
+          "percent": 95.23809523809523
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/source/lists.rs",
+        "lines": {
+          "count": 137,
+          "covered": 116,
+          "percent": 84.67153284671532
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/source/markdown.rs",
+        "lines": {
+          "count": 54,
+          "covered": 51,
+          "percent": 94.44444444444444
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/source/mask.rs",
+        "lines": {
+          "count": 127,
+          "covered": 117,
+          "percent": 92.1259842519685
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/source/mask_input.rs",
+        "lines": {
+          "count": 43,
+          "covered": 34,
+          "percent": 79.06976744186046
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/source/media.rs",
+        "lines": {
+          "count": 81,
+          "covered": 78,
+          "percent": 96.29629629629629
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/source/radio.rs",
+        "lines": {
+          "count": 63,
+          "covered": 57,
+          "percent": 90.47619047619048
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/source/relative.rs",
+        "lines": {
+          "count": 65,
+          "covered": 49,
+          "percent": 75.38461538461539
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/source/select.rs",
+        "lines": {
+          "count": 132,
+          "covered": 92,
+          "percent": 69.6969696969697
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/source/small.rs",
+        "lines": {
+          "count": 69,
+          "covered": 51,
+          "percent": 73.91304347826086
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/source/suggest.rs",
+        "lines": {
+          "count": 81,
+          "covered": 51,
+          "percent": 62.96296296296296
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/source/tests.rs",
+        "lines": {
+          "count": 338,
+          "covered": 338,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/table_family.rs",
+        "lines": {
+          "count": 173,
+          "covered": 158,
+          "percent": 91.32947976878613
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/table_state.rs",
+        "lines": {
+          "count": 160,
+          "covered": 156,
+          "percent": 97.5
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/tag_list.rs",
+        "lines": {
+          "count": 185,
+          "covered": 124,
+          "percent": 67.02702702702703
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/tests.rs",
+        "lines": {
+          "count": 113,
+          "covered": 113,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/text_editor/mod.rs",
+        "lines": {
+          "count": 258,
+          "covered": 244,
+          "percent": 94.57364341085271
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/text_editor/tests.rs",
+        "lines": {
+          "count": 171,
+          "covered": 171,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/text_editor/toolbar.rs",
+        "lines": {
+          "count": 415,
+          "covered": 407,
+          "percent": 98.0722891566265
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/components/text_editor/toolbar/icons.rs",
+        "lines": {
+          "count": 45,
+          "covered": 45,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/edit/decimal.rs",
+        "lines": {
+          "count": 195,
+          "covered": 194,
+          "percent": 99.48717948717949
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/edit/input.rs",
+        "lines": {
+          "count": 74,
+          "covered": 56,
+          "percent": 75.67567567567568
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/edit/mod.rs",
+        "lines": {
+          "count": 334,
+          "covered": 300,
+          "percent": 89.82035928143712
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/edit/phone.rs",
+        "lines": {
+          "count": 64,
+          "covered": 59,
+          "percent": 92.1875
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/edit/selection.rs",
+        "lines": {
+          "count": 68,
+          "covered": 68,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/edit/temporal.rs",
+        "lines": {
+          "count": 198,
+          "covered": 180,
+          "percent": 90.9090909090909
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/edit/tests.rs",
+        "lines": {
+          "count": 473,
+          "covered": 470,
+          "percent": 99.36575052854123
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/edit/transport.rs",
+        "lines": {
+          "count": 33,
+          "covered": 31,
+          "percent": 93.93939393939394
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/format.rs",
+        "lines": {
+          "count": 88,
+          "covered": 87,
+          "percent": 98.86363636363636
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/format_number.rs",
+        "lines": {
+          "count": 107,
+          "covered": 105,
+          "percent": 98.13084112149532
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/format_phone.rs",
+        "lines": {
+          "count": 61,
+          "covered": 60,
+          "percent": 98.36065573770492
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/format_time.rs",
+        "lines": {
+          "count": 246,
+          "covered": 243,
+          "percent": 98.78048780487805
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/language.rs",
+        "lines": {
+          "count": 159,
+          "covered": 159,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/language/tests.rs",
+        "lines": {
+          "count": 161,
+          "covered": 161,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/navigation.rs",
+        "lines": {
+          "count": 44,
+          "covered": 41,
+          "percent": 93.18181818181817
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/owner.rs",
+        "lines": {
+          "count": 9,
+          "covered": 9,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/realtime/event_source.rs",
+        "lines": {
+          "count": 83,
+          "covered": 83,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/realtime/mod.rs",
+        "lines": {
+          "count": 48,
+          "covered": 48,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/realtime/websocket.rs",
+        "lines": {
+          "count": 161,
+          "covered": 159,
+          "percent": 98.75776397515527
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/render.rs",
+        "lines": {
+          "count": 138,
+          "covered": 122,
+          "percent": 88.40579710144928
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/replay.rs",
+        "lines": {
+          "count": 60,
+          "covered": 58,
+          "percent": 96.66666666666667
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/replay_error.rs",
+        "lines": {
+          "count": 16,
+          "covered": 4,
+          "percent": 25
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/resources.rs",
+        "lines": {
+          "count": 79,
+          "covered": 72,
+          "percent": 91.13924050632912
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/rich.rs",
+        "lines": {
+          "count": 187,
+          "covered": 185,
+          "percent": 98.93048128342245
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/safety.rs",
+        "lines": {
+          "count": 24,
+          "covered": 24,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/state.rs",
+        "lines": {
+          "count": 109,
+          "covered": 109,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/state/tests.rs",
+        "lines": {
+          "count": 107,
+          "covered": 107,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/stream.rs",
+        "lines": {
+          "count": 328,
+          "covered": 299,
+          "percent": 91.15853658536585
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/leptos/src/stream_replay.rs",
+        "lines": {
+          "count": 117,
+          "covered": 77,
+          "percent": 65.8119658119658
+        }
+      }
+    ]
+  },
+  "stackpress-framework-language": {
+    "covered": 80,
+    "total": 84,
+    "percent": 95.23809523809524,
+    "files": [
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-language/src/lib.rs",
+        "lines": {
+          "count": 58,
+          "covered": 54,
+          "percent": 93.10344827586206
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-language/src/tests.rs",
+        "lines": {
+          "count": 26,
+          "covered": 26,
+          "percent": 100
+        }
+      }
+    ]
+  },
+  "stackpress-sql": {
+    "covered": 3335,
+    "total": 3443,
+    "percent": 96.86320069706652,
+    "files": [
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql/src/ddl.rs",
+        "lines": {
+          "count": 492,
+          "covered": 484,
+          "percent": 98.3739837398374
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql/src/dialect.rs",
+        "lines": {
+          "count": 51,
+          "covered": 51,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql/src/diff.rs",
+        "lines": {
+          "count": 238,
+          "covered": 235,
+          "percent": 98.73949579831933
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql/src/dml.rs",
+        "lines": {
+          "count": 509,
+          "covered": 502,
+          "percent": 98.62475442043221
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql/src/engine.rs",
+        "lines": {
+          "count": 168,
+          "covered": 159,
+          "percent": 94.64285714285714
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql/src/error.rs",
+        "lines": {
+          "count": 54,
+          "covered": 54,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql/src/expr.rs",
+        "lines": {
+          "count": 293,
+          "covered": 289,
+          "percent": 98.63481228668942
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql/src/identifier.rs",
+        "lines": {
+          "count": 62,
+          "covered": 62,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql/src/json.rs",
+        "lines": {
+          "count": 171,
+          "covered": 167,
+          "percent": 97.6608187134503
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql/src/json_render.rs",
+        "lines": {
+          "count": 57,
+          "covered": 57,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql/src/network_ddl.rs",
+        "lines": {
+          "count": 526,
+          "covered": 468,
+          "percent": 88.97338403041825
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql/src/query.rs",
+        "lines": {
+          "count": 85,
+          "covered": 85,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql/src/schema.rs",
+        "lines": {
+          "count": 282,
+          "covered": 276,
+          "percent": 97.87234042553192
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql/src/statement.rs",
+        "lines": {
+          "count": 141,
+          "covered": 140,
+          "percent": 99.29078014184397
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql/src/table.rs",
+        "lines": {
+          "count": 50,
+          "covered": 50,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql/src/tests/plan_validation.rs",
+        "lines": {
+          "count": 49,
+          "covered": 43,
+          "percent": 87.75510204081633
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql/src/value.rs",
+        "lines": {
+          "count": 215,
+          "covered": 213,
+          "percent": 99.06976744186046
+        }
+      }
+    ]
+  },
+  "stackpress-lib": {
+    "covered": 4558,
+    "total": 4780,
+    "percent": 95.35564853556485,
+    "files": [
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/lib/src/body.rs",
+        "lines": {
+          "count": 31,
+          "covered": 20,
+          "percent": 64.51612903225806
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/lib/src/data/json.rs",
+        "lines": {
+          "count": 244,
+          "covered": 213,
+          "percent": 87.29508196721312
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/lib/src/data/json/key.rs",
+        "lines": {
+          "count": 41,
+          "covered": 37,
+          "percent": 90.2439024390244
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/lib/src/data/mod.rs",
+        "lines": {
+          "count": 14,
+          "covered": 14,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/lib/src/data/mutation.rs",
+        "lines": {
+          "count": 237,
+          "covered": 231,
+          "percent": 97.46835443037975
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/lib/src/data/nest.rs",
+        "lines": {
+          "count": 276,
+          "covered": 254,
+          "percent": 92.02898550724638
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/lib/src/data/parsers.rs",
+        "lines": {
+          "count": 416,
+          "covered": 390,
+          "percent": 93.75
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/lib/src/data/path.rs",
+        "lines": {
+          "count": 84,
+          "covered": 77,
+          "percent": 91.66666666666666
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/lib/src/data/value.rs",
+        "lines": {
+          "count": 271,
+          "covered": 250,
+          "percent": 92.25092250922509
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/lib/src/error.rs",
+        "lines": {
+          "count": 177,
+          "covered": 163,
+          "percent": 92.09039548022598
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/lib/src/event.rs",
+        "lines": {
+          "count": 511,
+          "covered": 499,
+          "percent": 97.65166340508806
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/lib/src/headers.rs",
+        "lines": {
+          "count": 87,
+          "covered": 85,
+          "percent": 97.70114942528735
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/lib/src/pattern.rs",
+        "lines": {
+          "count": 217,
+          "covered": 210,
+          "percent": 96.7741935483871
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/lib/src/queue.rs",
+        "lines": {
+          "count": 151,
+          "covered": 145,
+          "percent": 96.02649006622516
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/lib/src/request.rs",
+        "lines": {
+          "count": 241,
+          "covered": 238,
+          "percent": 98.7551867219917
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/lib/src/response.rs",
+        "lines": {
+          "count": 383,
+          "covered": 358,
+          "percent": 93.47258485639686
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/lib/src/session.rs",
+        "lines": {
+          "count": 320,
+          "covered": 310,
+          "percent": 96.875
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/lib/src/status.rs",
+        "lines": {
+          "count": 20,
+          "covered": 20,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/lib/src/template/data.rs",
+        "lines": {
+          "count": 95,
+          "covered": 95,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/lib/src/template/error.rs",
+        "lines": {
+          "count": 29,
+          "covered": 28,
+          "percent": 96.55172413793103
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/lib/src/template/helpers.rs",
+        "lines": {
+          "count": 68,
+          "covered": 68,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/lib/src/template/mod.rs",
+        "lines": {
+          "count": 108,
+          "covered": 108,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/lib/src/template/parse.rs",
+        "lines": {
+          "count": 224,
+          "covered": 220,
+          "percent": 98.21428571428571
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/lib/src/template/render.rs",
+        "lines": {
+          "count": 187,
+          "covered": 181,
+          "percent": 96.79144385026738
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/lib/src/template/tests.rs",
+        "lines": {
+          "count": 348,
+          "covered": 344,
+          "percent": 98.85057471264368
+        }
+      }
+    ]
+  },
+  "stackpress-idea-parser": {
+    "covered": 2261,
+    "total": 2391,
+    "percent": 94.5629443747386,
+    "files": [
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/idea/idea-parser/src/ast.rs",
+        "lines": {
+          "count": 51,
+          "covered": 51,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/idea/idea-parser/src/error.rs",
+        "lines": {
+          "count": 60,
+          "covered": 58,
+          "percent": 96.66666666666667
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/idea/idea-parser/src/finalize.rs",
+        "lines": {
+          "count": 312,
+          "covered": 265,
+          "percent": 84.93589743589743
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/idea/idea-parser/src/json.rs",
+        "lines": {
+          "count": 133,
+          "covered": 125,
+          "percent": 93.98496240601504
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/idea/idea-parser/src/json/codec.rs",
+        "lines": {
+          "count": 185,
+          "covered": 172,
+          "percent": 92.97297297297298
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/idea/idea-parser/src/json/config.rs",
+        "lines": {
+          "count": 152,
+          "covered": 151,
+          "percent": 99.3421052631579
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/idea/idea-parser/src/lib.rs",
+        "lines": {
+          "count": 62,
+          "covered": 62,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/idea/idea-parser/src/parser.rs",
+        "lines": {
+          "count": 861,
+          "covered": 832,
+          "percent": 96.63182346109176
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/idea/idea-parser/src/references.rs",
+        "lines": {
+          "count": 239,
+          "covered": 216,
+          "percent": 90.3765690376569
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/idea/idea-parser/src/references/collect.rs",
+        "lines": {
+          "count": 143,
+          "covered": 140,
+          "percent": 97.9020979020979
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/idea/idea-parser/src/stages.rs",
+        "lines": {
+          "count": 190,
+          "covered": 186,
+          "percent": 97.89473684210527
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/idea/idea-parser/src/token.rs",
+        "lines": {
+          "count": 3,
+          "covered": 3,
+          "percent": 100
+        }
+      }
+    ]
+  },
+  "stackpress-sql-sqlite": {
+    "covered": 4908,
+    "total": 5013,
+    "percent": 97.90544584081388,
+    "files": [
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-sqlite/src/collect.rs",
+        "lines": {
+          "count": 66,
+          "covered": 62,
+          "percent": 93.93939393939394
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-sqlite/src/execute.rs",
+        "lines": {
+          "count": 113,
+          "covered": 104,
+          "percent": 92.03539823008849
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-sqlite/src/lease.rs",
+        "lines": {
+          "count": 40,
+          "covered": 39,
+          "percent": 97.5
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-sqlite/src/lib.rs",
+        "lines": {
+          "count": 69,
+          "covered": 69,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-sqlite/src/maintenance.rs",
+        "lines": {
+          "count": 416,
+          "covered": 362,
+          "percent": 87.01923076923077
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-sqlite/src/maintenance/tests.rs",
+        "lines": {
+          "count": 642,
+          "covered": 637,
+          "percent": 99.22118380062305
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-sqlite/src/options.rs",
+        "lines": {
+          "count": 55,
+          "covered": 55,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-sqlite/src/session.rs",
+        "lines": {
+          "count": 49,
+          "covered": 49,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-sqlite/src/tests.rs",
+        "lines": {
+          "count": 429,
+          "covered": 414,
+          "percent": 96.5034965034965
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-sqlite/src/tests/contention.rs",
+        "lines": {
+          "count": 48,
+          "covered": 48,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-sqlite/src/tests/m1.rs",
+        "lines": {
+          "count": 75,
+          "covered": 74,
+          "percent": 98.66666666666667
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-sqlite/src/tests/m1/outcomes.rs",
+        "lines": {
+          "count": 208,
+          "covered": 208,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-sqlite/src/tests/m1/pool.rs",
+        "lines": {
+          "count": 238,
+          "covered": 238,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-sqlite/src/tests/m1/values.rs",
+        "lines": {
+          "count": 309,
+          "covered": 309,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-sqlite/src/tests/m2.rs",
+        "lines": {
+          "count": 80,
+          "covered": 79,
+          "percent": 98.75
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-sqlite/src/tests/m2/cancellation.rs",
+        "lines": {
+          "count": 402,
+          "covered": 393,
+          "percent": 97.76119402985076
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-sqlite/src/tests/m2/ddl.rs",
+        "lines": {
+          "count": 324,
+          "covered": 324,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-sqlite/src/tests/m2/json.rs",
+        "lines": {
+          "count": 244,
+          "covered": 244,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-sqlite/src/tests/m2/plans.rs",
+        "lines": {
+          "count": 171,
+          "covered": 171,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-sqlite/src/tests/m2/queries.rs",
+        "lines": {
+          "count": 233,
+          "covered": 233,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-sqlite/src/tests/rounds.rs",
+        "lines": {
+          "count": 398,
+          "covered": 397,
+          "percent": 99.74874371859298
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-sqlite/src/tests/transitions.rs",
+        "lines": {
+          "count": 341,
+          "covered": 340,
+          "percent": 99.70674486803519
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-sqlite/src/tests/watchdog.rs",
+        "lines": {
+          "count": 63,
+          "covered": 59,
+          "percent": 93.65079365079364
+        }
+      }
+    ]
+  },
+  "stackpress-sql-postgres": {
+    "covered": 3368,
+    "total": 3566,
+    "percent": 94.4475602916433,
+    "files": [
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-postgres/src/collect.rs",
+        "lines": {
+          "count": 86,
+          "covered": 85,
+          "percent": 98.83720930232558
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-postgres/src/database.rs",
+        "lines": {
+          "count": 95,
+          "covered": 87,
+          "percent": 91.57894736842105
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-postgres/src/execute.rs",
+        "lines": {
+          "count": 204,
+          "covered": 188,
+          "percent": 92.15686274509804
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-postgres/src/json.rs",
+        "lines": {
+          "count": 104,
+          "covered": 89,
+          "percent": 85.57692307692307
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-postgres/src/lease.rs",
+        "lines": {
+          "count": 150,
+          "covered": 143,
+          "percent": 95.33333333333334
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-postgres/src/m1.rs",
+        "lines": {
+          "count": 3,
+          "covered": 3,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-postgres/src/m2.rs",
+        "lines": {
+          "count": 3,
+          "covered": 3,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-postgres/src/options.rs",
+        "lines": {
+          "count": 126,
+          "covered": 126,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-postgres/src/probe.rs",
+        "lines": {
+          "count": 44,
+          "covered": 44,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-postgres/src/reuse.rs",
+        "lines": {
+          "count": 19,
+          "covered": 19,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-postgres/src/session.rs",
+        "lines": {
+          "count": 55,
+          "covered": 55,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-postgres/src/tests.rs",
+        "lines": {
+          "count": 100,
+          "covered": 100,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-postgres/src/tests/binds.rs",
+        "lines": {
+          "count": 59,
+          "covered": 59,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-postgres/src/tests/environment.rs",
+        "lines": {
+          "count": 57,
+          "covered": 52,
+          "percent": 91.22807017543859
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-postgres/src/tests/m1.rs",
+        "lines": {
+          "count": 267,
+          "covered": 218,
+          "percent": 81.64794007490637
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-postgres/src/tests/m1/lifecycle.rs",
+        "lines": {
+          "count": 268,
+          "covered": 267,
+          "percent": 99.6268656716418
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-postgres/src/tests/m1/outcomes.rs",
+        "lines": {
+          "count": 117,
+          "covered": 117,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-postgres/src/tests/m1/publication.rs",
+        "lines": {
+          "count": 53,
+          "covered": 53,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-postgres/src/tests/m1/reuse.rs",
+        "lines": {
+          "count": 98,
+          "covered": 98,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-postgres/src/tests/m1/values.rs",
+        "lines": {
+          "count": 284,
+          "covered": 284,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-postgres/src/tests/m2.rs",
+        "lines": {
+          "count": 279,
+          "covered": 245,
+          "percent": 87.81362007168458
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-postgres/src/tests/process.rs",
+        "lines": {
+          "count": 31,
+          "covered": 29,
+          "percent": 93.54838709677419
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-postgres/src/tests/publication.rs",
+        "lines": {
+          "count": 148,
+          "covered": 148,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-postgres/src/tests/support/contract.rs",
+        "lines": {
+          "count": 53,
+          "covered": 51,
+          "percent": 96.22641509433963
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-postgres/src/tests/support/contract/errors.rs",
+        "lines": {
+          "count": 61,
+          "covered": 61,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-postgres/src/tests/support/contract/lifecycle.rs",
+        "lines": {
+          "count": 147,
+          "covered": 140,
+          "percent": 95.23809523809523
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-postgres/src/tests/support/contract/outcomes.rs",
+        "lines": {
+          "count": 50,
+          "covered": 42,
+          "percent": 84
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-postgres/src/tests/support/contract/transactions.rs",
+        "lines": {
+          "count": 149,
+          "covered": 148,
+          "percent": 99.32885906040269
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-postgres/src/tests/support/contract/values.rs",
+        "lines": {
+          "count": 50,
+          "covered": 49,
+          "percent": 98
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-postgres/src/tests/support/process.rs",
+        "lines": {
+          "count": 18,
+          "covered": 14,
+          "percent": 77.77777777777779
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-postgres/src/tests/support/sql_diagnostics.rs",
+        "lines": {
+          "count": 17,
+          "covered": 0,
+          "percent": 0
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-postgres/src/tests/support/sqlite.rs",
+        "lines": {
+          "count": 85,
+          "covered": 79,
+          "percent": 92.94117647058823
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-postgres/src/tests/support/stress.rs",
+        "lines": {
+          "count": 268,
+          "covered": 263,
+          "percent": 98.13432835820896
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/examples/generated-workspace/app/tests/support/driver_stores/../../../../../../crates/sql/sql-postgres/src/tests/support/process.rs",
+        "lines": {
+          "count": 18,
+          "covered": 9,
+          "percent": 50
+        }
+      }
+    ]
+  },
+  "stackpress-sql-mysql": {
+    "covered": 2898,
+    "total": 3042,
+    "percent": 95.26627218934911,
+    "files": [
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-mysql/src/collect.rs",
+        "lines": {
+          "count": 118,
+          "covered": 116,
+          "percent": 98.30508474576271
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-mysql/src/database.rs",
+        "lines": {
+          "count": 101,
+          "covered": 93,
+          "percent": 92.07920792079209
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-mysql/src/execute.rs",
+        "lines": {
+          "count": 183,
+          "covered": 160,
+          "percent": 87.43169398907104
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-mysql/src/json.rs",
+        "lines": {
+          "count": 101,
+          "covered": 86,
+          "percent": 85.14851485148515
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-mysql/src/lease.rs",
+        "lines": {
+          "count": 150,
+          "covered": 143,
+          "percent": 95.33333333333334
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-mysql/src/m1.rs",
+        "lines": {
+          "count": 3,
+          "covered": 3,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-mysql/src/m2.rs",
+        "lines": {
+          "count": 3,
+          "covered": 3,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-mysql/src/options.rs",
+        "lines": {
+          "count": 108,
+          "covered": 107,
+          "percent": 99.07407407407408
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-mysql/src/probe.rs",
+        "lines": {
+          "count": 44,
+          "covered": 44,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-mysql/src/reuse.rs",
+        "lines": {
+          "count": 182,
+          "covered": 175,
+          "percent": 96.15384615384616
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-mysql/src/session.rs",
+        "lines": {
+          "count": 56,
+          "covered": 56,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-mysql/src/tests.rs",
+        "lines": {
+          "count": 194,
+          "covered": 194,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-mysql/src/tests/g37.rs",
+        "lines": {
+          "count": 172,
+          "covered": 172,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-mysql/src/tests/m1.rs",
+        "lines": {
+          "count": 268,
+          "covered": 218,
+          "percent": 81.34328358208955
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-mysql/src/tests/m1/lifecycle.rs",
+        "lines": {
+          "count": 268,
+          "covered": 267,
+          "percent": 99.6268656716418
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-mysql/src/tests/m1/outcomes.rs",
+        "lines": {
+          "count": 126,
+          "covered": 126,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-mysql/src/tests/m1/publication.rs",
+        "lines": {
+          "count": 113,
+          "covered": 113,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-mysql/src/tests/m1/reuse.rs",
+        "lines": {
+          "count": 187,
+          "covered": 187,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-mysql/src/tests/m1/values.rs",
+        "lines": {
+          "count": 262,
+          "covered": 262,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-mysql/src/tests/m2.rs",
+        "lines": {
+          "count": 255,
+          "covered": 225,
+          "percent": 88.23529411764706
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/sql/sql-mysql/src/tests/publication.rs",
+        "lines": {
+          "count": 148,
+          "covered": 148,
+          "percent": 100
+        }
+      }
+    ]
+  },
+  "stackpress-server": {
+    "covered": 3519,
+    "total": 3756,
+    "percent": 93.69009584664536,
+    "files": [
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/server/src/builder.rs",
+        "lines": {
+          "count": 126,
+          "covered": 116,
+          "percent": 92.06349206349206
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/server/src/config.rs",
+        "lines": {
+          "count": 282,
+          "covered": 234,
+          "percent": 82.97872340425532
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/server/src/context.rs",
+        "lines": {
+          "count": 80,
+          "covered": 72,
+          "percent": 90
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/server/src/core_tests.rs",
+        "lines": {
+          "count": 430,
+          "covered": 410,
+          "percent": 95.34883720930233
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/server/src/http.rs",
+        "lines": {
+          "count": 139,
+          "covered": 135,
+          "percent": 97.12230215827337
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/server/src/http/common.rs",
+        "lines": {
+          "count": 271,
+          "covered": 213,
+          "percent": 78.59778597785979
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/server/src/http/json.rs",
+        "lines": {
+          "count": 58,
+          "covered": 58,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/server/src/http/sse.rs",
+        "lines": {
+          "count": 368,
+          "covered": 350,
+          "percent": 95.1086956521739
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/server/src/http/sse/channel.rs",
+        "lines": {
+          "count": 112,
+          "covered": 106,
+          "percent": 94.64285714285714
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/server/src/http/sse/driver_tests.rs",
+        "lines": {
+          "count": 86,
+          "covered": 85,
+          "percent": 98.83720930232558
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/server/src/http/sse/tests.rs",
+        "lines": {
+          "count": 64,
+          "covered": 64,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/server/src/http/stream.rs",
+        "lines": {
+          "count": 383,
+          "covered": 353,
+          "percent": 92.16710182767625
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/server/src/http/upgrade.rs",
+        "lines": {
+          "count": 105,
+          "covered": 102,
+          "percent": 97.14285714285714
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/server/src/lifecycle.rs",
+        "lines": {
+          "count": 479,
+          "covered": 469,
+          "percent": 97.91231732776617
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/server/src/output.rs",
+        "lines": {
+          "count": 33,
+          "covered": 30,
+          "percent": 90.9090909090909
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/server/src/plugin.rs",
+        "lines": {
+          "count": 115,
+          "covered": 114,
+          "percent": 99.1304347826087
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/server/src/registration.rs",
+        "lines": {
+          "count": 184,
+          "covered": 183,
+          "percent": 99.45652173913044
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/server/src/report.rs",
+        "lines": {
+          "count": 107,
+          "covered": 99,
+          "percent": 92.5233644859813
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/server/src/router.rs",
+        "lines": {
+          "count": 46,
+          "covered": 41,
+          "percent": 89.13043478260869
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/server/src/server.rs",
+        "lines": {
+          "count": 61,
+          "covered": 61,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/server/src/services.rs",
+        "lines": {
+          "count": 79,
+          "covered": 78,
+          "percent": 98.73417721518987
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/server/src/startup.rs",
+        "lines": {
+          "count": 148,
+          "covered": 146,
+          "percent": 98.64864864864865
+        }
+      }
+    ]
+  },
+  "stackpress-idea-transformer": {
+    "covered": 3558,
+    "total": 3747,
+    "percent": 94.95596477181745,
+    "files": [
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/idea/idea-transformer/src/compose/compile.rs",
+        "lines": {
+          "count": 22,
+          "covered": 22,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/idea/idea-transformer/src/compose/json.rs",
+        "lines": {
+          "count": 154,
+          "covered": 150,
+          "percent": 97.40259740259741
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/idea/idea-transformer/src/compose/merge.rs",
+        "lines": {
+          "count": 158,
+          "covered": 157,
+          "percent": 99.36708860759494
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/idea/idea-transformer/src/compose/merge/tests.rs",
+        "lines": {
+          "count": 53,
+          "covered": 53,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/idea/idea-transformer/src/compose/mod.rs",
+        "lines": {
+          "count": 215,
+          "covered": 182,
+          "percent": 84.65116279069768
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/idea/idea-transformer/src/lib.rs",
+        "lines": {
+          "count": 99,
+          "covered": 96,
+          "percent": 96.96969696969697
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/idea/idea-transformer/src/output.rs",
+        "lines": {
+          "count": 321,
+          "covered": 292,
+          "percent": 90.96573208722741
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/idea/idea-transformer/src/output/format.rs",
+        "lines": {
+          "count": 159,
+          "covered": 149,
+          "percent": 93.71069182389937
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/idea/idea-transformer/src/output/format/tests.rs",
+        "lines": {
+          "count": 134,
+          "covered": 133,
+          "percent": 99.25373134328358
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/idea/idea-transformer/src/output/ownership.rs",
+        "lines": {
+          "count": 241,
+          "covered": 213,
+          "percent": 88.38174273858921
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/idea/idea-transformer/src/output/report.rs",
+        "lines": {
+          "count": 18,
+          "covered": 18,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/idea/idea-transformer/src/output/tests.rs",
+        "lines": {
+          "count": 864,
+          "covered": 828,
+          "percent": 95.83333333333334
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/idea/idea-transformer/src/plan/mod.rs",
+        "lines": {
+          "count": 212,
+          "covered": 205,
+          "percent": 96.69811320754717
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/idea/idea-transformer/src/plan/path.rs",
+        "lines": {
+          "count": 38,
+          "covered": 37,
+          "percent": 97.36842105263158
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/idea/idea-transformer/src/plan/tests.rs",
+        "lines": {
+          "count": 111,
+          "covered": 111,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/idea/idea-transformer/src/registry.rs",
+        "lines": {
+          "count": 223,
+          "covered": 209,
+          "percent": 93.72197309417041
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/idea/idea-transformer/src/registry/context.rs",
+        "lines": {
+          "count": 80,
+          "covered": 79,
+          "percent": 98.75
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/idea/idea-transformer/src/registry/tests.rs",
+        "lines": {
+          "count": 303,
+          "covered": 301,
+          "percent": 99.33993399339934
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/idea/idea-transformer/src/source/memory.rs",
+        "lines": {
+          "count": 57,
+          "covered": 57,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/idea/idea-transformer/src/source/mod.rs",
+        "lines": {
+          "count": 45,
+          "covered": 45,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/idea/idea-transformer/src/source/native.rs",
+        "lines": {
+          "count": 106,
+          "covered": 91,
+          "percent": 85.84905660377359
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/idea/idea-transformer/src/source/package.rs",
+        "lines": {
+          "count": 87,
+          "covered": 84,
+          "percent": 96.55172413793103
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/idea/idea-transformer/src/source/paths.rs",
+        "lines": {
+          "count": 47,
+          "covered": 46,
+          "percent": 97.87234042553192
+        }
+      }
+    ]
+  },
+  "stackpress-server-http": {
+    "covered": 4027,
+    "total": 4301,
+    "percent": 93.629388514299,
+    "files": [
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/http/src/assets.rs",
+        "lines": {
+          "count": 172,
+          "covered": 166,
+          "percent": 96.51162790697676
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/http/src/body.rs",
+        "lines": {
+          "count": 99,
+          "covered": 98,
+          "percent": 98.98989898989899
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/http/src/connection.rs",
+        "lines": {
+          "count": 455,
+          "covered": 400,
+          "percent": 87.91208791208791
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/http/src/deployment.rs",
+        "lines": {
+          "count": 102,
+          "covered": 97,
+          "percent": 95.09803921568627
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/http/src/input.rs",
+        "lines": {
+          "count": 103,
+          "covered": 95,
+          "percent": 92.23300970873787
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/http/src/io.rs",
+        "lines": {
+          "count": 39,
+          "covered": 39,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/http/src/lib.rs",
+        "lines": {
+          "count": 139,
+          "covered": 130,
+          "percent": 93.5251798561151
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/http/src/monitor.rs",
+        "lines": {
+          "count": 174,
+          "covered": 169,
+          "percent": 97.12643678160919
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/http/src/observe.rs",
+        "lines": {
+          "count": 75,
+          "covered": 71,
+          "percent": 94.66666666666667
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/http/src/options.rs",
+        "lines": {
+          "count": 60,
+          "covered": 60,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/http/src/proxy.rs",
+        "lines": {
+          "count": 325,
+          "covered": 299,
+          "percent": 92
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/http/src/realtime.rs",
+        "lines": {
+          "count": 253,
+          "covered": 241,
+          "percent": 95.25691699604744
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/http/src/report.rs",
+        "lines": {
+          "count": 122,
+          "covered": 122,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/http/src/sse.rs",
+        "lines": {
+          "count": 87,
+          "covered": 87,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/http/src/startup.rs",
+        "lines": {
+          "count": 44,
+          "covered": 36,
+          "percent": 81.81818181818183
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/http/src/supervisor.rs",
+        "lines": {
+          "count": 219,
+          "covered": 199,
+          "percent": 90.8675799086758
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/http/src/timer.rs",
+        "lines": {
+          "count": 22,
+          "covered": 19,
+          "percent": 86.36363636363636
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/http/src/tls.rs",
+        "lines": {
+          "count": 132,
+          "covered": 125,
+          "percent": 94.6969696969697
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/http/src/websocket/connection.rs",
+        "lines": {
+          "count": 168,
+          "covered": 145,
+          "percent": 86.30952380952381
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/http/src/websocket/connection_tests.rs",
+        "lines": {
+          "count": 105,
+          "covered": 105,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/http/src/websocket/driver.rs",
+        "lines": {
+          "count": 318,
+          "covered": 281,
+          "percent": 88.36477987421384
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/http/src/websocket/driver/tests.rs",
+        "lines": {
+          "count": 573,
+          "covered": 562,
+          "percent": 98.08027923211169
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/http/src/websocket/handshake.rs",
+        "lines": {
+          "count": 160,
+          "covered": 153,
+          "percent": 95.625
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/http/src/websocket/mod.rs",
+        "lines": {
+          "count": 270,
+          "covered": 243,
+          "percent": 90
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/server/http/src/websocket/tests.rs",
+        "lines": {
+          "count": 85,
+          "covered": 85,
+          "percent": 100
+        }
+      }
+    ]
+  },
+  "stackpress-cli": {
+    "covered": 1479,
+    "total": 1580,
+    "percent": 93.60759493670886,
+    "files": [
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/tools/cli/src/args.rs",
+        "lines": {
+          "count": 160,
+          "covered": 159,
+          "percent": 99.375
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/tools/cli/src/control.rs",
+        "lines": {
+          "count": 132,
+          "covered": 132,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/tools/cli/src/diagnostics.rs",
+        "lines": {
+          "count": 47,
+          "covered": 47,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/tools/cli/src/diagnostics/tests.rs",
+        "lines": {
+          "count": 81,
+          "covered": 80,
+          "percent": 98.76543209876543
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/tools/cli/src/entry.rs",
+        "lines": {
+          "count": 164,
+          "covered": 122,
+          "percent": 74.39024390243902
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/tools/cli/src/execution.rs",
+        "lines": {
+          "count": 115,
+          "covered": 107,
+          "percent": 93.04347826086956
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/tools/cli/src/prompt/driver.rs",
+        "lines": {
+          "count": 208,
+          "covered": 194,
+          "percent": 93.26923076923077
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/tools/cli/src/prompt/options.rs",
+        "lines": {
+          "count": 136,
+          "covered": 127,
+          "percent": 93.38235294117648
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/tools/cli/src/prompt/render.rs",
+        "lines": {
+          "count": 130,
+          "covered": 125,
+          "percent": 96.15384615384616
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/tools/cli/src/prompt/state.rs",
+        "lines": {
+          "count": 122,
+          "covered": 122,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/tools/cli/src/tty.rs",
+        "lines": {
+          "count": 190,
+          "covered": 169,
+          "percent": 88.94736842105263
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/tools/cli/src/tty/tests.rs",
+        "lines": {
+          "count": 95,
+          "covered": 95,
+          "percent": 100
+        }
+      }
+    ]
+  },
+  "stackpress-framework-view": {
+    "covered": 2872,
+    "total": 2934,
+    "percent": 97.88684389911384,
+    "files": [
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-view/src/access.rs",
+        "lines": {
+          "count": 63,
+          "covered": 63,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-view/src/adapters/native.rs",
+        "lines": {
+          "count": 127,
+          "covered": 112,
+          "percent": 88.18897637795276
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-view/src/adapters/native_tests.rs",
+        "lines": {
+          "count": 147,
+          "covered": 144,
+          "percent": 97.95918367346938
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-view/src/adapters/web.rs",
+        "lines": {
+          "count": 43,
+          "covered": 43,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-view/src/adapters/web/host.rs",
+        "lines": {
+          "count": 10,
+          "covered": 10,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-view/src/flash.rs",
+        "lines": {
+          "count": 72,
+          "covered": 71,
+          "percent": 98.61111111111111
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-view/src/flash/host.rs",
+        "lines": {
+          "count": 94,
+          "covered": 93,
+          "percent": 98.93617021276596
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-view/src/leptos/async_render.rs",
+        "lines": {
+          "count": 72,
+          "covered": 68,
+          "percent": 94.44444444444444
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-view/src/leptos/presentation.rs",
+        "lines": {
+          "count": 9,
+          "covered": 9,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-view/src/leptos/render.rs",
+        "lines": {
+          "count": 127,
+          "covered": 121,
+          "percent": 95.2755905511811
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-view/src/leptos/replay.rs",
+        "lines": {
+          "count": 33,
+          "covered": 31,
+          "percent": 93.93939393939394
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-view/src/leptos/routing.rs",
+        "lines": {
+          "count": 34,
+          "covered": 34,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-view/src/leptos/safety.rs",
+        "lines": {
+          "count": 12,
+          "covered": 12,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-view/src/leptos/stream.rs",
+        "lines": {
+          "count": 133,
+          "covered": 129,
+          "percent": 96.99248120300751
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-view/src/leptos/stream_tests.rs",
+        "lines": {
+          "count": 396,
+          "covered": 393,
+          "percent": 99.24242424242425
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-view/src/lib.rs",
+        "lines": {
+          "count": 115,
+          "covered": 110,
+          "percent": 95.65217391304348
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-view/src/plugin.rs",
+        "lines": {
+          "count": 4,
+          "covered": 4,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-view/src/policy.rs",
+        "lines": {
+          "count": 215,
+          "covered": 214,
+          "percent": 99.53488372093024
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-view/src/preferences/action.rs",
+        "lines": {
+          "count": 108,
+          "covered": 106,
+          "percent": 98.14814814814815
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-view/src/preferences/host.rs",
+        "lines": {
+          "count": 144,
+          "covered": 139,
+          "percent": 96.52777777777779
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-view/src/preferences/locale.rs",
+        "lines": {
+          "count": 105,
+          "covered": 105,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-view/src/preferences/locale/tests.rs",
+        "lines": {
+          "count": 217,
+          "covered": 217,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-view/src/preferences/state.rs",
+        "lines": {
+          "count": 50,
+          "covered": 50,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-view/src/presentation_tests.rs",
+        "lines": {
+          "count": 322,
+          "covered": 319,
+          "percent": 99.06832298136646
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-view/src/routes.rs",
+        "lines": {
+          "count": 128,
+          "covered": 125,
+          "percent": 97.65625
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-view/src/server.rs",
+        "lines": {
+          "count": 106,
+          "covered": 103,
+          "percent": 97.16981132075472
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-view/src/theme.rs",
+        "lines": {
+          "count": 48,
+          "covered": 47,
+          "percent": 97.91666666666666
+        }
+      }
+    ]
+  },
+  "stackpress-framework-csrf": {
+    "covered": 67,
+    "total": 69,
+    "percent": 97.10144927536231,
+    "files": [
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-csrf/src/lib.rs",
+        "lines": {
+          "count": 54,
+          "covered": 52,
+          "percent": 96.29629629629629
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-csrf/src/plugin.rs",
+        "lines": {
+          "count": 15,
+          "covered": 15,
+          "percent": 100
+        }
+      }
+    ]
+  },
+  "stackpress-framework-email": {
+    "covered": 3027,
+    "total": 3304,
+    "percent": 91.61622276029055,
+    "files": [
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-email/src/backend.rs",
+        "lines": {
+          "count": 416,
+          "covered": 332,
+          "percent": 79.8076923076923
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-email/src/compose/headers.rs",
+        "lines": {
+          "count": 118,
+          "covered": 117,
+          "percent": 99.15254237288136
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-email/src/compose/json.rs",
+        "lines": {
+          "count": 111,
+          "covered": 109,
+          "percent": 98.1981981981982
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-email/src/compose/metadata.rs",
+        "lines": {
+          "count": 119,
+          "covered": 112,
+          "percent": 94.11764705882352
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-email/src/compose/mime.rs",
+        "lines": {
+          "count": 281,
+          "covered": 261,
+          "percent": 92.88256227758008
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-email/src/compose/node.rs",
+        "lines": {
+          "count": 165,
+          "covered": 135,
+          "percent": 81.81818181818183
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-email/src/compose/part.rs",
+        "lines": {
+          "count": 112,
+          "covered": 103,
+          "percent": 91.96428571428571
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-email/src/config.rs",
+        "lines": {
+          "count": 7,
+          "covered": 7,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-email/src/content.rs",
+        "lines": {
+          "count": 216,
+          "covered": 181,
+          "percent": 83.79629629629629
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-email/src/events.rs",
+        "lines": {
+          "count": 34,
+          "covered": 34,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-email/src/events/native.rs",
+        "lines": {
+          "count": 111,
+          "covered": 105,
+          "percent": 94.5945945945946
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-email/src/message.rs",
+        "lines": {
+          "count": 50,
+          "covered": 50,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-email/src/native.rs",
+        "lines": {
+          "count": 152,
+          "covered": 143,
+          "percent": 94.07894736842105
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-email/src/native/capabilities.rs",
+        "lines": {
+          "count": 316,
+          "covered": 268,
+          "percent": 84.81012658227847
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-email/src/native/sendmail.rs",
+        "lines": {
+          "count": 40,
+          "covered": 40,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-email/src/native/ses.rs",
+        "lines": {
+          "count": 62,
+          "covered": 59,
+          "percent": 95.16129032258065
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-email/src/options.rs",
+        "lines": {
+          "count": 304,
+          "covered": 291,
+          "percent": 95.72368421052632
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-email/src/plugin.rs",
+        "lines": {
+          "count": 34,
+          "covered": 32,
+          "percent": 94.11764705882352
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-email/src/service.rs",
+        "lines": {
+          "count": 27,
+          "covered": 27,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-email/src/smtp_error.rs",
+        "lines": {
+          "count": 47,
+          "covered": 46,
+          "percent": 97.87234042553192
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-email/src/smtp_tests.rs",
+        "lines": {
+          "count": 392,
+          "covered": 385,
+          "percent": 98.21428571428571
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-email/src/tasks.rs",
+        "lines": {
+          "count": 34,
+          "covered": 34,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-email/src/tests/content.rs",
+        "lines": {
+          "count": 10,
+          "covered": 10,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-email/src/tests/publication.rs",
+        "lines": {
+          "count": 146,
+          "covered": 146,
+          "percent": 100
+        }
+      }
+    ]
+  },
+  "stackpress-idea": {
+    "covered": 41,
+    "total": 41,
+    "percent": 100.0,
+    "files": [
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/idea/idea/src/lib.rs",
+        "lines": {
+          "count": 41,
+          "covered": 41,
+          "percent": 100
+        }
+      }
+    ]
+  },
+  "stackpress-framework-schema": {
+    "covered": 6430,
+    "total": 6979,
+    "percent": 92.13354348760568,
+    "files": [
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/codegen/assertions.rs",
+        "lines": {
+          "count": 183,
+          "covered": 168,
+          "percent": 91.80327868852459
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/codegen/budgets.rs",
+        "lines": {
+          "count": 142,
+          "covered": 117,
+          "percent": 82.3943661971831
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/codegen/create.rs",
+        "lines": {
+          "count": 101,
+          "covered": 89,
+          "percent": 88.11881188118812
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/codegen/diagnostics.rs",
+        "lines": {
+          "count": 137,
+          "covered": 120,
+          "percent": 87.59124087591242
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/codegen/emit.rs",
+        "lines": {
+          "count": 273,
+          "covered": 238,
+          "percent": 87.17948717948718
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/codegen/inputs.rs",
+        "lines": {
+          "count": 95,
+          "covered": 84,
+          "percent": 88.42105263157895
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/codegen/metadata.rs",
+        "lines": {
+          "count": 541,
+          "covered": 504,
+          "percent": 93.16081330868762
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/codegen/mod.rs",
+        "lines": {
+          "count": 491,
+          "covered": 458,
+          "percent": 93.27902240325867
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/codegen/names.rs",
+        "lines": {
+          "count": 105,
+          "covered": 104,
+          "percent": 99.04761904761905
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/codegen/projection.rs",
+        "lines": {
+          "count": 288,
+          "covered": 275,
+          "percent": 95.48611111111111
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/codegen/query.rs",
+        "lines": {
+          "count": 65,
+          "covered": 61,
+          "percent": 93.84615384615384
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/codegen/registry.rs",
+        "lines": {
+          "count": 305,
+          "covered": 294,
+          "percent": 96.39344262295081
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/codegen/source.rs",
+        "lines": {
+          "count": 49,
+          "covered": 37,
+          "percent": 75.51020408163265
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/codegen/source_assertions.rs",
+        "lines": {
+          "count": 69,
+          "covered": 59,
+          "percent": 85.5072463768116
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/codegen/source_catalog.rs",
+        "lines": {
+          "count": 125,
+          "covered": 121,
+          "percent": 96.8
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/codegen/source_emit.rs",
+        "lines": {
+          "count": 73,
+          "covered": 68,
+          "percent": 93.15068493150685
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/codegen/source_graph.rs",
+        "lines": {
+          "count": 357,
+          "covered": 340,
+          "percent": 95.23809523809523
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/codegen/source_roles.rs",
+        "lines": {
+          "count": 131,
+          "covered": 131,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/codegen/source_roles_remaining.rs",
+        "lines": {
+          "count": 430,
+          "covered": 428,
+          "percent": 99.53488372093024
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/codegen/source_ui.rs",
+        "lines": {
+          "count": 129,
+          "covered": 126,
+          "percent": 97.67441860465115
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/codegen/witnesses.rs",
+        "lines": {
+          "count": 60,
+          "covered": 51,
+          "percent": 85
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/input.rs",
+        "lines": {
+          "count": 81,
+          "covered": 70,
+          "percent": 86.41975308641975
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/lib.rs",
+        "lines": {
+          "count": 107,
+          "covered": 98,
+          "percent": 91.58878504672897
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/providers/crypto.rs",
+        "lines": {
+          "count": 52,
+          "covered": 52,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/providers/cuid.rs",
+        "lines": {
+          "count": 148,
+          "covered": 144,
+          "percent": 97.2972972972973
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/providers/mod.rs",
+        "lines": {
+          "count": 33,
+          "covered": 31,
+          "percent": 93.93939393939394
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/providers/nanoid.rs",
+        "lines": {
+          "count": 64,
+          "covered": 62,
+          "percent": 96.875
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/providers/tests.rs",
+        "lines": {
+          "count": 119,
+          "covered": 119,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/query.rs",
+        "lines": {
+          "count": 76,
+          "covered": 71,
+          "percent": 93.42105263157895
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/record.rs",
+        "lines": {
+          "count": 208,
+          "covered": 172,
+          "percent": 82.6923076923077
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/source.rs",
+        "lines": {
+          "count": 12,
+          "covered": 3,
+          "percent": 25
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/source/checks.rs",
+        "lines": {
+          "count": 242,
+          "covered": 218,
+          "percent": 90.08264462809917
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/source/codecs.rs",
+        "lines": {
+          "count": 44,
+          "covered": 43,
+          "percent": 97.72727272727273
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/source/coercion.rs",
+        "lines": {
+          "count": 168,
+          "covered": 157,
+          "percent": 93.45238095238095
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/source/columns.rs",
+        "lines": {
+          "count": 269,
+          "covered": 199,
+          "percent": 73.97769516728626
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/source/dates.rs",
+        "lines": {
+          "count": 88,
+          "covered": 82,
+          "percent": 93.18181818181817
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/source/fields.rs",
+        "lines": {
+          "count": 64,
+          "covered": 48,
+          "percent": 75
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/source/number.rs",
+        "lines": {
+          "count": 103,
+          "covered": 99,
+          "percent": 96.11650485436894
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/source/providers.rs",
+        "lines": {
+          "count": 16,
+          "covered": 16,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/source/schema.rs",
+        "lines": {
+          "count": 273,
+          "covered": 258,
+          "percent": 94.5054945054945
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/source/text.rs",
+        "lines": {
+          "count": 6,
+          "covered": 6,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/source/value.rs",
+        "lines": {
+          "count": 121,
+          "covered": 112,
+          "percent": 92.56198347107438
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/source_number.rs",
+        "lines": {
+          "count": 80,
+          "covered": 78,
+          "percent": 97.5
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/validation.rs",
+        "lines": {
+          "count": 236,
+          "covered": 215,
+          "percent": 91.10169491525424
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-schema/src/values.rs",
+        "lines": {
+          "count": 220,
+          "covered": 204,
+          "percent": 92.72727272727272
+        }
+      }
+    ]
+  },
+  "stackpress-framework-sql": {
+    "covered": 7920,
+    "total": 8743,
+    "percent": 90.58675511838042,
+    "files": [
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/codegen.rs",
+        "lines": {
+          "count": 456,
+          "covered": 415,
+          "percent": 91.00877192982456
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/codegen/bounds.rs",
+        "lines": {
+          "count": 36,
+          "covered": 36,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/codegen/catalog.rs",
+        "lines": {
+          "count": 181,
+          "covered": 175,
+          "percent": 96.68508287292818
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/codegen/conflicts.rs",
+        "lines": {
+          "count": 18,
+          "covered": 18,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/codegen/operations.rs",
+        "lines": {
+          "count": 127,
+          "covered": 125,
+          "percent": 98.4251968503937
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/codegen/queries.rs",
+        "lines": {
+          "count": 41,
+          "covered": 40,
+          "percent": 97.5609756097561
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/codegen/selection.rs",
+        "lines": {
+          "count": 78,
+          "covered": 75,
+          "percent": 96.15384615384616
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/codegen/source.rs",
+        "lines": {
+          "count": 42,
+          "covered": 40,
+          "percent": 95.23809523809523
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/codegen/templates.rs",
+        "lines": {
+          "count": 63,
+          "covered": 61,
+          "percent": 96.82539682539682
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/codegen/tests.rs",
+        "lines": {
+          "count": 49,
+          "covered": 49,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/codegen/writes.rs",
+        "lines": {
+          "count": 65,
+          "covered": 62,
+          "percent": 95.38461538461539
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/ddl_policy.rs",
+        "lines": {
+          "count": 144,
+          "covered": 130,
+          "percent": 90.27777777777779
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/lib.rs",
+        "lines": {
+          "count": 342,
+          "covered": 292,
+          "percent": 85.38011695906432
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/migrations.rs",
+        "lines": {
+          "count": 421,
+          "covered": 380,
+          "percent": 90.26128266033254
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/migrations/faults.rs",
+        "lines": {
+          "count": 265,
+          "covered": 263,
+          "percent": 99.24528301886792
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/migrations/history.rs",
+        "lines": {
+          "count": 354,
+          "covered": 319,
+          "percent": 90.11299435028248
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/migrations/planner.rs",
+        "lines": {
+          "count": 995,
+          "covered": 911,
+          "percent": 91.55778894472361
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/migrations/sqlite.rs",
+        "lines": {
+          "count": 738,
+          "covered": 668,
+          "percent": 90.5149051490515
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/migrations/steps.rs",
+        "lines": {
+          "count": 182,
+          "covered": 157,
+          "percent": 86.26373626373626
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/migrations/storage.rs",
+        "lines": {
+          "count": 204,
+          "covered": 166,
+          "percent": 81.37254901960785
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/migrations/wire.rs",
+        "lines": {
+          "count": 156,
+          "covered": 132,
+          "percent": 84.61538461538461
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/operations.rs",
+        "lines": {
+          "count": 324,
+          "covered": 289,
+          "percent": 89.19753086419753
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/plugin.rs",
+        "lines": {
+          "count": 31,
+          "covered": 29,
+          "percent": 93.54838709677419
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/projection.rs",
+        "lines": {
+          "count": 126,
+          "covered": 126,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/setup.rs",
+        "lines": {
+          "count": 21,
+          "covered": 21,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/source/actions.rs",
+        "lines": {
+          "count": 82,
+          "covered": 82,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/source/batch.rs",
+        "lines": {
+          "count": 130,
+          "covered": 106,
+          "percent": 81.53846153846153
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/source/error.rs",
+        "lines": {
+          "count": 39,
+          "covered": 35,
+          "percent": 89.74358974358975
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/source/event_defaults.rs",
+        "lines": {
+          "count": 6,
+          "covered": 5,
+          "percent": 83.33333333333334
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/source/events.rs",
+        "lines": {
+          "count": 504,
+          "covered": 452,
+          "percent": 89.68253968253968
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/source/maintenance.rs",
+        "lines": {
+          "count": 197,
+          "covered": 195,
+          "percent": 98.98477157360406
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/source/membership.rs",
+        "lines": {
+          "count": 121,
+          "covered": 87,
+          "percent": 71.900826446281
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/source/mod.rs",
+        "lines": {
+          "count": 9,
+          "covered": 9,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/source/native_actions.rs",
+        "lines": {
+          "count": 391,
+          "covered": 322,
+          "percent": 82.35294117647058
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/source/native_contracts.rs",
+        "lines": {
+          "count": 139,
+          "covered": 138,
+          "percent": 99.28057553956835
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/source/predicates.rs",
+        "lines": {
+          "count": 125,
+          "covered": 123,
+          "percent": 98.4
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/source/query.rs",
+        "lines": {
+          "count": 193,
+          "covered": 188,
+          "percent": 97.40932642487047
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/source/query_input.rs",
+        "lines": {
+          "count": 103,
+          "covered": 103,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/source/select.rs",
+        "lines": {
+          "count": 36,
+          "covered": 34,
+          "percent": 94.44444444444444
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/source/statement.rs",
+        "lines": {
+          "count": 14,
+          "covered": 11,
+          "percent": 78.57142857142857
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/source/store.rs",
+        "lines": {
+          "count": 345,
+          "covered": 295,
+          "percent": 85.5072463768116
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/source/tests/store.rs",
+        "lines": {
+          "count": 27,
+          "covered": 27,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/source/text.rs",
+        "lines": {
+          "count": 31,
+          "covered": 19,
+          "percent": 61.29032258064516
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/source/values.rs",
+        "lines": {
+          "count": 19,
+          "covered": 19,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/stores.rs",
+        "lines": {
+          "count": 139,
+          "covered": 123,
+          "percent": 88.48920863309353
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/stores/query.rs",
+        "lines": {
+          "count": 216,
+          "covered": 165,
+          "percent": 76.38888888888889
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-sql/src/stores/relations.rs",
+        "lines": {
+          "count": 418,
+          "covered": 403,
+          "percent": 96.41148325358851
+        }
+      }
+    ]
+  },
+  "stackpress-framework-admin": {
+    "covered": 4586,
+    "total": 5033,
+    "percent": 91.11861712696205,
+    "files": [
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-admin/src/codegen/bindings.rs",
+        "lines": {
+          "count": 137,
+          "covered": 134,
+          "percent": 97.8102189781022
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-admin/src/codegen/catalog.rs",
+        "lines": {
+          "count": 114,
+          "covered": 114,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-admin/src/codegen/emit.rs",
+        "lines": {
+          "count": 197,
+          "covered": 182,
+          "percent": 92.38578680203045
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-admin/src/codegen/formatted.rs",
+        "lines": {
+          "count": 63,
+          "covered": 63,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-admin/src/codegen/mod.rs",
+        "lines": {
+          "count": 20,
+          "covered": 20,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-admin/src/codegen/pages.rs",
+        "lines": {
+          "count": 246,
+          "covered": 237,
+          "percent": 96.34146341463415
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-admin/src/codegen/source.rs",
+        "lines": {
+          "count": 253,
+          "covered": 223,
+          "percent": 88.14229249011858
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-admin/src/codegen/table.rs",
+        "lines": {
+          "count": 60,
+          "covered": 60,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-admin/src/codegen/templates.rs",
+        "lines": {
+          "count": 96,
+          "covered": 94,
+          "percent": 97.91666666666666
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-admin/src/codegen/templates/tests.rs",
+        "lines": {
+          "count": 182,
+          "covered": 182,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-admin/src/components.rs",
+        "lines": {
+          "count": 275,
+          "covered": 218,
+          "percent": 79.27272727272727
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-admin/src/components/catalog_inputs.rs",
+        "lines": {
+          "count": 233,
+          "covered": 194,
+          "percent": 83.2618025751073
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-admin/src/components/collection_inputs.rs",
+        "lines": {
+          "count": 142,
+          "covered": 124,
+          "percent": 87.32394366197182
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-admin/src/components/formatted.rs",
+        "lines": {
+          "count": 415,
+          "covered": 345,
+          "percent": 83.13253012048193
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-admin/src/components/formatted_tests.rs",
+        "lines": {
+          "count": 207,
+          "covered": 206,
+          "percent": 99.51690821256038
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-admin/src/components/sync.rs",
+        "lines": {
+          "count": 53,
+          "covered": 21,
+          "percent": 39.62264150943396
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-admin/src/draft.rs",
+        "lines": {
+          "count": 138,
+          "covered": 138,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-admin/src/pages.rs",
+        "lines": {
+          "count": 145,
+          "covered": 144,
+          "percent": 99.3103448275862
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-admin/src/presentation.rs",
+        "lines": {
+          "count": 119,
+          "covered": 117,
+          "percent": 98.31932773109243
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-admin/src/row_actions.rs",
+        "lines": {
+          "count": 68,
+          "covered": 65,
+          "percent": 95.58823529411765
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-admin/src/search.rs",
+        "lines": {
+          "count": 151,
+          "covered": 146,
+          "percent": 96.68874172185431
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-admin/src/source/pages.rs",
+        "lines": {
+          "count": 56,
+          "covered": 56,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-admin/src/source/roles.rs",
+        "lines": {
+          "count": 399,
+          "covered": 338,
+          "percent": 84.71177944862156
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-admin/src/source/roles/countries.rs",
+        "lines": {
+          "count": 57,
+          "covered": 49,
+          "percent": 85.96491228070175
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-admin/src/source/roles/display.rs",
+        "lines": {
+          "count": 144,
+          "covered": 125,
+          "percent": 86.80555555555556
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-admin/src/source/roles/editor.rs",
+        "lines": {
+          "count": 110,
+          "covered": 96,
+          "percent": 87.27272727272727
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-admin/src/source/roles/fieldset.rs",
+        "lines": {
+          "count": 157,
+          "covered": 129,
+          "percent": 82.16560509554141
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-admin/src/source/roles/inputs.rs",
+        "lines": {
+          "count": 74,
+          "covered": 65,
+          "percent": 87.83783783783784
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-admin/src/source/roles/lists.rs",
+        "lines": {
+          "count": 20,
+          "covered": 17,
+          "percent": 85
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-admin/src/source/roles/media.rs",
+        "lines": {
+          "count": 12,
+          "covered": 11,
+          "percent": 91.66666666666666
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-admin/src/source/roles/props.rs",
+        "lines": {
+          "count": 96,
+          "covered": 95,
+          "percent": 98.95833333333334
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-admin/src/source/roles/rich.rs",
+        "lines": {
+          "count": 84,
+          "covered": 74,
+          "percent": 88.09523809523809
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-admin/src/transfer/csv.rs",
+        "lines": {
+          "count": 128,
+          "covered": 124,
+          "percent": 96.875
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-admin/src/transfer/encoding.rs",
+        "lines": {
+          "count": 75,
+          "covered": 75,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-admin/src/transfer/mod.rs",
+        "lines": {
+          "count": 205,
+          "covered": 203,
+          "percent": 99.02439024390245
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-admin/src/transfer/sniff.rs",
+        "lines": {
+          "count": 73,
+          "covered": 73,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-admin/src/transfer/upload.rs",
+        "lines": {
+          "count": 29,
+          "covered": 29,
+          "percent": 100
+        }
+      }
+    ]
+  },
+  "stackpress-framework-session": {
+    "covered": 3704,
+    "total": 3968,
+    "percent": 93.34677419354838,
+    "files": [
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/account/events.rs",
+        "lines": {
+          "count": 228,
+          "covered": 186,
+          "percent": 81.57894736842105
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/account/export.rs",
+        "lines": {
+          "count": 65,
+          "covered": 59,
+          "percent": 90.76923076923077
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/account/mod.rs",
+        "lines": {
+          "count": 45,
+          "covered": 44,
+          "percent": 97.77777777777777
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/account/password.rs",
+        "lines": {
+          "count": 97,
+          "covered": 95,
+          "percent": 97.9381443298969
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/account/profile.rs",
+        "lines": {
+          "count": 230,
+          "covered": 218,
+          "percent": 94.78260869565217
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/account/removal.rs",
+        "lines": {
+          "count": 79,
+          "covered": 77,
+          "percent": 97.46835443037975
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/account/routes.rs",
+        "lines": {
+          "count": 27,
+          "covered": 25,
+          "percent": 92.5925925925926
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/account/totp.rs",
+        "lines": {
+          "count": 220,
+          "covered": 214,
+          "percent": 97.27272727272728
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/auth/bindings.rs",
+        "lines": {
+          "count": 14,
+          "covered": 14,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/auth/bridge.rs",
+        "lines": {
+          "count": 135,
+          "covered": 133,
+          "percent": 98.51851851851852
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/auth/config.rs",
+        "lines": {
+          "count": 45,
+          "covered": 44,
+          "percent": 97.77777777777777
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/auth/events.rs",
+        "lines": {
+          "count": 195,
+          "covered": 177,
+          "percent": 90.76923076923077
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/auth/hooks.rs",
+        "lines": {
+          "count": 69,
+          "covered": 64,
+          "percent": 92.7536231884058
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/auth/pages/challenge.rs",
+        "lines": {
+          "count": 270,
+          "covered": 243,
+          "percent": 90
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/auth/pages/email.rs",
+        "lines": {
+          "count": 193,
+          "covered": 180,
+          "percent": 93.26424870466322
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/auth/pages/mod.rs",
+        "lines": {
+          "count": 87,
+          "covered": 76,
+          "percent": 87.35632183908046
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/auth/pages/password.rs",
+        "lines": {
+          "count": 67,
+          "covered": 60,
+          "percent": 89.55223880597015
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/auth/plugin.rs",
+        "lines": {
+          "count": 52,
+          "covered": 48,
+          "percent": 92.3076923076923
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/auth/templates.rs",
+        "lines": {
+          "count": 51,
+          "covered": 51,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/auth/totp.rs",
+        "lines": {
+          "count": 64,
+          "covered": 62,
+          "percent": 96.875
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/codecs.rs",
+        "lines": {
+          "count": 9,
+          "covered": 9,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/composite.rs",
+        "lines": {
+          "count": 8,
+          "covered": 8,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/jwt.rs",
+        "lines": {
+          "count": 79,
+          "covered": 78,
+          "percent": 98.73417721518987
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/permissions.rs",
+        "lines": {
+          "count": 72,
+          "covered": 71,
+          "percent": 98.61111111111111
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/plugin.rs",
+        "lines": {
+          "count": 154,
+          "covered": 148,
+          "percent": 96.1038961038961
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/presentation.rs",
+        "lines": {
+          "count": 174,
+          "covered": 167,
+          "percent": 95.97701149425288
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/session.rs",
+        "lines": {
+          "count": 191,
+          "covered": 166,
+          "percent": 86.91099476439791
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/storage/account.rs",
+        "lines": {
+          "count": 247,
+          "covered": 240,
+          "percent": 97.16599190283401
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/types.rs",
+        "lines": {
+          "count": 29,
+          "covered": 28,
+          "percent": 96.55172413793103
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/views/account.rs",
+        "lines": {
+          "count": 123,
+          "covered": 118,
+          "percent": 95.9349593495935
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/views/auth.rs",
+        "lines": {
+          "count": 128,
+          "covered": 125,
+          "percent": 97.65625
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/views/browser.rs",
+        "lines": {
+          "count": 6,
+          "covered": 3,
+          "percent": 50
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/views/controls.rs",
+        "lines": {
+          "count": 135,
+          "covered": 124,
+          "percent": 91.85185185185185
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/views/icons.rs",
+        "lines": {
+          "count": 21,
+          "covered": 20,
+          "percent": 95.23809523809523
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/views/mod.rs",
+        "lines": {
+          "count": 112,
+          "covered": 100,
+          "percent": 89.28571428571429
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/views/phone_input.rs",
+        "lines": {
+          "count": 63,
+          "covered": 47,
+          "percent": 74.60317460317461
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/views/strength.rs",
+        "lines": {
+          "count": 91,
+          "covered": 91,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-session/src/views/types.rs",
+        "lines": {
+          "count": 93,
+          "covered": 91,
+          "percent": 97.84946236559139
+        }
+      }
+    ]
+  },
+  "stackpress-framework-api": {
+    "covered": 2263,
+    "total": 2496,
+    "percent": 90.6650641025641,
+    "files": [
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-api/src/codegen.rs",
+        "lines": {
+          "count": 33,
+          "covered": 19,
+          "percent": 57.57575757575758
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-api/src/config.rs",
+        "lines": {
+          "count": 12,
+          "covered": 12,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-api/src/cors.rs",
+        "lines": {
+          "count": 55,
+          "covered": 55,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-api/src/endpoints.rs",
+        "lines": {
+          "count": 12,
+          "covered": 12,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-api/src/helpers.rs",
+        "lines": {
+          "count": 79,
+          "covered": 78,
+          "percent": 98.73417721518987
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-api/src/pages/mod.rs",
+        "lines": {
+          "count": 108,
+          "covered": 85,
+          "percent": 78.70370370370371
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-api/src/pages/oauth.rs",
+        "lines": {
+          "count": 151,
+          "covered": 146,
+          "percent": 96.68874172185431
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-api/src/pages/token.rs",
+        "lines": {
+          "count": 104,
+          "covered": 92,
+          "percent": 88.46153846153845
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-api/src/plugin.rs",
+        "lines": {
+          "count": 55,
+          "covered": 53,
+          "percent": 96.36363636363636
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-api/src/routes.rs",
+        "lines": {
+          "count": 108,
+          "covered": 108,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-api/src/sql/defaults.rs",
+        "lines": {
+          "count": 18,
+          "covered": 3,
+          "percent": 16.666666666666664
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-api/src/sql/events.rs",
+        "lines": {
+          "count": 51,
+          "covered": 31,
+          "percent": 60.78431372549019
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-api/src/views/admin.rs",
+        "lines": {
+          "count": 427,
+          "covered": 391,
+          "percent": 91.56908665105387
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-api/src/views/consent.rs",
+        "lines": {
+          "count": 90,
+          "covered": 90,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-api/src/views/document.rs",
+        "lines": {
+          "count": 15,
+          "covered": 15,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-api/src/views/host.rs",
+        "lines": {
+          "count": 69,
+          "covered": 48,
+          "percent": 69.56521739130434
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-api/src/views/icons.rs",
+        "lines": {
+          "count": 61,
+          "covered": 61,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-api/src/views/identity.rs",
+        "lines": {
+          "count": 47,
+          "covered": 41,
+          "percent": 87.2340425531915
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-api/src/views/management.rs",
+        "lines": {
+          "count": 335,
+          "covered": 303,
+          "percent": 90.44776119402985
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-api/src/views/mod.rs",
+        "lines": {
+          "count": 97,
+          "covered": 97,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-api/src/webhooks/fetch.rs",
+        "lines": {
+          "count": 12,
+          "covered": 12,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-api/src/webhooks/mod.rs",
+        "lines": {
+          "count": 53,
+          "covered": 50,
+          "percent": 94.33962264150944
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-api/src/webhooks/predicate.rs",
+        "lines": {
+          "count": 213,
+          "covered": 199,
+          "percent": 93.42723004694837
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework-api/src/webhooks/reqwest.rs",
+        "lines": {
+          "count": 291,
+          "covered": 262,
+          "percent": 90.03436426116839
+        }
+      }
+    ]
+  },
+  "stackpress-framework": {
+    "covered": 1190,
+    "total": 1246,
+    "percent": 95.50561797752809,
+    "files": [
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework/src/native/client.rs",
+        "lines": {
+          "count": 32,
+          "covered": 30,
+          "percent": 93.75
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework/src/native/commands.rs",
+        "lines": {
+          "count": 55,
+          "covered": 54,
+          "percent": 98.18181818181819
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework/src/native/commands/schema.rs",
+        "lines": {
+          "count": 111,
+          "covered": 105,
+          "percent": 94.5945945945946
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework/src/native/commands/server.rs",
+        "lines": {
+          "count": 112,
+          "covered": 107,
+          "percent": 95.53571428571429
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework/src/native/commands/source_client.rs",
+        "lines": {
+          "count": 108,
+          "covered": 91,
+          "percent": 84.25925925925925
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework/src/native/commands/sql.rs",
+        "lines": {
+          "count": 288,
+          "covered": 278,
+          "percent": 96.52777777777779
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework/src/native/config.rs",
+        "lines": {
+          "count": 37,
+          "covered": 37,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework/src/native/language.rs",
+        "lines": {
+          "count": 196,
+          "covered": 192,
+          "percent": 97.95918367346938
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework/src/native/mod.rs",
+        "lines": {
+          "count": 54,
+          "covered": 53,
+          "percent": 98.14814814814815
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework/src/native/tests.rs",
+        "lines": {
+          "count": 14,
+          "covered": 14,
+          "percent": 100
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework/src/native/view.rs",
+        "lines": {
+          "count": 180,
+          "covered": 170,
+          "percent": 94.44444444444444
+        }
+      },
+      {
+        "path": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/crates/framework/framework/src/native/view/packaging.rs",
+        "lines": {
+          "count": 59,
+          "covered": 59,
+          "percent": 100
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,269 @@
+{
+  "logs": [
+    "/Users/cblanquera/server/projects/stackpress/rust/.agents/resources/build-benchmarks/runs/20261118T025440.206811Z-a00b4e10ae19.log",
+    "/Users/cblanquera/server/projects/stackpress/rust/.agents/resources/build-benchmarks/runs/20261118T030006.840591Z-c5842c36fef3.log"
+  ],
+  "runs": [
+    {
+      "log": "/Users/cblanquera/server/projects/stackpress/rust/.agents/resources/build-benchmarks/runs/20261118T025440.206811Z-a00b4e10ae19.log",
+      "created_count": 46,
+      "dropped_count": 46,
+      "unique_created": 46,
+      "attempted_names": [
+        "stackpress_g46_mysql_1677_18e9043467912408",
+        "stackpress_g46_mysql_1678_18e9043467916a58",
+        "stackpress_g46_mysql_249_18e9043018ee8f10",
+        "stackpress_g46_mysql_276b_18e904363bbca468",
+        "stackpress_g46_mysql_276c_18e904363bbc98b0",
+        "stackpress_g46_mysql_287_18e904302acff778",
+        "stackpress_g46_postgres_167a_18e904346a983dd0",
+        "stackpress_g46_postgres_167c_18e9043479200770",
+        "stackpress_g46_postgres_276e_18e904363e89ed68",
+        "stackpress_g46_postgres_2773_18e904364b262348",
+        "stackpress_g46_postgres_289_18e904302e520da0",
+        "stackpress_g46_postgres_2da_18e904305a5af8d0",
+        "stackpress_release_stores_15e37_18e90427bb6d4b18",
+        "stackpress_release_stores_15e47_18e90427bf460108",
+        "stackpress_s7_m0_6278_18e9043e6998f280",
+        "stackpress_s7_m0_62a7_18e9043eaaa0c258",
+        "stackpress_s7_m1_627a_18e9043e6a84f090",
+        "stackpress_s7_m1_627d_18e9043e87426c30",
+        "stackpress_s7_m1_6280_18e9043e8aeb4438",
+        "stackpress_s7_m1_6281_18e9043e8b4e0d48",
+        "stackpress_s7_m1_6284_18e9043e8d282860",
+        "stackpress_s7_m1_62b1_18e9043ed733c518",
+        "stackpress_s7_m1_62d4_18e9043f0aee1c28",
+        "stackpress_s7_m1_62dc_18e9043f17fb53b8",
+        "stackpress_s7_m1_630a_18e9043f34cde1e0",
+        "stackpress_s7_m1_6311_18e9043f58793310",
+        "stackpress_s7_m2_6286_18e9043e91596278",
+        "stackpress_s7_m2_6287_18e9043e91596660",
+        "stackpress_s7_m2_6331_18e9043f78e3d060",
+        "stackpress_s7_m2_6348_18e9043f93b0bae8",
+        "stackpress_test_622a_18e9043e0a65cec8",
+        "stackpress_test_622c_18e9043e136dc9f8",
+        "stackpress_test_622d_18e9043e15e6b938",
+        "stackpress_test_6230_18e9043e185b5318",
+        "stackpress_test_6231_18e9043e1ae10bc8",
+        "stackpress_test_6232_18e9043e1d64ebd0",
+        "stackpress_test_6233_18e9043e1e0398e8",
+        "stackpress_test_6234_18e9043e20756bd8",
+        "stackpress_test_6235_18e9043e28c40600",
+        "stackpress_test_6237_18e9043e2a530a70",
+        "stackpress_test_623c_18e9043e38cc68a8",
+        "stackpress_test_623f_18e9043e3c404248",
+        "stackpress_test_6244_18e9043e435a0dc0",
+        "stackpress_test_6247_18e9043e46f24bc8",
+        "stackpress_test_624c_18e9043e4d0c7da8",
+        "stackpress_test_624f_18e9043e52b87c98"
+      ],
+      "pairs": {
+        "stackpress_g46_mysql_1677_18e9043467912408": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_g46_mysql_1678_18e9043467916a58": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_g46_mysql_249_18e9043018ee8f10": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_g46_mysql_276b_18e904363bbca468": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_g46_mysql_276c_18e904363bbc98b0": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_g46_mysql_287_18e904302acff778": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_g46_postgres_167a_18e904346a983dd0": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_g46_postgres_167c_18e9043479200770": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_g46_postgres_276e_18e904363e89ed68": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_g46_postgres_2773_18e904364b262348": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_g46_postgres_289_18e904302e520da0": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_g46_postgres_2da_18e904305a5af8d0": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_release_stores_15e37_18e90427bb6d4b18": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_release_stores_15e47_18e90427bf460108": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_s7_m0_6278_18e9043e6998f280": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_s7_m0_62a7_18e9043eaaa0c258": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_s7_m1_627a_18e9043e6a84f090": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_s7_m1_627d_18e9043e87426c30": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_s7_m1_6280_18e9043e8aeb4438": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_s7_m1_6281_18e9043e8b4e0d48": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_s7_m1_6284_18e9043e8d282860": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_s7_m1_62b1_18e9043ed733c518": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_s7_m1_62d4_18e9043f0aee1c28": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_s7_m1_62dc_18e9043f17fb53b8": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_s7_m1_630a_18e9043f34cde1e0": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_s7_m1_6311_18e9043f58793310": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_s7_m2_6286_18e9043e91596278": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_s7_m2_6287_18e9043e91596660": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_s7_m2_6331_18e9043f78e3d060": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_s7_m2_6348_18e9043f93b0bae8": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_test_622a_18e9043e0a65cec8": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_test_622c_18e9043e136dc9f8": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_test_622d_18e9043e15e6b938": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_test_6230_18e9043e185b5318": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_test_6231_18e9043e1ae10bc8": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_test_6232_18e9043e1d64ebd0": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_test_6233_18e9043e1e0398e8": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_test_6234_18e9043e20756bd8": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_test_6235_18e9043e28c40600": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_test_6237_18e9043e2a530a70": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_test_623c_18e9043e38cc68a8": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_test_623f_18e9043e3c404248": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_test_6244_18e9043e435a0dc0": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_test_6247_18e9043e46f24bc8": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_test_624c_18e9043e4d0c7da8": {
+          "created": 1,
+          "dropped": 1
+        },
+        "stackpress_test_624f_18e9043e52b87c98": {
+          "created": 1,
+          "dropped": 1
+        }
+      },
+      "unmatched": {},
+      "unconfirmed_attempts": [],
+      "cleanup_failures": []
+    },
+    {
+      "log": "/Users/cblanquera/server/projects/stackpress/rust/.agents/resources/build-benchmarks/runs/20261118T030006.840591Z-c5842c36fef3.log",
+      "created_count": 1,
+      "dropped_count": 1,
+      "unique_created": 1,
+      "attempted_names": [
+        "stackpress_s7_m2_8ee5_18e904708e1f42f8"
+      ],
+      "pairs": {
+        "stackpress_s7_m2_8ee5_18e904708e1f42f8": {
+          "created": 1,
+          "dropped": 1
+        }
+      },
+      "unmatched": {},
+      "unconfirmed_attempts": [],
+      "cleanup_failures": []
+    }
+  ]
+}

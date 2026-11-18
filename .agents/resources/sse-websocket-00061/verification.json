@@ -1,0 +1,1087 @@
+{
+  "invariants": {
+    "branch": "feature/sse-websocket",
+    "head": "aa3c5c27608d0e91901935ab40be5c739baaf13d",
+    "original_registry": 699,
+    "current_registry": 706,
+    "approved_additions": [
+      [
+        "data-encoding",
+        "2.11.1",
+        "registry+https://github.com/rust-lang/crates.io-index",
+        "4583a4551df46e2792f82ceeac45e850d2e2d5debba0b91f102385cda5b11f06"
+      ],
+      [
+        "rand",
+        "0.9.4",
+        "registry+https://github.com/rust-lang/crates.io-index",
+        "44c5af06bb1b7d3216d91932aed5265164bf384dc89cd6ba05cf59a35f5f76ea"
+      ],
+      [
+        "rand_chacha",
+        "0.9.0",
+        "registry+https://github.com/rust-lang/crates.io-index",
+        "d3022b5f1df60f26e1ffddd6c66e8aa15de382ae63b3a0c1bfc0e4d3e3f325cb"
+      ],
+      [
+        "rand_core",
+        "0.9.3",
+        "registry+https://github.com/rust-lang/crates.io-index",
+        "99d9a13982dcf210057a8a78572b2217b667c3beacbf3a0d8b454f6f82837d38"
+      ],
+      [
+        "sha1",
+        "0.10.6",
+        "registry+https://github.com/rust-lang/crates.io-index",
+        "e3bf829a2d51ab4a5ddf1352d8470c140cadc8301b2ae1789db023f01cedd6ba"
+      ],
+      [
+        "tokio-tungstenite",
+        "0.29.0",
+        "registry+https://github.com/rust-lang/crates.io-index",
+        "8f72a05e828585856dacd553fba484c242c46e391fb0e58917c942ee9202915c"
+      ],
+      [
+        "tungstenite",
+        "0.29.0",
+        "registry+https://github.com/rust-lang/crates.io-index",
+        "6c01152af293afb9c7c2a57e4b559c5620b421f6d133261c60dd2d0cdb38e6b8"
+      ]
+    ],
+    "root_sha256": "f2a491ab852786dfc325efd63af7d896701d80c7ba655db672ef29530fcf04d4",
+    "blog_registry": 448,
+    "blog_root_subset": true,
+    "fuzz_extras": [
+      [
+        "arbitrary",
+        "1.5.0",
+        "registry+https://github.com/rust-lang/crates.io-index",
+        "3bc62ac97cc33321f50863d514c3bc38a453947a8f9e781137e47c7401020aed"
+      ],
+      [
+        "libfuzzer-sys",
+        "0.4.10",
+        "registry+https://github.com/rust-lang/crates.io-index",
+        "5037190e1f70cbeef565bd267599242926f724d3b8a9f510fd7e0b540cfa4404"
+      ]
+    ],
+    "existing_frozen_expectation_changes": []
+  },
+  "gate_latest": {
+    "dependency-licenses": {
+      "phase": "dependency-licenses",
+      "command": [
+        "python3",
+        "tools/release/check_dep_licenses.py"
+      ],
+      "code": 0,
+      "command_seconds": 0.695501,
+      "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/target/task00061/core",
+      "log": ".agents/resources/release-manifests-00050/gate-logs/dependency-licenses.log"
+    },
+    "fmt": {
+      "phase": "fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "code": 0,
+      "command_seconds": 2.837297,
+      "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/target/task00061/core",
+      "log": ".agents/resources/release-manifests-00050/gate-logs/fmt.log"
+    },
+    "clippy-default": {
+      "phase": "clippy-default",
+      "command": [
+        "cargo",
+        "clippy",
+        "--workspace",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "code": 0,
+      "command_seconds": 56.245847,
+      "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/target/task00061/core",
+      "log": ".agents/resources/release-manifests-00050/gate-logs/clippy-default.log"
+    },
+    "nextest-default": {
+      "phase": "nextest-default",
+      "command": [
+        "cargo",
+        "nextest",
+        "run",
+        "--workspace",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--test-threads",
+        "2",
+        "--no-fail-fast",
+        "-E",
+        "not test(tcp_watchdog)"
+      ],
+      "code": 0,
+      "command_seconds": 395.765761,
+      "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/target/task00061/core",
+      "log": ".agents/resources/release-manifests-00050/gate-logs/nextest-default.log"
+    },
+    "nextest-tcp-default": {
+      "phase": "nextest-tcp-default",
+      "command": [
+        "cargo",
+        "nextest",
+        "run",
+        "--workspace",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--test-threads",
+        "1",
+        "-E",
+        "test(tcp_watchdog)"
+      ],
+      "code": 0,
+      "command_seconds": 2.072028,
+      "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/target/task00061/core",
+      "log": ".agents/resources/release-manifests-00050/gate-logs/nextest-tcp-default.log"
+    },
+    "doctests-default": {
+      "phase": "doctests-default",
+      "command": [
+        "cargo",
+        "test",
+        "--workspace",
+        "--locked",
+        "--offline",
+        "--doc"
+      ],
+      "code": 0,
+      "command_seconds": 37.209548,
+      "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/target/task00061/core",
+      "log": ".agents/resources/release-manifests-00050/gate-logs/doctests-default.log"
+    },
+    "rustdoc-default": {
+      "phase": "rustdoc-default",
+      "command": [
+        "cargo",
+        "doc",
+        "--workspace",
+        "--locked",
+        "--offline",
+        "--no-deps"
+      ],
+      "code": 0,
+      "command_seconds": 27.867537,
+      "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/target/task00061/core",
+      "log": ".agents/resources/release-manifests-00050/gate-logs/rustdoc-default.log"
+    },
+    "clippy-compatible": {
+      "phase": "clippy-compatible",
+      "command": [
+        "cargo",
+        "clippy",
+        "--workspace",
+        "--locked",
+        "--offline",
+        "--features",
+        "framework-aggregate-full,framework-aggregate-ui-session,framework-aggregate-ui-api,framework-aggregate-ui-admin,framework-aggregate-ui-view,framework-aggregate-ssr,framework-api-codegen,framework-csrf-server,framework-email-server,stackpress-framework/codegen,stackpress-framework-schema/providers,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-schema/source,stackpress-framework-sql/source,server-http-sse,server-http-host-sse,server-http-host-websocket,server-http-host-tls,leptos-sse,leptos-websocket",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "code": 0,
+      "command_seconds": 40.415035,
+      "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/target/task00061/core",
+      "log": ".agents/resources/release-manifests-00050/gate-logs/clippy-compatible.log"
+    },
+    "nextest-compatible": {
+      "phase": "nextest-compatible",
+      "command": [
+        "cargo",
+        "nextest",
+        "run",
+        "--workspace",
+        "--locked",
+        "--offline",
+        "--features",
+        "framework-aggregate-full,framework-aggregate-ui-session,framework-aggregate-ui-api,framework-aggregate-ui-admin,framework-aggregate-ui-view,framework-aggregate-ssr,framework-api-codegen,framework-csrf-server,framework-email-server,stackpress-framework/codegen,stackpress-framework-schema/providers,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-schema/source,stackpress-framework-sql/source,server-http-sse,server-http-host-sse,server-http-host-websocket,server-http-host-tls,leptos-sse,leptos-websocket",
+        "--all-targets",
+        "--test-threads",
+        "2",
+        "--no-fail-fast",
+        "-E",
+        "not test(tcp_watchdog)"
+      ],
+      "code": 0,
+      "command_seconds": 405.22411,
+      "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/target/task00061/core",
+      "log": ".agents/resources/release-manifests-00050/gate-logs/nextest-compatible.log"
+    },
+    "nextest-tcp-compatible": {
+      "phase": "nextest-tcp-compatible",
+      "command": [
+        "cargo",
+        "nextest",
+        "run",
+        "--workspace",
+        "--locked",
+        "--offline",
+        "--features",
+        "framework-aggregate-full,framework-aggregate-ui-session,framework-aggregate-ui-api,framework-aggregate-ui-admin,framework-aggregate-ui-view,framework-aggregate-ssr,framework-api-codegen,framework-csrf-server,framework-email-server,stackpress-framework/codegen,stackpress-framework-schema/providers,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-schema/source,stackpress-framework-sql/source,server-http-sse,server-http-host-sse,server-http-host-websocket,server-http-host-tls,leptos-sse,leptos-websocket",
+        "--all-targets",
+        "--test-threads",
+        "1",
+        "-E",
+        "test(tcp_watchdog)"
+      ],
+      "code": 0,
+      "command_seconds": 4.017947,
+      "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/target/task00061/core",
+      "log": ".agents/resources/release-manifests-00050/gate-logs/nextest-tcp-compatible.log"
+    },
+    "doctests-compatible": {
+      "phase": "doctests-compatible",
+      "command": [
+        "cargo",
+        "test",
+        "--workspace",
+        "--locked",
+        "--offline",
+        "--features",
+        "framework-aggregate-full,framework-aggregate-ui-session,framework-aggregate-ui-api,framework-aggregate-ui-admin,framework-aggregate-ui-view,framework-aggregate-ssr,framework-api-codegen,framework-csrf-server,framework-email-server,stackpress-framework/codegen,stackpress-framework-schema/providers,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-schema/source,stackpress-framework-sql/source,server-http-sse,server-http-host-sse,server-http-host-websocket,server-http-host-tls,leptos-sse,leptos-websocket",
+        "--doc"
+      ],
+      "code": 0,
+      "command_seconds": 43.258345,
+      "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/target/task00061/core",
+      "log": ".agents/resources/release-manifests-00050/gate-logs/doctests-compatible.log"
+    },
+    "rustdoc-compatible": {
+      "phase": "rustdoc-compatible",
+      "command": [
+        "cargo",
+        "doc",
+        "--workspace",
+        "--locked",
+        "--offline",
+        "--features",
+        "framework-aggregate-full,framework-aggregate-ui-session,framework-aggregate-ui-api,framework-aggregate-ui-admin,framework-aggregate-ui-view,framework-aggregate-ssr,framework-api-codegen,framework-csrf-server,framework-email-server,stackpress-framework/codegen,stackpress-framework-schema/providers,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-schema/source,stackpress-framework-sql/source,server-http-sse,server-http-host-sse,server-http-host-websocket,server-http-host-tls,leptos-sse,leptos-websocket",
+        "--no-deps"
+      ],
+      "code": 0,
+      "command_seconds": 35.546218,
+      "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/target/task00061/core",
+      "log": ".agents/resources/release-manifests-00050/gate-logs/rustdoc-compatible.log"
+    },
+    "aggregate-graphs": {
+      "phase": "aggregate-graphs",
+      "command": [
+        "python3",
+        "crates/framework/framework/consumers/graphs.py",
+        "--check"
+      ],
+      "code": 0,
+      "command_seconds": 241.673878,
+      "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/target/task00061/core",
+      "log": ".agents/resources/release-manifests-00050/gate-logs/aggregate-graphs-attempt-2.log"
+    },
+    "aggregate-consumers": {
+      "phase": "aggregate-consumers",
+      "command": [
+        "python3",
+        "crates/framework/framework/consumers/run.py"
+      ],
+      "code": 0,
+      "command_seconds": 714.888463,
+      "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/target/task00061/core",
+      "log": ".agents/resources/release-manifests-00050/gate-logs/aggregate-consumers.log"
+    },
+    "session-graphs": {
+      "phase": "session-graphs",
+      "command": [
+        "python3",
+        "crates/framework/framework-session/consumers/graphs.py",
+        "--check"
+      ],
+      "code": 0,
+      "command_seconds": 202.595042,
+      "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/target/task00061/core",
+      "log": ".agents/resources/release-manifests-00050/gate-logs/session-graphs.log"
+    },
+    "session-consumers": {
+      "phase": "session-consumers",
+      "command": [
+        "python3",
+        "crates/framework/framework-session/consumers/run.py"
+      ],
+      "code": 0,
+      "command_seconds": 187.667474,
+      "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/target/task00061/core",
+      "log": ".agents/resources/release-manifests-00050/gate-logs/session-consumers.log"
+    },
+    "generated-workspace": {
+      "phase": "generated-workspace",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "generated-workspace-tool",
+        "--locked",
+        "--offline",
+        "--",
+        "emit",
+        "generate",
+        "--check",
+        "true"
+      ],
+      "code": 0,
+      "command_seconds": 10.358383,
+      "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/target/task00061/core",
+      "log": ".agents/resources/release-manifests-00050/gate-logs/generated-workspace.log"
+    },
+    "generated-admin": {
+      "phase": "generated-admin",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "generated-admin-tool",
+        "--locked",
+        "--offline",
+        "--",
+        "emit",
+        "generate",
+        "--check"
+      ],
+      "code": 0,
+      "command_seconds": 25.414891,
+      "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/target/task00061/core",
+      "log": ".agents/resources/release-manifests-00050/gate-logs/generated-admin.log"
+    },
+    "api-checkpoint": {
+      "phase": "api-checkpoint",
+      "command": [
+        "cargo",
+        "run",
+        "--manifest-path",
+        "examples/api-checkpoint/tool/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--",
+        "--check"
+      ],
+      "code": 0,
+      "command_seconds": 66.393102,
+      "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/target/task00061/core/api-checkpoint",
+      "log": ".agents/resources/release-manifests-00050/gate-logs/api-checkpoint.log"
+    },
+    "regenerate_session_models": {
+      "phase": "regenerate_session_models",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "stackpress-framework-session",
+        "--example",
+        "regenerate_session_models",
+        "--locked",
+        "--offline",
+        "--features",
+        "auth-server,leptos-ssr",
+        "--",
+        "--check"
+      ],
+      "code": 0,
+      "command_seconds": 32.17291,
+      "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/target/task00061/core",
+      "log": ".agents/resources/release-manifests-00050/gate-logs/regenerate_session_models.log"
+    },
+    "regenerate_api_models": {
+      "phase": "regenerate_api_models",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "stackpress-framework-api",
+        "--example",
+        "regenerate_api_models",
+        "--locked",
+        "--offline",
+        "--features",
+        "sql,codegen,ui-ssr",
+        "--",
+        "--check"
+      ],
+      "code": 0,
+      "command_seconds": 32.394386,
+      "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/target/task00061/core",
+      "log": ".agents/resources/release-manifests-00050/gate-logs/regenerate_api_models.log"
+    },
+    "regenerate_aggregate_models": {
+      "phase": "regenerate_aggregate_models",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "stackpress-framework",
+        "--example",
+        "regenerate_aggregate_models",
+        "--locked",
+        "--offline",
+        "--features",
+        "full,codegen",
+        "--",
+        "--check"
+      ],
+      "code": 0,
+      "command_seconds": 22.337739,
+      "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/target/task00061/core",
+      "log": ".agents/resources/release-manifests-00050/gate-logs/regenerate_aggregate_models.log"
+    },
+    "realtime-graphs": {
+      "phase": "realtime-graphs",
+      "command": [
+        "python3",
+        "tools/realtime/graphs.py"
+      ],
+      "code": 0,
+      "command_seconds": 1.992328,
+      "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/target/task00061/core",
+      "log": ".agents/resources/release-manifests-00050/gate-logs/realtime-graphs.log"
+    },
+    "realtime-browser-build": {
+      "phase": "realtime-browser-build",
+      "command": [
+        "python3",
+        "tools/realtime/proof.py",
+        "build"
+      ],
+      "code": 0,
+      "command_seconds": 38.020108,
+      "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/target/task00061/core",
+      "log": ".agents/resources/release-manifests-00050/gate-logs/realtime-browser-build.log"
+    },
+    "realtime-browser": {
+      "phase": "realtime-browser",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "stackpress-server-http",
+        "--locked",
+        "--offline",
+        "--features",
+        "sse,websocket,tls",
+        "--test",
+        "realtime_browser",
+        "browser_watchdog",
+        "--",
+        "--ignored",
+        "--exact",
+        "--nocapture"
+      ],
+      "code": 0,
+      "command_seconds": 9.363189,
+      "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/target/task00061/core",
+      "log": ".agents/resources/release-manifests-00050/gate-logs/realtime-browser.log"
+    },
+    "blog": {
+      "phase": "blog",
+      "command": [
+        "python3",
+        "tools/examples/blog/gate.py"
+      ],
+      "code": 0,
+      "command_seconds": 1196.555035,
+      "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/target/task00061/blog/native",
+      "log": ".agents/resources/release-manifests-00050/gate-logs/blog.log"
+    },
+    "checker-controls": {
+      "phase": "checker-controls",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tools/release",
+        "-p",
+        "test_*.py"
+      ],
+      "code": 0,
+      "command_seconds": 0.155272,
+      "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/target/task00061/core",
+      "log": ".agents/resources/release-manifests-00050/gate-logs/checker-controls.log"
+    },
+    "readmes": {
+      "phase": "readmes",
+      "command": [
+        "python3",
+        "tools/release/check_readmes.py"
+      ],
+      "code": 0,
+      "command_seconds": 19.799373,
+      "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/target/task00061/core",
+      "log": ".agents/resources/release-manifests-00050/gate-logs/readmes.log"
+    },
+    "packages-and-dry-runs": {
+      "phase": "packages-and-dry-runs",
+      "command": [
+        "python3",
+        "tools/release/package_workspace.py",
+        "--allow-dirty"
+      ],
+      "code": 0,
+      "command_seconds": 132.507688,
+      "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/target/task00061/core",
+      "log": ".agents/resources/release-manifests-00050/gate-logs/packages-and-dry-runs.log"
+    },
+    "facade": {
+      "phase": "facade",
+      "command": [
+        "python3",
+        "tools/release/check_facade.py"
+      ],
+      "code": 0,
+      "command_seconds": 517.259393,
+      "target": "/Users/cblanquera/.paseo/worktrees/342ftjlj/sse-websocket/target/task00061/core",
+      "log": ".agents/resources/release-manifests-00050/gate-logs/facade.log"
+    }
+  },
+  "gate_attempts": 31,
+  "gate_all_latest_passed": true,
+  "standalone_clippy": [
+    {
+      "crate": "stackpress-leptos",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "stackpress-leptos",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "code": 0,
+      "seconds": 73.6106608749833
+    },
+    {
+      "crate": "stackpress-framework-language",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "stackpress-framework-language",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "code": 0,
+      "seconds": 0.39329120801994577
+    },
+    {
+      "crate": "stackpress-sql",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "stackpress-sql",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "code": 0,
+      "seconds": 21.852453333995072
+    },
+    {
+      "crate": "stackpress-lib",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "stackpress-lib",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "code": 0,
+      "seconds": 13.248424499994144
+    },
+    {
+      "crate": "stackpress-idea-parser",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "stackpress-idea-parser",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "code": 0,
+      "seconds": 5.5914142499968875
+    },
+    {
+      "crate": "stackpress-sql-sqlite",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "stackpress-sql-sqlite",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "code": 0,
+      "seconds": 9.11148733299342
+    },
+    {
+      "crate": "stackpress-sql-postgres",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "stackpress-sql-postgres",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "code": 0,
+      "seconds": 13.901803000015207
+    },
+    {
+      "crate": "stackpress-sql-mysql",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "stackpress-sql-mysql",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "code": 0,
+      "seconds": 4.632318249990931
+    },
+    {
+      "crate": "stackpress-server",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "stackpress-server",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "code": 0,
+      "seconds": 1.3351726660039276
+    },
+    {
+      "crate": "stackpress-idea-transformer",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "stackpress-idea-transformer",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "code": 0,
+      "seconds": 4.908743457985111
+    },
+    {
+      "crate": "stackpress-server-http",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "stackpress-server-http",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "code": 0,
+      "seconds": 5.148706000007223
+    },
+    {
+      "crate": "stackpress-cli",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "stackpress-cli",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "code": 0,
+      "seconds": 3.751090249978006
+    },
+    {
+      "crate": "stackpress-framework-view",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "stackpress-framework-view",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "code": 0,
+      "seconds": 8.887920667009894
+    },
+    {
+      "crate": "stackpress-framework-csrf",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "stackpress-framework-csrf",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "code": 0,
+      "seconds": 3.9997840419819113
+    },
+    {
+      "crate": "stackpress-framework-email",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "stackpress-framework-email",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "code": 0,
+      "seconds": 27.497274708002806
+    },
+    {
+      "crate": "stackpress-idea",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "stackpress-idea",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "code": 0,
+      "seconds": 0.8343492079875432
+    },
+    {
+      "crate": "stackpress-framework-schema",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "stackpress-framework-schema",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "code": 0,
+      "seconds": 1.959393375000218
+    },
+    {
+      "crate": "stackpress-framework-sql",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "stackpress-framework-sql",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "code": 0,
+      "seconds": 2.7240243749984074
+    },
+    {
+      "crate": "stackpress-framework-admin",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "stackpress-framework-admin",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "code": 0,
+      "seconds": 32.20719966699835
+    },
+    {
+      "crate": "stackpress-framework-session",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "stackpress-framework-session",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "code": 0,
+      "seconds": 43.45311283299816
+    },
+    {
+      "crate": "stackpress-framework-api",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "stackpress-framework-api",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "code": 0,
+      "seconds": 26.630945458018687
+    },
+    {
+      "crate": "stackpress-framework",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "stackpress-framework",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "code": 0,
+      "seconds": 7.982763292005984
+    },
+    {
+      "crate": "stackpress",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "stackpress",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "code": 0,
+      "seconds": 1.645176582998829
+    }
+  ],
+  "coverage_preparation": {
+    "compiled": true,
+    "live_tests_executed": false,
+    "features": "framework-aggregate-full,framework-aggregate-ui-session,framework-aggregate-ui-api,framework-aggregate-ui-admin,framework-aggregate-ui-view,framework-aggregate-ssr,framework-api-codegen,framework-csrf-server,framework-email-server,stackpress-framework/codegen,stackpress-framework-schema/providers,stackpress-framework-sql/sqlite-maintenance,stackpress-framework-sql/codegen,stackpress-framework-sql/server,stackpress-framework-schema/source,stackpress-framework-sql/source,server-http-sse,server-http-host-sse,server-http-host-websocket,server-http-host-tls,leptos-sse,leptos-websocket"
+  },
+  "live_coverage_complete": true,
+  "coverage_preliminary": {
+    "benchmark": "20261117T092847.379403Z-aa77da7f3d94",
+    "ordinary_tests_passed": 1336,
+    "ordinary_tests_skipped": 109,
+    "browser_modes": [
+      "hydrate",
+      "csr"
+    ],
+    "candidates_measured": 22,
+    "candidates_at_least_90": 20,
+    "live_databases_executed": false,
+    "mismatch_attribution": {
+      "count": 2166,
+      "all_zero_hash": true,
+      "dependency_crates": {
+        "foldhash": 931,
+        "tachys": 1028,
+        "tracing": 28,
+        "tokio": 96,
+        "ring": 29,
+        "memchr": 54
+      },
+      "stackpress_symbols": 0,
+      "compact_export_file_summaries_identical": true
+    }
+  },
+  "footprint": {
+    "overall_peak_bytes": 14612500480,
+    "current_bytes": 11304456192,
+    "live_peak_bytes": 12744790016,
+    "live_raw_profiles_retired": 811
+  },
+  "verification_processes_finished": true,
+  "database_readiness_preliminary": {
+    "phase": "coverage-readiness",
+    "at": "2026-11-17T09:35:47.141161+00:00",
+    "engines": {
+      "postgres": {
+        "code": 2,
+        "names": null,
+        "diagnostic": "psql: error: connection to server at \"localhost\" (::1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\nconnection to server at \"localhost\" (127.0.0.1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?"
+      },
+      "mysql": {
+        "code": 1,
+        "names": null,
+        "diagnostic": "ERROR 2003 (HY000): Can't connect to MySQL server on '127.0.0.1:3306' (61)"
+      }
+    }
+  },
+  "database_readiness": {
+    "phase": "live-final",
+    "at": "2026-11-18T03:02:47.490206+00:00",
+    "engines": {
+      "postgres": {
+        "code": 0,
+        "names": [],
+        "diagnostic": ""
+      },
+      "mysql": {
+        "code": 0,
+        "names": [],
+        "diagnostic": ""
+      }
+    }
+  },
+  "coverage_live": {
+    "workspace_benchmark": "20261118T025440.206811Z-a00b4e10ae19",
+    "ddl_and_export_benchmark": "20261118T030006.840591Z-c5842c36fef3",
+    "ordinary_tests_passed": 1382,
+    "ordinary_tests_skipped": 63,
+    "existing_mysql_generated_ddl_groups_passed": 1,
+    "browser_modes": [
+      "hydrate",
+      "csr"
+    ],
+    "browser_session_revocation_proof": true,
+    "candidates_measured": 22,
+    "candidates_at_least_90": 22,
+    "minimum_percent": 90.58675511838042,
+    "live_databases_executed": true,
+    "timing_retries": 0,
+    "scope": "Ordinary per-crate src rows, including in-source tests; facade exempt; dependency/separate-test/example files excluded.",
+    "source_changes_for_coverage": false,
+    "existing_expectation_changes": false,
+    "harness_correction": "Include the existing MySQL M2 --g37-ddl opt-in proof when its live URL is present; re-export the same completed workspace profiles.",
+    "initial_floor_failure": "All tests passed; MySQL was 89.55% before the omitted existing DDL group was executed unchanged.",
+    "mismatch_attribution": {
+      "count": 2299,
+      "all_zero_hash": true,
+      "dependency_crates": {
+        "foldhash": 1064,
+        "memchr": 54,
+        "ring": 29,
+        "tachys": 1028,
+        "tokio": 96,
+        "tracing": 28
+      },
+      "stackpress_symbols": 0,
+      "diagnostic_file_summaries_identical": true
+    },
+    "report": "coverage-live.json"
+  },
+  "database_cleanup": {
+    "pair_audit_benchmark": "20261118T030244.614591Z-9ccebf1f8a5e",
+    "final_listing_benchmark": "20261118T030247.332126Z-422a1255076b",
+    "created": 47,
+    "dropped_confirmed": 47,
+    "unmatched": 0,
+    "unconfirmed_attempts": 0,
+    "cleanup_failures": 0,
+    "final_postgres_names": [],
+    "final_mysql_names": [],
+    "pair_evidence": "database-live-pairs.json",
+    "final_listing": "database-live-final.json",
+    "audit_helper_correction": "Recognize both existing confirmed-cleanup message formats; initial failed parse retained."
+  },
+  "final_invariants_benchmark": "20261118T030345.095858Z-a52b0f89b997",
+  "live_diagnostic_benchmark": "20261118T030317.938061Z-19fe3ce05071",
+  "live_cleanup_benchmark": "20261118T030518.353301Z-52e3f8591d23",
+  "kb_validation": {
+    "benchmark": "20261118T030725.085444Z-5819fd8349df",
+    "exit_code": 1,
+    "inherited_errors": 146,
+    "inherited_warnings": 44,
+    "exact_diagnostic_set_unchanged": true,
+    "new_diagnostics": 0
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "phase": "live-final",
+  "at": "2026-11-18T03:02:47.490206+00:00",
+  "engines": {
+    "postgres": {
+      "code": 0,
+      "names": [],
+      "diagnostic": ""
+    },
+    "mysql": {
+      "code": 0,
+      "names": [],
+      "diagnostic": ""
+    }
+  }
+}

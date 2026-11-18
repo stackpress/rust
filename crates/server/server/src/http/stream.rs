@@ -81,17 +81,19 @@ impl StreamLimits {
 /// Exclusive pinned producer; no reference into a request or invocation can escape.
 type OwnedStream = Pin<Box<dyn Stream<Item = Result<Vec<u8>>> + Send + 'static>>;
 /// Private typed identity; a mutex transfers ownership and is never held during polling.
-struct HttpBodySlot {
+pub(super) struct HttpBodySlot {
     /// Only the selected final response may take this producer, after successful preflight.
-    stream: Mutex<Option<OwnedSource>>,
+    pub(super) stream: Mutex<Option<OwnedSource>>,
     /// Exact size is available only for internally owned immutable bytes.
-    length: Option<usize>,
+    pub(super) length: Option<usize>,
     /// Immutable limits travel with the exclusive producer when taken.
-    limits: StreamLimits,
+    pub(super) limits: StreamLimits,
+    #[cfg(feature = "http-sse")]
+    pub(super) sse: Option<super::sse::SseOptions>,
 }
 
 /// Owned alternatives share one take-once publication guard; neither runs under the slot lock.
-enum OwnedSource {
+pub(super) enum OwnedSource {
     /// An application producer retains its explicit runtime/byte policy.
     Stream(OwnedStream),
     /// An immutable representation shares its storage and has an exact checked length.
@@ -225,6 +227,8 @@ impl HttpResponseExt for Response {
                 stream: Mutex::new(Some(OwnedSource::Stream(Box::pin(stream)))),
                 length: None,
                 limits,
+                #[cfg(feature = "http-sse")]
+                sse: None,
             }))),
         )
     }
@@ -246,6 +250,8 @@ impl HttpResponseExt for Response {
                 stream: Mutex::new(Some(OwnedSource::Bytes(bytes))),
                 length: Some(length),
                 limits,
+                #[cfg(feature = "http-sse")]
+                sse: None,
             }))),
         )
     }
@@ -257,6 +263,9 @@ impl HttpResponseExt for Response {
 pub struct HttpBody {
     /// Exhaustive ownership state prevents producer/limit/buffer combinations that cannot occur.
     source: BodySource,
+    #[cfg(feature = "http-sse")]
+    /// Optional realtime policy is indirect so existing output enums retain compact variants.
+    sse: Option<Box<super::sse::SseOptions>>,
 }
 /// Each state carries only the fields required to drive that particular representation.
 enum BodySource {
@@ -278,11 +287,22 @@ enum BodySource {
     Finished,
 }
 impl HttpBody {
+    /// Construct an empty body for a host preflight rejection; no producer is retained.
+    pub fn empty() -> Self {
+        Self::buffered(Vec::new())
+    }
     /// Wrap already converted buffered output without collecting a producer.
-    fn buffered(bytes: Vec<u8>) -> Self {
+    pub(super) fn buffered(bytes: Vec<u8>) -> Self {
         Self {
             source: BodySource::Buffered(Some(bytes)),
+            #[cfg(feature = "http-sse")]
+            sse: None,
         }
+    }
+    /// Inspect the selected typed SSE policy; MIME alone never selects realtime clocks.
+    #[cfg(feature = "http-sse")]
+    pub fn sse_options(&self) -> Option<super::sse::SseOptions> {
+        self.sse.as_deref().copied()
     }
     /// Borrow finite streaming deadlines before the producer completes.
     pub fn limits(&self) -> Option<StreamLimits> {
@@ -461,6 +481,38 @@ impl StreamingHttpAdapter {
         F: FnOnce() -> Fut + Send,
         Fut: Future<Output = Result<Vec<u8>>> + Send,
     {
+        self.handle_body_with(app, parts, options, load, Ok).await
+    }
+    /// Preflight host admission after representation validation and before guarded publication.
+    /// The closure owns the unpolled response and must release its body when denying admission.
+    pub async fn handle_body_with<F, Fut, P>(
+        &self,
+        app: &Server,
+        parts: http::request::Parts,
+        options: HandleOptions,
+        load: F,
+        preflight: P,
+    ) -> Result<StreamingHttpReply>
+    where
+        F: FnOnce() -> Fut + Send,
+        Fut: Future<Output = Result<Vec<u8>>> + Send,
+        P: FnOnce(http::Response<HttpBody>) -> Result<http::Response<HttpBody>> + Send,
+    {
+        let (reply, head) = self.handle_reply(app, parts, options, load).await?;
+        Ok(finish(reply, head, &self.adapter.options.cookie, preflight).await)
+    }
+    /// Normalize/load/dispatch once for both ordinary and protocol-specific output paths.
+    pub(super) async fn handle_reply<F, Fut>(
+        &self,
+        app: &Server,
+        parts: http::request::Parts,
+        options: HandleOptions,
+        load: F,
+    ) -> Result<(HostReply, bool)>
+    where
+        F: FnOnce() -> Fut + Send,
+        Fut: Future<Output = Result<Vec<u8>>> + Send,
+    {
         // HEAD changes only native body publication, never operation selection.
         let head = parts.method == http::Method::HEAD;
         let policy = &self.adapter.options;
@@ -488,7 +540,12 @@ impl StreamingHttpAdapter {
             }
             Err(error) => app.input_failure("<invalid HTTP input>", error)?,
         };
-        Ok(finish(reply, head, &policy.cookie).await)
+        Ok((reply, head))
+    }
+    /// Borrow the selected whole cookie policy for sibling native output preflight.
+    #[cfg(feature = "http-upgrade")]
+    pub(super) fn cookie_options(&self) -> &CookieOptions {
+        &self.adapter.options.cookie
     }
 }
 /// Extract only the private extension identity; arbitrary SharedNative values stay unsupported.
@@ -499,7 +556,7 @@ fn descriptor(response: &Response) -> Option<&HttpBodySlot> {
     }
 }
 /// Validate all headers and response fields before taking exclusive producer ownership.
-fn prepare(
+pub(super) fn prepare(
     response: &Response,
     head: bool,
     cookie: &CookieOptions,
@@ -567,6 +624,8 @@ fn prepare(
         HttpBody::buffered(Vec::new())
     } else {
         HttpBody {
+            #[cfg(feature = "http-sse")]
+            sse: slot.sse.map(Box::new),
             source: match stream {
                 OwnedSource::Stream(stream) => BodySource::Streaming {
                     stream,
@@ -587,7 +646,7 @@ fn prepare(
     Ok(native)
 }
 /// Remove fixed and Connection-nominated hop fields; transport owns connection framing.
-fn strip_hop_headers(headers: &mut http::HeaderMap) -> Result<()> {
+pub(super) fn strip_hop_headers(headers: &mut http::HeaderMap) -> Result<()> {
     // Parse all nominations before removing Connection itself or mutating its borrowed values.
     let mut nominated = Vec::new();
     for value in headers.get_all(CONNECTION) {
@@ -624,7 +683,15 @@ fn strip_hop_headers(headers: &mut http::HeaderMap) -> Result<()> {
     Ok(())
 }
 /// Preflight, consume one output guard, then return an unpolled native body to the caller.
-async fn finish(mut reply: HostReply, head: bool, cookie: &CookieOptions) -> StreamingHttpReply {
+async fn finish<P>(
+    mut reply: HostReply,
+    head: bool,
+    cookie: &CookieOptions,
+    preflight: P,
+) -> StreamingHttpReply
+where
+    P: FnOnce(http::Response<HttpBody>) -> Result<http::Response<HttpBody>>,
+{
     // Authority is call-local and cannot be reset by any handler response replacement.
     let mut guard = OutputGuard::default();
     match reply.response.delivery_state() {
@@ -653,7 +720,7 @@ async fn finish(mut reply: HostReply, head: bool, cookie: &CookieOptions) -> Str
         }
     }
     // Every fallible conversion precedes publication; failure can still choose one empty 500.
-    let prepared = match prepare(&reply.response, head, cookie) {
+    let prepared = match prepare(&reply.response, head, cookie).and_then(preflight) {
         Ok(native) => native,
         Err(error) => {
             reply.report.record_output_failure(error, &reply.response);

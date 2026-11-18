@@ -21,5 +21,11 @@ its buffered-only meaning. Default and browser consumers gain no network host.
 See [limits and statuses](docs/api/limits.md), the accepted
 [G31 framing policy](docs/concepts.md#framing-and-connection-reuse), and
 [limitations](docs/concepts.md#supported-boundaries) before deployment. These
-crates currently use Rust 1.96, edition 2024, and `publish = false`; dependency
-examples therefore use local paths.
+crates use Rust 1.96 and edition 2024.
+
+The independent `sse` and `websocket` features add finite realtime sessions only
+when the host also selects their limits. See the [realtime guide](docs/guides/realtime.md)
+and [runnable example](examples/realtime.rs). Facade equivalents are
+`server-http-host-sse` and `server-http-host-websocket`. Ordinary `server-http`
+keeps its buffered meaning. Apps own authentication, Origin checks and authorization;
+cookie-bearing WebSockets require deliberate protection against cross-site hijacking.
